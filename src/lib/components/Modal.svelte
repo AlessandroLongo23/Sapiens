@@ -463,7 +463,7 @@
 										Invio in corso...
 									{:else}
 										<span class="flex items-center space-x-2">
-											<Send class="w-4 h-4" />
+											<ls.Send class="w-4 h-4" />
 											<span>Invia Richiesta</span>
 										</span>
 									{/if}
