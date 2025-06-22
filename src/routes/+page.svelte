@@ -165,7 +165,7 @@
 				<div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 morphing-shape bg-gradient-to-br from-blue-400/20 via-indigo-500/20 to-blue-600/20 flex items-center justify-center floating-animation">
 					<div class="w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full glass-effect flex items-center justify-center">
 						<div class="w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-600 shadow-elegant-lg">
-							<img src="/profile.jpg" alt="profile" class="w-full h-full rounded-full" />
+							<img src="/profile.jpg" alt="profile" class="w-full h-full rounded-full" id="profile-image" />
 						</div>
 					</div>
 				</div>

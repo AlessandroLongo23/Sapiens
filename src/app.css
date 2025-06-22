@@ -313,3 +313,7 @@ body {
     padding-bottom: 4rem;
   }
 }
+
+#profile-image {
+  filter: brightness(2.5) contrast(0.95);
+}
