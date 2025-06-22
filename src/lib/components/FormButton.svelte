@@ -1,0 +1,47 @@
+<script>
+	let { 
+		variant = 'primary', // 'primary', 'secondary', 'outline', 'ghost'
+		size = 'md', // 'sm', 'md', 'lg'
+		disabled = false,
+		loading = false,
+		fullWidth = false,
+		onclick = () => {},
+		children
+	} = $props();
+	
+	const sizeClasses = {
+		sm: 'px-4 py-2 text-sm',
+		md: 'px-6 py-3 text-base',
+		lg: 'px-8 py-4 text-lg'
+	};
+	
+	const variantClasses = {
+		primary: 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg hover:shadow-xl',
+		secondary: 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200',
+		outline: 'border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:border-blue-600',
+		ghost: 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+	};
+</script>
+
+<button
+	class="group relative inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transform hover:-translate-y-0.5 disabled:transform-none disabled:opacity-50 disabled:cursor-not-allowed {sizeClasses[size]} {variantClasses[variant]} {fullWidth ? 'w-full' : ''}"
+	{disabled}
+	onclick={onclick}
+>
+	<!-- Loading spinner -->
+	{#if loading}
+		<div class="absolute inset-0 flex items-center justify-center">
+			<div class="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+		</div>
+		<div class="opacity-0">
+			{@render children()}
+		</div>
+	{:else}
+		{@render children()}
+	{/if}
+	
+	<!-- Shine effect for primary variant -->
+	{#if variant === 'primary' && !disabled && !loading}
+		<div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none"></div>
+	{/if}
+</button> 
