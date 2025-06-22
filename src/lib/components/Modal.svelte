@@ -32,21 +32,21 @@
 			title: 'Scuola Media',
 			subtitle: 'Aiuto compiti e preparazione verifiche',
 			price: '12€/ora',
-			icon: ls.BookOpen
+			icon: ls.PenLine
 		},
 		{
 			value: 'superiore',
 			title: 'Scuola Superiore',
 			subtitle: 'Preparazione verifiche e interrogazioni, Recupero debiti formativi',
 			price: '15€/ora',
-			icon: ls.GraduationCap
+			icon: ls.BookOpen
 		},
 		{
 			value: 'università',
 			title: 'Università',
 			subtitle: 'Corsi universitari e preparazione esami',
 			price: '20€/ora',
-			icon: ls.User
+			icon: ls.GraduationCap
 		}
 	];
 	

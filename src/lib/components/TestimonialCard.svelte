@@ -10,12 +10,7 @@
 	<!-- Subtle gradient overlay -->
 	<div class="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-orange-50/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 	
-	<!-- Quote icon -->
-	<div class="relative mb-6">
-		<div class="inline-flex p-3 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50/50 group-hover:from-amber-50 group-hover:to-orange-50 transition-all duration-500">
-			<Quote class="w-6 h-6 text-amber-600/80 group-hover:text-amber-600 transition-colors duration-300" />
-		</div>
-	</div>
+
 	
 	<!-- Stars with elegant styling -->
 	<div class="relative flex items-center mb-6 space-x-1">
@@ -31,7 +26,8 @@
 	
 	<!-- Testimonial text with enhanced typography -->
 	<blockquote class="relative text-slate-700 leading-relaxed mb-8 text-lg group-hover:text-slate-800 transition-colors duration-300">
-		<span class="text-slate-600 text-6xl absolute -top-2 -left-1 opacity-20 font-serif leading-none">"</span>
+		<!-- Large background quote mark -->
+		<Quote class="absolute -top-2 -left-2 size-12 text-amber-500/20 group-hover:text-amber-500/25 transition-colors duration-300 pointer-events-none" />
 		<span class="relative italic font-medium">
 			{comment}
 		</span>

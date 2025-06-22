@@ -12,17 +12,20 @@
 		hours: {
 			value: "130+",
 			label: "Ore di Lezione",
-			iconName: "clock"
+			iconName: "clock",
+			color: "text-blue-500"
 		},
 		subjects: {
 			value: "15+",
 			label: "Materie Trattate",
-			iconName: "book-open"
+			iconName: "book-open",
+			color: "text-emerald-500"
 		},
 		students: {
 			value: "25+",
 			label: "Studenti Seguiti",
-			iconName: "users"
+			iconName: "users",
+			color: "text-purple-500"
 		}
 	};
 	
@@ -47,12 +50,7 @@
 		}
 	];
 	
-	const subjects = [
-		{ name: "Matematica", icon: ls.Calculator, color: "from-blue-500 to-cyan-500" },
-		{ name: "Fisica", icon: ls.Atom, color: "from-purple-500 to-pink-500" },
-		{ name: "Informatica", icon: ls.Laptop, color: "from-green-500 to-emerald-500" },
-		{ name: "Chimica", icon: ls.Award, color: "from-orange-500 to-red-500" }
-	];
+
 	
 	let heroSection;
 	let aboutSection;
@@ -216,39 +214,41 @@
 					</div>
 				</div>
 				
-				<!-- Credentials -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<a href="https://www.ing-inl.unifi.it/" class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center cursor-pointer">
-						<ls.GraduationCap class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mx-auto mb-2 sm:mb-3" />
-						<div class="font-semibold text-slate-800 text-sm sm:text-base">Università degli Studi di Firenze</div>
-						<div class="text-xs sm:text-sm text-slate-600">Ingegneria Informatica</div>
-					</a>
-					<a href="https://www.dtu.dk/english/education/graduate/msc-programmes/human-centered-artificial-intelligence" class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center cursor-pointer">
-						<ls.BookOpen class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mx-auto mb-2 sm:mb-3" />
-						<div class="font-semibold text-slate-800 text-sm sm:text-base">Denmark Technical University</div>
-						<div class="text-xs sm:text-sm text-slate-600">Human-Centered Artificial Intelligence</div>
-					</a>
-					<!-- <div class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center">
-						<ls.Target class="w-6 h-6 sm:w-8 sm:h-8 text-green-600 mx-auto mb-2 sm:mb-3" />
-						<div class="font-semibold text-slate-800 text-sm sm:text-base">98% Success Rate</div>
-						<div class="text-xs sm:text-sm text-slate-600">Studenti Promossi</div>
-					</div> -->
-				</div>
+
 			</div>
 			
-			<!-- Visual Element -->
-			<div class="flex justify-center mt-8 lg:mt-0">
-				<div class="relative">
-					<div class="w-72 h-72 sm:w-80 sm:h-80 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6 sm:p-8 glass-effect">
-						<div class="grid grid-cols-2 gap-3 sm:gap-4 h-full">
-							{#each subjects as subject, index}
-								<div class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/50 shadow-sm hover:shadow-md transition-all duration-300" style="animation-delay: {index * 100}ms">
-									<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br {subject.color} flex items-center justify-center mb-2 sm:mb-3 text-white">
-										<svelte:component this={subject.icon} class="w-5 h-5 sm:w-6 sm:h-6" />
-									</div>
-									<div class="text-xs sm:text-sm font-medium text-slate-700 text-center">{subject.name}</div>
-								</div>
-							{/each}
+			<!-- University Images with Overlay Cards - Hidden on mobile, visible on desktop -->
+			<div class="hidden lg:flex justify-center mt-8 lg:mt-0">
+				<div class="flex flex-col gap-12">
+					<!-- University of Florence Image -->
+					<div class="relative w-80 h-48 sm:w-96 sm:h-56 lg:w-[28rem] lg:h-64">
+						<div class="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg">
+							<!-- Florence University image -->
+							<img src="/morgagni.jpg" alt="UNIFI" class="w-full h-full object-cover" />
+						</div>
+						<!-- Overlay Card - positioned in top-right corner -->
+						<div class="absolute -bottom-8 -right-8 sm:-bottom-8 sm:-right-8">
+							<a href="https://www.ing-inl.unifi.it/" class="block glass-effect rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg">
+								<ls.GraduationCap class="size-5 sm:size-6 text-blue-600 mx-auto mb-1 sm:mb-2" />
+								<div class="font-semibold text-slate-800 text-xs sm:text-sm leading-tight">Università degli Studi di Firenze</div>
+								<div class="text-xs text-slate-600">Ingegneria Informatica</div>
+							</a>
+						</div>
+					</div>
+
+					<!-- DTU Image -->
+					<div class="relative w-80 h-48 sm:w-96 sm:h-56 lg:w-[28rem] lg:h-64 left-8">
+						<div class="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg">
+							<!-- DTU image -->
+							<img src="/dtu.png" alt="DTU" class="w-full h-full object-cover" />
+						</div>
+						<!-- Overlay Card - positioned in bottom-left corner -->
+						<div class="absolute -bottom-8 -left-8 sm:-bottom-8 sm:-left-8">
+							<a href="https://www.dtu.dk/english/education/graduate/msc-programmes/human-centered-artificial-intelligence" class="block glass-effect rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg">
+								<ls.BookOpen class="size-5 sm:size-6 text-blue-600 mx-auto mb-1 sm:mb-2" />
+								<div class="font-semibold text-slate-800 text-xs sm:text-sm leading-tight">Denmark Technical University</div>
+								<div class="text-xs text-slate-600">Human-Centered Artificial Intelligence</div>
+							</a>
 						</div>
 					</div>
 				</div>

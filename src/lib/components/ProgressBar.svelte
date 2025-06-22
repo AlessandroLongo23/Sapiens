@@ -7,18 +7,35 @@
 		{ number: 3, title: "Frequenza", description: "Scegli la frequenza delle lezioni" },
 		{ number: 4, title: "Contatti", description: "I tuoi dati per essere contattato" }
 	];
+
+
 </script>
 
 <div class="mb-8 mx-8">
 	<div class="relative">
 		<div class="absolute top-6 left-0 right-0 h-0.5 bg-slate-200 rounded-full"></div>
 		
-		<div 
-			class="absolute top-6 left-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-700 ease-out"
-			style="width: {((currentStep - 1) / (totalSteps - 1)) * 100}%"
-		></div>
+		<!-- Completed sections (solid green) -->
+		{#if currentStep > 2}
+			<div 
+				class="absolute top-6 left-0 h-0.5 bg-green-500 rounded-full transition-all duration-700 ease-out z-10"
+				style="width: {((currentStep - 2) / (totalSteps - 1)) * 100}%"
+			></div>
+		{/if}
 		
-		<div class="relative flex justify-between">
+		<!-- Current section (gradient from green to blue) -->
+		{#if currentStep > 1}
+			<div 
+				class="absolute top-6 left-0 h-0.5 bg-green-500 rounded-full transition-all duration-700 ease-out z-10"
+				style="width: {((currentStep - 2) / (totalSteps - 1)) * 100}%"
+			></div>
+			<div 
+				class="absolute top-6 h-0.5 bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-700 ease-out"
+				style="left: {((currentStep - 2) / (totalSteps - 1)) * 100}%; width: {(1 / (totalSteps - 1)) * 100}%"
+			></div>
+		{/if}
+		
+		<div class="relative flex justify-between z-20">
 			{#each steps as step}
 				<div class="flex flex-col items-center group">
 					<div class="relative">
@@ -27,7 +44,7 @@
 								step.number < currentStep 
 									? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-lg scale-110' 
 									: step.number === currentStep 
-										? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg scale-110 animate-pulse' 
+										? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg scale-110 ' 
 										: 'bg-white border-2 border-slate-200 text-slate-400'
 							}"
 						>
