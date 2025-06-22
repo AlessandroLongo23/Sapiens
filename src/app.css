@@ -16,6 +16,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Mobile-first responsive base styles */
+body {
+  overflow-x: hidden;
+}
+
 /* Sophisticated gradient backgrounds */
 .hero-gradient {
   background: linear-gradient(135deg, 
@@ -38,7 +43,7 @@ html {
   pointer-events: none;
 }
 
-/* Enhanced gradient text */
+/* Enhanced gradient text with mobile optimization */
 .gradient-text {
   background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #1d4ed8 50%, #2563eb 75%, #1e40af 100%);
   background-size: 200% 200%;
@@ -66,7 +71,7 @@ html {
   transform: translateY(0) scale(1);
 }
 
-/* Elegant floating animation */
+/* Elegant floating animation with mobile optimization */
 .floating-animation {
   animation: float 8s ease-in-out infinite;
 }
@@ -86,7 +91,29 @@ html {
   }
 }
 
-/* Sophisticated button styles */
+/* Mobile-optimized floating animation */
+@media (max-width: 768px) {
+  .floating-animation {
+    animation: float-mobile 6s ease-in-out infinite;
+  }
+  
+  @keyframes float-mobile {
+    0%, 100% { 
+      transform: translateY(0px) rotate(0deg); 
+    }
+    25% { 
+      transform: translateY(-4px) rotate(0.5deg); 
+    }
+    50% { 
+      transform: translateY(-8px) rotate(0deg); 
+    }
+    75% { 
+      transform: translateY(-4px) rotate(-0.5deg); 
+    }
+  }
+}
+
+/* Sophisticated button styles with mobile optimization */
 .btn-primary {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   background-size: 200% 200%;
@@ -113,7 +140,23 @@ html {
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
 }
 
-/* Elegant morphing shapes */
+/* Mobile button optimizations */
+@media (max-width: 768px) {
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .btn-primary:active,
+  .btn-secondary:active {
+    transform: translateY(0px);
+  }
+}
+
+/* Elegant morphing shapes with mobile scaling */
 .morphing-shape {
   animation: morph 20s ease-in-out infinite;
 }
@@ -123,6 +166,14 @@ html {
   25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
   50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
   75% { border-radius: 60% 40% 60% 30% / 70% 50% 40% 50%; }
+}
+
+/* Mobile morphing shape optimization */
+@media (max-width: 768px) {
+  .morphing-shape {
+    width: 240px !important;
+    height: 240px !important;
+  }
 }
 
 /* Advanced glass effect */
@@ -167,6 +218,14 @@ html {
   }
 }
 
+/* Mobile particle optimization */
+@media (max-width: 768px) {
+  .particle {
+    width: 1px;
+    height: 1px;
+  }
+}
+
 /* Enhanced shadows */
 .shadow-elegant {
   box-shadow: 
@@ -180,4 +239,77 @@ html {
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05),
     0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Mobile-specific responsive utilities */
+@media (max-width: 640px) {
+  .mobile-text-center {
+    text-align: center;
+  }
+  
+  .mobile-flex-col {
+    flex-direction: column;
+  }
+  
+  .mobile-w-full {
+    width: 100%;
+  }
+  
+  .mobile-px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .mobile-py-12 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  .mobile-space-y-6 > * + * {
+    margin-top: 1.5rem;
+  }
+  
+  .mobile-gap-4 {
+    gap: 1rem;
+  }
+}
+
+/* Mobile typography scaling */
+@media (max-width: 768px) {
+  .mobile-title {
+    font-size: 2.5rem;
+    line-height: 1.1;
+  }
+  
+  .mobile-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
+  
+  .mobile-text-lg {
+    font-size: 1.125rem;
+  }
+  
+  .mobile-text-base {
+    font-size: 1rem;
+  }
+}
+
+/* Grid improvements for mobile */
+@media (max-width: 768px) {
+  .mobile-grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .mobile-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile-first section spacing */
+@media (max-width: 768px) {
+  .mobile-section-py {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
 }

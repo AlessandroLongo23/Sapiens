@@ -198,7 +198,7 @@
 
 {#if isOpen}
 	<div 
-		class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-500"
+		class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 transition-all duration-500"
 		onclick={closeModal}
 		onkeydown={handleKeydown}
 		onwheel={handleBackgroundScroll}
@@ -211,19 +211,19 @@
             role="dialog"
             tabindex="-1"
             onkeydown={() => {}}
-			class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col border border-slate-100/60 transform transition-all duration-500 scale-100"
+			class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-4xl h-[90vh] sm:h-[85vh] flex flex-col border border-slate-100/60 transform transition-all duration-500 scale-100"
 			onclick={(e) => e.stopPropagation()}
 			onwheel={handleModalScroll}
 			ontouchmove={handleModalScroll}
 		>
 			{#if isSubmitted}
-				<div class="p-8 flex-1 flex items-center justify-center">
+				<div class="p-4 sm:p-8 flex-1 flex items-center justify-center">
 					<div class="text-center">
-						<div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
-							<ls.CheckCircle class="w-12 h-12 text-green-600" />
+						<div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+							<ls.CheckCircle class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" />
 						</div>
-						<h3 class="text-2xl font-bold text-slate-900 mb-4">Richiesta Inviata!</h3>
-						<p class="text-slate-600 text-lg mb-6">
+						<h3 class="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">Richiesta Inviata!</h3>
+						<p class="text-slate-600 text-base sm:text-lg mb-4 sm:mb-6 px-2">
 							Grazie per aver scelto i miei servizi. Ti contatterò entro 24 ore per organizzare la prima lezione.
 						</p>
 						<FormButton onclick={closeModal} variant="primary" size="lg">
@@ -232,8 +232,8 @@
 					</div>
 				</div>
 			{:else}
-				<div class="flex justify-between items-center p-6 border-b border-slate-100 flex-shrink-0">
-					<h3 class="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-900 bg-clip-text text-transparent">
+				<div class="flex justify-between items-center p-4 sm:p-6 border-b border-slate-100 flex-shrink-0">
+					<h3 class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-900 bg-clip-text text-transparent">
 						{title}
 					</h3>
 					<button 
@@ -245,20 +245,20 @@
 					</button>
 				</div>
 				
-				<div class="px-6 pt-4 flex-shrink-0">
+				<div class="px-4 sm:px-6 pt-2 sm:pt-4 flex-shrink-0">
 					<ProgressBar {currentStep} />
 				</div>
 				
 				<div class="flex-1 overflow-hidden flex flex-col">
-					<div class="p-8 pt-2 flex-1 overflow-y-auto">
+					<div class="p-4 sm:p-8 pt-2 flex-1 overflow-y-auto">
 						{#if currentStep === 1}
 							<div class="h-full flex flex-col justify-center animate-in slide-in-from-right-4 duration-500">
-								<div class="text-center mb-6">
-									<h4 class="text-xl font-semibold text-slate-800 mb-2">Seleziona il tuo livello di studio</h4>
-									<p class="text-slate-600">Scegli il livello che meglio rappresenta la tua situazione attuale</p>
+								<div class="text-center mb-4 sm:mb-6">
+									<h4 class="text-lg sm:text-xl font-semibold text-slate-800 mb-2">Seleziona il tuo livello di studio</h4>
+									<p class="text-slate-600 text-sm sm:text-base px-2">Scegli il livello che meglio rappresenta la tua situazione attuale</p>
 								</div>
 								
-								<div class="flex flex-row gap-4 max-w-4xl mx-auto">
+								<div class="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-4xl mx-auto">
 									{#each levelOptions as option}
 										<RadioCard
 											bind:selectedValue={formData.level}
@@ -307,12 +307,12 @@
 						{:else if currentStep === 3}
 							<!-- Step 3: Frequency Selection -->
 							<div class="h-full flex flex-col justify-start animate-in slide-in-from-right-4 duration-500">
-								<div class="text-center mb-6">
-									<h4 class="text-xl font-semibold text-slate-800 mb-2">Frequenza delle lezioni</h4>
-									<p class="text-slate-600">Scegli la frequenza che meglio si adatta alle tue esigenze</p>
+								<div class="text-center mb-4 sm:mb-6">
+									<h4 class="text-lg sm:text-xl font-semibold text-slate-800 mb-2">Frequenza delle lezioni</h4>
+									<p class="text-slate-600 text-sm sm:text-base px-2">Scegli la frequenza che meglio si adatta alle tue esigenze</p>
 								</div>
 								
-								<div class="flex flex-row gap-4 max-w-4xl mx-auto">
+								<div class="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-4xl mx-auto">
 									{#each frequencyOptions as option}
 										<RadioCard
 											bind:selectedValue={formData.frequency}
@@ -330,13 +330,13 @@
 						{:else if currentStep === 4}
 							<!-- Step 4: Personal Information -->
 							<div class="h-full flex flex-col justify-center animate-in slide-in-from-right-4 duration-500">
-								<div class="text-center mb-6">
-									<h4 class="text-xl font-semibold text-slate-800 mb-2">I tuoi dati di contatto</h4>
-									<p class="text-slate-600">Inserisci le informazioni per essere contattato</p>
+								<div class="text-center mb-4 sm:mb-6">
+									<h4 class="text-lg sm:text-xl font-semibold text-slate-800 mb-2">I tuoi dati di contatto</h4>
+									<p class="text-slate-600 text-sm sm:text-base px-2">Inserisci le informazioni per essere contattato</p>
 								</div>
 								
 								<div class="max-w-2xl mx-auto w-full space-y-4">
-									<div class="grid grid-cols-2 gap-4">
+									<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 										<FormInput
 											bind:value={formData.firstName}
 											label="Nome"
@@ -369,15 +369,15 @@
 										<label class="block text-sm font-medium text-slate-700">
 											Preferenza di contatto <span class="text-red-500">*</span>
 										</label>
-										<div class="flex space-x-4">
-											<label class="flex items-center">
+										<div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+											<label class="flex items-center flex-1">
 												<input
 													type="radio"
 													bind:group={formData.contactType}
 													value="email"
 													class="sr-only"
 												/>
-												<div class="flex items-center space-x-2 px-4 py-2 rounded-lg border-2 transition-all duration-300 cursor-pointer {
+												<div class="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 rounded-lg border-2 transition-all duration-300 cursor-pointer w-full {
 													formData.contactType === 'email' 
 														? 'border-blue-500 bg-blue-50 text-blue-700' 
 														: 'border-slate-200 hover:border-slate-300'
@@ -387,14 +387,14 @@
 												</div>
 											</label>
 
-                                            <label class="flex items-center">
+                                            <label class="flex items-center flex-1">
 												<input
 													type="radio"
 													bind:group={formData.contactType}
 													value="message"
 													class="sr-only"
 												/>
-												<div class="flex items-center space-x-2 px-4 py-2 rounded-lg border-2 transition-all duration-300 cursor-pointer {
+												<div class="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 rounded-lg border-2 transition-all duration-300 cursor-pointer w-full {
 													formData.contactType === 'message' 
 														? 'border-blue-500 bg-blue-50 text-blue-700' 
 														: 'border-slate-200 hover:border-slate-300'
@@ -404,14 +404,14 @@
 												</div>
 											</label>
 
-											<label class="flex items-center">
+											<label class="flex items-center flex-1">
 												<input
 													type="radio"
 													bind:group={formData.contactType}
 													value="call"
 													class="sr-only"
 												/>
-												<div class="flex items-center space-x-2 px-4 py-2 rounded-lg border-2 transition-all duration-300 cursor-pointer {
+												<div class="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 rounded-lg border-2 transition-all duration-300 cursor-pointer w-full {
 													formData.contactType === 'call' 
 														? 'border-blue-500 bg-blue-50 text-blue-700' 
 														: 'border-slate-200 hover:border-slate-300'
@@ -438,7 +438,7 @@
 					</div>
 					
 					<!-- Navigation Buttons -->
-					<div class="flex justify-between p-6 border-t border-slate-100 flex-shrink-0">
+					<div class="flex justify-between p-4 sm:p-6 border-t border-slate-100 flex-shrink-0">
 						<div>
 							{#if currentStep > 1}
 								<FormButton onclick={previousStep} variant="ghost">
