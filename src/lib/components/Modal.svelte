@@ -8,15 +8,13 @@
 	
 	let { isOpen = $bindable(false), title = "Prenota una Lezione" } = $props();
 	
-	// Booking state management
 	let currentStep = $state(1);
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);
 	
-	// Form data
 	let formData = $state({
 		level: '',
-		subjects: [], // Changed to array for multiple selection
+		subjects: [],
 		customSubject: '',
 		frequency: '',
 		firstName: '',
@@ -26,10 +24,8 @@
 		contactType: 'email'
 	});
 	
-	// Form validation errors
 	let errors = $state({});
 	
-	// Level options
 	const levelOptions = [
 		{
 			value: 'media',
@@ -54,7 +50,6 @@
 		}
 	];
 	
-	// Dynamic subject options based on level
 	const subjectOptionsByLevel = {
 		media: [
 			{ value: 'matematica', title: 'Matematica' },
@@ -81,12 +76,10 @@
 		]
 	};
 	
-	// Get current subject options
 	const currentSubjectOptions = $derived(
 		formData.level ? subjectOptionsByLevel[formData.level] || [] : []
 	);
 	
-	// Frequency options
 	const frequencyOptions = [
 		{ value: 'singola', title: 'Lezione Singola', subtitle: 'Una sola lezione' },
 		{ value: 'breve', title: '2-5 Lezioni', subtitle: 'Aiuto a breve termine' },
@@ -95,7 +88,6 @@
 	
 	function closeModal() {
 		isOpen = false;
-		// Reset form after closing
 		setTimeout(() => {
 			currentStep = 1;
 			isSubmitted = false;
@@ -148,7 +140,6 @@
 			case 4:
 				if (!formData.firstName) newErrors.firstName = 'Inserisci il nome';
 				if (!formData.lastName) newErrors.lastName = 'Inserisci il cognome';
-				if (!formData.city) newErrors.city = 'Inserisci la città';
 				if (!formData.contact) {
 					newErrors.contact = formData.contactType === 'email' ? 'Inserisci l\'email' : 'Inserisci il numero di telefono';
 				} else if (formData.contactType === 'email' && !formData.contact.includes('@')) {
@@ -172,7 +163,6 @@
 		errors = {};
 	}
 	
-	// Reset subjects when level changes
 	function handleLevelChange() {
 		formData.subjects = [];
 		formData.customSubject = '';
@@ -180,16 +170,19 @@
 	}
 	
 	async function submitForm() {
-		if (!validateStep(4)) return;
+		if (!validateStep(4)) {
+			console.log('Form validation failed');
+			return;
+		}
 		
 		isSubmitting = true;
 		
-		// Simulate API call
 		try {
 			await new Promise(resolve => setTimeout(resolve, 2000));
 			isSubmitted = true;
 		} catch (error) {
 			console.error('Submission error:', error);
+			isSubmitting = false;
 		} finally {
 			isSubmitting = false;
 		}
@@ -305,7 +298,6 @@
 								</div>
 							</div>
 						{:else if currentStep === 3}
-							<!-- Step 3: Frequency Selection -->
 							<div class="h-full flex flex-col justify-start animate-in slide-in-from-right-4 duration-500">
 								<div class="text-center mb-4 sm:mb-6">
 									<h4 class="text-lg sm:text-xl font-semibold text-slate-800 mb-2">Frequenza delle lezioni</h4>
@@ -328,7 +320,6 @@
 								{/if}
 							</div>
 						{:else if currentStep === 4}
-							<!-- Step 4: Personal Information -->
 							<div class="h-full flex flex-col justify-center animate-in slide-in-from-right-4 duration-500">
 								<div class="text-center mb-4 sm:mb-6">
 									<h4 class="text-lg sm:text-xl font-semibold text-slate-800 mb-2">I tuoi dati di contatto</h4>
@@ -364,7 +355,6 @@
 										icon={MapPin}
 									/> -->
 									
-									<!-- Contact Method Selection -->
 									<div class="space-y-3">
 										<label class="block text-sm font-medium text-slate-700">
 											Preferenza di contatto <span class="text-red-500">*</span>
@@ -437,7 +427,6 @@
 						{/if}
 					</div>
 					
-					<!-- Navigation Buttons -->
 					<div class="flex justify-between p-4 sm:p-6 border-t border-slate-100 flex-shrink-0">
 						<div>
 							{#if currentStep > 1}
