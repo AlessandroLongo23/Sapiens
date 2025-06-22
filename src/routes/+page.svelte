@@ -1,27 +1,13 @@
 <script>
 	import { onMount } from 'svelte';
-	import { 
-		Clock, 
-		BookOpen, 
-		Users, 
-		GraduationCap, 
-		Zap, 
-		Target, 
-		ChevronDown,
-		Calculator,
-		Atom,
-		Laptop,
-		Award,
-		Mail,
-		Phone
-	} from 'lucide-svelte';
+	import * as ls from 'lucide-svelte';
 	import StatsCard from '$lib/components/StatsCard.svelte';
 	import TestimonialCard from '$lib/components/TestimonialCard.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+  import { applyAction } from '$app/forms';
 	
 	let isModalOpen = $state(false);
 	
-	// Enhanced stats data with lucide icons
 	const stats = {
 		hours: {
 			value: "130+",
@@ -30,7 +16,7 @@
 		},
 		subjects: {
 			value: "15+",
-			label: "Materie Coperte",
+			label: "Materie Trattate",
 			iconName: "book-open"
 		},
 		students: {
@@ -40,7 +26,6 @@
 		}
 	};
 	
-	// Enhanced testimonials
 	const testimonials = [
 		{
 			name: "Marco Rossi",
@@ -62,12 +47,11 @@
 		}
 	];
 	
-	// Subject data with icons
 	const subjects = [
-		{ name: "Matematica", icon: Calculator, color: "from-blue-500 to-cyan-500" },
-		{ name: "Fisica", icon: Atom, color: "from-purple-500 to-pink-500" },
-		{ name: "Informatica", icon: Laptop, color: "from-green-500 to-emerald-500" },
-		{ name: "Chimica", icon: Award, color: "from-orange-500 to-red-500" }
+		{ name: "Matematica", icon: ls.Calculator, color: "from-blue-500 to-cyan-500" },
+		{ name: "Fisica", icon: ls.Atom, color: "from-purple-500 to-pink-500" },
+		{ name: "Informatica", icon: ls.Laptop, color: "from-green-500 to-emerald-500" },
+		{ name: "Chimica", icon: ls.Award, color: "from-orange-500 to-red-500" }
 	];
 	
 	let heroSection;
@@ -77,7 +61,6 @@
 	let testimonialsSection;
 	
 	onMount(() => {
-		// Enhanced Intersection Observer
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
@@ -89,12 +72,10 @@
 			rootMargin: '0px 0px -80px 0px'
 		});
 		
-		// Observe all sections
 		[aboutSection, subjectsSection, statsSection, testimonialsSection].forEach(section => {
 			if (section) observer.observe(section);
 		});
 		
-		// Create floating particles
 		createParticles();
 		
 		return () => observer.disconnect();
@@ -127,106 +108,82 @@
 </script>
 
 <svelte:head>
-	<title>Alessandro - Ripetizioni Materie Scientifiche | Tutor Esperto</title>
+	<title>AleRipetizioni</title>
 	<meta name="description" content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 130 ore di esperienza." />
 </svelte:head>
 
-<!-- Hero Section with Advanced Styling -->
 <section bind:this={heroSection} class="relative min-h-screen hero-gradient flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-20 overflow-hidden">
-	<!-- Floating particles background -->
 	<div class="hero-particles particles"></div>
 	
 	<div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center z-10">
-		<!-- Hero Content -->
 		<div class="text-center lg:text-left space-y-6 sm:space-y-8 lg:space-y-10">
 			<div class="space-y-4 sm:space-y-6">
-				<!-- Subtitle with icon -->
-				<div class="flex items-center justify-center lg:justify-start space-x-2 sm:space-x-3 text-blue-600 font-medium text-sm sm:text-base lg:text-lg">
-					<GraduationCap class="w-5 h-5 sm:w-6 sm:h-6" />
-					<span>Tutor Specializzato in Materie Scientifiche</span>
-				</div>
-				
-				<!-- Main title with enhanced gradient -->
-				<h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-slate-900 leading-tight tracking-tight">
-					Eccellenza nelle 
-					<span class="gradient-text block">Materie Scientifiche</span>
+				<h1 class="flex flex-col gap-2 font-bold text-slate-900 leading-tight tracking-tight">
+					<span class="block text-xl sm:text-2xl md:text-3xl lg:text-5xl">Tutor Specializzato in</span>
+					<span class="gradient-text block text-3xl sm:text-4xl md:text-5xl lg:text-7xl">Materie Scientifiche</span>
 				</h1>
 				
-				<!-- Description -->
 				<p class="text-lg sm:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-2xl font-light mx-auto lg:mx-0">
 					Trasforma le difficoltà in successi con ripetizioni personalizzate. 
 					Un approccio su misura che unisce teoria e pratica per risultati concreti.
 				</p>
 			</div>
 			
-			<!-- CTA Buttons with advanced styling -->
 			<div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start">
 				<button 
 					onclick={openModal}
-					class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group"
+					class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<Zap class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
+						<ls.Zap class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
 						<span>Prenotami</span>
 					</span>
 				</button>
 				<button 
 					onclick={() => scrollToSection('about')}
-					class="btn-secondary text-slate-700 px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group"
+					class="btn-secondary text-slate-700 px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
 						<span>Scopri di più</span>
-						<ChevronDown class="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-y-1 transition-transform duration-300" />
+						<ls.ChevronDown class="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-y-1 transition-transform duration-300" />
 					</span>
 				</button>
 			</div>
 			
-			<!-- Trust indicators -->
 			<div class="flex items-center justify-center lg:justify-start space-x-4 sm:space-x-8 pt-4 sm:pt-6">
-				<div class="text-center">
-					<div class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{stats.hours.value}</div>
-					<div class="text-xs sm:text-sm text-slate-600">{stats.hours.label}</div>
-				</div>
-				<div class="text-center">
-					<div class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{stats.students.value}</div>
-					<div class="text-xs sm:text-sm text-slate-600">{stats.students.label}</div>
-				</div>
-				<div class="text-center">
-					<div class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{stats.subjects.value}</div>
-					<div class="text-xs sm:text-sm text-slate-600">{stats.subjects.label}</div>
-				</div>
+				{#each Object.values(stats) as stat, index}
+					<div class="text-center">	
+						<div class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{stat.value}</div>
+						<div class="text-xs sm:text-sm text-slate-600">{stat.label}</div>
+					</div>
+				{/each}
 			</div>
 		</div>
 		
-		<!-- Enhanced Hero Visual -->
 		<div class="flex justify-center lg:justify-end mt-8 lg:mt-0">
 			<div class="relative">
-				<!-- Main avatar with morphing background -->
 				<div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 morphing-shape bg-gradient-to-br from-blue-400/20 via-indigo-500/20 to-blue-600/20 flex items-center justify-center floating-animation">
-					<!-- Avatar placeholder with glass effect -->
 					<div class="w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full glass-effect flex items-center justify-center">
 						<div class="w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-600 shadow-elegant-lg">
-							<GraduationCap class="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32" />
+							<img src="/profile.jpg" alt="profile" class="w-full h-full rounded-full" />
 						</div>
 					</div>
 				</div>
 				
-				<!-- Floating subject icons - Mobile optimized -->
-				<div class="absolute -top-4 -right-4 sm:-top-8 sm:-right-8 w-14 h-14 sm:w-20 sm:h-20 glass-effect rounded-xl sm:rounded-2xl flex items-center justify-center floating-animation shadow-elegant" style="animation-delay: -2s;">
-					<Calculator class="w-6 h-6 sm:w-10 sm:h-10 text-blue-600" />
+				<div class="absolute -top-4 -right-4 sm:-top-8 sm:-right-8 w-14 h-14 sm:w-20 sm:h-20 glass-effect rounded-full sm:rounded-2xl flex items-center justify-center floating-animation shadow-elegant" style="animation-delay: -2s;">
+					<ls.Calculator class="w-6 h-6 sm:w-10 sm:h-10 text-blue-600" />
 				</div>
-				<div class="absolute -bottom-4 -left-4 sm:-bottom-8 sm:-left-8 w-14 h-14 sm:w-20 sm:h-20 glass-effect rounded-xl sm:rounded-2xl flex items-center justify-center floating-animation shadow-elegant" style="animation-delay: -4s;">
-					<Atom class="w-6 h-6 sm:w-10 sm:h-10 text-purple-600" />
+				<div class="absolute -bottom-4 -left-4 sm:-bottom-8 sm:-left-8 w-14 h-14 sm:w-20 sm:h-20 glass-effect rounded-full sm:rounded-2xl flex items-center justify-center floating-animation shadow-elegant" style="animation-delay: -4s;">
+					<ls.Atom class="w-6 h-6 sm:w-10 sm:h-10 text-purple-600" />
 				</div>
-				<div class="absolute top-1/2 -left-8 sm:-left-12 w-12 h-12 sm:w-16 sm:h-16 glass-effect rounded-xl sm:rounded-2xl flex items-center justify-center floating-animation shadow-elegant" style="animation-delay: -6s;">
-					<Laptop class="w-5 h-5 sm:w-8 sm:h-8 text-green-600" />
+				<div class="absolute top-1/2 -left-8 sm:-left-12 w-12 h-12 sm:w-16 sm:h-16 glass-effect rounded-full sm:rounded-2xl flex items-center justify-center floating-animation shadow-elegant" style="animation-delay: -6s;">
+					<ls.Laptop class="w-5 h-5 sm:w-8 sm:h-8 text-green-600" />
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
 
-<!-- About Section with Enhanced Design -->
 <section id="about" bind:this={aboutSection} class="section-enter py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white relative overflow-hidden">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-12 sm:mb-16">
@@ -235,15 +192,16 @@
 		</div>
 		
 		<div class="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
-			<!-- Content -->
 			<div class="space-y-6 sm:space-y-8">
 				<div class="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12">
 					<div class="space-y-4 sm:space-y-6 text-slate-700">
 						<p class="text-lg sm:text-xl leading-relaxed">
-							Sono <strong class="text-slate-900">Alessandro</strong>, laureato in 
-							<strong class="text-blue-600">Ingegneria Informatica</strong> presso il 
-							<strong class="text-slate-900">Università degli Studi di Firenze</strong> e attualmente frequentante la <strong class="text-blue-600">Denmark Technical University</strong> in 
-							Human-Centered Artificial Intelligence.
+							Sono <strong class="text-slate-900">Alessandro</strong>, laureato con 110 e Lode in
+								<strong class="text-blue-600">Ingegneria Informatica</strong> presso l'<strong>Università degli Studi di Firenze</strong>
+							e attualmente frequentante la facoltà di 
+								<strong class="text-blue-600">Human-Centered Artificial Intelligence</strong> alla 
+								<strong>Denmark Technical University</strong>
+							, a Copenhagen.
 						</p>
 						<p class="text-base sm:text-lg leading-relaxed">
 							Durante il mio percorso accademico ho sviluppato una profonda passione per l'insegnamento, 
@@ -260,18 +218,18 @@
 				
 				<!-- Credentials -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<div class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center">
-						<GraduationCap class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mx-auto mb-2 sm:mb-3" />
+					<a href="https://www.ing-inl.unifi.it/" class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center cursor-pointer">
+						<ls.GraduationCap class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mx-auto mb-2 sm:mb-3" />
 						<div class="font-semibold text-slate-800 text-sm sm:text-base">Università degli Studi di Firenze</div>
 						<div class="text-xs sm:text-sm text-slate-600">Ingegneria Informatica</div>
-					</div>
-					<div class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center">
-						<BookOpen class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mx-auto mb-2 sm:mb-3" />
+					</a>
+					<a href="https://www.dtu.dk/english/education/graduate/msc-programmes/human-centered-artificial-intelligence" class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center cursor-pointer">
+						<ls.BookOpen class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mx-auto mb-2 sm:mb-3" />
 						<div class="font-semibold text-slate-800 text-sm sm:text-base">Denmark Technical University</div>
 						<div class="text-xs sm:text-sm text-slate-600">Human-Centered Artificial Intelligence</div>
-					</div>
+					</a>
 					<!-- <div class="glass-effect rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center">
-						<Target class="w-6 h-6 sm:w-8 sm:h-8 text-green-600 mx-auto mb-2 sm:mb-3" />
+						<ls.Target class="w-6 h-6 sm:w-8 sm:h-8 text-green-600 mx-auto mb-2 sm:mb-3" />
 						<div class="font-semibold text-slate-800 text-sm sm:text-base">98% Success Rate</div>
 						<div class="text-xs sm:text-sm text-slate-600">Studenti Promossi</div>
 					</div> -->
@@ -299,7 +257,6 @@
 	</div>
 </section>
 
-<!-- Stats Section with Enhanced Design -->
 <section bind:this={statsSection} class="section-enter py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 hero-gradient relative">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-16 sm:mb-20">
@@ -320,7 +277,6 @@
 	</div>
 </section>
 
-<!-- Testimonials Section -->
 <section bind:this={testimonialsSection} class="section-enter py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-16 sm:mb-20">
@@ -342,9 +298,7 @@
 	</div>
 </section>
 
-<!-- Enhanced Footer -->
 <footer class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-	<!-- Background pattern -->
 	<div class="absolute inset-0 opacity-5">
 		<div class="absolute inset-0" style="background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
 	</div>
@@ -362,19 +316,19 @@
 			<div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-10 sm:mb-12">
 				<button 
 					onclick={openModal}
-					class="btn-primary text-white px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group"
+					class="btn-primary text-white px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<Mail class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-300" />
+						<ls.Mail class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-300" />
 						<span>Prenotami Ora</span>
 					</span>
 				</button>
 				<a 
 					href="tel:+39 392 409 0699"
-					class="btn-secondary text-slate-700 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group"
+					class="btn-secondary text-slate-700 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<Phone class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
+						<ls.Phone class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
 						<span>Chiamami</span>
 					</span>
 				</a>

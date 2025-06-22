@@ -238,7 +238,7 @@
 					</h3>
 					<button 
 						onclick={closeModal}
-						class="group p-2 hover:bg-slate-100 rounded-xl transition-colors duration-300"
+						class="group p-2 hover:bg-slate-100 rounded-xl transition-colors duration-300 cursor-pointer"
 						aria-label="Chiudi modal"
 					>
 						<ls.X class="w-5 h-5 text-slate-500 group-hover:text-slate-700 transition-colors duration-300" />
