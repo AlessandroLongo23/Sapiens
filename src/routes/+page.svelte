@@ -1,56 +1,14 @@
 <script>
+	import { morgagniImages, dtuImages, stats, testimonials } from '$lib/data.js';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
-	import StatsCard from '$lib/components/StatsCard.svelte';
+
 	import TestimonialCard from '$lib/components/TestimonialCard.svelte';
+	import ImageSlideshow from '$lib/components/ImageSlideshow.svelte';
+	import StatsCard from '$lib/components/StatsCard.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-  import { applyAction } from '$app/forms';
 	
 	let isModalOpen = $state(false);
-	
-	const stats = {
-		hours: {
-			value: "130+",
-			label: "Ore di Lezione",
-			iconName: "clock",
-			color: "text-blue-500"
-		},
-		subjects: {
-			value: "15+",
-			label: "Materie Trattate",
-			iconName: "book-open",
-			color: "text-emerald-500"
-		},
-		students: {
-			value: "25+",
-			label: "Studenti Seguiti",
-			iconName: "users",
-			color: "text-purple-500"
-		}
-	};
-	
-	const testimonials = [
-		{
-			name: "Marco Rossi",
-			comment: "Grazie ad Alessandro ho migliorato incredibilmente in matematica. Le sue spiegazioni sono chiare e riesce a rendere semplici anche i concetti più complessi. Un vero professionista!",
-			rating: 5,
-			subject: "Matematica - Liceo Scientifico"
-		},
-		{
-			name: "Sofia Bianchi",
-			comment: "Il miglior tutor di fisica che abbia mai avuto! Mi ha aiutato a superare gli esami universitari con ottimi voti. Molto paziente, preparato e motivante.",
-			rating: 5,
-			subject: "Fisica - Università"
-		},
-		{
-			name: "Luca Verdi",
-			comment: "Le lezioni di informatica con Alessandro sono state fantastiche. Ha una grande capacità di adattarsi al livello dello studente e di rendere interessanti anche gli argomenti più complessi.",
-			rating: 5,
-			subject: "Informatica - Università"
-		}
-	];
-	
-
 	
 	let heroSection;
 	let aboutSection;
@@ -149,7 +107,7 @@
 			</div>
 			
 			<div class="flex items-center justify-center lg:justify-start space-x-4 sm:space-x-8 pt-4 sm:pt-6">
-				{#each Object.values(stats) as stat, index}
+				{#each Object.values($stats) as stat, index}
 					<div class="text-center">	
 						<div class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{stat.value}</div>
 						<div class="text-xs sm:text-sm text-slate-600">{stat.label}</div>
@@ -198,8 +156,7 @@
 								<strong class="text-blue-600">Ingegneria Informatica</strong> presso l'<strong>Università degli Studi di Firenze</strong>
 							e attualmente frequentante la facoltà di 
 								<strong class="text-blue-600">Human-Centered Artificial Intelligence</strong> alla 
-								<strong>Denmark Technical University</strong>
-							, a Copenhagen.
+								<strong>Denmark Technical University</strong>, a Copenhagen.
 						</p>
 						<p class="text-base sm:text-lg leading-relaxed">
 							Durante il mio percorso accademico ho sviluppato una profonda passione per l'insegnamento, 
@@ -213,20 +170,18 @@
 						</p>
 					</div>
 				</div>
-				
-
 			</div>
 			
-			<!-- University Images with Overlay Cards - Hidden on mobile, visible on desktop -->
 			<div class="hidden lg:flex justify-center mt-8 lg:mt-0">
 				<div class="flex flex-col gap-12">
-					<!-- University of Florence Image -->
 					<div class="relative w-80 h-48 sm:w-96 sm:h-56 lg:w-[28rem] lg:h-64">
 						<div class="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg">
-							<!-- Florence University image -->
-							<img src="/morgagni.jpg" alt="UNIFI" class="w-full h-full object-cover" />
+							<ImageSlideshow 
+								images={$morgagniImages}
+								alt="UNIFI"
+								duration={3000}
+							/>
 						</div>
-						<!-- Overlay Card - positioned in top-right corner -->
 						<div class="absolute -bottom-8 -right-8 sm:-bottom-8 sm:-right-8">
 							<a href="https://www.ing-inl.unifi.it/" class="block glass-effect rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg">
 								<ls.GraduationCap class="size-5 sm:size-6 text-blue-600 mx-auto mb-1 sm:mb-2" />
@@ -236,13 +191,15 @@
 						</div>
 					</div>
 
-					<!-- DTU Image -->
 					<div class="relative w-80 h-48 sm:w-96 sm:h-56 lg:w-[28rem] lg:h-64 left-8">
 						<div class="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg">
-							<!-- DTU image -->
-							<img src="/dtu.png" alt="DTU" class="w-full h-full object-cover" />
+							<ImageSlideshow 
+								images={$dtuImages}
+								alt="DTU"
+								duration={5000}
+								offset={2500}
+							/>
 						</div>
-						<!-- Overlay Card - positioned in bottom-left corner -->
 						<div class="absolute -bottom-8 -left-8 sm:-bottom-8 sm:-left-8">
 							<a href="https://www.dtu.dk/english/education/graduate/msc-programmes/human-centered-artificial-intelligence" class="block glass-effect rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg">
 								<ls.BookOpen class="size-5 sm:size-6 text-blue-600 mx-auto mb-1 sm:mb-2" />
@@ -268,7 +225,7 @@
 		</div>
 		
 		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-			{#each Object.values(stats) as stat, index}
+			{#each Object.values($stats) as stat, index}
 				<div style="animation-delay: {index * 200}ms">
 					<StatsCard {...stat} />
 				</div>
@@ -289,7 +246,7 @@
 		</div>
 		
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-			{#each testimonials as testimonial, index}
+			{#each $testimonials as testimonial, index}
 				<div style="animation-delay: {index * 150}ms">
 					<TestimonialCard {...testimonial} />
 				</div>

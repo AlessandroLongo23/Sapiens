@@ -5,7 +5,8 @@
 	import CheckboxCard from './CheckboxCard.svelte';
 	import FormInput from './FormInput.svelte';
 	import FormButton from './FormButton.svelte';
-	
+	import { subjectOptionsByLevel, frequencyOptions, levelOptions } from '$lib/data.js';
+
 	let { isOpen = $bindable(false), title = "Prenota una Lezione" } = $props();
 	
 	let currentStep = $state(1);
@@ -26,65 +27,9 @@
 	
 	let errors = $state({});
 	
-	const levelOptions = [
-		{
-			value: 'media',
-			title: 'Scuola Media',
-			subtitle: 'Aiuto compiti e preparazione verifiche',
-			price: '12€/ora',
-			icon: ls.PenLine
-		},
-		{
-			value: 'superiore',
-			title: 'Scuola Superiore',
-			subtitle: 'Preparazione verifiche e interrogazioni, Recupero debiti formativi',
-			price: '15€/ora',
-			icon: ls.BookOpen
-		},
-		{
-			value: 'università',
-			title: 'Università',
-			subtitle: 'Corsi universitari e preparazione esami',
-			price: '20€/ora',
-			icon: ls.GraduationCap
-		}
-	];
-	
-	const subjectOptionsByLevel = {
-		media: [
-			{ value: 'matematica', title: 'Matematica' },
-			{ value: 'fisica', title: 'Fisica' },
-			{ value: 'informatica', title: 'Informatica' },
-			{ value: 'chimica', title: 'Chimica' },
-			{ value: 'altro', title: 'Altro', editable: true }
-		],
-		superiore: [
-			{ value: 'matematica', title: 'Matematica' },
-			{ value: 'fisica', title: 'Fisica' },
-			{ value: 'informatica', title: 'Informatica' },
-			{ value: 'chimica', title: 'Chimica' },
-			{ value: 'altro', title: 'Altro', editable: true }
-		],
-		università: [
-			{ value: 'analisi1', title: 'Analisi I' },
-			{ value: 'analisi2', title: 'Analisi II' },
-			{ value: 'fisica1', title: 'Fisica I' },
-			{ value: 'fisica2', title: 'Fisica II' },
-			{ value: 'fondamenti_informatica', title: 'Fondamenti di Informatica' },
-			{ value: 'teoria_segnali', title: 'Teoria dei Segnali' },
-			{ value: 'altro', title: 'Altro', editable: true }
-		]
-	};
-	
 	const currentSubjectOptions = $derived(
-		formData.level ? subjectOptionsByLevel[formData.level] || [] : []
+		formData.level ? $subjectOptionsByLevel[formData.level] || [] : []
 	);
-	
-	const frequencyOptions = [
-		{ value: 'singola', title: 'Lezione Singola', subtitle: 'Una sola lezione' },
-		{ value: 'breve', title: '2-5 Lezioni', subtitle: 'Aiuto a breve termine' },
-		{ value: 'lungo', title: 'Supporto Continuativo', subtitle: 'Percorso personalizzato' }
-	];
 	
 	function closeModal() {
 		isOpen = false;
@@ -252,16 +197,47 @@
 								</div>
 								
 								<div class="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-4xl mx-auto">
-									{#each levelOptions as option}
+									{#each $levelOptions as option}
 										<RadioCard
 											bind:selectedValue={formData.level}
 											value={option.value}
-											title={option.title}
-											subtitle={option.subtitle}
-											price={option.price}
-											icon={option.icon}
 											onclick={handleLevelChange}
-										/>
+										>
+											<div class="flex flex-col justify-between h-full">
+												<div class="flex flex-row items-center justify-start gap-4 mb-3">
+													{#if option.icon}
+														<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center {
+															formData.level === option.value ? 'from-blue-100 to-indigo-100' : ''
+														} transition-all duration-300">
+															<svelte:component this={option.icon} class="w-4 h-4 {formData.level === option.value ? 'text-blue-600' : 'text-slate-600'} transition-colors duration-300" />
+														</div>
+													{/if}
+													 
+													<div class="text-base font-semibold {
+														formData.level === option.value ? 'text-blue-900' : 'text-slate-800 group-hover:text-slate-900'
+													} transition-colors duration-300 mb-1">
+														{option.title}
+													</div>
+												</div>
+												
+												{#if option.subtitle}
+													<div class="text-sm {
+														formData.level === option.value ? 'text-blue-700' : 'text-slate-600'
+													} transition-colors duration-300 mb-1">
+														{option.subtitle}
+													</div>
+												{/if}
+												
+												{#if option.price}
+													<div class="text-lg font-bold {
+														formData.level === option.value ? 'text-blue-600' : 'text-slate-700'
+													} transition-colors duration-300">
+														{option.price}
+													</div>
+												{/if}
+											</div>
+
+										</RadioCard>
 									{/each}
 								</div>
 								
@@ -305,13 +281,25 @@
 								</div>
 								
 								<div class="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-4xl mx-auto">
-									{#each frequencyOptions as option}
+									{#each $frequencyOptions as option}
 										<RadioCard
 											bind:selectedValue={formData.frequency}
 											value={option.value}
-											title={option.title}
-											subtitle={option.subtitle}
-										/>
+										>
+											<div class="text-base font-semibold {
+												formData.frequency === option.value ? 'text-blue-900' : 'text-slate-800 group-hover:text-slate-900'
+											} transition-colors duration-300 mb-1">
+												{option.title}
+											</div>
+											
+											{#if option.subtitle}
+												<div class="text-sm {
+													formData.frequency === option.value ? 'text-blue-700' : 'text-slate-600'
+												} transition-colors duration-300 mb-1">
+													{option.subtitle}
+												</div>
+											{/if}
+										</RadioCard>
 									{/each}
 								</div>
 								

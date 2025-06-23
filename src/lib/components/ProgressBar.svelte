@@ -1,21 +1,13 @@
 <script>
+	import { steps } from '$lib/data.js';
+
 	let { currentStep = 1, totalSteps = 4 } = $props();
-	
-	const steps = [
-		{ number: 1, title: "Livello", description: "Scegli il tuo livello di studio" },
-		{ number: 2, title: "Materie", description: "Seleziona le materie di interesse" },
-		{ number: 3, title: "Frequenza", description: "Scegli la frequenza delle lezioni" },
-		{ number: 4, title: "Contatti", description: "I tuoi dati per essere contattato" }
-	];
-
-
 </script>
 
 <div class="mb-8 mx-8">
 	<div class="relative">
 		<div class="absolute top-6 left-0 right-0 h-0.5 bg-slate-200 rounded-full"></div>
 		
-		<!-- Completed sections (solid green) -->
 		{#if currentStep > 2}
 			<div 
 				class="absolute top-6 left-0 h-0.5 bg-green-500 rounded-full transition-all duration-700 ease-out z-10"
@@ -23,7 +15,6 @@
 			></div>
 		{/if}
 		
-		<!-- Current section (gradient from green to blue) -->
 		{#if currentStep > 1}
 			<div 
 				class="absolute top-6 left-0 h-0.5 bg-green-500 rounded-full transition-all duration-700 ease-out z-10"
@@ -36,7 +27,7 @@
 		{/if}
 		
 		<div class="relative flex justify-between z-20">
-			{#each steps as step}
+			{#each $steps as step}
 				<div class="flex flex-col items-center group">
 					<div class="relative">
 						<div 

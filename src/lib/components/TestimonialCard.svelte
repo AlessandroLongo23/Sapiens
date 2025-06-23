@@ -10,8 +10,6 @@
 	<!-- Subtle gradient overlay -->
 	<div class="absolute inset-0 bg-gradient-to-br from-amber-50/20 via-transparent to-orange-50/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 	
-
-	
 	<!-- Stars with elegant styling -->
 	<div class="relative flex items-center mb-6 space-x-1">
 		{#each stars as filled}
