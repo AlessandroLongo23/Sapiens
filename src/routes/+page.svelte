@@ -4,6 +4,8 @@
 	import * as ls from 'lucide-svelte';
 
 	import TestimonialCard from '$lib/components/TestimonialCard.svelte';
+	import ScrollingTestimonials from '$lib/components/ScrollingTestimonials.svelte';
+	import MobileTestimonialSlideshow from '$lib/components/MobileTestimonialSlideshow.svelte';
 	import ImageSlideshow from '$lib/components/ImageSlideshow.svelte';
 	import StatsCard from '$lib/components/StatsCard.svelte';
 	import Modal from '$lib/components/Modal.svelte';
@@ -245,12 +247,22 @@
 			<div class="w-16 sm:w-24 h-1 bg-gradient-to-r from-amber-500 to-orange-500 mx-auto rounded-full mt-4 sm:mt-6"></div>
 		</div>
 		
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-			{#each $testimonials as testimonial, index}
-				<div style="animation-delay: {index * 150}ms">
-					<TestimonialCard {...testimonial} />
-				</div>
-			{/each}
+		<!-- Mobile testimonial slideshow (hidden on desktop) -->
+		<div class="block lg:hidden">
+			<MobileTestimonialSlideshow 
+				testimonials={$testimonials} 
+				duration={5000}
+				className="px-4"
+			/>
+		</div>
+		
+		<!-- Desktop scrolling testimonials (hidden on mobile) -->
+		<div class="hidden lg:block">
+			<ScrollingTestimonials 
+				testimonials={$testimonials} 
+				scrollSpeed={30}
+				className="py-8"
+			/>
 		</div>
 	</div>
 </section>

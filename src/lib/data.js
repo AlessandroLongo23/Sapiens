@@ -86,29 +86,29 @@ export const stats = writable({
 });
 
 export const testimonials = writable([
-    // {
-    //     name: "Marco Rossi",
-    //     comment: "Grazie ad Alessandro ho migliorato incredibilmente in matematica. Le sue spiegazioni sono chiare e riesce a rendere semplici anche i concetti più complessi. Un vero professionista!",
-    //     rating: 5,
-    //     subject: "Matematica - Liceo Scientifico"
-    // },
-    // {
-    //     name: "Sofia Bianchi",
-    //     comment: "Il miglior tutor di fisica che abbia mai avuto! Mi ha aiutato a superare gli esami universitari con ottimi voti. Molto paziente, preparato e motivante.",
-    //     rating: 5,
-    //     subject: "Fisica - Università"
-    // },
-    // {
-    //     name: "Luca Verdi",
-    //     comment: "Le lezioni di informatica con Alessandro sono state fantastiche. Ha una grande capacità di adattarsi al livello dello studente e di rendere interessanti anche gli argomenti più complessi.",
-    //     rating: 5,
-    //     subject: "Informatica - Università"
-    // }
     {
-        name: "John Doe",
-        comment: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        name: "Matteo R.",
+        comment: "Molto preparato e pronto a spiegare in modo chiaro e semplice tutti i concetti di cui lo studente necessiti per superare un esame o approfondire/esercitarsi su un argomento",
         rating: 5,
-        subject: "Matematica - Liceo Scientifico"
+        subject: "Database - Università"
+    },
+    {
+        name: "Sofia Bianchi",
+        comment: "Il miglior tutor di fisica che abbia mai avuto! Mi ha aiutato a superare gli esami universitari con ottimi voti. Molto paziente, preparato e motivante.",
+        rating: 5,
+        subject: "Fisica - Università"
+    },
+    {
+        name: "Luca Verdi",
+        comment: "Le lezioni di informatica con Alessandro sono state fantastiche. Ha una grande capacità di adattarsi al livello dello studente e di rendere interessanti anche gli argomenti più complessi.",
+        rating: 5,
+        subject: "Informatica - Università"
+    },
+    {
+        name: "Sindi B.",
+        comment: "Spiegazioni chiare, pazienza e disponibilità, finalmente sono riuscita a capire argomenti che mi sembravano impossibili.",
+        rating: 5,
+        subject: "Matematica e Fisica - Scuola Media"
     },
     {
         name: "Jane Doe",
