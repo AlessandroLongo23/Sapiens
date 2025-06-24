@@ -4,7 +4,7 @@
 	
 	let { 
 		testimonials = [],
-		duration = 5000,
+		duration = 10000,
 		className = ''
 	} = $props();
 	
@@ -52,15 +52,27 @@
 <div class="relative overflow-hidden {className}">
 	{#if hasMultipleTestimonials}
 		{@const loopedTestimonials = [...testimonials, testimonials[0]]}
-		<div class="relative" ontransitionend={handleTransitionEnd}>
+		
+		<!-- Ghost element for dynamic height animation -->
+		<div 
+			class="w-full grid transition-[grid-template-rows] duration-700 ease-in-out"
+			style="grid-template-rows: 1fr;"
+		>
+			<div class="overflow-hidden invisible" aria-hidden="true">
+				<TestimonialCard {...loopedTestimonials[currentIndex % testimonials.length]} />
+			</div>
+		</div>
+
+		<div 
+			class="absolute inset-0"
+			ontransitionend={handleTransitionEnd}
+		>
 			{#each loopedTestimonials as testimonial, index}
 				<div 
-					class="w-full"
+					class="absolute inset-0 w-full"
 					class:transition-transform={transitioning}
 					class:duration-700={transitioning}
 					class:ease-in-out={transitioning}
-					class:absolute={index !== 0}
-					class:inset-0={index !== 0}
 					style="transform: translateX({(index - currentIndex) * 100}%)"
 				>
 					<TestimonialCard {...testimonial} />

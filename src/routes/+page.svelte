@@ -251,7 +251,7 @@
 		<div class="block lg:hidden">
 			<MobileTestimonialSlideshow 
 				testimonials={$testimonials} 
-				duration={5000}
+				duration={10000}
 				className="px-4"
 			/>
 		</div>

@@ -97,16 +97,16 @@ export const testimonials = writable([
         subject: "Database - Università"
     },
     {
-        name: "Sindi B.",
-        comment: "Spiegazioni chiare, pazienza e disponibilità, finalmente sono riuscita a capire argomenti che mi sembravano impossibili.",
-        rating: 5,
-        subject: "Matematica e Fisica - Scuola Media"
-    },
-    {
         name: "Gianluca F.",
         comment: "Alessandro è stato fantastico! Ha saputo adattare le lezioni alle mie esigenze specifiche e mi ha aiutato a superare le mie difficoltà con la materia. La sua chiarezza e pazienza sono state fondamentali per il mio miglioramento. Lo consiglio vivamente a chiunque cerchi un tutor di matematica competente e affidabile!",
         rating: 5,
         subject: "Fisica - Università"
+    },
+    {
+        name: "Sindi B.",
+        comment: "Spiegazioni chiare, pazienza e disponibilità, finalmente sono riuscita a capire argomenti che mi sembravano impossibili.",
+        rating: 5,
+        subject: "Matematica e Fisica - Scuola Media"
     },
     {
         name: "Davide F.",
