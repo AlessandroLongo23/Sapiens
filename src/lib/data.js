@@ -47,6 +47,10 @@ export const subjectOptionsByLevel = writable({
         { value: 'fisica2', title: 'Fisica II' },
         { value: 'fondamenti_informatica', title: 'Fondamenti di Informatica' },
         { value: 'teoria_segnali', title: 'Teoria dei Segnali' },
+        { value: 'database', title: 'Database' },
+        { value: 'programmazione', title: 'Programmazione' },
+        { value: 'sistemi_operativi', title: 'Sistemi Operativi' },
+        { value: 'reti_di_calcolatori', title: 'Reti di Calcolatori' },
         { value: 'altro', title: 'Altro', editable: true }
     ]
 });
@@ -93,34 +97,22 @@ export const testimonials = writable([
         subject: "Database - Università"
     },
     {
-        name: "Sofia Bianchi",
-        comment: "Il miglior tutor di fisica che abbia mai avuto! Mi ha aiutato a superare gli esami universitari con ottimi voti. Molto paziente, preparato e motivante.",
-        rating: 5,
-        subject: "Fisica - Università"
-    },
-    {
-        name: "Luca Verdi",
-        comment: "Le lezioni di informatica con Alessandro sono state fantastiche. Ha una grande capacità di adattarsi al livello dello studente e di rendere interessanti anche gli argomenti più complessi.",
-        rating: 5,
-        subject: "Informatica - Università"
-    },
-    {
         name: "Sindi B.",
         comment: "Spiegazioni chiare, pazienza e disponibilità, finalmente sono riuscita a capire argomenti che mi sembravano impossibili.",
         rating: 5,
         subject: "Matematica e Fisica - Scuola Media"
     },
     {
-        name: "Jane Doe",
-        comment: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        name: "Gianluca F.",
+        comment: "Alessandro è stato fantastico! Ha saputo adattare le lezioni alle mie esigenze specifiche e mi ha aiutato a superare le mie difficoltà con la materia. La sua chiarezza e pazienza sono state fondamentali per il mio miglioramento. Lo consiglio vivamente a chiunque cerchi un tutor di matematica competente e affidabile!",
         rating: 5,
         subject: "Fisica - Università"
     },
     {
-        name: "John Doe",
-        comment: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        name: "Davide F.",
+        comment: "Tutor estremamente preparato, chiaro nelle spiegazioni e sempre disponibile per chiarimenti dettagliati passo passo. Senza di lui sarei ancora bloccato sull'esame di Teoria dei segnali. Inoltre sul piano umano, diversamente dal classico docente serioso, ti mette a tuo agio ed è alla mano e preciso.",
         rating: 5,
-        subject: "Informatica - Università"
+        subject: "Teoria dei Segnali - Università"
     }
 ]);
 
