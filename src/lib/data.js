@@ -109,6 +109,12 @@ export const testimonials = writable([
         subject: "Matematica e Fisica - Scuola Media"
     },
     {
+        name: "Giulio Z.",
+        comment: "Mi sono trovato davvero molto bene, Alessandro è molto preparato e abile nel capire i bisogni dello studente e come sia necessario lavorare in base alla tipologia d'esame. Super consigliato!",
+        rating: 5,
+        subject: "Ricerca operativa - Università"
+    },
+    {
         name: "Davide F.",
         comment: "Tutor estremamente preparato, chiaro nelle spiegazioni e sempre disponibile per chiarimenti dettagliati passo passo. Senza di lui sarei ancora bloccato sull'esame di Teoria dei segnali. Inoltre sul piano umano, diversamente dal classico docente serioso, ti mette a tuo agio ed è alla mano e preciso.",
         rating: 5,
