@@ -106,7 +106,13 @@ export const testimonials = writable([
         name: "Sindi B.",
         comment: "Spiegazioni chiare, pazienza e disponibilità, finalmente sono riuscita a capire argomenti che mi sembravano impossibili.",
         rating: 5,
-        subject: "Matematica e Fisica - Scuola Media"
+        subject: "Matematica e Fisica - Scuola Superiore"
+    },
+    {
+        name: "Davide F.",
+        comment: "Tutor estremamente preparato, chiaro nelle spiegazioni e sempre disponibile per chiarimenti dettagliati passo passo. Senza di lui sarei ancora bloccato sull'esame di Teoria dei segnali. Inoltre sul piano umano, diversamente dal classico docente serioso, ti mette a tuo agio ed è alla mano e preciso.",
+        rating: 5,
+        subject: "Teoria dei Segnali - Università"
     },
     {
         name: "Giulio Z.",
@@ -115,10 +121,16 @@ export const testimonials = writable([
         subject: "Ricerca operativa - Università"
     },
     {
-        name: "Davide F.",
-        comment: "Tutor estremamente preparato, chiaro nelle spiegazioni e sempre disponibile per chiarimenti dettagliati passo passo. Senza di lui sarei ancora bloccato sull'esame di Teoria dei segnali. Inoltre sul piano umano, diversamente dal classico docente serioso, ti mette a tuo agio ed è alla mano e preciso.",
+        name: "Sara L.",
+        comment: "Mi sono trovata davvero bene, abbiamo affrontato il programma in tempi molto rapidi, con spiegazioni sempre chiare e con un linguaggio semplice, facile da capire. È sempre stato disponibile con gli orari, molto preciso e attento, e non ha mai avuto problemi a rispiegarmi le cose anche più volte quando ne avevo bisogno. Grazie al suo aiuto ho superato l'esame e sono davvero soddisfatta. Lo consiglio assolutamente!",
         rating: 5,
-        subject: "Teoria dei Segnali - Università"
+        subject: "Informatica - Università"
+    },
+    {
+        name: "Leonardo D.",
+        comment: "Alessandro è estremamente preparato, paziente e capace di spiegare anche i concetti più complessi in modo chiaro e semplice.Grazie a lui, sto finalmente riuscendo a comprendere materie che prima trovavo davvero difficili. ",
+        rating: 5,
+        subject: "Matematica - Scuola Superiore"
     }
 ]);
 
