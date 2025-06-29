@@ -109,6 +109,12 @@ export const testimonials = writable([
         subject: "Matematica e Fisica - Scuola Superiore"
     },
     {
+        name: "Marco Z.",
+        comment: "Alessandro è davvero molto preparato e paziente nelle spiegare anche più volte un argomento, mi sono trovato molto bene con Alessandro anche negli argomenti più difficli che non riuscivo a capire da mesi. Veramente molto consigliato.",
+        rating: 5,
+        subject: "Informatica - Scuola Superiore"
+    },
+    {
         name: "Davide F.",
         comment: "Tutor estremamente preparato, chiaro nelle spiegazioni e sempre disponibile per chiarimenti dettagliati passo passo. Senza di lui sarei ancora bloccato sull'esame di Teoria dei segnali. Inoltre sul piano umano, diversamente dal classico docente serioso, ti mette a tuo agio ed è alla mano e preciso.",
         rating: 5,
