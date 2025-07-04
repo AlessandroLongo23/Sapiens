@@ -91,6 +91,12 @@ export const stats = writable({
 
 export const testimonials = writable([
     {
+        name: "Lucrezia B.",
+        comment: "Sono stata seguita da Alessandro per 5 mesi e mi sono trovata davvero benissimo. Spiega la matematica in modo super chiaro e ha moltissima pazienza. È sempre stato disponibile anche per brevi chiarimenti e spiegazioni. Grazie a lui ho preso molta sicurezza e i miei voti sono migliorati tanto, passando da un 7 a un 9 nel giro di qualche mese. Lo consiglio vivamente!",
+        rating: 5,
+        subject: "Matematica - Scuola Superiore"
+    },
+    {
         name: "Matteo R.",
         comment: "Molto preparato e pronto a spiegare in modo chiaro e semplice tutti i concetti di cui lo studente necessiti per superare un esame o approfondire/esercitarsi su un argomento",
         rating: 5,
