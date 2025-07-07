@@ -1,103 +1,85 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import TestimonialCard from './TestimonialCard.svelte';
-	
+	import * as ls from 'lucide-svelte';
+
 	let { 
 		testimonials = [],
-		scrollSpeed = 50, // pixels per second
 		className = ''
 	} = $props();
-	
-	let scrollContainer;
-	let animationId;
-	let scrollPosition = $state(0);
-	let containerWidth = $state(0);
-	let contentWidth = $state(0);
-	let isPaused = $state(false);
-	
-	// Double the testimonials for seamless looping
-	const loopedTestimonials = $derived([...testimonials, ...testimonials]);
-	
-	onMount(() => {
-		if (scrollContainer) {
-			updateDimensions();
-			startScrolling();
-			
-			// Handle resize
-			const resizeObserver = new ResizeObserver(updateDimensions);
-			resizeObserver.observe(scrollContainer);
-			
-			return () => {
-				resizeObserver.disconnect();
-				stopScrolling();
-			};
-		}
-	});
-	
-	onDestroy(() => {
-		stopScrolling();
-	});
-	
-	function updateDimensions() {
-		if (scrollContainer) {
-			containerWidth = scrollContainer.offsetWidth;
-			const firstChild = scrollContainer.querySelector('.testimonial-track');
-			if (firstChild) {
-				contentWidth = firstChild.scrollWidth / 2; // Divide by 2 since we doubled the content
-			}
-		}
+
+	const itemsPerPage = 3;
+	let isTransitioning = $state(true);
+
+	const groups = $derived(
+		Array.from({ length: Math.ceil(testimonials.length / itemsPerPage) }, (_, i) =>
+			testimonials.slice(i * itemsPerPage, (i + 1) * itemsPerPage)
+		)
+	);
+
+	const numGroups = $derived(groups.length);
+	let currentIndex = $derived(numGroups > 1 ? 1 : 0);
+
+	const displayGroups = $derived(
+		numGroups > 1 ? [groups[numGroups - 1], ...groups, groups[0]] : groups
+	);
+
+	function showNext() {
+		if (numGroups <= 1) return;
+		isTransitioning = true;
+		currentIndex = currentIndex + 1;
 	}
-	
-	function startScrolling() {
-		if (animationId) return;
-		
-		let lastTime = performance.now();
-		
-		function animate(currentTime) {
-			if (!isPaused) {
-				const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
-				scrollPosition += scrollSpeed * deltaTime;
-				
-				// Reset when we've scrolled through one full set
-				if (scrollPosition >= contentWidth) {
-					scrollPosition = 0;
-				}
-			}
-			
-			lastTime = currentTime;
-			animationId = requestAnimationFrame(animate);
-		}
-		
-		animationId = requestAnimationFrame(animate);
+
+	function showPrev() {
+		if (numGroups <= 1) return;
+		isTransitioning = true;
+		currentIndex = currentIndex - 1;
 	}
-	
-	function stopScrolling() {
-		if (animationId) {
-			cancelAnimationFrame(animationId);
-			animationId = null;
+
+	function handleTransitionEnd() {
+		if (currentIndex === 0) {
+			isTransitioning = false;
+			currentIndex = numGroups;
+		} else if (currentIndex === numGroups + 1) {
+			isTransitioning = false;
+			currentIndex = 1;
 		}
 	}
 </script>
 
-<div 
-	class="relative overflow-hidden {className}"
-	bind:this={scrollContainer}
->
-	<!-- Scrolling testimonials -->
-	<div 
-		class="testimonial-track flex gap-6 w-max transition-none"
-		style="transform: translateX(-{scrollPosition}px)"
-	>
-		{#each loopedTestimonials as testimonial, index}
-			<div class="flex-shrink-0 w-80">
-				<TestimonialCard {...testimonial} />
-			</div>
-		{/each}
+<div class="relative {className}">
+	<div class="overflow-hidden">
+		<div 
+			class="flex"
+			style="transform: translateX(-{currentIndex * 100}%); transition: {isTransitioning ? 'transform 0.5s ease-in-out' : 'none'};"
+			ontransitionend={handleTransitionEnd}
+		>
+			{#each displayGroups as group}
+				<div class="w-full flex-shrink-0">
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 items-start">
+						{#each group as testimonial}
+							<TestimonialCard {...testimonial} />
+						{/each}
+					</div>
+				</div>
+			{/each}
+		</div>
 	</div>
-	
-	<!-- Left gradient overlay -->
-	<div class="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>
-	
-	<!-- Right gradient overlay -->
-	<div class="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
+
+	{#if numGroups > 1}
+		<button
+			onclick={showPrev}
+			class="absolute -left-16 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition hover:bg-white hover:scale-110 focus:outline-none cursor-pointer"
+			aria-label="Previous testimonial"
+		>
+			<ls.ChevronLeft class="h-6 w-6 text-slate-800" />
+		</button>
+		
+		<button
+			onclick={showNext}
+			class="absolute -right-16 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition hover:bg-white hover:scale-110 focus:outline-none cursor-pointer"
+			aria-label="Next testimonial"
+		>
+			<ls.ChevronRight class="h-6 w-6 text-slate-800" />
+		</button>
+	{/if}
 </div> 

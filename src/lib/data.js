@@ -116,7 +116,7 @@ export const testimonials = writable([
     },
     {
         name: "Marco Z.",
-        comment: "Alessandro è davvero molto preparato e paziente nelle spiegare anche più volte un argomento, mi sono trovato molto bene con Alessandro anche negli argomenti più difficli che non riuscivo a capire da mesi. Veramente molto consigliato.",
+        comment: "Alessandro è davvero molto preparato e paziente nelle spiegare anche più volte un argomento, mi sono trovato molto bene con Alessandro anche negli argomenti più difficili che non riuscivo a capire da mesi. Veramente molto consigliato.",
         rating: 5,
         subject: "Informatica - Scuola Superiore"
     },
@@ -154,7 +154,7 @@ export const steps = writable([
 ]);
 
 export const frequencyOptions = writable([
-    { value: 'singola', title: 'Lezione Singola', subtitle: 'Una sola lezione' },
+    { value: 'singola', title: 'Lezione Singola', subtitle: 'Una sola lezione (no svolgimento esami)' },
     { value: 'breve', title: '2-5 Lezioni', subtitle: 'Aiuto a breve termine' },
     { value: 'lungo', title: 'Supporto Continuativo', subtitle: 'Percorso personalizzato' }
 ]);

@@ -1,98 +1,72 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import TestimonialCard from './TestimonialCard.svelte';
-	
+	import * as ls from 'lucide-svelte';
+
 	let { 
 		testimonials = [],
-		duration = 10000,
 		className = ''
 	} = $props();
-	
+
 	let currentIndex = $state(0);
-	let intervalId = null;
-	let transitioning = $state(true);
-	
-	const hasMultipleTestimonials = $derived(testimonials.length > 1);
 
-	onMount(() => {
-		if (hasMultipleTestimonials) {
-			startSlideshow();
-		}
-	});
-	
-	onDestroy(() => {
-		stopSlideshow();
-	});
-	
-	function advanceSlide() {
-		transitioning = true;
-		currentIndex = currentIndex + 1;
+	const numItems = $derived(testimonials.length);
+
+	function next() {
+		if (numItems === 0) return;
+		currentIndex = (currentIndex + 1) % numItems;
 	}
 
-	function startSlideshow() {
-		stopSlideshow();
-		intervalId = setInterval(advanceSlide, duration);
-	}
-	
-	function stopSlideshow() {
-		if (intervalId) {
-			clearInterval(intervalId);
-			intervalId = null;
-		}
-	}
-
-	function handleTransitionEnd() {
-		if (currentIndex >= testimonials.length) {
-			transitioning = false;
-			currentIndex = 0;
-		}
+	function prev() {
+		if (numItems === 0) return;
+		currentIndex = (currentIndex - 1 + numItems) % numItems;
 	}
 </script>
 
-<div class="relative overflow-hidden {className}">
-	{#if hasMultipleTestimonials}
-		{@const loopedTestimonials = [...testimonials, testimonials[0]]}
-		
-		<!-- Ghost element for dynamic height animation -->
+<div class="relative {className}">
+	<div class="overflow-hidden">
 		<div 
-			class="w-full grid transition-[grid-template-rows] duration-700 ease-in-out"
-			style="grid-template-rows: 1fr;"
+			class="flex transition-transform duration-500 ease-in-out"
+			style="transform: translateX(-{currentIndex * 100}%)"
 		>
-			<div class="overflow-hidden invisible" aria-hidden="true">
-				<TestimonialCard {...loopedTestimonials[currentIndex % testimonials.length]} />
-			</div>
-		</div>
-
-		<div 
-			class="absolute inset-0"
-			ontransitionend={handleTransitionEnd}
-		>
-			{#each loopedTestimonials as testimonial, index}
-				<div 
-					class="absolute inset-0 w-full"
-					class:transition-transform={transitioning}
-					class:duration-700={transitioning}
-					class:ease-in-out={transitioning}
-					style="transform: translateX({(index - currentIndex) * 100}%)"
-				>
+			{#each testimonials as testimonial}
+				<div class="w-full flex-shrink-0 px-1">
 					<TestimonialCard {...testimonial} />
 				</div>
 			{/each}
 		</div>
-		
-		<!-- Progress indicators -->
-		<div class="flex justify-center space-x-2 mt-6">
-			{#each testimonials as _, index}
-				<div 
-					class="w-2 h-2 rounded-full transition-colors duration-300 {
-						index === (currentIndex % testimonials.length)
-							? 'bg-slate-600' 
-							: 'bg-slate-300'
-					}"
-				></div>
-			{/each}
+	</div>
+
+	{#if numItems > 1}
+		<div class="mt-6 flex items-center justify-center space-x-4">
+			<button
+				onclick={prev}
+				class="rounded-full bg-slate-100 p-2 shadow-sm transition hover:bg-slate-200 focus:outline-none"
+				aria-label="Previous testimonial"
+			>
+				<ls.ChevronLeft class="h-5 w-5 text-slate-700" />
+			</button>
+
+			<div class="flex justify-center space-x-2">
+				{#each testimonials as _, index}
+					<button
+						onclick={() => currentIndex = index}
+						class="h-2 w-2 rounded-full transition-colors duration-300 {
+							index === currentIndex
+								? 'bg-slate-600 scale-125' 
+								: 'bg-slate-300'
+						}"
+						aria-label="Go to testimonial {index + 1}"
+					></button>
+				{/each}
+			</div>
+
+			<button
+				onclick={next}
+				class="rounded-full bg-slate-100 p-2 shadow-sm transition hover:bg-slate-200 focus:outline-none"
+				aria-label="Next testimonial"
+			>
+				<ls.ChevronRight class="h-5 w-5 text-slate-700" />
+			</button>
 		</div>
-	{:else if testimonials.length === 1}
-		<TestimonialCard {...testimonials[0]} />
 	{/if}
 </div> 
