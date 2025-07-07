@@ -93,8 +93,8 @@
 					class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<ls.Zap class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
-						<span>Prenotami</span>
+						<ls.Mail class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
+						<span>Contattami</span>
 					</span>
 				</button>
 				<button 
@@ -219,9 +219,9 @@
 <section bind:this={statsSection} class="section-enter py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 hero-gradient relative">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-16 sm:mb-20">
-			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6">I Miei Numeri</h2>
+			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6">I Miei Risultati</h2>
 			<p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto px-4">
-				Risultati che parlano da soli e testimoniano anni di dedizione nell'insegnamento
+				Numeri che parlano da soli e testimoniano anni di dedizione nell'insegnamento
 			</p>
 			<div class="w-16 sm:w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full mt-4 sm:mt-6"></div>
 		</div>
@@ -289,10 +289,10 @@
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
 						<ls.Mail class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-300" />
-						<span>Prenotami Ora</span>
+						<span>Contattami Ora</span>
 					</span>
 				</button>
-				<a 
+				<!-- <a 
 					href="tel:+39 392 409 0699"
 					class="btn-secondary text-slate-700 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
 				>
@@ -300,7 +300,7 @@
 						<ls.Phone class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
 						<span>Chiamami</span>
 					</span>
-				</a>
+				</a> -->
 			</div>
 		</div>
 		
