@@ -24,14 +24,43 @@ export async function POST({ request }) {
 			: subjects.join(', ');
 
 		const emailHtml = `
-			<h1>Nuova richiesta di lezione</h1>
-			<p><strong>Nome:</strong> ${firstName} ${lastName}</p>
-			<p><strong>Contatto (${contactType}):</strong> ${contact}</p>
-			<hr>
-			<h3>Dettagli Richiesta:</h3>
-			<p><strong>Livello:</strong> ${level}</p>
-			<p><strong>Materie:</strong> ${subjectList}</p>
-			<p><strong>Frequenza:</strong> ${frequency}</p>
+		<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+			<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; margin-top: 20px; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+				<tr>
+					<td align="center" style="padding: 40px 0 30px 0; background-color: #007bff; color: #ffffff;">
+						<h1 style="margin: 0;">Nuova Richiesta di Lezione</h1>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding: 40px 30px;">
+						<h2 style="color: #333333; border-bottom: 2px solid #eeeeee; padding-bottom: 10px;">Dati del Richiedente</h2>
+						<p style="font-size: 16px; line-height: 1.5;"><strong>Nome:</strong> ${firstName} ${lastName}</p>
+						<p style="font-size: 16px; line-height: 1.5;"><strong>Contatto (${contactType}):</strong> <a href="${contactType === 'email' ? 'mailto:' : 'tel:'}${contact}" style="color: #007bff;">${contact}</a></p>
+						
+						<h2 style="color: #333333; border-bottom: 2px solid #eeeeee; padding-bottom: 10px; margin-top: 30px;">Dettagli della Richiesta</h2>
+						<table border="0" cellpadding="0" cellspacing="0" width="100%">
+							<tr>
+								<td style="padding: 10px 0; font-size: 16px;"><strong>Livello:</strong></td>
+								<td style="padding: 10px 0; font-size: 16px;">${level}</td>
+							</tr>
+							<tr>
+								<td style="padding: 10px 0; font-size: 16px;"><strong>Materie:</strong></td>
+								<td style="padding: 10px 0; font-size: 16px;">${subjectList}</td>
+							</tr>
+							<tr>
+								<td style="padding: 10px 0; font-size: 16px;"><strong>Frequenza:</strong></td>
+								<td style="padding: 10px 0; font-size: 16px;">${frequency}</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center" style="padding: 20px; background-color: #f4f4f4; color: #666666; font-size: 12px;">
+						<p style="margin: 0;">Email inviata dal sito AleRipetizioni</p>
+					</td>
+				</tr>
+			</table>
+		</body>
         `;
 
 		const { data, error } = await resend.emails.send({

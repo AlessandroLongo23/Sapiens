@@ -2,7 +2,8 @@
 	let { 
 		value, 
 		selectedValue = $bindable(), 
-		disabled = false
+		disabled = false,
+		children
 	} = $props();
 	
 	const isSelected = $derived(selectedValue === value);
@@ -38,7 +39,7 @@
 	
 	<!-- Content Area with right padding to avoid radio circle -->
 	<div class="pr-6">
-		<slot {isSelected} {disabled} />
+		{@render children()}
 	</div>
 	
 	<!-- Selected overlay effect -->

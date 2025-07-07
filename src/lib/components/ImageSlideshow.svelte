@@ -67,6 +67,8 @@
 </script>
 
 <div 
+	role="region"
+	aria-label="Image slideshow"
 	class="relative w-full h-full overflow-hidden {className}"
 	onmouseenter={handleMouseEnter}
 	onmouseleave={handleMouseLeave}

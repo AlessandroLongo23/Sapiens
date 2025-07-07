@@ -15,6 +15,8 @@
 	const dispatch = createEventDispatcher();
 	let inputElement;
 	
+	const id = `form-input-${Math.random().toString(36).substring(2, 9)}`;
+	
 	const hasError = $derived(error && error.length > 0);
 	const hasValue = $derived(value && value.length > 0);
 	
@@ -35,7 +37,7 @@
 <div class="space-y-2">
 	<!-- Label -->
 	{#if label}
-		<label class="block text-sm font-medium text-slate-700 mb-2">
+		<label for={id} class="block text-sm font-medium text-slate-700 mb-2">
 			{label}
 			{#if required}
 				<span class="text-red-500 ml-1">*</span>
@@ -48,13 +50,14 @@
 		<!-- Icon -->
 		{#if icon}
 			<div class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-				<svelte:component this={icon} class="w-5 h-5 {hasError ? 'text-red-500' : hasValue ? 'text-blue-600' : 'text-slate-400'} transition-colors duration-300" />
+				{@render icon({ class: `w-5 h-5 ${hasError ? 'text-red-500' : hasValue ? 'text-blue-600' : 'text-slate-400'} transition-colors duration-300` })}
 			</div>
 		{/if}
 		
 		<!-- Input field -->
 		<input
 			bind:this={inputElement}
+			{id}
 			bind:value
 			{type}
 			{placeholder}
