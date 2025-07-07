@@ -123,11 +123,29 @@
 		isSubmitting = true;
 		
 		try {
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			isSubmitted = true;
+			const response = await fetch('/api/send-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(formData)
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+				throw new Error(errorData.error || 'Failed to send email');
+			}
+			
+			const result = await response.json();
+
+			if (result.success) {
+				isSubmitted = true;
+			} else {
+				console.error('Submission error:', result.error);
+			}
+
 		} catch (error) {
 			console.error('Submission error:', error);
-			isSubmitting = false;
 		} finally {
 			isSubmitting = false;
 		}

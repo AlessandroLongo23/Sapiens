@@ -22,6 +22,7 @@
 		"vite-plugin-devtools-json": "^0.2.0"
 	},
 	"dependencies": {
-		"lucide-svelte": "^0.522.0"
+		"lucide-svelte": "^0.522.0",
+		"resend": "^4.6.0"
 	}
 }
