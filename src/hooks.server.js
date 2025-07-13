@@ -1,31 +1,28 @@
-import { redirect, error } from '@sveltejs/kit'
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
+import { createServerClient } from '@supabase/ssr'
+import { redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
-import { createClient } from '$lib/supabase'
 
 const handleSupabase = async ({ event, resolve }) => {
-	event.locals.supabase = createClient(event.cookies)
+	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+		cookies: {
+			getAll: () => event.cookies.getAll(),
+			setAll: (cookiesToSet) => {
+				cookiesToSet.forEach(({ name, value, options }) => {
+					event.cookies.set(name, value, { ...options, path: '/' })
+				})
+			}
+		}
+	})
 
-	const { data: { session }, error: sessionError } = await event.locals.supabase.auth.getSession()
-
-	if (sessionError) {
-		console.error('Session error:', sessionError)
-		event.locals.session = null
-		event.locals.user = null
-		return resolve(event)
-	}
+	const {
+		data: { session }
+	} = await event.locals.supabase.auth.getSession()
 
 	event.locals.session = session
 
 	if (session) {
-		const { data: { user }, error: userError } = await event.locals.supabase.auth.getUser()
-		if (userError) {
-			console.error('User fetch error:', userError)
-			await event.locals.supabase.auth.signOut()
-			event.locals.session = null
-			event.locals.user = null
-		} else {
-			event.locals.user = user
-		}
+		event.locals.user = session.user
 	} else {
 		event.locals.user = null
 	}
@@ -33,7 +30,7 @@ const handleSupabase = async ({ event, resolve }) => {
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range'
-		},
+		}
 	})
 }
 
