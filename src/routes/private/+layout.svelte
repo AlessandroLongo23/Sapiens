@@ -1,0 +1,100 @@
+<script>
+	import { goto } from '$app/navigation';
+	import * as ls from 'lucide-svelte';
+  	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { motivational_messages } from '$lib/microcopy.js';
+	// import { selectedTopicStore } from '$lib/stores/topics.js';
+	import { selectedTopic } from '$lib/content.js';
+	
+	import TopicCard from '$lib/components/TopicCard.svelte';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+
+	let { data, children } = $props();
+	let { user } = $derived(data);
+
+	let isLoggingOut = $state(false);
+
+	let student = $state(null);
+
+	let current_page = $derived.by(() => {
+		if ($page.url.pathname.startsWith('/private/calendario'))
+			return 'calendario';
+
+		if ($page.url.pathname.startsWith('/private/materiale'))
+			return 'materiale';
+
+		if ($page.url.pathname.startsWith('/private/esercizi'))
+			return 'esercizi';
+
+		if ($page.url.pathname.startsWith('/private/profilo'))
+			return 'profilo';
+
+		if ($page.url.pathname.startsWith('/private/teoria'))
+			return 'teoria';
+
+		return 'calendario';
+	})
+
+	let motivational_message = $state(null);
+	onMount(() => {
+		motivational_message = $motivational_messages[Math.floor(Math.random() * $motivational_messages.length)];
+	})
+</script>
+
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 p-4 sm:p-6 lg:p-8 font-sans">
+	<div class="max-w-7xl mx-auto h-full">
+		<header class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-8 py-4 bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
+			{#if current_page === 'calendario' || current_page === 'materiale'}
+				<h1 class="text-3xl font-bold text-zinc-900 dark:text-white">Ciao {student?.name}!<span class="ms-4 text-zinc-700 dark:text-zinc-300	text-2xl">{motivational_message}</span></h1>
+			{:else}
+				<h1 class="text-3xl font-bold text-zinc-900 dark:text-white">{$selectedTopic.title}</h1>
+			{/if}
+			<div class="flex items-center gap-4">
+				<ThemeToggle />
+
+				<button
+					onclick={() => goto(current_page === 'calendario' ? '/private/materiale' : '/private/calendario')}
+					class="bg-zinc-50 dark:bg-zinc-800 border hover:bg-zinc-200 dark:hover:bg-zinc-700 border-zinc-200 dark:border-zinc-700 text-zinc-700 px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer transition-all duration-100 ease-in-out"
+				>
+					<span class="flex items-center justify-center space-x-2">
+						{#if current_page === 'calendario'}
+							<ls.BookOpen class="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+						{:else}
+							<ls.Calendar class="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+						{/if}
+						<span class="text-zinc-700 dark:text-zinc-300">{current_page === 'calendario' ? 'Materiale' : 'Calendario'}</span>
+					</span>
+				</button>
+
+				<form
+					action="/auth/logout"
+					method="POST"
+				>
+					<button
+						type="submit"
+						class="bg-zinc-50 dark:bg-zinc-800 border hover:bg-zinc-200 dark:hover:bg-zinc-700 border-zinc-200 dark:border-zinc-700 text-red-500 dark:text-red-400 px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer transition-all duration-100 ease-in-out"
+						disabled={isLoggingOut}
+					>
+						<span class="flex items-center justify-center space-x-2">
+							<ls.LogOut class="w-4 h-4" />
+							<span>{isLoggingOut ? 'Uscendo...' : 'Logout'}</span>
+						</span>
+					</button>
+				</form>
+			</div>
+		</header>
+
+		<div class="mt-12 min-h-[calc(100vh-10rem)]">
+			{@render children()}
+		</div>
+	</div>
+</div>
+
+<style>
+	.glass-effect {
+		background: rgba(255, 255, 255, 0.6);
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+	}
+</style> 

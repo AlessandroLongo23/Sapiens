@@ -19,7 +19,7 @@
 	class="group relative w-full text-left p-4 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {
 		isSelected 
 			? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md' 
-			: 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+			: 'border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm'
 	} {disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}"
 	onclick={handleSelect}
 	disabled={disabled}
@@ -28,7 +28,7 @@
 	<div class="absolute top-3 right-3">
 		<div class="relative w-4 h-4">
 			<div class="w-4 h-4 rounded-full border-2 transition-all duration-300 {
-				isSelected ? 'border-blue-500 bg-blue-500' : 'border-slate-300 group-hover:border-slate-400'
+				isSelected ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 group-hover:border-zinc-400'
 			}"></div>
 			
 			{#if isSelected}

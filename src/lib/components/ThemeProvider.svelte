@@ -1,0 +1,27 @@
+<script>
+    import { themeStore } from '$lib/stores/theme.js';
+    import { onMount } from 'svelte';
+    let { children } = $props();
+
+    onMount(() => {
+        const storedTheme = localStorage.getItem('theme') || 'dark';
+        themeStore.setTheme(storedTheme);
+
+        return themeStore.subscribe(theme => {
+            localStorage.setItem('theme', theme);
+        });
+    });
+
+    $effect(() => {
+        if (typeof window === 'undefined') 
+            return;
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        return () => {
+            mediaQuery.removeEventListener('change', handler);
+        };
+    });
+</script>
+
+{@render children()}

@@ -1,0 +1,8 @@
+- [x] fix supabase authentication
+- [ ] add content structure
+- [ ] add professor dashboard
+  - [ ] add student account creation
+  - [ ] add calendar interaction for preferences
+  - [ ] move in the whole TutorTrack project
+  - [ ] add editor to write new content
+- [ ] setup up aleripetizioni2024@gmail.com as the email receiver

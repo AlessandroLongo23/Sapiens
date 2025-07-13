@@ -143,6 +143,12 @@ export const testimonials = writable([
         comment: "Alessandro è estremamente preparato, paziente e capace di spiegare anche i concetti più complessi in modo chiaro e semplice.Grazie a lui, sto finalmente riuscendo a comprendere materie che prima trovavo davvero difficili. ",
         rating: 5,
         subject: "Matematica - Scuola Superiore"
+    },
+    {
+        name: "Alice M.",
+        comment: "Ho avuto il piacere di seguire lezioni con Alessandro per prepararmi agli esami universitari di Segnali e Immagini e non posso che consigliarlo vivamente. È un insegnante preparato, chiaro nelle spiegazioni e molto paziente. Riesce a rendere comprensibili anche gli argomenti più complessi, adattandosi al livello e al ritmo dello studente.",
+        rating: 5,
+        subject: "Segnali e Immagini - Università"
     }
 ]);
 

@@ -9,8 +9,18 @@
 	import ImageSlideshow from '$lib/components/ImageSlideshow.svelte';
 	import StatsCard from '$lib/components/StatsCard.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+	import BookingModal from '$lib/components/BookingModal.svelte';
+	import Auth from '$lib/components/Auth.svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	
-	let isModalOpen = $state(false);
+	let isContactModalOpen = $state(false);
+	let isAuthModalOpen = $state(false);
+
+	let { data } = $props();
+	let { session, supabase } = $derived(data);
+	
+	let error = $derived($page.url.searchParams.get('error'));
 	
 	let heroSection;
 	let aboutSection;
@@ -53,8 +63,12 @@
 		}
 	}
 	
-	function openModal() {
-		isModalOpen = true;
+	function openContactModal() {
+		isContactModalOpen = true;
+	}
+
+	function openAuthModal() {
+		isAuthModalOpen = true;
 	}
 	
 	function scrollToSection(sectionId) {
@@ -67,52 +81,103 @@
 
 <svelte:head>
 	<title>AleRipetizioni</title>
-	<meta name="description" content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 130 ore di esperienza." />
+	<meta
+		name="description"
+		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 130 ore di esperienza."
+	/>
 </svelte:head>
 
-<section bind:this={heroSection} class="relative min-h-screen hero-gradient flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-20 overflow-hidden">
+<BookingModal bind:isOpen={isContactModalOpen} />
+<Modal bind:isOpen={isAuthModalOpen} title="Accedi al tuo account">
+	<Auth {supabase} />
+</Modal>
+
+{#if error}
+	<div class="fixed top-4 left-4 right-4 z-50 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+		<p>{error}</p>
+	</div>
+{/if}
+
+<div class="fixed top-8 right-8 z-20">
+	{#if session}
+		<button
+			onclick={() => goto('/private/calendario')}
+			class="btn-secondary text-zinc-700 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
+		>
+			<span class="flex items-center justify-center space-x-2 sm:space-x-3">
+				<span>Dashboard</span>
+				<ls.Home class="w-4 h-4 sm:w-5 sm:h-5" />
+			</span>
+		</button>
+	{:else}
+		<button
+			onclick={openAuthModal}
+			class="btn-secondary text-zinc-700 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
+		>
+			<span class="flex items-center justify-center space-x-2 sm:space-x-3">
+				<span>Login Studente</span>
+				<ls.LogIn class="w-4 h-4 sm:w-5 sm:h-5" />
+			</span>
+		</button>
+	{/if}
+</div>
+
+<section
+	bind:this={heroSection}
+	class="relative min-h-screen hero-gradient flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-20 overflow-hidden"
+>
 	<div class="hero-particles particles"></div>
 	
 	<div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center z-10">
 		<div class="text-center lg:text-left space-y-6 sm:space-y-8 lg:space-y-10">
 			<div class="space-y-4 sm:space-y-6">
-				<h1 class="flex flex-col gap-2 font-bold text-slate-900 leading-tight tracking-tight">
-					<span class="block text-xl sm:text-2xl md:text-3xl lg:text-5xl">Tutor Specializzato in</span>
-					<span class="gradient-text block text-3xl sm:text-4xl md:text-5xl lg:text-7xl">Materie Scientifiche</span>
+				<h1 class="flex flex-col gap-2 font-bold text-zinc-900 leading-tight tracking-tight">
+					<span class="block text-xl sm:text-2xl md:text-3xl lg:text-5xl"
+						>Tutor Specializzato in</span
+					>
+					<span class="gradient-text block text-3xl sm:text-4xl md:text-5xl lg:text-7xl"
+						>Materie Scientifiche</span
+					>
 				</h1>
-				
-				<p class="text-lg sm:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-2xl font-light mx-auto lg:mx-0">
-					Trasforma le difficoltà in successi con ripetizioni personalizzate. 
-					Un approccio su misura che unisce teoria e pratica per risultati concreti.
+
+				<p class="text-lg sm:text-xl lg:text-2xl text-zinc-600 leading-relaxed max-w-2xl font-light mx-auto lg:mx-0">
+					Trasforma le difficoltà in successi con ripetizioni personalizzate. Un approccio su
+					misura che unisce teoria e pratica per risultati concreti.
 				</p>
 			</div>
-			
+
 			<div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start">
-				<button 
-					onclick={openModal}
+				<button
+					onclick={openContactModal}
 					class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<ls.Mail class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
+						<ls.Mail
+							class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300"
+						/>
 						<span>Contattami</span>
 					</span>
 				</button>
-				<button 
+				<button
 					onclick={() => scrollToSection('about')}
-					class="btn-secondary text-slate-700 px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
+					class="btn-secondary text-zinc-700 px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
 						<span>Scopri di più</span>
-						<ls.ChevronDown class="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-y-1 transition-transform duration-300" />
+						<ls.ChevronDown
+							class="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-y-1 transition-transform duration-300"
+						/>
 					</span>
 				</button>
 			</div>
-			
-			<div class="flex items-center justify-center lg:justify-start space-x-4 sm:space-x-8 pt-4 sm:pt-6">
+
+			<div
+				class="flex items-center justify-center lg:justify-start space-x-4 sm:space-x-8 pt-4 sm:pt-6"
+			>
 				{#each Object.values($stats) as stat, index}
 					<div class="text-center">	
-						<div class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{stat.value}</div>
-						<div class="text-xs sm:text-sm text-slate-600">{stat.label}</div>
+						<div class="text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-800">{stat.value}</div>
+						<div class="text-xs sm:text-sm text-zinc-600">{stat.label}</div>
 					</div>
 				{/each}
 			</div>
@@ -122,7 +187,7 @@
 			<div class="relative">
 				<div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 morphing-shape bg-gradient-to-br from-blue-400/20 via-indigo-500/20 to-blue-600/20 flex items-center justify-center floating-animation">
 					<div class="w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full glass-effect flex items-center justify-center">
-						<div class="w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-600 shadow-elegant-lg">
+						<div class="w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center text-zinc-600 shadow-elegant-lg">
 							<img src="/profile.jpg" alt="profile" class="w-full h-full rounded-full" id="profile-image" />
 						</div>
 					</div>
@@ -145,16 +210,16 @@
 <section id="about" bind:this={aboutSection} class="section-enter py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white relative overflow-hidden">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-12 sm:mb-16">
-			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6">Chi Sono</h2>
+			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 sm:mb-6">Chi Sono</h2>
 			<div class="w-16 sm:w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
 		</div>
 		
 		<div class="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
 			<div class="space-y-6 sm:space-y-8">
 				<div class="glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12">
-					<div class="space-y-4 sm:space-y-6 text-slate-700">
+					<div class="space-y-4 sm:space-y-6 text-zinc-700">
 						<p class="text-lg sm:text-xl leading-relaxed">
-							Sono <strong class="text-slate-900">Alessandro</strong>, laureato con 110 e Lode in
+							Sono <strong class="text-zinc-900">Alessandro</strong>, laureato con 110 e Lode in
 								<strong class="text-blue-600">Ingegneria Informatica</strong> presso l'<strong>Università degli Studi di Firenze</strong>
 							e attualmente frequentante la facoltà di 
 								<strong class="text-blue-600">Human-Centered Artificial Intelligence</strong> alla 
@@ -166,7 +231,7 @@
 							la differenza nel percorso di apprendimento degli studenti.
 						</p>
 						<p class="text-base sm:text-lg leading-relaxed">
-							Oltre alla solida formazione teorica, porto con me <strong class="text-slate-900">anni di esperienza pratica</strong> 
+							Oltre alla solida formazione teorica, porto con me <strong class="text-zinc-900">anni di esperienza pratica</strong> 
 							nel settore tecnologico, permettendomi di collegare sempre la teoria con applicazioni concrete 
 							e stimolanti che preparano gli studenti al mondo reale.
 						</p>
@@ -187,8 +252,8 @@
 						<div class="absolute -bottom-8 -right-8 sm:-bottom-8 sm:-right-8">
 							<a href="https://www.ing-inl.unifi.it/" class="block glass-effect rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg">
 								<ls.GraduationCap class="size-5 sm:size-6 text-blue-600 mx-auto mb-1 sm:mb-2" />
-								<div class="font-semibold text-slate-800 text-xs sm:text-sm leading-tight">Università degli Studi di Firenze</div>
-								<div class="text-xs text-slate-600">Ingegneria Informatica</div>
+								<div class="font-semibold text-zinc-800 text-xs sm:text-sm leading-tight">Università degli Studi di Firenze</div>
+								<div class="text-xs text-zinc-600">Ingegneria Informatica</div>
 							</a>
 						</div>
 					</div>
@@ -205,8 +270,8 @@
 						<div class="absolute -bottom-8 -left-8 sm:-bottom-8 sm:-left-8">
 							<a href="https://www.dtu.dk/english/education/graduate/msc-programmes/human-centered-artificial-intelligence" class="block glass-effect rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg">
 								<ls.BookOpen class="size-5 sm:size-6 text-blue-600 mx-auto mb-1 sm:mb-2" />
-								<div class="font-semibold text-slate-800 text-xs sm:text-sm leading-tight">Denmark Technical University</div>
-								<div class="text-xs text-slate-600">Human-Centered Artificial Intelligence</div>
+								<div class="font-semibold text-zinc-800 text-xs sm:text-sm leading-tight">Denmark Technical University</div>
+								<div class="text-xs text-zinc-600">Human-Centered Artificial Intelligence</div>
 							</a>
 						</div>
 					</div>
@@ -219,8 +284,8 @@
 <section bind:this={statsSection} class="section-enter py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 hero-gradient relative">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-16 sm:mb-20">
-			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6">I Miei Risultati</h2>
-			<p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto px-4">
+			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 sm:mb-6">I Miei Risultati</h2>
+			<p class="text-lg sm:text-xl text-zinc-600 max-w-2xl mx-auto px-4">
 				Numeri che parlano da soli e testimoniano anni di dedizione nell'insegnamento
 			</p>
 			<div class="w-16 sm:w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full mt-4 sm:mt-6"></div>
@@ -239,8 +304,8 @@
 <section bind:this={testimonialsSection} class="section-enter py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-16 sm:mb-20">
-			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6">Cosa Dicono i Miei Studenti</h2>
-			<p class="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto px-4">
+			<h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 sm:mb-6">Cosa Dicono i Miei Studenti</h2>
+			<p class="text-lg sm:text-xl text-zinc-600 max-w-3xl mx-auto px-4">
 				Testimonianze autentiche di chi ha già raggiunto i suoi obiettivi e trasformato 
 				le difficoltà in successi concreti
 			</p>
@@ -267,48 +332,46 @@
 	</div>
 </section>
 
-<footer class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+<footer class="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
 	<div class="absolute inset-0 opacity-5">
 		<div class="absolute inset-0" style="background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
 	</div>
 	
 	<div class="relative max-w-4xl mx-auto text-center">
 		<div class="mb-10 sm:mb-12">
-			<h3 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+			<h3 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
 				Pronto a Iniziare il Tuo Percorso?
 			</h3>
-			<p class="text-slate-300 mb-8 sm:mb-10 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto px-4">
+			<p class="text-zinc-300 mb-8 sm:mb-10 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto px-4">
 				Contattami per una consulenza gratuita e scopri come posso aiutarti a raggiungere 
 				i tuoi obiettivi accademici con un approccio personalizzato.
 			</p>
 			
 			<div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-10 sm:mb-12">
-				<button 
-					onclick={openModal}
+				<button
+					onclick={openContactModal}
 					class="btn-primary text-white px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<ls.Mail class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-300" />
-						<span>Contattami Ora</span>
+						<ls.Mail class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
+						<span>Richiedi una lezione di prova</span>
 					</span>
 				</button>
-				<!-- <a 
-					href="tel:+39 392 409 0699"
-					class="btn-secondary text-slate-700 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
+				<a
+					href="mailto:aleripetizioni2024@gmail.com"
+					class="btn-secondary text-zinc-700 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<ls.Phone class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
-						<span>Chiamami</span>
+						<span>Scrivimi una mail</span>
+						<ls.Send class="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
 					</span>
-				</a> -->
+				</a>
 			</div>
 		</div>
 		
-		<div class="pt-8 sm:pt-12 border-t border-slate-700">
-			<p class="text-slate-400 text-base sm:text-lg">© 2024 Alessandro - Ripetizioni Materie Scientifiche</p>
-			<p class="text-slate-500 text-sm mt-2">Trasformare le difficoltà in successi, una lezione alla volta.</p>
+		<div class="pt-8 sm:pt-12 border-t border-zinc-700">
+			<p class="text-zinc-400 text-base sm:text-lg">© 2024 Alessandro - Ripetizioni Materie Scientifiche</p>
+			<p class="text-zinc-500 text-sm mt-2">Trasformare le difficoltà in successi, una lezione alla volta.</p>
 		</div>
 	</div>
 </footer>
-
-<Modal bind:isOpen={isModalOpen} />

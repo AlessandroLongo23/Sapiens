@@ -9,7 +9,8 @@
 		required = false,
 		disabled = false,
 		error = '',
-		icon = null
+		icon = null,
+		onchange = null
 	} = $props();
 	
 	const dispatch = createEventDispatcher();
@@ -22,6 +23,7 @@
 	
 	function handleInput(event) {
 		value = event.target.value;
+		onchange?.(value);
 		dispatch('input', { value });
 	}
 	
@@ -37,7 +39,7 @@
 <div class="space-y-2">
 	<!-- Label -->
 	{#if label}
-		<label for={id} class="block text-sm font-medium text-slate-700 mb-2">
+		<label for={id} class="block text-sm font-medium text-zinc-700 mb-2">
 			{label}
 			{#if required}
 				<span class="text-red-500 ml-1">*</span>
@@ -50,7 +52,7 @@
 		<!-- Icon -->
 		{#if icon}
 			<div class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-				{@render icon({ class: `w-5 h-5 ${hasError ? 'text-red-500' : hasValue ? 'text-blue-600' : 'text-slate-400'} transition-colors duration-300` })}
+				{@render icon({ class: `w-5 h-5 ${hasError ? 'text-red-500' : hasValue ? 'text-blue-600' : 'text-zinc-400'} transition-colors duration-300` })}
 			</div>
 		{/if}
 		
@@ -68,8 +70,8 @@
 					? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20' 
 					: hasValue
 						? 'border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
-						: 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300'
-			} {disabled ? 'opacity-50 cursor-not-allowed bg-slate-50' : ''}"
+						: 'border-zinc-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-zinc-300'
+			} {disabled ? 'opacity-50 cursor-not-allowed bg-zinc-50' : ''}"
 			oninput={handleInput}
 			onfocus={handleFocus}
 			onblur={handleBlur}

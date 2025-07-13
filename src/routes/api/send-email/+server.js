@@ -64,8 +64,8 @@ export async function POST({ request }) {
         `;
 
 		const { data, error } = await resend.emails.send({
-			from: 'AleRipetizioni <aleripetizioni2024@gmail.com>',
-			to: ['aleripetizioni2024@gmail.com'],
+			from: 'AleRipetizioni <onboarding@resend.dev>',
+			to: ['longoa02@gmail.com'],
 			subject: `Nuova Richiesta Lezione da ${firstName} ${lastName}`,
 			html: emailHtml
 		});

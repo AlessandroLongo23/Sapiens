@@ -6,7 +6,7 @@
 
 <div class="mb-8 mx-8">
 	<div class="relative">
-		<div class="absolute top-6 left-0 right-0 h-0.5 bg-slate-200 rounded-full"></div>
+		<div class="absolute top-6 left-0 right-0 h-0.5 bg-zinc-200 rounded-full"></div>
 		
 		{#if currentStep > 2}
 			<div 
@@ -36,7 +36,7 @@
 									? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-lg scale-110' 
 									: step.number === currentStep 
 										? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg scale-110 ' 
-										: 'bg-white border-2 border-slate-200 text-slate-400'
+										: 'bg-white border-2 border-zinc-200 text-zinc-400'
 							}"
 						>
 							{#if step.number < currentStep}
@@ -55,12 +55,12 @@
 					
 					<div class="mt-3 text-center max-w-20">
 						<div class="text-sm font-semibold {
-							step.number <= currentStep ? 'text-slate-800' : 'text-slate-400'
+							step.number <= currentStep ? 'text-zinc-800' : 'text-zinc-400'
 						} transition-colors duration-300">
 							{step.title}
 						</div>
 						<!-- <div class="text-xs {
-							step.number <= currentStep ? 'text-slate-600' : 'text-slate-400'
+							step.number <= currentStep ? 'text-zinc-600' : 'text-zinc-400'
 						} mt-1 leading-tight transition-colors duration-300">
 							{step.description}
 						</div> -->

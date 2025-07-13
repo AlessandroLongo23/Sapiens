@@ -37,7 +37,7 @@
 	class="group relative text-left px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {
 		isSelected 
 			? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md' 
-			: 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+			: 'border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm'
 	} cursor-pointer"
 	onclick={handleToggle}
 >
@@ -46,7 +46,7 @@
 		<div class="relative w-4 h-4">
 			<!-- Checkbox -->
 			<div class="w-4 h-4 rounded border-2 transition-all duration-300 {
-				isSelected ? 'border-blue-500 bg-blue-500' : 'border-slate-300 group-hover:border-slate-400'
+				isSelected ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 group-hover:border-zinc-400'
 			}"></div>
 			
 			<!-- Checkmark -->
@@ -75,7 +75,7 @@
 			/>
 		{:else}
 			<div class="text-sm font-semibold {
-				isSelected ? 'text-blue-900' : 'text-slate-800 group-hover:text-slate-900'
+				isSelected ? 'text-blue-900' : 'text-zinc-800 group-hover:text-zinc-900'
 			} transition-colors duration-300">
 				{title}
 			</div>

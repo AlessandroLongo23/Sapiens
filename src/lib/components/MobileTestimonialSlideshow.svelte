@@ -40,10 +40,10 @@
 		<div class="mt-6 flex items-center justify-center space-x-4">
 			<button
 				onclick={prev}
-				class="rounded-full bg-slate-100 p-2 shadow-sm transition hover:bg-slate-200 focus:outline-none"
+				class="rounded-full bg-zinc-100 p-2 shadow-sm transition hover:bg-zinc-200 focus:outline-none"
 				aria-label="Previous testimonial"
 			>
-				<ls.ChevronLeft class="h-5 w-5 text-slate-700" />
+				<ls.ChevronLeft class="h-5 w-5 text-zinc-700" />
 			</button>
 
 			<div class="flex justify-center space-x-2">
@@ -52,8 +52,8 @@
 						onclick={() => currentIndex = index}
 						class="h-2 w-2 rounded-full transition-colors duration-300 {
 							index === currentIndex
-								? 'bg-slate-600 scale-125' 
-								: 'bg-slate-300'
+								? 'bg-zinc-600 scale-125' 
+								: 'bg-zinc-300'
 						}"
 						aria-label="Go to testimonial {index + 1}"
 					></button>
@@ -62,10 +62,10 @@
 
 			<button
 				onclick={next}
-				class="rounded-full bg-slate-100 p-2 shadow-sm transition hover:bg-slate-200 focus:outline-none"
+				class="rounded-full bg-zinc-100 p-2 shadow-sm transition hover:bg-zinc-200 focus:outline-none"
 				aria-label="Next testimonial"
 			>
-				<ls.ChevronRight class="h-5 w-5 text-slate-700" />
+				<ls.ChevronRight class="h-5 w-5 text-zinc-700" />
 			</button>
 		</div>
 	{/if}

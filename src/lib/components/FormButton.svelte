@@ -17,9 +17,9 @@
 	
 	const variantClasses = {
 		primary: 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg hover:shadow-xl',
-		secondary: 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200',
+		secondary: 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200',
 		outline: 'border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:border-blue-600',
-		ghost: 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+		ghost: 'text-zinc-600 hover:text-zinc-800 hover:bg-zinc-100'
 	};
 </script>
 
