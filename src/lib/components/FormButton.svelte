@@ -24,11 +24,10 @@
 </script>
 
 <button
-	class="group relative inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transform hover:-translate-y-0.5 disabled:transform-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer {sizeClasses[size]} {variantClasses[variant]} {fullWidth ? 'w-full' : ''}"
+	class="group relative inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transform hover:-translate-y-0.5 disabled:transform-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer overflow-hidden {sizeClasses[size]} {variantClasses[variant]} {fullWidth ? 'w-full' : ''}"
 	{disabled}
 	onclick={onclick}
 >
-	<!-- Loading spinner -->
 	{#if loading}
 		<div class="absolute inset-0 flex items-center justify-center">
 			<div class="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
@@ -40,8 +39,7 @@
 		{@render children()}
 	{/if}
 	
-	<!-- Shine effect for primary variant -->
 	{#if variant === 'primary' && !disabled && !loading}
 		<div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none"></div>
 	{/if}
-</button> 
+</button>
