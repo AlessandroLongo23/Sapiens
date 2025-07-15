@@ -1,6 +1,6 @@
 - [x] fix supabase authentication
-- [ ] add content structure
-- [ ] add professor dashboard
+- [x] add content structure
+- [x] add professor dashboard
   - [ ] add student account creation
   - [ ] add calendar interaction for preferences
   - [ ] move in the whole TutorTrack project

@@ -4,7 +4,7 @@
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	import ThemeProvider from '$lib/components/ThemeProvider.svelte';
+	import ThemeProvider from '$lib/components/theme/ThemeProvider.svelte';
 
 	let { data, children } = $props();
 	let { session, supabase, user } = $derived(data)

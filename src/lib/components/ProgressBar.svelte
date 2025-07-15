@@ -4,7 +4,7 @@
 	let { currentStep = 1, totalSteps = 4 } = $props();
 </script>
 
-<div class="mb-8 mx-8">
+<div class="mx-8">
 	<div class="relative">
 		<div class="absolute top-6 left-0 right-0 h-0.5 bg-zinc-200 rounded-full"></div>
 		

@@ -25,12 +25,13 @@
 	"dependencies": {
 		"@supabase/ssr": "^0.6.1",
 		"@supabase/supabase-js": "^2.50.3",
-		"lucide-svelte": "^0.522.0",
-		"resend": "^4.6.0",
 		"chart.js": "^4.4.9",
+		"date-fns": "^4.1.0",
+		"lucide-svelte": "^0.522.0",
 		"markdown-it": "^14.1.0",
 		"markdown-it-anchor": "^9.2.0",
 		"p5": "^1.11.3",
+		"resend": "^4.6.0",
 		"svelte-katex": "^0.1.2"
 	}
 }

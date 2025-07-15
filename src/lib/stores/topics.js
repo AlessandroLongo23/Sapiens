@@ -1,4 +1,4 @@
-import { fetchTopics } from '$lib/utils/topics.svelte.js';
+import { fetchTopics } from '$lib/stores/topics.svelte.js';
 import { supabase } from '$lib/supabase';
 import { writable } from 'svelte/store';
 

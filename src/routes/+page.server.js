@@ -32,7 +32,9 @@ export const actions = {
             }
         }
 
-        throw redirect(303, '/private/calendario');
+        const { data: student } = await supabase.from('students').select('role').eq('id', user.id).single();
+        const redirectPath = student?.role === 'admin' ? '/admin/dashboard' : '/student/materiale';
+        throw redirect(303, redirectPath);
     },
 
     logout: async ({ locals: { supabase } }) => {

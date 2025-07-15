@@ -38,7 +38,7 @@ const handleSupabase = async ({ event, resolve }) => {
 }
 
 const handleAuth = async ({ event, resolve }) => {
-	if (!event.locals.session && event.url.pathname.startsWith('/private')) {
+	if (!event.locals.session && event.url.pathname.startsWith('/student') || event.url.pathname.startsWith('/admin')) {
 		throw redirect(303, '/')
 	}
 

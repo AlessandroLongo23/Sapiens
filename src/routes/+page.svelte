@@ -3,14 +3,12 @@
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
 
-	import TestimonialCard from '$lib/components/TestimonialCard.svelte';
 	import ScrollingTestimonials from '$lib/components/ScrollingTestimonials.svelte';
 	import MobileTestimonialSlideshow from '$lib/components/MobileTestimonialSlideshow.svelte';
 	import ImageSlideshow from '$lib/components/ImageSlideshow.svelte';
-	import StatsCard from '$lib/components/StatsCard.svelte';
-	import Modal from '$lib/components/Modal.svelte';
-	import BookingModal from '$lib/components/BookingModal.svelte';
-	import Auth from '$lib/components/Auth.svelte';
+	import StatsCard from '$lib/components/cards/StatsCard.svelte';
+	import BookingModal from '$lib/components/modals/BookingModal.svelte';
+	import AuthModal from '$lib/components/modals/AuthModal.svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	
@@ -87,10 +85,9 @@
 	/>
 </svelte:head>
 
-<BookingModal bind:isOpen={isContactModalOpen} />
-<Modal bind:isOpen={isAuthModalOpen} title="Accedi al tuo account">
-	<Auth {supabase} />
-</Modal>
+<BookingModal bind:isOpen={isContactModalOpen} onClose={() => isContactModalOpen = false} />
+
+<AuthModal bind:isOpen={isAuthModalOpen} onClose={() => isAuthModalOpen = false} />
 
 {#if error}
 	<div class="fixed top-4 left-4 right-4 z-50 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -98,25 +95,25 @@
 	</div>
 {/if}
 
-<div class="fixed top-8 right-8 z-20">
+<div class="fixed z-20 top-4 right-4 sm:top-8 sm:right-8">
 	{#if session}
 		<button
-			onclick={() => goto('/private/calendario')}
-			class="btn-secondary text-zinc-700 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
+			onclick={() => goto('/student/calendario')}
+			class="btn-secondary text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
 		>
 			<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-				<span>Dashboard</span>
-				<ls.Home class="w-4 h-4 sm:w-5 sm:h-5" />
+				<span class="hidden sm:block">Dashboard</span>
+				<ls.Home class="size-5" />
 			</span>
 		</button>
 	{:else}
 		<button
 			onclick={openAuthModal}
-			class="btn-secondary text-zinc-700 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
+			class="btn-secondary text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
 		>
 			<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-				<span>Login Studente</span>
-				<ls.LogIn class="w-4 h-4 sm:w-5 sm:h-5" />
+				<span class="hidden sm:block">Login Studente</span>
+				<ls.LogIn class="size-5" />
 			</span>
 		</button>
 	{/if}

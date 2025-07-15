@@ -1,5 +1,5 @@
 <script>
-	import TestimonialCard from './TestimonialCard.svelte';
+	import TestimonialCard from '$lib/components/cards/TestimonialCard.svelte';
 	import * as ls from 'lucide-svelte';
 
 	let { 

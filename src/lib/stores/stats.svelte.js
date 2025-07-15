@@ -1,0 +1,171 @@
+import { lecturesStore } from '$lib/stores/lectures.svelte.js';
+import { subjectsStore } from '$lib/stores/subjects.svelte.js';
+import { studentsStore } from '$lib/stores/students.js';
+import { format, parseISO, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns';
+
+// Stats store for earnings and analytics
+class StatsStore {
+	// Filter state
+	filterType = $state('all'); // 'all', 'student', or 'subject'
+	filterId = $state(null);
+	timeRange = $state(6); // Number of months to show in earnings graph
+	
+	// Compute earnings by month
+	earningsByMonth = $derived.by(() => {
+		if (!lecturesStore.lectures.length) return [];
+		
+		const today = new Date();
+		const startDate = startOfMonth(subMonths(today, this.timeRange - 1));
+		const endDate = endOfMonth(today);
+		
+		// Create array of months in the range
+		const months = eachMonthOfInterval({ start: startDate, end: endDate });
+		
+		// Initialize earnings data
+		const earningsData = months.map(month => ({
+			month: format(month, 'MMM yyyy'),
+			earnings: 0,
+			date: month
+		}));
+		
+		// Calculate earnings for each month based on lectures
+		lecturesStore.lectures.forEach(lecture => {
+			// Apply filters
+			if (this.filterType === 'student' && lecture.student_id !== this.filterId) return;
+			if (this.filterType === 'subject' && lecture.subject_id !== this.filterId) return;
+			
+			const lectureDate = parseISO(lecture.date);
+			if (lectureDate >= startDate && lectureDate <= endDate) {
+				// Calculate lecture duration in hours
+				const startTime = lecture.start_time.split(':');
+				const endTime = lecture.end_time.split(':');
+				const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
+				const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
+				const hours = endHour - startHour;
+				
+				// Calculate earnings (assuming hourly rate is stored in lecture)
+				const earnings = hours * (lecture.hourly_rate || 0);
+				
+				// Add to the appropriate month
+				const monthIndex = months.findIndex(month => 
+					month.getMonth() === lectureDate.getMonth() && 
+					month.getFullYear() === lectureDate.getFullYear()
+				);
+				
+				if (monthIndex !== -1) {
+					earningsData[monthIndex].earnings += earnings;
+				}
+			}
+		});
+		
+		return earningsData;
+	});
+
+	hoursByMonth = $derived.by(() => {
+		if (!lecturesStore.lectures.length) return [];
+		
+		const today = new Date();
+		const startDate = startOfMonth(subMonths(today, this.timeRange - 1));
+		const endDate = endOfMonth(today);
+
+		const months = eachMonthOfInterval({ start: startDate, end: endDate });
+		
+		const hoursData = months.map(month => ({
+			month: format(month, 'MMM yyyy'),
+			hours: 0,
+			date: month
+		}));
+		
+		lecturesStore.lectures.forEach(lecture => {
+			const lectureDate = parseISO(lecture.date);
+			if (lectureDate >= startDate && lectureDate <= endDate) {
+				const startTime = lecture.start_time.split(':');
+				const endTime = lecture.end_time.split(':');
+				const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
+				const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
+				const hours = endHour - startHour;
+				
+				const monthIndex = months.findIndex(month => 
+					month.getMonth() === lectureDate.getMonth() && 
+					month.getFullYear() === lectureDate.getFullYear()
+				);
+				
+				if (monthIndex !== -1) {
+					hoursData[monthIndex].hours += hours;
+				}
+			}
+		});	
+
+		return hoursData;
+	});
+
+	// Compute top earnings by subject/student
+	topEarnings = $derived.by(() => {
+		if (!lecturesStore.lectures.length) return { bySubject: [], byStudent: [] };
+		
+		const bySubject = {};
+		const byStudent = {};
+		
+		lecturesStore.lectures.forEach(lecture => {
+			// Calculate lecture duration in hours
+			const startTime = lecture.start_time.split(':');
+			const endTime = lecture.end_time.split(':');
+			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
+			const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
+			const hours = endHour - startHour;
+			
+			// Calculate earnings (assuming hourly rate is stored in lecture)
+			const earnings = hours * (lecture.hourly_rate || 0);
+			
+			// Add to subjects totals
+			if (!bySubject[lecture.subject_id]) {
+				const subject = subjectsStore.subjects.find(s => s.id === lecture.subject_id);
+				bySubject[lecture.subject_id] = {
+					id: lecture.subject_id,
+					name: subject ? subject.name : 'Unknown Subject',
+					totalEarnings: 0,
+					hours: 0
+				};
+			}
+			bySubject[lecture.subject_id].totalEarnings += earnings;
+			bySubject[lecture.subject_id].hours += hours;
+			
+			// Add to students totals
+			if (!byStudent[lecture.student_id]) {
+				const student = studentsStore.students.find(s => s.id === lecture.student_id);
+				byStudent[lecture.student_id] = {
+					id: lecture.student_id,
+					name: student ? `${student.name} ${student.last_name}` : 'Unknown Student',
+					totalEarnings: 0,
+					hours: 0
+				};
+			}
+			byStudent[lecture.student_id].totalEarnings += earnings;
+			byStudent[lecture.student_id].hours += hours;
+		});
+		
+		// Convert to arrays and sort by earnings
+		const subjectArray = Object.values(bySubject)
+			.sort((a, b) => b.totalEarnings - a.totalEarnings)
+			.slice(0, 5); // Top 5
+			
+		const studentArray = Object.values(byStudent)
+			.sort((a, b) => b.totalEarnings - a.totalEarnings)
+			.slice(0, 5); // Top 5
+		
+		return { bySubject: subjectArray, byStudent: studentArray };
+	});
+	
+	// Set filter type and ID
+	setFilter(type, id = null) {
+		this.filterType = type;
+		this.filterId = id;
+	}
+	
+	// Set time range for the earnings graph
+	setTimeRange(months) {
+		this.timeRange = months;
+	}
+}
+
+export const statsStore = new StatsStore(); 
