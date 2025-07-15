@@ -1,5 +1,5 @@
 <script>
-    import { Search, X } from 'lucide-svelte';
+    import * as ls from 'lucide-svelte';
     import { searchStore } from '$lib/components/ui/search.js';
     
     let inputRef;
@@ -33,7 +33,7 @@
 
 <div class="relative flex items-center {classes}">
     <div class="absolute left-2 text-zinc-400">
-        <Search class="size-5" />
+        <ls.Search class="size-5" />
     </div>
     
     <input
@@ -59,7 +59,7 @@
             onclick={() => searchStore.clear()}
             aria-label="Clear search"
         >
-            <X size={14} />
+            <ls.X size={14} />
         </button>
     {:else}
         <div

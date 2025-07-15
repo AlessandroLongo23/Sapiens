@@ -1,11 +1,11 @@
 <script>
-    import { studentsStore } from '$lib/stores/students.js';
+    import { studentsStore } from '$lib/stores/students/students.js';
     import { searchStore } from '$lib/components/ui/search.js';
     import * as ls from 'lucide-svelte';
     
     import NewStudent from '$lib/components/buttons/NewStudent.svelte';
-    import StudentsTable from '$lib/components/dedicated/StudentsTable.svelte';
-    import StudentsGrid from '$lib/components/dedicated/StudentsGrid.svelte';
+    import StudentsTable from '$lib/components/students/StudentsTable.svelte';
+    import StudentsGrid from '$lib/components/students/StudentsGrid.svelte';
     import Searchbar from '$lib/components/ui/Searchbar.svelte';
     import ToggleButton from '$lib/components/ui/ToggleButton.svelte';
     

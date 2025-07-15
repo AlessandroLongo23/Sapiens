@@ -1,5 +1,5 @@
 <script>
-    import { X, Plus, Check } from 'lucide-svelte';
+    import * as ls from 'lucide-svelte';
     import Modal from '$lib/components/modals/Modal.svelte';
 
     let { 
@@ -18,7 +18,7 @@
         <div class="flex flex-row items-center justify-between p-6 border-b border-zinc-500/25">
             <div class="flex flex-row items-center gap-3 truncate">
                 <div class="flex flex-shrink-0 items-center justify-center size-10 rounded-lg bg-emerald-500/10">
-                    <Plus class="size-5 text-emerald-500"/>
+                    <ls.Plus class="size-5 text-emerald-500"/>
                 </div>
                 <div class="flex flex-col truncate">
                     <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
@@ -29,7 +29,7 @@
                 class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors rounded-full p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
                 onclick={onClose}
             >
-                <X class="size-5"/>
+                <ls.X class="size-5"/>
             </button>
         </div>
 
@@ -43,7 +43,7 @@
                 class="flex flex-row items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors text-zinc-900 dark:text-zinc-100"
                 onclick={onClose}
             >
-                <X class="size-4"/>
+                <ls.X class="size-4"/>
                 Annulla
             </button>
             <button 
@@ -51,7 +51,7 @@
                 class="flex flex-row items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
                 onclick={onSubmit}
             >
-                <Check class="size-4"/>
+                <ls.Check class="size-4"/>
                 Aggiungi
             </button>
         </div>

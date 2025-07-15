@@ -1,8 +1,8 @@
 <script>
 	import { calendarView, getMonthDays, weekDays, nextMonth, prevMonth, formatDateString } from '$lib/utils/date.svelte.js';
-	import { ChevronLeft, ChevronRight } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { onMount } from 'svelte';
+	import * as ls from 'lucide-svelte';
 	
 	import CalendarDay from '$lib/components/calendars/CalendarDay.svelte';
 	
@@ -35,14 +35,14 @@
 				class="p-2 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
 				aria-label="Previous month"
 			>
-				<ChevronLeft size={20} />
+				<ls.ChevronLeft size={20} />
 			</button>
 			<button 
 				onclick={nextMonth} 
 				class="p-2 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
 				aria-label="Next month"
 			>
-				<ChevronRight size={20} />
+				<ls.ChevronRight size={20} />
 			</button>
 		</div>
 	</div>

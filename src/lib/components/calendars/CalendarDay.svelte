@@ -1,9 +1,11 @@
 <script>
 	import { calendarView, isSelectedDate } from '$lib/utils/date.svelte.js';
-	import { Calendar, Clock, BookOpen, User } from 'lucide-svelte';
-	import { lecturesStore } from '$lib/stores/lectures.svelte.js';
+	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+	import { studentsStore } from '$lib/stores/students/students.js';
+	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { isToday, format, isSameDay } from 'date-fns';
 	import { createEventDispatcher } from 'svelte';
+	import * as ls from 'lucide-svelte';
 
 	let { day, isCurrentMonth = true } = $props();
 	
@@ -13,17 +15,22 @@
 	let mouseOverTooltip = $state(false);
 
 	let hasLectures = $derived.by(() => {
-		return lecturesStore.lectures.some(lecture => isSameDay(new Date(lecture.date), new Date(day)));
+		return $lecturesStore.lectures.some(lecture => isSameDay(new Date(lecture.date), new Date(day)));
 	});
 	
 	let lectureCount = $derived.by(() => {
-		return lecturesStore.lectures.filter(lecture => isSameDay(new Date(lecture.date), new Date(day))).length;
+		return $lecturesStore.lectures.filter(lecture => isSameDay(new Date(lecture.date), new Date(day))).length;
 	});
 
 	let dayLectures = $derived.by(() => {
-		return lecturesStore.lectures
+		return $lecturesStore.lectures
 			.filter(lecture => isSameDay(new Date(lecture.date), new Date(day)))
-			.sort((a, b) => a.start_time.localeCompare(b.start_time));
+			.sort((a, b) => a.start_time.localeCompare(b.start_time))
+			.map(lecture => ({
+				...lecture,
+				student: $studentsStore.students.find(student => student.id === lecture.student_id),
+				subject: $subjectsStore.subjects.find(subject => subject.id === lecture.subject_id)
+			}));
 	});
 
 	let isDayToday = $derived(isToday(day));
@@ -102,7 +109,7 @@
 			onmouseleave={() => { mouseOverTooltip = false; showTooltip = false; }}
 		>
 			<div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 p-3 flex flex-row gap-2 items-center">
-				<Calendar size={12} />
+				<ls.Calendar size={12} />
 				{format(day, 'EEEE, MMMM d')}
 			</div>
 
@@ -115,24 +122,18 @@
 					>
 						<div class="flex justify-between">
 							<span class="font-medium text-zinc-900 dark:text-zinc-100 flex flex-row gap-2 items-center">
-								<Clock size={12} />
+								<ls.Clock size={12} />
 								{lecture.start_time} - {lecture.end_time}
 							</span>
 						</div>
 						<div class="text-zinc-600 dark:text-zinc-300 flex flex-row gap-2 items-center">
-							<User size={12} />
-							{#if lecture.student}
-								{lecture.student.name} {lecture.student.last_name}
-							{:else}
-								Unknown Student
-							{/if}
+							<ls.User size={12} />
+							{lecture.student.first_name} {lecture.student.last_name}
 						</div>
-						{#if lecture.subject}
-							<div class="text-zinc-500 dark:text-zinc-400 truncate flex flex-row gap-2 items-center">
-								<BookOpen size={12} />
-								{lecture.subject.name}
-							</div>
-						{/if}
+						<div class="text-zinc-500 dark:text-zinc-400 truncate flex flex-row gap-2 items-center">
+							<ls.BookOpen size={12} />
+							{lecture.subject.name}
+						</div>
 					</button>
 				{/each}
 			</div>

@@ -1,13 +1,13 @@
 <script>
-	import { lecturesStore } from '$lib/stores/lectures.svelte.js';
-	import { studentsStore } from '$lib/stores/students.js';
-	import { subjectsStore } from '$lib/stores/subjects.svelte.js';
 	import { formatCurrency, formatDateDisplay, calculateEarnings } from '$lib/utils/format.svelte.js';
-	import { Users, BookOpen, Clock, CreditCard } from 'lucide-svelte';
+	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { studentsStore } from '$lib/stores/students/students.js';
+	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { isSameDay } from 'date-fns';
+	import * as ls from 'lucide-svelte';
 
 	let totalTime = $derived.by(() => {
-		let total = lecturesStore.lectures.reduce((total, lecture) => {
+		let total = $lecturesStore.lectures.reduce((total, lecture) => {
 			const startTime = lecture.start_time.split(':');
 			const endTime = lecture.end_time.split(':');
 			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
@@ -24,19 +24,19 @@
 	});
 
 	let totalEarnings = $derived.by(() => {
-		return lecturesStore.lectures.reduce((total, lecture) => {
+		return $lecturesStore.lectures.reduce((total, lecture) => {
 			return total + calculateEarnings(lecture.start_time, lecture.end_time, lecture.hourly_rate);
 		}, 0);
 	});
 	
 	let averageRate = $derived.by(() => {
-		if (lecturesStore.lectures.length === 0) return 0;
+		if ($lecturesStore.lectures.length === 0) return 0;
 		
-		const totalRates = lecturesStore.lectures.reduce((sum, lecture) => {
+		const totalRates = $lecturesStore.lectures.reduce((sum, lecture) => {
 			return sum + (lecture.hourly_rate || 0);
 		}, 0);
 		
-		return totalRates / lecturesStore.lectures.length;
+		return totalRates / $lecturesStore.lectures.length;
 	});
 	
 	let nextLecture = $derived.by(() => {
@@ -44,7 +44,7 @@
 		const today = now.toISOString().split('T')[0];
 		const currentTime = `${now.getHours()}:${now.getMinutes()}`;
 		
-		return lecturesStore.lectures
+		return $lecturesStore.lectures
 			.filter(lecture => {
 				let lecture_start_hour = lecture.start_time.split(':')[0];
 				let lecture_start_minute = lecture.start_time.split(':')[1];
@@ -69,7 +69,7 @@
 <div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
 		<div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
-			<Users size={24} class="text-blue-600 dark:text-blue-300" />
+			<ls.Users size={24} class="text-blue-600 dark:text-blue-300" />
 		</div>
 		<div>
 			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Students</p>
@@ -79,17 +79,17 @@
 	
 	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
 		<div class="bg-green-100 dark:bg-green-900 p-3 rounded-full mr-4">
-			<BookOpen size={24} class="text-green-600 dark:text-green-300" />
+			<ls.BookOpen size={24} class="text-green-600 dark:text-green-300" />
 		</div>
 		<div>
 			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Subjects</p>
-			<p class="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{subjectsStore.subjects.length}</p>
+			<p class="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{$subjectsStore.subjects.length}</p>
 		</div>
 	</div>
 	
 	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
 		<div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-full mr-4">
-			<Clock size={24} class="text-purple-600 dark:text-purple-300" />
+			<ls.Clock size={24} class="text-purple-600 dark:text-purple-300" />
 		</div>
 		<div>
 			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Hours Taught</p>
@@ -99,7 +99,7 @@
 	
 	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
 		<div class="bg-amber-100 dark:bg-amber-900 p-3 rounded-full mr-4">
-			<CreditCard size={24} class="text-amber-600 dark:text-amber-300" />
+			<ls.CreditCard size={24} class="text-amber-600 dark:text-amber-300" />
 		</div>
 		<div>
 			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Earnings</p>

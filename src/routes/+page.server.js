@@ -33,7 +33,7 @@ export const actions = {
         }
 
         const { data: student } = await supabase.from('students').select('role').eq('id', user.id).single();
-        const redirectPath = student?.role === 'admin' ? '/admin/dashboard' : '/student/materiale';
+        const redirectPath = student?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
         throw redirect(303, redirectPath);
     },
 

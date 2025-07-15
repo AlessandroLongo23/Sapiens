@@ -1,14 +1,14 @@
 <script>
-	import { ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Equal } from 'lucide-svelte';
-	import { studentsStore } from '$lib/stores/students.js';
-	import { subjectsStore } from '$lib/stores/subjects.svelte.js';
-	import { lecturesStore } from '$lib/stores/lectures.svelte.js';
+	import { studentsStore } from '$lib/stores/students/students.js';
+	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { widgetStyle } from '$lib/stores/appearance.js';
 	import { format, parseISO } from 'date-fns';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
+	import * as ls from 'lucide-svelte';
 
 	import ChartTooltip from '$lib/components/ChartTooltip.svelte';
 
@@ -44,17 +44,17 @@
 		}
 		
 		if (statsStore.filterType === 'subject' && !statsStore.filterId) {
-			const months = statsStore.earningsByMonth.map(item => item.month);
+			const months = statsStore.earningsByMonth?.map(item => item.month) || [];
 			
 			// Get all unique subject IDs and names from lectures
 			const subjectMap = {};
-			subjectsStore.subjects.forEach(subject => {
+			$subjectsStore.subjects.forEach(subject => {
 				subjectMap[subject.id] = subject.name;
 			});
 			
 			// Calculate earnings by subject for each month
 			const subjectDataByMonth = {};
-			lecturesStore.lectures.forEach(lecture => {
+			$lecturesStore.lectures.forEach(lecture => {
 				const lectureDate = parseISO(lecture.date);
 				const monthStr = format(lectureDate, 'MMM yyyy');
 				
@@ -178,8 +178,8 @@
 			});
 		} else {
 			// Default line chart for other views
-			const monthlyData = statsStore.earningsByMonth;
-			const avgEarnings = monthlyData.reduce((sum, item) => sum + item.earnings, 0) / monthlyData.length;
+			const monthlyData = statsStore.earningsByMonth || [];
+			const avgEarnings = monthlyData.length > 0 ? monthlyData.reduce((sum, item) => sum + item.earnings, 0) / monthlyData.length : 0;
 			
 			const data = {
 				labels: monthlyData.map(item => item.month),
@@ -228,14 +228,14 @@
 							}
 							
 							const dataIndex = t.dataPoints[0].dataIndex;
-							const currentEarnings = statsStore.earningsByMonth[dataIndex].earnings;
-							const previousEarnings = dataIndex > 0 ? statsStore.earningsByMonth[dataIndex - 1].earnings : currentEarnings;
+							const currentEarnings = statsStore.earningsByMonth?.[dataIndex]?.earnings || 0;
+							const previousEarnings = dataIndex > 0 ? (statsStore.earningsByMonth?.[dataIndex - 1]?.earnings || 0) : currentEarnings;
 							const change = currentEarnings - previousEarnings;
 							
 							const rect = canvas.getBoundingClientRect();
 
 							tooltipData = {
-								title: statsStore.earningsByMonth[dataIndex].month,
+								title: statsStore.earningsByMonth?.[dataIndex]?.month || '',
 								value: currentEarnings,
 								change: change,
 								details: [],
@@ -290,14 +290,17 @@
 	}
 	
 	let totalEarnings = $derived.by(() => {
+		if (!statsStore.earningsByMonth?.length) return 0;
 		return statsStore.earningsByMonth.reduce((sum, item) => sum + item.earnings, 0);
 	});
 
 	let totalHours = $derived.by(() => {
+		if (!statsStore.hoursByMonth?.length) return 0;
 		return statsStore.hoursByMonth.reduce((sum, item) => sum + item.hours, 0);
 	});
 
 	let averageMonthlyEarnings = $derived.by(() => {
+		if (!statsStore.earningsByMonth?.length) return 0;
 		return statsStore.earningsByMonth.reduce((sum, item) => sum + item.earnings, 0) / statsStore.earningsByMonth.length;
 	});
 
@@ -349,7 +352,7 @@
             
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-2">
-                    <Equal class="w-3 h-3 text-zinc-950 dark:text-zinc-50"/>
+                    <ls.Equal class="w-3 h-3 text-zinc-950 dark:text-zinc-50"/>
                     <span class="text-xs text-zinc-950 dark:text-zinc-50">Balance</span>
                 </div>
                 
@@ -361,10 +364,10 @@
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-2">
                     {#if tooltipData.change >= 0}
-                        <ArrowUp class="w-3 h-3 text-green-500"/>
+                        	<ls.ArrowUp class="w-3 h-3 text-green-500"/>
                         <span class="text-xs text-zinc-950 dark:text-zinc-50">Increase</span>
                     {:else}
-                        <ArrowDown class="w-3 h-3 text-red-500"/>
+                        <ls.ArrowDown class="w-3 h-3 text-red-500"/>
                         <span class="text-xs text-zinc-950 dark:text-zinc-50">Decrease</span>
                     {/if}
                 </div>

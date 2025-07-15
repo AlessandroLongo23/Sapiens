@@ -8,12 +8,13 @@
         labels = [],
         icons = [],
         value = $bindable(),
-        style = 'flat'
+        style = 'flat',
+        classes = ''
     } = $props();
 
     const dispatch = createEventDispatcher();
-    let toggleRef;
-    let optionRefs = [];
+    let toggleRef = $state(null);
+    let optionRefs = $state([]);
     let mounted = $state(false);
 
     $effect(() => {

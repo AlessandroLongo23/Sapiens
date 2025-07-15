@@ -34,7 +34,7 @@
 			if (error) throw error;
 
 			isNavigating = true;
-			const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/dashboard' : '/student/materiale';
+			const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
 			await goto(redirectPath);
 		} catch (err) {
 			error = err.message;

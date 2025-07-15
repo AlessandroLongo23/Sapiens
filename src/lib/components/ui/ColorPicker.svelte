@@ -7,7 +7,9 @@
 
     let isOpen = $state(false);
 
-    const togglePicker = () => {
+    const togglePicker = (e) => {
+        e.stopPropagation();
+
         isOpen = !isOpen;
     }
 
@@ -19,8 +21,9 @@
 
 <div class="relative flex flex-col items-center gap-2">
     <button 
+        type="button"
         aria-label="colorpicker"
-        onclick={togglePicker}
+        onclick={(e) => togglePicker(e)}
         class="text-sm size-8 rounded-lg cursor-pointer"
         style="background-color: {selectedColor}"
     ></button>
@@ -33,6 +36,7 @@
             <div class="grid grid-cols-6 gap-2 w-60">
                 {#each colors as color, i}
                     <button
+                        type="button"
                         onclick={() => selectColor(color.hex)}
                         class="group relative size-8 rounded-lg cursor-pointer hover:scale-110 transition-transform"
                         style="background-color: {color.hex}"

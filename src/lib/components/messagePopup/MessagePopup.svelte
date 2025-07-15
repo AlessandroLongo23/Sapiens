@@ -1,6 +1,6 @@
 <script>
     import { fly } from 'svelte/transition';
-    import { CheckCircle, Info, AlertTriangle } from 'lucide-svelte';
+    import * as ls from 'lucide-svelte';
 
     let { 
         message = '',
@@ -23,9 +23,9 @@
     };
 
     let Icon = $derived(
-        type === 'info' ? Info :
-        type === 'success' ? CheckCircle :
-        AlertTriangle
+        type === 'info' ? ls.Info :
+        type === 'success' ? ls.CheckCircle :
+        ls.AlertTriangle
     );
 </script>
 

@@ -1,11 +1,10 @@
 <script>
-	import { ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Equal } from 'lucide-svelte';
-	import { studentsStore } from '$lib/stores/students.js';
-	import { subjectsStore } from '$lib/stores/subjects.svelte.js';
-	import { lecturesStore } from '$lib/stores/lectures.svelte.js';
+	import { studentsStore } from '$lib/stores/students/students.js';
+	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { widgetStyle } from '$lib/stores/appearance.js';
+	import * as ls from 'lucide-svelte';
 
 	import EarningsGraph from '$lib/components/graphs/EarningsGraph.svelte';
 
@@ -31,13 +30,14 @@
 	}
 	
 	let totalEarnings = $derived.by(() => {
+		if (!statsStore.earningsByMonth?.length) return 0;
 		return statsStore.earningsByMonth.reduce((sum, item) => sum + item.earnings, 0);
 	});
 </script>
 
 <div class="flex flex-col h-full transition-all duration-500 ease-in-out {widgetStyle}">
 	<div class="p-4 border-b border-zinc-200 dark:border-zinc-800">
-		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Earnings Over Time</h2>
+		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Guadagni nel tempo</h2>
 		
 		<div class="mt-2 flex flex-wrap items-center justify-between gap-2">
 			<div class="flex flex-wrap items-center gap-2">
@@ -62,7 +62,7 @@
 						onchange={() => handleFilterChange('student', statsStore.filterId)}
 					>
 						<option value={null}>All Students</option>
-						{#each studentsStore.students as student}
+						{#each $studentsStore.students as student}
 							<option value={student.id}>{student.name} {student.last_name}</option>
 						{/each}
 					</select>
@@ -73,7 +73,7 @@
 						onchange={() => handleFilterChange('subject', statsStore.filterId)}
 					>
 						<option value={null}>All Subjects</option>
-						{#each subjectsStore.subjects as subject}
+						{#each $subjectsStore.subjects as subject}
 							<option value={subject.id}>{subject.name}</option>
 						{/each}
 					</select>

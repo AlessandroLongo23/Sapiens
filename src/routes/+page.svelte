@@ -75,6 +75,11 @@
 			element.scrollIntoView({ behavior: 'smooth' });
 		}
 	}
+
+	const accessPrivateRoute = async () => {
+		const redirectPath = session?.user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+		await goto(redirectPath);
+	}
 </script>
 
 <svelte:head>
@@ -98,7 +103,7 @@
 <div class="fixed z-20 top-4 right-4 sm:top-8 sm:right-8">
 	{#if session}
 		<button
-			onclick={() => goto('/student/calendario')}
+			onclick={accessPrivateRoute}
 			class="btn-secondary text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
 		>
 			<span class="flex items-center justify-center space-x-2 sm:space-x-3">

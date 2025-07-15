@@ -1,12 +1,18 @@
 <script>
-	import { lecturesStore } from '$lib/stores/lectures.svelte.js';
-	import { subjectsStore } from '$lib/stores/subjects.svelte.js';
-	import { Plus, Pencil, Trash, X } from 'lucide-svelte';
+	import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
+	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { subjectOptionsByLevel } from '$lib/data.js';
+	import * as ls from 'lucide-svelte';
 
 	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
-	import Modal from '$lib/components/modals/Modal.svelte';
-	
-	let isOpen = $state(false);
+	import AddModal from '$lib/components/modals/AddModal.svelte';
+	import EditModal from '$lib/components/modals/EditModal.svelte';
+	import Searchbar from '$lib/components/ui/Searchbar.svelte';
+	import NewSubject from '$lib/components/buttons/NewSubject.svelte';
+
+	let isAddSubjectOpen = $state(false);
+	let isEditSubjectOpen = $state(false);
 	let editingSubject = $state(null);
 	let formData = $state({
 		id: null,
@@ -17,6 +23,9 @@
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	
+    let sortColumn = $state('name');
+    let sortDirection = $state('asc');
+
 	function addSubject() {
 		editingSubject = null;
 		formData = {
@@ -24,22 +33,35 @@
 			name: '',
 			hex_color: '#3b82f6' // Default blue color
 		};
-		isOpen = true;
+		isAddSubjectOpen = true;
 	}
 	
 	function editSubject(subject) {
 		editingSubject = subject;
 		formData = { ...subject };
-		isOpen = true;
+		isEditSubjectOpen = true;
 	}
 	
 	function handleColorSelect(hex_color) {
 		formData.hex_color = hex_color;
 	}
 	
-	function toggleModal() {
-		isOpen = !isOpen;
+	function closeAddSubjectModal() {
+		isAddSubjectOpen = false;
 	}
+	
+	function closeEditSubjectModal() {
+		isEditSubjectOpen = false;
+	}
+
+    function handleSort(column) {
+        if (sortColumn === column) {
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortColumn = column;
+            sortDirection = 'asc';
+        }
+    }
 	
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -49,22 +71,15 @@
 		try {
 			if (editingSubject) {
 				const { id, ...updates } = formData;
-				const result = await subjectsStore.updateSubject(id, updates);
-				if (result) {
-					isOpen = false;
-				} else {
-					errorMessage = 'Failed to update subject';
-				}
+				await subjectsStore.updateSubject(id, updates);
+                isEditSubjectOpen = false;
 			} else {
-				// Add new subject
 				const { id, ...newSubject } = formData;
-				const result = await subjectsStore.addSubject(newSubject);
-				if (result) {
-					isOpen = false;
-				} else {
-					errorMessage = 'Failed to add subject';
-				}
+				await subjectsStore.addSubject(newSubject);
+                isAddSubjectOpen = false;
 			}
+
+			messagePopup.success('Materia aggiornata con successo!');
 		} catch (error) {
 			errorMessage = error.message || 'An unknown error occurred';
 		} finally {
@@ -76,87 +91,126 @@
 		if (!confirm('Are you sure you want to delete this subject?')) return;
 		
 		try {
-			const result = await subjectsStore.deleteSubject(id);
-			if (!result) {
-				alert('Failed to delete subject');
-			}
+			await subjectsStore.deleteSubject(id);
 		} catch (error) {
 			alert(error.message || 'An unknown error occurred');
 		}
 	}
+
+    let sortedSubjects = $derived.by(() => {
+        if (!$subjectsStore.subjects) return [];
+
+        return [...$subjectsStore.subjects].sort((a, b) => {
+            let aValue, bValue;
+
+            if (sortColumn === 'lectures_count') {
+                aValue = $lecturesStore.lectures.filter(lecture => lecture.subject_id === a.id).length;
+                bValue = $lecturesStore.lectures.filter(lecture => lecture.subject_id === b.id).length;
+            } else {
+                aValue = a[sortColumn] || '';
+                bValue = b[sortColumn] || '';
+            }
+
+            if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+            if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+
+            if (sortDirection === 'asc') {
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+            } else {
+                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+            }
+        });
+    });
+
+	let search = $state('');
+
+    const columns = [
+        { label: 'Nome', key: 'name', sortable: true },
+        { label: 'Lezioni', key: 'lectures_count', sortable: true },
+		{ label: 'Livello', key: 'level', sortable: true }
+    ];
 </script>
 
 <div>
 	<div class="flex justify-between items-center mb-6">
-		<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Subjects</h1>
+		<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Materie</h1>
 		
-		<button 
-			class="px-3 py-2 flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
-			onclick={addSubject}
-		>
-			<Plus size={18} />
-			Add Subject
-		</button>
+		<div class="flex flex-row items-center gap-4">
+			<Searchbar placeholder="Cerca materia" bind:value={search} classes="w-80"/>
+			<NewSubject />
+		</div>
 	</div>
 	
-	<div class="bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800 overflow-hidden">
-		<table class="w-full">
-			<thead>
-				<tr class="border-b border-zinc-200 dark:border-zinc-800">
-					<th class="px-4 w-6 border-r border-zinc-200 dark:border-zinc-800 py-3 text-left text-sm font-semibold text-zinc-900 dark:text-zinc-50">#</th>
-					<th class="px-4 w-6 border-r border-zinc-200 dark:border-zinc-800 py-3 text-left text-sm font-semibold text-zinc-900 dark:text-zinc-50">Color</th>
-					<th class="px-4 py-3 text-left text-sm font-semibold text-zinc-900 dark:text-zinc-50">Subject Name</th>
-					<th class="px-4 py-3 text-left text-sm font-semibold text-zinc-900 dark:text-zinc-50"># Lectures</th>
-					<th class="px-4 py-3 text-right text-sm font-semibold text-zinc-900 dark:text-zinc-50">Actions</th>
-				</tr>
-			</thead>
+	<div class="bg-white dark:bg-zinc-900 shadow-sm rounded-lg overflow-x-auto">
+        <table class="w-full text-sm text-left text-zinc-500 dark:text-zinc-400">
+            <thead class="text-xs text-zinc-700 bg-zinc-50 dark:bg-zinc-800 dark:text-zinc-400">
+                <tr>
+                    {#each columns as column}
+                        <th scope="col" class="px-6 py-3 border-r border-zinc-200 dark:border-zinc-700">
+                            <button 
+                                class="flex items-center justify-between w-full hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+                                onclick={() => column.sortable && handleSort(column.key)}
+                            >
+                                <span class="uppercase">{column.label}</span>
+                                {#if column.sortable}
+                                    <div class="flex flex-col ml-2">
+                                        <ls.ChevronUp class="size-3 {sortColumn === column.key && sortDirection === 'asc' ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-400'}" />
+                                        <ls.ChevronDown class="size-3 -mt-1 {sortColumn === column.key && sortDirection === 'desc' ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-400'}" />
+                                    </div>
+                                {/if}
+                            </button>
+                        </th>
+                    {/each}
+                    
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Azioni</span>
+                    </th>
+                </tr>
+            </thead>
 			<tbody>
-				{#if subjectsStore.isLoading}
+				{#if $subjectsStore.isLoading}
 					<tr>
 						<td colspan="3" class="px-4 py-6 text-center text-zinc-500 dark:text-zinc-400">
 							Loading subjects...
 						</td>
 					</tr>
-				{:else if subjectsStore.subjects.length === 0}
+				{:else if sortedSubjects.length === 0}
 					<tr>
 						<td colspan="3" class="px-4 py-6 text-center text-zinc-500 dark:text-zinc-400">
 							No subjects found. Add your first subject to get started.
 						</td>
 					</tr>
 				{:else}
-					{#each subjectsStore.subjects as subject, index}
-						<tr class="border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900">
-							<td class="px-4 w-6 border-r border-zinc-200 dark:border-zinc-800 py-3 text-zinc-600 dark:text-zinc-400">
-								{index + 1}
+					{#each sortedSubjects as subject (subject.id)}
+                        {@const lecturesCount = $lecturesStore.lectures.filter(lecture => lecture.subject_id === subject.id).length}
+						<tr class="bg-white dark:bg-zinc-900 border-t border-zinc-500/25 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+							<td class="px-4 py-2 font-medium text-zinc-900 dark:text-white whitespace-nowrap border-r border-zinc-200/50 dark:border-zinc-700/50">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-3 rounded-full" style="background-color: {subject.hex_color};"></div>
+                                    {subject.name}
+                                </div>
 							</td>
-							<td class="px-4 py-3 border-r border-zinc-200 dark:border-zinc-800 text-center">
-								<div class="flex justify-center items-center">
-									<div class="size-4 rounded" style="background-color: {subject.hex_color};"></div>
-								</div>
+							<td class="px-4 py-2 text-right border-r border-zinc-200/50 dark:border-zinc-700/50">
+								{lecturesCount}
 							</td>
-							<td class="px-4 py-3 text-zinc-900 dark:text-zinc-100">
-								{subject.name}
+							<td class="px-4 py-2 text-right border-r border-zinc-200/50 dark:border-zinc-700/50">
+								<!-- {Object.values(subjectOptionsByLevel).find(option => option.value === subject.level) || 'N/A'} -->
 							</td>
-							<td class="px-4 py-3 text-zinc-600 dark:text-zinc-400">
-								{lecturesStore.lectures.filter(lecture => lecture.subject_id === subject.id).length}
-							</td>
-							<td class="px-4 py-3 text-right">
-								<div class="flex justify-end items-center space-x-2">
-									<button 
-										class="p-1 text-zinc-500 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 transition-colors"
-										onclick={() => editSubject(subject)}
-										aria-label="Edit subject"
-									>
-										<Pencil size={16} />
-									</button>
-									<button 
-										class="p-1 text-zinc-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 transition-colors"
-										onclick={() => deleteSubject(subject.id)}
-										aria-label="Delete subject"
-									>
-										<Trash size={16} />
-									</button>
-								</div>
+							<td class="flex items-center px-4 py-2 text-center justify-center gap-2">
+                                <button 
+                                    onclick={() => editSubject(subject)}
+                                    class="font-medium p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 hover:text-zinc-900 dark:text-zinc-500"
+                                    aria-label="Edit subject"
+                                >
+                                    <ls.Pencil size={16} />
+                                </button>
+                                <button 
+                                    onclick={() => deleteSubject(subject.id)}
+                                    class="font-medium p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-700 text-red-600 hover:text-red-900 dark:text-red-500"
+                                    aria-label="Delete subject"
+                                >
+                                    <ls.Trash size={16} />
+                                </button>
 							</td>
 						</tr>
 					{/each}
@@ -166,25 +220,19 @@
 	</div>
 </div>
 
-<Modal isOpen={isOpen} onClose={toggleModal}>
-	<div class="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-700">
-		<h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-			{editingSubject ? 'Edit Subject' : 'Add Subject'}
-		</h2>
-		<button 
-			class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
-			onclick={toggleModal}
-			aria-label="Close"
-		>
-			<X size={20} />
-		</button>
-	</div>
-	
+<EditModal 
+	isOpen={isEditSubjectOpen} 
+	onClose={closeEditSubjectModal}
+	onSubmit={handleSubmit}
+	title="Modifica Materia"
+	subtitle="Gestione Materie"
+	classes="max-w-xl bg-zinc-50 dark:bg-zinc-900 rounded-md"
+>
 	<form onsubmit={handleSubmit} class="p-4 space-y-4">
 		<div class="flex flex-row gap-4 justify-between items-center">
 			<div class="flex-1">
 				<label for="name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Subject Name
+					Nome Materia
 				</label>
 				<input 
 					type="text" 
@@ -197,7 +245,7 @@
 			
 			<div>
 				<label for="color" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Subject Color
+					Colore Materia
 				</label>
 				<ColorPicker 
 					selectedColor={formData.hex_color}
@@ -209,24 +257,5 @@
 		{#if errorMessage}
 			<div class="text-red-500 text-sm">{errorMessage}</div>
 		{/if}
-		
-		<div class="flex justify-end pt-2 space-x-2">
-			<button
-				type="button"
-				class="px-4 py-2 bg-zinc-200 text-zinc-900 rounded hover:bg-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600"
-				onclick={toggleModal}
-				disabled={isSubmitting}
-			>
-				Cancel
-			</button>
-			
-			<button
-				type="submit"
-				class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-				disabled={isSubmitting}
-			>
-				{editingSubject ? 'Update' : 'Add'} Subject
-			</button>
-		</div>
 	</form>
-</Modal> 
+</EditModal> 

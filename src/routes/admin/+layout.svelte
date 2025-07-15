@@ -12,9 +12,9 @@
 	let { children, data } = $props();
 
 	let tabs = [
-		{ name: 'Dashboard', icon: ls.LayoutDashboard },
-		{ name: 'Studenti', icon: ls.Users },
+		{ name: 'Analytics', icon: ls.ChartArea },
 		{ name: 'Calendario', icon: ls.Calendar },
+		{ name: 'Studenti', icon: ls.Users },
 		{ name: 'Argomenti', icon: ls.BookOpen }
 	];
 </script>
@@ -51,7 +51,7 @@
 						{
 							$page.url.pathname.split('/').pop().toLowerCase() === tab.name.toLowerCase()
 								? 'text-zinc-900 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-800 rounded-lg'
-								: 'text-zinc-900/50 dark:text-zinc-200/50'
+								: 'text-zinc-900/50 dark:text-zinc-200/50 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 rounded-lg'
 						}
 						">
 							<tab.icon class="size-4" />

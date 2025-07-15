@@ -1,5 +1,5 @@
 <script>
-	import { Sun, Moon } from 'lucide-svelte';
+	import * as ls from 'lucide-svelte';
 	import { themeStore } from '$lib/components/theme/theme.js';
 
 	const toggleTheme = () => {
@@ -18,7 +18,7 @@
 	onclick={toggleTheme}
 >
 	<div class="relative size-5 flex items-center justify-center">
-		<Sun class="absolute theme-toggle-icon size-5 rotate-0 scale-100 transition-all duration-500 dark:-rotate-90 dark:scale-0 text-zinc-950 dark:text-zinc-50" />
-		<Moon class="absolute theme-toggle-icon size-5 rotate-90 scale-0 transition-all duration-500 dark:rotate-0 dark:scale-100 text-zinc-950 dark:text-zinc-50" />
+		<ls.Sun class="absolute theme-toggle-icon size-5 rotate-0 scale-100 transition-all duration-500 dark:-rotate-90 dark:scale-0 text-zinc-950 dark:text-zinc-50" />
+		<ls.Moon class="absolute theme-toggle-icon size-5 rotate-90 scale-0 transition-all duration-500 dark:rotate-0 dark:scale-100 text-zinc-950 dark:text-zinc-50" />
 	</div>
 </button>

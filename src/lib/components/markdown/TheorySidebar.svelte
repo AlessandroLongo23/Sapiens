@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { contentService } from '$lib/services/contentService';
-	import { ChevronDown } from 'lucide-svelte';
+	import * as ls from 'lucide-svelte';
 	import { slide } from 'svelte/transition';
 	
 	let sections = $derived(contentService.sections || []);
@@ -69,7 +69,6 @@
 			<div class="theory-toc">
 				{#each sections as section}
 					<div class="mb-4">
-						<!-- H1 Section -->
 						<div class="flex items-center">
 							<button 
 								class="text-left flex-1 py-1.5 px-2 rounded text-sm
@@ -87,7 +86,7 @@
 									aria-label={expandedSections[section.id] ? "Collapse section" : "Expand section"}
 									title={expandedSections[section.id] ? "Collapse section" : "Expand section"}
 								>
-									<ChevronDown 
+									<ls.ChevronDown 
 										size={14} 
 										class="transition-transform duration-200 {expandedSections[section.id] ? 'rotate-180' : ''}"
 									/>
@@ -95,7 +94,6 @@
 							{/if}
 						</div>
 						
-						<!-- H2 Sections inside H1 -->
 						{#if hasSubsections(section) && expandedSections[section.id]}
 							<div class="ml-3 border-l border-zinc-700/50 pl-2 mt-1" transition:slide={{ duration: 150 }}>
 								{#each section.subsections as subsection}
@@ -116,7 +114,7 @@
 													aria-label={expandedSections[subsection.id] ? "Collapse section" : "Expand section"}
 													title={expandedSections[subsection.id] ? "Collapse section" : "Expand section"}
 												>
-													<ChevronDown 
+													<ls.ChevronDown 
 														size={12} 
 														class="transition-transform duration-200 {expandedSections[subsection.id] ? 'rotate-180' : ''}"
 													/>
@@ -124,7 +122,6 @@
 											{/if}
 										</div>
 										
-										<!-- H3 Sections inside H2 -->
 										{#if hasSubsections(subsection) && expandedSections[subsection.id]}
 											<div class="ml-3 border-l border-zinc-700/50 pl-2 mt-1" transition:slide={{ duration: 150 }}>
 												{#each subsection.subsections as subsubsection}

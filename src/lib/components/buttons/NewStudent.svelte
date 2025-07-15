@@ -1,19 +1,17 @@
 <script>
-    import { addStudent } from '$lib/stores/students.svelte.js';
-    import { studentsStore } from '$lib/stores/students.js';
-    import { Plus, Check, X as XMark } from 'lucide-svelte';
-    import { colors } from '$lib/stores/appearance.js';
-    import { themeStore } from '$lib/components/theme/theme.js';
-    import { supabase } from '$lib/supabase.js';
-
     import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
-    import { levels } from '$lib/stores/students.js';
+    import { studentsStore, levels } from '$lib/stores/students/students.js';
+    import { themeStore } from '$lib/components/theme/theme.js';
+    import { createEventDispatcher } from 'svelte';
+    import * as ls from 'lucide-svelte';
+    import { slide } from 'svelte/transition';
 
     import CustomSelect from '$lib/components/forms/CustomSelect.svelte';
     import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
     import AddModal from '$lib/components/modals/AddModal.svelte';
     import Modal from '$lib/components/modals/Modal.svelte';
     import PhoneNumber from '$lib/components/forms/PhoneNumber.svelte';
+    import FormInput from '$lib/components/forms/FormInput.svelte';
 
     let isAddNewStudentModalOpen = $state(false);
     let firstName = $state('');
@@ -100,7 +98,7 @@
     class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
     onclick={() => isAddNewStudentModalOpen = true}
 >
-    <Plus class="size-5"/>
+    <ls.UserPlus class="size-5"/>
     <span>Nuovo studente</span>
 </button>
 

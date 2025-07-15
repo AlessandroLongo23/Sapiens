@@ -1,6 +1,13 @@
-import { fetchStudents } from '$lib/stores/students.svelte.js';
 import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
+
+async function fetchStudents() {
+    const { data, error } = await supabase
+        .from('students')
+        .select('*');
+    if (error) throw new Error(error.message);
+    return data;
+}
 
 export const roles = [
     { label: 'Admin', value: 'admin' },
@@ -69,33 +76,35 @@ const createStudentsStore = () => {
                 });
             }
         },
-        addStudent: (student) => {
-            update(state => ({
-                ...state,
-                students: [...state.students, student]
-            }));
+        addStudent: async (student) => {
+            const { data, error } = await supabase.from('students').insert([student]).select().single();
+            if (error) {
+                console.error('Error adding student:', error.message);
+                throw new Error('Impossibile aggiungere lo studente.');
+            }
+            return data;
         },
-        deleteStudent: (studentId) => {
-            selectedStudentStore.update(selectedStudent => 
-                selectedStudent?.id === studentId ? null : selectedStudent
-            );
-
-            update(state => ({
-                ...state,
-                students: state.students.filter(student => student.id !== studentId)
-            }));
+        deleteStudent: async (studentId) => {
+            const { error } = await supabase.from('students').delete().eq('id', studentId);
+            if (error) {
+                console.error('Error deleting student:', error.message);
+                throw new Error('Impossibile eliminare lo studente.');
+            }
+            return true;
         },
-        updateStudent: (studentId, updatedStudent) => {
-            selectedStudentStore.update(selectedStudent => 
-                selectedStudent?.id === studentId ? updatedStudent : selectedStudent
-            );
+        updateStudent: async (studentId, updatedStudent) => {
+            const { data, error } = await supabase
+                .from('students')
+                .update(updatedStudent)
+                .eq('id', studentId)
+                .select()
+                .single();
 
-            update(state => ({
-                ...state,
-                students: state.students.map(student => 
-                    student.id === studentId ? updatedStudent : student
-                )
-            }));
+            if (error) {
+                console.error('Error updating student:', error.message);
+                throw new Error('Impossibile aggiornare lo studente.');
+            }
+            return data;
         },
         selectStudent: (studentId) => {
             selectedStudentStore.update(currentSelectedStudent => {

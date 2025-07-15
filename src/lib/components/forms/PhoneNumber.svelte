@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { ChevronDown } from 'lucide-svelte';
+    import * as ls from 'lucide-svelte';
 
     // Props
     let { value = '', onChange = () => {} } = $props();
@@ -91,7 +91,7 @@
             onclick={() => showPrefixDropdown = !showPrefixDropdown}
         >
             <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{prefix}</span>
-            <ChevronDown class="size-4 text-zinc-500" />
+            <ls.ChevronDown class="size-4 text-zinc-500" />
         </button>
 
         {#if showPrefixDropdown}

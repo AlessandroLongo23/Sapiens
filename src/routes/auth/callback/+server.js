@@ -12,5 +12,5 @@ export const GET = async ({ url, locals: { supabase } }) => {
 		}
 	}
 
-	throw redirect(303, next ?? '/student/calendario')
+	throw redirect(303, next ?? '/student/materiale')
 } 

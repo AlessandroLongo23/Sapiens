@@ -1,11 +1,11 @@
 <script>
-    import { lecturesStore } from '$lib/stores/lectures.svelte.js';
+    import { lecturesStore } from '$lib/stores/lectures/lectures.js';
     import { isAfter, isSameDay } from 'date-fns';
-    
+
     import UpcomingLecture from '$lib/components/UpcomingLecture.svelte';
 
     let filteredLectures = $derived.by(() => {
-		return lecturesStore.lectures.sort((a, b) => {
+		return $lecturesStore.lectures.sort((a, b) => {
 			if (a.date !== b.date)
 				return a.date.localeCompare(b.date);
 			
@@ -40,11 +40,11 @@
 </script>
 
 <div class="bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800 p-4 max-h-[calc(100vh-120px)] overflow-y-scroll">
-    <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 mb-3">Upcoming Lectures</h2>
+    <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 mb-3">Prossime Lezioni</h2>
     
     <div class="space-y-3 pr-2">
         {#if filteredLectures.length === 0}
-            <p class="text-zinc-500 dark:text-zinc-400 text-sm">No lectures scheduled. Click on a day to add a lecture.</p>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm">Nessuna lezione programmata.<br>Clicca su un giorno per aggiungere una lezione.</p>
         {:else}
             {#each filteredLectures as lecture}
                 <UpcomingLecture 

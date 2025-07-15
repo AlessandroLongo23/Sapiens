@@ -1,5 +1,5 @@
 <script>
-    import StudentCard from '$lib/components/dedicated/StudentCard.svelte';
+    import StudentCard from '$lib/components/students/StudentCard.svelte';
 
     let { students } = $props();
 </script>

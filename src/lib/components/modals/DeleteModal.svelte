@@ -1,5 +1,5 @@
 <script>
-    import { CircleAlert, X, Trash2 } from 'lucide-svelte';
+    import * as ls from 'lucide-svelte';
     import Modal from '$lib/components/modals/Modal.svelte';
 
     let { 
@@ -10,9 +10,9 @@
         onCancel = () => {}, 
         confirmText = 'Elimina',
         cancelText = 'Annulla',
-        mainIcon = CircleAlert,
+        mainIcon = ls.CircleAlert,
         mainColor = 'red',
-        confirmIcon = Trash2,
+        confirmIcon = ls.Trash2,
         classes = '',
         children
     } = $props();
@@ -43,7 +43,7 @@
                     class="flex flex-row flex-grow items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors text-zinc-900 dark:text-zinc-100"
                     onclick={onCancel}
                 >
-                    <X class="size-4"/>
+                    <ls.X class="size-4"/>
                     {cancelText}
                 </button>
                 <button 

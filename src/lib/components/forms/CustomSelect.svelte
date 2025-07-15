@@ -9,7 +9,7 @@
         isNullable = false,
         disabled = false,
         searchable = true,
-        maxHeight = 'max-h-36',
+        maxHeight = 'max-h-40',
         classes = ''
     } = $props();
 
