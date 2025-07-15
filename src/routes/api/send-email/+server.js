@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { Resend } from 'resend';
-import { env } from '$env/dynamic/student';
+import { env } from '$env/dynamic/private';
 
 const resend = new Resend(env.RESEND_API_KEY);
 
