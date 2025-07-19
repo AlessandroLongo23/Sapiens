@@ -29,7 +29,7 @@ export const addSubject = async (newSubject) => {
             throw error;
         }
 
-        return data;
+        return data, error;
     } catch (error) {
         console.error('Error adding subject:', error);
         throw error;
@@ -54,7 +54,7 @@ export const updateSubject = async (subjectId, subjectData) => {
             throw error;
         }
 
-        return data;
+        return data, error;
     } catch (error) {
         console.error('Error updating subject:', error);
         throw error;

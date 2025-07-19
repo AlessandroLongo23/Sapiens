@@ -3,7 +3,10 @@
     import { fade, scale } from 'svelte/transition';
     import { quintOut } from 'svelte/easing';
 
-    let { selectedColor, onColorSelect } = $props();
+    let { 
+        selectedColor = colors[0].hex, 
+        onColorSelect = () => {}
+    } = $props();
 
     let isOpen = $state(false);
 
@@ -14,7 +17,7 @@
     }
 
     const selectColor = (hexColor) => {
-        onColorSelect(hexColor);
+        onColorSelect({ hex: hexColor });
         isOpen = false;
     }
 </script>

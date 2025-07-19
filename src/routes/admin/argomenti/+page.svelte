@@ -42,10 +42,6 @@
 		isEditSubjectOpen = true;
 	}
 	
-	function handleColorSelect(hex_color) {
-		formData.hex_color = hex_color;
-	}
-	
 	function closeAddSubjectModal() {
 		isAddSubjectOpen = false;
 	}
@@ -249,7 +245,7 @@
 				</label>
 				<ColorPicker 
 					selectedColor={formData.hex_color}
-					onColorSelect={handleColorSelect}
+					onColorSelect={(e) => formData.hex_color = e.hex}
 				/>
 			</div>
 		</div>

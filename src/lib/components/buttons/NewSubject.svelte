@@ -1,6 +1,7 @@
 <script>
     import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
     import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+    import { addSubject } from '$lib/stores/subjects/subjects.svelte.js';
     import { themeStore } from '$lib/components/theme/theme.js';
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
@@ -29,11 +30,11 @@
 
         isLoading = true;
         try {
-            subjectsStore.addSubject({
+            const [data, error] = await addSubject({
                 name: formData.name,
                 hex_color: formData.hex_color
             });
-            
+
             messagePopup.success('Materia aggiunta con successo');
         } catch (error) {
             messagePopup.error('Errore durante la creazione della materia: ' + error.message);
@@ -43,6 +44,8 @@
             isAddNewSubjectModalOpen = false;
         }
     };
+</script>
+
 <button
     class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
     onclick={() => isAddNewSubjectModalOpen = true}
@@ -80,14 +83,10 @@
 				</label>
 				<ColorPicker 
 					selectedColor={formData.hex_color}
-					onColorSelect={handleColorSelect}
+					onColorSelect={(e) => formData.hex_color = e.hex}
 				/>
 			</div>
 		</div>
-		
-		{#if errorMessage}
-			<div class="text-red-500 text-sm">{errorMessage}</div>
-		{/if}
 	</form>
 </AddModal>
 
