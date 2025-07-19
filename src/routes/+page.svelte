@@ -78,7 +78,7 @@
 
 <button
 	onclick={() => { if (session) { accessPrivateRoute() } else { openAuthModal() } }}
-	class="fixed z-20 top-4 right-4 sm:top-8 sm:right-8 btn-secondary text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
+	class="fixed z-20 top-4 right-4 sm:top-8 sm:right-8 bg-zinc-100 dark:bg-zinc-850 border border-zinc-200 dark:border-zinc-700 text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
 >
 	<span class="flex items-center justify-center space-x-2 sm:space-x-3">
 		<span class="hidden sm:block">{session ? 'Dashboard' : 'Login Studente'}</span>

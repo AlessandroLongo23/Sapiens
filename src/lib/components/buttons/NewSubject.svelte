@@ -14,86 +14,35 @@
     import FormInput from '$lib/components/forms/FormInput.svelte';
 
     let isAddNewSubjectModalOpen = $state(false);
-    let firstName = $state('');
-    let lastName = $state('');
-    let fullName = $derived(`${firstName} ${lastName}`);
-    let email = $state('');
-    let phone = $state('');
-    let password = $state('');
-    let city = $state('');
-    let level = $state('');
-    let isLoading = $state(false);
-
-    let passwordValidation = $derived({
-        hasMinLength: password.length >= 8,
-        hasUpperCase: /[A-Z]/.test(password),
-        hasNumber: /[0-9]/.test(password),
-        hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    let formData = $state({
+        name: '',
+        hex_color: ''
     });
+    let isLoading = $state(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!firstName || !lastName || !email || !password) {
-            messagePopup.error('I campi Nome, Cognome, Email e Password sono obbligatori');
+        if (!formData.name || !formData.hex_color) {
+            messagePopup.error('I campi Nome e Colore sono obbligatori');
             return;
         }
 
         isLoading = true;
         try {
-            const response = await fetch('/api/students', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    student: {
-                        firstName,
-                        lastName,
-                        email,
-                        password,
-                        phone,
-                        city,
-                        level,
-                    }
-                })
-            });
-
-            const result = await response.json();
-            if (!result.success) throw new Error(result.error);
-
-            studentsStore.addStudent({
-                id: result.user.id,
-                first_name: firstName,
-                last_name: lastName,
-                role: 'student'
+            subjectsStore.addSubject({
+                name: formData.name,
+                hex_color: formData.hex_color
             });
             
-            messagePopup.success('Studente aggiunto con successo');
-            
-            firstName = '';
-            lastName = '';
-            email = '';
-            phone = '';
-            password = '';
+            messagePopup.success('Materia aggiunta con successo');
         } catch (error) {
-            messagePopup.error('Errore durante la creazione dello studente: ' + error.message);
-            console.error('Error creating student:', error);
+            messagePopup.error('Errore durante la creazione della materia: ' + error.message);
+            console.error('Error creating subject:', error);
         } finally {
             isLoading = false;
-            isAddNewStudentModalOpen = false;
+            isAddNewSubjectModalOpen = false;
         }
     };
-
-//     const handleAddStudentSubmit = async () => {
-//         let student = {
-//             full_name: studentName,
-//             email: studentEmail,
-//             color: studentColor
-//         }
-//         await addStudent(student);
-//     }
-// </script>
-
 <button
     class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
     onclick={() => isAddNewSubjectModalOpen = true}
