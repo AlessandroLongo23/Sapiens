@@ -132,12 +132,12 @@
 			<div>
 				<span class="text-zinc-500 dark:text-zinc-400">Student:</span> 
 				<span class="text-zinc-900 dark:text-zinc-100 font-medium">
-					{nextLecture.student.first_name} {nextLecture.student.last_name}
+					{nextLecture.student?.first_name} {nextLecture.student?.last_name}
 				</span>
 			</div>
 			<div>
 				<span class="text-zinc-500 dark:text-zinc-400">Subject:</span> 
-				<span class="text-zinc-900 dark:text-zinc-100 font-medium">{nextLecture.subject.name}</span>
+				<span class="text-zinc-900 dark:text-zinc-100 font-medium">{nextLecture.subject?.name}</span>
 			</div>
 		</div>
 	</div>
