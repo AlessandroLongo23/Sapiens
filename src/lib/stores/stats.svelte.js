@@ -10,7 +10,18 @@ class StatsStore {
 	timeRange = $state(6);
 	
 	earningsByMonth = $derived.by(() => {
-		if (!lecturesStore.lectures?.length) return [];
+		let lectures, subjects, students;
+		lecturesStore.subscribe(data => {
+			lectures = data.lectures;
+		});
+		subjectsStore.subscribe(data => {
+			subjects = data.subjects;
+		});
+		studentsStore.subscribe(data => {
+			students = data.students;
+		});
+		
+		if (!lectures?.length) return [];
 		
 		const today = new Date();
 		const startDate = startOfMonth(subMonths(today, this.timeRange - 1));
@@ -24,7 +35,7 @@ class StatsStore {
 			date: month
 		}));
 		
-		lecturesStore.lectures.forEach(lecture => {
+		lectures.forEach(lecture => {
 			if (this.filterType === 'student' && lecture.student_id !== this.filterId) return;
 			if (this.filterType === 'subject' && lecture.subject_id !== this.filterId) return;
 			
@@ -53,7 +64,18 @@ class StatsStore {
 	});
 
 	hoursByMonth = $derived.by(() => {
-		if (!lecturesStore.lectures?.length) return [];
+		let lectures, subjects, students;
+		lecturesStore.subscribe(data => {
+			lectures = data.lectures;
+		});
+		subjectsStore.subscribe(data => {
+			subjects = data.subjects;
+		});
+		studentsStore.subscribe(data => {
+			students = data.students;
+		});
+
+		if (!lectures?.length) return [];
 		
 		const today = new Date();
 		const startDate = startOfMonth(subMonths(today, this.timeRange - 1));
@@ -67,7 +89,7 @@ class StatsStore {
 			date: month
 		}));
 		
-		lecturesStore.lectures.forEach(lecture => {
+		lectures.forEach(lecture => {
 			const lectureDate = parseISO(lecture.date);
 			if (lectureDate >= startDate && lectureDate <= endDate) {
 				const startTime = lecture.start_time.split(':');
@@ -91,12 +113,23 @@ class StatsStore {
 	});
 
 	topEarnings = $derived.by(() => {
-		if (!lecturesStore.lectures?.length) return { bySubject: [], byStudent: [] };
+		let lectures, subjects, students;
+		lecturesStore.subscribe(data => {
+			lectures = data.lectures;
+		});
+		subjectsStore.subscribe(data => {
+			subjects = data.subjects;
+		});
+		studentsStore.subscribe(data => {
+			students = data.students;
+		});
+
+		if (!lectures?.length) return { bySubject: [], byStudent: [] };
 		
 		const bySubject = {};
 		const byStudent = {};
 		
-		lecturesStore.lectures.forEach(lecture => {
+		lectures.forEach(lecture => {
 			const startTime = lecture.start_time.split(':');
 			const endTime = lecture.end_time.split(':');
 			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
@@ -106,7 +139,7 @@ class StatsStore {
 			const earnings = hours * (lecture.hourly_rate || 0);
 			
 			if (!bySubject[lecture.subject_id]) {
-				const subject = subjectsStore.subjects?.find(s => s.id === lecture.subject_id);
+				const subject = subjects?.find(s => s.id === lecture.subject_id);
 				bySubject[lecture.subject_id] = {
 					id: lecture.subject_id,
 					name: subject ? subject.name : 'Unknown Subject',
@@ -118,10 +151,10 @@ class StatsStore {
 			bySubject[lecture.subject_id].hours += hours;
 			
 			if (!byStudent[lecture.student_id]) {
-				const student = studentsStore.students.find(s => s.id === lecture.student_id);
+				const student = students.find(s => s.id === lecture.student_id);
 				byStudent[lecture.student_id] = {
 					id: lecture.student_id,
-					name: student ? `${student.name} ${student.last_name}` : 'Unknown Student',
+					name: student ? `${student.first_name} ${student.last_name}` : 'Unknown Student',
 					totalEarnings: 0,
 					hours: 0
 				};

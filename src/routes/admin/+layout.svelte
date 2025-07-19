@@ -43,7 +43,7 @@
 		</header>
 
 		<div class="mt-18 min-h-[calc(100vh-4.5rem)]">
-			<Sidebar classes="bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700">
+			<Sidebar classes="bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700 mt-16">
 				<div class="flex flex-col gap-2 p-4 mt-4">
 					{#each tabs as tab}
 						<a href={`/admin/${tab.name.toLowerCase()}`} class="

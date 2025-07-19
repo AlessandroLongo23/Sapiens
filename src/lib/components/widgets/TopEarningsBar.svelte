@@ -1,6 +1,7 @@
 <script>
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
+	import { widgetStyle } from '$lib/stores/appearance.js';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
 
@@ -24,7 +25,6 @@
 		setupCanvasHover();
 	});
 	
-	// Re-render chart when data or view mode changes
 	$effect(() => {
 		if (statsStore.topEarnings && canvas) {
 			renderChart();
@@ -64,12 +64,10 @@
 	}
 	
 	function updateTooltipData(dataIndex, x, y) {
-		// Get the appropriate data based on view mode
 		const data = viewMode === 'subject' 
 			? statsStore.topEarnings.bySubject 
 			: statsStore.topEarnings.byStudent;
 		
-		// Sort data by earnings (descending)
 		const sortedData = [...data].sort((a, b) => b.totalEarnings - a.totalEarnings);
 		
 		const earnings = sortedData[dataIndex].totalEarnings;
@@ -92,12 +90,10 @@
 		
 		const ctx = canvas.getContext('2d');
 		
-		// Get the appropriate data based on view mode
 		const data = viewMode === 'subject' 
 			? statsStore.topEarnings.bySubject 
 			: statsStore.topEarnings.byStudent;
 		
-		// Sort data by earnings (descending)
 		const sortedData = [...data].sort((a, b) => b.totalEarnings - a.totalEarnings);
 		
 		const chartData = {
@@ -168,7 +164,7 @@
 	}
 </script>
 
-<div class="w-full flex flex-col rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-hidden">
+<div class="w-full flex flex-col overflow-hidden {widgetStyle}">
 	<div class="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
 		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
 			Top Earnings by {viewMode === 'subject' ? 'Subject' : 'Student'}

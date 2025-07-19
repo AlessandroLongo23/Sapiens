@@ -2,7 +2,7 @@
 	import { formatCurrency, formatDateDisplay, calculateEarnings } from '$lib/utils/format.svelte.js';
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { studentsStore } from '$lib/stores/students/students.js';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+	import { lecturesStore } from '$lib/stores/lectures/lectures.js';	
 	import { isSameDay } from 'date-fns';
 	import * as ls from 'lucide-svelte';
 
@@ -44,7 +44,7 @@
 		const today = now.toISOString().split('T')[0];
 		const currentTime = `${now.getHours()}:${now.getMinutes()}`;
 		
-		return $lecturesStore.lectures
+		let nextLecture = $lecturesStore.lectures
 			.filter(lecture => {
 				let lecture_start_hour = lecture.start_time.split(':')[0];
 				let lecture_start_minute = lecture.start_time.split(':')[1];
@@ -62,7 +62,16 @@
 					return a.date.localeCompare(b.date);
 				}
 				return a.start_time.localeCompare(b.start_time);
-			})[0];
+			});
+
+		if (nextLecture.length > 0) {
+			nextLecture = nextLecture[0];
+			nextLecture.student = $studentsStore.students.find(student => student.id === nextLecture.student_id);
+			nextLecture.subject = $subjectsStore.subjects.find(subject => subject.id === nextLecture.subject_id);
+			return nextLecture;
+		}
+
+		return null;
 	});
 </script>
 
@@ -123,12 +132,12 @@
 			<div>
 				<span class="text-zinc-500 dark:text-zinc-400">Student:</span> 
 				<span class="text-zinc-900 dark:text-zinc-100 font-medium">
-					{nextLecture.student?.name} {nextLecture.student?.last_name}
+					{nextLecture.student.first_name} {nextLecture.student.last_name}
 				</span>
 			</div>
 			<div>
 				<span class="text-zinc-500 dark:text-zinc-400">Subject:</span> 
-				<span class="text-zinc-900 dark:text-zinc-100 font-medium">{nextLecture.subject?.name}</span>
+				<span class="text-zinc-900 dark:text-zinc-100 font-medium">{nextLecture.subject.name}</span>
 			</div>
 		</div>
 	</div>

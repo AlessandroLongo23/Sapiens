@@ -1,5 +1,6 @@
 <script>
 	import { morgagniImages, dtuImages, stats, testimonials } from '$lib/data.js';
+	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -23,6 +24,23 @@
 	let subjectsSection;
 	let statsSection;
 	let testimonialsSection;
+	
+	// let totalTime = $derived.by(() => {
+	// 	let total = $lecturesStore.lectures.reduce((total, lecture) => {
+	// 		const startTime = lecture.start_time.split(':');
+	// 		const endTime = lecture.end_time.split(':');
+	// 		const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
+	// 		const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
+	// 		const hours = endHour - startHour;
+			
+	// 		return total + hours;
+	// 	}, 0);
+
+	// 	return {
+	// 		hours: Math.floor(total),
+	// 		minutes: Math.round((total - Math.floor(total)) * 60)
+	// 	}
+	// });
 	
 	onMount(() => {
 		const observer = new IntersectionObserver((entries) => {
@@ -68,7 +86,7 @@
 	<title>AleRipetizioni</title>
 	<meta
 		name="description"
-		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 130 ore di esperienza."
+		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 140 ore di esperienza."
 	/>
 </svelte:head>
 

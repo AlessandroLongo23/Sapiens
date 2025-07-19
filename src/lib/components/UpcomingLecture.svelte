@@ -2,9 +2,9 @@
     import { studentsStore } from '$lib/stores/students/students.js';
     import { subjectsStore } from '$lib/stores/subjects/subjects.js';
     import { createEventDispatcher } from 'svelte';
-    import * as ls from 'lucide-svelte';
-	import { format } from 'date-fns';
 	import { it } from 'date-fns/locale';
+	import { format } from 'date-fns';
+    import * as ls from 'lucide-svelte';
 
 	let { lecture } = $props();
 
@@ -20,13 +20,13 @@
 </script>
 
 <button 
-    class="w-full text-left p-3 rounded border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+    class="flex flex-col gap-3 w-full text-left p-3 rounded border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
     onclick={() => dispatch('openLectureModal', lecture)}
 >
     <div class="flex justify-between">
         <span class="flex flex-row items-center gap-2 font-medium text-zinc-900 dark:text-zinc-100">
             <ls.Calendar size={16} /> 
-            {format(new Date(lecture.date), 'EEE, MMM d', { locale: it })}
+            {format(new Date(lecture.date), 'EEE d MMMM', { locale: it })}
         </span>
         <span class="flex flex-row items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
             <ls.Clock size={16} /> 
@@ -34,13 +34,18 @@
         </span>
     </div>
 
-    <div class="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
-        {student.first_name} {student.last_name} - {subject.name}
-    </div>
-
-    {#if lecture.level}
-        <div class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            {lecture.level === 'high_school' ? 'High School' : 'University'}
+    <div class="flex flex-col gap-1 text-sm text-zinc-600 dark:text-zinc-300">
+        <div class="flex flex-row items-center gap-2">
+            <ls.User size={16} />
+            {student.first_name} {student.last_name}
         </div>
-    {/if}
+        <div class="flex flex-row items-center gap-2">
+            <ls.BookOpen size={16} />
+            {subject.name}
+        </div>
+        <div class="flex flex-row items-center gap-2 ">
+            <ls.School size={12}/>
+            {lecture.level === 'high_school' ? 'Scuola Superiore' : 'Università'}
+        </div>
+    </div>
 </button>

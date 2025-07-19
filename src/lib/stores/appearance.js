@@ -37,5 +37,5 @@ export const colors = [
     { hex: '#ef4444', name: 'Rosso' }
 ];
 
-export const widgetStyle = 'bg-zinc-50 dark:bg-zinc-925 shadow-zinc-black/20 shadow-lg animate-appear rounded-lg border';
+export const widgetStyle = 'bg-zinc-50 dark:bg-zinc-925 shadow-zinc-black/20 shadow-lg animate-appear rounded-lg border border-zinc-200 dark:border-zinc-800';
 export const widgetTitleStyle = 'text-zinc-900 dark:text-zinc-100 text-lg font-semibold';

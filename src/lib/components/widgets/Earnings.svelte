@@ -37,7 +37,7 @@
 
 <div class="flex flex-col h-full transition-all duration-500 ease-in-out {widgetStyle}">
 	<div class="p-4 border-b border-zinc-200 dark:border-zinc-800">
-		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Guadagni nel tempo</h2>
+		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Earnings over time</h2>
 		
 		<div class="mt-2 flex flex-wrap items-center justify-between gap-2">
 			<div class="flex flex-wrap items-center gap-2">
@@ -63,7 +63,7 @@
 					>
 						<option value={null}>All Students</option>
 						{#each $studentsStore.students as student}
-							<option value={student.id}>{student.name} {student.last_name}</option>
+							<option value={student.id}>{student.first_name} {student.last_name}</option>
 						{/each}
 					</select>
 				{:else if statsStore.filterType === 'subject'}
@@ -103,7 +103,7 @@
 		/>
 	</div>
 	
-	<div class="flex items-center gap-2 p-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+	<div class="flex items-center gap-2 p-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg">
 		<span class="text-sm text-zinc-500 dark:text-zinc-400">Total earnings:</span>
 		<span class="text-sm font-medium text-zinc-900 dark:text-zinc-50">{formatCurrency(totalEarnings)}</span>
 	</div>

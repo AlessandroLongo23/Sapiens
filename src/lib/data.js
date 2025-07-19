@@ -70,7 +70,7 @@ export const dtuImages = writable([
 
 export const stats = writable({
     hours: {
-        value: "130+",
+        value: "140+",
         label: "Ore di Lezione",
         iconName: "clock",
         color: "text-blue-500"
