@@ -6,7 +6,11 @@
 		isSidebarOpen = $bindable(true),
 		sidebarElement = $bindable(''),	
 		children,
-		classes = ''
+		classes = '',
+		side = 'left',
+		type = "move", // shrink or move
+		maxWidth = '60',
+		minWidth = '12',
 	} = $props();
 
 	const dispatch = createEventDispatcher();
@@ -22,34 +26,45 @@
 			}, 300);
 		}
 	}
-</script>
+
+	// Convert Tailwind spacing values to rem (each unit is 0.25rem)
+	let maxWidthRem = $derived(`${parseInt(maxWidth) * 0.25}rem`);
+	let minWidthRem = $derived(`${parseInt(minWidth) * 0.25}rem`);
+
+	// Static Tailwind classes for positioning
+	let staticClasses = $derived.by(() => {
+		if (side === 'left') {
+			return 'left-0';
+		} else {
+			return 'right-0';
+		}
+	});
+
+	// Dynamic inline styles for width and transform
+	let dynamicStyles = $derived.by(() => {
+		if (type === 'shrink') {
+			return {
+				width: isSidebarOpen ? maxWidthRem : minWidthRem,
+				transform: 'none'
+			};
+		} else if (type === 'move') {
+			const translateValue = isSidebarOpen ? '0' : 
+				side === 'left' ? `-${maxWidthRem}` : maxWidthRem;
+			
+			return {
+				width: maxWidthRem,
+				transform: `translateX(${translateValue})`
+			};
+		}
+		return {};
+	});
+</script>	
 
 <div 
 	id="sidebar" 
 	bind:this={sidebarElement}
-	class="h-full fixed left-0 top-0 transition-all duration-300 flex flex-col {isSidebarOpen ? 'w-60' : 'w-12'} {classes}" 
+	class="h-full flex flex-col fixed top-0 transition-all duration-300 overflow-hidden {staticClasses} {classes}"
+	style={Object.entries(dynamicStyles).map(([key, value]) => `${key}: ${value}`).join('; ')}
 >
-	<div class="p-3 flex items-center justify-between border-b border-zinc-700/50 flex-shrink-0">
-		{#if isSidebarOpen}
-			<h2 class="text-sm font-medium text-white/90 uppercase tracking-wider">Controls</h2>
-		{/if}
-
-		<button
-			onclick={toggleSidebar}
-			class="p-1 rounded-md hover:bg-zinc-700/70 transition-all text-white/80 hover:text-white/100"
-			aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-		>
-			{#if isSidebarOpen}
-				<ls.ChevronLeft size={18} />
-			{:else}
-				<ls.ChevronRight size={18} />
-			{/if}
-		</button>
-	</div>
-	
-	{#if isSidebarOpen}
-		<div class="flex-1 overflow-hidden">
-			{@render children()}
-		</div>
-	{/if}
+	{@render children()}
 </div>

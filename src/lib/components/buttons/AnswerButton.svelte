@@ -1,4 +1,6 @@
 <script>
+	import MathRenderer from '$lib/components/MathRenderer.svelte';
+
 	let { answer, state = 'idle', onclick } = $props(); 
 
 	const baseClasses =
@@ -13,7 +15,7 @@
 </script>
 
 <button class="{baseClasses} {stateClasses[state]} cursor-pointer" onclick={onclick}>
-	{answer}
+	<MathRenderer content={answer}/>
 </button>
 
 <style>

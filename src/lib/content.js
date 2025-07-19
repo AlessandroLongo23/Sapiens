@@ -2,6 +2,16 @@ import { writable } from "svelte/store";
 
 export const content = {
     "superiori": {
+        "informatica": {
+            "3": {
+                "foglio di calcolo": {
+                    "title": "Foglio di Calcolo",
+                    "description": "Il foglio di calcolo è un programma che permette di creare e modificare tabelle.",
+                    "icon": "",
+                    "path": "/superiori/informatica/3/foglio di calcolo/foglio-di-calcolo.md"
+                }
+            }
+        },
         "matematica": {
             "1": {
                 "numeri naturali": {
@@ -23,12 +33,6 @@ export const content = {
                         "icon": "",
                         "path": "/superiori/matematica/1/numeri-naturali/mcm-MCD.md"
                     }
-                },
-                "numeri interi": {
-
-                },
-                "numeri razionali": {
-
                 }
             }
         }

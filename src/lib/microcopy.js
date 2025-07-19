@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store';
 
 export const motivational_messages = writable([
+    'Bentornato!',
+    'Come va oggi?',
     'Riprendiamo?',
     'Dove eravamo rimasti?',
     'Ancora un altro esercizio?',

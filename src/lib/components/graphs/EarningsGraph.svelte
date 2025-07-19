@@ -6,6 +6,7 @@
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { widgetStyle } from '$lib/stores/appearance.js';
 	import { format, parseISO } from 'date-fns';
+	import { it } from 'date-fns/locale';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
@@ -32,6 +33,7 @@
 	
 	$effect(() => {
 		if (statsStore.earningsByMonth && canvas) {
+			console.log(statsStore.earningsByMonth);
 			renderChart();
 		}
 	});
@@ -46,17 +48,15 @@
 		if (statsStore.filterType === 'subject' && !statsStore.filterId) {
 			const months = statsStore.earningsByMonth?.map(item => item.month) || [];
 			
-			// Get all unique subject IDs and names from lectures
 			const subjectMap = {};
 			$subjectsStore.subjects.forEach(subject => {
 				subjectMap[subject.id] = subject.name;
 			});
 			
-			// Calculate earnings by subject for each month
 			const subjectDataByMonth = {};
 			$lecturesStore.lectures.forEach(lecture => {
 				const lectureDate = parseISO(lecture.date);
-				const monthStr = format(lectureDate, 'MMM yyyy');
+				const monthStr = format(lectureDate, 'MMM yyyy', { locale: it });
 				
 				if (!months.includes(monthStr)) return;
 				
@@ -98,7 +98,6 @@
 				};
 			});
 			
-			// Calculate monthly totals for average line
 			const monthlyTotals = months.map(month => {
 				let total = 0;
 				subjectIds.forEach(subjectId => {
@@ -177,7 +176,6 @@
 				options: options
 			});
 		} else {
-			// Default line chart for other views
 			const monthlyData = statsStore.earningsByMonth || [];
 			const avgEarnings = monthlyData.length > 0 ? monthlyData.reduce((sum, item) => sum + item.earnings, 0) / monthlyData.length : 0;
 			

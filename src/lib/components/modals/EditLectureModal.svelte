@@ -4,6 +4,7 @@
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { createEventDispatcher } from 'svelte';
 	import { format } from 'date-fns';
+	import { it } from 'date-fns/locale';
 	import { X } from 'lucide-svelte';
 	
 	import CustomSelect from '$lib/components/forms/CustomSelect.svelte';
@@ -20,7 +21,7 @@
 		id: null,
 		student_id: '',
 		subject_id: '',
-		date: format(selectedDate, 'yyyy-MM-dd'),
+		date: format(selectedDate, 'yyyy-MM-dd', { locale: it }),
 		start_time: '15:00',
 		end_time: '16:00',
 		hourly_rate: 15,
@@ -39,7 +40,7 @@
 				id: lecture.id,
 				student_id: lecture.student_id,
 				subject_id: lecture.subject_id,
-				date: format(lecture.date, 'yyyy-MM-dd'),
+				date: format(lecture.date, 'yyyy-MM-dd', { locale: it }),
 				start_time: lecture.start_time,
 				end_time: lecture.end_time,
 				hourly_rate: lecture.hourly_rate,

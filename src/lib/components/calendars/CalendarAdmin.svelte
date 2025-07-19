@@ -4,8 +4,8 @@
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
 	
-	import CalendarDay from '$lib/components/calendars/CalendarDay.svelte';
-	
+	import CalendarDay from '$lib/components/calendars/CalendarDayAdmin.svelte';
+
 	const dispatch = createEventDispatcher();
 
 	let monthDays = $state([]);
@@ -57,7 +57,7 @@
 	
 	<div class="grid grid-cols-7 gap-1 p-4 pt-0">
 		{#each monthDays as day}
-			<CalendarDay 
+			<CalendarDay
 				day={day.date} 
 				isCurrentMonth={day.isCurrentMonth}
 				on:click={() => handleDayClick(day.date)} 

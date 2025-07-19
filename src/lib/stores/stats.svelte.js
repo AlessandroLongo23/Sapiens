@@ -2,6 +2,7 @@ import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 import { studentsStore } from '$lib/stores/students/students.js';
 import { format, parseISO, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns';
+import { it } from 'date-fns/locale';
 
 class StatsStore {
 	filterType = $state('all');
@@ -18,7 +19,7 @@ class StatsStore {
 		const months = eachMonthOfInterval({ start: startDate, end: endDate });
 		
 		const earningsData = months.map(month => ({
-			month: format(month, 'MMM yyyy'),
+			month: format(month, 'MMM yyyy', { locale: it }),
 			earnings: 0,
 			date: month
 		}));
@@ -61,7 +62,7 @@ class StatsStore {
 		const months = eachMonthOfInterval({ start: startDate, end: endDate });
 		
 		const hoursData = months.map(month => ({
-			month: format(month, 'MMM yyyy'),
+			month: format(month, 'MMM yyyy', { locale: it }),
 			hours: 0,
 			date: month
 		}));
@@ -135,18 +136,16 @@ class StatsStore {
 			
 		const studentArray = Object.values(byStudent)
 			.sort((a, b) => b.totalEarnings - a.totalEarnings)
-			.slice(0, 5); // Top 5
+			.slice(0, 5);
 		
 		return { bySubject: subjectArray, byStudent: studentArray };
 	});
 	
-	// Set filter type and ID
 	setFilter(type, id = null) {
 		this.filterType = type;
 		this.filterId = id;
 	}
 	
-	// Set time range for the earnings graph
 	setTimeRange(months) {
 		this.timeRange = months;
 	}

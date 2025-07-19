@@ -3,17 +3,21 @@ export const gcd = (a, b) => {
 }
 
 export const gcdArray = (arr) => {
-	if (arr.length === 0) return 0;
-	return arr.reduce((acc, val) => gcd(acc, val), 1);
+	if (arr.length === 0) {
+		return 0;
+	}
+	return arr.reduce((acc, val) => gcd(acc, val), arr[0]);
 }
 
-export const lcm = (a, b) => {
+export const mcm = (a, b) => {
 	return (a * b) / gcd(a, b);
 }
 
-export const lcmArray = (arr) => {
-	if (arr.length === 0) return 0;
-	return arr.reduce((acc, val) => lcm(acc, val), 1);
+export const mcmArray = (arr) => {
+	if (arr.length === 0) {
+		return 0;
+	}
+	return arr.reduce((acc, val) => mcm(acc, val), arr[0]);
 }
 
 Array.prototype.shuffle = function() {

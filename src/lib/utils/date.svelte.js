@@ -1,9 +1,10 @@
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, isSameDay, addDays, subDays } from 'date-fns';
+import { it } from 'date-fns/locale';
 import { writable } from 'svelte/store';
 
 export const calendarView = writable(new Date());
 export const selectedDate = writable(new Date());
-export const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+export const weekDays = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
 
 export function nextMonth() {
 	calendarView.update(date => addMonths(date, 1));
@@ -14,7 +15,7 @@ export function prevMonth() {
 }
 
 export function formatDateString(date, formatString = 'PP') {
-	return format(date, formatString);
+	return format(date, formatString, { locale: it });
 }
 
 export function isSelectedDate(date) {

@@ -2,6 +2,8 @@
 	import SegmentedProgressBar from '$lib/components/SegmentedProgressBar.svelte';
 	import AnswerButton from '$lib/components/buttons/AnswerButton.svelte';
 	import SummaryModal from '$lib/components/modals/SummaryModal.svelte';
+	import MathRenderer from '$lib/components/MathRenderer.svelte';
+	
 	import { sineOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
 	import { fade } from 'svelte/transition';
@@ -31,9 +33,8 @@
 
 		isAnswering = true;
 		selectedAnswer = answer;
-		const isCorrect = answer === currentExercise.correctAnswer;
 
-		progressStates[currentExerciseIndex] = isCorrect ? 'correct' : 'incorrect';
+		progressStates[currentExerciseIndex] = answer.isCorrect ? 'correct' : 'incorrect';
 
 		setTimeout(() => {
 			selectedAnswer = null;
@@ -51,7 +52,7 @@
 		if (!isAnswering) return 'idle';
 		if (answer !== selectedAnswer) return 'idle';
 
-		return answer === currentExercise.correctAnswer ? 'correct' : 'incorrect';
+		return answer.isCorrect ? 'correct' : 'incorrect';
 	}
 
 	let correctCount = $derived(progressStates.filter((s) => s === 'correct').length);
@@ -69,13 +70,13 @@
 			class="text-4xl font-bold text-zinc-800 dark:text-zinc-200"
 			in:fade={{ opacity: 0, duration: 500}}
 		>
-			{currentExercise.question}
+			<MathRenderer content={currentExercise.question.textContent} />
 		</div>
 
 		<div class="flex flex-row justify-center items-center gap-4 w-full">
-			{#each currentExercise.answers as answer (answer)}
+			{#each currentExercise.answers as answer}
 				<div>
-					<AnswerButton {answer} state={getButtonState(answer)} onclick={() => handleAnswer(answer)} />
+					<AnswerButton answer={answer.textContent} state={getButtonState(answer)} onclick={() => handleAnswer(answer)} />
 				</div>
 			{/each}
 		</div>

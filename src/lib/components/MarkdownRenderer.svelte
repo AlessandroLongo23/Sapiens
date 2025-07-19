@@ -3,7 +3,15 @@
 	import katex from 'katex';
 	import 'katex/dist/katex.min.css';
 	
-	let { content = '', targetSection = '' } = $props();
+	let { 
+		content = '', 
+		targetSection = '', 
+		classes = '' 
+	} = $props();
+
+	// $effect(() => {
+	// 	console.log(content);
+	// });
 	
 	let containerElement;
 	let activeSection = $state('');
@@ -155,7 +163,7 @@
 </script>
 
 <div 
-	class="markdown-content w-full h-full overflow-y-auto p-6 md:p-8 bg-zinc-50 dark:bg-zinc-950" 
+	class="markdown-content w-full h-full overflow-y-auto {classes}" 
 	bind:this={containerElement}
 	onscroll={handleScroll}
 >
@@ -217,15 +225,15 @@
 	}
 	
 	:global(.markdown-content code) {
-		@apply font-mono text-sm bg-zinc-800 px-1.5 py-0.5 rounded text-blue-400;
+		@apply font-mono text-sm bg-zinc-200 px-1.5 py-0.5 rounded text-blue-400;
 	}
 	
 	:global(.markdown-content pre) {
-		@apply bg-zinc-800/50 p-4 rounded-md overflow-x-auto mb-6 border border-zinc-700/30;
+		@apply bg-zinc-200/50 p-4 rounded-md overflow-x-auto mb-6 border border-zinc-700/30;
 	}
 	
 	:global(.markdown-content pre code) {
-		@apply bg-transparent p-0 text-zinc-300;
+		@apply bg-transparent p-0 text-zinc-800 dark:text-zinc-200;
 	}
 	
 	:global(.markdown-content a) {

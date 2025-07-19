@@ -7,7 +7,7 @@
 	import UpcomingLectures from '$lib/components/widgets/UpcomingLectures.svelte';
 	import AddLectureModal from '$lib/components/modals/AddLectureModal.svelte';
 	import EditLectureModal from '$lib/components/modals/EditLectureModal.svelte';
-	import Calendar from '$lib/components/calendars/Calendar.svelte';
+	import Calendar from '$lib/components/calendars/CalendarAdmin.svelte';
 
 	let showLectureModal = $state(false);
 	let selectedLecture = $state(null);

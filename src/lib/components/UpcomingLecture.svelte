@@ -4,6 +4,7 @@
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
 	import { format } from 'date-fns';
+	import { it } from 'date-fns/locale';
 
 	let { lecture } = $props();
 
@@ -25,7 +26,7 @@
     <div class="flex justify-between">
         <span class="flex flex-row items-center gap-2 font-medium text-zinc-900 dark:text-zinc-100">
             <ls.Calendar size={16} /> 
-            {format(new Date(lecture.date), 'EEE, MMM d')}
+            {format(new Date(lecture.date), 'EEE, MMM d', { locale: it })}
         </span>
         <span class="flex flex-row items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
             <ls.Clock size={16} /> 

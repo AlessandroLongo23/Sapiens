@@ -4,6 +4,7 @@
 	import { studentsStore } from '$lib/stores/students/students.js';
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { isToday, format, isSameDay } from 'date-fns';
+	import { it } from 'date-fns/locale';
 	import { createEventDispatcher } from 'svelte';
 	import * as ls from 'lucide-svelte';
 
@@ -84,9 +85,9 @@
 		onclick={handleClick}
 		onmouseenter={() => { if (dayLectures.length > 0 && isCurrentMonth) showTooltip = true; }}
 		onmouseleave={handleMouseLeave}
-		aria-label="Select {format(day, 'PPP')}"
+		aria-label="Select {format(day, 'PPP', { locale: it })}"
 	>
-		{format(day, 'd')}
+		{format(day, 'd', { locale: it })}
 		
 		<div class="flex flex-row gap-1 justify-center items-center absolute bottom-1 left-1/2 transform -translate-x-1/2 translate-y-1/4">
 			{#if dayLectures.length > 0 && isCurrentMonth}
@@ -110,7 +111,7 @@
 		>
 			<div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 p-3 flex flex-row gap-2 items-center">
 				<ls.Calendar size={12} />
-				{format(day, 'EEEE, MMMM d')}
+									{format(day, 'EEEE, MMMM d', { locale: it })}
 			</div>
 
 			<div class="flex flex-col max-h-64 overflow-y-auto">

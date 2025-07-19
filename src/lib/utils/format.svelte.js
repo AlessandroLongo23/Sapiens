@@ -1,8 +1,9 @@
 import { format as formatDate, parseISO } from 'date-fns';
+import { it } from 'date-fns/locale';
 
 // Format currency
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('it-IT', {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2
@@ -13,7 +14,7 @@ function formatCurrency(amount) {
 function formatDateDisplay(date, formatStr = 'PP') {
   if (!date) return '';
   const dateObj = typeof date === 'string' ? parseISO(date) : date;
-  return formatDate(dateObj, formatStr);
+  return formatDate(dateObj, formatStr, { locale: it });
 }
 
 // Format time

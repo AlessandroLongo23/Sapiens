@@ -39,9 +39,10 @@ export async function load({ params }) {
 				});
 			}
 		}
+		exercises.shuffle();
 
 		return {
-			exercises: exercises.shuffle(),
+			exercises: exercises,
 			title: topicPath.split('/').pop().replace(/-/g, ' ')
 		};
 	} catch (e) {

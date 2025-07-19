@@ -27,16 +27,16 @@ function restoreMath(html, placeholders) {
 	let result = html;
 	
 	// Restore display math first
-	result = result.replace(/DISPLAY_MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
-		const { content } = placeholders[parseInt(index)];
-		return `<div class="katex-display"><span class="katex-equation">${content}</span></div>`;
-	});
+	// result = result.replace(/DISPLAY_MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
+	// 	const { content } = placeholders[parseInt(index)];
+	// 	return `<div class="katex-display"><span class="katex-equation">${content}</span></div>`;
+	// });
 	
-	// Then restore inline math
-	result = result.replace(/MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
-		const { content } = placeholders[parseInt(index)];
-		return `<span class="katex-inline">${content}</span>`;
-	});
+	// // Then restore inline math
+	// result = result.replace(/MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
+	// 	const { content } = placeholders[parseInt(index)];
+	// 	return `<span class="katex-inline">${content}</span>`;
+	// });
 	
 	return result;
 }
@@ -93,32 +93,38 @@ function admonitionPlugin(md) {
 		note: {
 			border: 'border-blue-900/80',
 			header: 'bg-blue-400/20',
-			content: 'bg-blue-300/5'
+			content: 'bg-blue-300/5',
+			title: 'Nota'
 		},
 		tip: {
 			border: 'border-emerald-900/80',
 			header: 'bg-emerald-400/20',
-			content: 'bg-emerald-300/5'
+			content: 'bg-emerald-300/5',
+			title: 'Suggerimento'
 		},
 		warning: {
 			border: 'border-amber-900/80',
 			header: 'bg-amber-400/20',
-			content: 'bg-amber-300/5'
+			content: 'bg-amber-300/5',
+			title: 'Attenzione'
 		},
 		error: {
 			border: 'border-red-900/80',
 			header: 'bg-red-400/20',
-			content: 'bg-red-300/5'
+			content: 'bg-red-300/5',
+			title: 'Errore'
 		},
 		example: {
-			border: 'border-gray-900/80',
-			header: 'bg-gray-400/20',
-			content: 'bg-gray-300/5'
+			border: 'border-purple-900/80',
+			header: 'bg-purple-400/40',
+			content: 'bg-purple-300/5',
+			title: 'Esempio'
 		},
 		info: {
 			border: 'border-teal-900/80',
 			header: 'bg-teal-400/20',
-			content: 'bg-teal-300/5'
+			content: 'bg-teal-300/5',
+			title: 'Info'
 		}
 	};
 
@@ -128,8 +134,8 @@ function admonitionPlugin(md) {
 
 		while (i < tokens.length) {
 			const token = tokens[i];
-			if (token.type === 'fence' && token.info.startsWith('ad-')) {
-				const adType = token.info.substring(3).trim().toLowerCase();
+			if (token.type === 'fence' && token.info.trim().startsWith('ad-')) {
+				const adType = token.info.trim().substring(3).trim().toLowerCase();
 				let title = '';
 				let content = token.content.trim();
 
@@ -152,7 +158,7 @@ function admonitionPlugin(md) {
 				const admonitionToken = new state.Token('html_block', '', 0);
 				admonitionToken.content = `
 					<div class="admonition my-6 rounded-md overflow-hidden border ${colors[adType].border} shadow-lg">
-						<div class="header flex items-center px-4 py-2 text-white ${colors[adType].header}">
+						<div class="header flex items-center px-4 py-2 text-zinc-950 dark:text-white ${colors[adType].header}">
 							${icons[adType] || icons.note}
 							<span class="title font-medium capitalize">${title || adType}</span>
 						</div>
@@ -201,7 +207,7 @@ function gifPlugin(md) {
 
 const md = new MarkdownIt({
 	html: true,
-	linkify: true,
+	linkify: false, // avoid automatic links when a word has a dot in the middle (CONTA.SE)
 	typographer: true
 });
 
@@ -215,7 +221,6 @@ md.use(admonitionPlugin);
 md.use(gifPlugin);
 
 export function renderMarkdown(markdownContent) {
-	// remove first two lines
 	markdownContent = markdownContent.split('\n').slice(2).join('\n');
 
 	const { processed, placeholders } = protectMath(markdownContent);

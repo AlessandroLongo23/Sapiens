@@ -1,5 +1,7 @@
 <script>
 	import { morgagniImages, dtuImages, stats, testimonials } from '$lib/data.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
 
@@ -9,16 +11,12 @@
 	import StatsCard from '$lib/components/cards/StatsCard.svelte';
 	import BookingModal from '$lib/components/modals/BookingModal.svelte';
 	import AuthModal from '$lib/components/modals/AuthModal.svelte';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	
+
 	let isContactModalOpen = $state(false);
 	let isAuthModalOpen = $state(false);
 
 	let { data } = $props();
 	let { session, supabase } = $derived(data);
-	
-	let error = $derived($page.url.searchParams.get('error'));
 	
 	let heroSection;
 	let aboutSection;
@@ -42,24 +40,8 @@
 			if (section) observer.observe(section);
 		});
 		
-		createParticles();
-		
 		return () => observer.disconnect();
 	});
-	
-	function createParticles() {
-		const hero = document.querySelector('.hero-particles');
-		if (!hero) return;
-		
-		for (let i = 0; i < 8; i++) {
-			const particle = document.createElement('div');
-			particle.className = 'particle';
-			particle.style.left = Math.random() * 100 + '%';
-			particle.style.animationDelay = Math.random() * 15 + 's';
-			particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-			hero.appendChild(particle);
-		}
-	}
 	
 	function openContactModal() {
 		isContactModalOpen = true;
@@ -94,42 +76,24 @@
 
 <AuthModal bind:isOpen={isAuthModalOpen} onClose={() => isAuthModalOpen = false} />
 
-{#if error}
-	<div class="fixed top-4 left-4 right-4 z-50 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-		<p>{error}</p>
-	</div>
-{/if}
-
-<div class="fixed z-20 top-4 right-4 sm:top-8 sm:right-8">
-	{#if session}
-		<button
-			onclick={accessPrivateRoute}
-			class="btn-secondary text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
-		>
-			<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-				<span class="hidden sm:block">Dashboard</span>
-				<ls.Home class="size-5" />
-			</span>
-		</button>
-	{:else}
-		<button
-			onclick={openAuthModal}
-			class="btn-secondary text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
-		>
-			<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-				<span class="hidden sm:block">Login Studente</span>
-				<ls.LogIn class="size-5" />
-			</span>
-		</button>
-	{/if}
-</div>
+<button
+	onclick={() => { if (session) { accessPrivateRoute() } else { openAuthModal() } }}
+	class="fixed z-20 top-4 right-4 sm:top-8 sm:right-8 btn-secondary text-zinc-700 px-3 sm:px-6 py-3 sm:py-3 rounded-2xl font-semibold text-base group cursor-pointer"
+>
+	<span class="flex items-center justify-center space-x-2 sm:space-x-3">
+		<span class="hidden sm:block">{session ? 'Dashboard' : 'Login Studente'}</span>
+		{#if session}
+			<ls.Home class="size-5" />
+		{:else}
+			<ls.LogIn class="size-5" />
+		{/if}
+	</span>
+</button>
 
 <section
 	bind:this={heroSection}
 	class="relative min-h-screen hero-gradient flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-20 overflow-hidden"
 >
-	<div class="hero-particles particles"></div>
-	
 	<div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center z-10">
 		<div class="text-center lg:text-left space-y-6 sm:space-y-8 lg:space-y-10">
 			<div class="space-y-4 sm:space-y-6">
