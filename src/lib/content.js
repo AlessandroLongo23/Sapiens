@@ -53,6 +53,12 @@ export const content = {
                         "icon": "",
                         "path": "/superiori/matematica/1/frazioni/conversione.md"
                     }
+                },
+                "insiemi": {
+
+                },
+                "monomi": {
+                    
                 }
             }
         }

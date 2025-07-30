@@ -41,7 +41,7 @@
 
         <button
             onclick={() => goto(exercisePath)}
-            class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
+            class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer mt-8 mb-32"
         >
             <span class="flex items-center justify-center space-x-2 sm:space-x-3">
                 <ls.PenLine

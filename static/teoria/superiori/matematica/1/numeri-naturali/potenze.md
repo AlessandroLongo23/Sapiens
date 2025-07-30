@@ -38,7 +38,7 @@ $2^3 \cdot 2^2 = 2^{3+2} = 2^5 = 32$
 
 ### 2. Divisione di potenze con la stessa base
 
-$$\dfrac{a^m}{a^n} = a^{m-n} \quad \text{(se } m \ge n \text{ e } a \neq 0\text{)}$$
+$$\dfrac{a^m}{a^n} = a^{m-n} \quad \text{(se } m \ge n \text{ e } a \mathrel{\char`≠} 0\text{)}$$
 
 **Esempio:**  
 $\dfrac{3^5}{3^2} = 3^{5-2} = 3^3 = 27$
@@ -65,7 +65,7 @@ $2^3 \cdot 3^3 = (2 \cdot 3)^3 = 6^3 = 216$
 
 ### 5. Divisione di potenze con lo stesso esponente
 
-$$\dfrac{a^n}{b^n} = \left(\dfrac{a}{b}\right)^n \quad \text{(con } b \neq 0 \text{)}$$
+$$\dfrac{a^n}{b^n} = \left(\dfrac{a}{b}\right)^n \quad \text{(con } b \mathrel{\char`≠} 0 \text{)}$$
 
 **Esempio:**  
 $\dfrac{8^2}{2^2} = \left(\dfrac{8}{2}\right)^2 = 4^2 = 16$

@@ -13,7 +13,9 @@ export class FinitoEx extends Exercise {
 	generateQuestion() {
         this.integer = Math.random() < 0.5 ? Math.floor(Math.random() * 10) : 0;
         this.decimalDigits = Math.floor(Math.random() * 3) + 1;
-        this.decimal = Math.round(Math.random() * 10 ** this.decimalDigits).toString();
+        this.decimal = Math.round(Math.random() * 10 ** this.decimalDigits);
+        if (this.decimal % 10 == 0) this.decimal++;
+        this.decimal = this.decimal.toString();
         this.num = this.integer + '.' + this.decimal;
 
         this.question = new Question(`${this.num}`);

@@ -16,7 +16,7 @@ Il metodo da utilizzare dipende da come sono fatte le frazioni:
 Quando due frazioni hanno lo **stesso denominatore**, è più grande quella che ha il **numeratore maggiore**.
 
 ### Regola
-Se $a$ e $b$ sono due numeri naturali e $c \neq 0$, allora:
+Se $a$ e $b$ sono due numeri naturali e $c \mathrel{\char`≠} 0$, allora:
 
 $$\dfrac{a}{c} > \dfrac{b}{c} \Leftrightarrow a > b$$
 
@@ -41,7 +41,7 @@ $11 > 8 \Rightarrow \dfrac{11}{12} > \dfrac{8}{12}$
 Quando due frazioni hanno lo **stesso numeratore**, è più grande quella che ha il **denominatore minore**.
 
 ### Regola
-Se $a$ è un numero naturale e $b, c \neq 0$, allora:
+Se $a$ è un numero naturale e $b, c \mathrel{\char`≠} 0$, allora:
 
 $$\dfrac{a}{b} > \dfrac{a}{c} \Leftrightarrow b < c$$
 

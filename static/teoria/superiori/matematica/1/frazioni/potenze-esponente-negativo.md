@@ -4,7 +4,7 @@
 
 Una **potenza con esponente negativo** è l'inverso della potenza con esponente positivo corrispondente.
 
-Per qualsiasi numero $a \neq 0$ e per qualsiasi numero naturale $n$:
+Per qualsiasi numero $a \mathrel{\char`≠} 0$ e per qualsiasi numero naturale $n$:
 
 $$a^{-n} = \dfrac{1}{a^n}$$
 
