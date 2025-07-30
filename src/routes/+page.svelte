@@ -86,7 +86,7 @@
 	<title>AleRipetizioni</title>
 	<meta
 		name="description"
-		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 140 ore di esperienza."
+		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 150 ore di esperienza."
 	/>
 </svelte:head>
 

@@ -25,6 +25,11 @@ export class Question {
     generateQuestion() {
         throw new Error('Abstract method not implemented');
     }
+
+    equals(other) {
+        return other instanceof Question && 
+               this.textContent === other.textContent;
+    }
 }
 
 export class Answer {
@@ -35,5 +40,11 @@ export class Answer {
 
     generateAnswer() {
         throw new Error('Abstract method not implemented');
+    }
+
+    equals(other) {
+        return other instanceof Answer && 
+               this.textContent === other.textContent && 
+               this.isCorrect === other.isCorrect;
     }
 }

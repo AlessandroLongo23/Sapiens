@@ -53,9 +53,6 @@
                 type="icon"
                 options={['table', 'grid']}
                 icons={[ls.TableProperties, ls.LayoutGrid]}
-                onchange={() => {
-                    console.log('view changed to:', view);
-                }}
             />
             <NewStudent />
         </div>

@@ -5,7 +5,7 @@
 	let { user } = $derived(data);
 </script>
 
-<div class="relative p-8">
+<div class="relative px-8 py-4">
 	<CalendarStudent user={user}>
 		<div>
 		</div>

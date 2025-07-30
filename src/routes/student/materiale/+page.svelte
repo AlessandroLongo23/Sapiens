@@ -12,12 +12,14 @@
 		for (let topic of Object.values(content["superiori"]["matematica"]["1"]["numeri naturali"])) {
 			topics.push(topic)
 		}
+		for (let topic of Object.values(content["superiori"]["matematica"]["1"]["frazioni"])) {
+			topics.push(topic)
+		}
 		for (let topic of Object.values(content["superiori"]["informatica"]["3"])) {
 			topics.push(topic)
 		}
 		return topics
 	})
-
 </script>
 
 <div class="flex flex-col gap-8 mt-18 mx-auto px-32 py-8">

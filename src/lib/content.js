@@ -33,6 +33,26 @@ export const content = {
                         "icon": "",
                         "path": "/superiori/matematica/1/numeri-naturali/mcm-MCD.md"
                     }
+                },
+                "frazioni": {
+                    "confronto frazioni": {
+                        "title": "Confronto frazioni",
+                        "description": "Confronto frazioni.",
+                        "icon": "",
+                        "path": "/superiori/matematica/1/frazioni/confronto-frazioni.md"
+                    },
+                    "potenze esponente negativo": {
+                        "title": "Potenze esponente negativo",
+                        "description": "Potenze con esponente negativo.",
+                        "icon": "",
+                        "path": "/superiori/matematica/1/frazioni/potenze-esponente-negativo.md"
+                    },
+                    "conversione": {
+                        "title": "Conversione",
+                        "description": "Conversione di numeri dalla forma frazionaria alla forma decimale e viceversa.",
+                        "icon": "",
+                        "path": "/superiori/matematica/1/frazioni/conversione.md"
+                    }
                 }
             }
         }

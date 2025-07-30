@@ -8,7 +8,11 @@
 	import { createEventDispatcher } from 'svelte';
 	import * as ls from 'lucide-svelte';
 
-	let { day, isCurrentMonth = true } = $props();
+	let { 
+		user,
+		day, 
+		isCurrentMonth = true 
+	} = $props();
 	
 	const dispatch = createEventDispatcher();
 
@@ -75,7 +79,7 @@
 </script>
 
 <div 
-	class="flex flex-col items-center relative w-full h-24 border border-zinc-200 dark:border-zinc-700"
+	class="flex flex-col items-center relative w-full h-28 border border-zinc-200 dark:border-zinc-700"
 	class:opacity-40={!isCurrentMonth}
 >
 	<button 
@@ -89,12 +93,14 @@
 			{format(day, 'd', { locale: it })}
 		</span>
 		
-		<div class="flex flex-row gap-1 justify-center items-center absolute bottom-0 w-full left-1/2 transform -translate-x-1/2">
+		<div class="flex flex-col justify-center items-start absolute p-4 w-full left-1/2 transform -translate-x-1/2">
 			{#if dayLectures.length > 0 && isCurrentMonth}
 				{#each dayLectures as dayLecture}
-					<div class="flex flex-col items-center justify-center bg-red-500/50 rounded-md p-2 w-full m-2">
-						<span class="text-xs text-zinc-900 dark:text-zinc-100">{dayLecture.start_time} - {dayLecture.end_time}</span>
-					</div>
+					{#if dayLecture.student_id === user.id}
+						<div class="flex flex-row w-full gap-1 justify-center items-center bg-green-500/50 rounded-md">
+							<span class="text-xs text-zinc-900 dark:text-zinc-100 p-1">{dayLecture.start_time} - {dayLecture.end_time}</span>
+						</div>
+					{/if}
 				{/each}
 			{/if}
 		</div>

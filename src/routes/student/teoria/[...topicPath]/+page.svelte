@@ -27,7 +27,7 @@
 </svelte:head>
 
 {#if data.error}
-    <div class="flex justify-center items-center h-full bg-zinc-50 text-red-500">
+    <div class="flex justify-center items-center h-full text-red-500">
         <p>Errore: {data.error}</p>
     </div>
 {:else if data.content}

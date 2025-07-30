@@ -81,7 +81,6 @@ const createSubjectsStore = () => {
             return true;
         },
         updateSubject: async (subjectId, updatedSubject) => {
-            console.log('updateSubject', subjectId, updatedSubject);
             const { data, error } = await supabase
                 .from('subjects')
                 .update(updatedSubject)

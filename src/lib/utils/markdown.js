@@ -27,16 +27,16 @@ function restoreMath(html, placeholders) {
 	let result = html;
 	
 	// Restore display math first
-	// result = result.replace(/DISPLAY_MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
-	// 	const { content } = placeholders[parseInt(index)];
-	// 	return `<div class="katex-display"><span class="katex-equation">${content}</span></div>`;
-	// });
+	result = result.replace(/DISPLAY_MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
+		const { content } = placeholders[parseInt(index)];
+		return `<div class="katex-display"><span class="katex-equation">${content}</span></div>`;
+	});
 	
-	// // Then restore inline math
-	// result = result.replace(/MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
-	// 	const { content } = placeholders[parseInt(index)];
-	// 	return `<span class="katex-inline">${content}</span>`;
-	// });
+	// Then restore inline math
+	result = result.replace(/MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
+		const { content } = placeholders[parseInt(index)];
+		return `<span class="katex-inline">${content}</span>`;
+	});
 	
 	return result;
 }

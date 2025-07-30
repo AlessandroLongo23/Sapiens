@@ -8,6 +8,9 @@
 
 	import CalendarDayStudent from '$lib/components/calendars/CalendarDayStudent.svelte';
 	import Sidebar from '$lib/components/sidebar/Sidebar.svelte';
+	import { isSameDay } from 'date-fns';
+	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 
 	const dispatch = createEventDispatcher();
 
@@ -18,6 +21,17 @@
 	let selectedDay = $state(null);
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);
+
+	let dayLectures = $derived.by(() => {
+		return $lecturesStore.lectures
+			.filter(lecture => isSameDay(new Date(lecture.date), new Date(selectedDay)))
+			.sort((a, b) => a.start_time.localeCompare(b.start_time))
+			.map(lecture => ({
+				...lecture,
+				student: $studentsStore.students.find(student => student.id === lecture.student_id),
+				subject: $subjectsStore.subjects.find(subject => subject.id === lecture.subject_id)
+			}));
+	});
 
 	let monthDays = $state([]);
 	$effect(() => {
@@ -72,7 +86,6 @@
 
 			if (result.success) {
 				isSubmitted = true;
-				// Reset the form after 4 seconds
 				setTimeout(() => {
 					isSubmitted = false;
 					isCalendarSidebarOpen = false;
@@ -93,8 +106,25 @@
 	}
 </script>
 
-<div class="relative h-full flex flex-col {calendarContainerMargin} transition-all duration-200 ease-in-out gap-4">
+<div class="relative h-full flex flex-col {calendarContainerMargin} transition-all duration-200 ease-in-out gap-2">
 	<div class="flex w-full justify-center items-center space-x-2">
+		<div class="absolute left-0 top-0 flex flex-row gap-8">
+			<div class="flex flex-row gap-2 justify-center items-center">
+				<span class="h-2 w-2 rounded-full bg-green-500"></span>
+				<span>Le mie Lezioni</span>
+			</div>
+
+			<div class="flex flex-row gap-2 justify-center items-center">
+				<span class="h-2 w-2 rounded-full bg-amber-500"></span>
+				<span>Le mie Proposte</span>
+			</div>
+
+			<div class="flex flex-row gap-2 justify-center items-center">
+				<span class="h-2 w-2 rounded-full bg-red-500"></span>
+				<span>Non disponibile</span>
+			</div>
+		</div>
+
 		<button 
 			onclick={prevMonth} 
 			class="p-2 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
@@ -127,6 +157,7 @@
 	<div class="grid grid-cols-7 pt-0">
 		{#each monthDays as day}
 			<CalendarDayStudent
+				user={user}
 				day={day.date} 
 				isCurrentMonth={day.isCurrentMonth}
 				on:click={() => handleDayClick(day.date)} 
@@ -143,14 +174,7 @@
 		maxWidth="96"
 		classes="bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 z-20 mt-18"
 	>
-		<div class="p-6 h-full flex flex-col">
-			<button 
-				onclick={() => isCalendarSidebarOpen = false}
-				class="absolute top-6 right-6 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 p-2 border border-zinc-200 dark:border-zinc-700 rounded-md hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all duration-200 ease-in-out"
-			>
-				<ls.X size={20} class="text-zinc-900 dark:text-zinc-50"/>
-			</button>
-
+		<div class="h-full flex flex-col">
 			{#if isSubmitted}
 				<div class="flex flex-col items-center justify-center h-full text-center">
 					<div class="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 flex items-center justify-center animate-pulse">
@@ -173,14 +197,29 @@
 					</button>
 				</div>
 			{:else}
-				<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
-					{capitalize(formatDateString(selectedDay, 'EEEE'))}
-					<span class="block text-sm text-zinc-500 dark:text-zinc-400 font-normal">
-						{formatDateString(selectedDay, 'PPP')}
-					</span>
-				</h2>
+				<div class="flex flex-row gap-2 justify-between items-center px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
+					<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+						{capitalize(formatDateString(selectedDay, 'EEEE'))}
+						<span class="block text-sm text-zinc-500 dark:text-zinc-400 font-normal">
+							{formatDateString(selectedDay, 'PPP')}
+						</span>
+					</h2>
 
-				<form onsubmit={handleSubmit} class="space-y-4">
+					<button 
+						onclick={() => isCalendarSidebarOpen = false}
+						class="bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 p-2 border border-zinc-200 dark:border-zinc-700 rounded-md hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all duration-200 ease-in-out"
+					>
+						<ls.X size={20} class="text-zinc-900 dark:text-zinc-50"/>
+					</button>
+				</div>
+
+				<form onsubmit={handleSubmit} class="space-y-4 px-6 py-4">
+					<div class="flex flex-col gap-2">
+						<h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+							Proponi una lezione
+						</h3>
+					</div>
+
 					<div class="grid grid-cols-2 gap-4">
 						<div>
 							<label for="start-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
@@ -223,6 +262,22 @@
 						{/if}
 					</button>
 				</form>
+
+				<hr class="border-zinc-200 dark:border-zinc-700" />
+
+				<div class="flex flex-col gap-2 px-6 py-4">
+					<h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+						Impegni del giorno
+					</h3>
+
+					<div class="flex flex-col gap-2">
+						{#each dayLectures as dayLecture}
+							<div class="flex flex-row gap-2 justify-center items-center bg-green-500/50 rounded-md p-2">
+								<span class="text-xs text-zinc-900 dark:text-zinc-100">{dayLecture.start_time} - {dayLecture.end_time}</span>
+							</div>
+						{/each}
+					</div>
+				</div>
 			{/if}
 		</div>
 	</Sidebar>

@@ -1,11 +1,11 @@
 <script>
-	import { goto } from '$app/navigation';
-	import * as ls from 'lucide-svelte';
-  	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+	import { studentsStore } from '$lib/stores/students/students.js';
 	import { motivational_messages } from '$lib/microcopy.js';
 	import { selectedTopic } from '$lib/content.js';
-	import { studentsStore } from '$lib/stores/students/students.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import * as ls from 'lucide-svelte';
 	
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';

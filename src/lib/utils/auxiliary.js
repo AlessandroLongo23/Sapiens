@@ -21,5 +21,13 @@ export const mcmArray = (arr) => {
 }
 
 Array.prototype.shuffle = function() {
-	return this.sort((a, b) => Math.random() - 0.5);
+	for (let i = this.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[this[i], this[j]] = [this[j], this[i]];
+	}
+	return this;
+}
+
+Array.prototype.random = function() {
+	return this[Math.floor(Math.random() * this.length)];
 }

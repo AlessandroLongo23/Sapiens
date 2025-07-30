@@ -1,8 +1,11 @@
 - [x] fix supabase authentication
 - [x] add content structure
 - [x] add professor dashboard
-  - [ ] add student account creation
-  - [ ] add calendar interaction for preferences
-  - [ ] move in the whole TutorTrack project
+  - [x] add student account creation
+  - [x] add calendar
+    - [x] students lectures proposals
+    - [ ] admin preferences
+  - [x] move in the whole TutorTrack project
   - [ ] add editor to write new content
 - [ ] setup up aleripetizioni2024@gmail.com as the email receiver
+- [ ] add form for students to add a new review

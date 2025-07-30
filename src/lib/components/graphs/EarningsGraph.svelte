@@ -33,7 +33,6 @@
 	
 	$effect(() => {
 		if (statsStore.earningsByMonth && canvas) {
-			console.log(statsStore.earningsByMonth);
 			renderChart();
 		}
 	});
@@ -303,7 +302,6 @@
 	});
 
 	const formatHours = (hours) => {
-		console.log(hours);
 		const hoursInt = Math.floor(hours);
 		const minutes = Math.round((hours - hoursInt) * 60);
 		return `${hoursInt}h ${minutes}m`;

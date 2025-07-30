@@ -23,7 +23,6 @@ export async function load({ params }) {
 		let exercises = [];
 		for (const exercise of Object.values(topicConfig)) {
 			const { generator: generatorName, count, args } = exercise;
-			console.log(generatorName, count, args);
 			const generator = exerciseModule[generatorName];
 
 			if (!generator) {
