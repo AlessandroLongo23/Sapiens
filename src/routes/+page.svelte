@@ -134,7 +134,7 @@
 
 <AuthModal bind:isOpen={isAuthModalOpen} onClose={() => isAuthModalOpen = false} />
 
-<header class="sm:top-8 top-4 z-30 fixed left-4 right-4 mx-auto max-w-7xl rounded-2xl border border-zinc-200/70 dark:border-zinc-700/60 bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-zinc-900/60">
+<header class="sm:top-8 top-4 z-30 fixed left-1/2 -translate-x-1/2 sm:left-4 sm:right-4 sm:translate-x-0 mx-auto max-w-7xl rounded-2xl border border-zinc-200/70 dark:border-zinc-700/60 bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-zinc-900/60">
 	<div class="flex items-center sm:justify-between justify-center px-2 sm:px-4 py-3">
 		<a href="/" class="hidden sm:flex items-center gap-3">
 			<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-elegant">
@@ -181,7 +181,7 @@
 
 <section
     bind:this={heroSection}
-    class="relative min-h-screen hero-gradient flex items-center justify-center md:scroll-mt-32 md:pt-28 lg:pt-36 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden"
+    class="relative min-h-screen hero-gradient flex items-center justify-center md:scroll-mt-32 pt-24 md:pt-28 lg:pt-36 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden"
 >
 	<div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center z-10">
 		<div class="text-center lg:text-left space-y-6 sm:space-y-8 lg:space-y-10">
@@ -200,7 +200,7 @@
 			<div class="flex flex-row gap-4 sm:gap-6 justify-center lg:justify-start">
 				<button
 					onclick={openContactModal}
-					class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
+					class="btn-primary text-white px-6 sm:px-8 py-2 sm:py-4 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
 				>
 					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
 						<ls.Calendar
