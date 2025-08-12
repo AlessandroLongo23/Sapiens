@@ -5,8 +5,8 @@
 </script>
 
 <div class="mx-8">
-	<div class="relative">
-		<div class="absolute top-6 left-0 right-0 h-0.5 bg-zinc-200 rounded-full"></div>
+    <div class="relative">
+        <div class="absolute top-6 left-0 right-0 h-0.5 bg-zinc-200 dark:bg-zinc-700 rounded-full"></div>
 		
 		{#if currentStep > 2}
 			<div 
@@ -26,18 +26,18 @@
 			></div>
 		{/if}
 		
-		<div class="relative flex justify-between z-20">
+        <div class="relative flex justify-between z-20">
 			{#each $steps as step}
 				<div class="flex flex-col items-center group">
 					<div class="relative">
 						<div 
-							class="w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-500 {
-								step.number < currentStep 
-									? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-lg scale-110' 
-									: step.number === currentStep 
-										? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg scale-110 ' 
-										: 'bg-white border-2 border-zinc-200 text-zinc-400'
-							}"
+                            class="w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-500 {
+                                step.number < currentStep 
+                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-lg scale-110' 
+                                    : step.number === currentStep 
+                                        ? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg scale-110 ' 
+                                        : 'bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500'
+                            }"
 						>
 							{#if step.number < currentStep}
 								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,10 +53,10 @@
 						{/if}
 					</div>
 					
-					<div class="mt-3 text-center max-w-20">
-						<div class="text-sm font-semibold {
-							step.number <= currentStep ? 'text-zinc-800' : 'text-zinc-400'
-						} transition-colors duration-300">
+                    <div class="mt-3 text-center max-w-20">
+                        <div class="text-sm font-semibold {
+                            step.number <= currentStep ? 'text-zinc-800 dark:text-zinc-200' : 'text-zinc-400 dark:text-zinc-500'
+                        } transition-colors duration-300">
 							{step.title}
 						</div>
 						<!-- <div class="text-xs {

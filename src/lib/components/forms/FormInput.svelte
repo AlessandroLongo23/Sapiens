@@ -38,8 +38,8 @@
 
 <div class="space-y-2">
 	<!-- Label -->
-	{#if label}
-		<label for={id} class="block text-sm font-medium text-zinc-700 mb-2">
+    {#if label}
+        <label for={id} class="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-2">
 			{label}
 			{#if required}
 				<span class="text-red-500 ml-1">*</span>
@@ -57,7 +57,7 @@
 		{/if}
 		
 		<!-- Input field -->
-		<input
+        <input
 			bind:this={inputElement}
 			{id}
 			bind:value
@@ -65,20 +65,20 @@
 			{placeholder}
 			{required}
 			{disabled}
-			class="w-full px-4 py-3 {icon ? 'pl-12' : ''} rounded-xl border-2 transition-all duration-300 bg-white focus:outline-none {
+            class="w-full px-4 py-3 {icon ? 'pl-12' : ''} rounded-xl border-2 transition-all duration-300 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none {
 				hasError 
 					? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20' 
 					: hasValue
 						? 'border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
-						: 'border-zinc-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-zinc-300'
-			} {disabled ? 'opacity-50 cursor-not-allowed bg-zinc-50' : ''}"
+                        : 'border-zinc-200 dark:border-zinc-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-zinc-300 dark:hover:border-zinc-600'
+            } {disabled ? 'opacity-50 cursor-not-allowed bg-zinc-50 dark:bg-zinc-800' : ''}"
 			oninput={handleInput}
 			onfocus={handleFocus}
 			onblur={handleBlur}
 		/>
 		
 		<!-- Focus ring effect -->
-		<div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-indigo-500/10 opacity-0 transition-opacity duration-300 pointer-events-none {
+        <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-indigo-500/10 opacity-0 transition-opacity duration-300 pointer-events-none {
 			!hasError && (hasValue) ? 'opacity-100' : ''
 		}"></div>
 	</div>

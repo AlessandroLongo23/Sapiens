@@ -37,35 +37,35 @@
 	</div>
 
 	{#if numItems > 1}
-		<div class="mt-6 flex items-center justify-center space-x-4">
+    <div class="mt-6 flex items-center justify-center space-x-4">
 			<button
 				onclick={prev}
-				class="rounded-full bg-zinc-100 p-2 shadow-sm transition hover:bg-zinc-200 focus:outline-none"
+        class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-2 shadow-sm transition hover:bg-zinc-200 dark:hover:bg-zinc-700 focus:outline-none"
 				aria-label="Previous testimonial"
 			>
-				<ls.ChevronLeft class="h-5 w-5 text-zinc-700" />
+        <ls.ChevronLeft class="h-5 w-5 text-zinc-700 dark:text-zinc-200" />
 			</button>
 
 			<div class="flex justify-center space-x-2">
 				{#each testimonials as _, index}
 					<button
 						onclick={() => currentIndex = index}
-						class="h-2 w-2 rounded-full transition-colors duration-300 {
-							index === currentIndex
-								? 'bg-zinc-600 scale-125' 
-								: 'bg-zinc-300'
-						}"
+          class="h-2 w-2 rounded-full transition-colors duration-300 {
+              index === currentIndex
+                ? 'bg-zinc-600 dark:bg-zinc-300 scale-125' 
+                : 'bg-zinc-300 dark:bg-zinc-600'
+            }"
 						aria-label="Go to testimonial {index + 1}"
 					></button>
 				{/each}
 			</div>
 
-			<button
+      <button
 				onclick={next}
-				class="rounded-full bg-zinc-100 p-2 shadow-sm transition hover:bg-zinc-200 focus:outline-none"
+        class="rounded-full bg-zinc-100 dark:bg-zinc-800 p-2 shadow-sm transition hover:bg-zinc-200 dark:hover:bg-zinc-700 focus:outline-none"
 				aria-label="Next testimonial"
 			>
-				<ls.ChevronRight class="h-5 w-5 text-zinc-700" />
+        <ls.ChevronRight class="h-5 w-5 text-zinc-700 dark:text-zinc-200" />
 			</button>
 		</div>
 	{/if}

@@ -68,18 +68,18 @@
 	{#if numGroups > 1}
 		<button
 			onclick={showPrev}
-			class="absolute -left-16 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition hover:bg-white hover:scale-110 focus:outline-none cursor-pointer"
+			class="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 dark:bg-zinc-800/70 p-3 shadow-lg backdrop-blur-sm transition hover:bg-white dark:hover:bg-zinc-700/80 hover:scale-110 focus:outline-none cursor-pointer"
 			aria-label="Previous testimonial"
 		>
-			<ls.ChevronLeft class="h-6 w-6 text-zinc-800" />
+			<ls.ChevronLeft class="h-6 w-6 text-zinc-800 dark:text-zinc-200" />
 		</button>
 		
 		<button
 			onclick={showNext}
-			class="absolute -right-16 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-3 shadow-lg backdrop-blur-sm transition hover:bg-white hover:scale-110 focus:outline-none cursor-pointer"
+			class="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 dark:bg-zinc-800/70 p-3 shadow-lg backdrop-blur-sm transition hover:bg-white dark:hover:bg-zinc-700/80 hover:scale-110 focus:outline-none cursor-pointer"
 			aria-label="Next testimonial"
 		>
-			<ls.ChevronRight class="h-6 w-6 text-zinc-800" />
+			<ls.ChevronRight class="h-6 w-6 text-zinc-800 dark:text-zinc-200" />
 		</button>
 	{/if}
 </div> 

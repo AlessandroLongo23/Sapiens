@@ -166,14 +166,14 @@
 		<div class="p-4 sm:p-8 flex-1 flex items-center justify-center">
 			<div class="text-center">
 				<div
-					class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center"
+					class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center"
 				>
 					<ls.CheckCircle class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" />
 				</div>
-				<h3 class="text-xl sm:text-2xl font-bold text-zinc-900 mb-3 sm:mb-4">
+				<h3 class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3 sm:mb-4">
 					Richiesta Inviata!
 				</h3>
-				<p class="text-zinc-600 text-base sm:text-lg mb-4 sm:mb-6 px-2">
+				<p class="text-zinc-600 dark:text-zinc-300 text-base sm:text-lg mb-4 sm:mb-6 px-2">
 					Grazie per aver scelto i miei servizi. Ti contatterò entro 24 ore per organizzare la
 					prima lezione.
 				</p>
@@ -182,20 +182,20 @@
 		</div>
 	{:else}
 		<div
-			class="flex justify-between items-center p-4 sm:p-6 border-b border-zinc-100 flex-shrink-0"
+			class="flex justify-between items-center p-4 sm:p-6 border-b border-zinc-100 dark:border-zinc-700/50 flex-shrink-0"
 		>
 			<h3
-				class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-zinc-800 to-zinc-900 bg-clip-text text-transparent"
+				class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-zinc-800 to-zinc-900 dark:from-zinc-100 dark:to-zinc-300 bg-clip-text text-transparent"
 			>
 				{title}
 			</h3>
 			<button
 				onclick={closeModal}
-				class="group p-2 hover:bg-zinc-100 rounded-xl transition-colors duration-300 cursor-pointer"
+				class="group p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-300 cursor-pointer"
 				aria-label="Chiudi modal"
 			>
 				<ls.X
-					class="w-5 h-5 text-zinc-500 group-hover:text-zinc-700 transition-colors duration-300"
+					class="w-5 h-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200 transition-colors duration-300"
 				/>
 			</button>
 		</div>
@@ -211,10 +211,10 @@
 						class="h-full flex flex-col justify-center animate-in slide-in-from-right-4 duration-500"
 					>
 						<div class="text-center mb-4 sm:mb-6">
-							<h4 class="text-lg sm:text-xl font-semibold text-zinc-800 mb-2">
+						<h4 class="text-lg sm:text-xl font-semibold text-zinc-800 dark:text-zinc-100 mb-2">
 								Seleziona il tuo livello di studio
 							</h4>
-							<p class="text-zinc-600 text-sm sm:text-base px-2">
+						<p class="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base px-2">
 								Scegli il livello che meglio rappresenta la tua situazione attuale
 							</p>
 						</div>
@@ -229,26 +229,26 @@
 									<div class="flex flex-col justify-between h-full">
 										<div class="flex flex-row items-center justify-start gap-4 mb-3">
 											{#if option.icon}
-												<div
-													class="w-8 h-8 rounded-lg bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center {
-														formData.level === option.value
-															? 'from-blue-100 to-indigo-100'
-															: ''
-													} transition-all duration-300"
-												>
+									<div
+										class="w-8 h-8 rounded-lg bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center {
+											formData.level === option.value
+												? 'from-blue-100 to-indigo-100 dark:from-blue-950/40 dark:to-indigo-900/40'
+												: ''
+										} transition-all duration-300"
+									>
 													<option.icon
-														class="w-4 h-4 {formData.level === option.value
-															? 'text-blue-600'
-															: 'text-zinc-600'} transition-colors duration-300"
+											class="w-4 h-4 {formData.level === option.value
+												? 'text-blue-600 dark:text-blue-400'
+												: 'text-zinc-600 dark:text-zinc-300'} transition-colors duration-300"
 													/>
 												</div>
 											{/if}
 
 											<div
-												class="text-base font-semibold {
+									class="text-base font-semibold {
 													formData.level === option.value
-														? 'text-blue-900'
-														: 'text-zinc-800 group-hover:text-zinc-900'
+											? 'text-blue-900 dark:text-blue-300'
+											: 'text-zinc-800 dark:text-zinc-100 group-hover:text-zinc-900 dark:group-hover:text-zinc-50'
 												} transition-colors duration-300 mb-1"
 											>
 												{option.title}
@@ -257,10 +257,10 @@
 
 										{#if option.subtitle}
 											<div
-												class="text-sm {
+									class="text-sm {
 													formData.level === option.value
-														? 'text-blue-700'
-														: 'text-zinc-600'
+											? 'text-blue-700 dark:text-blue-400'
+											: 'text-zinc-600 dark:text-zinc-300'
 												} transition-colors duration-300 mb-1"
 											>
 												{option.subtitle}
@@ -269,10 +269,10 @@
 
 										{#if option.price}
 											<div
-												class="text-lg font-bold {
+									class="text-lg font-bold {
 													formData.level === option.value
-														? 'text-blue-600'
-														: 'text-zinc-700'
+											? 'text-blue-600 dark:text-blue-400'
+											: 'text-zinc-700 dark:text-zinc-200'
 												} transition-colors duration-300"
 											>
 												{option.price}
@@ -283,8 +283,8 @@
 							{/each}
 						</div>
 
-						{#if errors.level}
-							<div class="text-red-600 text-sm text-center mt-4">{errors.level}</div>
+			{#if errors.level}
+				<div class="text-red-600 dark:text-red-400 text-sm text-center mt-4">{errors.level}</div>
 						{/if}
 					</div>
 				{:else if currentStep === 2}
@@ -292,8 +292,8 @@
 						class="h-full flex flex-col justify-start animate-in slide-in-from-right-4 duration-500"
 					>
 						<div class="text-center mb-6">
-							<h4 class="text-xl font-semibold text-zinc-800 mb-2">Seleziona le materie</h4>
-							<p class="text-zinc-600">
+							<h4 class="text-xl font-semibold text-zinc-800 dark:text-zinc-100 mb-2">Seleziona le materie</h4>
+							<p class="text-zinc-600 dark:text-zinc-300">
 								Scegli una o più materie per cui hai bisogno di supporto
 							</p>
 						</div>
@@ -312,12 +312,12 @@
 							</div>
 
 							{#if errors.subjects}
-								<div class="text-red-600 text-sm text-center mt-4">
+								<div class="text-red-600 dark:text-red-400 text-sm text-center mt-4">
 									{errors.subjects}
 								</div>
 							{/if}
 							{#if errors.customSubject}
-								<div class="text-red-600 text-sm text-center mt-2">
+								<div class="text-red-600 dark:text-red-400 text-sm text-center mt-2">
 									{errors.customSubject}
 								</div>
 							{/if}
@@ -328,10 +328,10 @@
 						class="h-full flex flex-col justify-start animate-in slide-in-from-right-4 duration-500"
 					>
 						<div class="text-center mb-4 sm:mb-6">
-							<h4 class="text-lg sm:text-xl font-semibold text-zinc-800 mb-2">
+							<h4 class="text-lg sm:text-xl font-semibold text-zinc-800 dark:text-zinc-100 mb-2">
 								Frequenza delle lezioni
 							</h4>
-							<p class="text-zinc-600 text-sm sm:text-base px-2">
+							<p class="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base px-2">
 								Scegli la frequenza che meglio si adatta alle tue esigenze
 							</p>
 						</div>
@@ -342,8 +342,8 @@
 									<div
 										class="text-base font-semibold {
 											formData.frequency === option.value
-												? 'text-blue-900'
-												: 'text-zinc-800 group-hover:text-zinc-900'
+												? 'text-blue-900 dark:text-blue-300'
+												: 'text-zinc-800 dark:text-zinc-100 group-hover:text-zinc-900 dark:group-hover:text-zinc-50'
 										} transition-colors duration-300 mb-1"
 									>
 										{option.title}
@@ -353,8 +353,8 @@
 										<div
 											class="text-sm {
 												formData.frequency === option.value
-													? 'text-blue-700'
-													: 'text-zinc-600'
+													? 'text-blue-700 dark:text-blue-400'
+													: 'text-zinc-600 dark:text-zinc-300'
 											} transition-colors duration-300 mb-1"
 										>
 											{option.subtitle}
@@ -365,18 +365,18 @@
 						</div>
 
 						{#if errors.frequency}
-							<div class="text-red-600 text-sm text-center mt-4">{errors.frequency}</div>
+							<div class="text-red-600 dark:text-red-400 text-sm text-center mt-4">{errors.frequency}</div>
 						{/if}
 					</div>
 				{:else if currentStep === 4}
 					<div
 						class="h-full flex flex-col justify-center animate-in slide-in-from-right-4 duration-500"
 					>
-						<div class="text-center mb-4 sm:mb-6">
-							<h4 class="text-lg sm:text-xl font-semibold text-zinc-800 mb-2">
+					<div class="text-center mb-4 sm:mb-6">
+						<h4 class="text-lg sm:text-xl font-semibold text-zinc-800 dark:text-zinc-100 mb-2">
 								I tuoi dati di contatto
 							</h4>
-							<p class="text-zinc-600 text-sm sm:text-base px-2">
+						<p class="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base px-2">
 								Inserisci le informazioni per essere contattato
 							</p>
 						</div>
@@ -410,13 +410,13 @@
 								<div class="col-span-1">
 									<label
 										for="contact-type"
-										class="block text-sm font-medium text-zinc-700 mb-2"
+								class="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-2"
 										>Contatto</label
 									>
 									<select
 										id="contact-type"
 										bind:value={formData.contactType}
-										class="w-full py-3 rounded-xl border-2 border-zinc-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+								class="w-full py-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
 									>
 										<option value="email">Email</option>
 										<option value="phone">Telefono</option>

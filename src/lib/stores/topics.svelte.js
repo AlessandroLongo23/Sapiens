@@ -1,81 +1,76 @@
-import { content } from "$lib/content.js";
+import { messagePopup } from '$lib/components/messagePopup/messagePopup';
+import { supabase } from '$lib/supabase.js';
 
-function flattenTopics(node, path = '', allTopics = {}) {
-    if (!node) {
-        return;
+export const fetchTopics = async () => {
+    const { data, error } = await supabase
+        .from('topics')
+        .select('*');
+
+    if (error) {
+        console.error('Error fetching topics:', error);
+        throw error;
     }
 
-    for (const key in node) {
-        if (Object.prototype.hasOwnProperty.call(node, key)) {
-            const newPath = path ? `${path}/${key}` : key;
-            const topic = node[key];
+    return data;
+};
 
-            if (topic.path) { // It's a leaf node
-                allTopics[newPath] = {
-                    id: newPath,
-                    title: topic.title,
-                    description: topic.description,
-                    path: topic.path,
-                };
-            } else { // It's a branch
-                flattenTopics(topic, newPath, allTopics);
-            }
-        }
-    }
-    return allTopics;
-}
-
-function buildTopicTree(assignedTopicIds) {
-    const filteredContent = {};
-
-    for (const id of assignedTopicIds) {
-        const pathParts = id.split('/');
-        let currentLevel = filteredContent;
-        let contentLevel = content;
-
-        for (let i = 0; i < pathParts.length; i++) {
-            const part = pathParts[i];
-            contentLevel = contentLevel[part];
-
-            if (!currentLevel[part]) {
-                // If it's the leaf node, copy the whole topic object
-                if (i === pathParts.length - 1) {
-                    currentLevel[part] = contentLevel;
-                } else {
-                    // Otherwise, just create an empty object to traverse
-                    currentLevel[part] = {};
-                }
-            }
-            currentLevel = currentLevel[part];
-        }
+export const addTopic = async (topicName, topicDescription, topicLevel, topicYear, topicPath) => {
+    const { data, error } = await supabase
+        .from('topics')
+        .insert({ name: topicName, description: topicDescription, level: topicLevel, year: topicYear, path: topicPath });
+        
+    if (error) {
+        messagePopup.error('Errore nell\'aggiunta dell\'argomento');
+        console.error('Error adding topic:', error);
+        throw error;
     }
 
-    // Now we need to fill in the non-leaf node data (like titles, descriptions if they exist)
-    function addBranchData(filtered, original, path = []) {
-        for (const key in filtered) {
-            const currentPath = [...path, key];
-            const originalNode = currentPath.reduce((o, k) => o[k], content);
-            
-            if (originalNode && !originalNode.path) { // It's a branch
-                // Copy all properties except children
-                Object.keys(originalNode).forEach(propKey => {
-                    if (typeof originalNode[propKey] !== 'object') {
-                        filtered[key][propKey] = originalNode[propKey];
-                    }
-                });
-                addBranchData(filtered[key], originalNode, currentPath);
-            }
-        }
+    messagePopup.success('Argomento aggiunto con successo');
+    return data;
+};
+
+export const deleteTopic = async (topicId) => {
+    try {
+        const { error: availabilityError } = await supabase
+            .from('topics-availability')
+            .delete()
+            .eq('topic_id', topicId);
+
+        if (availabilityError) 
+            throw availabilityError;
+
+        const { error: topicError } = await supabase
+            .from('topics')
+            .delete()
+            .eq('id', topicId);
+
+        if (topicError) throw topicError;
+        
+        // messagePopup.success('Argomento eliminato con successo');
+    } catch (error) {
+        console.error('Error deleting topic:', error);
+        // messagePopup.error('Errore durante l\'eliminazione dell\'argomento');
     }
+};
 
-    addBranchData(filteredContent, content);
-    
-    return filteredContent;
-}
+export const updateTopic = async (topicId, editedName, editedDescription, editedLevel, editedYear, editedPath) => {
+    try {
+        const { error } = await supabase
+            .from('topics')
+            .update({ 
+                name: editedName,
+                description: editedDescription,
+                level: editedLevel,
+                year: editedYear,
+                path: editedPath
+            })
+            .eq('id', topicId);
 
-export const allTopics = flattenTopics(content);
-
-export const getTopicsForStudent = (assignedIds) => {
-    if (!assignedIds) return {};
-    return buildTopicTree(assignedIds);
+        if (error) throw error;
+        
+        // messagePopup.success('Argomento aggiornato con successo');
+    } catch (error) {
+        console.error('Error updating topic:', error);
+        // messagePopup.error('Errore durante l\'aggiornamento dell\'argomento');
+    }
 };

@@ -19,6 +19,10 @@ html {
   scroll-behavior: smooth;
 }
 
+.dark body {
+  background-color: #09090b;
+}
+
 /* Mobile-first responsive base styles */
 body {
   overflow-x: hidden;
@@ -48,6 +52,20 @@ button, a {
   bottom: 0;
   background: radial-gradient(600px circle at 50% 200px, rgba(59, 130, 246, 0.06), transparent 50%);
   pointer-events: none;
+}
+
+/* Dark mode hero gradient */
+.dark .hero-gradient {
+  background: linear-gradient(135deg,
+    rgb(24, 24, 27) 0%,
+    rgb(28, 28, 32) 25%,
+    rgb(17, 24, 39) 50%,
+    rgb(28, 28, 32) 75%,
+    rgb(24, 24, 27) 100%
+  );
+}
+.dark .hero-gradient::before {
+  background: radial-gradient(600px circle at 50% 200px, rgba(59, 130, 246, 0.08), transparent 50%);
 }
 
 /* Enhanced gradient text with mobile optimization */
@@ -148,6 +166,16 @@ button, a {
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
 }
 
+/* Dark mode secondary button */
+.dark .btn-secondary {
+  background: rgba(24, 24, 27, 0.75);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+}
+.dark .btn-secondary:hover {
+  background: rgba(39, 39, 42, 0.85);
+  border-color: rgba(82, 82, 91, 0.6);
+}
+
 /* Mobile button optimizations */
 @media (max-width: 768px) {
   .btn-primary,
@@ -191,6 +219,15 @@ button, a {
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Dark mode glass */
+.dark .glass-effect {
+  background: rgba(24, 24, 27, 0.7);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 /* Subtle particle animation */

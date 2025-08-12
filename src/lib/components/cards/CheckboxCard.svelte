@@ -34,20 +34,20 @@
 </script>
 
 <button
-	class="group relative text-left px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {
-		isSelected 
-			? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md' 
-			: 'border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-sm'
-	} cursor-pointer"
+    class="group relative text-left px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {
+        isSelected 
+            ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 shadow-md' 
+            : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-600 hover:shadow-sm'
+    } cursor-pointer"
 	onclick={handleToggle}
 >
 	<!-- Selection indicator (checkbox) -->
 	<div class="absolute top-2 right-2">
 		<div class="relative w-4 h-4">
 			<!-- Checkbox -->
-			<div class="w-4 h-4 rounded border-2 transition-all duration-300 {
-				isSelected ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 group-hover:border-zinc-400'
-			}"></div>
+            <div class="w-4 h-4 rounded border-2 transition-all duration-300 {
+                isSelected ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 dark:border-zinc-600 group-hover:border-zinc-400 dark:group-hover:border-zinc-500'
+            }"></div>
 			
 			<!-- Checkmark -->
 			{#if isSelected}
@@ -64,19 +64,19 @@
 	<div class="pr-6">
 		<!-- Title or editable input -->
 		{#if isEditable}
-			<input
+            <input
 				type="text"
 				bind:value={editableValue}
 				placeholder="Inserisci la materia..."
 				data-editable={value}
-				class="w-full bg-transparent border-none outline-none text-sm font-semibold text-blue-900 placeholder-blue-600/60"
+                class="w-full bg-transparent border-none outline-none text-sm font-semibold text-blue-900 dark:text-blue-300 placeholder-blue-600/60 dark:placeholder-blue-300/60"
 				onclick={(e) => e.stopPropagation()}
 				oninput={handleInputChange}
 			/>
 		{:else}
-			<div class="text-sm font-semibold {
-				isSelected ? 'text-blue-900' : 'text-zinc-800 group-hover:text-zinc-900'
-			} transition-colors duration-300">
+            <div class="text-sm font-semibold {
+                isSelected ? 'text-blue-900 dark:text-blue-300' : 'text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-zinc-100'
+            } transition-colors duration-300">
 				{title}
 			</div>
 		{/if}
