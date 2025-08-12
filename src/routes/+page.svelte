@@ -85,6 +85,17 @@
 		await goto(redirectPath);
 	}
 
+	const subjects = [
+		{ title: 'Matematica', icon: ls.Sigma },
+		{ title: 'Fisica', icon: ls.Atom },
+		{ title: 'Informatica', icon: ls.Code2 },
+		{ title: 'Chimica', icon: ls.Beaker },
+		{ title: 'Analisi I/II', icon: ls.BookOpen },
+		{ title: 'Teoria dei Segnali', icon: ls.Activity },
+		{ title: 'Database', icon: ls.Database },
+		{ title: 'Programmazione', icon: ls.Cpu }
+	];
+
 	const sections = [
 		{
 			id: 'about',
@@ -108,7 +119,7 @@
 		}
 	]
 
-	const section_style = "section-enter scroll-mt-28 md:scroll-mt-32 pt-24 sm:pt-28 lg:pt-36 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8";
+	const section_style = "section-enter scroll-mt-24 md:scroll-mt-28 pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8";
 </script>
 
 <svelte:head>
@@ -123,66 +134,54 @@
 
 <AuthModal bind:isOpen={isAuthModalOpen} onClose={() => isAuthModalOpen = false} />
 
-<header class="fixed top-0 left-0 right-0 z-30">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mt-4 sm:mt-6 rounded-2xl border border-zinc-200/70 dark:border-zinc-700/60 bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-zinc-900/60">
-            <div class="flex items-center justify-between px-2 sm:px-4 py-3">
-                <a href="/" class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-elegant">
-                        <ls.Calculator class="w-4 h-4 text-white" />
-                    </div>
-                    <span class="font-semibold text-zinc-900 dark:text-zinc-100">Ale Ripetizioni</span>
-                </a>
-                <nav class="hidden md:flex items-center gap-6 text-sm">
-                    {#each sections as section}
-                        <a href={`#${section.id}`} class="relative nav-link group text-zinc-900 dark:text-zinc-100">
-                            {section.label}
-                            <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-blue-500 rounded-full transition-opacity duration-200 {activeSection === section.id ? 'opacity-100' : 'opacity-0'}"></span>
-                        </a>
-                    {/each}
-                </nav>
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <ThemeToggle />
-                    <button
-                        onclick={() => { if (session) { accessPrivateRoute() } else { openAuthModal() } }}
-                        class="hidden sm:inline-flex bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
-                    >
-                        <span class="flex items-center justify-center gap-2">
-                            <span>{session ? 'Dashboard' : 'Accedi'}</span>
-                            {#if session}
-                                <ls.Home class="w-4 h-4" />
-                            {:else}
-                                <ls.LogIn class="w-4 h-4" />
-                            {/if}
-                        </span>
-                    </button>
-                    <button
-                        onclick={openContactModal}
-                        class="btn-primary text-white px-4 sm:px-5 py-2 rounded-xl font-semibold text-sm shadow-elegant-lg group cursor-pointer"
-                    >
-                        <span class="flex items-center gap-2">
-                            <ls.Calendar class="w-4 h-4" />
-                            <span class="hidden sm:inline">Prenota ora</span>
-                            <span class="sm:hidden">Prenota</span>
-                        </span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="md:hidden mt-2 px-4">
-        <nav class="flex items-center justify-center gap-4 text-xs px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur">
-            {#each sections as section}
-				<a href={`#${section.id}`} class="nav-link">{section.label}</a>
+<header class="sm:top-8 top-4 z-30 fixed left-4 right-4 mx-auto max-w-7xl rounded-2xl border border-zinc-200/70 dark:border-zinc-700/60 bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-zinc-900/60">
+	<div class="flex items-center sm:justify-between justify-center px-2 sm:px-4 py-3">
+		<a href="/" class="hidden sm:flex items-center gap-3">
+			<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-elegant">
+				<ls.Calculator class="w-4 h-4 text-white" />
+			</div>
+			<span class="font-semibold text-zinc-900 dark:text-zinc-100">Ale Ripetizioni</span>
+		</a>
+		<nav class="hidden sm:flex items-center gap-6 text-sm">
+			{#each sections as section}
+				<a href={`#${section.id}`} class="relative nav-link group text-zinc-900 dark:text-zinc-100">
+					{section.label}
+					<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-blue-500 rounded-full transition-opacity duration-200 {activeSection === section.id ? 'opacity-100' : 'opacity-0'}"></span>
+				</a>
 			{/each}
-        </nav>
+		</nav>
+		<div class="flex items-center gap-2 sm:gap-3">
+			<ThemeToggle />
+			<button
+				onclick={() => { if (session) { accessPrivateRoute() } else { openAuthModal() } }}
+				class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
+			>
+				<span class="flex items-center justify-center gap-2">
+					<span>{session ? 'Dashboard' : 'Accedi'}</span>
+					{#if session}
+						<ls.Home class="w-4 h-4" />
+					{:else}
+						<ls.LogIn class="w-4 h-4" />
+					{/if}
+				</span>
+			</button>
+			<button
+				onclick={openContactModal}
+				class="btn-primary text-white px-4 sm:px-5 py-2 rounded-xl font-semibold shadow-elegant-lg group cursor-pointer"
+			>
+				<span class="flex items-center gap-2 text-sm">
+					<ls.Calendar class="w-4 h-4" />
+					<span class="hidden sm:inline">Prenota ora</span>
+					<span class="sm:hidden">Prenota</span>
+				</span>
+			</button>
+		</div>
     </div>
 </header>
 
 <section
-	bind:this={heroSection}
-	class="relative min-h-screen hero-gradient flex items-center justify-center scroll-mt-28 md:scroll-mt-32 pt-24 sm:pt-28 lg:pt-36 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden"
+    bind:this={heroSection}
+    class="relative min-h-screen hero-gradient flex items-center justify-center md:scroll-mt-32 md:pt-28 lg:pt-36 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden"
 >
 	<div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center z-10">
 		<div class="text-center lg:text-left space-y-6 sm:space-y-8 lg:space-y-10">
@@ -198,7 +197,7 @@
 				</p>
 			</div>
 
-			<div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start">
+			<div class="flex flex-row gap-4 sm:gap-6 justify-center lg:justify-start">
 				<button
 					onclick={openContactModal}
 					class="btn-primary text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg shadow-elegant-lg group cursor-pointer"
@@ -210,24 +209,20 @@
 						<span>Prenota ora</span>
 					</span>
 				</button>
-				<!-- <button
-					onclick={() => scrollToSection('about')}
-					class="btn-secondary text-zinc-700 dark:text-zinc-200 px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
-				>
-					<span class="flex items-center justify-center space-x-2 sm:space-x-3">
-						<span>Scopri di più</span>
-						<ls.ChevronDown
-							class="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-y-1 transition-transform duration-300"
-						/>
-					</span>
-				</button> -->
-				<a href="mailto:aleripetizioni2024@gmail.com" class="btn-secondary text-zinc-700 dark:text-zinc-200 px-4 sm:px-8 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer">
-					<ls.Mail class="size-6" />
-				</a>
 
-				<a href="tel:+393924090699" class="btn-secondary text-zinc-700 dark:text-zinc-200 px-4 sm:px-8 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer">
-					<ls.Phone class="size-6" />
-				</a>
+				<a 
+					href="mailto:aleripetizioni2024@gmail.com" 
+					class="inline-flex items-center justify-center btn-secondary text-zinc-700 dark:text-zinc-200 size-12 sm:w-auto sm:h-auto px-4 sm:px-8 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
+				>
+					<ls.Mail class="size-4 sm:size-6" />
+                </a>
+
+                <a 
+					href="tel:+393924090699" 
+					class="inline-flex items-center justify-center btn-secondary text-zinc-700 dark:text-zinc-200 size-12 sm:w-auto sm:h-auto px-4 sm:px-8 py-4 sm:py-5 rounded-2xl font-semibold text-base sm:text-lg group cursor-pointer"
+				>
+                    <ls.Phone class="size-4 sm:size-6" />
+                </a>
 			</div>
 
             <div
@@ -355,20 +350,11 @@
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-            {#each [
-                { title: 'Matematica', icon: ls.Sigma },
-                { title: 'Fisica', icon: ls.Atom },
-                { title: 'Informatica', icon: ls.Code2 },
-                { title: 'Chimica', icon: ls.Beaker },
-                { title: 'Analisi I/II', icon: ls.BookOpen },
-                { title: 'Teoria dei Segnali', icon: ls.Activity },
-                { title: 'Database', icon: ls.Database },
-                { title: 'Programmazione', icon: ls.Cpu }
-            ] as s}
+            {#each subjects as s}
                 <div class="group rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-5 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors shadow-sm">
                     <div class="flex items-center gap-3">
-                        <s.icon class="w-5 h-5 text-blue-600" />
-                        <div class="font-semibold text-zinc-900 dark:text-zinc-100">{s.title}</div>
+                        <s.icon class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
+                        <div class="font-semibold text-zinc-900 dark:text-zinc-100 text-xs sm:text-base">{s.title}</div>
                     </div>
                 </div>
             {/each}
