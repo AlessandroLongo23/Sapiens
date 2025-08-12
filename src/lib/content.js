@@ -55,7 +55,10 @@ export const content = {
                     }
                 },
                 "insiemi": {
-
+                    "title": "Insiemi e logica",
+                    "description": "Gli insiemi e le loro operazioni.",
+                    "icon": "",
+                    "path": "/superiori/matematica/1/insiemi.md"
                 },
                 "monomi": {
                     

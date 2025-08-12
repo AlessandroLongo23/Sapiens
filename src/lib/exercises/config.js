@@ -90,5 +90,12 @@ export const configs = {
 			count: 2,
 			args: []
 		},
+	},
+	'superiori/matematica/1/insiemi': {
+		'intersezione': {
+			generator: 'IntersezioneEx',
+			count: 5,
+			args: []
+		}
 	}
 };

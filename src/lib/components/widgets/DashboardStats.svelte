@@ -5,6 +5,7 @@
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';	
 	import { isSameDay } from 'date-fns';
 	import * as ls from 'lucide-svelte';
+    import { cardStyle } from '$lib/stores/appearance.js';
 
 	let totalTime = $derived.by(() => {
 		let total = $lecturesStore.lectures.reduce((total, lecture) => {
@@ -76,7 +77,7 @@
 </script>
 
 <div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
+	<div class={`flex items-start p-6 ${cardStyle}`}>
 		<div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
 			<ls.Users size={24} class="text-blue-600 dark:text-blue-300" />
 		</div>
@@ -86,7 +87,7 @@
 		</div>
 	</div>
 	
-	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
+	<div class={`flex items-start p-6 ${cardStyle}`}>
 		<div class="bg-green-100 dark:bg-green-900 p-3 rounded-full mr-4">
 			<ls.BookOpen size={24} class="text-green-600 dark:text-green-300" />
 		</div>
@@ -96,7 +97,7 @@
 		</div>
 	</div>
 	
-	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
+	<div class={`flex items-start p-6 ${cardStyle}`}>
 		<div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-full mr-4">
 			<ls.Clock size={24} class="text-purple-600 dark:text-purple-300" />
 		</div>
@@ -106,7 +107,7 @@
 		</div>
 	</div>
 	
-	<div class="flex items-start p-6 bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800">
+	<div class={`flex items-start p-6 ${cardStyle}`}>
 		<div class="bg-amber-100 dark:bg-amber-900 p-3 rounded-full mr-4">
 			<ls.CreditCard size={24} class="text-amber-600 dark:text-amber-300" />
 		</div>
@@ -118,7 +119,7 @@
 </div>
 
 {#if nextLecture}
-	<div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+	<div class={`mt-4 p-4 ${cardStyle} bg-blue-50/60 dark:bg-blue-900/30 border-blue-200/40 dark:border-blue-800/40`}>
 		<h3 class="font-medium text-blue-700 dark:text-blue-300">Next Lecture</h3>
 		<div class="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm">
 			<div>

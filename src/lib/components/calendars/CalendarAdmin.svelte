@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
+	import { cardStyle } from '$lib/stores/appearance.js';
 	
 	import CalendarDay from '$lib/components/calendars/CalendarDayAdmin.svelte';
 
@@ -24,7 +25,7 @@
 	}
 </script>
 
-<div class="w-full flex flex-col rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800 bg-white dark:bg-zinc-950">
+<div class={`w-full flex flex-col ${cardStyle}`}>
 	<div class="flex items-center justify-between p-4">
 		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
 			{formatDateString($calendarView, 'MMMM yyyy')}

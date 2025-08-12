@@ -5,6 +5,20 @@
 		<title>Ale Ripetizioni</title>
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script>
+			// Set initial theme before hydration and disable transitions momentarily
+			(function () {
+				try {
+					var stored = localStorage.getItem('theme');
+					var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+					var theme = stored || (prefersDark ? 'dark' : 'light');
+					var root = document.documentElement;
+					root.classList.add('disable-transitions');
+					root.classList.toggle('dark', theme === 'dark');
+					setTimeout(function(){ root.classList.remove('disable-transitions'); }, 120);
+				} catch (e) {}
+			})();
+		</script>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
 		%sveltekit.head%
 	</head>

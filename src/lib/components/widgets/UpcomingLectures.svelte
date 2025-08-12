@@ -3,6 +3,7 @@
     import { isAfter, isSameDay } from 'date-fns';
 
     import UpcomingLecture from '$lib/components/UpcomingLecture.svelte';
+    import { cardStyle } from '$lib/stores/appearance.js';
 
     let filteredLectures = $derived.by(() => {
 		return $lecturesStore.lectures.sort((a, b) => {
@@ -39,7 +40,7 @@
 	}
 </script>
 
-<div class="bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-800 p-4 max-h-[calc(100vh-120px)] overflow-y-scroll">
+<div class={`p-4 max-h-[calc(100vh-120px)] overflow-y-scroll ${cardStyle}`}>
     <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 mb-3">Prossime Lezioni</h2>
     
     <div class="space-y-3 pr-2">

@@ -8,6 +8,7 @@
     
     import EditModal from '$lib/components/modals/EditModal.svelte';
     import DeleteModal from '$lib/components/modals/DeleteModal.svelte';
+    import { cardStyle } from '$lib/stores/appearance.js';
     import PhoneNumber from '$lib/components/forms/PhoneNumber.svelte';
     import CustomSelect from '$lib/components/forms/CustomSelect.svelte';
 
@@ -166,7 +167,7 @@
     ])
 </script>
 
-<div class="bg-white dark:bg-zinc-900 shadow-sm rounded-lg overflow-x-auto">
+<div class={`shadow-sm overflow-x-auto ${cardStyle}`}>
     <table class="w-full text-sm text-left text-zinc-500 dark:text-zinc-400">
         <thead class="text-xs text-zinc-700 bg-zinc-50 dark:bg-zinc-800 dark:text-zinc-400">
             <tr>

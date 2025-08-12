@@ -8,17 +8,28 @@
 	let { user } = $derived(data);
 
 	let topics = $derived.by(() => {
-		let topics = []
-		for (let topic of Object.values(content["superiori"]["matematica"]["1"]["numeri naturali"])) {
-			topics.push(topic)
+		const collected = [];
+		const seenPaths = new Set();
+
+		const stack = [content];
+		while (stack.length) {
+			const node = stack.pop();
+			if (!node || typeof node !== 'object') continue;
+
+			if ('title' in node && 'path' in node) {
+				const path = node.path;
+				if (typeof path === 'string' && !seenPaths.has(path)) {
+					collected.push(node);
+					seenPaths.add(path);
+				}
+			}
+
+			for (const value of Object.values(node)) {
+				if (value && typeof value === 'object') stack.push(value);
+			}
 		}
-		for (let topic of Object.values(content["superiori"]["matematica"]["1"]["frazioni"])) {
-			topics.push(topic)
-		}
-		for (let topic of Object.values(content["superiori"]["informatica"]["3"])) {
-			topics.push(topic)
-		}
-		return topics
+
+		return collected;
 	})
 </script>
 

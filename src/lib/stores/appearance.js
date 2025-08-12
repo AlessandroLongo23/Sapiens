@@ -37,5 +37,8 @@ export const colors = [
     { hex: '#ef4444', name: 'Rosso' }
 ];
 
-export const widgetStyle = 'bg-zinc-50 dark:bg-zinc-925 shadow-zinc-black/20 shadow-lg animate-appear rounded-lg border border-zinc-200 dark:border-zinc-800';
+// Modern glassmorphism style for dark mode cards & widgets
+export const cardStyle = 'backdrop-blur-md bg-white/75 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-700/40 shadow-lg rounded-xl transition-colors';
+
+export const widgetStyle = cardStyle;
 export const widgetTitleStyle = 'text-zinc-900 dark:text-zinc-100 text-lg font-semibold';

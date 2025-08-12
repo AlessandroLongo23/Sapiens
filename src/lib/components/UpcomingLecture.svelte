@@ -1,6 +1,7 @@
 <script>
     import { studentsStore } from '$lib/stores/students/students.js';
     import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+    import { lecturesStore } from '$lib/stores/lectures/lectures.js';
     import { createEventDispatcher } from 'svelte';
 	import { it } from 'date-fns/locale';
 	import { format } from 'date-fns';
@@ -17,11 +18,55 @@
     let subject = $derived.by(() => {
         return $subjectsStore.subjects.find(subject => subject.id === lecture.subject_id);
     });
+
+    // Google Meet state
+    let meetLink = $state(lecture?.meet_link ?? null);
+    let creating = $state(false);
+
+    async function handleStartMeet(event) {
+        event.stopPropagation();
+        if (creating) return;
+        creating = true;
+        try {
+            const summary = `Lezione con ${student?.first_name ?? ''} ${student?.last_name ?? ''} - ${subject?.name ?? ''}`.trim();
+            const res = await fetch('/api/create-meet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    lectureId: lecture.id,
+                    summary,
+                    date: lecture.date,
+                    start_time: lecture.start_time,
+                    end_time: lecture.end_time
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || 'Errore nella creazione del Meet');
+            meetLink = data.hangoutLink;
+            try {
+                await lecturesStore.updateLecture(lecture.id, { meet_link: meetLink, google_event_id: data.eventId });
+            } catch (_) {}
+        } catch (err) {
+            console.error(err);
+        } finally {
+            creating = false;
+        }
+    }
+
+    function handleEnterMeet(event) {
+        event.stopPropagation();
+        if (meetLink) {
+            window.open(meetLink, '_blank', 'noopener');
+        }
+    }
 </script>
 
-<button 
-    class="flex flex-col gap-3 w-full text-left p-3 rounded border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+<div 
+    class="flex flex-col gap-3 w-full text-left p-3 rounded border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition cursor-pointer"
+    role="button"
+    tabindex="0"
     onclick={() => dispatch('openLectureModal', lecture)}
+    onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dispatch('openLectureModal', lecture) } }}
 >
     <div class="flex justify-between">
         <span class="flex flex-row items-center gap-2 font-medium text-zinc-900 dark:text-zinc-100">
@@ -48,4 +93,24 @@
             {lecture.level === 'high_school' ? 'Scuola Superiore' : 'Università'}
         </div>
     </div>
-</button>
+
+    <div class="mt-2 flex items-center gap-2">
+        {#if meetLink}
+            <button
+                class="px-3 py-1.5 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+                onclick={handleEnterMeet}
+            >
+                Enter
+            </button>
+        {:else}
+            <button
+                class="px-3 py-1.5 text-sm rounded bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
+                disabled={creating}
+                onclick={handleStartMeet}
+            >
+                {creating ? 'Creating…' : 'Start'}
+            </button>
+        {/if}
+    </div>
+
+</div>

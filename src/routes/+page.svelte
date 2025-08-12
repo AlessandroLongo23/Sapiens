@@ -361,8 +361,8 @@
         </div>
 
         <div class="text-center mt-10 sm:mt-12">
-            <button onclick={openContactModal} class="btn-primary text-white px-6 sm:px-8 py-3 rounded-xl font-semibold text-sm sm:text-base shadow-elegant-lg">Richiedi informazioni</button>
-        </div>
+			<p class="text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto px-4 text-xl">E molte altre...</p>
+		</div>
     </div>
 </section>
 
