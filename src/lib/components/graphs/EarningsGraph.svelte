@@ -3,15 +3,16 @@
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
+	import { themeStore } from '$lib/components/theme/theme.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { widgetStyle } from '$lib/stores/appearance.js';
+	import { designSystem } from '$lib/stores/appearance.js';
 	import { format, parseISO } from 'date-fns';
 	import { it } from 'date-fns/locale';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
 
-	import ChartTooltip from '$lib/components/ChartTooltip.svelte';
+	import ChartTooltip from '$lib/components/graphs/ChartTooltip.svelte';
 
     let { filterOptions, timeRangeOptions } = $props();
 
@@ -28,11 +29,21 @@
 	});
 	
 	onMount(() => {
-		renderChart();
+		if (statsStore.earningsByMonth?.length) {
+			renderChart();
+		}
 	});
 	
 	$effect(() => {
-		if (statsStore.earningsByMonth && canvas) {
+		// Track all reactive inputs used by renderChart
+		const months = statsStore.earningsByMonth;
+		const subjects = $subjectsStore.subjects;
+		const lectures = $lecturesStore.lectures;
+		const filterType = statsStore.filterType;
+		const filterId = statsStore.filterId;
+		const timeRange = statsStore.timeRange;
+
+		if (canvas && months?.length > 0) {
 			renderChart();
 		}
 	});
@@ -113,7 +124,7 @@
 			datasets.push({
 				label: 'Average',
 				data: Array(months.length).fill(avgEarnings),
-				borderColor: '#71717a',
+				borderColor: `${window.matchMedia('(prefers-color-scheme: dark)').matches ? designSystem.colors.chart.avgLine.dark : designSystem.colors.chart.avgLine.light}`,
 				backgroundColor: 'transparent',
 				borderWidth: 2,
 				borderDash: [5, 5],
@@ -146,21 +157,22 @@
 					x: {
 						stacked: true,
 						grid: {
-							color: '#71717a20'
+							color: $themeStore === 'dark' ? designSystem.colors.chart.grid.dark : designSystem.colors.chart.grid.light,
+							drawBorder: false
 						},
 						ticks: {
-							color: '#71717a'
+							color: designSystem.colors.chart.text
 						}
 					},
 					y: {
 						stacked: true,
 						beginAtZero: true,
 						grid: {
-							color: '#71717a20',
+							color: $themeStore === 'dark' ? designSystem.colors.chart.grid.dark : designSystem.colors.chart.grid.light,
 							drawBorder: false
 						},
 						ticks: {
-							color: '#71717a',
+							color: designSystem.colors.chart.text,
 							callback: function(value) {
 								return formatCurrency(value);
 							}
@@ -184,16 +196,21 @@
 					{
 						label: 'Earnings',
 						data: monthlyData.map(item => item.earnings),
-						backgroundColor: 'rgba(59, 130, 246, 0.2)',
-						borderColor: 'rgba(59, 130, 246, 1)',
+						backgroundColor: 'rgba(34, 197, 94, 0.15)',
+						borderColor: designSystem.colors.primary.green,
 						borderWidth: 2,
 						fill: true,
 						tension: 0.4,
+						pointBackgroundColor: designSystem.colors.primary.green,
+						pointBorderColor: '#FFFFFF',
+						pointBorderWidth: 1.5,
+						pointRadius: 4,
+						pointHoverRadius: 6,
 					},
 					{
 						label: 'Average',
 						data: Array(monthlyData.length).fill(avgEarnings),
-						borderColor: '#71717a',
+						borderColor: `${$themeStore === 'dark' ? designSystem.colors.chart.avgLine.dark : designSystem.colors.chart.avgLine.light}`,
 						backgroundColor: 'transparent',
 						borderWidth: 2,
 						borderDash: [5, 5],
@@ -248,11 +265,11 @@
 					y: {
 						beginAtZero: true,
 						grid: {
-							color: '#71717a20',
+							color: $themeStore === 'dark' ? designSystem.colors.chart.grid.dark : designSystem.colors.chart.grid.light,
 							drawBorder: false
 						},
 						ticks: {
-							color: '#71717a',
+							color: designSystem.colors.chart.text,
 							callback: function(value) {
 								return formatCurrency(value);
 							}
@@ -260,11 +277,11 @@
 					},
 					x: {
 						grid: {
-							color: '#71717a20',
+							color: $themeStore === 'dark' ? designSystem.colors.chart.grid.dark : designSystem.colors.chart.grid.light,
 							drawBorder: false
 						},
 						ticks: {
-							color: '#71717a'
+							color: designSystem.colors.chart.text
 						}
 					}
 				}
@@ -309,12 +326,12 @@
 </script>
 
 <div class="relative flex flex-col h-full items-center">
-    <div class="absolute top-2 right-2 z-10 flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-sm">
+    <div class="absolute top-2 right-2 z-10 flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/90 dark:bg-[#121212] border border-[#E5E7EB] dark:border-[#374151] shadow-sm">
         <div class="flex items-center gap-2">
-            <div class="w-8 h-0.5 bg-zinc-500 dark:bg-zinc-400" style="background-image: linear-gradient(to right, #71717a 50%, transparent 50%); background-size: 6px 100%; background-repeat: repeat-x;"></div>
-            <span class="text-xs font-medium text-zinc-700 dark:text-zinc-300">Average</span>
+            <div class="w-8 h-0.5" style="background-image: linear-gradient(to right, #D1D5DB 50%, transparent 50%); background-size: 6px 100%; background-repeat: repeat-x;"></div>
+            <span class="text-xs font-medium text-[#6B7280]">Average</span>
         </div>
-        <span class="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+        <span class="text-sm font-semibold text-[#111827] dark:text-white">
             {formatCurrency(averageMonthlyEarnings)}
         </span>
     </div>
@@ -323,10 +340,10 @@
     
     <ChartTooltip visible={tooltipVisible} x={tooltipData.x} y={tooltipData.y} position="top">
         <div class="p-3">
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-50">{tooltipData.title}</p>
+            <p class="text-sm font-medium text-[#111827] dark:text-white">{tooltipData.title}</p>
         </div>
         
-        <hr class="w-full border-zinc-200 dark:border-zinc-700"/>
+        <hr class="w-full border-[#E5E7EB] dark:border-[#374151]"/>
         
         <div class="flex flex-col gap-2 p-3">
             {#if tooltipData.details.length > 0}
@@ -334,25 +351,25 @@
                     <div class="flex items-center justify-between gap-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-3 rounded-full" style="background-color: {detail.color}"></div>
-                            <span class="text-xs text-muted-foreground">{detail.label}</span>
+                            <span class="text-xs text-[#6B7280]">{detail.label}</span>
                         </div>
                         
-                        <span class="text-sm font-medium text-foreground">
+                        <span class="text-sm font-medium text-[#111827] dark:text-white">
                             {formatCurrency(detail.value)}
                         </span>
                     </div>
                 {/each}
                 
-                <hr class="w-full border-zinc-200 dark:border-zinc-700"/>
+                <hr class="w-full border-[#E5E7EB] dark:border-[#374151]"/>
             {/if}
             
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-2">
-                    <ls.Equal class="w-3 h-3 text-zinc-950 dark:text-zinc-50"/>
-                    <span class="text-xs text-zinc-950 dark:text-zinc-50">Balance</span>
+                    <ls.Equal class="w-3 h-3 text-[#111827] dark:text-white"/>
+                    <span class="text-xs text-[#6B7280]">Total</span>
                 </div>
                 
-                <span class="text-sm font-medium text-foreground">
+                <span class="text-sm font-medium text-[#111827] dark:text-white">
                     {formatCurrency(tooltipData.value)}
                 </span>
             </div>
@@ -360,15 +377,15 @@
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-2">
                     {#if tooltipData.change >= 0}
-                        	<ls.ArrowUp class="w-3 h-3 text-green-500"/>
-                        <span class="text-xs text-zinc-950 dark:text-zinc-50">Increase</span>
+                        <ls.ArrowUp class="w-3 h-3 text-[#22C55E]"/>
+                        <span class="text-xs text-[#6B7280]">Increase</span>
                     {:else}
-                        <ls.ArrowDown class="w-3 h-3 text-red-500"/>
-                        <span class="text-xs text-zinc-950 dark:text-zinc-50">Decrease</span>
+                        <ls.ArrowDown class="w-3 h-3 text-[#EF4444]"/>
+                        <span class="text-xs text-[#6B7280]">Decrease</span>
                     {/if}
                 </div>
                 
-                <span class="text-sm font-medium {tooltipData.change >= 0 ? 'text-green-500' : 'text-red-500'}">
+                <span class="text-sm font-medium {tooltipData.change >= 0 ? 'text-[#22C55E]' : 'text-[#EF4444]'}">
                     {formatCurrency(Math.abs(tooltipData.change))}
                 </span>
             </div>

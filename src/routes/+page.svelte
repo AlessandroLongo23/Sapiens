@@ -195,6 +195,12 @@
 					Trasforma le difficoltà in successi con ripetizioni personalizzate. Un approccio su
 					misura che unisce teoria e pratica per risultati concreti.
 				</p>
+<!-- 
+				<script type="text/tikz">
+					\begin{tikzpicture}
+						\draw (0,0) circle (1in);
+					\end{tikzpicture}
+				</script> -->
 			</div>
 
 			<div class="flex flex-row gap-4 sm:gap-6 justify-center lg:justify-start">

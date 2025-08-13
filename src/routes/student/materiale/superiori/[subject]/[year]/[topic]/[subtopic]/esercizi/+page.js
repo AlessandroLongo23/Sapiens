@@ -1,11 +1,30 @@
 import { error } from '@sveltejs/kit';
 import { configs } from '$lib/exercises/config.js';
+import { getContentFromParams } from '$lib/utils/route-params.js';
 
 const exerciseModules = import.meta.glob('/src/lib/exercises/*.svelte.js');
 
 export async function load({ params }) {
-	const { topicPath } = params;
-	const topicName = topicPath.split('/').pop();
+	const { subject, year, topic: topicKey, subtopic: subtopicKey } = params;
+	const level = 'superiori';
+	
+	let topicName;
+	let topicTitle;
+	let configPath;
+	
+	if (subtopicKey) {
+		topicName = subtopicKey;
+		configPath = `${level}/${subject}/${year}/${topicKey}/${subtopicKey}`;
+	}
+	else {
+		topicName = topicKey;
+		configPath = `${level}/${subject}/${year}/${topicKey}`;
+	}
+	
+	if (!topicTitle) {
+		topicTitle = topicName.replace(/-/g, ' ');
+	}
+
 	const modulePath = `/src/lib/exercises/${topicName}.svelte.js`;
 
 	try {
@@ -15,9 +34,12 @@ export async function load({ params }) {
 		}
 		const exerciseModule = await moduleImporter();
 
-		const topicConfig = configs[topicPath];
+		let topicConfig = configs[configPath];
 		if (!topicConfig) {
-			throw error(404, `No exercise configuration found for ${topicPath}`);
+			topicConfig = configs[path];
+		}
+		if (!topicConfig) {
+			throw error(404, `No exercise configuration found for ${configPath}`);
 		}
 
 		let exercises = [];
@@ -38,11 +60,27 @@ export async function load({ params }) {
 				});
 			}
 		}
+		
+		if (!Array.prototype.shuffle) {
+			Array.prototype.shuffle = function() {
+				for (let i = this.length - 1; i > 0; i--) {
+					const j = Math.floor(Math.random() * (i + 1));
+					[this[i], this[j]] = [this[j], this[i]];
+				}
+				return this;
+			};
+		}
+		
 		exercises.shuffle();
 
 		return {
 			exercises: exercises,
-			title: topicPath.split('/').pop().replace(/-/g, ' ')
+			title: topicTitle,
+			level,
+			subject,
+			year,
+			topicKey,
+			subtopicKey
 		};
 	} catch (e) {
 		console.error(e);
@@ -51,4 +89,4 @@ export async function load({ params }) {
 		}
 		throw error(500, `Failed to load exercises for ${topicName}: ${e.message}`);
 	}
-} 
+}

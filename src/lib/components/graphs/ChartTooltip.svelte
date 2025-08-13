@@ -1,4 +1,6 @@
 <script>
+    import { designSystem } from '$lib/stores/appearance.js';
+    
     let { 
         visible,
         x,
@@ -41,11 +43,11 @@
 
 {#if visible}
     <div 
-        class="{tooltipStyles.translate} absolute flex flex-col z-50 bg-zinc-50 dark:bg-zinc-950 min-w-52 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg transform transition-all duration-200 pointer-events-none"
+        class="{tooltipStyles.translate} absolute flex flex-col z-50 bg-white dark:bg-[#121212] min-w-52 border border-[#E5E7EB] dark:border-[#2A2A2A] rounded-lg shadow-md dark:shadow-glow transform transition-all duration-200 pointer-events-none"
         style={tooltipStyles.style}
     >
         {@render children()}
 
-        <div class="{tooltipStyles.indicator} absolute size-3 bg-zinc-50 dark:bg-zinc-950 border-b border-r border-zinc-200 dark:border-zinc-800 transform"></div>
+        <div class="{tooltipStyles.indicator} absolute size-3 bg-white dark:bg-[#121212] border-b border-r border-[#E5E7EB] dark:border-[#2A2A2A] transform"></div>
     </div>
 {/if}

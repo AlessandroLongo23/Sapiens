@@ -5,26 +5,39 @@ import { format, parseISO, startOfMonth, endOfMonth, eachMonthOfInterval, subMon
 import { it } from 'date-fns/locale';
 
 class StatsStore {
+	// Reactive inputs populated from external stores
+	lectures = $state([]);
+	subjects = $state([]);
+	students = $state([]);
 	filterType = $state('all');
 	filterId = $state(null);
 	timeRange = $state(6);
+
+	constructor() {
+		// Keep internal reactive state in sync with external stores
+		lecturesStore.subscribe((data) => {
+			this.lectures = data.lectures || [];
+		});
+		subjectsStore.subscribe((data) => {
+			this.subjects = data.subjects || [];
+		});
+		studentsStore.subscribe((data) => {
+			this.students = data.students || [];
+		});
+	}
 	
 	earningsByMonth = $derived.by(() => {
-		let lectures, subjects, students;
-		lecturesStore.subscribe(data => {
-			lectures = data.lectures;
-		});
-		subjectsStore.subscribe(data => {
-			subjects = data.subjects;
-		});
-		studentsStore.subscribe(data => {
-			students = data.students;
-		});
+		const lectures = this.lectures;
+		const subjects = this.subjects;
+		const students = this.students;
+		const timeRange = this.timeRange; // track dependency
+		const filterType = this.filterType; // track dependency
+		const filterId = this.filterId; // track dependency
 		
 		if (!lectures?.length) return [];
 		
 		const today = new Date();
-		const startDate = startOfMonth(subMonths(today, this.timeRange - 1));
+		const startDate = startOfMonth(subMonths(today, timeRange - 1));
 		const endDate = endOfMonth(today);
 		
 		const months = eachMonthOfInterval({ start: startDate, end: endDate });
@@ -36,8 +49,8 @@ class StatsStore {
 		}));
 		
 		lectures.forEach(lecture => {
-			if (this.filterType === 'student' && lecture.student_id !== this.filterId) return;
-			if (this.filterType === 'subject' && lecture.subject_id !== this.filterId) return;
+			if (filterType === 'student' && lecture.student_id !== filterId) return;
+			if (filterType === 'subject' && lecture.subject_id !== filterId) return;
 			
 			const lectureDate = parseISO(lecture.date);
 			if (lectureDate >= startDate && lectureDate <= endDate) {
@@ -59,26 +72,18 @@ class StatsStore {
 				}
 			}
 		});
-		
+
 		return earningsData;
 	});
 
 	hoursByMonth = $derived.by(() => {
-		let lectures, subjects, students;
-		lecturesStore.subscribe(data => {
-			lectures = data.lectures;
-		});
-		subjectsStore.subscribe(data => {
-			subjects = data.subjects;
-		});
-		studentsStore.subscribe(data => {
-			students = data.students;
-		});
+		const lectures = this.lectures;
+		const timeRange = this.timeRange; // track dependency
 
 		if (!lectures?.length) return [];
 		
 		const today = new Date();
-		const startDate = startOfMonth(subMonths(today, this.timeRange - 1));
+		const startDate = startOfMonth(subMonths(today, timeRange - 1));
 		const endDate = endOfMonth(today);
 
 		const months = eachMonthOfInterval({ start: startDate, end: endDate });
@@ -113,16 +118,9 @@ class StatsStore {
 	});
 
 	topEarnings = $derived.by(() => {
-		let lectures, subjects, students;
-		lecturesStore.subscribe(data => {
-			lectures = data.lectures;
-		});
-		subjectsStore.subscribe(data => {
-			subjects = data.subjects;
-		});
-		studentsStore.subscribe(data => {
-			students = data.students;
-		});
+		const lectures = this.lectures;
+		const subjects = this.subjects;
+		const students = this.students;
 
 		if (!lectures?.length) return { bySubject: [], byStudent: [] };
 		

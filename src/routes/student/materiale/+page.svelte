@@ -1,75 +1,452 @@
 <script>
+	import { studentsStore } from '$lib/stores/students/students.js';
 	import { content } from '$lib/content';
 	import * as ls from 'lucide-svelte';
-	
+	import { selectedTopic } from '$lib/content.js';
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 	let { user } = $derived(data);
+	let student = $derived($studentsStore.students.find(s => s.id === user.id));
+	
+	let activeTab = $state("all");
+	let searchQuery = $state("");
+	let sortBy = $state("default");
+	let groupBy = $state("subject"); // Options: subject, year
 
-	let topics = $derived.by(() => {
+	// Define subject categories with colors and icons
+	const subjectCategories = {
+		'matematica': { color: 'from-blue-500 to-blue-600', icon: ls.Calculator, name: 'Matematica' },
+		'informatica': { color: 'from-purple-500 to-purple-600', icon: ls.Laptop, name: 'Informatica' },
+		'fisica': { color: 'from-orange-500 to-orange-600', icon: ls.Atom, name: 'Fisica' },
+		'chimica': { color: 'from-green-500 to-green-600', icon: ls.Flask, name: 'Chimica' },
+		'Analisi I': { color: 'from-red-500 to-red-600', icon: ls.LineChart, name: 'Analisi I' },
+	};
+
+	// Get all topics with additional metadata
+	let allTopics = $derived.by(() => {
 		const collected = [];
-		const seenPaths = new Set();
 
-		const stack = [content];
-		while (stack.length) {
-			const node = stack.pop();
-			if (!node || typeof node !== 'object') continue;
-
-			if ('title' in node && 'path' in node) {
-				const path = node.path;
-				if (typeof path === 'string' && !seenPaths.has(path)) {
-					collected.push(node);
-					seenPaths.add(path);
+		// Traverse the hierarchy: level > subject > year > topics
+		for (const [levelKey, level] of Object.entries(content)) {
+			for (const [subjectKey, subject] of Object.entries(level)) {
+				// Skip if it's a title/description/icon/path (for university level items)
+				if (typeof subject !== 'object' || 'title' in subject && !('year' in subject)) {
+					// Handle university level courses which may be directly under level
+					if ('title' in subject && 'description' in subject) {
+						collected.push({
+							...subject,
+							level: levelKey,
+							subject: subjectKey,
+							subtopicCount: subject.subtopics ? Object.keys(subject.subtopics).length : 0,
+							memory: Math.floor(Math.random() * 100), // Replace with actual memory data
+							lastAccessed: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
+						});
+					}
+					continue;
+				}
+				
+				for (const [yearKey, year] of Object.entries(subject)) {
+					if (!year || !year.topics) continue;
+					
+					for (const [topicKey, topic] of Object.entries(year.topics)) {
+						// Add each topic with its navigation metadata
+						collected.push({
+							...topic,
+							level: levelKey,
+							subject: subjectKey,
+							year: yearKey,
+							key: topicKey,
+							subtopicCount: topic.subtopics ? Object.keys(topic.subtopics).length : 0,
+							memory: Math.floor(Math.random() * 100), // Replace with actual memory data
+							lastAccessed: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000) // Random date within last two weeks
+						});
+					}
 				}
 			}
-
-			for (const value of Object.values(node)) {
-				if (value && typeof value === 'object') stack.push(value);
-			}
 		}
-
+		
 		return collected;
-	})
+	});
+
+	// Filter and sort topics based on user preferences
+	// Topics for "Continua a studiare" section - not affected by search filters
+	let continuaTopics = $derived.by(() => {
+		return allTopics
+			.filter(t => t.memory > 0 && t.memory < 100)
+			.sort((a, b) => b.memory - a.memory);
+	});
+
+	// Topics filtered by tab and search for all other sections
+	let filteredTopics = $derived.by(() => {
+		let filtered = [...allTopics];
+		
+		// Filter by tab
+		if (activeTab !== "all") {
+			filtered = filtered.filter(topic => topic.subject === activeTab);
+		}
+		
+		// Filter by search
+		if (searchQuery) {
+			const query = searchQuery.toLowerCase();
+			filtered = filtered.filter(topic => 
+				topic.title?.toLowerCase().includes(query) || 
+				topic.description?.toLowerCase().includes(query) ||
+				topic.subject?.toLowerCase().includes(query)
+			);
+		}
+		
+		// Sort topics
+		switch (sortBy) {
+			case "memory":
+				filtered.sort((a, b) => b.memory - a.memory);
+				break;
+			case "recent":
+				filtered.sort((a, b) => b.lastAccessed - a.lastAccessed);
+				break;
+			case "alphabetical":
+				filtered.sort((a, b) => a.title.localeCompare(b.title));
+				break;
+			case "level":
+				filtered.sort((a, b) => {
+					if (a.level !== b.level) return a.level.localeCompare(b.level);
+					if (a.subject !== b.subject) return a.subject.localeCompare(b.subject);
+					if (a.year && b.year) return a.year.localeCompare(b.year);
+					return 0;
+				});
+				break;
+			default:
+				// Default sort - prioritize in-memory topics
+				filtered.sort((a, b) => {
+					if (a.memory > 0 && a.memory < 100 && (b.memory === 0 || b.memory === 100)) return -1;
+					if (b.memory > 0 && b.memory < 100 && (a.memory === 0 || a.memory === 100)) return 1;
+					return b.lastAccessed - a.lastAccessed;
+				});
+		}
+		
+		return filtered;
+	});
+
+	// Group topics by subject or year for the featured section
+	let groupedTopics = $derived.by(() => {
+		const grouped = {};
+		
+		allTopics.forEach(topic => {
+			// Group key depends on groupBy setting
+			const key = groupBy === 'subject' ? topic.subject : (topic.year || 'università');
+			
+			if (!grouped[key]) {
+				grouped[key] = [];
+			}
+			grouped[key].push(topic);
+		});
+		
+		// Sort each group by memory (previously memory)
+		Object.keys(grouped).forEach(key => {
+			grouped[key].sort((a, b) => b.memory - a.memory);
+		});
+		
+		return grouped;
+	});
+
+	// Calculate streak (placeholder)
+	let streak = $state(5); // Days in a row
+	let nextMilestone = $state(7); // Next streak milestone
+
+	// Format date for display
+	function formatDate(date) {
+		return new Intl.DateTimeFormat('it-IT', { 
+			day: 'numeric', 
+			month: 'short'
+		}).format(date);
+	}
 </script>
 
-<div class="flex flex-col gap-8 mt-18 mx-auto px-32 py-8">
-	<div class="flex flex-row justify-between items-center">
-		<h2 class="text-2xl font-bold text-zinc-950 dark:text-white">I miei argomenti</h2>
-	
-		<!-- sort by memory, alphabetically, by level, ecc -->
-	</div>
+<div class="bg-white dark:bg-zinc-900 min-h-screen pb-12">
+	<div class="flex flex-col lg:flex-row">
+		<div class="hidden lg:block w-80 flex-shrink-0 p-4 lg:pr-8">
+			<div class="sticky top-24 space-y-6">
+				<!-- Streak widget -->
+				<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
+					<div class="flex items-center justify-between mb-4">
+						<h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+							<div class="h-8 w-8 flex items-center justify-center bg-yellow-500 text-white rounded-lg">
+								<ls.Flame class="h-5 w-5" />
+							</div>
+							<span>Streak</span>
+						</h3>
+						<div class="text-2xl font-bold text-yellow-500">{streak} giorni</div>
+					</div>
+					
+					<!-- Streak goal memory -->
+					<div class="mb-4">
+						<div class="flex justify-between text-sm mb-1">
+							<span class="text-zinc-500 dark:text-zinc-400">Obiettivo</span>
+							<span class="text-zinc-900 dark:text-white font-medium">{streak}/{nextMilestone} giorni</span>
+						</div>
+						<div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+							<div class="bg-yellow-500 h-2 rounded-full" style="width: {(streak/nextMilestone) * 100}%"></div>
+						</div>
+					</div>
+					
+					<div>
+						<h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Attività degli ultimi 30 giorni</h4>
+						<div class="grid grid-cols-7 gap-1">
+							{#each Array(30) as _, i}
+								{@const isActive = Math.random() > 0.5}
+								{@const day = new Date()}
+								{@const isToday = i === 29}
+								<div 
+									class="w-6 h-6 rounded-sm {isActive ? 'bg-yellow-500 dark:bg-yellow-600' : 'bg-zinc-200 dark:bg-zinc-700'} 
+									{isToday ? 'ring-2 ring-yellow-400' : ''}"
+									title={day.toLocaleDateString('it-IT', { weekday: 'short', month: 'short', day: 'numeric' })}
+								></div>
+							{/each}
+						</div>
+						<div class="mt-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
+							Ultimo accesso: {new Date().toLocaleDateString('it-IT', { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-	<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-		{#each topics as topic}
-		<TopicCard 
-			title={topic.title} 
-			description={topic.description} 
-			icon={ls.BookOpen} 
-			path={topic.path}
-		/>
-		{/each}
+		<div class="flex-1 max-w-5xl px-4 sm:px-6 lg:pl-8 lg:pr-6">
+			<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
+				<div class="flex items-center justify-between mb-4">
+					<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+						<div class="text-blue-600">
+							<ls.BookOpen class="h-5 w-5" />
+						</div>
+						<span>Continua a studiare</span>
+					</h2>
+				</div>
+			
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+					{#each continuaTopics.slice(0, 3) as topic}
+						<button
+							onclick={() => goto(`/student/materiale/${topic.level}/${topic.subject}/${topic.year}/${topic.key}/`)}
+						 	class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm hover:shadow-md transition-all p-4 flex gap-4 items-center"
+						>
+							<div class="w-16 h-16 overflow-hidden flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center rounded-lg">
+								<img src={topic.icon} alt={topic.title} class="w-12 h-12 object-contain" />
+							</div>
+							
+							<div class="flex-1">
+								<div class="flex justify-between items-center">
+									<h3 class="font-semibold text-zinc-900 dark:text-zinc-100 text-base">{topic.title}</h3>
+								</div>
+								
+								<div class="text-xs text-zinc-500 dark:text-zinc-400 my-1.5 flex items-center gap-1">
+									<span class="capitalize">{topic.subject.replace('-', ' ')}</span>
+									<span class="inline-block w-1 h-1 bg-zinc-400 dark:bg-zinc-500 rounded-full"></span>
+									<span>{topic.level === 'superiori' ? `${topic.year}° anno` : 'Università'}</span>
+								</div>
+								
+								<div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+									<div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full" style="width: {topic.memory}%"></div>
+								</div>
+							</div>
+						</button>
+					{/each}
+				</div>
+			</section>
+
+			<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 search-section">
+				<div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+					<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+						<div class="text-purple-600">
+							<ls.Search class="h-5 w-5" />
+						</div>
+						<span>Cerca e filtra</span>
+					</h2>
+					
+					<div class="flex gap-3 w-full sm:w-auto">
+						<!-- Search box -->
+						<div class="relative flex-1 sm:w-64">
+							<ls.Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
+							<input 
+								type="text" 
+								placeholder="Cerca argomenti..."
+								bind:value={searchQuery}
+								class="w-full pl-10 pr-4 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none border border-zinc-200 dark:border-zinc-600"
+							/>
+						</div>
+						
+						<!-- Sort dropdown -->
+						<div class="relative">
+							<select 
+								bind:value={sortBy}
+								class="appearance-none px-4 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 pr-9 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer border border-zinc-200 dark:border-zinc-600"
+							>
+															<option value="default">Consigliati</option>
+							<option value="memory">Memoria</option>
+							<option value="recent">Recenti</option>
+							<option value="alphabetical">A-Z</option>
+							<option value="level">Livello</option>
+							</select>
+							<ls.ChevronDown class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
+						</div>
+					</div>
+				</div>
+
+				<!-- Group By options -->
+				<div class="mt-4 flex flex-col gap-4">
+					<div class="flex items-center gap-4">
+						<span class="text-sm text-zinc-500 dark:text-zinc-400">Raggruppa per:</span>
+						<div class="flex bg-zinc-100 dark:bg-zinc-700 rounded-lg overflow-hidden">
+							<button
+								class="px-4 py-2 text-sm font-medium {groupBy === 'subject' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
+								onclick={() => groupBy = 'subject'}
+							>
+								Materia
+							</button>
+							<button
+								class="px-4 py-2 text-sm font-medium {groupBy === 'year' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
+								onclick={() => groupBy = 'year'}
+							>
+								Anno
+							</button>
+						</div>
+					</div>
+
+					<!-- Filter tabs -->
+					<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+						<button 
+							class="px-4 py-2.5 rounded-full text-sm font-medium {activeTab === 'all' ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors whitespace-nowrap"
+							onclick={() => activeTab = 'all'}
+						>
+							Tutti
+						</button>
+						
+						{#each Object.keys(groupedTopics) as groupKey}
+							{#if groupBy === 'subject' && subjectCategories[groupKey]}
+								{@const SubjectIcon = subjectCategories[groupKey].icon}
+								<button 
+									class="px-4 py-2.5 rounded-full text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-2 whitespace-nowrap"
+									onclick={() => activeTab = groupKey}
+								>
+									<SubjectIcon class="h-4 w-4" />
+									{subjectCategories[groupKey].name}
+								</button>
+							{:else if groupBy === 'year'}
+								<button 
+									class="px-4 py-2.5 rounded-full text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-2 whitespace-nowrap"
+									onclick={() => activeTab = groupKey}
+								>
+									{#if groupKey === 'università'}
+										<ls.GraduationCap class="h-4 w-4" />
+									{:else}
+										<ls.BookOpen class="h-4 w-4" />
+									{/if}
+									{groupKey === 'università' ? 'Università' : `${groupKey}° anno`}
+								</button>
+							{/if}
+						{/each}
+					</div>
+				</div>
+			</section>
+			
+			<!-- Content display based on search state -->
+			{#if !searchQuery}
+				<!-- Featured topics by subject/year when not searching -->
+				{#each Object.keys(groupedTopics).slice(0, 3) as groupKey}
+					<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
+						<div class="flex items-center justify-between mb-4">
+							<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+								{#if groupBy === 'subject' && subjectCategories[groupKey]}
+									{@const SubjectIcon = subjectCategories[groupKey].icon}
+									<div class="h-8 w-8 rounded-lg bg-gradient-to-br {subjectCategories[groupKey].color} flex items-center justify-center text-white">
+										<SubjectIcon class="h-5 w-5" />
+									</div>
+									<span>{subjectCategories[groupKey].name}</span>
+								{:else if groupBy === 'year'}
+									<div class="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white">
+										{#if groupKey === 'università'}
+											<ls.GraduationCap class="h-5 w-5" />
+										{:else}
+											<ls.BookOpen class="h-5 w-5" />
+										{/if}
+									</div>
+									<span>{groupKey === 'università' ? 'Università' : `${groupKey}° anno`}</span>
+								{/if}
+							</h2>
+							
+							{#if groupedTopics[groupKey].length > 5}
+								<button 
+									class="text-blue-600 dark:text-blue-400 font-medium text-sm hover:underline flex items-center gap-1"
+									onclick={() => {
+										activeTab = groupKey;
+										document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' });
+									}}
+								>
+									Vedi tutti
+									<ls.ChevronRight class="h-4 w-4" />
+								</button>
+							{/if}
+						</div>
+						
+						<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+							{#each groupedTopics[groupKey].slice(0, 5) as topic}
+								<TopicCard
+									title={topic.title} 
+									description={topic.description} 
+									icon={topic.icon} 
+									path={topic.path}
+									level={topic.level}
+									subject={topic.subject}
+									year={topic.year}
+									key={topic.key}
+									subtopics={topic.subtopics}
+								/>
+							{/each}
+						</div>
+					</section>
+				{/each}
+			{:else}
+				<!-- Search results -->
+				<section class="mb-8">
+					<div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700 p-6">
+						{#if filteredTopics.length > 0}
+							<div class="flex items-center justify-between mb-4">
+								<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+									<div class="text-blue-600">
+										<ls.Search class="h-5 w-5" />
+									</div>
+									<span>Risultati ricerca ({filteredTopics.length})</span>
+								</h2>
+							</div>
+							
+							<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+								{#each filteredTopics as topic}
+									<TopicCard
+										title={topic.title} 
+										description={topic.description} 
+										icon={topic.icon} 
+										path={topic.path}
+										level={topic.level}
+										subject={topic.subject}
+										year={topic.year}
+										key={topic.key}
+										subtopics={topic.subtopics}
+									/>
+								{/each}
+							</div>
+						{:else}
+							<div class="flex flex-col items-center justify-center py-16 text-center">
+								<div class="bg-zinc-100 dark:bg-zinc-700 rounded-full p-4 mb-6">
+									<ls.Search class="h-8 w-8 text-zinc-500 dark:text-zinc-400" />
+								</div>
+								<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Nessun argomento trovato</h3>
+								<p class="text-zinc-500 dark:text-zinc-400 max-w-md">
+									Prova a modificare i filtri di ricerca o a selezionare un'altra categoria.
+								</p>
+							</div>
+						{/if}
+					</div>
+				</section>
+			{/if}
+		</div>
 	</div>
 </div>
-
-<style>
-	.glass-effect {
-		background: rgba(255, 255, 255, 0.6);
-		backdrop-filter: blur(10px);
-		border: 1px solid rgba(255, 255, 255, 0.2);
-	}
-	.btn-primary {
-		background: #3b82f6; /* blue-500 */
-		transition: background-color 0.3s;
-	}
-	.btn-primary:hover {
-		background: #2563eb; /* blue-600 */
-	}
-	.btn-secondary {
-		background-color: rgba(255, 255, 255, 0.7);
-		transition: background-color 0.3s;
-	}
-	.btn-secondary:hover {
-		background-color: rgba(255, 255, 255, 1);
-	}
-</style> 

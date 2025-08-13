@@ -3,7 +3,7 @@
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { widgetStyle } from '$lib/stores/appearance.js';
+	import { widgetStyle, designSystem } from '$lib/stores/appearance.js';
 	import * as ls from 'lucide-svelte';
 
 	import EarningsGraph from '$lib/components/graphs/EarningsGraph.svelte';
@@ -35,57 +35,20 @@
 	});
 </script>
 
-<div class="flex flex-col h-full transition-all duration-500 ease-in-out {widgetStyle}">
-	<div class="p-4 border-b border-zinc-200 dark:border-zinc-800">
-		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Earnings over time</h2>
+<div class="flex flex-col h-full bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow">
+	<div class="p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex justify-between items-center">
+		<div>
+			<h2 class="text-base font-semibold text-[#111827] dark:text-white mb-1">Earnings over time</h2>
+			<p class="text-sm text-[#6B7280] dark:text-[#A0A0A0]">{formatCurrency(totalEarnings)} total</p>
+		</div>
 		
-		<div class="mt-2 flex flex-wrap items-center justify-between gap-2">
-			<div class="flex flex-wrap items-center gap-2">
-				<div class="flex rounded overflow-hidden">
-					{#each filterOptions as option}
-						<button 
-							class="
-								px-3 py-1 text-sm border-r last:border-r-0 border-zinc-200 dark:border-zinc-700 transition
-								{statsStore.filterType === option.id ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-100' : 'bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'}
-							"
-							onclick={() => handleFilterChange(option.id)}
-						>
-							{option.name}
-						</button>
-					{/each}
-				</div>
-				
-				{#if statsStore.filterType === 'student'}
-					<select 
-						class="px-3 py-1 text-sm border border-zinc-200 rounded dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
-						bind:value={statsStore.filterId}
-						onchange={() => handleFilterChange('student', statsStore.filterId)}
-					>
-						<option value={null}>All Students</option>
-						{#each $studentsStore.students as student}
-							<option value={student.id}>{student.first_name} {student.last_name}</option>
-						{/each}
-					</select>
-				{:else if statsStore.filterType === 'subject'}
-					<select 
-						class="px-3 py-1 text-sm border border-zinc-200 rounded dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
-						bind:value={statsStore.filterId}
-						onchange={() => handleFilterChange('subject', statsStore.filterId)}
-					>
-						<option value={null}>All Subjects</option>
-						{#each $subjectsStore.subjects as subject}
-							<option value={subject.id}>{subject.name}</option>
-						{/each}
-					</select>
-				{/if}
-			</div>
-			
-			<div class="flex rounded overflow-hidden">
+		<div class="flex items-center gap-2">
+			<div class="flex rounded-md border border-[#E5E7EB] dark:border-[#333333] overflow-hidden">
 				{#each timeRangeOptions as option}
 					<button 
 						class="
-							px-3 py-1 text-sm border-r last:border-r-0 border-zinc-200 dark:border-zinc-700 transition
-							{statsStore.timeRange === option.id ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-100' : 'bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300'}
+							px-3 py-1.5 text-xs font-medium transition-colors
+							{statsStore.timeRange === option.id ? 'bg-[#22C55E]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]' : 'bg-white dark:bg-[#121212] text-[#6B7280] dark:text-[#A0A0A0] hover:bg-[#F9FAFB] dark:hover:bg-[#1E1E1E]'}
 						"
 						onclick={() => handleTimeRangeChange(option.id)}
 					>
@@ -96,15 +59,50 @@
 		</div>
 	</div>
 	
-	<div class="p-4 h-64">
+	<div class="p-5 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center gap-3">
+		<div class="flex rounded-md border border-[#E5E7EB] dark:border-[#333333] overflow-hidden">
+			{#each filterOptions as option}
+				<button 
+					class="
+						px-3 py-1.5 text-xs font-medium transition-colors
+						{statsStore.filterType === option.id ? 'bg-[#22C55E]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]' : 'bg-white dark:bg-[#121212] text-[#6B7280] dark:text-[#A0A0A0] hover:bg-[#F9FAFB] dark:hover:bg-[#1E1E1E]'}
+					"
+					onclick={() => handleFilterChange(option.id)}
+				>
+					{option.name}
+				</button>
+			{/each}
+		</div>
+		
+		{#if statsStore.filterType === 'student'}
+			<select 
+				class="px-3 py-1.5 text-xs font-medium bg-white border border-[#E5E7EB] rounded-md dark:border-[#333333] dark:bg-[#1E1E1E] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#22C55E] focus:border-[#22C55E]"
+				bind:value={statsStore.filterId}
+				onchange={() => handleFilterChange('student', statsStore.filterId)}
+			>
+				<option value={null}>All Students</option>
+				{#each $studentsStore.students as student}
+					<option value={student.id}>{student.first_name} {student.last_name}</option>
+				{/each}
+			</select>
+		{:else if statsStore.filterType === 'subject'}
+			<select 
+				class="px-3 py-1.5 text-xs font-medium bg-white border border-[#E5E7EB] rounded-md dark:border-[#333333] dark:bg-[#1E1E1E] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#22C55E] focus:border-[#22C55E]"
+				bind:value={statsStore.filterId}
+				onchange={() => handleFilterChange('subject', statsStore.filterId)}
+			>
+				<option value={null}>All Subjects</option>
+				{#each $subjectsStore.subjects as subject}
+					<option value={subject.id}>{subject.name}</option>
+				{/each}
+			</select>
+		{/if}
+	</div>
+	
+	<div class="p-6 h-72 flex-1">
 		<EarningsGraph 
 			filterOptions={filterOptions}
 			timeRangeOptions={timeRangeOptions}
 		/>
-	</div>
-	
-	<div class="flex items-center gap-2 p-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg">
-		<span class="text-sm text-zinc-500 dark:text-zinc-400">Total earnings:</span>
-		<span class="text-sm font-medium text-zinc-900 dark:text-zinc-50">{formatCurrency(totalEarnings)}</span>
 	</div>
 </div> 

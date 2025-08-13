@@ -1,11 +1,13 @@
 <script>
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { widgetStyle } from '$lib/stores/appearance.js';
+	import { designSystem } from '$lib/stores/appearance.js';
+	import { themeStore } from '$lib/components/theme/theme.js';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
+	import * as ls from 'lucide-svelte';
 
-	import ChartTooltip from '$lib/components/ChartTooltip.svelte';
+	import ChartTooltip from '$lib/components/graphs/ChartTooltip.svelte';
 
 	let canvas;
 	let chart;
@@ -21,12 +23,16 @@
 	});
 	
 	onMount(() => {
-		renderChart();
+		if ((statsStore.topEarnings.bySubject?.length || statsStore.topEarnings.byStudent?.length)) {
+			renderChart();
+		}
 		setupCanvasHover();
 	});
 	
 	$effect(() => {
-		if (statsStore.topEarnings && canvas) {
+		const bySubject = statsStore.topEarnings.bySubject;
+		const byStudent = statsStore.topEarnings.byStudent;
+		if ((bySubject?.length || byStudent?.length) && canvas) {
 			renderChart();
 			setupCanvasHover();
 		}
@@ -102,9 +108,10 @@
 				{
 					label: 'Earnings',
 					data: sortedData.map(item => item.totalEarnings),
-					backgroundColor: 'rgba(59, 130, 246, 0.7)',
-					borderColor: 'rgba(59, 130, 246, 1)',
+					backgroundColor: 'rgba(34, 197, 94, 0.7)',
+					borderColor: designSystem.colors.primary.green,
 					borderWidth: 1,
+					borderRadius: 4
 				}
 			]
 		};
@@ -130,11 +137,11 @@
 				x: {
 					beginAtZero: true,
 					grid: {
-						color: '#71717a20',
+						color: $themeStore === 'dark' ? designSystem.colors.chart.grid.dark : designSystem.colors.chart.grid.light,
 						drawBorder: false
 					},
 					ticks: {
-						color: '#71717a',
+						color: designSystem.colors.chart.text,
 						callback: function(value) {
 							return formatCurrency(value);
 						}
@@ -142,10 +149,14 @@
 				},
 				y: {
 					grid: {
-						color: '#71717a20'
+						color: $themeStore === 'dark' ? designSystem.colors.chart.grid.dark : designSystem.colors.chart.grid.light,
+						drawBorder: false
 					},
 					ticks: {
-						color: '#71717a'
+						color: designSystem.colors.chart.text,
+						font: {
+							size: 12
+						}
 					}
 				}
 			}
@@ -164,43 +175,49 @@
 	}
 </script>
 
-<div class="w-full flex flex-col overflow-hidden {widgetStyle}">
-	<div class="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
-		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-			Top Earnings by {viewMode === 'subject' ? 'Subject' : 'Student'}
-		</h2>
+<div class="w-full flex flex-col overflow-hidden bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow">
+	<div class="flex items-center justify-between p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
+		<div>
+			<h2 class="text-base font-semibold text-[#111827] dark:text-white mb-1">
+				Top Earnings by {viewMode === 'subject' ? 'Subject' : 'Student'}
+			</h2>
+			<p class="text-sm text-[#6B7280] dark:text-[#A0A0A0]">Showing top performers</p>
+		</div>
 		
 		<button 
-			class="px-3 py-1 text-sm bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded transition"
+			class="px-3 py-1.5 text-xs font-medium border border-[#E5E7EB] dark:border-[#333333] bg-white hover:bg-[#F9FAFB] dark:bg-[#1E1E1E] dark:hover:bg-[#2B2B2B] text-[#4B5563] dark:text-[#A0A0A0] rounded-md transition-colors"
 			onclick={toggleViewMode}
 		>
-			View by {viewMode === 'subject' ? 'Student' : 'Subject'}
+			<div class="flex items-center gap-2">
+				<ls.Repeat class="w-3.5 h-3.5" />
+				<span>View by {viewMode === 'subject' ? 'Student' : 'Subject'}</span>
+			</div>
 		</button>
 	</div>
 	
-	<div class="p-4 relative">
-		<div class="w-full h-64" bind:this={canvasContainer}>
+	<div class="p-6 relative">
+		<div class="w-full h-72" bind:this={canvasContainer}>
 			<canvas bind:this={canvas}></canvas>
 		</div>
 		
 		<ChartTooltip visible={tooltipVisible} x={tooltipData.x} y={tooltipData.y} position="left">
 			<div class="p-3">
-				<p class="text-sm font-medium text-foreground">{tooltipData.title}</p>
+				<p class="text-sm font-medium text-[#111827] dark:text-white">{tooltipData.title}</p>
 			</div>
 			
-			<hr class="w-full border-border"/>
+			<hr class="w-full border-[#E5E7EB] dark:border-[#2A2A2A]"/>
 			
 			<div class="flex flex-col gap-2 p-3">
 				<div class="flex items-center justify-between gap-4">
-					<span class="text-xs text-muted-foreground">Earnings</span>
-					<span class="text-sm font-medium text-foreground">
+					<span class="text-xs text-[#6B7280] dark:text-[#A0A0A0]">Earnings</span>
+					<span class="text-sm font-medium text-[#111827] dark:text-white">
 						{formatCurrency(tooltipData.earnings)}
 					</span>
 				</div>
 				
 				<div class="flex items-center justify-between gap-4">
-					<span class="text-xs text-muted-foreground">Hours</span>
-					<span class="text-sm font-medium text-foreground">
+					<span class="text-xs text-[#6B7280] dark:text-[#A0A0A0]">Hours</span>
+					<span class="text-sm font-medium text-[#111827] dark:text-white">
 						{tooltipData.hours.toFixed(1)}h
 					</span>
 				</div>

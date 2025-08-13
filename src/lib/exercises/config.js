@@ -50,7 +50,7 @@ export const configs = {
 		// 	args: [2]
 		// }
 	},
-	'superiori/matematica/1/frazioni/confronto-frazioni': {
+	'superiori/matematica/1/numeri-razionali/confronto-frazioni': {
 		'stesso-numeratore': {
 			generator: 'StessoNumeratoreEx',
 			count: 2,
@@ -67,14 +67,14 @@ export const configs = {
 			args: []
 		}
 	},
-	'superiori/matematica/1/frazioni/potenze-esponente-negativo': {
+	'superiori/matematica/1/numeri-razionali/potenze-esponente-negativo': {
 		'stessa-base': {
 			generator: 'PotenzeEsponenteNegativoEx',
 			count: 6,
 			args: []
 		}
 	},
-	'superiori/matematica/1/frazioni/conversione': {
+	'superiori/matematica/1/numeri-razionali/conversione': {
 		'finito': {
 			generator: 'FinitoEx',
 			count: 2,
@@ -94,7 +94,22 @@ export const configs = {
 	'superiori/matematica/1/insiemi': {
 		'intersezione': {
 			generator: 'IntersezioneEx',
-			count: 5,
+			count: 2,
+			args: []
+		},
+		'unione': {
+			generator: 'UnioneEx',
+			count: 2,
+			args: []
+		},
+		'differenza': {
+			generator: 'DifferenzaEx',
+			count: 2,
+			args: []
+		},
+		'espressione': {
+			generator: 'EspressioneEx',
+			count: 2,
 			args: []
 		}
 	}

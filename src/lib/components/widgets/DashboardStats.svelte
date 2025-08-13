@@ -5,7 +5,7 @@
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';	
 	import { isSameDay } from 'date-fns';
 	import * as ls from 'lucide-svelte';
-    import { cardStyle } from '$lib/stores/appearance.js';
+    import { cardStyle, designSystem } from '$lib/stores/appearance.js';
 
 	let totalTime = $derived.by(() => {
 		let total = $lecturesStore.lectures.reduce((total, lecture) => {
@@ -76,69 +76,94 @@
 	});
 </script>
 
-<div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-	<div class={`flex items-start p-6 ${cardStyle}`}>
-		<div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
-			<ls.Users size={24} class="text-blue-600 dark:text-blue-300" />
-		</div>
-		<div>
-			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Students</p>
-			<p class="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{$studentsStore.students.length}</p>
-		</div>
-	</div>
-	
-	<div class={`flex items-start p-6 ${cardStyle}`}>
-		<div class="bg-green-100 dark:bg-green-900 p-3 rounded-full mr-4">
-			<ls.BookOpen size={24} class="text-green-600 dark:text-green-300" />
-		</div>
-		<div>
-			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Subjects</p>
-			<p class="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{$subjectsStore.subjects.length}</p>
+<div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
+		<div class="flex flex-row justify-between">
+			<div class="w-14 h-14 bg-[#EFF6FF] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
+				<ls.Users class="w-7 h-7 text-[#3B82F6]" />
+			</div>
+			<div class="flex flex-col items-end">
+				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">STUDENTS</span>
+				<div class="flex items-baseline">
+					<span class="text-3xl font-bold text-[#111827] dark:text-white">{$studentsStore.students.length}</span>
+					<!-- <span class="text-sm text-[#22C55E] font-medium ml-3">+2 this month</span> -->
+				</div>
+			</div>
 		</div>
 	</div>
 	
-	<div class={`flex items-start p-6 ${cardStyle}`}>
-		<div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-full mr-4">
-			<ls.Clock size={24} class="text-purple-600 dark:text-purple-300" />
-		</div>
-		<div>
-			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Hours Taught</p>
-			<p class="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{totalTime.hours}h {totalTime.minutes}m</p>
+	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
+		<div class="flex flex-row justify-between">
+			<div class="w-14 h-14 bg-[#F0FDF4] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
+				<ls.BookOpen class="w-7 h-7 text-[#22C55E]" />
+			</div>
+			<div class="flex flex-col items-end">
+				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">SUBJECTS</span>
+				<div class="flex items-baseline">
+					<span class="text-3xl font-bold text-[#111827] dark:text-white">{$subjectsStore.subjects.length}</span>
+				</div>
+			</div>
 		</div>
 	</div>
 	
-	<div class={`flex items-start p-6 ${cardStyle}`}>
-		<div class="bg-amber-100 dark:bg-amber-900 p-3 rounded-full mr-4">
-			<ls.CreditCard size={24} class="text-amber-600 dark:text-amber-300" />
+	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
+		<div class="flex flex-row justify-between">
+			<div class="w-14 h-14 bg-[#F3E8FF] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
+				<ls.Clock class="w-7 h-7 text-[#8B5CF6]" />
+			</div>
+			<div class="flex flex-col items-end">
+				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">HOURS TAUGHT</span>
+				<div class="flex items-baseline">
+					<span class="text-3xl font-bold text-[#111827] dark:text-white">{totalTime.hours}h {totalTime.minutes}m</span>
+					<!-- <span class="text-sm text-[#22C55E] font-medium ml-3">+4h this week</span> -->
+				</div>
+			</div>
 		</div>
-		<div>
-			<p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Earnings</p>
-			<p class="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{formatCurrency(totalEarnings)}</p>
+	</div>
+	
+	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
+		<div class="flex flex-row justify-between">
+			<div class="w-14 h-14 bg-[#FEF3C7] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
+				<ls.CreditCard class="w-7 h-7 text-[#F59E0B]" />
+			</div>
+			<div class="flex flex-col items-end">
+				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">TOTAL EARNINGS</span>
+				<div class="flex items-baseline">
+					<span class="text-3xl font-bold text-[#111827] dark:text-white">{formatCurrency(totalEarnings)}</span>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 
 {#if nextLecture}
-	<div class={`mt-4 p-4 ${cardStyle} bg-blue-50/60 dark:bg-blue-900/30 border-blue-200/40 dark:border-blue-800/40`}>
-		<h3 class="font-medium text-blue-700 dark:text-blue-300">Next Lecture</h3>
-		<div class="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-			<div>
-				<span class="text-zinc-500 dark:text-zinc-400">Date:</span> 
-				<span class="text-zinc-900 dark:text-zinc-100 font-medium">{formatDateDisplay(nextLecture.date)}</span>
+	<div class="bg-white border-l-4 border-l-[#3B82F6] border-t border-r border-b border-[#E5E7EB] dark:bg-[#121212] dark:border-l-[#3B82F6] dark:border-t-[#2A2A2A] dark:border-r-[#2A2A2A] dark:border-b-[#2A2A2A] rounded-md p-5 shadow-base dark:shadow-glow mb-8">
+		<div class="flex items-center">
+			<div class="p-3 rounded-md bg-[#EFF6FF] dark:bg-[#1E1E1E] mr-4">
+				<ls.Calendar class="w-6 h-6 text-[#3B82F6]" />
 			</div>
 			<div>
-				<span class="text-zinc-500 dark:text-zinc-400">Time:</span> 
-				<span class="text-zinc-900 dark:text-zinc-100 font-medium">{nextLecture.start_time} - {nextLecture.end_time}</span>
-			</div>
-			<div>
-				<span class="text-zinc-500 dark:text-zinc-400">Student:</span> 
-				<span class="text-zinc-900 dark:text-zinc-100 font-medium">
-					{nextLecture.student?.first_name} {nextLecture.student?.last_name}
-				</span>
-			</div>
-			<div>
-				<span class="text-zinc-500 dark:text-zinc-400">Subject:</span> 
-				<span class="text-zinc-900 dark:text-zinc-100 font-medium">{nextLecture.subject?.name}</span>
+				<h3 class="font-semibold text-[#111827] dark:text-white text-sm mb-2">Next Lecture</h3>
+				<div class="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+					<div class="flex items-center">
+						<span class="text-xs text-[#6B7280] dark:text-[#A0A0A0]">Date:</span> 
+						<span class="text-sm text-[#111827] dark:text-white font-medium ml-2">{formatDateDisplay(nextLecture.date)}</span>
+					</div>
+					<div class="flex items-center">
+						<span class="text-xs text-[#6B7280] dark:text-[#A0A0A0]">Time:</span> 
+						<span class="text-sm text-[#111827] dark:text-white font-medium ml-2">{nextLecture.start_time} - {nextLecture.end_time}</span>
+					</div>
+					<div class="flex items-center">
+						<span class="text-xs text-[#6B7280] dark:text-[#A0A0A0]">Student:</span> 
+						<span class="text-sm text-[#111827] dark:text-white font-medium ml-2">
+							{nextLecture.student?.first_name} {nextLecture.student?.last_name}
+						</span>
+					</div>
+					<div class="flex items-center">
+						<span class="text-xs text-[#6B7280] dark:text-[#A0A0A0]">Subject:</span> 
+						<span class="text-sm text-[#111827] dark:text-white font-medium ml-2">{nextLecture.subject?.name}</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
