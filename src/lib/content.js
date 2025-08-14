@@ -43,12 +43,12 @@ export const content = {
                         description: "I numeri razionali sono i numeri che si usano per misurare.",
                         icon: "subjectsIcons/numeri-razionali.png",
                         subtopics: {
-                            "confronto frazioni": {
+                            "confronto-frazioni": {
                                 title: "Confronto frazioni",
                                 description: "Confronto frazioni.",
                                 icon: "",
                             },
-                            "potenze esponente negativo": {
+                            "potenze-esponente-negativo": {
                                 title: "Potenze esponente negativo",
                                 description: "Potenze con esponente negativo.",
                                 icon: "",
@@ -74,13 +74,13 @@ export const content = {
             }
         },
     },
-    università: {
-        "analisi-I": {
-            title: "Analisi I",
-            description: "L'analisi I è la parte della matematica che studia i numeri, le figure geometriche e le relazioni tra di loro.",
-            icon: "subjectsIcons/analisi-I.png",
-        }
-    }
+    // università: {
+    //     "analisi-I": {
+    //         title: "Analisi I",
+    //         description: "L'analisi I è la parte della matematica che studia i numeri, le figure geometriche e le relazioni tra di loro.",
+    //         icon: "subjectsIcons/analisi-I.png",
+    //     }
+    // }
 }
 
 export let selectedTopic = writable(null);

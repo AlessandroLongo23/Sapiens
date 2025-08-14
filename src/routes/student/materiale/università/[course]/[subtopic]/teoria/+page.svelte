@@ -19,7 +19,7 @@
         activeTheorySection = e.detail.sectionId;
     };
 
-    let exercisePath = $derived($page.url.pathname.replace('/teoria/', '/esercizi/'));
+    let exercisePath = $derived($page.url.pathname.replace('/teoria', '/esercizi'));
 </script>
 
 <svelte:head>

@@ -70,24 +70,19 @@
 		return collected;
 	});
 
-	// Filter and sort topics based on user preferences
-	// Topics for "Continua a studiare" section - not affected by search filters
 	let continuaTopics = $derived.by(() => {
 		return allTopics
 			.filter(t => t.memory > 0 && t.memory < 100)
 			.sort((a, b) => b.memory - a.memory);
 	});
 
-	// Topics filtered by tab and search for all other sections
 	let filteredTopics = $derived.by(() => {
 		let filtered = [...allTopics];
 		
-		// Filter by tab
 		if (activeTab !== "all") {
 			filtered = filtered.filter(topic => topic.subject === activeTab);
 		}
 		
-		// Filter by search
 		if (searchQuery) {
 			const query = searchQuery.toLowerCase();
 			filtered = filtered.filter(topic => 
@@ -97,7 +92,6 @@
 			);
 		}
 		
-		// Sort topics
 		switch (sortBy) {
 			case "memory":
 				filtered.sort((a, b) => b.memory - a.memory);
@@ -117,7 +111,6 @@
 				});
 				break;
 			default:
-				// Default sort - prioritize in-memory topics
 				filtered.sort((a, b) => {
 					if (a.memory > 0 && a.memory < 100 && (b.memory === 0 || b.memory === 100)) return -1;
 					if (b.memory > 0 && b.memory < 100 && (a.memory === 0 || a.memory === 100)) return 1;
@@ -128,12 +121,10 @@
 		return filtered;
 	});
 
-	// Group topics by subject or year for the featured section
 	let groupedTopics = $derived.by(() => {
 		const grouped = {};
 		
 		allTopics.forEach(topic => {
-			// Group key depends on groupBy setting
 			const key = groupBy === 'subject' ? topic.subject : (topic.year || 'università');
 			
 			if (!grouped[key]) {
@@ -142,7 +133,6 @@
 			grouped[key].push(topic);
 		});
 		
-		// Sort each group by memory (previously memory)
 		Object.keys(grouped).forEach(key => {
 			grouped[key].sort((a, b) => b.memory - a.memory);
 		});
@@ -150,11 +140,9 @@
 		return grouped;
 	});
 
-	// Calculate streak (placeholder)
-	let streak = $state(5); // Days in a row
-	let nextMilestone = $state(7); // Next streak milestone
+	let streak = $state(5);
+	let nextMilestone = $state(7);
 
-	// Format date for display
 	function formatDate(date) {
 		return new Intl.DateTimeFormat('it-IT', { 
 			day: 'numeric', 
@@ -167,7 +155,6 @@
 	<div class="flex flex-col lg:flex-row">
 		<div class="hidden lg:block w-80 flex-shrink-0 p-4 lg:pr-8">
 			<div class="sticky top-24 space-y-6">
-				<!-- Streak widget -->
 				<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
 					<div class="flex items-center justify-between mb-4">
 						<h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -179,7 +166,6 @@
 						<div class="text-2xl font-bold text-yellow-500">{streak} giorni</div>
 					</div>
 					
-					<!-- Streak goal memory -->
 					<div class="mb-4">
 						<div class="flex justify-between text-sm mb-1">
 							<span class="text-zinc-500 dark:text-zinc-400">Obiettivo</span>
@@ -212,7 +198,7 @@
 			</div>
 		</div>
 
-		<div class="flex-1 max-w-5xl px-4 sm:px-6 lg:pl-8 lg:pr-6">
+		<div class="flex-1 max-w-5xl px-4 sm:px-6 lg:pl-8 lg:pr-6 mt-6">
 			<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
 				<div class="flex items-center justify-between mb-4">
 					<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -253,7 +239,7 @@
 				</div>
 			</section>
 
-			<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 search-section">
+			<section class="flex flex-col gap-8 mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 search-section">
 				<div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
 					<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
 						<div class="text-purple-600">
@@ -263,7 +249,23 @@
 					</h2>
 					
 					<div class="flex gap-3 w-full sm:w-auto">
-						<!-- Search box -->
+						<div class="flex items-center gap-4">
+							<div class="flex bg-zinc-100 dark:bg-zinc-700 rounded-lg overflow-hidden">
+								<button
+									class="px-4 py-2 text-sm font-medium {groupBy === 'subject' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
+									onclick={() => groupBy = 'subject'}
+								>
+									Materia
+								</button>
+								<button
+									class="px-4 py-2 text-sm font-medium {groupBy === 'year' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
+									onclick={() => groupBy = 'year'}
+								>
+									Anno
+								</button>
+							</div>
+						</div>
+						
 						<div class="relative flex-1 sm:w-64">
 							<ls.Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
 							<input 
@@ -274,7 +276,6 @@
 							/>
 						</div>
 						
-						<!-- Sort dropdown -->
 						<div class="relative">
 							<select 
 								bind:value={sortBy}
@@ -291,27 +292,7 @@
 					</div>
 				</div>
 
-				<!-- Group By options -->
 				<div class="mt-4 flex flex-col gap-4">
-					<div class="flex items-center gap-4">
-						<span class="text-sm text-zinc-500 dark:text-zinc-400">Raggruppa per:</span>
-						<div class="flex bg-zinc-100 dark:bg-zinc-700 rounded-lg overflow-hidden">
-							<button
-								class="px-4 py-2 text-sm font-medium {groupBy === 'subject' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
-								onclick={() => groupBy = 'subject'}
-							>
-								Materia
-							</button>
-							<button
-								class="px-4 py-2 text-sm font-medium {groupBy === 'year' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
-								onclick={() => groupBy = 'year'}
-							>
-								Anno
-							</button>
-						</div>
-					</div>
-
-					<!-- Filter tabs -->
 					<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
 						<button 
 							class="px-4 py-2.5 rounded-full text-sm font-medium {activeTab === 'all' ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors whitespace-nowrap"
@@ -346,107 +327,106 @@
 						{/each}
 					</div>
 				</div>
-			</section>
 			
-			<!-- Content display based on search state -->
-			{#if !searchQuery}
-				<!-- Featured topics by subject/year when not searching -->
-				{#each Object.keys(groupedTopics).slice(0, 3) as groupKey}
-					<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
-						<div class="flex items-center justify-between mb-4">
-							<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-								{#if groupBy === 'subject' && subjectCategories[groupKey]}
-									{@const SubjectIcon = subjectCategories[groupKey].icon}
-									<div class="h-8 w-8 rounded-lg bg-gradient-to-br {subjectCategories[groupKey].color} flex items-center justify-center text-white">
-										<SubjectIcon class="h-5 w-5" />
-									</div>
-									<span>{subjectCategories[groupKey].name}</span>
-								{:else if groupBy === 'year'}
-									<div class="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white">
-										{#if groupKey === 'università'}
-											<ls.GraduationCap class="h-5 w-5" />
-										{:else}
-											<ls.BookOpen class="h-5 w-5" />
+				{#if !searchQuery}
+					<div class="flex flex-col gap-12">
+						{#each Object.keys(groupedTopics).slice(0, 3) as groupKey}
+							<div class="flex flex-col gap-4">
+								<div class="flex items-center justify-between">
+									<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+										{#if groupBy === 'subject' && subjectCategories[groupKey]}
+											{@const SubjectIcon = subjectCategories[groupKey].icon}
+											<div class="h-8 w-8 rounded-lg bg-gradient-to-br {subjectCategories[groupKey].color} flex items-center justify-center text-white">
+												<SubjectIcon class="h-5 w-5" />
+											</div>
+											<span>{subjectCategories[groupKey].name}</span>
+										{:else if groupBy === 'year'}
+											<div class="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white">
+												{#if groupKey === 'università'}
+													<ls.GraduationCap class="h-5 w-5" />
+												{:else}
+													<ls.BookOpen class="h-5 w-5" />
+												{/if}
+											</div>
+											<span>{groupKey === 'università' ? 'Università' : `${groupKey}° anno`}</span>
 										{/if}
+									</h2>
+									
+									{#if groupedTopics[groupKey].length > 5}
+										<button 
+											class="text-blue-600 dark:text-blue-400 font-medium text-sm hover:underline flex items-center gap-1"
+											onclick={() => {
+												activeTab = groupKey;
+												document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' });
+											}}
+										>
+											Vedi tutti
+											<ls.ChevronRight class="h-4 w-4" />
+										</button>
+									{/if}
+								</div>
+								
+								<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+									{#each groupedTopics[groupKey].slice(0, 5) as topic}
+										<TopicCard
+											title={topic.title} 
+											description={topic.description} 
+											icon={topic.icon} 
+											path={topic.path}
+											level={topic.level}
+											subject={topic.subject}
+											year={topic.year}
+											key={topic.key}
+											subtopics={topic.subtopics}
+										/>
+									{/each}
+								</div>
+							</div>
+						{/each}
+					</div>
+				{:else}
+					<section class="mb-8">
+						<div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700 p-6">
+							{#if filteredTopics.length > 0}
+								<div class="flex items-center justify-between mb-4">
+									<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+										<div class="text-blue-600">
+											<ls.Search class="h-5 w-5" />
+										</div>
+										<span>Risultati ricerca ({filteredTopics.length})</span>
+									</h2>
+								</div>
+								
+								<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+									{#each filteredTopics as topic}
+										<TopicCard
+											title={topic.title} 
+											description={topic.description} 
+											icon={topic.icon} 
+											path={topic.path}
+											level={topic.level}
+											subject={topic.subject}
+											year={topic.year}
+											key={topic.key}
+											subtopics={topic.subtopics}
+										/>
+									{/each}
+								</div>
+							{:else}
+								<div class="flex flex-col items-center justify-center py-16 text-center">
+									<div class="bg-zinc-100 dark:bg-zinc-700 rounded-full p-4 mb-6">
+										<ls.Search class="h-8 w-8 text-zinc-500 dark:text-zinc-400" />
 									</div>
-									<span>{groupKey === 'università' ? 'Università' : `${groupKey}° anno`}</span>
-								{/if}
-							</h2>
-							
-							{#if groupedTopics[groupKey].length > 5}
-								<button 
-									class="text-blue-600 dark:text-blue-400 font-medium text-sm hover:underline flex items-center gap-1"
-									onclick={() => {
-										activeTab = groupKey;
-										document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' });
-									}}
-								>
-									Vedi tutti
-									<ls.ChevronRight class="h-4 w-4" />
-								</button>
+									<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Nessun argomento trovato</h3>
+									<p class="text-zinc-500 dark:text-zinc-400 max-w-md">
+										Prova a modificare i filtri di ricerca o a selezionare un'altra categoria.
+									</p>
+								</div>
 							{/if}
 						</div>
-						
-						<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-							{#each groupedTopics[groupKey].slice(0, 5) as topic}
-								<TopicCard
-									title={topic.title} 
-									description={topic.description} 
-									icon={topic.icon} 
-									path={topic.path}
-									level={topic.level}
-									subject={topic.subject}
-									year={topic.year}
-									key={topic.key}
-									subtopics={topic.subtopics}
-								/>
-							{/each}
-						</div>
 					</section>
-				{/each}
-			{:else}
-				<!-- Search results -->
-				<section class="mb-8">
-					<div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700 p-6">
-						{#if filteredTopics.length > 0}
-							<div class="flex items-center justify-between mb-4">
-								<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-									<div class="text-blue-600">
-										<ls.Search class="h-5 w-5" />
-									</div>
-									<span>Risultati ricerca ({filteredTopics.length})</span>
-								</h2>
-							</div>
-							
-							<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-								{#each filteredTopics as topic}
-									<TopicCard
-										title={topic.title} 
-										description={topic.description} 
-										icon={topic.icon} 
-										path={topic.path}
-										level={topic.level}
-										subject={topic.subject}
-										year={topic.year}
-										key={topic.key}
-										subtopics={topic.subtopics}
-									/>
-								{/each}
-							</div>
-						{:else}
-							<div class="flex flex-col items-center justify-center py-16 text-center">
-								<div class="bg-zinc-100 dark:bg-zinc-700 rounded-full p-4 mb-6">
-									<ls.Search class="h-8 w-8 text-zinc-500 dark:text-zinc-400" />
-								</div>
-								<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Nessun argomento trovato</h3>
-								<p class="text-zinc-500 dark:text-zinc-400 max-w-md">
-									Prova a modificare i filtri di ricerca o a selezionare un'altra categoria.
-								</p>
-							</div>
-						{/if}
-					</div>
-				</section>
-			{/if}
+				{/if}
+			</section>
 		</div>
 	</div>
 </div>
