@@ -31,7 +31,7 @@
         <p>Errore: {data.error}</p>
     </div>
 {:else if data.content}
-    <div class="flex flex-col gap-4 w-full justify-center items-center">
+    <div class="flex flex-col gap-4 w-full justify-center items-center max-w-6xl mx-auto px-6 sm:px-4 pt-16 pb-8 sm:py-12 md:px-8">
         <TheoryContent 
             content={data.content}
             sections={data.sections}

@@ -195,8 +195,8 @@
 	}
 </script>
 
-<div class="bg-white dark:bg-zinc-900 min-h-screen pb-12">
-	<div class="px-4 sm:px-6 lg:px-8">
+<div class="bg-white dark:bg-zinc-900 min-h-screen pb-8 sm:pb-12">
+	<div class="px-3 sm:px-6 lg:px-8">
 		<div class="flex flex-col lg:flex-row justify-center">
 			<div class="hidden lg:block w-96 flex-shrink-0 p-4">
 				<div class="sticky top-24 space-y-6">
@@ -258,40 +258,40 @@
 				</div>
 			</div>
 
-			<div class="flex-1 max-w-4xl px-4 lg:px-8 mt-6">
-			<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
+			<div class="flex-1 max-w-4xl px-2 sm:px-4 lg:px-8 mt-4 sm:mt-6">
+			<section class="mb-6 sm:mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-4 sm:p-6">
 				<div class="flex items-center justify-between mb-4">
-					<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+					<h2 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
 						<div class="text-blue-600">
-							<ls.BookOpen class="h-5 w-5" />
+							<ls.BookOpen class="h-4 sm:h-5 w-4 sm:w-5" />
 						</div>
 						<span>Continua a studiare</span>
 					</h2>
 				</div>
 			
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
 					{#each continuaTopics.slice(0, 3) as topic}
 						<button
 							onclick={() => goto(`/student/materiale/${topic.level}/${topic.subject}/${topic.year}/${topic.key}/`)}
-						 	class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm hover:shadow-md transition-all p-4 flex gap-4 items-center"
+						 	class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm hover:shadow-md transition-all p-3 sm:p-4 flex gap-3 sm:gap-4 items-center"
 						>
-							<div class="w-16 h-16 overflow-hidden flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center rounded-lg">
-								<img src={topic.icon} alt={topic.title} class="w-12 h-12 object-contain" />
+							<div class="w-12 h-12 sm:w-16 sm:h-16 overflow-hidden flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center rounded-lg">
+								<img src={topic.icon} alt={topic.title} class="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
 							</div>
 							
-							<div class="flex-1">
+							<div class="flex-1 min-w-0">
 								<div class="flex justify-between items-center">
-									<h3 class="font-semibold text-zinc-900 dark:text-zinc-100 text-base">{topic.title}</h3>
+									<h3 class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base truncate">{topic.title}</h3>
 								</div>
 								
-								<div class="text-xs text-zinc-500 dark:text-zinc-400 my-1.5 flex items-center gap-1">
-									<span class="capitalize">{topic.subject.replace('-', ' ')}</span>
-									<span class="inline-block w-1 h-1 bg-zinc-400 dark:bg-zinc-500 rounded-full"></span>
-									<span>{topic.level === 'superiori' ? `${topic.year}° anno` : 'Università'}</span>
+								<div class="text-xs text-zinc-500 dark:text-zinc-400 my-1 sm:my-1.5 flex items-center gap-1">
+									<span class="capitalize truncate">{topic.subject.replace('-', ' ')}</span>
+									<span class="inline-block flex-shrink-0 w-1 h-1 bg-zinc-400 dark:bg-zinc-500 rounded-full"></span>
+									<span class="flex-shrink-0">{topic.level === 'superiori' ? `${topic.year}° anno` : 'Università'}</span>
 								</div>
 								
-								<div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
-									<div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full" style="width: {topic.memory}%"></div>
+								<div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-1.5 sm:h-2">
+									<div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-1.5 sm:h-2 rounded-full" style="width: {topic.memory}%"></div>
 								</div>
 							</div>
 						</button>
@@ -299,63 +299,65 @@
 				</div>
 			</section>
 
-			<section class="flex flex-col gap-8 mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 search-section">
-				<div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-					<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-						<div class="text-purple-600">
-							<ls.Search class="h-5 w-5" />
-						</div>
-						<span>Cerca e filtra</span>
-					</h2>
-					
-					<div class="flex gap-3 w-full sm:w-auto">
-						<div class="flex items-center gap-4">
+			<section class="flex flex-col gap-6 sm:gap-8 mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-4 sm:p-6 search-section">
+				<div class="flex flex-col gap-4 w-full">
+					<div class="flex items-center justify-between">
+						<h2 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+							<div class="text-purple-600">
+								<ls.Search class="h-5 w-5" />
+							</div>
+							<span>Cerca e filtra</span>
+						</h2>
+						
+						<div class="flex items-center gap-2">
 							<div class="flex bg-zinc-100 dark:bg-zinc-700 rounded-lg overflow-hidden">
 								<button
-									class="px-4 py-2 text-sm font-medium {groupBy === 'subject' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
+									class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium {groupBy === 'subject' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
 									onclick={() => groupBy = 'subject'}
 								>
 									Materia
 								</button>
 								<button
-									class="px-4 py-2 text-sm font-medium {groupBy === 'year' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
+									class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium {groupBy === 'year' ? 'bg-blue-600 text-white' : 'text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors"
 									onclick={() => groupBy = 'year'}
 								>
 									Anno
 								</button>
 							</div>
 						</div>
-						
-						<div class="relative flex-1 sm:w-64">
+					</div>
+					
+					<div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
+						<div class="relative flex-1">
 							<ls.Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
 							<input 
 								type="text" 
 								placeholder="Cerca argomenti..."
 								bind:value={searchQuery}
-								class="w-full pl-10 pr-4 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none border border-zinc-200 dark:border-zinc-600"
+								class="w-full pl-10 pr-4 py-2 sm:py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none border border-zinc-200 dark:border-zinc-600 text-sm"
 							/>
 						</div>
 						
-						<div class="relative">
+						<div class="relative w-full sm:w-auto">
 							<select 
 								bind:value={sortBy}
-								class="appearance-none px-4 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 pr-9 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer border border-zinc-200 dark:border-zinc-600"
+								class="appearance-none w-full px-4 py-2 sm:py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 pr-9 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer border border-zinc-200 dark:border-zinc-600 text-sm"
 							>
-															<option value="default">Consigliati</option>
-							<option value="memory">Memoria</option>
-							<option value="recent">Recenti</option>
-							<option value="alphabetical">A-Z</option>
-							<option value="level">Livello</option>
+								<option value="default">Consigliati</option>
+								<option value="memory">Memoria</option>
+								<option value="recent">Recenti</option>
+								<option value="alphabetical">A-Z</option>
+								<option value="level">Livello</option>
 							</select>
 							<ls.ChevronDown class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
 						</div>
 					</div>
 				</div>
 
-				<div class="mt-4 flex flex-col gap-4">
-					<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+				<div class="flex flex-col gap-3">
+					<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar">
 						<button 
-							class="px-4 py-2.5 rounded-full text-sm font-medium {activeTab === 'all' ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors whitespace-nowrap"
+							class="px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium {activeTab === 'all' ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors whitespace-nowrap"
 							onclick={() => activeTab = 'all'}
 						>
 							Tutti
@@ -365,21 +367,21 @@
 							{#if groupBy === 'subject' && subjectCategories[groupKey]}
 								{@const SubjectIcon = subjectCategories[groupKey].icon}
 								<button 
-									class="px-4 py-2.5 rounded-full text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-2 whitespace-nowrap"
+									class="px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"
 									onclick={() => activeTab = groupKey}
 								>
-									<SubjectIcon class="h-4 w-4" />
+									<SubjectIcon class="h-3 w-3 sm:h-4 sm:w-4" />
 									{subjectCategories[groupKey].name}
 								</button>
 							{:else if groupBy === 'year'}
 								<button 
-									class="px-4 py-2.5 rounded-full text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-2 whitespace-nowrap"
+									class="px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"
 									onclick={() => activeTab = groupKey}
 								>
 									{#if groupKey === 'università'}
-										<ls.GraduationCap class="h-4 w-4" />
+										<ls.GraduationCap class="h-3 w-3 sm:h-4 sm:w-4" />
 									{:else}
-										<ls.BookOpen class="h-4 w-4" />
+										<ls.BookOpen class="h-3 w-3 sm:h-4 sm:w-4" />
 									{/if}
 									{groupKey === 'università' ? 'Università' : `${groupKey}° anno`}
 								</button>
@@ -426,7 +428,7 @@
 									{/if}
 								</div>
 								
-								<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+								<div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
 									{#each groupedTopics[groupKey].slice(0, 5) as topic}
 										<TopicCard
 											title={topic.title} 
@@ -457,7 +459,7 @@
 									</h2>
 								</div>
 								
-								<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+								<div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
 									{#each filteredTopics as topic}
 										<TopicCard
 											title={topic.title} 

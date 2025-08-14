@@ -1,7 +1,8 @@
 <script>
     import { contentStore } from '$lib/stores/content/content.js';
-    import * as ls from 'lucide-svelte';
     import { createEventDispatcher } from 'svelte';
+    import * as ls from 'lucide-svelte';
+
     import TreeNode from './TreeNode.svelte';
     
     // Component props

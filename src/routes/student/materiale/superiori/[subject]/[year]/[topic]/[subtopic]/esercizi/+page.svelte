@@ -67,13 +67,13 @@
 
 	{#key currentExercise.question}
 		<div
-			class="text-4xl font-bold text-zinc-800 dark:text-zinc-200"
+			class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-zinc-200"
 			in:fade={{ opacity: 0, duration: 500}}
 		>
 			<MathRenderer content={currentExercise.question.textContent} />
 		</div>
 
-		<div class="flex flex-row justify-center items-center gap-4 w-full">
+		<div class="sm:flex sm:flex-row grid grid-cols-2 justify-center items-center gap-4 w-full">
 			{#each currentExercise.answers as answer}
 				<div>
 					<AnswerButton answer={answer.textContent} state={getButtonState(answer)} onclick={() => handleAnswer(answer)} />

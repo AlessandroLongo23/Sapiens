@@ -4,7 +4,7 @@
 	let { answer, state = 'idle', onclick } = $props(); 
 
 	const baseClasses =
-		'w-full max-w-sm text-lg font-semibold border-2 rounded-lg py-4 px-8 transition-all duration-300 ease-in-out transform focus:outline-none';
+		'w-full max-w-sm text-base sm:text-lg font-semibold border-2 rounded-lg py-2 sm:py-4 px-6 sm:px-8 transition-all duration-300 ease-in-out transform focus:outline-none';
 
 	const stateClasses = {
 		idle: 'bg-white dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:border-blue-500',

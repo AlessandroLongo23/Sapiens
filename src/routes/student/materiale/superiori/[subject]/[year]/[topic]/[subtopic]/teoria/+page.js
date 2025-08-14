@@ -5,7 +5,6 @@ export async function load({ params, fetch }) {
     const { subject, year, topic: topicKey, subtopic: subtopicKey } = params;
     const level = 'superiori';
     
-    // Get the markdown path from our utility function
     const markdownPath = getMarkdownPath({ level, subject, year, topic: topicKey, subtopic: subtopicKey });
     
     try {
