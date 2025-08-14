@@ -1,15 +1,15 @@
 <script>
 	import TestimonialCard from '$lib/components/cards/TestimonialCard.svelte';
+	import { reviewsStore } from '$lib/stores/reviews/reviews.js';
 	import * as ls from 'lucide-svelte';
 
 	let { 
-		testimonials = [],
 		className = ''
 	} = $props();
 
 	let currentIndex = $state(0);
 
-	const numItems = $derived(testimonials.length);
+	const numItems = $derived($reviewsStore.reviews.length);
 
 	function next() {
 		if (numItems === 0) return;
@@ -28,9 +28,9 @@
 			class="flex transition-transform duration-500 ease-in-out"
 			style="transform: translateX(-{currentIndex * 100}%)"
 		>
-			{#each testimonials as testimonial}
+			{#each $reviewsStore.reviews as testimonial}
 				<div class="w-full flex-shrink-0 px-1">
-					<TestimonialCard {...testimonial} />
+					<TestimonialCard review={testimonial} />
 				</div>
 			{/each}
 		</div>
@@ -47,7 +47,7 @@
 			</button>
 
 			<div class="flex justify-center space-x-2">
-				{#each testimonials as _, index}
+				{#each $reviewsStore.reviews as _, index}
 					<button
 						onclick={() => currentIndex = index}
           class="h-2 w-2 rounded-full transition-colors duration-300 {

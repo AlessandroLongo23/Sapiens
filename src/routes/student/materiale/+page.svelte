@@ -1,10 +1,14 @@
 <script>
 	import { studentsStore } from '$lib/stores/students/students.js';
-	import { content } from '$lib/content';
-	import * as ls from 'lucide-svelte';
 	import { selectedTopic } from '$lib/content.js';
-	import TopicCard from '$lib/components/cards/TopicCard.svelte';
+	import { content } from '$lib/content';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import * as ls from 'lucide-svelte';
+	
+	import TopicCard from '$lib/components/cards/TopicCard.svelte';
+	import ReviewBox from '$lib/components/ReviewBox.svelte';
+	import { fetchStudentReview } from '$lib/stores/reviews/reviews.svelte.js';
 
 	let { data } = $props();
 	let { user } = $derived(data);
@@ -13,9 +17,8 @@
 	let activeTab = $state("all");
 	let searchQuery = $state("");
 	let sortBy = $state("default");
-	let groupBy = $state("subject"); // Options: subject, year
+	let groupBy = $state("subject");
 
-	// Define subject categories with colors and icons
 	const subjectCategories = {
 		'matematica': { color: 'from-blue-500 to-blue-600', icon: ls.Calculator, name: 'Matematica' },
 		'informatica': { color: 'from-purple-500 to-purple-600', icon: ls.Laptop, name: 'Informatica' },
@@ -24,24 +27,20 @@
 		'Analisi I': { color: 'from-red-500 to-red-600', icon: ls.LineChart, name: 'Analisi I' },
 	};
 
-	// Get all topics with additional metadata
 	let allTopics = $derived.by(() => {
 		const collected = [];
 
-		// Traverse the hierarchy: level > subject > year > topics
 		for (const [levelKey, level] of Object.entries(content)) {
 			for (const [subjectKey, subject] of Object.entries(level)) {
-				// Skip if it's a title/description/icon/path (for university level items)
 				if (typeof subject !== 'object' || 'title' in subject && !('year' in subject)) {
-					// Handle university level courses which may be directly under level
 					if ('title' in subject && 'description' in subject) {
 						collected.push({
 							...subject,
 							level: levelKey,
 							subject: subjectKey,
 							subtopicCount: subject.subtopics ? Object.keys(subject.subtopics).length : 0,
-							memory: Math.floor(Math.random() * 100), // Replace with actual memory data
-							lastAccessed: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
+							memory: Math.floor(Math.random() * 100),
+							lastAccessed: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000)
 						});
 					}
 					continue;
@@ -51,7 +50,6 @@
 					if (!year || !year.topics) continue;
 					
 					for (const [topicKey, topic] of Object.entries(year.topics)) {
-						// Add each topic with its navigation metadata
 						collected.push({
 							...topic,
 							level: levelKey,
@@ -59,8 +57,8 @@
 							year: yearKey,
 							key: topicKey,
 							subtopicCount: topic.subtopics ? Object.keys(topic.subtopics).length : 0,
-							memory: Math.floor(Math.random() * 100), // Replace with actual memory data
-							lastAccessed: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000) // Random date within last two weeks
+							memory: Math.floor(Math.random() * 100),
+							lastAccessed: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000)
 						});
 					}
 				}
@@ -142,6 +140,34 @@
 
 	let streak = $state(5);
 	let nextMilestone = $state(7);
+	
+	// Review data
+	let studentReview = $state(null);
+	let hasReviewed = $state(false);
+	let reviewId = $state(null);
+	let reviewRating = $state(0);
+	let reviewText = $state('');
+	let loadingReview = $state(true);
+
+	onMount(async () => {
+		if (student?.id) {
+			try {
+				loadingReview = true;
+				const review = await fetchStudentReview(student.id);
+				if (review) {
+					studentReview = review;
+					hasReviewed = true;
+					reviewId = review.id;
+					reviewRating = review.rating;
+					reviewText = review.review;
+				}
+			} catch (error) {
+				console.error('Error fetching student review:', error);
+			} finally {
+				loadingReview = false;
+			}
+		}
+	});
 
 	function formatDate(date) {
 		return new Intl.DateTimeFormat('it-IT', { 
@@ -152,53 +178,68 @@
 </script>
 
 <div class="bg-white dark:bg-zinc-900 min-h-screen pb-12">
-	<div class="flex flex-col lg:flex-row">
-		<div class="hidden lg:block w-80 flex-shrink-0 p-4 lg:pr-8">
-			<div class="sticky top-24 space-y-6">
-				<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
-					<div class="flex items-center justify-between mb-4">
-						<h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
-							<div class="h-8 w-8 flex items-center justify-center bg-yellow-500 text-white rounded-lg">
-								<ls.Flame class="h-5 w-5" />
+	<div class="px-4 sm:px-6 lg:px-8">
+		<div class="flex flex-col lg:flex-row justify-center">
+			<div class="hidden lg:block w-96 flex-shrink-0 p-4">
+				<div class="sticky top-24 space-y-6">
+					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
+						<div class="flex items-center justify-between mb-4">
+							<h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+								<div class="h-8 w-8 flex items-center justify-center bg-yellow-500 text-white rounded-lg">
+									<ls.Flame class="h-5 w-5" />
+								</div>
+								<span>Streak</span>
+							</h3>
+							<div class="text-2xl font-bold text-yellow-500">{streak} giorni</div>
+						</div>
+						
+						<div class="mb-4">
+							<div class="flex justify-between text-sm mb-1">
+								<span class="text-zinc-500 dark:text-zinc-400">Obiettivo</span>
+								<span class="text-zinc-900 dark:text-white font-medium">{streak}/{nextMilestone} giorni</span>
 							</div>
-							<span>Streak</span>
-						</h3>
-						<div class="text-2xl font-bold text-yellow-500">{streak} giorni</div>
+							<div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+								<div class="bg-yellow-500 h-2 rounded-full" style="width: {(streak/nextMilestone) * 100}%"></div>
+							</div>
+						</div>
+						
+						<div>
+							<h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Attività degli ultimi 30 giorni</h4>
+							<div class="grid grid-cols-7 gap-1">
+								{#each Array(30) as _, i}
+									{@const isActive = Math.random() > 0.5}
+									{@const day = new Date()}
+									{@const isToday = i === 29}
+									<div 
+										class="w-6 h-6 rounded-sm {isActive ? 'bg-yellow-500 dark:bg-yellow-600' : 'bg-zinc-200 dark:bg-zinc-700'} 
+										{isToday ? 'ring-2 ring-yellow-400' : ''}"
+										title={day.toLocaleDateString('it-IT', { weekday: 'short', month: 'short', day: 'numeric' })}
+									></div>
+								{/each}
+							</div>
+							<div class="mt-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
+								Ultimo accesso: {new Date().toLocaleDateString('it-IT', { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
+							</div>
+						</div>
 					</div>
 					
-					<div class="mb-4">
-						<div class="flex justify-between text-sm mb-1">
-							<span class="text-zinc-500 dark:text-zinc-400">Obiettivo</span>
-							<span class="text-zinc-900 dark:text-white font-medium">{streak}/{nextMilestone} giorni</span>
-						</div>
-						<div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
-							<div class="bg-yellow-500 h-2 rounded-full" style="width: {(streak/nextMilestone) * 100}%"></div>
-						</div>
+				{#if loadingReview}
+					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 flex justify-center items-center h-40">
+						<ls.Loader class="h-6 w-6 animate-spin text-purple-500" />
 					</div>
-					
-					<div>
-						<h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Attività degli ultimi 30 giorni</h4>
-						<div class="grid grid-cols-7 gap-1">
-							{#each Array(30) as _, i}
-								{@const isActive = Math.random() > 0.5}
-								{@const day = new Date()}
-								{@const isToday = i === 29}
-								<div 
-									class="w-6 h-6 rounded-sm {isActive ? 'bg-yellow-500 dark:bg-yellow-600' : 'bg-zinc-200 dark:bg-zinc-700'} 
-									{isToday ? 'ring-2 ring-yellow-400' : ''}"
-									title={day.toLocaleDateString('it-IT', { weekday: 'short', month: 'short', day: 'numeric' })}
-								></div>
-							{/each}
-						</div>
-						<div class="mt-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
-							Ultimo accesso: {new Date().toLocaleDateString('it-IT', { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
-						</div>
-					</div>
+				{:else}
+					<ReviewBox 
+						studentId={student?.id}
+						hasReviewed={hasReviewed}
+						existingRating={reviewRating}
+						existingReview={reviewText}
+						reviewId={reviewId}
+					/>
+				{/if}
 				</div>
 			</div>
-		</div>
 
-		<div class="flex-1 max-w-5xl px-4 sm:px-6 lg:pl-8 lg:pr-6 mt-6">
+			<div class="flex-1 max-w-4xl px-4 lg:px-8 mt-6">
 			<section class="mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
 				<div class="flex items-center justify-between mb-4">
 					<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -427,6 +468,7 @@
 					</section>
 				{/if}
 			</section>
+			</div>
 		</div>
 	</div>
 </div>

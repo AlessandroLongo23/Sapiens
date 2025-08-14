@@ -406,7 +406,6 @@
 		<!-- Mobile testimonial slideshow (hidden on desktop) -->
 		<div class="block lg:hidden">
 			<MobileTestimonialSlideshow 
-				testimonials={$testimonials} 
 				duration={10000}
 				className="px-4"
 			/>
@@ -415,7 +414,6 @@
 		<!-- Desktop scrolling testimonials (hidden on mobile) -->
 		<div class="hidden lg:block">
 			<ScrollingTestimonials 
-				testimonials={$testimonials} 
 				scrollSpeed={30}
 				className="py-8"
 			/>

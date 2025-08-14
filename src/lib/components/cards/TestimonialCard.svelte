@@ -1,8 +1,12 @@
 <script>
 	import * as ls from 'lucide-svelte';
-	let { name, comment, rating, subject, avatar } = $props();
+	import { studentsStore } from '$lib/stores/students/students.js';
 	
-	const stars = Array.from({ length: 5 }, (_, i) => i < rating);
+	let { review } = $props();
+
+	let student = $derived($studentsStore.students.find(s => s.id === review.student_id));
+	
+	const stars = Array.from({ length: 5 }, (_, i) => i < review.rating);
 </script>
 
 <div class="group relative overflow-hidden bg-white dark:bg-zinc-900 rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.1)] dark:hover:shadow-[0_24px_48px_rgba(0,0,0,0.6)] transition-all duration-700 border border-zinc-100/60 dark:border-zinc-800 hover:border-zinc-200/80 dark:hover:border-zinc-700">
@@ -22,7 +26,7 @@
     <blockquote class="relative text-zinc-700 dark:text-zinc-200 leading-relaxed mb-8 text-lg group-hover:text-zinc-800 dark:group-hover:text-zinc-100 transition-colors duration-300">
         <ls.Quote class="absolute -top-2 -left-2 size-12 text-amber-500/20 dark:text-amber-400/15 group-hover:text-amber-500/25 dark:group-hover:text-amber-400/25 transition-colors duration-300 pointer-events-none" />
 		<span class="relative italic font-medium">
-			{comment}
+			{review.review}
 		</span>
 	</blockquote>
 	
@@ -30,7 +34,7 @@
         <div class="relative mr-4">
             <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:shadow-xl transition-all duration-300">
 				<span class="group-hover:scale-110 transition-transform duration-300">
-					{avatar || name.charAt(0).toUpperCase()}
+					{student.avatar || student.first_name.charAt(0).toUpperCase()}
 				</span>
 			</div>
             <div class="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300 scale-110"></div>
@@ -38,10 +42,10 @@
 		
         <div class="relative">
             <div class="font-semibold text-zinc-800 dark:text-zinc-100 text-lg group-hover:text-zinc-900 dark:group-hover:text-white transition-colors duration-300">
-				{name}
+				{student.first_name} {student.last_name.charAt(0).toUpperCase()}.
 			</div>
             <div class="text-zinc-500 dark:text-zinc-400 text-sm font-medium group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors duration-300">
-				{subject}
+				{student.level.charAt(0).toUpperCase() + student.level.slice(1)}
 			</div>
 		</div>
 	</div>

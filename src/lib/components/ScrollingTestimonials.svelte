@@ -1,9 +1,9 @@
 <script>
 	import TestimonialCard from '$lib/components/cards/TestimonialCard.svelte';
 	import * as ls from 'lucide-svelte';
+	import { reviewsStore } from '$lib/stores/reviews/reviews.js';
 
 	let { 
-		testimonials = [],
 		className = ''
 	} = $props();
 
@@ -11,8 +11,8 @@
 	let isTransitioning = $state(true);
 
 	const groups = $derived(
-		Array.from({ length: Math.ceil(testimonials.length / itemsPerPage) }, (_, i) =>
-			testimonials.slice(i * itemsPerPage, (i + 1) * itemsPerPage)
+		Array.from({ length: Math.ceil($reviewsStore.reviews.length / itemsPerPage) }, (_, i) =>
+			$reviewsStore.reviews.slice(i * itemsPerPage, (i + 1) * itemsPerPage)
 		)
 	);
 
@@ -57,7 +57,7 @@
 				<div class="w-full flex-shrink-0">
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 items-start">
 						{#each group as testimonial}
-							<TestimonialCard {...testimonial} />
+							<TestimonialCard review={testimonial} />
 						{/each}
 					</div>
 				</div>
