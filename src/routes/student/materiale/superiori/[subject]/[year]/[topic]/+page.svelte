@@ -1,7 +1,7 @@
 <script>
     import * as ls from 'lucide-svelte';
     import { goto } from '$app/navigation';
-    import { content } from '$lib/content.js';
+    import { contentStore } from '$lib/stores/content/content.js';
     import { page } from '$app/stores';
 
     let topic = $derived.by(() => {
@@ -10,7 +10,7 @@
         let subjectIndex = pieces.indexOf(pieces[levelIndex + 1]);
         let yearIndex = pieces.indexOf(pieces[subjectIndex + 1]);
         let topicIndex = pieces.indexOf(pieces[yearIndex + 1]);
-        let topic = content.superiori[pieces[subjectIndex]][pieces[yearIndex]].topics[pieces[topicIndex]];
+        let topic = $contentStore.content.superiori[pieces[subjectIndex]][pieces[yearIndex]].topics[pieces[topicIndex]];
 
         topic.year = pieces[yearIndex];
         topic.subject = pieces[subjectIndex];

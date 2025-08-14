@@ -1,11 +1,10 @@
 <script>
 	import { studentsStore } from '$lib/stores/students/students.js';
-	import { selectedTopic } from '$lib/content.js';
-	import { content } from '$lib/content';
+	import { selectedTopic, contentStore, legacyContentStructure } from '$lib/stores/content/content.js';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
-	
+
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 	import ReviewBox from '$lib/components/ReviewBox.svelte';
 	import { fetchStudentReview } from '$lib/stores/reviews/reviews.svelte.js';
@@ -27,42 +26,61 @@
 		'Analisi I': { color: 'from-red-500 to-red-600', icon: ls.LineChart, name: 'Analisi I' },
 	};
 
+	// You could alternatively use the legacyContentStructure for a smoother transition:
+	// let allTopics = $derived.by(() => {
+	//   const collected = [];
+	//   for (const [levelKey, level] of Object.entries($legacyContentStructure)) {
+	//     // Same old logic as before
+	//   }
+	//   return collected;
+	// });
+	
+	// New implementation that works directly with the flat database structure
 	let allTopics = $derived.by(() => {
+		if ($contentStore.loading || !$contentStore.flatNodes || $contentStore.flatNodes.length === 0) {
+			return [];
+		}
+		
+		// Process topic and subtopic nodes
 		const collected = [];
-
-		for (const [levelKey, level] of Object.entries(content)) {
-			for (const [subjectKey, subject] of Object.entries(level)) {
-				if (typeof subject !== 'object' || 'title' in subject && !('year' in subject)) {
-					if ('title' in subject && 'description' in subject) {
-						collected.push({
-							...subject,
-							level: levelKey,
-							subject: subjectKey,
-							subtopicCount: subject.subtopics ? Object.keys(subject.subtopics).length : 0,
-							memory: Math.floor(Math.random() * 100),
-							lastAccessed: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000)
-						});
-					}
-					continue;
-				}
-				
-				for (const [yearKey, year] of Object.entries(subject)) {
-					if (!year || !year.topics) continue;
-					
-					for (const [topicKey, topic] of Object.entries(year.topics)) {
-						collected.push({
-							...topic,
-							level: levelKey,
-							subject: subjectKey,
-							year: yearKey,
-							key: topicKey,
-							subtopicCount: topic.subtopics ? Object.keys(topic.subtopics).length : 0,
-							memory: Math.floor(Math.random() * 100),
-							lastAccessed: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000)
-						});
-					}
-				}
-			}
+		
+		// Get topic nodes (we're primarily interested in these for display)
+		const topicNodes = $contentStore.flatNodes.filter(node => node.node_type === 'topic');
+		
+		for (const topic of topicNodes) {
+			// Get the parent chain to determine level, subject, and year
+			const pathParts = topic.path || [];
+			const level = pathParts[0] || '';
+			const subject = pathParts[1] || '';
+			const year = pathParts[2] || '';
+			const topicSlug = pathParts[3] || '';
+			
+			// Get children (subtopics) count
+			const subtopics = $contentStore.flatNodes.filter(node => 
+				node.parent_id === topic.id && node.node_type === 'subtopic'
+			);
+			
+			collected.push({
+				...topic,
+				title: topic.title || '',
+				description: topic.description || '',
+				icon: topic.icon || '',
+				level: level,
+				subject: subject,
+				year: year,
+				key: topicSlug,
+				subtopicCount: subtopics.length,
+				subtopics: subtopics.reduce((acc, subtopic) => {
+					acc[subtopic.slug] = {
+						title: subtopic.title,
+						description: subtopic.description,
+						icon: subtopic.icon
+					};
+					return acc;
+				}, {}),
+				memory: Math.floor(Math.random() * 100), // Would be from student progress in real app
+				lastAccessed: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000) // Mock data
+			});
 		}
 		
 		return collected;

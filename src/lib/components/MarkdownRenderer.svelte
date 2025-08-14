@@ -9,10 +9,6 @@
 		classes = '' 
 	} = $props();
 
-	// $effect(() => {
-	// 	console.log(content);
-	// });
-	
 	let containerElement;
 	let activeSection = $state('');
 	let expandedGif = $state(null);

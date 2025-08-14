@@ -1,7 +1,7 @@
 <script>
 	import { studentsStore } from '$lib/stores/students/students.js';
 	import { motivational_messages } from '$lib/microcopy.js';
-	import { selectedTopic } from '$lib/content.js';
+	import { selectedTopic } from '$lib/stores/content/content.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';

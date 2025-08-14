@@ -89,69 +89,6 @@ export const stats = writable({
     }
 });
 
-export const testimonials = writable([
-    {
-        name: "Lucrezia B.",
-        comment: "Sono stata seguita da Alessandro per 5 mesi e mi sono trovata davvero benissimo. Spiega la matematica in modo super chiaro e ha moltissima pazienza. È sempre stato disponibile anche per brevi chiarimenti e spiegazioni. Grazie a lui ho preso molta sicurezza e i miei voti sono migliorati tanto, passando da un 7 a un 9 nel giro di qualche mese. Lo consiglio vivamente!",
-        rating: 5,
-        subject: "Matematica - Scuola Superiore"
-    },
-    {
-        name: "Matteo R.",
-        comment: "Molto preparato e pronto a spiegare in modo chiaro e semplice tutti i concetti di cui lo studente necessiti per superare un esame o approfondire/esercitarsi su un argomento",
-        rating: 5,
-        subject: "Database - Università"
-    },
-    {
-        name: "Gianluca F.",
-        comment: "Alessandro è stato fantastico! Ha saputo adattare le lezioni alle mie esigenze specifiche e mi ha aiutato a superare le mie difficoltà con la materia. La sua chiarezza e pazienza sono state fondamentali per il mio miglioramento. Lo consiglio vivamente a chiunque cerchi un tutor di matematica competente e affidabile!",
-        rating: 5,
-        subject: "Fisica - Università"
-    },
-    {
-        name: "Sindi B.",
-        comment: "Spiegazioni chiare, pazienza e disponibilità, finalmente sono riuscita a capire argomenti che mi sembravano impossibili.",
-        rating: 5,
-        subject: "Matematica e Fisica - Scuola Superiore"
-    },
-    {
-        name: "Marco Z.",
-        comment: "Alessandro è davvero molto preparato e paziente nelle spiegare anche più volte un argomento, mi sono trovato molto bene con Alessandro anche negli argomenti più difficili che non riuscivo a capire da mesi. Veramente molto consigliato.",
-        rating: 5,
-        subject: "Informatica - Scuola Superiore"
-    },
-    {
-        name: "Davide F.",
-        comment: "Tutor estremamente preparato, chiaro nelle spiegazioni e sempre disponibile per chiarimenti dettagliati passo passo. Senza di lui sarei ancora bloccato sull'esame di Teoria dei segnali. Inoltre sul piano umano, diversamente dal classico docente serioso, ti mette a tuo agio ed è alla mano e preciso.",
-        rating: 5,
-        subject: "Teoria dei Segnali - Università"
-    },
-    {
-        name: "Giulio Z.",
-        comment: "Mi sono trovato davvero molto bene, Alessandro è molto preparato e abile nel capire i bisogni dello studente e come sia necessario lavorare in base alla tipologia d'esame. Super consigliato!",
-        rating: 5,
-        subject: "Ricerca operativa - Università"
-    },
-    {
-        name: "Sara L.",
-        comment: "Mi sono trovata davvero bene, abbiamo affrontato il programma in tempi molto rapidi, con spiegazioni sempre chiare e con un linguaggio semplice, facile da capire. È sempre stato disponibile con gli orari, molto preciso e attento, e non ha mai avuto problemi a rispiegarmi le cose anche più volte quando ne avevo bisogno. Grazie al suo aiuto ho superato l'esame e sono davvero soddisfatta. Lo consiglio assolutamente!",
-        rating: 5,
-        subject: "Informatica - Università"
-    },
-    {
-        name: "Leonardo D.",
-        comment: "Alessandro è estremamente preparato, paziente e capace di spiegare anche i concetti più complessi in modo chiaro e semplice.Grazie a lui, sto finalmente riuscendo a comprendere materie che prima trovavo davvero difficili. ",
-        rating: 5,
-        subject: "Matematica - Scuola Superiore"
-    },
-    {
-        name: "Alice M.",
-        comment: "Ho avuto il piacere di seguire lezioni con Alessandro per prepararmi agli esami universitari di Segnali e Immagini e non posso che consigliarlo vivamente. È un insegnante preparato, chiaro nelle spiegazioni e molto paziente. Riesce a rendere comprensibili anche gli argomenti più complessi, adattandosi al livello e al ritmo dello studente.",
-        rating: 5,
-        subject: "Segnali e Immagini - Università"
-    }
-]);
-
 export const steps = writable([
     { number: 1, title: "Livello", description: "Scegli il tuo livello di studio" },
     { number: 2, title: "Materie", description: "Seleziona le materie di interesse" },

@@ -11,6 +11,8 @@
 
 	const numItems = $derived($reviewsStore.reviews.length);
 
+	let reviews = $derived($reviewsStore.reviews);
+
 	function next() {
 		if (numItems === 0) return;
 		currentIndex = (currentIndex + 1) % numItems;
@@ -28,7 +30,7 @@
 			class="flex transition-transform duration-500 ease-in-out"
 			style="transform: translateX(-{currentIndex * 100}%)"
 		>
-			{#each $reviewsStore.reviews as testimonial}
+			{#each reviews as testimonial}
 				<div class="w-full flex-shrink-0 px-1">
 					<TestimonialCard review={testimonial} />
 				</div>
@@ -47,7 +49,7 @@
 			</button>
 
 			<div class="flex justify-center space-x-2">
-				{#each $reviewsStore.reviews as _, index}
+				{#each reviews as _, index}
 					<button
 						onclick={() => currentIndex = index}
           class="h-2 w-2 rounded-full transition-colors duration-300 {

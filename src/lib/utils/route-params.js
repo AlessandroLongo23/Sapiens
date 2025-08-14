@@ -2,7 +2,7 @@
  * Utility functions for route parameter handling in the application
  */
 
-import { content } from '$lib/content.js';
+import { contentStore } from '$lib/stores/content/content.js';
 import { writable } from 'svelte/store';
 
 /**
@@ -59,10 +59,10 @@ export function getContentFromParams(params) {
         
         if (level === 'superiori') {
             // For topics with subtopics
-            if (subtopicKey && content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
+            if (subtopicKey && $contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
                 result = {
-                    ...content[level][subject][year].topics[topicKey].subtopics[subtopicKey],
-                    parentTopic: content[level][subject][year].topics[topicKey],
+                    ...$contentStore.content[level][subject][year].topics[topicKey].subtopics[subtopicKey],
+                    parentTopic: $contentStore.content[level][subject][year].topics[topicKey],
                     level,
                     subject,
                     year,
@@ -70,9 +70,9 @@ export function getContentFromParams(params) {
                 };
             } 
             // For main topics
-            else if (content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
+            else if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
                 result = { 
-                    ...content[level][subject][year].topics[topicKey],
+                    ...$contentStore.content[level][subject][year].topics[topicKey],
                     level,
                     subject,
                     year,
@@ -81,17 +81,17 @@ export function getContentFromParams(params) {
             }
         } else if (level === 'università') {
             // For university courses
-            if (subtopicKey && content[level]?.[subject]?.subtopics?.[subtopicKey]) {
+            if (subtopicKey && $contentStore.content[level]?.[subject]?.subtopics?.[subtopicKey]) {
                 result = {
-                    ...content[level][subject].subtopics[subtopicKey],
-                    parentTopic: content[level][subject],
+                    ...$contentStore.content[level][subject].subtopics[subtopicKey],
+                    parentTopic: $contentStore.content[level][subject],
                     level,
                     subject,
                     key: subtopicKey
                 };
-            } else if (content[level]?.[subject]) {
+            } else if ($contentStore.content[level]?.[subject]) {
                 result = {
-                    ...content[level][subject],
+                    ...$contentStore.content[level][subject],
                     level,
                     subject,
                     key: subject
@@ -117,17 +117,17 @@ export function getMarkdownPath(params) {
     
     // If we have a subtopic, get its path from the content structure
     if (level === 'superiori') {
-        if (subtopicKey && content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
+        if (subtopicKey && $contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
             return `/teoria/${level}/${subject}/${year}/${topicKey}/${subtopicKey}.md`;
         } 
         // Otherwise, use the topic's path
-        else if (content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
+        else if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
             return `/teoria/${level}/${subject}/${year}/${topicKey}.md`;
         }
     } else if (level === 'università') {
-        if (subtopicKey && content[level]?.[subject]?.subtopics?.[subtopicKey]) {
+        if (subtopicKey && $contentStore.content[level]?.[subject]?.subtopics?.[subtopicKey]) {
             return `/teoria/${level}/${subject}/${subtopicKey}.md`;
-        } else if (content[level]?.[subject]) {
+        } else if ($contentStore.content[level]?.[subject]) {
             return `/teoria/${level}/${subject}.md`;
         }
     }

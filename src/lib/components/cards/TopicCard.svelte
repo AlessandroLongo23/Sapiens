@@ -1,7 +1,7 @@
 <script>
     import { goto } from '$app/navigation';
     import * as ls from 'lucide-svelte';
-    import { selectedTopic } from '$lib/content.js';
+    import { selectedTopic } from '$lib/stores/content/content.js';
     import MemoryBar from '../MemoryBar.svelte';
     
     let { title, description, icon, path, level, subject, year, key, subtopics } = $props();

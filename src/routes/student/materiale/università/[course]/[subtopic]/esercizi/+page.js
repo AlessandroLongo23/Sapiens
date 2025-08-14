@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { configs } from '$lib/exercises/config.js';
-import { content } from '$lib/content.js';
+import { contentStore } from '$lib/stores/content/content.js';
 
 const exerciseModules = import.meta.glob('/src/lib/exercises/*.svelte.js');
 
@@ -18,8 +18,8 @@ export async function load({ params }) {
 		topicName = subtopicKey;
 		configPath = `${level}/${subject}/${year}/${topicKey}/${subtopicKey}`;
 		
-		if (content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
-			topicTitle = content[level][subject][year].topics[topicKey].subtopics[subtopicKey].title;
+		if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
+			topicTitle = $contentStore.content[level][subject][year].topics[topicKey].subtopics[subtopicKey].title;
 		}
 	}
 	// Otherwise use the main topic
@@ -27,8 +27,8 @@ export async function load({ params }) {
 		topicName = topicKey;
 		configPath = `${level}/${subject}/${year}/${topicKey}`;
 		
-		if (content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
-			topicTitle = content[level][subject][year].topics[topicKey].title;
+		if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
+			topicTitle = $contentStore.content[level][subject][year].topics[topicKey].title;
 		}
 	}
 	

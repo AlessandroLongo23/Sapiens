@@ -1,5 +1,5 @@
 <script>
-	import { morgagniImages, dtuImages, stats, testimonials } from '$lib/data.js';
+	import { morgagniImages, dtuImages, stats } from '$lib/data.js';
     import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
