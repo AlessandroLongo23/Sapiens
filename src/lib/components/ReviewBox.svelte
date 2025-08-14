@@ -5,7 +5,7 @@
 	
 	let { 
 		studentId = $bindable(''),
-		studentName = $bindable('Studente'),  // Added for email notification
+		studentName = $bindable('Studente'),
 		hasReviewed = $bindable(false),
 		existingRating = $bindable(0),
 		existingReview = $bindable(''),
@@ -37,20 +37,17 @@
 			const isEdit = hasReviewed && reviewId;
 			
 			if (isEdit) {
-				// Update existing review
 				const updatedReview = await updateReview(reviewId, {
 					rating,
 					review: reviewText
 				});
 				
-				// Update props with new values
 				existingRating = rating;
 				existingReview = reviewText;
 				
 				reviewData = updatedReview;
 				dispatch('update', updatedReview);
 			} else {
-				// Create new review
 				const newReview = {
 					student_id: studentId,
 					rating,
@@ -60,14 +57,12 @@
 				const createdReview = await addReview(newReview);
 				reviewId = createdReview?.id;
 				
-				// Set hasReviewed flag to true after submission
 				hasReviewed = true;
 				
 				reviewData = createdReview;
 				dispatch('create', createdReview);
 			}
-			
-			// Send email notification
+
 			try {
 				const response = await fetch('/api/submit-review', {
 					method: 'POST',
@@ -88,12 +83,10 @@
 				}
 			} catch (emailError) {
 				console.error('Failed to send review email notification:', emailError);
-				// Continue with the review submission process even if the email fails
 			}
 			
 			isSubmitted = true;
 			
-			// Reset UI state after a delay
 			setTimeout(() => {
 				isSubmitted = false;
 			}, 5000);

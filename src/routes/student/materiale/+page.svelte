@@ -150,22 +150,34 @@
 	let loadingReview = $state(true);
 
 	onMount(async () => {
-		if (student?.id) {
-			try {
-				loadingReview = true;
-				const review = await fetchStudentReview(student.id);
-				if (review) {
-					studentReview = review;
-					hasReviewed = true;
-					reviewId = review.id;
-					reviewRating = review.rating;
-					reviewText = review.review;
-				}
-			} catch (error) {
-				console.error('Error fetching student review:', error);
-			} finally {
+		try {
+			loadingReview = true;
+			
+			if (!student?.id) {
+				console.log('No student ID available, skipping review fetch');
 				loadingReview = false;
+				return;
 			}
+			
+			const review = await fetchStudentReview(student.id);
+			
+			if (review) {
+				studentReview = review;
+				hasReviewed = true;
+				reviewId = review.id;
+				reviewRating = review.rating;
+				reviewText = review.review;
+			} else {
+				hasReviewed = false;
+				reviewId = null;
+				reviewRating = 0;
+				reviewText = '';
+			}
+		} catch (error) {
+			console.error('Error fetching student review:', error);
+			hasReviewed = false;
+		} finally {
+			loadingReview = false;
 		}
 	});
 
