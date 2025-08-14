@@ -230,6 +230,7 @@
 				{:else}
 					<ReviewBox 
 						studentId={student?.id}
+						studentName={`${student?.first_name || ''} ${student?.last_name || ''}`}
 						hasReviewed={hasReviewed}
 						existingRating={reviewRating}
 						existingReview={reviewText}
