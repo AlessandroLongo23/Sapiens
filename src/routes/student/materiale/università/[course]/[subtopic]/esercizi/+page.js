@@ -18,8 +18,25 @@ export async function load({ params }) {
 		topicName = subtopicKey;
 		configPath = `${level}/${subject}/${year}/${topicKey}/${subtopicKey}`;
 		
-		if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
-			topicTitle = $contentStore.content[level][subject][year].topics[topicKey].subtopics[subtopicKey].title;
+		// Find the topic and subtopic in the flat nodes structure
+		const topicPath = [level, subject, year, topicKey];
+		const topicNode = $contentStore.flatNodes.find(node => 
+			node.node_type === 'topic' && 
+			node.path?.length === topicPath.length &&
+			node.path.every((segment, i) => segment === topicPath[i])
+		);
+		
+		if (topicNode) {
+			// Find the subtopic
+			const subtopicNode = $contentStore.flatNodes.find(node => 
+				node.node_type === 'subtopic' && 
+				node.parent_id === topicNode.id && 
+				node.slug === subtopicKey
+			);
+			
+			if (subtopicNode) {
+				topicTitle = subtopicNode.title;
+			}
 		}
 	}
 	// Otherwise use the main topic
@@ -27,8 +44,16 @@ export async function load({ params }) {
 		topicName = topicKey;
 		configPath = `${level}/${subject}/${year}/${topicKey}`;
 		
-		if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
-			topicTitle = $contentStore.content[level][subject][year].topics[topicKey].title;
+		// Find the topic in the flat nodes structure
+		const topicPath = [level, subject, year, topicKey];
+		const topicNode = $contentStore.flatNodes.find(node => 
+			node.node_type === 'topic' && 
+			node.path?.length === topicPath.length &&
+			node.path.every((segment, i) => segment === topicPath[i])
+		);
+		
+		if (topicNode) {
+			topicTitle = topicNode.title;
 		}
 	}
 	

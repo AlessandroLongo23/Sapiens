@@ -1,6 +1,6 @@
 <script>
 	import { studentsStore } from '$lib/stores/students/students.js';
-	import { selectedTopic, contentStore, legacyContentStructure } from '$lib/stores/content/content.js';
+	import { contentStore } from '$lib/stores/content/content.js';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
@@ -26,36 +26,24 @@
 		'Analisi I': { color: 'from-red-500 to-red-600', icon: ls.LineChart, name: 'Analisi I' },
 	};
 
-	// You could alternatively use the legacyContentStructure for a smoother transition:
-	// let allTopics = $derived.by(() => {
-	//   const collected = [];
-	//   for (const [levelKey, level] of Object.entries($legacyContentStructure)) {
-	//     // Same old logic as before
-	//   }
-	//   return collected;
-	// });
-	
-	// New implementation that works directly with the flat database structure
 	let allTopics = $derived.by(() => {
 		if ($contentStore.loading || !$contentStore.flatNodes || $contentStore.flatNodes.length === 0) {
 			return [];
 		}
 		
-		// Process topic and subtopic nodes
 		const collected = [];
 		
-		// Get topic nodes (we're primarily interested in these for display)
 		const topicNodes = $contentStore.flatNodes.filter(node => node.node_type === 'topic');
+
+		const assignedTopics = topicNodes.filter(node => student?.assigned_topics?.includes(node.id));
 		
-		for (const topic of topicNodes) {
-			// Get the parent chain to determine level, subject, and year
+		for (const topic of assignedTopics) {
 			const pathParts = topic.path || [];
 			const level = pathParts[0] || '';
 			const subject = pathParts[1] || '';
 			const year = pathParts[2] || '';
 			const topicSlug = pathParts[3] || '';
 			
-			// Get children (subtopics) count
 			const subtopics = $contentStore.flatNodes.filter(node => 
 				node.parent_id === topic.id && node.node_type === 'subtopic'
 			);
@@ -78,8 +66,8 @@
 					};
 					return acc;
 				}, {}),
-				memory: Math.floor(Math.random() * 100), // Would be from student progress in real app
-				lastAccessed: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000) // Mock data
+				memory: Math.floor(Math.random() * 100),
+				lastAccessed: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000)
 			});
 		}
 		

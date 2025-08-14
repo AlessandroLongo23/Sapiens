@@ -2,13 +2,14 @@
     import { studentsStore } from '$lib/stores/students/students.js';
     import { lecturesStore } from '$lib/stores/lectures/lectures.js';
     import { levels } from '$lib/stores/students/students.js';
+    import { cardStyle } from '$lib/stores/appearance.js';
     import { createEventDispatcher } from 'svelte';
     import { slide } from 'svelte/transition';
+    import { goto } from '$app/navigation';
     import * as ls from 'lucide-svelte';
-    
+
     import EditModal from '$lib/components/modals/EditModal.svelte';
     import DeleteModal from '$lib/components/modals/DeleteModal.svelte';
-    import { cardStyle } from '$lib/stores/appearance.js';
     import PhoneNumber from '$lib/components/forms/PhoneNumber.svelte';
     import CustomSelect from '$lib/components/forms/CustomSelect.svelte';
 
@@ -196,7 +197,10 @@
         <tbody>
             {#each sortedStudents as student (student.id)}
                 {@const lecturesDone = $lecturesStore.lectures.filter(lecture => lecture.student_id === student.id).length}
-                <tr class="bg-white dark:bg-zinc-900 border-t border-zinc-500/25 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                <tr 
+                    onclick={() => goto(`/admin/studenti/${student.id}`)}
+                    class="cursor-pointer bg-white dark:bg-zinc-900 border-t border-zinc-500/25 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                >
                     <td class="px-4 py-2 font-medium text-zinc-900 dark:text-white whitespace-nowrap border-r border-zinc-200/50 dark:border-zinc-700/50">{student.first_name}</td>
                     <td class="px-4 py-2 border-r border-zinc-200/50 dark:border-zinc-700/50">{student.last_name}</td>
                     <td class="px-4 py-2 border-r border-zinc-200/50 dark:border-zinc-700/50">{levels.find(level => level.value === student.level)?.label || 'N/A'}</td>

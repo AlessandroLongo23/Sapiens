@@ -5,19 +5,58 @@
     import { page } from '$app/stores';
 
     let topic = $derived.by(() => {
+        if (!$contentStore.flatNodes || $contentStore.flatNodes.length === 0) {
+            return null;
+        }
+        
         let pieces = $page.url.pathname.split('/');
-        let levelIndex = pieces.indexOf('superiori');
-        let subjectIndex = pieces.indexOf(pieces[levelIndex + 1]);
-        let yearIndex = pieces.indexOf(pieces[subjectIndex + 1]);
-        let topicIndex = pieces.indexOf(pieces[yearIndex + 1]);
-        let topic = $contentStore.content.superiori[pieces[subjectIndex]][pieces[yearIndex]].topics[pieces[topicIndex]];
-
-        topic.year = pieces[yearIndex];
-        topic.subject = pieces[subjectIndex];
-        topic.level = pieces[levelIndex];
-        topic.key = pieces[topicIndex];
-
-        return topic;
+        let levelSlug = 'superiori';
+        let subjectSlug = pieces[pieces.indexOf('superiori') + 1];
+        let yearSlug = pieces[pieces.indexOf(subjectSlug) + 1];
+        let topicSlug = pieces[pieces.indexOf(yearSlug) + 1];
+        
+        // Construct the path to find the topic node
+        const path = [levelSlug, subjectSlug, yearSlug, topicSlug];
+        
+        // Find the topic node with this path
+        let topicNode = $contentStore.flatNodes.find(node => 
+            node.node_type === 'topic' && 
+            node.path && 
+            node.path.length === path.length && 
+            node.path.every((segment, i) => segment === path[i])
+        );
+        
+        if (!topicNode) {
+            console.error('Topic not found:', path);
+            return null;
+        }
+        
+        // Find all subtopics for this topic
+        const subtopicNodes = $contentStore.flatNodes.filter(node => 
+            node.node_type === 'subtopic' && 
+            node.parent_id === topicNode.id
+        );
+        
+        // Convert subtopics array to object with slug keys
+        const subtopics = subtopicNodes.reduce((acc, node) => {
+            acc[node.slug] = {
+                id: node.id,
+                title: node.title || '',
+                description: node.description || '',
+                icon: node.icon || ''
+            };
+            return acc;
+        }, {});
+        
+        // Return the topic with all needed data
+        return {
+            ...topicNode,
+            year: yearSlug,
+            subject: subjectSlug,
+            level: levelSlug,
+            key: topicSlug,
+            subtopics: subtopics
+        };
     })
     
     let subtopics = $derived(topic?.subtopics || {});

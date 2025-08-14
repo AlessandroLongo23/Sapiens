@@ -1,4 +1,4 @@
-import { messagePopup } from '$lib/components/messagePopup/messagePopup';
+import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
 import { supabase } from '$lib/supabase.js';
 
 export const fetchTopics = async () => {

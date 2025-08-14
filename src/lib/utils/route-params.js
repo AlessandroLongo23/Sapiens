@@ -57,22 +57,45 @@ export function getContentFromParams(params) {
     try {
         let result = {};
         
+        if (!$contentStore.flatNodes || $contentStore.flatNodes.length === 0) {
+            return null;
+        }
+        
         if (level === 'superiori') {
+            // Construct path to find the topic
+            const topicPath = [level, subject, year, topicKey];
+            
+            // Find topic node
+            const topicNode = $contentStore.flatNodes.find(node => 
+                node.node_type === 'topic' && 
+                node.path?.length === topicPath.length &&
+                node.path.every((segment, i) => segment === topicPath[i])
+            );
+            
             // For topics with subtopics
-            if (subtopicKey && $contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
-                result = {
-                    ...$contentStore.content[level][subject][year].topics[topicKey].subtopics[subtopicKey],
-                    parentTopic: $contentStore.content[level][subject][year].topics[topicKey],
-                    level,
-                    subject,
-                    year,
-                    key: subtopicKey
-                };
+            if (subtopicKey && topicNode) {
+                // Find subtopic node
+                const subtopicNode = $contentStore.flatNodes.find(node => 
+                    node.node_type === 'subtopic' && 
+                    node.parent_id === topicNode.id && 
+                    node.slug === subtopicKey
+                );
+                
+                if (subtopicNode) {
+                    result = {
+                        ...subtopicNode,
+                        parentTopic: topicNode,
+                        level,
+                        subject,
+                        year,
+                        key: subtopicKey
+                    };
+                }
             } 
             // For main topics
-            else if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
+            else if (topicNode) {
                 result = { 
-                    ...$contentStore.content[level][subject][year].topics[topicKey],
+                    ...topicNode,
                     level,
                     subject,
                     year,
@@ -80,18 +103,37 @@ export function getContentFromParams(params) {
                 };
             }
         } else if (level === 'università') {
-            // For university courses
-            if (subtopicKey && $contentStore.content[level]?.[subject]?.subtopics?.[subtopicKey]) {
+            // Construct path to find the university course
+            const coursePath = [level, subject];
+            
+            // Find course node
+            const courseNode = $contentStore.flatNodes.find(node => 
+                (node.node_type === 'subject' || node.node_type === 'topic') && 
+                node.path?.length === coursePath.length &&
+                node.path.every((segment, i) => segment === coursePath[i])
+            );
+            
+            // For university subtopics
+            if (subtopicKey && courseNode) {
+                // Find subtopic node
+                const subtopicNode = $contentStore.flatNodes.find(node => 
+                    node.node_type === 'subtopic' && 
+                    node.parent_id === courseNode.id && 
+                    node.slug === subtopicKey
+                );
+                
+                if (subtopicNode) {
+                    result = {
+                        ...subtopicNode,
+                        parentTopic: courseNode,
+                        level,
+                        subject,
+                        key: subtopicKey
+                    };
+                }
+            } else if (courseNode) {
                 result = {
-                    ...$contentStore.content[level][subject].subtopics[subtopicKey],
-                    parentTopic: $contentStore.content[level][subject],
-                    level,
-                    subject,
-                    key: subtopicKey
-                };
-            } else if ($contentStore.content[level]?.[subject]) {
-                result = {
-                    ...$contentStore.content[level][subject],
+                    ...courseNode,
                     level,
                     subject,
                     key: subject
@@ -115,20 +157,85 @@ export function getContentFromParams(params) {
 export function getMarkdownPath(params) {
     const { level, subject, year, topic: topicKey, subtopic: subtopicKey } = params;
     
-    // If we have a subtopic, get its path from the content structure
+    if (!$contentStore.flatNodes || $contentStore.flatNodes.length === 0) {
+        return null;
+    }
+    
+    // Find the appropriate node based on path
+    let node = null;
+    
     if (level === 'superiori') {
-        if (subtopicKey && $contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]?.subtopics?.[subtopicKey]) {
-            return `/teoria/${level}/${subject}/${year}/${topicKey}/${subtopicKey}.md`;
+        // With subtopic
+        if (subtopicKey) {
+            // Find topic node first
+            const topicPath = [level, subject, year, topicKey];
+            const topicNode = $contentStore.flatNodes.find(node => 
+                node.node_type === 'topic' && 
+                node.path?.length === topicPath.length &&
+                node.path.every((segment, i) => segment === topicPath[i])
+            );
+            
+            if (topicNode) {
+                // Find subtopic
+                node = $contentStore.flatNodes.find(node => 
+                    node.node_type === 'subtopic' && 
+                    node.parent_id === topicNode.id && 
+                    node.slug === subtopicKey
+                );
+            }
+            
+            if (node) {
+                return `/teoria/${level}/${subject}/${year}/${topicKey}/${subtopicKey}.md`;
+            }
         } 
-        // Otherwise, use the topic's path
-        else if ($contentStore.content[level]?.[subject]?.[year]?.topics?.[topicKey]) {
-            return `/teoria/${level}/${subject}/${year}/${topicKey}.md`;
+        // Main topic
+        else {
+            const topicPath = [level, subject, year, topicKey];
+            node = $contentStore.flatNodes.find(node => 
+                node.node_type === 'topic' && 
+                node.path?.length === topicPath.length &&
+                node.path.every((segment, i) => segment === topicPath[i])
+            );
+            
+            if (node) {
+                return `/teoria/${level}/${subject}/${year}/${topicKey}.md`;
+            }
         }
-    } else if (level === 'università') {
-        if (subtopicKey && $contentStore.content[level]?.[subject]?.subtopics?.[subtopicKey]) {
-            return `/teoria/${level}/${subject}/${subtopicKey}.md`;
-        } else if ($contentStore.content[level]?.[subject]) {
-            return `/teoria/${level}/${subject}.md`;
+    } 
+    else if (level === 'università') {
+        // With subtopic
+        if (subtopicKey) {
+            const coursePath = [level, subject];
+            const courseNode = $contentStore.flatNodes.find(node => 
+                (node.node_type === 'subject' || node.node_type === 'topic') && 
+                node.path?.length === coursePath.length &&
+                node.path.every((segment, i) => segment === coursePath[i])
+            );
+            
+            if (courseNode) {
+                node = $contentStore.flatNodes.find(node => 
+                    node.node_type === 'subtopic' && 
+                    node.parent_id === courseNode.id && 
+                    node.slug === subtopicKey
+                );
+            }
+            
+            if (node) {
+                return `/teoria/${level}/${subject}/${subtopicKey}.md`;
+            }
+        }
+        // Main course
+        else {
+            const coursePath = [level, subject];
+            node = $contentStore.flatNodes.find(node => 
+                (node.node_type === 'subject' || node.node_type === 'topic') && 
+                node.path?.length === coursePath.length &&
+                node.path.every((segment, i) => segment === coursePath[i])
+            );
+            
+            if (node) {
+                return `/teoria/${level}/${subject}.md`;
+            }
         }
     }
     
