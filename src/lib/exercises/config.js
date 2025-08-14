@@ -91,7 +91,7 @@ export const configs = {
 			args: []
 		},
 	},
-	'superiori/matematica/1/insiemi': {
+	'superiori/matematica/1/insiemi-e-logica/operazioni': {
 		'intersezione': {
 			generator: 'IntersezioneEx',
 			count: 2,

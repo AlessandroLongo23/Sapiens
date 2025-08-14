@@ -1,7 +1,8 @@
+import { format, parseISO, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns';
 import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 import { studentsStore } from '$lib/stores/students/students.js';
-import { format, parseISO, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns';
+import { calculateEarnings } from '$lib/utils/format.svelte.js';
 import { it } from 'date-fns/locale';
 
 class StatsStore {
@@ -25,6 +26,23 @@ class StatsStore {
 			this.students = data.students || [];
 		});
 	}
+
+	totalTime = $derived.by(() => {
+		let total = this.lectures.reduce((total, lecture) => {
+			const startTime = lecture.start_time.split(':');
+			const endTime = lecture.end_time.split(':');
+			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
+			const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
+			const hours = endHour - startHour;
+			
+			return total + hours;
+		}, 0);
+
+		return {
+			hours: Math.floor(total),
+			minutes: Math.round((total - Math.floor(total)) * 60)
+		}
+	});
 	
 	earningsByMonth = $derived.by(() => {
 		const lectures = this.lectures;
@@ -74,6 +92,12 @@ class StatsStore {
 		});
 
 		return earningsData;
+	});
+
+	totalEarnings = $derived.by(() => {
+		return this.lectures.reduce((total, lecture) => {
+			return total + calculateEarnings(lecture.start_time, lecture.end_time, lecture.hourly_rate);
+		}, 0);
 	});
 
 	hoursByMonth = $derived.by(() => {

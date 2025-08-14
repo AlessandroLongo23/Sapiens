@@ -1,5 +1,8 @@
 <script>
-	import { morgagniImages, dtuImages, stats } from '$lib/data.js';
+	import { morgagniImages, dtuImages } from '$lib/data.js';
+	import { statsStore } from '$lib/stores/stats.svelte.js';
+	import { studentsStore } from '$lib/stores/students/students.js';
+	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
     import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
@@ -119,6 +122,27 @@
 		}
 	]
 
+	let stats = $derived({
+		hours: {
+			value: Math.floor(statsStore.totalTime.hours / 10) * 10 + "+",
+			label: "Ore di Lezione",
+			icon: ls.Clock,
+			color: "text-blue-500"
+		},
+		subjects: {
+			value: $subjectsStore.subjects.length,
+			label: "Materie Trattate",
+			icon: ls.BookOpen,
+			color: "text-emerald-500"
+		},
+		students: {
+			value: Math.floor($studentsStore.students.length / 5) * 5 + "+",
+			label: "Studenti Seguiti",
+			icon: ls.Users,
+			color: "text-purple-500"
+		}
+	});
+
 	const section_style = "section-enter scroll-mt-24 md:scroll-mt-28 pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8";
 </script>
 
@@ -126,7 +150,7 @@
 	<title>AleRipetizioni</title>
 	<meta
 		name="description"
-		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre 150 ore di esperienza."
+		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre {stats.hours.value} ore di esperienza."
 	/>
 </svelte:head>
 
@@ -234,7 +258,7 @@
             <div
                 class="flex items-center justify-center lg:justify-start space-x-4 sm:space-x-8 pt-4 sm:pt-6"
             >
-				{#each Object.values($stats) as stat, index}
+				{#each Object.values(stats) as stat, index}
 					<div class="text-center">	
                         <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-800 dark:text-zinc-100">{stat.value}</div>
                         <div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">{stat.label}</div>
@@ -383,7 +407,7 @@
 		</div>
 		
 		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-			{#each Object.values($stats) as stat, index}
+			{#each Object.values(stats) as stat, index}
 				<div style="animation-delay: {index * 200}ms">
 					<StatsCard {...stat} />
 				</div>

@@ -1,34 +1,35 @@
 <script>
 	import { formatCurrency, formatDateDisplay, calculateEarnings } from '$lib/utils/format.svelte.js';
+    import { cardStyle, designSystem } from '$lib/stores/appearance.js';
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { studentsStore } from '$lib/stores/students/students.js';
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';	
+	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { isSameDay } from 'date-fns';
 	import * as ls from 'lucide-svelte';
-    import { cardStyle, designSystem } from '$lib/stores/appearance.js';
 
-	let totalTime = $derived.by(() => {
-		let total = $lecturesStore.lectures.reduce((total, lecture) => {
-			const startTime = lecture.start_time.split(':');
-			const endTime = lecture.end_time.split(':');
-			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
-			const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
-			const hours = endHour - startHour;
+	// let totalTime = $derived.by(() => {
+	// 	let total = $lecturesStore.lectures.reduce((total, lecture) => {
+	// 		const startTime = lecture.start_time.split(':');
+	// 		const endTime = lecture.end_time.split(':');
+	// 		const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
+	// 		const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
+	// 		const hours = endHour - startHour;
 			
-			return total + hours;
-		}, 0);
+	// 		return total + hours;
+	// 	}, 0);
 
-		return {
-			hours: Math.floor(total),
-			minutes: Math.round((total - Math.floor(total)) * 60)
-		}
-	});
+	// 	return {
+	// 		hours: Math.floor(total),
+	// 		minutes: Math.round((total - Math.floor(total)) * 60)
+	// 	}
+	// });
 
-	let totalEarnings = $derived.by(() => {
-		return $lecturesStore.lectures.reduce((total, lecture) => {
-			return total + calculateEarnings(lecture.start_time, lecture.end_time, lecture.hourly_rate);
-		}, 0);
-	});
+	// let totalEarnings = $derived.by(() => {
+	// 	return $lecturesStore.lectures.reduce((total, lecture) => {
+	// 		return total + calculateEarnings(lecture.start_time, lecture.end_time, lecture.hourly_rate);
+	// 	}, 0);
+	// });
 	
 	let averageRate = $derived.by(() => {
 		if ($lecturesStore.lectures.length === 0) return 0;
@@ -114,7 +115,7 @@
 			<div class="flex flex-col items-end">
 				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">HOURS TAUGHT</span>
 				<div class="flex items-baseline">
-					<span class="text-3xl font-bold text-[#111827] dark:text-white">{totalTime.hours}h {totalTime.minutes}m</span>
+					<span class="text-3xl font-bold text-[#111827] dark:text-white">{statsStore.totalTime.hours}h {statsStore.totalTime.minutes}m</span>
 					<!-- <span class="text-sm text-[#22C55E] font-medium ml-3">+4h this week</span> -->
 				</div>
 			</div>
@@ -129,7 +130,7 @@
 			<div class="flex flex-col items-end">
 				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">TOTAL EARNINGS</span>
 				<div class="flex items-baseline">
-					<span class="text-3xl font-bold text-[#111827] dark:text-white">{formatCurrency(totalEarnings)}</span>
+					<span class="text-3xl font-bold text-[#111827] dark:text-white">{formatCurrency(statsStore.totalEarnings)}</span>
 				</div>
 			</div>
 		</div>

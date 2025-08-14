@@ -68,27 +68,6 @@ export const dtuImages = writable([
     '/DTU/5.jpg'
 ]);
 
-export const stats = writable({
-    hours: {
-        value: "150+",
-        label: "Ore di Lezione",
-        iconName: "clock",
-        color: "text-blue-500"
-    },
-    subjects: {
-        value: "15+",
-        label: "Materie Trattate",
-        iconName: "book-open",
-        color: "text-emerald-500"
-    },
-    students: {
-        value: "30+",
-        label: "Studenti Seguiti",
-        iconName: "users",
-        color: "text-purple-500"
-    }
-});
-
 export const steps = writable([
     { number: 1, title: "Livello", description: "Scegli il tuo livello di studio" },
     { number: 2, title: "Materie", description: "Seleziona le materie di interesse" },

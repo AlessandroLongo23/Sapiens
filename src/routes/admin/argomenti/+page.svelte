@@ -132,6 +132,13 @@
 		<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Materie</h1>
 		
 		<div class="flex flex-row items-center gap-4">
+			<a 
+				href="/admin/argomenti/contenuto" 
+				class="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-md text-sm flex items-center gap-1.5 transition-colors"
+			>
+				<ls.LayoutGrid class="size-4" />
+				Gestione Contenuti
+			</a>
 			<Searchbar placeholder="Cerca materia" bind:value={search} classes="w-80"/>
 			<NewSubject />
 		</div>
