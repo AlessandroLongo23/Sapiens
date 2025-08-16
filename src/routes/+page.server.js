@@ -2,7 +2,6 @@ import { redirect } from '@sveltejs/kit'
 
 export const load = async ({ locals: { session, user, supabase } }) => {
     if (session) {
-        // Fetch the user role from the students table
         const { data: student } = await supabase.from('students').select('role').eq('id', user.id).single();
         const redirectPath = student?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
         throw redirect(303, redirectPath);

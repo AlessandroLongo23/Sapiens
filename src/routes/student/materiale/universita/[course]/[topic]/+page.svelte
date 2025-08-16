@@ -10,13 +10,12 @@
         }
         
         let pieces = $page.url.pathname.split('/');
-        let levelSlug = 'superiori';
-        let subjectSlug = pieces[pieces.indexOf('superiori') + 1];
-        let yearSlug = pieces[pieces.indexOf(subjectSlug) + 1];
-        let topicSlug = pieces[pieces.indexOf(yearSlug) + 1];
+        let levelSlug = 'universita';
+        let subjectSlug = pieces[pieces.indexOf('universita') + 1];
+        let topicSlug = pieces[pieces.indexOf(subjectSlug) + 1];
         
         // Construct the path to find the topic node
-        const path = [levelSlug, subjectSlug, yearSlug, topicSlug];
+        const path = [levelSlug, subjectSlug, topicSlug];
         
         // Find the topic node with this path
         let topicNode = $contentStore.flatNodes.find(node => 
@@ -57,7 +56,6 @@
         
         return {
             ...topicNode,
-            year: yearSlug,
             subject: subjectSlug,
             level: levelSlug,
             key: topicSlug,
@@ -93,8 +91,6 @@
                     <span class="capitalize whitespace-nowrap">{topic.level}</span>
                     <ls.ChevronRight class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                     <span class="capitalize whitespace-nowrap">{topic?.subject?.replace('-', ' ')}</span>
-                    <ls.ChevronRight class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span class="capitalize whitespace-nowrap">{topic?.year}° Anno</span>
                 </div>
             </div>
             
@@ -137,14 +133,14 @@
                             <div class="flex flex-row gap-2">
                                 <button 
                                     class="flex w-1/2 items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
-                                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.year}/${topic?.key}/${key}/teoria`)}
+                                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.key}/${key}/teoria`)}
                                 >
                                     <ls.BookOpen class="w-3 h-3 sm:w-4 sm:h-4" />
                                     Teoria
                                 </button>
                                 <button 
                                     class="flex w-1/2 items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors"
-                                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.year}/${topic?.key}/${key}/esercizi`)}
+                                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.key}/${key}/esercizi`)}
                                 >
                                     <ls.PenLine class="w-3 h-3 sm:w-4 sm:h-4" />
                                     Esercizi
@@ -163,14 +159,14 @@
             <div class="flex flex-col xs:flex-row gap-2 xs:gap-4 w-full xs:w-auto">
                 <button 
                     class="flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
-                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.year}/${topic?.key}/teoria`)}
+                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.key}/teoria`)}
                 >
                     <ls.BookOpen class="w-3 h-3 sm:w-4 sm:h-4" />
                     Teoria
                 </button>
                 <button 
                     class="flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors"
-                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.year}/${topic?.key}/esercizi`)}
+                    onclick={() => goto(`/student/materiale/${topic?.level}/${topic?.subject}/${topic?.key}/esercizi`)}
                 >
                     <ls.PenLine class="w-3 h-3 sm:w-4 sm:h-4" />
                     Esercizi

@@ -2,12 +2,12 @@ import { renderMarkdown, extractTableOfContents, structureTableOfContents } from
 import { getMarkdownPath, getContentFromParams } from '$lib/utils/route-params.js';
 
 export async function load({ params, fetch }) {
-    const { course, subtopic: subtopicKey } = params;
-    const level = 'università';
+    const { course, topic: topicKey, subtopic: subtopicKey } = params;
+    const level = 'universita';
     const subject = course;
     
     // Get the markdown path from our utility function
-    const markdownPath = getMarkdownPath({ level, subject, subtopic: subtopicKey });
+    const markdownPath = getMarkdownPath({ level, subject, topic: topicKey, subtopic: subtopicKey });
     
     try {
         const response = await fetch(markdownPath);
@@ -25,7 +25,7 @@ export async function load({ params, fetch }) {
         const content = renderMarkdown(markdownContent);
         
         // Get content data from our utility function
-        const contentData = getContentFromParams({ level, subject, subtopic: subtopicKey });
+        const contentData = getContentFromParams({ level, subject, topic: topicKey, subtopic: subtopicKey });
         
         // Get the title from the content data or use a fallback
         let title = contentData?.title || subtopicKey?.replace(/-/g, ' ') || subject?.replace(/-/g, ' ');
@@ -36,6 +36,7 @@ export async function load({ params, fetch }) {
             title,
             level,
             subject,
+            topicKey,
             subtopicKey,
             markdownPath
         };
@@ -48,6 +49,7 @@ export async function load({ params, fetch }) {
             sections: [],
             level,
             subject,
+            topicKey,
             subtopicKey
         };
     }

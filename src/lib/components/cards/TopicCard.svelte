@@ -13,7 +13,7 @@
     });
 
     let isHovered = $state(false);
-    
+
     // Calculate subtopic count if available
     let hasSubtopics = $derived(subtopics && Object.keys(subtopics || {}).length > 0);
     let subtopicCount = $derived(hasSubtopics ? Object.keys(subtopics).length : 0);
@@ -28,7 +28,12 @@
     onmouseleave={() => isHovered = false}
     onclick={() => {
         setTimeout(() => {
-            goto(`/student/materiale/${level}/${subject}/${year}/${key}/`);
+            console.log(level, subject, key);
+            if (level === 'universita') {
+                goto(`/student/materiale/${level}/${subject}/${key}/`);
+            } else {
+                goto(`/student/materiale/${level}/${subject}/${year}/${key}/`);
+            }
         }, 100);
     }}
 >
@@ -37,14 +42,16 @@
     </div>
     
     <div class="flex flex-col h-48 p-4">
-        <div class="text-xs font-medium px-2.5 py-1 rounded-full w-fit {
-            subject === 'matematica' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
-            subject === 'informatica' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
-            subject === 'fisica' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
-            'bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200'
-        } mb-2.5 capitalize">
-            {level === 'superiori' ? `${year}° anno` : ''}
-        </div>
+        {#if level === 'superiori' && year}
+            <div class="text-xs font-medium px-2.5 py-1 rounded-full w-fit {
+                subject === 'matematica' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
+                subject === 'informatica' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
+                subject === 'fisica' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
+                'bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200'
+            } mb-2.5 capitalize">
+                {year}° anno
+            </div>
+        {/if}
         
         <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100 line-clamp-1 mb-2">
             {title}
@@ -60,18 +67,6 @@
                     </div>
                 {/if}
             </div>
-            
-            <!-- <div class="absolute inset-0 bg-gradient-to-t from-blue-600/90 to-blue-800/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white rounded-md">
-                <div class="text-center p-2">
-                    {#if hasSubtopics}
-                        <div class="font-bold text-2xl mb-1">{subtopicCount}</div>
-                        <div class="text-sm font-medium">sottotemi</div>
-                    {:else}
-                        <ls.BookOpen class="h-8 w-8 mx-auto mb-1" />
-                        <div class="text-sm font-medium">Visualizza</div>
-                    {/if}
-                </div>
-            </div> -->
         </div>
     </div>
 </div>

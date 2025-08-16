@@ -3,6 +3,8 @@
     import * as ls from 'lucide-svelte';
     import { createEventDispatcher } from 'svelte';
     import ContextMenu from '../ui/ContextMenu.svelte';
+    import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
+    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
     
     // Props
     let { 
@@ -87,11 +89,19 @@
     
     // Get list of possible child node types based on parent node type
     function getChildNodeTypes(nodeType) {
+        // For università level, subject nodes can have topics directly
+        // For superiori level, subject nodes have years first
+        
+        // Get the node's level by looking at its path
+        const isUniversitaLevel = node.path && node.path[0] === 'universita';
+        
         switch (nodeType) {
             case 'level':
                 return ['subject'];
             case 'subject':
-                return ['year'];
+                // If this is a università subject, it can have topics
+                // If this is a superiori subject, it has years
+                return isUniversitaLevel ? ['topic'] : ['year'];
             case 'year':
                 return ['topic'];
             case 'topic':
@@ -149,9 +159,28 @@
         return labels[nodeType] || nodeType;
     }
     
-    const hasChildren = $derived(node.children && node.children.length > 0);
+    const hasChildren = $derived(!!(node.children && node.children.length > 0));
     const isExpanded = $derived(expanded.has(node.id));
     const isSelected = $derived(selected.has(node.id));
+
+    // DnD handlers for reordering children locally and persisting order
+    function onReorderConsider(event) {
+        if (!node.children) return;
+        const { items } = event.detail;
+        node = { ...node, children: items };
+    }
+    
+    async function onReorderFinalize(event) {
+        if (!node.children) return;
+        const { items } = event.detail;
+        node = { ...node, children: items };
+        try {
+            const orderedIds = node.children.map(c => c.id);
+            await reorderChildNodes(node.id, orderedIds);
+        } catch (err) {
+            console.error('Failed to persist reorder:', err);
+        }
+    }
 </script>
 
 <div class="tree-node mb-1" oncontextmenu={handleContextMenu} role="treeitem" aria-selected={isSelected} tabindex="0">
@@ -206,6 +235,9 @@
                         {node.title || node.slug}
                     </span>
                 </label>
+                <span use:dragHandle class="drag-handle ml-2 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 cursor-grab" role="button" tabindex="0" aria-label="Riordina" title="Trascina per riordinare" onmousedown={(e) => e.stopPropagation()}>
+                    <ls.GripVertical class="size-3.5" />
+                </span>
             </div>
             
             <div class="flex gap-1 ml-2">
@@ -232,10 +264,11 @@
                         class="p-1 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 rounded"
                         onclick={(e) => {
                             e.stopPropagation();
+                            const childNodeTypes = getChildNodeTypes(node.node_type);
                             dispatch('nodeAction', { 
                                 action: 'create', 
                                 nodeId: node.id, 
-                                nodeType: getChildNodeTypes(node.node_type)[0],
+                                nodeType: childNodeTypes[0],
                                 node
                             });
                         }}
@@ -270,8 +303,12 @@
     </div>
     
     {#if isExpanded && hasChildren}
-        <div class="pl-4 border-l border-zinc-200 dark:border-zinc-700 ml-5.5 mt-1" transition:slide={{duration: 200}}>
-            {#each node.children as childNode}
+        <div class="pl-4 border-l border-zinc-200 dark:border-zinc-700 ml-5.5 mt-1" transition:slide={{duration: 200}}
+            use:dragHandleZone={{ items: node.children, dropFromOthersDisabled: true, flipDurationMs: 150 }}
+            onconsider={onReorderConsider}
+            onfinalize={onReorderFinalize}
+        >
+            {#each node.children as childNode (childNode.id)}
                 <EditableTreeNode 
                     node={childNode} 
                     expanded={expanded} 
@@ -295,3 +332,17 @@
         on:action={handleNodeAction}
     />
 {/if}
+
+<style>
+    :global(.dndDragging) {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+    :global(.dndPlaceholder) {
+        border: 2px dashed rgb(161 161 170); /* zinc-400 */
+        border-radius: 0.5rem;
+        margin-bottom: 0.25rem;
+        min-height: 2rem;
+        background: rgba(161,161,170,0.08);
+    }
+</style>

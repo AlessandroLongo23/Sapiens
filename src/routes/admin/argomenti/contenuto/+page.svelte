@@ -35,6 +35,15 @@
                 currentNodeType = nodeType;
                 currentNode = null;
                 parentNode = nodeId ? await getNodeById(nodeId) : null;
+                
+                // Make sure the child type is correctly set based on parent node path
+                if (parentNode && parentNode.node_type === 'subject' && parentNode.path && parentNode.path[0] === 'universita') {
+                    // For università subjects, children are topics (not years)
+                    if (currentNodeType === 'year') {
+                        currentNodeType = 'topic';
+                    }
+                }
+                
                 showCreateModal = true;
                 break;
                 

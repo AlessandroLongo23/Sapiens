@@ -22,6 +22,33 @@ export async function createContentNode(nodeData) {
             nodeData.path = [nodeData.slug];
         }
         
+        // If child_index not provided, append at end among siblings
+        if (typeof nodeData.child_index !== 'number') {
+            let maxIndex = -1;
+            if (nodeData.parent_id) {
+                const { data: siblings, error: sibErr } = await supabase
+                    .from('content_nodes')
+                    .select('child_index')
+                    .eq('parent_id', nodeData.parent_id)
+                    .order('child_index', { ascending: false, nullsFirst: false })
+                    .limit(1);
+                if (!sibErr && siblings && siblings.length > 0 && typeof siblings[0].child_index === 'number') {
+                    maxIndex = siblings[0].child_index;
+                }
+            } else {
+                const { data: rootSiblings, error: rootErr } = await supabase
+                    .from('content_nodes')
+                    .select('child_index')
+                    .is('parent_id', null)
+                    .order('child_index', { ascending: false, nullsFirst: false })
+                    .limit(1);
+                if (!rootErr && rootSiblings && rootSiblings.length > 0 && typeof rootSiblings[0].child_index === 'number') {
+                    maxIndex = rootSiblings[0].child_index;
+                }
+            }
+            nodeData.child_index = maxIndex + 1;
+        }
+        
         // Insert the node
         const { data, error } = await supabase
             .from('content_nodes')
@@ -187,7 +214,8 @@ export async function getChildNodes(nodeId) {
             .from('content_nodes')
             .select('*')
             .eq('parent_id', nodeId)
-            .order('path', { ascending: true });
+            .order('child_index', { ascending: true })
+            .order('slug', { ascending: true });
             
         if (error) {
             console.error('Error fetching child nodes:', error);
@@ -197,6 +225,38 @@ export async function getChildNodes(nodeId) {
         return data || [];
     } catch (error) {
         console.error('Error in getChildNodes:', error);
+        throw error;
+    }
+}
+
+/**
+ * Reorder children for a parent by updating child_index for each child id in order
+ * @param {string|null} parentId - The parent node ID (or null for root nodes)
+ * @param {Array<string>} orderedChildIds - Child IDs in the desired order
+ * @returns {Promise<boolean>} - True if successful
+ */
+export async function reorderChildNodes(parentId, orderedChildIds) {
+    try {
+        if (!Array.isArray(orderedChildIds) || orderedChildIds.length === 0) return true;
+        
+        // Run in a single transaction-like batch by updating sequentially to preserve order
+        for (let index = 0; index < orderedChildIds.length; index++) {
+            const id = orderedChildIds[index];
+            const { error } = await supabase
+                .from('content_nodes')
+                .update({ child_index: index })
+                .eq('id', id);
+            if (error) {
+                console.error('Error updating child_index for', id, error);
+                throw error;
+            }
+        }
+        
+        // Refresh
+        await contentStore.fetchContent();
+        return true;
+    } catch (error) {
+        console.error('Error in reorderChildNodes:', error);
         throw error;
     }
 }

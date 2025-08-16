@@ -6,7 +6,16 @@ export const selectedContentNodeStore = writable(null);
 function buildContentTree(nodes, parentId = null) {
 	const result = [];
 	
-	const children = nodes.filter(node => node.parent_id === parentId);
+	const children = nodes
+		.filter(node => node.parent_id === parentId)
+		.sort((a, b) => {
+			const ai = a.child_index ?? Number.POSITIVE_INFINITY;
+			const bi = b.child_index ?? Number.POSITIVE_INFINITY;
+			if (ai !== bi) return ai - bi;
+			const at = (a.title || a.slug || '').toString().toLowerCase();
+			const bt = (b.title || b.slug || '').toString().toLowerCase();
+			return at.localeCompare(bt);
+		});
 	
 	for (const child of children) {
 		const grandChildren = buildContentTree(nodes, child.id);
@@ -115,7 +124,16 @@ const createContentStore = () => {
 		getChildrenOf: (parentId) => {
 			let result = [];
 			update(state => {
-				result = state.flatNodes.filter(node => node.parent_id === parentId);
+				result = state.flatNodes
+					.filter(node => node.parent_id === parentId)
+					.sort((a, b) => {
+						const ai = a.child_index ?? Number.POSITIVE_INFINITY;
+						const bi = b.child_index ?? Number.POSITIVE_INFINITY;
+						if (ai !== bi) return ai - bi;
+						const at = (a.title || a.slug || '').toString().toLowerCase();
+						const bt = (b.title || b.slug || '').toString().toLowerCase();
+						return at.localeCompare(bt);
+					});
 				return state;
 			});
 			return result;
@@ -201,80 +219,3 @@ if (typeof window !== 'undefined') {
 }
 
 export let selectedTopic = writable(null);
-
-// const createLegacyStructureStore = () => {
-// 	const { subscribe } = derived(contentStore, $contentStore => {
-// 		// If still loading or no data, return empty object
-// 		if ($contentStore.loading || $contentStore.flatNodes.length === 0) {
-// 			return {};
-// 		}
-
-// 		const legacyStructure = {};
-		
-// 		// Get all levels (superiori, università)
-// 		const levels = $contentStore.flatNodes.filter(node => node.node_type === 'level');
-		
-// 		for (const level of levels) {
-// 			legacyStructure[level.slug] = {};
-			
-// 			// Get subjects for this level
-// 			const subjects = $contentStore.flatNodes.filter(node => 
-// 				node.node_type === 'subject' && 
-// 				node.path && 
-// 				node.path[0] === level.slug
-// 			);
-			
-// 			for (const subject of subjects) {
-// 				legacyStructure[level.slug][subject.slug] = {};
-				
-// 				// Get years for this subject
-// 				const years = $contentStore.flatNodes.filter(node => 
-// 					node.node_type === 'year' && 
-// 					node.path && 
-// 					node.path[0] === level.slug &&
-// 					node.path[1] === subject.slug
-// 				);
-				
-// 				for (const year of years) {
-// 					legacyStructure[level.slug][subject.slug][year.slug] = { topics: {} };
-					
-// 					// Get topics for this year
-// 					const topics = $contentStore.flatNodes.filter(node => 
-// 						node.node_type === 'topic' && 
-// 						node.path && 
-// 						node.path[0] === level.slug &&
-// 						node.path[1] === subject.slug &&
-// 						node.path[2] === year.slug
-// 					);
-					
-// 					for (const topic of topics) {
-// 						legacyStructure[level.slug][subject.slug][year.slug].topics[topic.slug] = {
-// 							title: topic.title,
-// 							description: topic.description,
-// 							icon: topic.icon,
-// 							subtopics: {}
-// 						};
-						
-// 						// Get subtopics for this topic
-// 						const subtopics = $contentStore.flatNodes.filter(node => 
-// 							node.node_type === 'subtopic' && 
-// 							node.parent_id === topic.id
-// 						);
-						
-// 						for (const subtopic of subtopics) {
-// 							legacyStructure[level.slug][subject.slug][year.slug].topics[topic.slug].subtopics[subtopic.slug] = {
-// 								title: subtopic.title,
-// 								description: subtopic.description,
-// 								icon: subtopic.icon
-// 							};
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-		
-// 		return legacyStructure;
-// 	});
-	
-// 	return { subscribe };
-// };

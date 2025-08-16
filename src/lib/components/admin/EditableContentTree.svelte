@@ -4,6 +4,8 @@
     import { createEventDispatcher } from 'svelte';
     import EditableTreeNode from './EditableTreeNode.svelte';
     import ContextMenu from '../ui/ContextMenu.svelte';
+    import { dragHandleZone } from 'svelte-dnd-action';
+    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
     
     // Component props
     let { selectedIds = [] } = $props();
@@ -109,6 +111,37 @@
     $effect(() => {
         dispatch('change', Array.from(selected));
     });
+
+    // Root-level DnD state and handlers
+    let rootItems = $state([]);
+    let isRootDragging = $state(false);
+    
+    $effect(() => {
+        const tree = Array.isArray($contentStore.contentTree) ? $contentStore.contentTree : [];
+        if (!isRootDragging) {
+            // create a shallow copy with unique object references to help dnd track items
+            rootItems = tree.map(n => ({ ...n }));
+        }
+    });
+    
+    function onRootConsider(event) {
+        isRootDragging = true;
+        const { items } = event.detail;
+        rootItems = items;
+    }
+    
+    async function onRootFinalize(event) {
+        const { items } = event.detail;
+        rootItems = items;
+        try {
+            const orderedIds = rootItems.map(n => n.id);
+            await reorderChildNodes(null, orderedIds);
+        } catch (err) {
+            console.error('Failed to persist root reorder:', err);
+        } finally {
+            isRootDragging = false;
+        }
+    }
 </script>
 
 <div 
@@ -162,17 +195,25 @@
             </div>
         </div>
         
-        {#each $contentStore.contentTree as node}
-            <EditableTreeNode 
-                {node} 
-                {expanded} 
-                {selected} 
-                depth={0}
-                on:toggleExpand={handleToggleExpand}
-                on:toggleSelect={handleToggleSelect}
-                on:nodeAction={handleNodeAction}
-            />
-        {/each}
+        <div
+            use:dragHandleZone={{ items: rootItems, dropFromOthersDisabled: true, flipDurationMs: 150 }}
+            onconsider={onRootConsider}
+            onfinalize={onRootFinalize}
+        >
+            {#if Array.isArray(rootItems)}
+                {#each rootItems as node (node.id)}
+                <EditableTreeNode 
+                    {node} 
+                    {expanded} 
+                    {selected} 
+                    depth={0}
+                    on:toggleExpand={handleToggleExpand}
+                    on:toggleSelect={handleToggleSelect}
+                    on:nodeAction={handleNodeAction}
+                />
+                {/each}
+            {/if}
+        </div>
     {/if}
 </div>
 
@@ -211,5 +252,16 @@
     
     :global(.dark .tree-view::-webkit-scrollbar-thumb) {
         background-color: rgb(55 65 81);
+    }
+    :global(.dndDragging) {
+        opacity: 0.85;
+        transform: scale(0.99);
+    }
+    :global(.dndPlaceholder) {
+        border: 2px dashed rgb(161 161 170);
+        border-radius: 0.5rem;
+        margin-bottom: 0.25rem;
+        min-height: 2rem;
+        background: rgba(161,161,170,0.08);
     }
 </style>

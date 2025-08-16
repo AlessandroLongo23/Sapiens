@@ -2,6 +2,8 @@
     import { slide } from 'svelte/transition';
     import * as ls from 'lucide-svelte';
     import { createEventDispatcher } from 'svelte';
+    import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
+    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
     
     let { 
         node,
@@ -104,9 +106,27 @@
         return labels[nodeType] || nodeType;
     }
     
-    const hasChildren = $derived(node.children && node.children.length > 0);
+    const hasChildren = $derived(!!(node.children && node.children.length > 0));
     const isExpanded = $derived(expanded.has(node.id));
     const isSelected = $derived(selected.has(node.id));
+
+    function onReorderConsider(event) {
+        if (!node.children) return;
+        const { items } = event.detail;
+        node = { ...node, children: items };
+    }
+    
+    async function onReorderFinalize(event) {
+        if (!node.children) return;
+        const { items } = event.detail;
+        node = { ...node, children: items };
+        try {
+            const orderedIds = node.children.map(c => c.id);
+            await reorderChildNodes(node.id, orderedIds);
+        } catch (err) {
+            console.error('Failed to persist reorder:', err);
+        }
+    }
 </script>
 
 <div class="tree-node mb-1">
@@ -156,6 +176,9 @@
                 <label for="node-{node.id}" class="ml-2 font-medium text-zinc-900 dark:text-zinc-100">
                     {node.title || node.slug}
                 </label>
+                <span use:dragHandle class="drag-handle ml-2 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 cursor-grab" role="button" tabindex="0" aria-label="Riordina" title="Trascina per riordinare" onmousedown={(e) => e.stopPropagation()}>
+                    <ls.GripVertical class="size-3.5" />
+                </span>
             </div>
         </div>
         
@@ -165,8 +188,12 @@
     </button>
     
     {#if isExpanded && hasChildren}
-        <div class="pl-4 border-l border-zinc-200 dark:border-zinc-700 ml-5.5 mt-1" transition:slide={{duration: 200}}>
-            {#each node.children as childNode}
+        <div class="pl-4 border-l border-zinc-200 dark:border-zinc-700 ml-5.5 mt-1" transition:slide={{duration: 200}}
+            use:dragHandleZone={{ items: node.children, dropFromOthersDisabled: true, flipDurationMs: 150 }}
+            onconsider={onReorderConsider}
+            onfinalize={onReorderFinalize}
+        >
+            {#each node.children as childNode (childNode.id)}
                 <TreeNode 
                     node={childNode} 
                     expanded={expanded} 
@@ -179,3 +206,17 @@
         </div>
     {/if}
 </div>
+
+<style>
+    :global(.dndDragging) {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+    :global(.dndPlaceholder) {
+        border: 2px dashed rgb(161 161 170);
+        border-radius: 0.5rem;
+        margin-bottom: 0.25rem;
+        min-height: 2rem;
+        background: rgba(161,161,170,0.08);
+    }
+</style>

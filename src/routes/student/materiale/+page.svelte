@@ -129,7 +129,7 @@
 		const grouped = {};
 		
 		allTopics.forEach(topic => {
-			const key = groupBy === 'subject' ? topic.subject : (topic.year || 'università');
+			const key = groupBy === 'subject' ? topic.subject : (topic.year || 'universita');
 			
 			if (!grouped[key]) {
 				grouped[key] = [];
@@ -378,12 +378,12 @@
 									class="px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"
 									onclick={() => activeTab = groupKey}
 								>
-									{#if groupKey === 'università'}
+									{#if groupKey === 'universita'}
 										<ls.GraduationCap class="h-3 w-3 sm:h-4 sm:w-4" />
 									{:else}
 										<ls.BookOpen class="h-3 w-3 sm:h-4 sm:w-4" />
 									{/if}
-									{groupKey === 'università' ? 'Università' : `${groupKey}° anno`}
+									{groupKey === 'universita' ? 'Università' : `${groupKey}° anno`}
 								</button>
 							{/if}
 						{/each}
@@ -404,32 +404,19 @@
 											<span>{subjectCategories[groupKey].name}</span>
 										{:else if groupBy === 'year'}
 											<div class="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white">
-												{#if groupKey === 'università'}
+												{#if groupKey === 'universita'}
 													<ls.GraduationCap class="h-5 w-5" />
 												{:else}
 													<ls.BookOpen class="h-5 w-5" />
 												{/if}
 											</div>
-											<span>{groupKey === 'università' ? 'Università' : `${groupKey}° anno`}</span>
+											<span>{groupKey === 'universita' ? 'Università' : `${groupKey}° anno`}</span>
 										{/if}
 									</h2>
-									
-									{#if groupedTopics[groupKey].length > 5}
-										<button 
-											class="text-blue-600 dark:text-blue-400 font-medium text-sm hover:underline flex items-center gap-1"
-											onclick={() => {
-												activeTab = groupKey;
-												document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' });
-											}}
-										>
-											Vedi tutti
-											<ls.ChevronRight class="h-4 w-4" />
-										</button>
-									{/if}
 								</div>
 								
 								<div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-									{#each groupedTopics[groupKey].slice(0, 5) as topic}
+									{#each groupedTopics[groupKey]as topic}
 										<TopicCard
 											title={topic.title} 
 											description={topic.description} 
@@ -438,7 +425,7 @@
 											level={topic.level}
 											subject={topic.subject}
 											year={topic.year}
-											key={topic.key}
+											key={topic.level === 'universita' ? topic.year : topic.key}
 											subtopics={topic.subtopics}
 										/>
 									{/each}

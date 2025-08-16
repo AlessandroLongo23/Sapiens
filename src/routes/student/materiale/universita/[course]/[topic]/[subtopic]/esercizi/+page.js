@@ -5,8 +5,9 @@ import { contentStore } from '$lib/stores/content/content.js';
 const exerciseModules = import.meta.glob('/src/lib/exercises/*.svelte.js');
 
 export async function load({ params }) {
-	const { path } = params;
-	const [level, subject, year, topicKey, subtopicKey] = path.split('/');
+	const { course, topic: topicKey, subtopic: subtopicKey } = params;
+	const level = 'universita';
+	const subject = course;
 	
 	// Determine the appropriate topic name for loading exercises
 	let topicName;
@@ -16,44 +17,60 @@ export async function load({ params }) {
 	// If we have a subtopic, use it as the topic name
 	if (subtopicKey) {
 		topicName = subtopicKey;
-		configPath = `${level}/${subject}/${year}/${topicKey}/${subtopicKey}`;
+		configPath = `${level}/${subject}/${topicKey}/${subtopicKey}`;
 		
 		// Find the topic and subtopic in the flat nodes structure
-		const topicPath = [level, subject, year, topicKey];
-		const topicNode = $contentStore.flatNodes.find(node => 
-			node.node_type === 'topic' && 
-			node.path?.length === topicPath.length &&
-			node.path.every((segment, i) => segment === topicPath[i])
+		const coursePath = [level, subject];
+		const courseNode = $contentStore.flatNodes.find(node => 
+			node.node_type === 'subject' && 
+			node.path?.length === coursePath.length &&
+			node.path.every((segment, i) => segment === coursePath[i])
 		);
 		
-		if (topicNode) {
-			// Find the subtopic
-			const subtopicNode = $contentStore.flatNodes.find(node => 
-				node.node_type === 'subtopic' && 
-				node.parent_id === topicNode.id && 
-				node.slug === subtopicKey
+		if (courseNode) {
+			const topicNode = $contentStore.flatNodes.find(node => 
+				node.node_type === 'topic' && 
+				node.parent_id === courseNode.id && 
+				node.slug === topicKey
 			);
 			
-			if (subtopicNode) {
-				topicTitle = subtopicNode.title;
+			if (topicNode) {
+				// Find the subtopic
+				const subtopicNode = $contentStore.flatNodes.find(node => 
+					node.node_type === 'subtopic' && 
+					node.parent_id === topicNode.id && 
+					node.slug === subtopicKey
+				);
+				
+				if (subtopicNode) {
+					topicTitle = subtopicNode.title;
+				}
 			}
 		}
 	}
 	// Otherwise use the main topic
 	else {
 		topicName = topicKey;
-		configPath = `${level}/${subject}/${year}/${topicKey}`;
+		configPath = `${level}/${subject}/${topicKey}`;
 		
 		// Find the topic in the flat nodes structure
-		const topicPath = [level, subject, year, topicKey];
-		const topicNode = $contentStore.flatNodes.find(node => 
-			node.node_type === 'topic' && 
-			node.path?.length === topicPath.length &&
-			node.path.every((segment, i) => segment === topicPath[i])
+		const coursePath = [level, subject];
+		const courseNode = $contentStore.flatNodes.find(node => 
+			node.node_type === 'subject' && 
+			node.path?.length === coursePath.length &&
+			node.path.every((segment, i) => segment === coursePath[i])
 		);
 		
-		if (topicNode) {
-			topicTitle = topicNode.title;
+		if (courseNode) {
+			const topicNode = $contentStore.flatNodes.find(node => 
+				node.node_type === 'topic' && 
+				node.parent_id === courseNode.id && 
+				node.slug === topicKey
+			);
+			
+			if (topicNode) {
+				topicTitle = topicNode.title;
+			}
 		}
 	}
 	
@@ -118,7 +135,6 @@ export async function load({ params }) {
 			title: topicTitle,
 			level,
 			subject,
-			year,
 			topicKey,
 			subtopicKey
 		};

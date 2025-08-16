@@ -33,7 +33,16 @@ class ContentManager {
   buildContentTree(nodes, parentId = null) {
     const result = [];
     
-    const children = nodes.filter(node => node.parent_id === parentId);
+    const children = nodes
+      .filter(node => node.parent_id === parentId)
+      .sort((a, b) => {
+        const ai = a.child_index ?? Number.POSITIVE_INFINITY;
+        const bi = b.child_index ?? Number.POSITIVE_INFINITY;
+        if (ai !== bi) return ai - bi;
+        const at = (a.title || a.slug || '').toString().toLowerCase();
+        const bt = (b.title || b.slug || '').toString().toLowerCase();
+        return at.localeCompare(bt);
+      });
     
     for (const child of children) {
       const grandChildren = this.buildContentTree(nodes, child.id);

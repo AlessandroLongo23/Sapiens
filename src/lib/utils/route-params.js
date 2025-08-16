@@ -4,8 +4,10 @@ import { writable } from 'svelte/store';
 export function extractRouteParams(pathname) {
     const segments = pathname.split('/').filter(Boolean);
     
+    console.log(segments);
+
     const levelIndex = segments.findIndex(segment => 
-        segment === 'superiori' || segment === 'università'
+        segment === 'superiori' || segment === 'universita'
     );
     
     if (levelIndex === -1) {
@@ -20,9 +22,10 @@ export function extractRouteParams(pathname) {
         year = segments[levelIndex + 2];
         topic = segments[levelIndex + 3];
         subtopic = segments[levelIndex + 4];
-    } else if (level === 'università') {
+    } else if (level === 'universita') {
         subject = segments[levelIndex + 1];
         topic = segments[levelIndex + 2];
+        subtopic = segments[levelIndex + 3];
     }
 
     return {
@@ -85,29 +88,46 @@ export function getContentFromParams(params) {
                     key: topicKey
                 };
             }
-        } else if (level === 'università') {
+        } else if (level === 'universita') {
             const coursePath = [level, subject];
             
             const courseNode = content.flatNodes.find(node => 
-                (node.node_type === 'subject' || node.node_type === 'topic') && 
+                node.node_type === 'subject' && 
                 node.path?.length === coursePath.length &&
                 node.path.every((segment, i) => segment === coursePath[i])
             );
             
-            if (subtopicKey && courseNode) {
-                const subtopicNode = content.flatNodes.find(node => 
-                    node.node_type === 'subtopic' && 
+            if (topicKey && courseNode) {
+                const topicPath = [...coursePath, topicKey];
+                const topicNode = content.flatNodes.find(node => 
+                    node.node_type === 'topic' && 
                     node.parent_id === courseNode.id && 
-                    node.slug === subtopicKey
+                    node.slug === topicKey
                 );
                 
-                if (subtopicNode) {
+                if (subtopicKey && topicNode) {
+                    const subtopicNode = content.flatNodes.find(node => 
+                        node.node_type === 'subtopic' && 
+                        node.parent_id === topicNode.id && 
+                        node.slug === subtopicKey
+                    );
+                    
+                    if (subtopicNode) {
+                        result = {
+                            ...subtopicNode,
+                            parentTopic: topicNode,
+                            level,
+                            subject,
+                            topic: topicKey,
+                            key: subtopicKey
+                        };
+                    }
+                } else if (topicNode) {
                     result = {
-                        ...subtopicNode,
-                        parentTopic: courseNode,
+                        ...topicNode,
                         level,
                         subject,
-                        key: subtopicKey
+                        key: topicKey
                     };
                 }
             } else if (courseNode) {
@@ -175,31 +195,59 @@ export function getMarkdownPath(params) {
             }
         }
     } 
-    else if (level === 'università') {
+    else if (level === 'universita') {
         if (subtopicKey) {
             const coursePath = [level, subject];
             const courseNode = content.flatNodes.find(node => 
-                (node.node_type === 'subject' || node.node_type === 'topic') && 
+                node.node_type === 'subject' && 
+                node.path?.length === coursePath.length &&
+                node.path.every((segment, i) => segment === coursePath[i])
+            );
+            
+            if (courseNode && topicKey) {
+                const topicNode = content.flatNodes.find(node => 
+                    node.node_type === 'topic' && 
+                    node.parent_id === courseNode.id && 
+                    node.slug === topicKey
+                );
+                
+                if (topicNode) {
+                    node = content.flatNodes.find(node => 
+                        node.node_type === 'subtopic' && 
+                        node.parent_id === topicNode.id && 
+                        node.slug === subtopicKey
+                    );
+                }
+            }
+            
+            if (node) {
+                return `/teoria/${level}/${subject}/${topicKey}/${subtopicKey}.md`;
+            }
+        }
+        else if (topicKey) {
+            const coursePath = [level, subject];
+            const courseNode = content.flatNodes.find(node => 
+                node.node_type === 'subject' && 
                 node.path?.length === coursePath.length &&
                 node.path.every((segment, i) => segment === coursePath[i])
             );
             
             if (courseNode) {
                 node = content.flatNodes.find(node => 
-                    node.node_type === 'subtopic' && 
+                    node.node_type === 'topic' && 
                     node.parent_id === courseNode.id && 
-                    node.slug === subtopicKey
+                    node.slug === topicKey
                 );
             }
             
             if (node) {
-                return `/teoria/${level}/${subject}/${subtopicKey}.md`;
+                return `/teoria/${level}/${subject}/${topicKey}.md`;
             }
         }
         else {
             const coursePath = [level, subject];
             node = content.flatNodes.find(node => 
-                (node.node_type === 'subject' || node.node_type === 'topic') && 
+                node.node_type === 'subject' && 
                 node.path?.length === coursePath.length &&
                 node.path.every((segment, i) => segment === coursePath[i])
             );
@@ -215,10 +263,14 @@ export function getMarkdownPath(params) {
             return subtopicKey 
                 ? `/teoria/${level}/${subject}/${year}/${topicKey}/${subtopicKey}.md`
                 : `/teoria/${level}/${subject}/${year}/${topicKey}.md`;
-        } else if (level === 'università') {
-            return subtopicKey
-                ? `/teoria/${level}/${subject}/${subtopicKey}.md`
-                : `/teoria/${level}/${subject}.md`;
+        } else if (level === 'universita') {
+            if (subtopicKey && topicKey) {
+                return `/teoria/${level}/${subject}/${topicKey}/${subtopicKey}.md`;
+            } else if (topicKey) {
+                return `/teoria/${level}/${subject}/${topicKey}.md`;
+            } else {
+                return `/teoria/${level}/${subject}.md`;
+            }
         }
     }
     
