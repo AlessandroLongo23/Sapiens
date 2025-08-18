@@ -11,6 +11,7 @@
 		type = "move", // shrink or move
 		maxWidth = '60',
 		minWidth = '12',
+		useInlineWidth = true,
 	} = $props();
 
 	const dispatch = createEventDispatcher();
@@ -44,7 +45,7 @@
 	let dynamicStyles = $derived.by(() => {
 		if (type === 'shrink') {
 			return {
-				width: isSidebarOpen ? maxWidthRem : minWidthRem,
+				...(useInlineWidth ? { width: isSidebarOpen ? maxWidthRem : minWidthRem } : {}),
 				transform: 'none'
 			};
 		} else if (type === 'move') {
@@ -52,8 +53,8 @@
 				side === 'left' ? `-${maxWidthRem}` : maxWidthRem;
 			
 			return {
-				width: maxWidthRem,
-				transform: `translateX(${translateValue})`
+				...(useInlineWidth ? { width: maxWidthRem } : {}),
+				transform: useInlineWidth ? `translateX(${translateValue})` : 'none'
 			};
 		}
 		return {};

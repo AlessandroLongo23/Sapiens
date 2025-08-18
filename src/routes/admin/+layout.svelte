@@ -32,23 +32,39 @@
 		const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 		return formattedTime;
 	});
+
+	// Mobile sidebar state
+	let isMobileSidebarOpen = $state(false);
+
+	$effect(() => {
+		// Close mobile sidebar on route change
+		$page.url.pathname;
+		isMobileSidebarOpen = false;
+	});
 </script>
 
 <div class="min-h-screen bg-[#F9FAFB] dark:bg-[#0A0A0A] text-[#374151] dark:text-white p-0 font-sans">
 	<div class="h-full">
-		<header class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-[#121212] border-b border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm dark:shadow-md">
-			<div class="flex flex-row items-center gap-4">
+		<header class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-4 md:px-6 py-3 md:py-4 bg-white dark:bg-[#121212] border-b border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm dark:shadow-md">
+			<div class="flex flex-row items-center gap-3 md:gap-4">
+				<button
+					class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#E5E7EB] dark:border-[#2A2A2A] bg-white dark:bg-[#1A1A1A] text-[#111827] dark:text-white"
+					onclick={() => (isMobileSidebarOpen = true)}
+					aria-label="Apri menu"
+				>
+					<ls.Menu class="w-5 h-5" />
+				</button>
 				<div class="flex flex-row items-center gap-2">
 					<ls.Calendar class="w-5 h-5 text-[#111827] dark:text-white" />
-					<h1 class="text-xl font-semibold text-[#111827] dark:text-white">{date}</h1>
+					<h1 class="text-lg md:text-xl font-semibold text-[#111827] dark:text-white">{date}</h1>
 				</div>
 
-				<div class="flex flex-row items-center gap-2">
+				<div class="hidden sm:flex flex-row items-center gap-2">
 					<ls.Clock class="w-5 h-5 text-[#111827] dark:text-white" />
-					<h1 class="text-xl font-semibold text-[#111827] dark:text-white">{time}</h1>
+					<h1 class="text-lg md:text-xl font-semibold text-[#111827] dark:text-white">{time}</h1>
 				</div>
 			</div>
-			<div class="flex items-center gap-5">
+			<div class="flex items-center gap-4 md:gap-5">
 				<div class="flex items-center gap-3">
 					<div class="w-9 h-9 rounded-full border-2 border-[#E5E7EB] dark:border-[#333333] overflow-hidden">
 						<img src="/profile.jpg" alt="Profile" class="w-full h-full object-cover" id="profile-image"/>
@@ -65,11 +81,11 @@
 				>
 					<button
 						type="submit"
-						class="bg-white dark:bg-[#1E1E1E] border hover:bg-[#F3F4F6] dark:hover:bg-[#2B2B2B] border-[#D1D5DB] dark:border-[#333333] text-[#EF4444] px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-all duration-200"
+						class="bg-white dark:bg-[#1E1E1E] border hover:bg-[#F3F4F6] dark:hover:bg-[#2B2B2B] border-[#D1D5DB] dark:border-[#333333] text-[#EF4444] px-3 md:px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-all duration-200"
 					>
 						<span class="flex items-center justify-center gap-2">
 							<ls.LogOut class="w-4 h-4" />
-							<span>Logout</span>
+							<span class="hidden sm:inline">Logout</span>
 						</span>
 					</button>
 				</form>
@@ -77,8 +93,21 @@
 		</header>
 
 		<div class="flex">
-			<Sidebar classes="fixed top-16 bottom-0 left-0 bg-white dark:bg-[#121212] border-r border-[#E5E7EB] dark:border-[#2A2A2A] w-[240px]">
+			<!-- Mobile Sidebar (off-canvas) -->
+			<Sidebar
+				classes="md:hidden fixed top-16 bottom-0 left-0 bg-white dark:bg-[#121212] border-r border-[#E5E7EB] dark:border-[#2A2A2A] z-50"
+				maxWidth="64"
+				minWidth="16"
+				type="move"
+				isSidebarOpen={isMobileSidebarOpen}
+			>
 				<div class="p-6 space-y-1">
+					<div class="flex items-center justify-between mb-2">
+						<h2 class="text-base font-semibold">Menu</h2>
+						<button class="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-[#F3F4F6] dark:hover:bg-[#1E1E1E]" onclick={() => (isMobileSidebarOpen = false)} aria-label="Chiudi menu">
+							<ls.X class="w-5 h-5" />
+						</button>
+					</div>
 					{#each tabs as tab}
 						<a href={`/admin/${tab.name.toLowerCase()}`} class="
 						flex items-center gap-3 font-medium transition-all duration-200 ease-in-out px-4 py-3 text-sm rounded-md
@@ -87,7 +116,7 @@
 								? 'text-[#15803D] bg-[#F0FDF4] dark:text-[#22C55E] dark:bg-[#1E1E1E] font-medium dark:shadow-glow'
 								: 'text-[#6B7280] hover:text-[#374151] hover:bg-[#F9FAFB] dark:text-[#A0A0A0] dark:hover:text-white dark:hover:bg-[#1E1E1E]'
 						}
-						">
+						" onclick={() => (isMobileSidebarOpen = false)}>
 							<tab.icon class="w-5 h-5" />
 							<span>{tab.name}</span>
 						</a>
@@ -95,8 +124,37 @@
 				</div>
 			</Sidebar>
 
-			<div class="ml-[240px] p-6 dark:bg-[#0A0A0A] min-h-screen w-full pt-24">
-				<div class="p-6 bg-white dark:bg-[#121212] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-md dark:shadow-glow rounded-lg">
+			{#if isMobileSidebarOpen}
+				<!-- Overlay -->
+				<button
+					type="button"
+					class="md:hidden fixed inset-0 bg-black/40 z-40"
+					onclick={() => (isMobileSidebarOpen = false)}
+					aria-label="Chiudi menu"
+				></button>
+			{/if}
+
+			<!-- Desktop Sidebar -->
+			<Sidebar classes="hidden md:flex fixed top-16 bottom-0 left-0 bg-white dark:bg-[#121212] border-r border-[#E5E7EB] dark:border-[#2A2A2A] w-[72px] lg:w-[240px]" useInlineWidth={false}>
+				<div class="p-6 space-y-1">
+					{#each tabs as tab}
+						<a href={`/admin/${tab.name.toLowerCase()}`} class="
+						flex items-center justify-center lg:justify-start gap-0 lg:gap-3 font-medium transition-all duration-200 ease-in-out px-0 lg:px-4 py-3 text-sm rounded-md
+						{
+							$page.url.pathname.split('/').pop().toLowerCase() === tab.name.toLowerCase()
+								? 'text-[#15803D] bg-[#F0FDF4] dark:text-[#22C55E] dark:bg-[#1E1E1E] font-medium dark:shadow-glow'
+								: 'text-[#6B7280] hover:text-[#374151] hover:bg-[#F9FAFB] dark:text-[#A0A0A0] dark:hover:text-white dark:hover:bg-[#1E1E1E]'
+						}
+						">
+							<tab.icon class="w-5 h-5" />
+							<span class="hidden lg:inline">{tab.name}</span>
+						</a>
+					{/each}
+				</div>
+			</Sidebar>
+
+			<div class="ml-0 md:ml-[72px] lg:ml-[240px] px-4 md:p-6 dark:bg-[#0A0A0A] min-h-screen w-full pt-20 md:pt-24">
+				<div class="p-4 md:p-6 bg-white dark:bg-[#121212] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-md dark:shadow-glow rounded-lg">
 					{@render children()}
 				</div>
 			</div>

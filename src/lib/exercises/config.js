@@ -67,6 +67,23 @@ export const configs = {
 			args: []
 		}
 	},
+	'superiori/matematica/1/numeri-razionali/espressioni-con-frazioni': {
+		'addizione-e-sottrazione': {
+			generator: 'AddizioneESottrazioneEx',
+			count: 2,
+			args: []
+		},
+		'moltiplicazione-e-divisione': {
+			generator: 'MoltiplicazioneEDivisioneEx',
+			count: 2,
+			args: []
+		},
+		'potenze': {
+			generator: 'PotenzeEx',
+			count: 2,
+			args: []
+		},
+	},
 	'superiori/matematica/1/numeri-razionali/potenze-esponente-negativo': {
 		'stessa-base': {
 			generator: 'PotenzeEsponenteNegativoEx',
@@ -112,5 +129,48 @@ export const configs = {
 			count: 2,
 			args: []
 		}
-	}
+	},
+	'superiori/matematica/1/monomi/grado': {
+		'grado': {
+			generator: 'GradoEx',
+			count: 6,
+			args: []
+		}
+	},
+	'superiori/matematica/1/monomi/mcm-mcd-monomi': {
+		'mcm': {
+			generator: 'McmMonomiEx',
+			count: 2,
+			args: []
+		},
+		'mcd': {
+			generator: 'McdMonomiEx',
+			count: 2,
+			args: []
+		}
+	},
+	'superiori/matematica/1/monomi/operazioni-tra-monomi': {
+		'somma-e-sottrazione': {
+			generator: 'SommaESottrazioneMonomiEx',
+			count: 2,
+			args: []
+		},
+		'moltiplicazione-e-divisione': {
+			generator: 'MoltiplicazioneEDivisioneMonomiEx',
+			count: 2,
+			args: []
+		},
+		'potenze': {
+			generator: 'PotenzeMonomiEx',
+			count: 2,
+			args: []
+		}
+	},
+	'superiori/matematica/1/monomi/espressioni-con-monomi': {
+		'espressione': {
+			generator: 'EspressioneMonomiEx',
+			count: 4,
+			args: []
+		}
+	},
 };

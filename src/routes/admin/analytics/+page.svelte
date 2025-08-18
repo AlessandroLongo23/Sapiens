@@ -32,10 +32,10 @@
 	}
 </script>
 
-<div class="space-y-6">
+<div class="space-y-4 md:space-y-6">
 	<DashboardStats />
 	
-	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 		<Earnings />
 		<TopEarningsBar />
 	</div>
