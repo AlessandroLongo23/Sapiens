@@ -50,45 +50,49 @@ export class SommaESottrazioneMonomiEx extends Exercise {
 	generateQuestion() {
 		this.vars = pickVariables();
 		this.baseExps = randomExponents(this.vars, 1, 4);
-		this.termCount = 3;
-		this.terms = [];
-		let expr = '';
-		for (let i = 0; i < this.termCount; i++) {
-			const sign = i === 0 ? 1 : (Math.random() < 0.5 ? 1 : -1);
-			const coeff = Math.floor(Math.random() * 9) + 1; // 1..9
-			this.terms.push(sign * coeff);
-			if (i > 0) expr += sign === 1 ? ' + ' : ' - ';
-			expr += formatMonomial(coeff, this.baseExps);
-		}
+		// exactly two like terms and one operation (+ or -)
+		this.coeffA = Math.floor(Math.random() * 9) + 1; // 1..9
+		this.coeffB = Math.floor(Math.random() * 9) + 1; // 1..9
+		this.isPlus = Math.random() < 0.5;
+		// avoid zero result for subtraction
+		if (!this.isPlus && this.coeffA === this.coeffB) this.coeffB += 1;
+		const op = this.isPlus ? ' + ' : ' - ';
+		const expr = `${formatMonomial(this.coeffA, this.baseExps)}${op}${formatMonomial(this.coeffB, this.baseExps)}`;
 		this.question = new Question(expr);
 	}
 
 	generateCorrectAnswer() {
-		const coeff = this.terms.reduce((a, b) => a + b, 0);
-		this.correctCoeff = coeff === 0 ? 1 : coeff; // avoid 0 result; adjust for robustness
-		this.answers.push(new Answer(formatMonomial(this.correctCoeff, this.baseExps), true));
-		this.correctAnswer = this.answers[0];
+		const resultCoeff = this.isPlus ? this.coeffA + this.coeffB : this.coeffA - this.coeffB;
+		this.correctText = formatMonomial(resultCoeff, this.baseExps);
+		const ans = new Answer(this.correctText, true);
+		this.answers.push(ans);
+		this.correctAnswer = ans;
 	}
 
 	generateAnswers() {
 		this.answers = [];
 		this.generateCorrectAnswer();
 
-		const wrongs = new Set();
-		wrongs.add(this.correctAnswer.textContent);
-		const candidates = [this.correctCoeff + 1, this.correctCoeff - 1, -this.correctCoeff, this.correctCoeff + 2];
-		for (const c of candidates) {
-			if (c !== 0) {
-				const txt = '$$' + formatMonomial(c, this.baseExps) + '$$';
-				wrongs.add(txt);
-			}
-			if (wrongs.size >= 4) break;
+		const wrongTexts = new Set();
+		wrongTexts.add(this.correctText);
+		// plausible wrongs: flip sign, off-by-one, swap operation
+		const candidates = [];
+		const sum = this.coeffA + this.coeffB;
+		const diff = this.coeffA - this.coeffB;
+		candidates.push(formatMonomial(- (this.isPlus ? sum : diff), this.baseExps));
+		candidates.push(formatMonomial((this.isPlus ? sum : diff) + 1, this.baseExps));
+		candidates.push(formatMonomial((this.isPlus ? sum : diff) - 1, this.baseExps));
+		candidates.push(formatMonomial(this.isPlus ? diff : sum, this.baseExps));
+
+		for (const t of candidates) {
+			if (!wrongTexts.has(t)) wrongTexts.add(t);
+			if (wrongTexts.size >= 4) break;
 		}
-		for (const txt of Array.from(wrongs)) {
-			if (txt !== this.correctAnswer.textContent) this.answers.push(new Answer(txt.replace(/^\$\$|\$\$/g, ''), false));
-			if (this.answers.length >= 3) break;
+
+		for (const t of Array.from(wrongTexts)) {
+			if (t !== this.correctText && this.answers.length < 3) this.answers.push(new Answer(t, false));
 		}
-		this.answers.push(this.correctAnswer);
+		// ensure we include the existing correct answer once (already present)
 		this.answers.shuffle();
 	}
 }
@@ -102,37 +106,32 @@ export class MoltiplicazioneEDivisioneMonomiEx extends Exercise {
 
 	generateQuestion() {
 		this.vars = pickVariables();
-		// Start monomial
-		let coeff = Math.floor(Math.random() * 8) + 2; // 2..9
-		let exps = randomExponents(this.vars, 1, 4);
-		const parts = [formatMonomial(coeff, exps)];
-
-		const steps = Math.random() < 0.5 ? 2 : 3;
-		for (let i = 0; i < steps - 1; i++) {
-			const isMul = Math.random() < 0.6; // more multiplications
-			if (isMul) {
-				const f = Math.floor(Math.random() * 4) + 2; // 2..5
-				const add = randomExponents(this.vars, 0, 3);
-				coeff *= f;
-				exps = addExponents(exps, add);
-				parts.push(' \\times ' + formatMonomial(f, add));
-			} else {
-				// division: pick divisor of current coefficient and exponents <= current
-				let divisors = [];
-				for (let d = 2; d <= Math.min(9, coeff); d++) if (coeff % d === 0) divisors.push(d);
-				if (divisors.length === 0) divisors = [1];
-				const d = divisors[Math.floor(Math.random() * divisors.length)];
-				const sub = {};
-				for (const v of this.vars) sub[v] = Math.floor(Math.random() * (exps[v] + 1));
-				coeff = Math.floor(coeff / d);
-				exps = subExponents(exps, sub);
-				parts.push(' : ' + formatMonomial(d, sub));
-			}
+		this.isMul = Math.random() < 0.5; // choose exactly one: mul or div
+		// Build two monomials A and B
+		const Acoeff = Math.floor(Math.random() * 8) + 2; // 2..9
+		const Aexps = randomExponents(this.vars, 1, 4);
+		let Bcoeff;
+		let Bexps;
+		if (this.isMul) {
+			Bcoeff = Math.floor(Math.random() * 8) + 2; // 2..9
+			Bexps = randomExponents(this.vars, 0, 3);
+			this.finalCoeff = Acoeff * Bcoeff;
+			this.finalExps = addExponents(Aexps, Bexps);
+			this.question = new Question(`${formatMonomial(Acoeff, Aexps)} \\times ${formatMonomial(Bcoeff, Bexps)}`);
+		} else {
+			// Ensure integer result with non-negative exponents: choose B such that it divides A
+			// 1) pick divisors of Acoeff (>=2 if possible)
+			let divisors = [];
+			for (let d = 2; d <= Acoeff; d++) if (Acoeff % d === 0) divisors.push(d);
+			if (divisors.length === 0) divisors = [1];
+			Bcoeff = divisors[Math.floor(Math.random() * divisors.length)];
+			// 2) pick exponents of B not exceeding Aexps
+			Bexps = {};
+			for (const v of this.vars) Bexps[v] = Math.floor(Math.random() * (Aexps[v] + 1));
+			this.finalCoeff = Math.floor(Acoeff / Bcoeff);
+			this.finalExps = subExponents(Aexps, Bexps);
+			this.question = new Question(`${formatMonomial(Acoeff, Aexps)} : ${formatMonomial(Bcoeff, Bexps)}`);
 		}
-
-		this.finalCoeff = coeff;
-		this.finalExps = exps;
-		this.question = new Question(parts.join(''));
 	}
 
 	generateCorrectAnswer() {
@@ -146,33 +145,36 @@ export class MoltiplicazioneEDivisioneMonomiEx extends Exercise {
 		this.answers = [];
 		this.generateCorrectAnswer();
 
-		const wrongs = new Set();
-		wrongs.add(this.correctAnswer.textContent);
+		const correctText = this.correctAnswer.textContent.replace(/^\$\$|\$\$/g, '');
+		const wrongTexts = new Set([correctText]);
 
-		// Wrong 1: tweak one exponent by ±1
+		// Wrong 1: tweak one exponent by ±1 on an existing variable
 		const vars = Object.keys(this.finalExps);
 		if (vars.length > 0) {
 			const v = vars[Math.floor(Math.random() * vars.length)];
 			const mutated = { ...this.finalExps };
 			mutated[v] = Math.max(0, (mutated[v] || 0) + (Math.random() < 0.5 ? -1 : 1));
-			wrongs.add('$$' + formatMonomial(this.finalCoeff, mutated) + '$$');
+			if (mutated[v] === 0) delete mutated[v];
+			wrongTexts.add(formatMonomial(this.finalCoeff, mutated));
 		}
 
-		// Wrong 2: coefficient off by one factor
-		wrongs.add('$$' + formatMonomial(this.finalCoeff + 1, this.finalExps) + '$$');
+		// Wrong 2: coefficient off by ±1
+		wrongTexts.add(formatMonomial(Math.max(1, this.finalCoeff - 1), this.finalExps));
+		wrongTexts.add(formatMonomial(this.finalCoeff + 1, this.finalExps));
 
-		// Wrong 3: treat last division as multiplication (if any division used)
-		const text = this.question.textContent.replace(/^\$\$|\$\$/g, '');
-		if (text.includes(' : ')) {
-			const wrongText = text.replace(/ : /, ' \\times ');
-			// we can't compute value easily here; provide structural distractor as text answer is numeric/monomial only, so skip
+		// Wrong 3: add a small spurious exponent on a missing var if any variable missing
+		for (const v of this.vars) {
+			if (!this.finalExps[v]) {
+				const mutated = { ...this.finalExps, [v]: 1 };
+				wrongTexts.add(formatMonomial(this.finalCoeff, mutated));
+				break;
+			}
 		}
 
-		for (const txt of Array.from(wrongs)) {
-			if (txt !== this.correctAnswer.textContent) this.answers.push(new Answer(txt.replace(/^\$\$|\$\$/g, ''), false));
-			if (this.answers.length >= 3) break;
+		for (const t of Array.from(wrongTexts)) {
+			if (t !== correctText && this.answers.length < 3) this.answers.push(new Answer(t, false));
 		}
-		this.answers.push(this.correctAnswer);
+		// correct answer already present once
 		this.answers.shuffle();
 	}
 }

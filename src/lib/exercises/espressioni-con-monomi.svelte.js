@@ -1,11 +1,39 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
+import { gcd } from '$lib/utils/auxiliary.js';
 
 const candidateVariables = ['x', 'y', 'z'];
 
+// Fraction helpers
+function simplifyFraction(frac) {
+	let num = frac.num;
+	let den = frac.den;
+	if (den < 0) {
+		num = -num; den = -den;
+	}
+	const g = gcd(Math.abs(num), Math.abs(den));
+	return { num: num / g, den: den / g };
+}
+
+function makeInt(n) { return { num: n, den: 1 }; }
+function multiplyFrac(a, b) { return simplifyFraction({ num: a.num * b.num, den: a.den * b.den }); }
+function divideFrac(a, b) { return simplifyFraction({ num: a.num * b.den, den: a.den * b.num }); }
+function addFrac(a, b) { return simplifyFraction({ num: a.num * b.den + b.num * a.den, den: a.den * b.den }); }
+function subFrac(a, b) { return simplifyFraction({ num: a.num * b.den - b.num * a.den, den: a.den * b.den }); }
+
+function formatFraction(frac) {
+	if (frac.den === 1) return String(frac.num);
+	return `\\dfrac{${frac.num}}{${frac.den}}`;
+}
+
 function formatMonomial(coefficient, exponents) {
-	const vars = Object.keys(exponents).sort();
+	const vars = Object.keys(exponents).filter(k => exponents[k] !== 0).sort();
+	const coeffStr = formatFraction(coefficient);
 	let s = '';
-	if (coefficient !== 1 || vars.length === 0) s += String(coefficient);
+	if (coefficient.den === 1 && Math.abs(coefficient.num) === 1 && vars.length > 0) {
+		s += coefficient.num === -1 ? '-' : '';
+	} else {
+		s += coeffStr;
+	}
 	for (const v of vars) {
 		const e = exponents[v];
 		s += e === 1 ? v : `${v}^{${e}}`;
@@ -13,11 +41,12 @@ function formatMonomial(coefficient, exponents) {
 	return s || '1';
 }
 
-function randomMonomial(vars) {
-	const coefficient = Math.floor(Math.random() * 9) + 1; // 1..9
+function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function randomExponents(vars, min = 1, max = 4) {
 	const exps = {};
-	for (const v of vars) exps[v] = Math.floor(Math.random() * 4) + 1; // 1..4
-	return { coefficient, exponents: exps };
+	for (const v of vars) exps[v] = randomInt(min, max);
+	return exps;
 }
 
 function addExponents(a, b) {
@@ -32,6 +61,16 @@ function subExponents(a, b) {
 	for (const v of Object.keys(b)) out[v] = (out[v] || 0) - b[v];
 	for (const v of Object.keys(out)) if (out[v] === 0) delete out[v];
 	return out;
+}
+
+function monomialWithIntegerCoeff(vars, coeffMin = 1, coeffMax = 9, expMin = 1, expMax = 4) {
+	return { coefficient: makeInt(randomInt(coeffMin, coeffMax)), exponents: randomExponents(vars, expMin, expMax) };
+}
+
+function monomialWithFractionCoeff(vars, numMin = 1, numMax = 9, denMin = 2, denMax = 5, expMin = -2, expMax = 2) {
+	const num = randomInt(numMin, numMax) * (Math.random() < 0.3 ? -1 : 1);
+	const den = randomInt(denMin, denMax);
+	return { coefficient: simplifyFraction({ num, den }), exponents: randomExponents(vars, expMin, expMax) };
 }
 
 export class EspressioneMonomiEx extends Exercise {
@@ -49,24 +88,41 @@ export class EspressioneMonomiEx extends Exercise {
 		this.vars = Array.from(varsSet).sort();
 
 		// Build expression: ((m1 * m2) : m3) * (m4) ± (m5)
-		const m1 = randomMonomial(this.vars);
-		const m2 = randomMonomial(this.vars);
-		const m3 = randomMonomial(this.vars);
-		const m4 = randomMonomial(this.vars);
-		const m5 = randomMonomial(this.vars);
+		const m1 = monomialWithIntegerCoeff(this.vars, 1, 9, 1, 4);
+		const m2 = monomialWithIntegerCoeff(this.vars, 1, 9, 1, 4);
 
-		const group1 = `(${formatMonomial(m1.coefficient, m1.exponents)} \\times ${formatMonomial(m2.coefficient, m2.exponents)} : ${formatMonomial(m3.coefficient, m3.exponents)})`;
-		const group2 = `${formatMonomial(m4.coefficient, m4.exponents)}`;
-		const plus = Math.random() < 0.5;
-		const group3 = `${formatMonomial(m5.coefficient, m5.exponents)}`;
-		this.question = new Question(`${group1} \\times ${group2} ${plus ? '+' : '-'} ${group3}`);
+		// Choose m3 so that division yields integer coefficient and non-negative exponents
+		const exps12 = addExponents(m1.exponents, m2.exponents);
+		const prodCoeff = m1.coefficient.num * m2.coefficient.num;
+		let divisors = [];
+		for (let d = 1; d <= prodCoeff; d++) if (prodCoeff % d === 0) divisors.push(d);
+		const d = divisors[Math.floor(Math.random() * divisors.length)];
+		const m3exps = {};
+		for (const v of this.vars) m3exps[v] = Math.floor(Math.random() * (exps12[v] + 1));
+		const m3 = { coefficient: makeInt(d), exponents: m3exps };
 
-		// compute value
-		let coeff = Math.floor((m1.coefficient * m2.coefficient) / m3.coefficient) * m4.coefficient;
+		// m4 introduces fractions and possibly negative exponents
+		const m4 = monomialWithFractionCoeff(this.vars, 1, 9, 2, 5, -2, 2);
+
+		// compute intermediate result r = ((m1*m2)/m3) * m4
 		let exps = addExponents(m1.exponents, m2.exponents);
 		exps = subExponents(exps, m3.exponents);
 		exps = addExponents(exps, m4.exponents);
-		this.resultCoeff = plus ? coeff + m5.coefficient : Math.max(1, coeff - m5.coefficient);
+
+		const c12 = multiplyFrac(m1.coefficient, m2.coefficient);
+		const c123 = divideFrac(c12, m3.coefficient); // guaranteed integer
+		const c1234 = multiplyFrac(c123, m4.coefficient); // may be fractional
+
+		// m5 shares final exponents so that +/- keeps a monomial
+		const m5 = { coefficient: monomialWithFractionCoeff(this.vars, 1, 9, 2, 5, 0, 0).coefficient, exponents: { ...exps } };
+		const plus = Math.random() < 0.5;
+
+		const group1 = `(${formatMonomial(m1.coefficient, m1.exponents)} \\times ${formatMonomial(m2.coefficient, m2.exponents)} : ${formatMonomial(m3.coefficient, m3.exponents)})`;
+		const group2 = `${formatMonomial(m4.coefficient, m4.exponents)}`;
+		const group3 = `${formatMonomial(m5.coefficient, m5.exponents)}`;
+		this.question = new Question(`${group1} \\times ${group2} ${plus ? '+' : '-'} ${group3}`);
+
+		this.resultCoeff = plus ? addFrac(c1234, m5.coefficient) : subFrac(c1234, m5.coefficient);
 		this.resultExps = { ...exps };
 	}
 
@@ -80,23 +136,30 @@ export class EspressioneMonomiEx extends Exercise {
 		this.answers = [];
 		this.generateCorrectAnswer();
 
-		// wrong 1: forget division
-		const wrong1Coeff = this.resultCoeff * 2;
-		this.answers.push(new Answer(formatMonomial(wrong1Coeff, this.resultExps), false));
+		const correctText = this.correctAnswer.textContent.replace(/^\$\$|\$\$/g, '');
+		const wrongs = new Set([correctText]);
 
-		// wrong 2: sign flipped on last term
-		const wrong2Coeff = Math.max(1, this.resultCoeff - 2);
-		this.answers.push(new Answer(formatMonomial(wrong2Coeff, this.resultExps), false));
+		// wrong 1: tweak coefficient by a small fraction ±1/q
+		const tweak = simplifyFraction({ num: 1, den: Math.floor(Math.random() * 4) + 2 });
+		wrongs.add(formatMonomial(addFrac(this.resultCoeff, tweak), this.resultExps));
+		wrongs.add(formatMonomial(subFrac(this.resultCoeff, tweak), this.resultExps));
 
-		// wrong 3: one exponent off by ±1
+		// wrong 2: one exponent off by ±1
 		const mutated = { ...this.resultExps };
 		const keys = Object.keys(mutated);
 		if (keys.length > 0) {
 			const v = keys[Math.floor(Math.random() * keys.length)];
-			mutated[v] = Math.max(0, mutated[v] + (Math.random() < 0.5 ? -1 : 1));
+			mutated[v] = (mutated[v] || 0) + (Math.random() < 0.5 ? -1 : 1);
 			if (mutated[v] === 0) delete mutated[v];
+			wrongs.add(formatMonomial(this.resultCoeff, mutated));
 		}
-		this.answers.push(new Answer(formatMonomial(this.resultCoeff, mutated), false));
+
+		// wrong 3: negate coefficient
+		wrongs.add(formatMonomial(simplifyFraction({ num: -this.resultCoeff.num, den: this.resultCoeff.den }), this.resultExps));
+
+		for (const t of Array.from(wrongs)) {
+			if (t !== correctText && this.answers.length < 3) this.answers.push(new Answer(t, false));
+		}
 
 		this.answers.shuffle();
 	}
