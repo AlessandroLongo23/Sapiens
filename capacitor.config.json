@@ -1,0 +1,16 @@
+{
+  "appId": "it.aleripetizioni.app",
+  "appName": "AleRipetizioni",
+  "webDir": "build",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#ffffff",
+      "androidSplashResourceName": "splash"
+    }
+  }
+}

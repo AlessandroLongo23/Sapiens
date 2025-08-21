@@ -202,15 +202,15 @@
         >
             {#if Array.isArray(rootItems)}
                 {#each rootItems as node (node.id)}
-                <EditableTreeNode 
-                    {node} 
-                    {expanded} 
-                    {selected} 
-                    depth={0}
-                    on:toggleExpand={handleToggleExpand}
-                    on:toggleSelect={handleToggleSelect}
-                    on:nodeAction={handleNodeAction}
-                />
+                    <EditableTreeNode 
+                        {node} 
+                        {expanded} 
+                        {selected} 
+                        depth={0}
+                        on:toggleExpand={handleToggleExpand}
+                        on:toggleSelect={handleToggleSelect}
+                        on:nodeAction={handleNodeAction}
+                    />
                 {/each}
             {/if}
         </div>

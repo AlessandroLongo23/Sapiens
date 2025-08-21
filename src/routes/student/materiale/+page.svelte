@@ -57,6 +57,7 @@
 				subject: subject,
 				year: year,
 				key: topicSlug,
+				child_index: topic.child_index, // Include the child_index property
 				subtopicCount: subtopics.length,
 				subtopics: subtopics.reduce((acc, subtopic) => {
 					acc[subtopic.slug] = {
@@ -77,7 +78,13 @@
 	let continuaTopics = $derived.by(() => {
 		return allTopics
 			.filter(t => t.memory > 0 && t.memory < 100)
-			.sort((a, b) => b.memory - a.memory);
+			.sort((a, b) => {
+				const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
+				const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
+				
+				if (aIndex !== bIndex) return aIndex - bIndex;
+				return b.memory - a.memory;
+			});
 	});
 
 	let filteredTopics = $derived.by(() => {
@@ -114,8 +121,22 @@
 					return 0;
 				});
 				break;
-			default:
+			case "index":
 				filtered.sort((a, b) => {
+					const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
+					const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
+					return aIndex - bIndex;
+				});
+				break;
+			default:
+				// Use child_index as the default sort if available
+				filtered.sort((a, b) => {
+					const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
+					const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
+					
+					if (aIndex !== bIndex) return aIndex - bIndex;
+					
+					// Fall back to the original default sort
 					if (a.memory > 0 && a.memory < 100 && (b.memory === 0 || b.memory === 100)) return -1;
 					if (b.memory > 0 && b.memory < 100 && (a.memory === 0 || a.memory === 100)) return 1;
 					return b.lastAccessed - a.lastAccessed;
@@ -138,7 +159,14 @@
 		});
 		
 		Object.keys(grouped).forEach(key => {
-			grouped[key].sort((a, b) => b.memory - a.memory);
+			// Sort by child_index first (if available), then by memory
+			grouped[key].sort((a, b) => {
+				const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
+				const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
+				
+				if (aIndex !== bIndex) return aIndex - bIndex;
+				return b.memory - a.memory;
+			});
 		});
 		
 		return grouped;
@@ -344,6 +372,7 @@
 								class="appearance-none w-full px-4 py-2 sm:py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 pr-9 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer border border-zinc-200 dark:border-zinc-600 text-sm"
 							>
 								<option value="default">Consigliati</option>
+								<option value="index">Ordine personalizzato</option>
 								<option value="memory">Memoria</option>
 								<option value="recent">Recenti</option>
 								<option value="alphabetical">A-Z</option>

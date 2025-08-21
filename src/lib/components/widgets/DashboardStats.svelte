@@ -7,29 +7,6 @@
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { isSameDay } from 'date-fns';
 	import * as ls from 'lucide-svelte';
-
-	// let totalTime = $derived.by(() => {
-	// 	let total = $lecturesStore.lectures.reduce((total, lecture) => {
-	// 		const startTime = lecture.start_time.split(':');
-	// 		const endTime = lecture.end_time.split(':');
-	// 		const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
-	// 		const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
-	// 		const hours = endHour - startHour;
-			
-	// 		return total + hours;
-	// 	}, 0);
-
-	// 	return {
-	// 		hours: Math.floor(total),
-	// 		minutes: Math.round((total - Math.floor(total)) * 60)
-	// 	}
-	// });
-
-	// let totalEarnings = $derived.by(() => {
-	// 	return $lecturesStore.lectures.reduce((total, lecture) => {
-	// 		return total + calculateEarnings(lecture.start_time, lecture.end_time, lecture.hourly_rate);
-	// 	}, 0);
-	// });
 	
 	let averageRate = $derived.by(() => {
 		if ($lecturesStore.lectures.length === 0) return 0;
@@ -75,66 +52,58 @@
 
 		return null;
 	});
+
+	let cardsData = $derived.by(() => {
+		return [
+			{
+				icon: ls.Users,
+				label: 'STUDENTS',
+				value: $studentsStore.students.length,
+				backgroundColor: 'bg-[#EFF6FF]',
+				iconColor: 'text-[#3B82F6]'
+			},
+			{
+				icon: ls.BookOpen,
+				label: 'SUBJECTS',
+				value: $subjectsStore.subjects.length,
+				backgroundColor: 'bg-[#F3E8FF]',
+				iconColor: 'text-[#8B5CF6]'
+			},
+			{
+				icon: ls.Clock,
+				label: 'HOURS TAUGHT',
+				value: statsStore.totalTime.hours + "h " + statsStore.totalTime.minutes + "m",
+				backgroundColor: 'bg-[#FEF3C7]',
+				iconColor: 'text-[#F59E0B]'
+			},
+			{
+				icon: ls.CreditCard,
+				label: 'TOTAL EARNINGS',
+				value: statsStore.totalEarnings + "€",
+				backgroundColor: 'bg-[#F0FDF4]',
+				iconColor: 'text-[#22C55E]'
+			}
+		]
+	})
 </script>
 
-<div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+<div class="w-full grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+	{#each cardsData as card, index}
 	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
-		<div class="flex flex-row justify-between">
-			<div class="w-14 h-14 bg-[#EFF6FF] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
-				<ls.Users class="w-7 h-7 text-[#3B82F6]" />
+		<div class="flex flex-row justify-between">	
+			<div class="w-14 h-14 {card.backgroundColor} rounded-lg flex items-center justify-center">
+				<card.icon class="w-7 h-7 {card.iconColor}" />
 			</div>
 			<div class="flex flex-col items-end">
-				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">STUDENTS</span>
+				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">{card.label}</span>
 				<div class="flex items-baseline">
-					<span class="text-3xl font-bold text-[#111827] dark:text-white">{$studentsStore.students.length}</span>
+					<span class="text-3xl font-bold text-[#111827] dark:text-white">{card.value}</span>
 					<!-- <span class="text-sm text-[#22C55E] font-medium ml-3">+2 this month</span> -->
 				</div>
 			</div>
 		</div>
 	</div>
-	
-	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
-		<div class="flex flex-row justify-between">
-			<div class="w-14 h-14 bg-[#F0FDF4] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
-				<ls.BookOpen class="w-7 h-7 text-[#22C55E]" />
-			</div>
-			<div class="flex flex-col items-end">
-				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">SUBJECTS</span>
-				<div class="flex items-baseline">
-					<span class="text-3xl font-bold text-[#111827] dark:text-white">{$subjectsStore.subjects.length}</span>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
-		<div class="flex flex-row justify-between">
-			<div class="w-14 h-14 bg-[#F3E8FF] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
-				<ls.Clock class="w-7 h-7 text-[#8B5CF6]" />
-			</div>
-			<div class="flex flex-col items-end">
-				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">HOURS TAUGHT</span>
-				<div class="flex items-baseline">
-					<span class="text-3xl font-bold text-[#111827] dark:text-white">{statsStore.totalTime.hours}h {statsStore.totalTime.minutes}m</span>
-					<!-- <span class="text-sm text-[#22C55E] font-medium ml-3">+4h this week</span> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
-		<div class="flex flex-row justify-between">
-			<div class="w-14 h-14 bg-[#FEF3C7] dark:bg-[#1E1E1E] rounded-lg flex items-center justify-center">
-				<ls.CreditCard class="w-7 h-7 text-[#F59E0B]" />
-			</div>
-			<div class="flex flex-col items-end">
-				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">TOTAL EARNINGS</span>
-				<div class="flex items-baseline">
-					<span class="text-3xl font-bold text-[#111827] dark:text-white">{formatCurrency(statsStore.totalEarnings)}</span>
-				</div>
-			</div>
-		</div>
-	</div>
+	{/each}
 </div>
 
 {#if nextLecture}

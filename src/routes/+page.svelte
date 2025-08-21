@@ -161,9 +161,7 @@
 <header class="sm:top-8 top-4 z-30 fixed left-1/2 -translate-x-1/2 sm:left-4 sm:right-4 sm:translate-x-0 mx-auto max-w-7xl rounded-2xl border border-zinc-200/70 dark:border-zinc-700/60 bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-zinc-900/60">
 	<div class="flex items-center sm:justify-between justify-center px-2 sm:px-4 py-3">
 		<a href="/" class="hidden sm:flex items-center gap-3">
-			<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-elegant">
-				<ls.Calculator class="w-4 h-4 text-white" />
-			</div>
+			<img src="/icon.png" alt="logo" class="size-8 rounded-md" />
 			<span class="font-semibold text-zinc-900 dark:text-zinc-100">Ale Ripetizioni</span>
 		</a>
 		<nav class="hidden sm:flex items-center gap-6 text-sm">
