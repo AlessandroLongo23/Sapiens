@@ -5,6 +5,7 @@
 	import { Plus } from 'lucide-svelte';
 	
 	import UpcomingLectures from '$lib/components/widgets/UpcomingLectures.svelte';
+	import UnpaidLectures from '$lib/components/widgets/UnpaidLectures.svelte';
 	import AddLectureModal from '$lib/components/modals/AddLectureModal.svelte';
 	import EditLectureModal from '$lib/components/modals/EditLectureModal.svelte';
 	import Calendar from '$lib/components/calendars/CalendarAdmin.svelte';
@@ -37,15 +38,21 @@
 	}
 </script>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-	<div class="lg:col-span-2">
-		<Calendar 
-			on:daySelected={handleDaySelected} 
-			on:lectureSelected={handleLectureSelected}
-		/>
+<div class="space-y-6">
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+		<div class="lg:col-span-2 space-y-6">
+			<Calendar 
+				on:daySelected={handleDaySelected} 
+				on:lectureSelected={handleLectureSelected}
+			/>
+
+			<UnpaidLectures />
+		</div>
+		
+		<div>
+			<UpcomingLectures />
+		</div>
 	</div>
-	
-	<UpcomingLectures />
 </div>
 
 <AddLectureModal 
