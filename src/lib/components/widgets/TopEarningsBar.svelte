@@ -38,6 +38,23 @@
 		}
 	});
 	
+	// Handle window resize
+	let resizeTimeout;
+	onMount(() => {
+		window.addEventListener('resize', () => {
+			// Debounce to avoid excessive re-renders
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(() => {
+				if (chart) renderChart();
+			}, 250);
+		});
+		
+		return () => {
+			window.removeEventListener('resize', () => {});
+			clearTimeout(resizeTimeout);
+		};
+	});
+	
 	function setupCanvasHover() {
 		if (!canvasContainer) return;
 		
@@ -144,7 +161,9 @@
 						color: designSystem.colors.chart.text,
 						callback: function(value) {
 							return formatCurrency(value);
-						}
+						},
+						maxRotation: 0,
+						autoSkip: true
 					}
 				},
 				y: {
@@ -155,7 +174,16 @@
 					ticks: {
 						color: designSystem.colors.chart.text,
 						font: {
-							size: 12
+							size: 11
+						},
+						callback: function(value, index) {
+							const label = this.getLabelForValue(value);
+							// Abbreviate long names for mobile
+							const maxLength = window.innerWidth < 640 ? 12 : 20;
+							if (label && label.length > maxLength) {
+								return label.substring(0, maxLength) + '...';
+							}
+							return label;
 						}
 					}
 				}
@@ -176,7 +204,7 @@
 </script>
 
 <div class="w-full flex flex-col overflow-hidden bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow">
-	<div class="flex items-center justify-between p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
+	<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
 		<div>
 			<h2 class="text-base font-semibold text-[#111827] dark:text-white mb-1">
 				Top Earnings by {viewMode === 'subject' ? 'Subject' : 'Student'}
@@ -185,18 +213,18 @@
 		</div>
 		
 		<button 
-			class="px-3 py-1.5 text-xs font-medium border border-[#E5E7EB] dark:border-[#333333] bg-white hover:bg-[#F9FAFB] dark:bg-[#1E1E1E] dark:hover:bg-[#2B2B2B] text-[#4B5563] dark:text-[#A0A0A0] rounded-md transition-colors"
+			class="w-full sm:w-auto px-3 py-1.5 text-xs font-medium border border-[#E5E7EB] dark:border-[#333333] bg-white hover:bg-[#F9FAFB] dark:bg-[#1E1E1E] dark:hover:bg-[#2B2B2B] text-[#4B5563] dark:text-[#A0A0A0] rounded-md transition-colors"
 			onclick={toggleViewMode}
 		>
-			<div class="flex items-center gap-2">
+			<div class="flex items-center justify-center sm:justify-start gap-2">
 				<ls.Repeat class="w-3.5 h-3.5" />
 				<span>View by {viewMode === 'subject' ? 'Student' : 'Subject'}</span>
 			</div>
 		</button>
 	</div>
 	
-	<div class="p-6 relative">
-		<div class="w-full h-72" bind:this={canvasContainer}>
+	<div class="p-4 sm:p-6 relative">
+		<div class="w-full h-72 pl-0 sm:pl-0" bind:this={canvasContainer}>
 			<canvas bind:this={canvas}></canvas>
 		</div>
 		

@@ -36,13 +36,13 @@
 </script>
 
 <div class="flex flex-col h-full bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow">
-	<div class="p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex justify-between items-center">
+	<div class="p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
 		<div>
 			<h2 class="text-base font-semibold text-[#111827] dark:text-white mb-1">Earnings over time</h2>
 			<p class="text-sm text-[#6B7280] dark:text-[#A0A0A0]">{formatCurrency(totalEarnings)} total</p>
 		</div>
 		
-		<div class="flex items-center gap-2">
+		<div class="flex items-center">
 			<div class="flex rounded-md border border-[#E5E7EB] dark:border-[#333333] overflow-hidden">
 				{#each timeRangeOptions as option}
 					<button 
@@ -52,14 +52,15 @@
 						"
 						onclick={() => handleTimeRangeChange(option.id)}
 					>
-						{option.name}
+						<span class="sm:hidden">{option.id === 24 ? '2y' : `${option.id}m`}</span>
+						<span class="hidden sm:inline">{option.name}</span>
 					</button>
 				{/each}
 			</div>
 		</div>
 	</div>
 	
-	<div class="p-5 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center gap-3">
+	<div class="p-5 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-wrap items-center gap-3">
 		<div class="flex rounded-md border border-[#E5E7EB] dark:border-[#333333] overflow-hidden">
 			{#each filterOptions as option}
 				<button 

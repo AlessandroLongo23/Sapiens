@@ -54,51 +54,57 @@
 	});
 
 	let cardsData = $derived.by(() => {
-		return [
-			{
-				icon: ls.Users,
-				label: 'STUDENTS',
-				value: $studentsStore.students.length,
-				backgroundColor: 'bg-[#EFF6FF]',
-				iconColor: 'text-[#3B82F6]'
-			},
-			{
-				icon: ls.BookOpen,
-				label: 'SUBJECTS',
-				value: $subjectsStore.subjects.length,
-				backgroundColor: 'bg-[#F3E8FF]',
-				iconColor: 'text-[#8B5CF6]'
-			},
-			{
-				icon: ls.Clock,
-				label: 'HOURS TAUGHT',
-				value: statsStore.totalTime.hours + "h " + statsStore.totalTime.minutes + "m",
-				backgroundColor: 'bg-[#FEF3C7]',
-				iconColor: 'text-[#F59E0B]'
-			},
-			{
-				icon: ls.CreditCard,
-				label: 'TOTAL EARNINGS',
-				value: statsStore.totalEarnings + "€",
-				backgroundColor: 'bg-[#F0FDF4]',
-				iconColor: 'text-[#22C55E]'
-			}
-		]
-	})
+	return [
+		{
+			icon: ls.Users,
+			label: 'STUDENTS',
+			value: $studentsStore.students.length,
+			backgroundColor: 'bg-[#EFF6FF]',
+			iconColor: 'text-[#3B82F6]'
+		},
+		{
+			icon: ls.BookOpen,
+			label: 'SUBJECTS',
+			value: $subjectsStore.subjects.length,
+			backgroundColor: 'bg-[#F3E8FF]',
+			iconColor: 'text-[#8B5CF6]'
+		},
+		{
+			icon: ls.Clock,
+			label: 'HOURS TAUGHT',
+			value: statsStore.totalTime.hours + "h\n" + statsStore.totalTime.minutes + "m",
+			mobileValue: `${statsStore.totalTime.hours}h ${statsStore.totalTime.minutes}m`,
+			backgroundColor: 'bg-[#FEF3C7]',
+			iconColor: 'text-[#F59E0B]'
+		},
+		{
+			icon: ls.CreditCard,
+			label: 'TOTAL EARNINGS',
+			value: statsStore.totalEarnings + "€",
+			mobileValue: `${statsStore.totalEarnings}€`,
+			backgroundColor: 'bg-[#F0FDF4]',
+			iconColor: 'text-[#22C55E]'
+		}
+	]
+})
 </script>
 
-<div class="w-full grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+<div class="w-full grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
 	{#each cardsData as card, index}
-	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-6">
-		<div class="flex flex-row justify-between">	
-			<div class="w-14 h-14 {card.backgroundColor} rounded-lg flex items-center justify-center">
-				<card.icon class="w-7 h-7 {card.iconColor}" />
+	<div class="bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow p-4 sm:p-6">
+		<div class="flex flex-col sm:flex-row justify-between h-full">	
+			<div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 {card.backgroundColor} rounded-lg flex items-center justify-center mb-3 sm:mb-0">
+				<card.icon class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 {card.iconColor}" />
 			</div>
-			<div class="flex flex-col items-end">
-				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-2">{card.label}</span>
+			<div class="flex flex-col sm:items-end w-full sm:w-auto">
+				<span class="text-xs font-medium text-[#6B7280] dark:text-[#A0A0A0] uppercase tracking-wide mb-1">{card.label}</span>
 				<div class="flex items-baseline">
-					<span class="text-3xl font-bold text-[#111827] dark:text-white">{card.value}</span>
-					<!-- <span class="text-sm text-[#22C55E] font-medium ml-3">+2 this month</span> -->
+					{#if card.mobileValue && (index === 2 || index === 3)}
+						<span class="text-xl sm:text-2xl md:text-3xl font-bold text-[#111827] dark:text-white block sm:hidden">{card.mobileValue}</span>
+						<span class="hidden sm:block text-xl sm:text-2xl md:text-3xl font-bold text-[#111827] dark:text-white">{card.value}</span>
+					{:else}
+						<span class="text-xl sm:text-2xl md:text-3xl font-bold text-[#111827] dark:text-white">{card.value}</span>
+					{/if}
 				</div>
 			</div>
 		</div>
