@@ -21,7 +21,7 @@ export const configs = {
 			args: [2]
 		}
 	},
-	'superiori/matematica/1/numeri-naturali/mcm-MCD': {
+	'superiori/matematica/1/numeri-naturali/mcm-mcd': {
 		'mcm': {
 			generator: 'McmEx',
 			count: 3,
