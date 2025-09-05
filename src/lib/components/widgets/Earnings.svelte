@@ -36,10 +36,13 @@
 </script>
 
 <div class="flex flex-col h-full bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow">
-	<div class="p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-		<div>
-			<h2 class="text-base font-semibold text-[#111827] dark:text-white mb-1">Earnings over time</h2>
-			<p class="text-sm text-[#6B7280] dark:text-[#A0A0A0]">{formatCurrency(totalEarnings)} total</p>
+	<div class="px-5 py-4 sm:p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center">
+		<div class="p-2.5 mr-4 rounded-md bg-[#F0FDF4] dark:bg-[#1E1E1E]">
+			<ls.LineChart class="w-5 h-5 text-[#22C55E]" />
+		</div>
+		<div class="flex-1">
+			<h2 class="text-base font-semibold text-[#111827] dark:text-white leading-tight">Earnings over time</h2>
+			<p class="text-xs sm:text-sm text-[#6B7280] dark:text-[#A0A0A0] mt-0.5">{formatCurrency(totalEarnings)} total</p>
 		</div>
 		
 		<div class="flex items-center">

@@ -4,10 +4,11 @@
 	import { format } from 'date-fns';
 
 	import DashboardStats from '$lib/components/widgets/DashboardStats.svelte';
-	import TopEarningsBar from '$lib/components/widgets/TopEarningsBar.svelte';
-	import AddLectureModal from '$lib/components/modals/AddLectureModal.svelte';
-	import EditLectureModal from '$lib/components/modals/EditLectureModal.svelte';
-	import Earnings from '$lib/components/widgets/Earnings.svelte';
+import TopEarningsBar from '$lib/components/widgets/TopEarningsBar.svelte';
+import AddLectureModal from '$lib/components/modals/AddLectureModal.svelte';
+import EditLectureModal from '$lib/components/modals/EditLectureModal.svelte';
+import Earnings from '$lib/components/widgets/Earnings.svelte';
+import LectureTimeDistribution from '$lib/components/widgets/LectureTimeDistribution.svelte';
 	
 	let showAddLectureModal = $state(false);
 	let showEditLectureModal = $state(false);
@@ -38,5 +39,9 @@
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 		<Earnings />
 		<TopEarningsBar />
+	</div>
+	
+	<div class="grid grid-cols-1 gap-4 md:gap-6">
+		<LectureTimeDistribution />
 	</div>
 </div>

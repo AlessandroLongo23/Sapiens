@@ -27,7 +27,7 @@
 
 <div class={`w-full flex flex-col ${cardStyle}`}>
 	<div class="flex items-center justify-between p-4">
-		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 ps-2">
 			{formatDateString($calendarView, 'MMMM yyyy')}
 		</h2>
 		<div class="flex items-center space-x-2">

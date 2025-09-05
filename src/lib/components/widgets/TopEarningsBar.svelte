@@ -204,12 +204,17 @@
 </script>
 
 <div class="w-full flex flex-col overflow-hidden bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-lg shadow-base dark:shadow-md transition-all hover:shadow-md dark:hover:shadow-glow">
-	<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
-		<div>
-			<h2 class="text-base font-semibold text-[#111827] dark:text-white mb-1">
-				Top Earnings by {viewMode === 'subject' ? 'Subject' : 'Student'}
-			</h2>
-			<p class="text-sm text-[#6B7280] dark:text-[#A0A0A0]">Showing top performers</p>
+	<div class="px-5 py-4 sm:p-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col sm:flex-row sm:items-center gap-4">
+		<div class="flex sm:flex-1 items-center">
+			<div class="p-2.5 mr-4 rounded-md bg-[#F0FDF4] dark:bg-[#1E1E1E]">
+				<ls.BarChart3 class="w-5 h-5 text-[#22C55E]" />
+			</div>
+			<div>
+				<h2 class="text-base font-semibold text-[#111827] dark:text-white leading-tight">
+					Top Earnings by {viewMode === 'subject' ? 'Subject' : 'Student'}
+				</h2>
+				<p class="text-xs sm:text-sm text-[#6B7280] dark:text-[#A0A0A0] mt-0.5">Showing top performers</p>
+			</div>
 		</div>
 		
 		<button 
