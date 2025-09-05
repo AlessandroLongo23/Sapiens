@@ -20,6 +20,18 @@ export const mcmArray = (arr) => {
 	return arr.reduce((acc, val) => mcm(acc, val), arr[0]);
 }
 
+export const ceilToMultiple = (value, multiple) => {
+	return Math.ceil(value / multiple) * multiple;
+}
+
+export const floorToMultiple = (value, multiple) => {
+	return Math.floor(value / multiple) * multiple;
+}
+
+export const roundToMultiple = (value, multiple) => {
+	return Math.round(value / multiple) * multiple;
+}
+
 Array.prototype.shuffle = function() {
 	for (let i = this.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));

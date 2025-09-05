@@ -8,4 +8,8 @@
   - [x] move in the whole TutorTrack project
   - [ ] add editor to write new content
 - [ ] setup up aleripetizioni2024@gmail.com as the email receiver
-- [ ] add form for students to add a new review
+- [x] add form for students to add a new review
+- [ ] fix reviews not showing (and Universita instead of Università)
+- [ ] fix earnings cumulative graph "by subjects"
+- [ ] track students activity (completing exercises)
+- [ ] add missing content

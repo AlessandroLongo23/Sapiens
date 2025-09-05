@@ -15,16 +15,16 @@
 	]);
 	
 	let timeRangeOptions = $state([
-		{ id: 3, name: '3 Months' },
-		{ id: 6, name: '6 Months' },
-		{ id: 12, name: '12 Months' },
-		{ id: 24, name: '24 Months' },
+		{ id: 3, name: '3M' },
+		{ id: 6, name: '6M' },
+		{ id: 12, name: '1Y' },
+		{ id: 24, name: '2Y' },
 	]);
 	
 	function handleFilterChange(type, id = null) {
 		statsStore.setFilter(type, id);
 	}
-	
+
 	function handleTimeRangeChange(months) {
 		statsStore.setTimeRange(months);
 	}

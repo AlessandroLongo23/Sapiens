@@ -97,7 +97,7 @@ class StatsStore {
 	totalEarnings = $derived.by(() => {
 		return this.lectures.reduce((total, lecture) => {
 			return total + calculateEarnings(lecture.start_time, lecture.end_time, lecture.hourly_rate);
-		}, 0);
+		}, 0).toFixed(2);
 	});
 
 	hoursByMonth = $derived.by(() => {
