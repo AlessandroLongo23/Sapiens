@@ -10,6 +10,6 @@
 - [ ] setup up aleripetizioni2024@gmail.com as the email receiver
 - [x] add form for students to add a new review
 - [ ] fix reviews not showing (and Universita instead of Università)
-- [ ] fix earnings cumulative graph "by subjects"
+- [ ] refactor EarningsWidget code to be more organized, flexible and fast
 - [ ] track students activity (completing exercises)
 - [ ] add missing content

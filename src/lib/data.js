@@ -80,3 +80,42 @@ export const frequencyOptions = writable([
     { value: 'breve', title: '2-5 Lezioni', subtitle: 'Aiuto a breve termine' },
     { value: 'lungo', title: 'Supporto Continuativo', subtitle: 'Percorso personalizzato' }
 ]);
+
+export const methodCards = writable([
+    { 
+        title: 'Materiale Completo',
+        color: 'bg-gradient-to-br from-green-500 to-emerald-600',
+        icon: ls.BookText, 
+        description: 'Fornisco appunti dettagliati e materiale didattico personalizzato su tutti gli argomenti, permettendoti di concentrarti sulla comprensione anziché sulla trascrizione.'
+    },
+    { 
+        title: 'Esercizi Illimitati', 
+        color: 'bg-gradient-to-br from-blue-500 to-indigo-600',
+        icon: ls.Bot, 
+        description: 'Un\'IA dedicata genera esercizi illimitati con diversi livelli di difficoltà, permettendoti di raggiungere la completa padronanza.'
+    },
+    { 
+        title: 'Ritmo Personalizzato', 
+        color: 'bg-gradient-to-br from-purple-500 to-pink-600',
+        icon: ls.Clock, 
+        description: 'Adatto il ritmo delle lezioni alle tue esigenze, assicurandomi che ogni concetto sia pienamente compreso prima di passare al successivo.'
+    },
+    { 
+        title: 'Obiettivi Chiari', 
+        color: 'bg-gradient-to-br from-orange-500 to-red-600',
+        icon: ls.Target, 
+        description: 'Stabiliamo insieme obiettivi concreti e misurabili, con un percorso personalizzato per raggiungerli nel modo più efficace.'
+    },
+    { 
+        title: 'Metodo di Studio', 
+        color: 'bg-gradient-to-br from-yellow-500 to-amber-600',
+        icon: ls.Puzzle, 
+        description: 'Ti insegno strategie efficaci di apprendimento che potrai applicare autonomamente anche dopo il nostro percorso insieme.'
+    },
+    { 
+        title: 'Supporto Continuo', 
+        color: 'bg-gradient-to-br from-pink-500 to-rose-600',
+        icon: ls.HeartHandshake, 
+        description: 'Rimango disponibile anche fuori dalle lezioni per rispondere ai tuoi dubbi e aiutarti a superare gli ostacoli nel percorso di apprendimento.' 
+    }
+]);

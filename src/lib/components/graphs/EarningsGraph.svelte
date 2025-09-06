@@ -75,7 +75,6 @@
 			
 			if (!months.includes(monthStr)) return;
 			
-			// Calculate lecture earnings
 			const startTime = lecture.start_time.split(':');
 			const endTime = lecture.end_time.split(':');
 			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
@@ -94,7 +93,6 @@
 			subjectDataByMonth[monthStr][lecture.subject_id] += earnings;
 		});
 		
-		// Format data for stacked area chart
 		let data = [];
 		months.forEach(month => {
 			Object.entries(subjectMap).forEach(([subjectId, subjectName]) => {
@@ -115,15 +113,12 @@
 	}
 
 	function renderChart() {
-		// Only use stacked area chart when filter is specifically "By Subject" AND "All Subjects" is selected
 		if (statsStore.filterType === 'subject' && !statsStore.filterId) {
-			// Use D3 stacked area chart for the "By Subject" + "All Subjects" combination
 			useStackedArea = true;
 			stackedAreaData = prepareStackedAreaData();
 			return;
 		}
 		
-		// Reset to normal chart for all other filter combinations
 		useStackedArea = false;
 		const ctx = canvas.getContext('2d');
 		
@@ -165,11 +160,9 @@
 				subjectDataByMonth[monthStr][lecture.subject_id] += earnings;
 			});
 			
-			// Create a dataset for each subject
 			const subjectIds = Object.keys(subjectMap);
 			const datasets = subjectIds.map((subjectId, index) => {
-				// Generate a color for this subject
-				const hue = (index * 137) % 360; // Use golden ratio to distribute colors
+				const hue = (index * 137) % 360;
 				const color = `hsl(${hue}, 70%, 60%)`;
 				
 				return {
@@ -196,7 +189,6 @@
 			
 			const avgEarnings = monthlyTotals.reduce((sum, val) => sum + val, 0) / monthlyTotals.length;
 			
-			// Add average line dataset
 			datasets.push({
 				label: 'Average',
 				data: Array(months.length).fill(avgEarnings),
@@ -439,6 +431,7 @@
             <StackedAreaChart 
                 data={stackedAreaData} 
                 height={300}
+                tension={0.4}
                 onHover={handleStackedAreaHover}
                 onMouseOut={handleStackedAreaMouseOut}
             />
@@ -463,10 +456,10 @@
                     <div class="flex items-center justify-between gap-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-3 rounded-full" style="background-color: {detail.color}"></div>
-                            <span class="text-xs text-[#6B7280]">{detail.subject}</span>
+                            <span class="text-xs {detail.isHighlighted ? 'font-semibold text-[#111827] dark:text-white' : 'text-[#6B7280]'}">{detail.subject}</span>
                         </div>
                         
-                        <span class="text-sm font-medium text-[#111827] dark:text-white">
+                        <span class="text-sm font-medium {detail.isHighlighted ? 'font-semibold' : ''} text-[#111827] dark:text-white">
                             {formatCurrency(detail.earnings)}
                         </span>
                     </div>

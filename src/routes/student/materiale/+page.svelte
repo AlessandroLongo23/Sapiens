@@ -8,6 +8,7 @@
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 	import ReviewBox from '$lib/components/ReviewBox.svelte';
 	import { fetchStudentReview } from '$lib/stores/reviews/reviews.svelte.js';
+	import StreakWidget from '$lib/components/widgets/StreakWidget.svelte';
 
 	let { data } = $props();
 	let { user } = $derived(data);
@@ -228,46 +229,7 @@
 		<div class="flex flex-col lg:flex-row justify-center">
 			<div class="hidden lg:block w-96 flex-shrink-0 p-4">
 				<div class="sticky top-24 space-y-6">
-					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
-						<div class="flex items-center justify-between mb-4">
-							<h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
-								<div class="h-8 w-8 flex items-center justify-center bg-yellow-500 text-white rounded-lg">
-									<ls.Flame class="h-5 w-5" />
-								</div>
-								<span>Streak</span>
-							</h3>
-							<div class="text-2xl font-bold text-yellow-500">{streak} giorni</div>
-						</div>
-						
-						<div class="mb-4">
-							<div class="flex justify-between text-sm mb-1">
-								<span class="text-zinc-500 dark:text-zinc-400">Obiettivo</span>
-								<span class="text-zinc-900 dark:text-white font-medium">{streak}/{nextMilestone} giorni</span>
-							</div>
-							<div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
-								<div class="bg-yellow-500 h-2 rounded-full" style="width: {(streak/nextMilestone) * 100}%"></div>
-							</div>
-						</div>
-						
-						<div>
-							<h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Attività degli ultimi 30 giorni</h4>
-							<div class="grid grid-cols-7 gap-1">
-								{#each Array(30) as _, i}
-									{@const isActive = Math.random() > 0.5}
-									{@const day = new Date()}
-									{@const isToday = i === 29}
-									<div 
-										class="w-6 h-6 rounded-sm {isActive ? 'bg-yellow-500 dark:bg-yellow-600' : 'bg-zinc-200 dark:bg-zinc-700'} 
-										{isToday ? 'ring-2 ring-yellow-400' : ''}"
-										title={day.toLocaleDateString('it-IT', { weekday: 'short', month: 'short', day: 'numeric' })}
-									></div>
-								{/each}
-							</div>
-							<div class="mt-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
-								Ultimo accesso: {new Date().toLocaleDateString('it-IT', { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
-							</div>
-						</div>
-					</div>
+					<StreakWidget streak={streak} nextMilestone={nextMilestone} />
 					
 				{#if loadingReview}
 					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 flex justify-center items-center h-40">

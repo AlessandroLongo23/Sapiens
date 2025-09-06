@@ -8,7 +8,8 @@
 	let { 
 		data = [], 
 		width = 800, 
-		height = 400,
+		height = 300, // Match EarningsGraph default height of 300px
+		tension = 0.4, // Default tension similar to EarningsGraph
 		onHover = () => {},
 		onMouseOut = () => {}
 	} = $props();
@@ -39,12 +40,13 @@
 		// Create SVG
 		svg = d3.select(container)
 			.append('svg')
-			.attr('width', width)
+			.attr('width', '100%')  // Use percentage for responsive sizing
 			.attr('height', height)
 			.attr('viewBox', `0 0 ${width} ${height}`)
+			.attr('preserveAspectRatio', 'xMinYMin meet') // Better handling of aspect ratio
 			.style('overflow', 'visible');
 			
-		const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+		const margin = { top: 10, right: 10, bottom: 30, left: 60 }; // Adjusted margins to match EarningsGraph
 		const chartWidth = width - margin.left - margin.right;
 		const chartHeight = height - margin.top - margin.bottom;
 		
@@ -52,33 +54,50 @@
 		const months = [...new Set(data.map(d => d.month))];
 		const subjects = [...new Set(data.map(d => d.subject))];
 		
-		// Create a nested data structure for the stacked area chart
-		const stackedData = [];
-		months.forEach(month => {
-			const monthData = { month };
-			subjects.forEach(subject => {
-				const entry = data.find(d => d.month === month && d.subject === subject);
-				monthData[subject] = entry ? entry.earnings : 0;
-			});
-			stackedData.push(monthData);
+		// Organize data by subject
+		const subjectData = {};
+		subjects.forEach(subject => {
+			subjectData[subject] = [];
 		});
 		
-		// Create the stack generator
-		const stack = d3.stack()
-			.keys(subjects)
-			.order(d3.stackOrderNone)
-			.offset(d3.stackOffsetNone);
-			
-		const series = stack(stackedData);
+		// Create a data structure for line charts
+		data.forEach(item => {
+			if (subjectData[item.subject]) {
+				subjectData[item.subject].push({
+					month: item.month,
+					earnings: item.earnings
+				});
+			}
+		});
 		
-		// Create scales
-		const xScale = d3.scaleBand()
+		// Ensure each subject has entries for all months (with 0 earnings if needed)
+		subjects.forEach(subject => {
+			const existingMonths = subjectData[subject].map(d => d.month);
+			
+			months.forEach(month => {
+				if (!existingMonths.includes(month)) {
+					subjectData[subject].push({
+						month,
+						earnings: 0
+					});
+				}
+			});
+			
+			// Sort by month to ensure line continuity
+			subjectData[subject].sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month));
+		});
+		
+		// Create scales - using scalePoint instead of scaleBand for better edge-to-edge display
+		const xScale = d3.scalePoint()
 			.domain(months)
 			.range([0, chartWidth])
-			.padding(0.1);
+			.padding(0);  // No padding to use the entire width
 			
+		// Find the maximum earnings value across all subjects
+		const maxEarnings = d3.max(Object.values(subjectData).flat(), d => d.earnings);
+		
 		const yScale = d3.scaleLinear()
-			.domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
+			.domain([0, maxEarnings])
 			.nice()
 			.range([chartHeight, 0]);
 			
@@ -104,35 +123,114 @@
 		const g = svg.append('g')
 			.attr('transform', `translate(${margin.left},${margin.top})`);
 			
-		// Create the area generator
+		// Create line and area generators
+		// Create the line generator with tension parameter (similar to Chart.js)
+		const line = d3.line()
+			.x(d => xScale(d.month)) // scalePoint already positions at correct x
+			.y(d => yScale(d.earnings))
+			.curve(d3.curveCardinal.tension(tension));
+			
+		// Create the area generator with matching tension parameter
 		const area = d3.area()
-			.x((d, i) => xScale(stackedData[i].month) + xScale.bandwidth() / 2)
-			.y0(d => yScale(d[0]))
-			.y1(d => yScale(d[1]))
-			.curve(d3.curveCardinal);
+			.x(d => xScale(d.month)) // scalePoint already positions at correct x
+			.y0(chartHeight)
+			.y1(d => yScale(d.earnings))
+			.curve(d3.curveCardinal.tension(tension));
 			
-		// Create the stacked areas
-		g.selectAll('.area')
-			.data(series)
-			.enter()
-			.append('path')
-			.attr('class', 'area')
-			.attr('fill', (d, i) => {
-				const color = d3.rgb(colorScale(d.key));
-				return `rgba(${color.r}, ${color.g}, ${color.b}, 0.7)`;
-			})
-			.attr('d', area)
-			.attr('stroke', (d, i) => colorScale(d.key))
-			.attr('stroke-width', 1.5)
-			.attr('stroke-linejoin', 'round')
-			.attr('stroke-linecap', 'round');
+		// Create lines for each subject
+		Object.entries(subjectData).forEach(([subject, values]) => {
+			const color = d3.rgb(colorScale(subject));
 			
-		// Create x-axis
+			// Create unique gradient ID for this subject
+			const gradientId = `gradient-${subject.replace(/\s+/g, '-').toLowerCase()}`;
+			
+			// Create linear gradient
+			const gradient = svg.append('defs')
+				.append('linearGradient')
+				.attr('id', gradientId)
+				.attr('x1', '0%')
+				.attr('y1', '0%')
+				.attr('x2', '0%')
+				.attr('y2', '100%');
+				
+			gradient.append('stop')
+				.attr('offset', '0%')
+				.attr('stop-color', color.toString())
+				.attr('stop-opacity', 0.15);
+				
+			gradient.append('stop')
+				.attr('offset', '100%')
+				.attr('stop-color', color.toString())
+				.attr('stop-opacity', 0);
+			
+			// Create area path with gradient fill
+			g.append('path')
+				.datum(values)
+				.attr('class', `area-${subject.replace(/\s+/g, '-').toLowerCase()}`)
+				.attr('fill', `url(#${gradientId})`)
+				.attr('opacity', 0.7)
+				.attr('d', area);
+			
+			// Create line path on top of area
+			g.append('path')
+				.datum(values)
+				.attr('class', `line-${subject.replace(/\s+/g, '-').toLowerCase()}`)
+				.attr('fill', 'none')
+				.attr('stroke', color.toString())
+				.attr('stroke-width', 2)
+				.attr('d', line);
+			
+			// Add data points
+			g.selectAll(`.point-${subject.replace(/\s+/g, '-').toLowerCase()}`)
+				.data(values.filter(d => d.earnings > 0)) // Only show points for non-zero values
+				.enter()
+				.append('circle')
+				.attr('class', `point-${subject.replace(/\s+/g, '-').toLowerCase()}`)
+				.attr('cx', d => xScale(d.month))
+				.attr('cy', d => yScale(d.earnings))
+				.attr('r', 4)
+				.attr('fill', color.toString())
+				.attr('stroke', '#FFFFFF')
+				.attr('stroke-width', 1.5)
+				.attr('cursor', 'pointer')
+				.on('mouseover', function(event, d) {
+					// Enlarge the point
+					d3.select(this)
+						.attr('r', 6);
+						
+					// Prepare details for tooltip
+					const details = subjects.map(subj => {
+						const dataPoint = subjectData[subj].find(item => item.month === d.month);
+						return {
+							subject: subj,
+							earnings: dataPoint ? dataPoint.earnings : 0,
+							color: colorScale(subj),
+							isHighlighted: subj === subject
+						};
+					}).filter(detail => detail.earnings > 0);
+					
+					// Show the vertical line
+					const xPos = xScale(d.month);
+					mouseLine.attr('d', `M${xPos},${chartHeight} ${xPos},0`)
+						.style('opacity', '1');
+						
+					onHover({
+						month: d.month,
+						details,
+						x: xPos + margin.left,
+						y: event.clientY - container.getBoundingClientRect().top  // Position tooltip above cursor
+					});
+				})
+				.on('mouseout', function(event) {
+					d3.select(this)
+						.attr('r', 4);
+				});
+		});
+			
+		// Create x-axis - all labels shown
 		g.append('g')
 			.attr('transform', `translate(0,${chartHeight})`)
-			.call(d3.axisBottom(xScale)
-				.tickValues(months.filter((_, i) => i % Math.ceil(months.length / 6) === 0))
-			)
+			.call(d3.axisBottom(xScale))
 			.selectAll('text')
 			.attr('fill', $themeStore === 'dark' ? designSystem.colors.chart.text : designSystem.colors.chart.text)
 			.attr('font-size', '11px');
@@ -165,13 +263,14 @@
 			.style('stroke-width', '1px')
 			.style('opacity', '0');
 			
-		// Add overlay rectangle
+		// Add overlay rectangle for mouse events
 		mouseG.append('rect')
 			.attr('width', chartWidth)
 			.attr('height', chartHeight)
 			.attr('fill', 'none')
 			.attr('pointer-events', 'all')
-			.on('mouseout', function() {
+			.on('mouseout', function(event) {
+				// Hide tooltip when mouse leaves the chart area
 				mouseLine.style('opacity', '0');
 				onMouseOut();
 			})
@@ -191,16 +290,20 @@
 				
 				if (monthIndex >= 0 && monthIndex < months.length) {
 					const month = months[monthIndex];
-					const monthData = stackedData[monthIndex];
 					
 					// Extract subject data for this month
-					const details = subjects.map(subject => ({
-						subject,
-						earnings: monthData[subject] || 0,
-						color: colorScale(subject)
-					})).filter(d => d.earnings > 0);
+					const details = subjects.map(subj => {
+						const dataPoint = subjectData[subj].find(item => item.month === month);
+						return {
+							subject: subj,
+							earnings: dataPoint ? dataPoint.earnings : 0,
+							color: colorScale(subj),
+							isHighlighted: false // No subject highlighted when hovering the general area
+						};
+					}).filter(detail => detail.earnings > 0);
 					
 					// Get mouse position
+					const xPos = xScale(month);
 					mouseLine.attr('d', `M${xPos},${chartHeight} ${xPos},0`);
 					
 					// Calculate tooltip position
@@ -217,4 +320,4 @@
 	}
 </script>
 
-<div class="w-full h-full" bind:this={container}></div>
+<div class="w-full h-full" style="min-height: 300px;" bind:this={container}></div>

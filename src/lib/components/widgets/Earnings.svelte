@@ -7,6 +7,7 @@
 	import * as ls from 'lucide-svelte';
 
 	import EarningsGraph from '$lib/components/graphs/EarningsGraph.svelte';
+	import StackedAreaChart from '$lib/components/graphs/StackedAreaChart.svelte';
 
 	let filterOptions = $state([
 		{ id: 'all', name: 'All' },
