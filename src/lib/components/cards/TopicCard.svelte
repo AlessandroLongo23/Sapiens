@@ -28,8 +28,7 @@
     onmouseleave={() => isHovered = false}
     onclick={() => {
         setTimeout(() => {
-            console.log(level, subject, key);
-            if (level === 'universita') {
+            if (level === 'university') {
                 goto(`/student/materiale/${level}/${subject}/${key}/`);
             } else {
                 goto(`/student/materiale/${level}/${subject}/${year}/${key}/`);
@@ -42,7 +41,7 @@
     </div>
     
     <div class="flex flex-col h-48 p-4">
-        {#if level === 'superiori' && year}
+        {#if level === 'high_school' && year}
             <div class="text-xs font-medium px-2.5 py-1 rounded-full w-fit {
                 subject === 'matematica' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
                 subject === 'informatica' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :

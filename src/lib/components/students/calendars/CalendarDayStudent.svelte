@@ -116,12 +116,12 @@
 			{#if dayLectures.length > 0 && isCurrentMonth}
 				{#each dayLectures as dayLecture}
 					{#if dayLecture.student_id === user.id}
-						<div class="flex flex-row w-full gap-1 justify-between items-center px-1 py-0.5 my-0.5 text-xs bg-green-500/20 border-l-2 border-green-500 rounded-r-sm">
+						<div class="{dayLecture.status == 'accepted' ? 'bg-green-500/20 border-l-2 border-green-500' : 'bg-amber-500/20 border-l-2 border-amber-500'} flex flex-row w-full gap-1 justify-between items-center px-1 py-0.5 my-0.5 text-xs rounded-r-sm">
 							<span class="font-medium">{dayLecture.start_time}</span>
 							<span class="truncate text-xs text-zinc-500">-</span>
 							<span class="font-medium">{dayLecture.end_time}</span>
 						</div>
-					{:else}
+					{:else if dayLecture.status == 'accepted'}
 						<div class="flex flex-row w-full gap-1 justify-between items-center px-1 py-0.5 my-0.5 text-xs bg-red-500/20 border-l-2 border-red-500 rounded-r-sm">
 							<span class="font-medium text-zinc-700 dark:text-zinc-300">{dayLecture.start_time} - {dayLecture.end_time}</span>
 							<span class="text-xs text-red-600 dark:text-red-400 font-medium">Occupato</span>

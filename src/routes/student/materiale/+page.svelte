@@ -151,7 +151,7 @@
 		const grouped = {};
 		
 		allTopics.forEach(topic => {
-			const key = groupBy === 'subject' ? topic.subject : (topic.year || 'universita');
+			const key = groupBy === 'subject' ? topic.subject : (topic.year || 'university');
 			
 			if (!grouped[key]) {
 				grouped[key] = [];
@@ -369,12 +369,12 @@
 									class="px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium {activeTab === groupKey ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600'} transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"
 									onclick={() => activeTab = groupKey}
 								>
-									{#if groupKey === 'universita'}
+									{#if groupKey === 'university'}
 										<ls.GraduationCap class="h-3 w-3 sm:h-4 sm:w-4" />
 									{:else}
 										<ls.BookOpen class="h-3 w-3 sm:h-4 sm:w-4" />
 									{/if}
-									{groupKey === 'universita' ? 'Università' : `${groupKey}° anno`}
+									{groupKey === 'university' ? 'Università' : `${groupKey}° anno`}
 								</button>
 							{/if}
 						{/each}
@@ -395,13 +395,13 @@
 											<span>{subjectCategories[groupKey].name}</span>
 										{:else if groupBy === 'year'}
 											<div class="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white">
-												{#if groupKey === 'universita'}
+												{#if groupKey === 'university'}
 													<ls.GraduationCap class="h-5 w-5" />
 												{:else}
 													<ls.BookOpen class="h-5 w-5" />
 												{/if}
 											</div>
-											<span>{groupKey === 'universita' ? 'Università' : `${groupKey}° anno`}</span>
+											<span>{groupKey === 'university' ? 'Università' : `${groupKey}° anno`}</span>
 										{/if}
 									</h2>
 								</div>
@@ -416,7 +416,7 @@
 											level={topic.level}
 											subject={topic.subject}
 											year={topic.year}
-											key={topic.level === 'universita' ? topic.year : topic.key}
+											key={topic.level === 'university' ? topic.year : topic.key}
 											subtopics={topic.subtopics}
 										/>
 									{/each}

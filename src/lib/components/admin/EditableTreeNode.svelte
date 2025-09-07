@@ -78,7 +78,6 @@
     function handleNodeAction(event) {
         const { action, data } = event.detail;
         
-        
         dispatch('nodeAction', { 
             action, 
             nodeId: node.id, 
@@ -87,20 +86,13 @@
         });
     }
     
-    
     function getChildNodeTypes(nodeType) {
-        
-        
-        
-        
         const isUniversitaLevel = node.path && node.path[0] === 'universita';
         
         switch (nodeType) {
             case 'level':
                 return ['subject'];
             case 'subject':
-                
-                
                 return isUniversitaLevel ? ['topic'] : ['year'];
             case 'year':
                 return ['topic'];

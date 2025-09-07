@@ -26,6 +26,7 @@
 		hourly_rate: 15,
 		level: 'medie',
 		paid: false,
+		status: 'accepted', // Admin-created lectures are automatically accepted
 	});
 	
 	let isSubmitting = $state(false);
@@ -44,6 +45,8 @@
 				end_time: '16:30',
 				hourly_rate: 25,
 				level: 'high_school',
+				paid: false,
+				status: 'accepted', // Admin-created lectures are automatically accepted
 			};
 			
 			errorMessage = '';

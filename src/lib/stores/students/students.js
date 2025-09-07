@@ -15,9 +15,9 @@ export const roles = [
 ];
 
 export const levels = [
-    { label: 'Scuola Media', value: 'media' },
-    { label: 'Scuole Superiori', value: 'superiori' },
-    { label: 'Università', value: 'universita' },
+    { label: 'Scuola Media', value: 'middle_school' },
+    { label: 'Scuole Superiori', value: 'high_school' },
+    { label: 'Università', value: 'university' },
     { label: 'Altro', value: 'altro' }
 ];
 

@@ -7,6 +7,7 @@
 	import { isSameDay, isToday, isPast, parseISO, setHours, setMinutes, format } from 'date-fns';
 	import * as ls from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
+	import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -38,6 +39,13 @@
 	// Run validation when modal opens
 	$effect(() => {
 		if (isOpen && formData.start_time && formData.end_time) {
+			validateTimes(formData.start_time, formData.end_time);
+		}
+	});
+	
+	// Run validation when subject changes
+	$effect(() => {
+		if (isOpen && formData.subject_id !== undefined) {
 			validateTimes(formData.start_time, formData.end_time);
 		}
 	});
@@ -108,15 +116,55 @@
 			}));
 	});
 
-	let formData = $derived.by(() => {
-		const student = $studentsStore.students.find(student => student.id === user.id);
-		return {
-			student_id: user.id,
-			first_name: student?.first_name,
-			last_name: student?.last_name,
-			date: formatDateString(selectedDay, 'yyyy-MM-dd'),
-			start_time: '15:00',
-			end_time: '16:00',
+	// Get available subjects
+	let availableSubjects = $derived.by(() => {
+		return $subjectsStore.subjects || [];
+	});
+	
+	// Format subjects for CustomSelect
+	let subjectOptions = $derived.by(() => {
+		return availableSubjects.map(subject => ({
+			value: subject.id,
+			label: subject.name
+		}));
+	});
+
+	let formData = $state({
+		student_id: user.id,
+		first_name: '',
+		last_name: '',
+		date: '',
+		start_time: '15:00',
+		end_time: '16:00',
+		subject_id: '',
+		status: 'pending', // Setting status to pending for student-proposed lectures
+		level: '',
+		hourly_rate: 0,
+	});
+	
+	// Update form data when modal opens or selectedDay changes
+	$effect(() => {
+		if (isOpen && selectedDay) {
+			const student = $studentsStore.students.find(student => student.id === user.id);
+			
+			// Set hourly rate based on student level
+			let hourlyRate = 15; // Default for high school
+			if (student?.level === 'university') {
+				hourlyRate = 20;
+			}
+			
+			formData = {
+				student_id: user.id,
+				first_name: student?.first_name,
+				last_name: student?.last_name,
+				date: formatDateString(selectedDay, 'yyyy-MM-dd'),
+				start_time: '15:00',
+				end_time: '16:00',
+				subject_id: availableSubjects.length > 0 ? availableSubjects[0].id : '',
+				status: 'pending',
+				level: student?.level || 'high_school',
+				hourly_rate: hourlyRate,
+			};
 		}
 	});
 
@@ -143,7 +191,12 @@
 
 			if (checkForTimeOverlap(start_time, end_time)) {
 				validationError = "L'orario scelto si sovrappone a un impegno.";
-				return;
+				return false;
+			}
+			
+			if (!formData.subject_id) {
+				validationError = "È necessario selezionare una materia.";
+				return false;
 			}
 			
 			validationError = "";
@@ -162,30 +215,56 @@
 		isSubmitting = true;
 
 		try {
-			const response = await fetch('/api/request-lecture', {
+			// First, add the lecture directly using the lecturesStore
+			const lectureData = {
+				student_id: formData.student_id,
+				subject_id: formData.subject_id,
+				date: formData.date,
+				start_time: formData.start_time,
+				end_time: formData.end_time,
+				status: 'pending',
+				level: formData.level,
+				hourly_rate: formData.hourly_rate,
+				paid: false
+			};
+			
+			const result = await lecturesStore.addLecture(lectureData);
+			
+			const emailData = {
+				student_id: formData.student_id,
+				first_name: formData.first_name,
+				last_name: formData.last_name,
+				date: formData.date,
+				start_time: formData.start_time,
+				end_time: formData.end_time,
+				subject_id: formData.subject_id,
+				level: formData.level,
+				status: 'pending'
+			};
+			
+			console.log('Sending email notification with data:', emailData);
+			
+			const emailResponse = await fetch('/api/request-lecture', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(formData)
+				body: JSON.stringify(emailData)
 			});
 
-			if (!response.ok) {
-				const errorData = await response.json().catch(() => ({ error: 'Server error' }));
-				throw new Error(errorData.error || 'Failed to request lecture');
+			if (!emailResponse.ok) {
+				// Email notification failed, but lecture was added
+				console.warn('Email notification failed, but lecture was added successfully');
 			}
 
-			const result = await response.json();
-
-			if (result.success) {
+			if (result) {
 				isSubmitted = true;
 				setTimeout(() => {
 					isSubmitted = false;
 					closeModal();
 				}, 4000);
 			} else {
-				console.error('Submission error:', result.error);
-				validationError = result.error || "Si è verificato un errore durante l'invio della richiesta.";
+				throw new Error('Impossibile aggiungere la lezione');
 			}
 		} catch (error) {
 			console.error('Submission error:', error);
@@ -249,32 +328,47 @@
 									</div>
 								{/if}
 								
-								<div class="grid grid-cols-2 gap-4">
-									<div>
-										<label for="start-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-											Inizio
-										</label>
-										<input 
-											type="time" 
-											id="start-time"
-											bind:value={formData.start_time}
-											onchange={() => { validateTimes(formData.start_time, formData.end_time); }}
-											class="w-full px-3 py-2 text-base border {validationError && (!validateTimeNotInPast(formData.start_time) || (formData.end_time && !validateStartBeforeEnd(formData.start_time, formData.end_time))) ? 'border-red-300 dark:border-red-700' : 'border-zinc-300 dark:border-zinc-700'} rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-800 dark:text-zinc-100"
-											required
-										/>
+								<div class="space-y-4">
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label for="start-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+												Inizio
+											</label>
+											<input 
+												type="time" 
+												id="start-time"
+												bind:value={formData.start_time}
+												onchange={() => { validateTimes(formData.start_time, formData.end_time); }}
+												class="w-full px-3 py-2 text-base border {validationError && (!validateTimeNotInPast(formData.start_time) || (formData.end_time && !validateStartBeforeEnd(formData.start_time, formData.end_time))) ? 'border-red-300 dark:border-red-700' : 'border-zinc-300 dark:border-zinc-700'} rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-800 dark:text-zinc-100"
+												required
+											/>
+										</div>
+										
+										<div>
+											<label for="end-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+												Fine
+											</label>
+											<input 
+												type="time" 
+												id="end-time"
+												bind:value={formData.end_time}
+												onchange={() => { validateTimes(formData.start_time, formData.end_time); }}
+												class="w-full px-3 py-2 text-base border {validationError && (!validateTimeNotInPast(formData.end_time) || (formData.start_time && !validateStartBeforeEnd(formData.start_time, formData.end_time))) ? 'border-red-300 dark:border-red-700' : 'border-zinc-300 dark:border-zinc-700'} rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-800 dark:text-zinc-100"
+												required
+											/>
+										</div>
 									</div>
-									
+
 									<div>
-										<label for="end-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-											Fine
+										<label for="subject-select" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+											Materia
 										</label>
-										<input 
-											type="time" 
-											id="end-time"
-											bind:value={formData.end_time}
-											onchange={() => { validateTimes(formData.start_time, formData.end_time); }}
-											class="w-full px-3 py-2 text-base border {validationError && (!validateTimeNotInPast(formData.end_time) || (formData.start_time && !validateStartBeforeEnd(formData.start_time, formData.end_time))) ? 'border-red-300 dark:border-red-700' : 'border-zinc-300 dark:border-zinc-700'} rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-800 dark:text-zinc-100"
-											required
+										<CustomSelect
+											bind:value={formData.subject_id}
+											options={subjectOptions}
+											placeholder="Seleziona una materia"
+											searchable={true}
+											classes={validationError && !formData.subject_id ? "error" : ""}
 										/>
 									</div>
 								</div>

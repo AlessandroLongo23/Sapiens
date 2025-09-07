@@ -110,8 +110,10 @@
 </script>
 
 <div class="relative {classes}" bind:this={selectRef}>
-    <button
+    <div
         type="button"
+        role="button"
+        tabindex="0"
         class="w-full px-3 py-2 text-left bg-white dark:bg-zinc-800 border border-zinc-500/25 rounded-lg shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors flex items-center justify-between {disabled ? 'opacity-50 cursor-not-allowed' : ''}"
         onclick={() => {
             if (!disabled) {
@@ -147,7 +149,7 @@
                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
         </div>
-    </button>
+    </div>
     
     {#if isOpen}
         <div 

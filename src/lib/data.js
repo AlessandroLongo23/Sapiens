@@ -3,21 +3,21 @@ import { writable } from 'svelte/store';
 
 export const levelOptions = writable([
     {
-        value: 'media',
+        value: 'middle_school',
         title: 'Scuola Media',
         subtitle: 'Aiuto compiti e preparazione verifiche',
         price: '12€/ora',
         icon: ls.PenLine
     },
     {
-        value: 'superiore',
+        value: 'high_school',
         title: 'Scuola Superiore',
         subtitle: 'Preparazione verifiche e interrogazioni, Recupero debiti formativi',
         price: '15€/ora',
         icon: ls.BookOpen
     },
     {
-        value: 'università',
+        value: 'university',
         title: 'Università',
         subtitle: 'Corsi universitari e preparazione esami',
         price: '20€/ora',
@@ -26,21 +26,21 @@ export const levelOptions = writable([
 ]);
 
 export const subjectOptionsByLevel = writable({
-    media: [
+    middle_school: [
         { value: 'matematica', title: 'Matematica' },
         { value: 'fisica', title: 'Fisica' },
         { value: 'informatica', title: 'Informatica' },
         { value: 'chimica', title: 'Chimica' },
         { value: 'altro', title: 'Altro', editable: true }
     ],
-    superiore: [
+    high_school: [
         { value: 'matematica', title: 'Matematica' },
         { value: 'fisica', title: 'Fisica' },
         { value: 'informatica', title: 'Informatica' },
         { value: 'chimica', title: 'Chimica' },
         { value: 'altro', title: 'Altro', editable: true }
     ],
-    università: [
+    university: [
         { value: 'analisi1', title: 'Analisi I' },
         { value: 'analisi2', title: 'Analisi II' },
         { value: 'fisica1', title: 'Fisica I' },
