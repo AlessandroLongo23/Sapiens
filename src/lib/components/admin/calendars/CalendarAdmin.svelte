@@ -23,14 +23,6 @@
 	function handleLectureSelected(event) {
 		dispatch('lectureSelected', event.detail);
 	}
-	
-	function handleAcceptLecture(event) {
-		dispatch('acceptLecture', event.detail);
-	}
-	
-	function handleRefuseLecture(event) {
-		dispatch('refuseLecture', event.detail);
-	}
 </script>
 
 <div class={`w-full flex flex-col ${cardStyle}`}>
@@ -71,8 +63,6 @@
 				isCurrentMonth={day.isCurrentMonth}
 				on:click={() => handleDayClick(day.date)} 
 				on:lectureSelected={handleLectureSelected}
-				on:acceptLecture={handleAcceptLecture}
-				on:refuseLecture={handleRefuseLecture}
 			/>
 		{/each}
 	</div>

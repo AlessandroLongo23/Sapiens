@@ -63,7 +63,6 @@
 	}
 
 	async function handleAcceptLecture(lecture, event) {
-		console.log('handleAcceptLecture', lecture, event);
 		let student = $studentsStore.students.find(student => student.id === lecture.student_id);
 		let subject = $subjectsStore.subjects.find(subject => subject.id === lecture.subject_id);
 		try {
@@ -113,18 +112,6 @@
 		dispatch('lectureSelected', lecture);
 		showTooltip = false;
 	}
-
-	// function handleAcceptLecture(lecture, event) {
-	// 	event.stopPropagation();
-	// 	dispatch('acceptLecture', lecture);
-	// 	showTooltip = false;
-	// }
-
-	// function handleRefuseLecture(lecture, event) {
-	// 	event.stopPropagation();
-	// 	dispatch('refuseLecture', lecture);
-	// 	showTooltip = false;
-	// }
 	
 	function handleMouseLeave() {
 		setTimeout(() => {
