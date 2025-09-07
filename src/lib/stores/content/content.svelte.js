@@ -1,6 +1,6 @@
 import { supabase } from '$lib/supabase.js';
 
-// Create a class for managing content
+
 class ContentManager {
   contentTree = $state({});
   flatNodes = $state([]);
@@ -12,7 +12,7 @@ class ContentManager {
     if (typeof window !== 'undefined') {
       this.fetchContent();
       
-      // Subscribe to realtime changes
+      
       const subscription = supabase
         .channel('content_nodes_changes')
         .on('postgres_changes',
@@ -29,7 +29,7 @@ class ContentManager {
     }
   }
   
-  // Build tree structure from flat array
+  
   buildContentTree(nodes, parentId = null) {
     const result = [];
     
@@ -57,7 +57,7 @@ class ContentManager {
     return result;
   }
 
-  // Get all content and build the tree
+  
   async fetchContent() {
     this.loading = true;
     
@@ -80,15 +80,15 @@ class ContentManager {
     }
   }
 
-  // Get a node by ID
+  
   getNodeById(id) {
     return this.flatNodes.find(node => node.id === id);
   }
 
-  // Get a node by path
+  
   getNodeByPath(path) {
     if (!Array.isArray(path)) {
-      path = [path]; // Convert string to array if needed
+      path = [path]; 
     }
     
     return this.flatNodes.find(node => 
@@ -98,17 +98,17 @@ class ContentManager {
     );
   }
 
-  // Get all children of a node
+  
   getChildrenOf(parentId) {
     return this.flatNodes.filter(node => node.parent_id === parentId);
   }
 
-  // Get nodes by type
+  
   getNodesByType(nodeType) {
     return this.flatNodes.filter(node => node.node_type === nodeType);
   }
 
-  // Get the full path to a node as an array of node objects
+  
   getPathToNode(nodeId) {
     const node = this.getNodeById(nodeId);
     if (!node || !node.path) return [];
@@ -119,22 +119,22 @@ class ContentManager {
     }).filter(Boolean);
   }
 
-  // Select a node
+  
   selectNode(nodeId) {
     this.selectedNode = nodeId ? this.getNodeById(nodeId) : null;
   }
 
-  // Add a content node
+  
   async addContentNode(contentNode) {
     try {
-      // If it's a child node, calculate its path
+      
       if (contentNode.parent_id) {
         const parent = this.getNodeById(contentNode.parent_id);
         if (parent && parent.path) {
           contentNode.path = [...parent.path, contentNode.slug];
         }
       } else {
-        // Root node
+        
         contentNode.path = [contentNode.slug];
       }
 
@@ -146,7 +146,7 @@ class ContentManager {
         
       if (error) throw error;
       
-      // Refresh the content
+      
       await this.fetchContent();
       return data;
     } catch (error) {
@@ -155,25 +155,25 @@ class ContentManager {
     }
   }
 
-  // Update a content node
+  
   async updateContentNode(nodeId, updatedNode) {
     try {
-      // Don't allow changing the path directly
+      
       if (updatedNode.path) {
         delete updatedNode.path;
       }
       
-      // If slug is changing, we need to update the path
+      
       if (updatedNode.slug) {
         const currentNode = this.getNodeById(nodeId);
         if (currentNode && currentNode.path && currentNode.path.length > 0) {
-          // Create a new path with the updated slug
+          
           const newPath = [...currentNode.path];
           newPath[newPath.length - 1] = updatedNode.slug;
           updatedNode.path = newPath;
           
-          // We also need to update all children's paths
-          // This would be done via a database function in production
+          
+          
         }
       }
 
@@ -186,7 +186,7 @@ class ContentManager {
 
       if (error) throw error;
       
-      // Refresh the content
+      
       await this.fetchContent();
       return data;
     } catch (error) {
@@ -195,7 +195,7 @@ class ContentManager {
     }
   }
 
-  // Delete a content node and all its children
+  
   async deleteContentNode(nodeId) {
     try {
       const nodeToDelete = this.getNodeById(nodeId);
@@ -203,8 +203,8 @@ class ContentManager {
         throw new Error('Node not found');
       }
       
-      // This should be handled by the database with cascading deletes,
-      // but we're implementing it here for safety
+      
+      
       const nodesToDelete = this.flatNodes.filter(node => 
         node.path && 
         node.path.length >= nodeToDelete.path.length &&
@@ -220,7 +220,7 @@ class ContentManager {
         
       if (error) throw error;
       
-      // Refresh the content
+      
       await this.fetchContent();
       return true;
     } catch (error) {
@@ -230,5 +230,5 @@ class ContentManager {
   }
 }
 
-// Create and export a singleton instance
+
 export const contentManager = new ContentManager();

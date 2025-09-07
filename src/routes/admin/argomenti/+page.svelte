@@ -1,15 +1,15 @@
 <script>
-	import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
+	import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { subjectOptionsByLevel } from '$lib/data.js';
 	import * as ls from 'lucide-svelte';
 
-	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
-	import AddModal from '$lib/components/modals/AddModal.svelte';
-	import EditModal from '$lib/components/modals/EditModal.svelte';
-	import Searchbar from '$lib/components/ui/Searchbar.svelte';
-	import NewSubject from '$lib/components/buttons/NewSubject.svelte';
+	import ColorPicker from '$lib/components/shared/ui/ColorPicker.svelte';
+	import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
+	import EditModal from '$lib/components/shared/ui/modals/EditModal.svelte';
+	import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
+	import NewSubject from '$lib/components/shared/ui/buttons/NewSubject.svelte';
 
 	let isAddSubjectOpen = $state(false);
 	let isEditSubjectOpen = $state(false);
@@ -17,7 +17,7 @@
 	let formData = $state({
 		id: null,
 		name: '',
-		hex_color: '#3b82f6' // Default blue color
+		hex_color: '#3b82f6' 
 	});
 	
 	let isSubmitting = $state(false);
@@ -31,7 +31,7 @@
 		formData = {
 			id: null,
 			name: '',
-			hex_color: '#3b82f6' // Default blue color
+			hex_color: '#3b82f6' 
 		};
 		isAddSubjectOpen = true;
 	}

@@ -3,7 +3,7 @@
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
-	import { themeStore } from '$lib/components/theme/theme.js';
+	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { designSystem } from '$lib/stores/appearance.js';
 	import { format, parseISO } from 'date-fns';
@@ -29,7 +29,7 @@
 		y: 0
 	});
 	
-	// For stacked area chart
+	
 	let useStackedArea = $state(false);
 	let stackedAreaData = $state([]);
 	let stackedTooltipData = $state({
@@ -46,7 +46,7 @@
 	});
 	
 	$effect(() => {
-		// Track all reactive inputs used by renderChart
+		
 		const months = statsStore.earningsByMonth;
 		const subjects = $subjectsStore.subjects;
 		const lectures = $lecturesStore.lectures;
@@ -54,7 +54,7 @@
 		const filterId = statsStore.filterId;
 		const timeRange = statsStore.timeRange;
 
-		// Re-render chart when any of these dependencies change
+		
 		if ((canvas || useStackedArea) && months?.length > 0) {
 			renderChart();
 		}
@@ -141,7 +141,7 @@
 				
 				if (!months.includes(monthStr)) return;
 				
-				// Calculate lecture earnings
+				
 				const startTime = lecture.start_time.split(':');
 				const endTime = lecture.end_time.split(':');
 				const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
@@ -374,7 +374,7 @@
 	function handleStackedAreaHover(event) {
 		const { month, details, x, y } = event;
 		
-		// Calculate total earnings for the month
+		
 		const totalEarnings = details.reduce((sum, d) => sum + d.earnings, 0);
 		
 		stackedTooltipData = {
@@ -382,7 +382,7 @@
 			details,
 			totalEarnings,
 			x,
-			y: y - 70 // Offset to position tooltip above the cursor
+			y: y - 70 
 		};
 		
 		tooltipVisible = true;
@@ -426,7 +426,7 @@
     </div>
     
     {#if useStackedArea}
-        <!-- D3 stacked area chart for all subjects view -->
+        
         <div class="w-full h-full">
             <StackedAreaChart 
                 data={stackedAreaData} 
@@ -437,7 +437,7 @@
             />
         </div>
     {:else}
-        <!-- Regular Chart.js chart -->
+        
         <canvas bind:this={canvas}></canvas>
     {/if}
     

@@ -8,7 +8,7 @@
 	import * as ls from 'lucide-svelte';
 	
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
-	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
+	import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
 
 	let { data, children } = $props();
 	let { user } = $derived(data);

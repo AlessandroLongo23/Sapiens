@@ -14,7 +14,7 @@
 
     let isHovered = $state(false);
 
-    // Calculate subtopic count if available
+    
     let hasSubtopics = $derived(subtopics && Object.keys(subtopics || {}).length > 0);
     let subtopicCount = $derived(hasSubtopics ? Object.keys(subtopics).length : 0);
 </script>

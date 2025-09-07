@@ -10,25 +10,25 @@ export class GradoEx extends Exercise {
 
 	generateQuestion(n) {
 		const candidateVariables = ['x', 'y', 'z', 'a', 'b', 'c'];
-		const numberOfVariables = Math.floor(Math.random() * 3) + 1; // 1..3
+		const numberOfVariables = Math.floor(Math.random() * 3) + 1; 
 
-		// pick unique variables
+		
 		const variables = [];
 		while (variables.length < numberOfVariables) {
 			const v = candidateVariables[Math.floor(Math.random() * candidateVariables.length)];
 			if (!variables.includes(v)) variables.push(v);
 		}
 
-		// generate positive integer coefficient in 1..9
+		
 		this.coefficient = Math.floor(Math.random() * 9) + 1;
 
-		// generate exponents (each at least 1)
-		this.exponents = variables.map(() => Math.floor(Math.random() * 5) + 1); // 1..5
+		
+		this.exponents = variables.map(() => Math.floor(Math.random() * 5) + 1); 
 
-		// compute degree as sum of exponents
+		
 		this.degree = this.exponents.reduce((sum, e) => sum + e, 0);
 
-		// build LaTeX for monomial
+		
 		let monomial = this.coefficient === 1 ? '' : String(this.coefficient);
 		for (let i = 0; i < variables.length; i++) {
 			const variable = variables[i];
@@ -48,7 +48,7 @@ export class GradoEx extends Exercise {
 
 		answersSet.add(this.generateCorrectAnswer());
 
-		// generate 3 distinct wrong answers around the correct degree (>=1)
+		
 		const wrongNumbers = new Set();
 		const targetWrongCount = 3;
 		while (wrongNumbers.size < targetWrongCount) {

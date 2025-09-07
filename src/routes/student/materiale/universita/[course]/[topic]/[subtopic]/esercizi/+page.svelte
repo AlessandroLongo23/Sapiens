@@ -1,8 +1,8 @@
 <script>
 	import SegmentedProgressBar from '$lib/components/SegmentedProgressBar.svelte';
-	import AnswerButton from '$lib/components/buttons/AnswerButton.svelte';
-	import SummaryModal from '$lib/components/modals/SummaryModal.svelte';
-	import MathRenderer from '$lib/components/MathRenderer.svelte';
+	import AnswerButton from '$lib/components/shared/ui/buttons/AnswerButton.svelte';
+	import SummaryModal from '$lib/components/shared/ui/modals/SummaryModal.svelte';
+	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
 	
 	import { sineOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';

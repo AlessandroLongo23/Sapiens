@@ -19,7 +19,7 @@
 		} else {
 			selectedValues = [...selectedValues, value];
 			if (editable) {
-				// Focus the input after a short delay to ensure it's rendered
+				
 				setTimeout(() => {
 					const input = document.querySelector(`input[data-editable="${value}"]`);
 					if (input) input.focus();
@@ -41,15 +41,15 @@
     } cursor-pointer"
 	onclick={handleToggle}
 >
-	<!-- Selection indicator (checkbox) -->
+	
 	<div class="absolute top-2 right-2">
 		<div class="relative w-4 h-4">
-			<!-- Checkbox -->
+			
             <div class="w-4 h-4 rounded border-2 transition-all duration-300 {
                 isSelected ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 dark:border-zinc-600 group-hover:border-zinc-400 dark:group-hover:border-zinc-500'
             }"></div>
 			
-			<!-- Checkmark -->
+			
 			{#if isSelected}
 				<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 					<svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,9 +60,9 @@
 		</div>
 	</div>
 	
-	<!-- Content -->
+	
 	<div class="pr-6">
-		<!-- Title or editable input -->
+		
 		{#if isEditable}
             <input
 				type="text"
@@ -82,7 +82,7 @@
 		{/if}
 	</div>
 	
-	<!-- Subtle glow effect for selected state -->
+	
 	{#if isSelected}
 		<div class="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 to-indigo-500/5 pointer-events-none"></div>
 	{/if}

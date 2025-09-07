@@ -107,7 +107,7 @@ const createContentStore = () => {
 		},
 		getNodeByPath: (path) => {
 			if (!Array.isArray(path)) {
-				path = [path]; // Convert string to array if needed
+				path = [path]; 
 			}
 			
 			let result = null;
@@ -178,14 +178,14 @@ const createContentStore = () => {
 				throw new Error('Node not found');
 			}
 			
-			// Get all descendants based on path
+			
 			const nodesToDelete = allNodes.filter(node => 
 				node.path && 
 				node.path.length >= nodeToDelete.path.length &&
 				nodeToDelete.path.every((segment, index) => node.path[index] === segment)
 			);
 			
-			// Delete nodes from leaf to root to avoid foreign key constraints
+			
 			const nodeIds = nodesToDelete.map(node => node.id);
 			
 			const { error } = await supabase

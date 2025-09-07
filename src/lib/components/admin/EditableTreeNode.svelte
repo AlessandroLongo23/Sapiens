@@ -2,11 +2,11 @@
     import { slide } from 'svelte/transition';
     import * as ls from 'lucide-svelte';
     import { createEventDispatcher } from 'svelte';
-    import ContextMenu from '../ui/ContextMenu.svelte';
+    import ContextMenu from '../shared/ui/ContextMenu.svelte';
     import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
     import { reorderChildNodes } from '$lib/services/contentNodeService.js';
     
-    // Props
+    
     let { 
         node,
         expanded = new Set(),
@@ -14,13 +14,13 @@
         depth = 0
     } = $props();
     
-    // Import self for recursion
+    
     import EditableTreeNode from './EditableTreeNode.svelte';
     
-    // Create event dispatcher
+    
     const dispatch = createEventDispatcher();
     
-    // Context menu state
+    
     let showContextMenu = $state(false);
     let contextMenuX = $state(0);
     let contextMenuY = $state(0);
@@ -31,7 +31,7 @@
             event.preventDefault();
         }
         
-        // Create a new set to ensure reactivity
+        
         const newExpanded = new Set([...expanded]);
         
         if (newExpanded.has(nodeId)) {
@@ -40,7 +40,7 @@
             newExpanded.add(nodeId);
         }
         
-        // Dispatch event to parent component
+        
         dispatch('toggleExpand', { expanded: newExpanded });
     }
     
@@ -49,7 +49,7 @@
             event.stopPropagation();
         }
         
-        // Create a new set to ensure reactivity
+        
         const newSelected = new Set([...selected]);
         
         if (newSelected.has(nodeId)) {
@@ -58,14 +58,14 @@
             newSelected.add(nodeId);
         }
         
-        // Dispatch event to parent component
+        
         dispatch('toggleSelect', { selected: newSelected });
     }
     
     function handleContextMenu(event) {
         event.preventDefault();
         
-        // Show context menu at click position
+        
         contextMenuX = event.clientX;
         contextMenuY = event.clientY;
         showContextMenu = true;
@@ -78,7 +78,7 @@
     function handleNodeAction(event) {
         const { action, data } = event.detail;
         
-        // Dispatch action to parent component
+        
         dispatch('nodeAction', { 
             action, 
             nodeId: node.id, 
@@ -87,20 +87,20 @@
         });
     }
     
-    // Get list of possible child node types based on parent node type
+    
     function getChildNodeTypes(nodeType) {
-        // For università level, subject nodes can have topics directly
-        // For superiori level, subject nodes have years first
         
-        // Get the node's level by looking at its path
+        
+        
+        
         const isUniversitaLevel = node.path && node.path[0] === 'universita';
         
         switch (nodeType) {
             case 'level':
                 return ['subject'];
             case 'subject':
-                // If this is a università subject, it can have topics
-                // If this is a superiori subject, it has years
+                
+                
                 return isUniversitaLevel ? ['topic'] : ['year'];
             case 'year':
                 return ['topic'];
@@ -111,7 +111,7 @@
         }
     }
     
-    // Build context menu items dynamically based on node type
+    
     let contextMenuItems = $derived(() => {
         const childTypes = getChildNodeTypes(node.node_type);
         
@@ -130,7 +130,7 @@
             }
         ];
         
-        // If node can have children, add create options
+        
         if (childTypes.length > 0) {
             items.unshift(
                 {
@@ -163,7 +163,7 @@
     const isExpanded = $derived(expanded.has(node.id));
     const isSelected = $derived(selected.has(node.id));
 
-    // DnD handlers for reordering children locally and persisting order
+    
     function onReorderConsider(event) {
         if (!node.children) return;
         const { items } = event.detail;

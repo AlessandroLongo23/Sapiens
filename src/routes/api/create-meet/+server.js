@@ -42,11 +42,11 @@ export async function POST({ request, locals: { supabase, user } }) {
 
         const timeZone = env.GOOGLE_CALENDAR_TIMEZONE || 'Europe/Rome'
 
-        // Build RFC3339 dateTimes
+        
         const startDateTime = `${date}T${start_time}:00`
         const endDateTime = `${date}T${end_time}:00`
 
-        // Service account auth
+        
         const privateKey = normalizePrivateKey(env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY)
         if (!env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !privateKey) {
             return json({ error: 'Missing GOOGLE_SERVICE_ACCOUNT_EMAIL or GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY' }, { status: 500 })
@@ -79,14 +79,14 @@ export async function POST({ request, locals: { supabase, user } }) {
         const event = res.data
         const hangoutLink = event?.hangoutLink || event?.conferenceData?.entryPoints?.[0]?.uri
 
-        // Try to persist to Supabase if columns exist
+        
         try {
             await supabase
                 .from('lectures')
                 .update({ meet_link: hangoutLink, google_event_id: event?.id })
                 .eq('id', lectureId)
         } catch (_) {
-            // Ignore persistence errors (e.g., columns not present)
+            
         }
 
         return json({ hangoutLink, eventId: event?.id })

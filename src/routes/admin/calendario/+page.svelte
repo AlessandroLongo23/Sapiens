@@ -1,14 +1,11 @@
 <script>
 	import { setSelectedDate, selectedDate } from '$lib/utils/date.svelte.js';
-	import { format, isSameDay, parseISO, isAfter } from 'date-fns';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { Plus } from 'lucide-svelte';
 	
-	import UpcomingLectures from '$lib/components/widgets/UpcomingLectures.svelte';
-	import UnpaidLectures from '$lib/components/widgets/UnpaidLectures.svelte';
-	import AddLectureModal from '$lib/components/modals/AddLectureModal.svelte';
-	import EditLectureModal from '$lib/components/modals/EditLectureModal.svelte';
-	import Calendar from '$lib/components/calendars/CalendarAdmin.svelte';
+	import UpcomingLectures from '$lib/components/admin/widgets/UpcomingLectures.svelte';
+	import UnpaidLectures from '$lib/components/admin/widgets/UnpaidLectures.svelte';
+	import AddLectureModal from '$lib/components/shared/ui/modals/AddLectureModal.svelte';
+	import EditLectureModal from '$lib/components/shared/ui/modals/EditLectureModal.svelte';
+	import Calendar from '$lib/components/admin/calendars/CalendarAdmin.svelte';
 
 	let showLectureModal = $state(false);
 	let selectedLecture = $state(null);

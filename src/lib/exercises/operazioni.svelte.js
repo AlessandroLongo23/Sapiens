@@ -10,7 +10,7 @@ Set.prototype.sort = function() {
     return new Set([...this].sort((a, b) => parseInt(a) - parseInt(b)));
 }
 
-// Helpers for set operations and formatting
+
 const setUnion = (A, B) => new Set([...A, ...B]);
 const setIntersection = (A, B) => new Set([...A].filter(x => B.has(x)));
 const setDifference = (A, B) => new Set([...A].filter(x => !B.has(x)));
@@ -62,25 +62,25 @@ export class IntersezioneEx extends Exercise {
 
 		let wrongAnswers = new Map();
 
-		// Base sets
+		
 		const intersection = setIntersection(this.setA, this.setB);
 		const union = setUnion(this.setA, this.setB);
 		const diffAB = setDifference(this.setA, this.setB);
 		const diffBA = setDifference(this.setB, this.setA);
 
-		// 1) Union instead of intersection
+		
 		if (!setEquals(intersection, union)) {
 			wrongAnswers.set('union', new Answer(formatSetLatex(union), false));
 		}
-		// 2) A\\B
+		
 		if (!setEquals(intersection, diffAB)) {
 			wrongAnswers.set('diffAB', new Answer(formatSetLatex(diffAB), false));
 		}
-		// 3) B\\A
+		
 		if (!setEquals(intersection, diffBA)) {
 			wrongAnswers.set('diffBA', new Answer(formatSetLatex(diffBA), false));
 		}
-		// 4) Remove one element from correct (if possible)
+		
 		if (intersection.size > 0) {
 			const arr = [...intersection];
 			const removed = new Set(arr.slice(1));
@@ -88,7 +88,7 @@ export class IntersezioneEx extends Exercise {
 				wrongAnswers.set('minusOne', new Answer(formatSetLatex(removed), false));
 			}
 		}
-		// 5) Add one element from union \ intersection (if possible)
+		
 		const candidates = toSortedArray(setDifference(union, intersection));
 		if (candidates.length > 0) {
 			const added = new Set([...intersection, candidates[0]]);
@@ -145,19 +145,19 @@ export class UnioneEx extends Exercise {
 		const diffAB = new Set([...this.setA].filter(x => !this.setB.has(x)));
 		const diffBA = new Set([...this.setB].filter(x => !this.setA.has(x)));
 
-		// 1) Intersection instead of union
+		
 		if (!setEquals(union, intersection)) {
 			wrongAnswers.set('intersection', new Answer(formatSetLatex(intersection), false));
 		}
-		// 2) A\\B
+		
 		if (!setEquals(union, diffAB)) {
 			wrongAnswers.set('diffAB', new Answer(formatSetLatex(diffAB), false));
 		}
-		// 3) B\\A
+		
 		if (!setEquals(union, diffBA)) {
 			wrongAnswers.set('diffBA', new Answer(formatSetLatex(diffBA), false));
 		}
-		// 4) Remove one element from correct (if possible)
+		
 		if (union.size > 0) {
 			const uArr = toSortedArray(union);
 			const removed = new Set(uArr.slice(1));
@@ -216,13 +216,13 @@ export class DifferenzaEx extends Exercise {
 		const inter = setIntersection(this.setA, this.setB);
 		const union = setUnion(this.setA, this.setB);
 
-		// 1) B\\A
+		
 		if (!setEquals(correct, swapped)) wrongAnswers.set('swapped', new Answer(formatSetLatex(swapped), false));
-		// 2) A ∩ B
+		
 		if (!setEquals(correct, inter)) wrongAnswers.set('inter', new Answer(formatSetLatex(inter), false));
-		// 3) A ∪ B
+		
 		if (!setEquals(correct, union)) wrongAnswers.set('union', new Answer(formatSetLatex(union), false));
-		// 4) Off-by-one: remove element if exists
+		
 		if (correct.size > 0) {
 			const arr = toSortedArray(correct);
 			const removed = new Set(arr.slice(1));
@@ -243,7 +243,7 @@ export class EspressioneEx extends Exercise {
 	}
 
 	generateQuestion() {
-		// build three random sets A, B, C
+		
 		this.setA = new Set();
 		this.setB = new Set();
 		this.setC = new Set();
@@ -256,7 +256,7 @@ export class EspressioneEx extends Exercise {
 		temp = [...nums]; temp.shuffle(); for (let i = 0; i < nB; i++) this.setB.add(temp.pop());
 		temp = [...nums]; temp.shuffle(); for (let i = 0; i < nC; i++) this.setC.add(temp.pop());
 
-		// pick a random expression type
+		
 		const exprs = [
 			'(A \\cup B) \\smallsetminus C',
 			'A \\cap (B \\smallsetminus C)',
@@ -310,13 +310,13 @@ export class EspressioneEx extends Exercise {
 
 		const A = this.setA, B = this.setB, C = this.setC;
 
-		// Alternative similar expressions as common mistakes
+		
 		const altExprs = [
 			'(A \\cap B) \\smallsetminus C', // ∩ instead of ∪
-			'(A \\cup B) \\cap C', // cap instead of setminus
-			'C \\smallsetminus (A \\cup B)', // reversed setminus
-			'A \\cup (B \\smallsetminus C)', // union instead of cap
-			'(A \\cap (B \\smallsetminus C))', // extra parentheses same op
+			'(A \\cup B) \\cap C', 
+			'C \\smallsetminus (A \\cup B)', 
+			'A \\cup (B \\smallsetminus C)', 
+			'(A \\cap (B \\smallsetminus C))', 
 		];
 
 		const evalAlt = (expr) => {
@@ -337,7 +337,7 @@ export class EspressioneEx extends Exercise {
 			}
 		}
 
-		// small off-by-one tweaks
+		
 		if (correct.size > 0) {
 			const arr = toSortedArray(correct);
 			const removed = new Set(arr.slice(1));

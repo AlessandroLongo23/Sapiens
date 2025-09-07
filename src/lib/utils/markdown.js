@@ -4,7 +4,7 @@ import anchor from 'markdown-it-anchor';
 function protectMath(markdown) {
 	const placeholders = [];
 	
-	// First process the block math ($$...$$) to avoid interference with inline math
+	
 	let processed = markdown.replace(/\$\$([\s\S]+?)\$\$/g, (match, content) => {
 		const placeholder = `DISPLAY_MATH_PLACEHOLDER_${placeholders.length}`;
 		placeholders.push({ type: 'display', content: content.trim() });
@@ -13,7 +13,7 @@ function protectMath(markdown) {
 	
 	processed = processed.replace(/\$([^$]+?)\$/g, (match, content) => {
 		if (match.includes('DISPLAY_MATH_PLACEHOLDER')) {
-			return match; // Skip if it's part of a placeholder
+			return match; 
 		}
 		const placeholder = `MATH_PLACEHOLDER_${placeholders.length}`;
 		placeholders.push({ type: 'inline', content: content.trim() });
@@ -26,13 +26,13 @@ function protectMath(markdown) {
 function restoreMath(html, placeholders) {
 	let result = html;
 	
-	// Restore display math first
+	
 	result = result.replace(/DISPLAY_MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
 		const { content } = placeholders[parseInt(index)];
 		return `<div class="katex-display"><span class="katex-equation">${content}</span></div>`;
 	});
 	
-	// Then restore inline math
+	
 	result = result.replace(/MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
 		const { content } = placeholders[parseInt(index)];
 		return `<span class="katex-inline">${content}</span>`;
@@ -78,7 +78,7 @@ function tableClassPlugin(md) {
 	});
 }
 
-// Add admonition plugin
+
 function admonitionPlugin(md) {
 	const icons = {
 		note: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-5 w-5"><path d="M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z"/><path d="M15 3v6h6"/></svg>',
@@ -139,7 +139,7 @@ function admonitionPlugin(md) {
 				let title = '';
 				let content = token.content.trim();
 
-				// Check if there's a title (first line)
+				
 				if (content.length > 0) {
 					const contentLines = content.split(/\r?\n/);
 					const firstLine = contentLines[0].trim();
@@ -151,10 +151,10 @@ function admonitionPlugin(md) {
 					}
 				}
 
-				// Render the markdown content
+				
 				const contentHtml = md.render(content);
 
-				// Create the admonition HTML
+				
 				const admonitionToken = new state.Token('html_block', '', 0);
 				admonitionToken.content = `
 					<div class="admonition my-6 rounded-md overflow-hidden border ${colors[adType].border} shadow-lg">
@@ -168,7 +168,7 @@ function admonitionPlugin(md) {
 					</div>
 				`;
 
-				// Replace the fence token with our HTML token
+				
 				tokens.splice(i, 1, admonitionToken);
 			}
 			i++;
@@ -178,7 +178,7 @@ function admonitionPlugin(md) {
 }
 
 function gifPlugin(md) {
-	// Store the original image renderer
+	
 	const defaultRender = md.renderer.rules.image || function(tokens, idx, options, env, self) {
 		return self.renderToken(tokens, idx, options);
 	};
@@ -188,16 +188,16 @@ function gifPlugin(md) {
 		const srcIndex = token.attrIndex('src');
 		const src = token.attrs[srcIndex][1];
 		
-		// Check if the image is a GIF
+		
 		if (src.toLowerCase().endsWith('.gif')) {
-			// Add gif-specific classes and attributes
+			
 			token.attrPush(['class', 'markdown-gif lazy-gif']);
 			token.attrPush(['loading', 'lazy']);
 			token.attrPush(['decoding', 'async']);
 			
-			// Create a placeholder while the GIF loads
+			
 			token.attrPush(['data-src', src]);
-			// Set a temporary small placeholder image
+			
 			token.attrs[srcIndex][1] = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 		}
 		
@@ -207,7 +207,7 @@ function gifPlugin(md) {
 
 const md = new MarkdownIt({
 	html: true,
-	linkify: false, // avoid automatic links when a word has a dot in the middle (CONTA.SE)
+	linkify: false, 
 	typographer: true
 });
 
@@ -265,7 +265,7 @@ export function structureTableOfContents(flatToc) {
 	
 	for (const item of flatToc) {
 		if (item.level === 1) {
-			// Create a new top-level section for h1
+			
 			currentH1Section = {
 				id: item.id,
 				title: item.title,
@@ -273,9 +273,9 @@ export function structureTableOfContents(flatToc) {
 				level: 1
 			};
 			sections.push(currentH1Section);
-			currentSection = null; // Reset current h2 section
+			currentSection = null; 
 		} else if (item.level === 2) {
-			// Create a new section for h2
+			
 			currentSection = {
 				id: item.id,
 				title: item.title,
@@ -284,14 +284,14 @@ export function structureTableOfContents(flatToc) {
 				parent: currentH1Section ? currentH1Section.id : null
 			};
 			
-			// Add to parent h1 or to main sections array
+			
 			if (currentH1Section) {
 				currentH1Section.subsections.push(currentSection);
 			} else {
 				sections.push(currentSection);
 			}
 		} else if (item.level === 3 && currentSection) {
-			// Add h3 to the current h2 section
+			
 			currentSection.subsections.push({
 				id: item.id,
 				title: item.title,

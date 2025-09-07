@@ -8,7 +8,7 @@
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 	import ReviewBox from '$lib/components/ReviewBox.svelte';
 	import { fetchStudentReview } from '$lib/stores/reviews/reviews.svelte.js';
-	import StreakWidget from '$lib/components/widgets/StreakWidget.svelte';
+	import StreakWidget from '$lib/components/admin/widgets/StreakWidget.svelte';
 
 	let { data } = $props();
 	let { user } = $derived(data);
@@ -58,7 +58,7 @@
 				subject: subject,
 				year: year,
 				key: topicSlug,
-				child_index: topic.child_index, // Include the child_index property
+				child_index: topic.child_index, 
 				subtopicCount: subtopics.length,
 				subtopics: subtopics.reduce((acc, subtopic) => {
 					acc[subtopic.slug] = {
@@ -130,14 +130,14 @@
 				});
 				break;
 			default:
-				// Use child_index as the default sort if available
+				
 				filtered.sort((a, b) => {
 					const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
 					const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
 					
 					if (aIndex !== bIndex) return aIndex - bIndex;
 					
-					// Fall back to the original default sort
+					
 					if (a.memory > 0 && a.memory < 100 && (b.memory === 0 || b.memory === 100)) return -1;
 					if (b.memory > 0 && b.memory < 100 && (a.memory === 0 || a.memory === 100)) return 1;
 					return b.lastAccessed - a.lastAccessed;
@@ -160,7 +160,7 @@
 		});
 		
 		Object.keys(grouped).forEach(key => {
-			// Sort by child_index first (if available), then by memory
+			
 			grouped[key].sort((a, b) => {
 				const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
 				const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
@@ -176,7 +176,7 @@
 	let streak = $state(5);
 	let nextMilestone = $state(7);
 	
-	// Review data
+	
 	let studentReview = $state(null);
 	let hasReviewed = $state(false);
 	let reviewId = $state(null);

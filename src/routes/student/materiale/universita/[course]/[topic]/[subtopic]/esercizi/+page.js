@@ -9,17 +9,17 @@ export async function load({ params }) {
 	const level = 'universita';
 	const subject = course;
 	
-	// Determine the appropriate topic name for loading exercises
+	
 	let topicName;
 	let topicTitle;
 	let configPath;
 	
-	// If we have a subtopic, use it as the topic name
+	
 	if (subtopicKey) {
 		topicName = subtopicKey;
 		configPath = `${level}/${subject}/${topicKey}/${subtopicKey}`;
 		
-		// Find the topic and subtopic in the flat nodes structure
+		
 		const coursePath = [level, subject];
 		const courseNode = $contentStore.flatNodes.find(node => 
 			node.node_type === 'subject' && 
@@ -35,7 +35,7 @@ export async function load({ params }) {
 			);
 			
 			if (topicNode) {
-				// Find the subtopic
+				
 				const subtopicNode = $contentStore.flatNodes.find(node => 
 					node.node_type === 'subtopic' && 
 					node.parent_id === topicNode.id && 
@@ -48,12 +48,12 @@ export async function load({ params }) {
 			}
 		}
 	}
-	// Otherwise use the main topic
+	
 	else {
 		topicName = topicKey;
 		configPath = `${level}/${subject}/${topicKey}`;
 		
-		// Find the topic in the flat nodes structure
+		
 		const coursePath = [level, subject];
 		const courseNode = $contentStore.flatNodes.find(node => 
 			node.node_type === 'subject' && 
@@ -74,7 +74,7 @@ export async function load({ params }) {
 		}
 	}
 	
-	// Fallback to the last part of the path for title
+	
 	if (!topicTitle) {
 		topicTitle = topicName.replace(/-/g, ' ');
 	}
@@ -88,9 +88,9 @@ export async function load({ params }) {
 		}
 		const exerciseModule = await moduleImporter();
 
-		// First try the new path format
+		
 		let topicConfig = configs[configPath];
-		// Fallback to old path format if not found
+		
 		if (!topicConfig) {
 			topicConfig = configs[path];
 		}
@@ -117,7 +117,7 @@ export async function load({ params }) {
 			}
 		}
 		
-		// Add array shuffle method if not exists
+		
 		if (!Array.prototype.shuffle) {
 			Array.prototype.shuffle = function() {
 				for (let i = this.length - 1; i > 0; i--) {

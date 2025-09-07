@@ -3,7 +3,7 @@
     import * as ls from 'lucide-svelte';
     import { page } from '$app/stores';
 
-    import TheoryContent from '$lib/components/markdown/TheoryContent.svelte';
+    import TheoryContent from '$lib/components/students/markdown/TheoryContent.svelte';
 
     let { data } = $props();
     let { content, sections, error, title } = $derived(data);

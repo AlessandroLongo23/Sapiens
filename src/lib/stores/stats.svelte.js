@@ -6,7 +6,7 @@ import { calculateEarnings } from '$lib/utils/format.svelte.js';
 import { it } from 'date-fns/locale';
 
 class StatsStore {
-	// Reactive inputs populated from external stores
+	
 	lectures = $state([]);
 	subjects = $state([]);
 	students = $state([]);
@@ -15,7 +15,7 @@ class StatsStore {
 	timeRange = $state(6);
 
 	constructor() {
-		// Keep internal reactive state in sync with external stores
+		
 		lecturesStore.subscribe((data) => {
 			this.lectures = data.lectures || [];
 		});
@@ -48,9 +48,9 @@ class StatsStore {
 		const lectures = this.lectures;
 		const subjects = this.subjects;
 		const students = this.students;
-		const timeRange = this.timeRange; // track dependency
-		const filterType = this.filterType; // track dependency
-		const filterId = this.filterId; // track dependency
+		const timeRange = this.timeRange; 
+		const filterType = this.filterType; 
+		const filterId = this.filterId; 
 		
 		if (!lectures?.length) return [];
 		
@@ -102,7 +102,7 @@ class StatsStore {
 
 	hoursByMonth = $derived.by(() => {
 		const lectures = this.lectures;
-		const timeRange = this.timeRange; // track dependency
+		const timeRange = this.timeRange; 
 
 		if (!lectures?.length) return [];
 		

@@ -19,11 +19,10 @@
         return $subjectsStore.subjects.find(subject => subject.id === lecture.subject_id);
     });
 
-    // Google Meet state
     let meetLink = $state(lecture?.meet_link ?? null);
     let creating = $state(false);
 
-    async function handleStartMeet(event) {
+    const handleStartMeet = async (event) => {
         event.stopPropagation();
         if (creating) return;
         creating = true;
@@ -53,7 +52,7 @@
         }
     }
 
-    function handleEnterMeet(event) {
+    const handleEnterMeet = (event) => {
         event.stopPropagation();
         if (meetLink) {
             window.open(meetLink, '_blank', 'noopener');

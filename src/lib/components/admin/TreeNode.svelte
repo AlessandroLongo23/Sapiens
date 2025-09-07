@@ -1,0 +1,222 @@
+<script>
+    import { slide } from 'svelte/transition';
+    import * as ls from 'lucide-svelte';
+    import { createEventDispatcher } from 'svelte';
+    import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
+    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
+    
+    let { 
+        node,
+        expanded = new Set(),
+        selected = new Set(),
+        depth = 0
+    } = $props();
+    
+    import TreeNode from '$lib/components/admin/TreeNode.svelte';
+    
+    const dispatch = createEventDispatcher();
+    
+    function toggleExpand(nodeId, event) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        
+        
+        const newExpanded = new Set([...expanded]);
+        
+        if (newExpanded.has(nodeId)) {
+            newExpanded.delete(nodeId);
+        } else {
+            newExpanded.add(nodeId);
+        }
+        
+        
+        dispatch('toggleExpand', { expanded: newExpanded });
+    }
+    
+    function toggleSelect(nodeId, event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        
+        
+        const newSelected = new Set([...selected]);
+        
+        if (newSelected.has(nodeId)) {
+            
+            newSelected.delete(nodeId);
+            
+            
+            if (node.children && node.children.length > 0) {
+                recursiveDeselect(node, newSelected);
+            }
+        } else {
+            
+            newSelected.add(nodeId);
+            
+            
+            if (node.children && node.children.length > 0) {
+                recursiveSelect(node, newSelected);
+            }
+        }
+        
+        
+        dispatch('toggleSelect', { 
+            selected: newSelected,
+            nodeId,
+            wasSelected: selected.has(nodeId),
+            nodeType: node.node_type,
+            parentId: node.parent_id
+        });
+    }
+    
+    
+    function recursiveSelect(parentNode, selectedSet) {
+        if (!parentNode.children) return;
+        
+        for (const child of parentNode.children) {
+            selectedSet.add(child.id);
+            if (child.children && child.children.length > 0) {
+                recursiveSelect(child, selectedSet);
+            }
+        }
+    }
+    
+    
+    function recursiveDeselect(parentNode, selectedSet) {
+        if (!parentNode.children) return;
+        
+        for (const child of parentNode.children) {
+            selectedSet.delete(child.id);
+            if (child.children && child.children.length > 0) {
+                recursiveDeselect(child, selectedSet);
+            }
+        }
+    }
+    
+    function getNodeTypeLabel(nodeType) {
+        const labels = {
+            'level': 'Livello',
+            'subject': 'Materia',
+            'year': 'Anno',
+            'topic': 'Argomento',
+            'subtopic': 'Sottoargomento'
+        };
+        return labels[nodeType] || nodeType;
+    }
+    
+    const hasChildren = $derived(!!(node.children && node.children.length > 0));
+    const isExpanded = $derived(expanded.has(node.id));
+    const isSelected = $derived(selected.has(node.id));
+
+    function onReorderConsider(event) {
+        if (!node.children) return;
+        const { items } = event.detail;
+        node = { ...node, children: items };
+    }
+    
+    async function onReorderFinalize(event) {
+        if (!node.children) return;
+        const { items } = event.detail;
+        node = { ...node, children: items };
+        try {
+            const orderedIds = node.children.map(c => c.id);
+            await reorderChildNodes(node.id, orderedIds);
+        } catch (err) {
+            console.error('Failed to persist reorder:', err);
+        }
+    }
+</script>
+
+<div class="tree-node mb-1">
+    <button 
+        type="button"
+        class="tree-node-content flex justify-between items-center px-3 py-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer transition-colors w-full text-left {isSelected ? 'bg-blue-50 dark:bg-blue-900/30' : ''}"
+        onclick={() => toggleExpand(node.id)}
+        onkeydown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleExpand(node.id);
+            }
+        }}
+    >
+        <div class="flex items-center gap-2">
+            {#if hasChildren}
+                <div 
+                    onkeydown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggleExpand(node.id, e);
+                        }
+                    }}
+                    class="w-5 h-5 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                    onclick={(e) => toggleExpand(node.id, e)}
+                    role="button"
+                    tabindex="0"
+                >
+                    {#if isExpanded}
+                        <ls.ChevronDown class="size-4" />
+                    {:else}
+                        <ls.ChevronRight class="size-4" />
+                    {/if}
+                </div>
+            {:else}
+                <span class="w-5"></span>
+            {/if}
+            
+            <div class="flex items-center">
+                <input 
+                    type="checkbox" 
+                    id="node-{node.id}" 
+                    class="form-checkbox h-4 w-4 text-blue-600 dark:text-blue-400 rounded border-zinc-300 dark:border-zinc-600 focus:ring-blue-500 dark:focus:ring-blue-400 transition"
+                    checked={isSelected}
+                    onclick={(e) => toggleSelect(node.id, e)}
+                />
+                <label for="node-{node.id}" class="ml-2 font-medium text-zinc-900 dark:text-zinc-100">
+                    {node.title || node.slug}
+                </label>
+                <span use:dragHandle class="drag-handle ml-2 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 cursor-grab" role="button" tabindex="0" aria-label="Riordina" title="Trascina per riordinare" onmousedown={(e) => e.stopPropagation()}>
+                    <ls.GripVertical class="size-3.5" />
+                </span>
+            </div>
+        </div>
+        
+        <span class="text-xs font-medium px-2 py-1 rounded bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300">
+            {getNodeTypeLabel(node.node_type)}
+        </span>
+    </button>
+    
+    {#if isExpanded && hasChildren}
+        <div class="pl-4 border-l border-zinc-200 dark:border-zinc-700 ml-5.5 mt-1" transition:slide={{duration: 200}}
+            use:dragHandleZone={{ items: node.children, dropFromOthersDisabled: true, flipDurationMs: 150 }}
+            onconsider={onReorderConsider}
+            onfinalize={onReorderFinalize}
+        >
+            {#each node.children as childNode (childNode.id)}
+                <TreeNode 
+                    node={childNode} 
+                    expanded={expanded} 
+                    selected={selected}
+                    depth={depth + 1}
+                    on:toggleExpand
+                    on:toggleSelect
+                />
+            {/each}
+        </div>
+    {/if}
+</div>
+
+<style>
+    :global(.dndDragging) {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+    :global(.dndPlaceholder) {
+        border: 2px dashed rgb(161 161 170);
+        border-radius: 0.5rem;
+        margin-bottom: 0.25rem;
+        min-height: 2rem;
+        background: rgba(161,161,170,0.08);
+    }
+</style>

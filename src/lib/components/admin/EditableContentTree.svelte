@@ -3,45 +3,45 @@
     import * as ls from 'lucide-svelte';
     import { createEventDispatcher } from 'svelte';
     import EditableTreeNode from './EditableTreeNode.svelte';
-    import ContextMenu from '../ui/ContextMenu.svelte';
+    import ContextMenu from '../shared/ui/ContextMenu.svelte';
     import { dragHandleZone } from 'svelte-dnd-action';
     import { reorderChildNodes } from '$lib/services/contentNodeService.js';
     
-    // Component props
+    
     let { selectedIds = [] } = $props();
     
-    // Create reactive state for selected and expanded nodes
+    
     let selected = $state(new Set(selectedIds));
     let expanded = $state(new Set());
     
-    // Context menu state for the background
+    
     let showContextMenu = $state(false);
     let contextMenuX = $state(0);
     let contextMenuY = $state(0);
     
-    // Create event dispatcher for external communication
+    
     const dispatch = createEventDispatcher();
     
-    // Handle expanding/collapsing nodes
+    
     function handleToggleExpand(event) {
         expanded = event.detail.expanded;
     }
     
-    // Handle selection changes
+    
     function handleToggleSelect(event) {
         selected = event.detail.selected;
         dispatch('change', Array.from(selected));
     }
     
-    // Handle node actions (create, edit, delete)
+    
     function handleNodeAction(event) {
         const { action, nodeId, nodeType, node } = event.detail;
         dispatch('nodeAction', { action, nodeId, nodeType, node });
     }
     
-    // Background context menu handler
+    
     function handleBackgroundContextMenu(event) {
-        // Only allow context menu in empty areas
+        
         if (event.target.classList.contains('tree-view')) {
             event.preventDefault();
             contextMenuX = event.clientX;
@@ -54,7 +54,7 @@
         showContextMenu = false;
     }
     
-    // Context menu items for the background (root level)
+    
     const backgroundContextMenuItems = [
         {
             label: 'Add Level',
@@ -74,7 +74,7 @@
         }
     ];
     
-    // Handle background context menu actions
+    
     function handleBackgroundAction(event) {
         const { action, data } = event.detail;
         
@@ -87,7 +87,7 @@
         }
     }
     
-    // Helper function to expand all nodes
+    
     function expandAll() {
         const newExpanded = new Set();
         $contentStore.flatNodes.forEach(node => {
@@ -98,12 +98,12 @@
         expanded = newExpanded;
     }
     
-    // Helper function to collapse all nodes
+    
     function collapseAll() {
         expanded = new Set();
     }
     
-    // Helper function to check if a node has children
+    
     function hasChildren(nodeId) {
         return $contentStore.flatNodes.some(node => node.parent_id === nodeId);
     }
@@ -112,14 +112,14 @@
         dispatch('change', Array.from(selected));
     });
 
-    // Root-level DnD state and handlers
+    
     let rootItems = $state([]);
     let isRootDragging = $state(false);
     
     $effect(() => {
         const tree = Array.isArray($contentStore.contentTree) ? $contentStore.contentTree : [];
         if (!isRootDragging) {
-            // create a shallow copy with unique object references to help dnd track items
+            
             rootItems = tree.map(n => ({ ...n }));
         }
     });

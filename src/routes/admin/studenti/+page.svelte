@@ -1,13 +1,13 @@
 <script>
     import { studentsStore } from '$lib/stores/students/students.js';
-    import { searchStore } from '$lib/components/ui/search.js';
+    import { searchStore } from '$lib/components/shared/ui/search.js';
     import * as ls from 'lucide-svelte';
     
-    import NewStudent from '$lib/components/buttons/NewStudent.svelte';
-    import StudentsTable from '$lib/components/students/StudentsTable.svelte';
-    import StudentsGrid from '$lib/components/students/StudentsGrid.svelte';
-    import Searchbar from '$lib/components/ui/Searchbar.svelte';
-    import ToggleButton from '$lib/components/ui/ToggleButton.svelte';
+    import NewStudent from '$lib/components/shared/ui/buttons/NewStudent.svelte';
+    import StudentsTable from '$lib/components/admin/StudentsTable.svelte';
+    import StudentsGrid from '$lib/components/admin/StudentsGrid.svelte';
+    import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
+    import ToggleButton from '$lib/components/shared/ui/ToggleButton.svelte';
     
     let search = $state('');
     let view = $state('table');

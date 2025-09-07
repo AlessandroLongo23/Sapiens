@@ -24,7 +24,7 @@
 	onclick={handleSelect}
 	disabled={disabled}
 >
-	<!-- Radio Circle -->
+	
 	<div class="absolute top-3 right-3">
 		<div class="relative w-4 h-4">
             <div class="w-4 h-4 rounded-full border-2 transition-all duration-300 {
@@ -37,12 +37,12 @@
 		</div>
 	</div>
 	
-	<!-- Content Area with right padding to avoid radio circle -->
+	
     <div class="pr-6">
 		{@render children()}
 	</div>
 	
-	<!-- Selected overlay effect -->
+	
 	{#if isSelected}
         <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 to-indigo-500/5 pointer-events-none"></div>
 	{/if}

@@ -30,7 +30,7 @@ ${tikzCode}
         
         return svgContent;
     } finally {
-        // Clean up temporary files
+        
         const files = await fs.readdir(tempDir);
         for (const file of files) {
             await fs.unlink(path.join(tempDir, file));

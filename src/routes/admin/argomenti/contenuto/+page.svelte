@@ -4,25 +4,25 @@
     import EditableContentTree from '$lib/components/admin/EditableContentTree.svelte';
     import ContentNodeForm from '$lib/components/admin/ContentNodeForm.svelte';
     import DeleteConfirmationModal from '$lib/components/admin/DeleteConfirmationModal.svelte';
-    import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
+    import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { contentStore } from '$lib/stores/content/content.js';
     import { createContentNode, updateContentNode, deleteContentNode, getNodeById } from '$lib/services/contentNodeService.js';
     
-    // State for modals
+    
     let showCreateModal = $state(false);
     let showEditModal = $state(false);
     let showDeleteModal = $state(false);
     
-    // Currently selected node info
+    
     let currentNode = $state(null);
     let currentNodeType = $state('level');
     let parentNode = $state(null);
     
-    // Selected content nodes
+    
     let selectedIds = $state([]);
     
     onMount(() => {
-        // Ensure content is loaded
+        
         contentStore.fetchContent();
     });
     
@@ -31,14 +31,14 @@
         
         switch (action) {
             case 'create':
-                // Prepare for node creation
+                
                 currentNodeType = nodeType;
                 currentNode = null;
                 parentNode = nodeId ? await getNodeById(nodeId) : null;
                 
-                // Make sure the child type is correctly set based on parent node path
+                
                 if (parentNode && parentNode.node_type === 'subject' && parentNode.path && parentNode.path[0] === 'universita') {
-                    // For università subjects, children are topics (not years)
+                    
                     if (currentNodeType === 'year') {
                         currentNodeType = 'topic';
                     }
@@ -48,7 +48,7 @@
                 break;
                 
             case 'edit':
-                // Prepare for node editing
+                
                 currentNode = node || await getNodeById(nodeId);
                 currentNodeType = nodeType || currentNode.node_type;
                 parentNode = currentNode.parent_id ? await getNodeById(currentNode.parent_id) : null;
@@ -56,7 +56,7 @@
                 break;
                 
             case 'delete':
-                // Prepare for node deletion
+                
                 currentNode = node || await getNodeById(nodeId);
                 showDeleteModal = true;
                 break;
@@ -144,7 +144,7 @@
         />
     </div>
     
-    <!-- Create Node Modal -->
+    
     {#if showCreateModal}
         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
@@ -159,7 +159,7 @@
         </div>
     {/if}
     
-    <!-- Edit Node Modal -->
+    
     {#if showEditModal}
         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
@@ -175,7 +175,7 @@
         </div>
     {/if}
     
-    <!-- Delete Confirmation Modal -->
+    
     {#if showDeleteModal}
         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl w-full max-w-md">

@@ -6,7 +6,7 @@ export async function load({ params, fetch }) {
     const level = 'universita';
     const subject = course;
     
-    // Get the markdown path from our utility function
+    
     const markdownPath = getMarkdownPath({ level, subject, topic: topicKey, subtopic: subtopicKey });
     
     try {
@@ -24,10 +24,10 @@ export async function load({ params, fetch }) {
         const sections = structureTableOfContents(flatToc);
         const content = renderMarkdown(markdownContent);
         
-        // Get content data from our utility function
+        
         const contentData = getContentFromParams({ level, subject, topic: topicKey, subtopic: subtopicKey });
         
-        // Get the title from the content data or use a fallback
+        
         let title = contentData?.title || subtopicKey?.replace(/-/g, ' ') || subject?.replace(/-/g, ' ');
 
         return {

@@ -2,13 +2,13 @@
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
     
-    // Props
+    
     let { node = null } = $props();
     
-    // Create event dispatcher
+    
     const dispatch = createEventDispatcher();
     
-    // Check if the node might have children (if it's a node type that could have children)
+    
     const mightHaveChildren = ['level', 'subject', 'year', 'topic'].includes(node?.node_type);
     
     function handleConfirm() {
@@ -19,7 +19,7 @@
         dispatch('cancel');
     }
     
-    // Get node type label
+    
     function getNodeTypeLabel(type) {
         const labels = {
             'level': 'Level',

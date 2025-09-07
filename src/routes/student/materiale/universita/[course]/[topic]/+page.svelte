@@ -14,10 +14,8 @@
         let subjectSlug = pieces[pieces.indexOf('universita') + 1];
         let topicSlug = pieces[pieces.indexOf(subjectSlug) + 1];
         
-        // Construct the path to find the topic node
         const path = [levelSlug, subjectSlug, topicSlug];
         
-        // Find the topic node with this path
         let topicNode = $contentStore.flatNodes.find(node => 
             node.node_type === 'topic' && 
             node.path && 
@@ -30,7 +28,6 @@
             return null;
         }
         
-        // Find all subtopics for this topic
         const subtopicNodes = $contentStore.flatNodes
             .filter(node => 
                 node.node_type === 'subtopic' && 
@@ -43,7 +40,6 @@
                 return (a.title || a.slug || '').localeCompare(b.title || b.slug || '');
             });
         
-        // Convert subtopics array to object with slug keys
         const subtopics = subtopicNodes.reduce((acc, node) => {
             acc[node.slug] = {
                 id: node.id,
@@ -82,8 +78,7 @@
                 <img src={topic.icon} alt={topic.title} class="w-full h-full object-contain p-6 sm:p-8" />
             </div>
         </div>
-
-        <!-- Topic details -->
+        
         <div class="w-full md:w-2/3 lg:w-3/4 space-y-4 sm:space-y-6">
             <div>
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 text-zinc-900 dark:text-white">{topic?.title}</h1>
@@ -113,7 +108,7 @@
         </div>
     </div>
 
-    <!-- Subtopics section -->
+    
     {#if hasSubtopics}
         <div class="mt-8 sm:mt-12">
             <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-8 text-zinc-900 dark:text-white flex items-center">
@@ -153,7 +148,6 @@
         </div>
     {/if}
 
-    <!-- Actions section -->
     <div class="mt-8 sm:mt-12 flex justify-between items-center">
         {#if !hasSubtopics}
             <div class="flex flex-col xs:flex-row gap-2 xs:gap-4 w-full xs:w-auto">

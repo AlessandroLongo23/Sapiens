@@ -1,4 +1,4 @@
-// Modern Dark Dashboard Design System colors
+
 export const designSystem = {
   colors: {
     primary: {
@@ -20,14 +20,14 @@ export const designSystem = {
       gray900: "#111827"
     },
     dark: {
-      background: "#0A0A0A",       // Almost black background
-      surface: "#121212",          // Slightly lighter surface
-      surfaceLight: "#1E1E1E",     // Subtle elevation
-      border: "#2A2A2A",           // Subtle borders
-      borderLight: "#333333",      // Lighter borders
-      textPrimary: "#FFFFFF",      // White text
-      textSecondary: "#A0A0A0",    // Light gray text
-      highlight: "#2B2B2B"         // Subtle highlight
+      background: "#0A0A0A",       
+      surface: "#121212",          
+      surfaceLight: "#1E1E1E",     
+      border: "#2A2A2A",           
+      borderLight: "#333333",      
+      textPrimary: "#FFFFFF",      
+      textSecondary: "#A0A0A0",    
+      highlight: "#2B2B2B"         
     },
     accent: {
       blue: "#3B82F6",
@@ -44,13 +44,13 @@ export const designSystem = {
       primary: "#22C55E",
       secondary: "#555555", 
       grid: {
-        light: "#E5E7EB", // Subtle grid for light mode
-        dark: "#272727"   // Grid for dark mode
+        light: "#E5E7EB", 
+        dark: "#272727"   
       },
       text: "#A0A0A0",
       avgLine: {
-        light: "#9CA3AF", // Gray for light mode
-        dark: "#555555"   // Darker gray for dark mode
+        light: "#9CA3AF", 
+        dark: "#555555"   
       }
     }
   },
@@ -64,7 +64,7 @@ export const designSystem = {
   }
 };
 
-// Color options for user selection
+
 export const colors = [
     { hex: '#ef4444', name: 'Rosso' },
     { hex: '#f15a2a', name: 'Vermiglione' },
@@ -104,8 +104,9 @@ export const colors = [
     { hex: '#ef4444', name: 'Rosso' }
 ];
 
-// Card styles based on modern dark design system
+
 export const cardStyle = 'bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-xl shadow-base transition-all hover:shadow-md dark:shadow-glow';
 
 export const widgetStyle = cardStyle;
 export const widgetTitleStyle = 'text-[#111827] dark:text-white text-base font-semibold';
+export const section_style = "section-enter scroll-mt-24 md:scroll-mt-28 pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8";

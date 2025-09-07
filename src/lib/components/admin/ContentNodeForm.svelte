@@ -2,7 +2,7 @@
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
     
-    // Props
+    
     let { 
         node = null,
         nodeType = 'level', 
@@ -10,10 +10,10 @@
         isNew = true,
     } = $props();
     
-    // Create event dispatcher
+    
     const dispatch = createEventDispatcher();
     
-    // Form values
+    
     let title = $state(node?.title || '');
     let slug = $state(node?.slug || '');
     let description = $state(node?.description || '');
@@ -21,20 +21,20 @@
     let formValid = $state(false);
     let slugEdited = $state(false);
     
-    // When title changes, update slug if slug hasn't been manually edited
+    
     $effect(() => {
         if (title && !slugEdited) {
             slug = title
                 .toLowerCase()
-                .replace(/\s+/g, '-')     // Replace spaces with -
-                .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-                .replace(/\-\-+/g, '-')   // Replace multiple - with single -
-                .replace(/^-+/, '')       // Trim - from start of text
-                .replace(/-+$/, '');      // Trim - from end of text
+                .replace(/\s+/g, '-')     
+                .replace(/[^\w\-]+/g, '') 
+                .replace(/\-\-+/g, '-')   
+                .replace(/^-+/, '')       
+                .replace(/-+$/, '');      
         }
     });
     
-    // Check form validity
+    
     $effect(() => {
         formValid = !!title && !!slug;
     });
@@ -42,7 +42,7 @@
     function handleSubmit() {
         if (!formValid) return;
         
-        // Prepare data
+        
         const nodeData = {
             ...(node?.id && { id: node.id }),
             node_type: nodeType,
@@ -53,7 +53,7 @@
             icon
         };
         
-        // Dispatch save event
+        
         dispatch('save', { node: nodeData, isNew });
     }
     
@@ -61,14 +61,14 @@
         dispatch('cancel');
     }
     
-    // Get form title based on node type and mode
+    
     function getFormTitle() {
         const action = isNew ? 'New' : 'Edit';
         const type = getNodeTypeLabel(nodeType);
         return `${action} ${type}`;
     }
     
-    // Get node type label
+    
     function getNodeTypeLabel(type) {
         const labels = {
             'level': 'Level',
@@ -106,7 +106,7 @@
         {/if}
         
         <div class="space-y-4">
-            <!-- Title field -->
+            
             <div>
                 <label for="title" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Title *</label>
                 <input 
@@ -119,7 +119,7 @@
                 />
             </div>
             
-            <!-- Slug field -->
+            
             <div>
                 <label for="slug" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Slug *</label>
                 <div class="flex gap-2">
@@ -136,7 +136,7 @@
                 <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Used in URLs. Use lowercase letters, numbers, and hyphens only.</p>
             </div>
             
-            <!-- Description field -->
+            
             <div>
                 <label for="description" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Description</label>
                 <textarea 
@@ -147,7 +147,7 @@
                 ></textarea>
             </div>
             
-            <!-- Icon field -->
+            
             <div>
                 <label for="icon" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Icon URL</label>
                 <div class="flex gap-2">

@@ -8,7 +8,7 @@ import { contentStore } from '$lib/stores/content/content.js';
  */
 export async function createContentNode(nodeData) {
     try {
-        // Set path if parent node exists
+        
         if (nodeData.parent_id) {
             const parentNode = await getNodeById(nodeData.parent_id);
             
@@ -18,11 +18,11 @@ export async function createContentNode(nodeData) {
                 throw new Error('Parent node not found or has no path');
             }
         } else {
-            // Root level nodes
+            
             nodeData.path = [nodeData.slug];
         }
         
-        // If child_index not provided, append at end among siblings
+        
         if (typeof nodeData.child_index !== 'number') {
             let maxIndex = -1;
             if (nodeData.parent_id) {
@@ -49,7 +49,7 @@ export async function createContentNode(nodeData) {
             nodeData.child_index = maxIndex + 1;
         }
         
-        // Insert the node
+        
         const { data, error } = await supabase
             .from('content_nodes')
             .insert([nodeData])
@@ -61,7 +61,7 @@ export async function createContentNode(nodeData) {
             throw error;
         }
         
-        // Refresh content store
+        
         await contentStore.fetchContent();
         
         return data;
@@ -79,26 +79,26 @@ export async function createContentNode(nodeData) {
  */
 export async function updateContentNode(nodeId, nodeData) {
     try {
-        // Get the current node
+        
         const currentNode = await getNodeById(nodeId);
         
         if (!currentNode) {
             throw new Error('Node not found');
         }
         
-        // Check if slug changed
+        
         if (nodeData.slug && nodeData.slug !== currentNode.slug) {
-            // Update path for this node and all descendants
+            
             const newPath = [...currentNode.path];
             newPath[newPath.length - 1] = nodeData.slug;
             nodeData.path = newPath;
             
-            // We would need a database function to update all descendants' paths
-            // For now, just show a warning
+            
+            
             console.warn('Changing slug will not update descendants paths automatically');
         }
         
-        // Update the node
+        
         const { data, error } = await supabase
             .from('content_nodes')
             .update(nodeData)
@@ -111,7 +111,7 @@ export async function updateContentNode(nodeId, nodeData) {
             throw error;
         }
         
-        // Refresh content store
+        
         await contentStore.fetchContent();
         
         return data;
@@ -128,7 +128,7 @@ export async function updateContentNode(nodeId, nodeData) {
  */
 export async function deleteContentNode(nodeId) {
     try {
-        // Get all nodes
+        
         const { data: allNodes, error: fetchError } = await supabase
             .from('content_nodes')
             .select('id, path');
@@ -138,26 +138,26 @@ export async function deleteContentNode(nodeId) {
             throw fetchError;
         }
         
-        // Find the target node
+        
         const nodeToDelete = allNodes.find(node => node.id === nodeId);
         
         if (!nodeToDelete) {
             throw new Error('Node not found');
         }
         
-        // Find all descendants based on path
+        
         const nodesToDelete = allNodes.filter(node => {
             if (!node.path || !nodeToDelete.path) return false;
             
-            // A node is a descendant if its path starts with the parent's path
+            
             return node.path.length >= nodeToDelete.path.length && 
                 nodeToDelete.path.every((segment, i) => node.path[i] === segment);
         });
         
-        // Get IDs of all nodes to delete
+        
         const nodeIds = nodesToDelete.map(node => node.id);
         
-        // Delete the nodes
+        
         const { error } = await supabase
             .from('content_nodes')
             .delete()
@@ -168,7 +168,7 @@ export async function deleteContentNode(nodeId) {
             throw error;
         }
         
-        // Refresh content store
+        
         await contentStore.fetchContent();
         
         return true;
@@ -239,7 +239,7 @@ export async function reorderChildNodes(parentId, orderedChildIds) {
     try {
         if (!Array.isArray(orderedChildIds) || orderedChildIds.length === 0) return true;
         
-        // Run in a single transaction-like batch by updating sequentially to preserve order
+        
         for (let index = 0; index < orderedChildIds.length; index++) {
             const id = orderedChildIds[index];
             const { error } = await supabase
@@ -252,7 +252,7 @@ export async function reorderChildNodes(parentId, orderedChildIds) {
             }
         }
         
-        // Refresh
+        
         await contentStore.fetchContent();
         return true;
     } catch (error) {

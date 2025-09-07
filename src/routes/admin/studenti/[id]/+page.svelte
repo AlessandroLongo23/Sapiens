@@ -1,15 +1,15 @@
 <script>
-    import { page } from '$app/stores';
+	import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { studentsStore } from '$lib/stores/students/students.js';
     import { contentStore } from '$lib/stores/content/content.js';
     import { supabase } from '$lib/supabase.js';
-	import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
+    import { page } from '$app/stores';
     import { onMount } from 'svelte';
     import * as ls from 'lucide-svelte';
     
-    import ActivityCalendar from '$lib/components/students/ActivityCalendar.svelte';
-    import TopicProgressList from '$lib/components/students/TopicProgressList.svelte';
-    import CollapsibleTreeView from '$lib/components/CollapsibleTreeView.svelte';
+    import CalendarActivity from '$lib/components/admin/calendars/CalendarActivity.svelte';
+    import CollapsibleTreeView from '$lib/components/admin/CollapsibleTreeView.svelte';
+    import TopicProgressList from '$lib/components/admin/TopicProgressList.svelte';
 
     let studentId = $page.params.id;
     let student = $state(null);
@@ -40,7 +40,6 @@
             
             student = studentData;
             
-            // Get assigned topics from student record
             const { data: topicsData, error: topicsError } = await supabase
                 .from('students')
                 .select('assigned_topics')
@@ -50,11 +49,8 @@
             if (topicsError) {
                 console.error('Error fetching assigned topics:', topicsError);
             } else {
-                // Store the current assigned topics
                 currentAssignedTopics = topicsData.assigned_topics || [];
                 
-                // Initialize selectedTopicIds with current assignments
-                // when the modal opens, these will be pre-selected
                 selectedTopicIds = [...currentAssignedTopics];
             }
             
@@ -131,7 +127,6 @@
     
     async function fetchStudentAssignments() {
         try {
-            // First get the student's assigned_topics array
             const { data: studentData, error: studentError } = await supabase
                 .from('students')
                 .select('assigned_topics')
@@ -148,7 +143,6 @@
                 return [];
             }
             
-            // Then fetch the content nodes for these IDs
             const { data: contentNodes, error: contentError } = await supabase
                 .from('content_nodes')
                 .select('*')
@@ -158,19 +152,13 @@
                 throw new Error(`Failed to fetch content nodes: ${contentError.message}`);
             }
             
-            // Fetch student progress for these topics (if you have a separate progress table)
-            // For now, we'll use mock progress data
-            
-            // Map content nodes to assignment objects
             return contentNodes.map(node => {
-                // Look up mock progress data - in production, this would come from a database
                 const mockProgress = {
                     'completed': { progress: 100, last_activity: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
                     'in_progress': { progress: Math.floor(Math.random() * 70) + 30, last_activity: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
                     'assigned': { progress: 0, last_activity: null }
                 };
                 
-                // Randomly assign a status for demonstration
                 const statuses = ['assigned', 'in_progress', 'completed'];
                 const randomStatus = statuses[Math.floor(Math.random() * 3)];
                 const progress = mockProgress[randomStatus];
@@ -181,7 +169,6 @@
                     topic: {
                         id: node.id,
                         title: node.title,
-                        // Reconstruct a readable path from the path array
                         path: node.path || []
                     },
                     status: randomStatus,
@@ -204,7 +191,6 @@
             const date = new Date();
             date.setDate(today.getDate() - i);
             
-            // Random activity
             if (Math.random() > 0.4) {
                 const intensity = Math.floor(Math.random() * 5);
                 const types = ['login', 'exercise', 'topic', 'lecture'];
@@ -215,7 +201,7 @@
                     type,
                     count: Math.floor(Math.random() * 5) + 1,
                     intensity,
-                    duration: Math.floor(Math.random() * 60) + 15 // minutes
+                    duration: Math.floor(Math.random() * 60) + 15
                 });
             }
         }
@@ -241,10 +227,8 @@
             
             console.log('Assigned topics saved successfully:', selectedTopicIds);
             
-            // Update the current assigned topics
             currentAssignedTopics = [...selectedTopicIds];
             
-            // Refresh assignments
             studentAssignments = await fetchStudentAssignments();
             
             const topicCount = selectedTopicIds.length;
@@ -283,7 +267,6 @@
     </div>
 {:else if student}
     <div class="space-y-8">
-        <!-- Student Header -->
         <div class="flex items-start justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-1 flex items-center gap-2">
@@ -329,7 +312,6 @@
                 <button 
                     class="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-1.5"
                     onclick={() => {
-                        // Make sure selectedTopicIds starts with the current assignments
                         selectedTopicIds = [...currentAssignedTopics];
                         showAssignTopicsModal = true;
                     }}
@@ -340,9 +322,7 @@
             </div>
         </div>
         
-        <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Streak -->
             <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Streak Attuale</h3>
@@ -361,7 +341,6 @@
                 </div>
             </div>
             
-            <!-- Total Logins -->
             <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Accessi Totali</h3>
@@ -379,7 +358,6 @@
                 </div>
             </div>
             
-            <!-- Avg Session Time -->
             <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Tempo Medio Sessione</h3>
@@ -397,7 +375,6 @@
                 </div>
             </div>
             
-            <!-- Total Exercises Done -->
             <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Esercizi Completati</h3>
@@ -416,25 +393,21 @@
             </div>
         </div>
         
-        <!-- Activity and Topics -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Topics Progress -->
             <div class="col-span-1">
                 <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
                     <TopicProgressList assignments={studentAssignments} />
                 </div>
             </div>
             
-            <!-- Activity Calendar -->
             <div class="col-span-1 lg:col-span-2">
                 <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
-                    <ActivityCalendar activities={studentActivities} months={3} />
+                    <CalendarActivity activities={studentActivities} months={3} />
                 </div>
             </div>
         </div>
-        
-        <!-- Recent Lectures -->
-<div>
+
+        <div>
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Lezioni Recenti</h2>
                 <a href="/admin/calendario" class="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
@@ -510,7 +483,6 @@
         </div>
     </div>
     
-    <!-- Assign Topics Modal -->
     {#if showAssignTopicsModal}
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/50">
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">

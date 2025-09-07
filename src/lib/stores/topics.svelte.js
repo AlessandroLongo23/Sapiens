@@ -1,4 +1,4 @@
-import { messagePopup } from '$lib/components/messagePopup/messagePopup.js';
+import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
 import { supabase } from '$lib/supabase.js';
 
 export const fetchTopics = async () => {
@@ -46,10 +46,10 @@ export const deleteTopic = async (topicId) => {
 
         if (topicError) throw topicError;
         
-        // messagePopup.success('Argomento eliminato con successo');
+        
     } catch (error) {
         console.error('Error deleting topic:', error);
-        // messagePopup.error('Errore durante l\'eliminazione dell\'argomento');
+        
     }
 };
 
@@ -68,9 +68,9 @@ export const updateTopic = async (topicId, editedName, editedDescription, edited
 
         if (error) throw error;
         
-        // messagePopup.success('Argomento aggiornato con successo');
+        
     } catch (error) {
         console.error('Error updating topic:', error);
-        // messagePopup.error('Errore durante l\'aggiornamento dell\'argomento');
+        
     }
 };

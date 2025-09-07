@@ -3,13 +3,13 @@
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { format } from 'date-fns';
 
-	import DashboardStats from '$lib/components/widgets/DashboardStats.svelte';
-	import TopEarningsBar from '$lib/components/widgets/TopEarningsBar.svelte';
-	import AddLectureModal from '$lib/components/modals/AddLectureModal.svelte';
-	import EditLectureModal from '$lib/components/modals/EditLectureModal.svelte';
-	import Earnings from '$lib/components/widgets/Earnings.svelte';
-	import LecturesTimeDistribution from '$lib/components/widgets/LecturesTimeDistribution.svelte';
-	import LecturesWeekDistribution from '$lib/components/widgets/LecturesWeekDistribution.svelte';
+	import DashboardStats from '$lib/components/admin/widgets/DashboardStats.svelte';
+	import TopEarningsBar from '$lib/components/admin/widgets/TopEarningsBar.svelte';
+	import AddLectureModal from '$lib/components/shared/ui/modals/AddLectureModal.svelte';
+	import EditLectureModal from '$lib/components/shared/ui/modals/EditLectureModal.svelte';
+	import Earnings from '$lib/components/admin/widgets/Earnings.svelte';
+	import LecturesTimeDistribution from '$lib/components/admin/widgets/LecturesTimeDistribution.svelte';
+	import LecturesWeekDistribution from '$lib/components/admin/widgets/LecturesWeekDistribution.svelte';
 
 	let showAddLectureModal = $state(false);
 	let showEditLectureModal = $state(false);

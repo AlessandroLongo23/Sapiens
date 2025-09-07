@@ -1,9 +1,9 @@
 <script>
 	import { goto } from '$app/navigation';
 	import * as ls from 'lucide-svelte';
-	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
-	import MessagePopupContainer from '$lib/components/messagePopup/MessagePopupContainer.svelte';
-	import Sidebar from '$lib/components/sidebar/Sidebar.svelte';
+    import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
+	import MessagePopupContainer from '$lib/components/shared/ui/messagePopup/MessagePopupContainer.svelte';
+	import Sidebar from '$lib/components/shared/ui/sidebar/Sidebar.svelte';
 	import { designSystem } from '$lib/stores/appearance.js';
 
 	import { page } from '$app/stores';
@@ -33,11 +33,11 @@
 		return formattedTime;
 	});
 
-	// Mobile sidebar state
+	
 	let isMobileSidebarOpen = $state(false);
 
 	$effect(() => {
-		// Close mobile sidebar on route change
+		
 		$page.url.pathname;
 		isMobileSidebarOpen = false;
 	});
@@ -93,7 +93,7 @@
 		</header>
 
 		<div class="flex">
-			<!-- Mobile Sidebar (off-canvas) -->
+			
 			<Sidebar
 				classes="md:hidden fixed top-16 bottom-0 left-0 bg-white dark:bg-[#121212] border-r border-[#E5E7EB] dark:border-[#2A2A2A] z-50"
 				maxWidth="64"
@@ -125,7 +125,7 @@
 			</Sidebar>
 
 			{#if isMobileSidebarOpen}
-				<!-- Overlay -->
+				
 				<button
 					type="button"
 					class="md:hidden fixed inset-0 bg-black/40 z-40"
@@ -134,7 +134,7 @@
 				></button>
 			{/if}
 
-			<!-- Desktop Sidebar -->
+			
 			<Sidebar classes="hidden md:flex fixed top-16 bottom-0 left-0 bg-white dark:bg-[#121212] border-r border-[#E5E7EB] dark:border-[#2A2A2A] w-[72px] lg:w-[240px]" useInlineWidth={false}>
 				<div class="p-6 space-y-1">
 					{#each tabs as tab}

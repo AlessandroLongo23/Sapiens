@@ -36,20 +36,20 @@ export const getMonthDays = () => {
 	const monthStart = startOfMonth(currentMonth);
 	const monthEnd = endOfMonth(currentMonth);
 	
-	// Calculate days from previous month to include
-	let startPadding = monthStart.getDay() - 1; // Monday is 1, Sunday is 0
-	if (startPadding === -1) startPadding = 6; // If Sunday, make it 6
+	
+	let startPadding = monthStart.getDay() - 1; 
+	if (startPadding === -1) startPadding = 6; 
 	
 	const paddedStart = subDays(monthStart, startPadding);
 	
-	// Calculate days from next month to include to complete the grid
+	
 	const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
 	const totalCalendarDays = Math.ceil((daysInMonth.length + startPadding) / 7) * 7;
 	const endPadding = totalCalendarDays - daysInMonth.length - startPadding;
 	
 	const paddedEnd = addDays(monthEnd, endPadding);
 	
-	// Return all days with an isCurrentMonth flag
+	
 	return eachDayOfInterval({ start: paddedStart, end: paddedEnd }).map(date => ({
 		date,
 		isCurrentMonth: date.getMonth() === currentMonth.getMonth()

@@ -1,10 +1,8 @@
 <script>
+    import { levels } from '$lib/stores/students/students.js';
 	import * as ls from 'lucide-svelte';
-	import { studentsStore } from '$lib/stores/students/students.js';
 	
-	let { review } = $props();
-
-	let student = $derived($studentsStore.students.find(s => s.id === review.student_id));
+	let { review, student } = $props();
 	
 	const stars = Array.from({ length: 5 }, (_, i) => i < review.rating);
 </script>
@@ -45,7 +43,7 @@
 				{student.first_name} {student.last_name.charAt(0).toUpperCase()}.
 			</div>
             <div class="text-zinc-500 dark:text-zinc-400 text-sm font-medium group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors duration-300">
-				{student.level.charAt(0).toUpperCase() + student.level.slice(1)}
+				{levels.find(level => level.value === student.level)?.label || 'N/A'}
 			</div>
 		</div>
 	</div>

@@ -1,6 +1,6 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
 import { gcd, gcdArray, mcmArray } from '$lib/utils/auxiliary.js';
-import { themeStore } from '$lib/components/theme/theme.js';
+import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
 
 export class PotenzeEsponenteNegativoEx extends Exercise {
 	constructor() {
@@ -54,7 +54,7 @@ export class PotenzeEsponenteNegativoEx extends Exercise {
 
         this.generateCorrectAnswer();
 
-        // right answer ^{-1}
+        
         if (this.exp < 0) {
             if (this.den ** -this.exp == 1) {
                 wrongAnswers.add(new Answer(`${this.negativeBase && this.exp % 2 == 1 ? '-' : ''}${this.num ** -this.exp}`, false));
@@ -76,7 +76,7 @@ export class PotenzeEsponenteNegativoEx extends Exercise {
             wrongAnswers.add(new Answer(`${this.negativeBase ? '' : '-'}\\dfrac{${this.num * this.exp}}{${this.den * this.exp}}`, false));
         }
 
-        // right answer * -1
+        
         if (this.exp < 0) {
             if (this.num ** -this.exp == 1) {
                 wrongAnswers.add(new Answer(`${this.negativeBase && this.exp % 2 == 1 ? '' : '-'}${this.den ** -this.exp}`, true));
@@ -91,7 +91,7 @@ export class PotenzeEsponenteNegativoEx extends Exercise {
             }
         }
 
-        // right answer ^{-1} * -1
+        
         if (this.exp < 0) {
             if (this.den ** -this.exp == 1) {
                 wrongAnswers.add(new Answer(`${this.negativeBase && this.exp % 2 == 1 ? '' : '-'}${this.num ** -this.exp}`, false));

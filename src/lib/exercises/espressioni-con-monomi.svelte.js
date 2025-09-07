@@ -3,7 +3,7 @@ import { gcd } from '$lib/utils/auxiliary.js';
 
 const candidateVariables = ['x', 'y', 'z'];
 
-// Fraction helpers
+
 function simplifyFraction(frac) {
 	let num = frac.num;
 	let den = frac.den;
@@ -81,17 +81,17 @@ export class EspressioneMonomiEx extends Exercise {
 	}
 
 	generateQuestion() {
-		// choose variable set
-		const count = Math.floor(Math.random() * 3) + 1; // 1..3
+		
+		const count = Math.floor(Math.random() * 3) + 1; 
 		const varsSet = new Set();
 		while (varsSet.size < count) varsSet.add(candidateVariables[Math.floor(Math.random() * candidateVariables.length)]);
 		this.vars = Array.from(varsSet).sort();
 
-		// Build expression: ((m1 * m2) : m3) * (m4) ± (m5)
+		
 		const m1 = monomialWithIntegerCoeff(this.vars, 1, 9, 1, 4);
 		const m2 = monomialWithIntegerCoeff(this.vars, 1, 9, 1, 4);
 
-		// Choose m3 so that division yields integer coefficient and non-negative exponents
+		
 		const exps12 = addExponents(m1.exponents, m2.exponents);
 		const prodCoeff = m1.coefficient.num * m2.coefficient.num;
 		let divisors = [];
@@ -101,19 +101,19 @@ export class EspressioneMonomiEx extends Exercise {
 		for (const v of this.vars) m3exps[v] = Math.floor(Math.random() * (exps12[v] + 1));
 		const m3 = { coefficient: makeInt(d), exponents: m3exps };
 
-		// m4 introduces fractions and possibly negative exponents
+		
 		const m4 = monomialWithFractionCoeff(this.vars, 1, 9, 2, 5, -2, 2);
 
-		// compute intermediate result r = ((m1*m2)/m3) * m4
+		
 		let exps = addExponents(m1.exponents, m2.exponents);
 		exps = subExponents(exps, m3.exponents);
 		exps = addExponents(exps, m4.exponents);
 
 		const c12 = multiplyFrac(m1.coefficient, m2.coefficient);
-		const c123 = divideFrac(c12, m3.coefficient); // guaranteed integer
-		const c1234 = multiplyFrac(c123, m4.coefficient); // may be fractional
+		const c123 = divideFrac(c12, m3.coefficient); 
+		const c1234 = multiplyFrac(c123, m4.coefficient); 
 
-		// m5 shares final exponents so that +/- keeps a monomial
+		
 		const m5 = { coefficient: monomialWithFractionCoeff(this.vars, 1, 9, 2, 5, 0, 0).coefficient, exponents: { ...exps } };
 		const plus = Math.random() < 0.5;
 
@@ -139,12 +139,12 @@ export class EspressioneMonomiEx extends Exercise {
 		const correctText = this.correctAnswer.textContent.replace(/^\$\$|\$\$/g, '');
 		const wrongs = new Set([correctText]);
 
-		// wrong 1: tweak coefficient by a small fraction ±1/q
+		
 		const tweak = simplifyFraction({ num: 1, den: Math.floor(Math.random() * 4) + 2 });
 		wrongs.add(formatMonomial(addFrac(this.resultCoeff, tweak), this.resultExps));
 		wrongs.add(formatMonomial(subFrac(this.resultCoeff, tweak), this.resultExps));
 
-		// wrong 2: one exponent off by ±1
+		
 		const mutated = { ...this.resultExps };
 		const keys = Object.keys(mutated);
 		if (keys.length > 0) {
@@ -154,7 +154,7 @@ export class EspressioneMonomiEx extends Exercise {
 			wrongs.add(formatMonomial(this.resultCoeff, mutated));
 		}
 
-		// wrong 3: negate coefficient
+		
 		wrongs.add(formatMonomial(simplifyFraction({ num: -this.resultCoeff.num, den: this.resultCoeff.den }), this.resultExps));
 
 		for (const t of Array.from(wrongs)) {

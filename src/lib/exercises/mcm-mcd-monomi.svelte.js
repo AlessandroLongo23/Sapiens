@@ -4,16 +4,16 @@ import { gcdArray, mcmArray } from '$lib/utils/auxiliary.js';
 const candidateVariables = ['x', 'y', 'z'];
 
 function generateRandomMonomial() {
-	const numberOfVariables = Math.floor(Math.random() * 3) + 1; // 1..3
+	const numberOfVariables = Math.floor(Math.random() * 3) + 1; 
 	const variables = new Set();
 	while (variables.size < numberOfVariables) {
 		variables.add(candidateVariables[Math.floor(Math.random() * candidateVariables.length)]);
 	}
 	const exponents = {};
 	for (const v of Array.from(variables).sort()) {
-		exponents[v] = Math.floor(Math.random() * 5) + 1; // 1..5
+		exponents[v] = Math.floor(Math.random() * 5) + 1; 
 	}
-	const coefficient = Math.floor(Math.random() * 12) + 1; // 1..13
+	const coefficient = Math.floor(Math.random() * 12) + 1; 
 	return { coefficient, exponents };
 }
 
@@ -94,11 +94,11 @@ export class McmMonomiEx extends Exercise {
 		const correct = formatMonomial(mcmMonomial(this.monomials));
 		const distractors = new Set();
 
-		// 1) Use GCD monomial as a distractor
+		
 		const gcdMono = formatMonomial(mcdMonomial(this.monomials));
 		if (gcdMono !== correct) distractors.add(gcdMono);
 
-		// 2) Off-by-one exponent on one variable
+		
 		const lcm = mcmMonomial(this.monomials);
 		const vars = Object.keys(lcm.exponents);
 		if (vars.length > 0) {
@@ -108,7 +108,7 @@ export class McmMonomiEx extends Exercise {
 			distractors.add(formatMonomial(mutated));
 		}
 
-		// 3) Tweak the coefficient
+		
 		const coeffVariants = [lcm.coefficient * 2, Math.max(1, Math.floor(lcm.coefficient / 2)), lcm.coefficient + 1];
 		for (const c of coeffVariants) {
 			if (c !== lcm.coefficient) {
@@ -154,11 +154,11 @@ export class McdMonomiEx extends Exercise {
 		const correct = formatMonomial(mcdMonomial(this.monomials));
 		const distractors = new Set();
 
-		// 1) Use LCM monomial as a distractor
+		
 		const lcmMono = formatMonomial(mcmMonomial(this.monomials));
 		if (lcmMono !== correct) distractors.add(lcmMono);
 
-		// 2) Off-by-one exponent on one variable
+		
 		const gcd = mcdMonomial(this.monomials);
 		const vars = Object.keys(gcd.exponents);
 		if (vars.length > 0) {
@@ -169,7 +169,7 @@ export class McdMonomiEx extends Exercise {
 			distractors.add(formatMonomial(mutated));
 		}
 
-		// 3) Tweak the coefficient
+		
 		const coeffVariants = [gcd.coefficient * 2, Math.max(1, Math.floor(gcd.coefficient / 2)), gcd.coefficient + 1];
 		for (const c of coeffVariants) {
 			if (c !== gcd.coefficient) {
