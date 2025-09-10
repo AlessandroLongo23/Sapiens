@@ -1,16 +1,15 @@
 <script>
-	import { goto } from '$app/navigation';
+	import { designSystem } from '$lib/stores/appearance.js';
+	import { page } from '$app/stores';
 	import * as ls from 'lucide-svelte';
-    import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
+
+	import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
 	import MessagePopupContainer from '$lib/components/shared/ui/messagePopup/MessagePopupContainer.svelte';
 	import Sidebar from '$lib/components/shared/ui/sidebar/Sidebar.svelte';
-	import { designSystem } from '$lib/stores/appearance.js';
-
-	import { page } from '$app/stores';
-
-	let title = $derived($page.url.pathname.split('/').pop().charAt(0).toUpperCase() + $page.url.pathname.split('/').pop().slice(1));
 
 	let { children, data } = $props();
+	
+	let title = $derived($page.url.pathname.split('/').pop().charAt(0).toUpperCase() + $page.url.pathname.split('/').pop().slice(1));
 
 	let tabs = [
 		{ name: 'Analytics', icon: ls.ChartArea },
@@ -37,7 +36,6 @@
 	let isMobileSidebarOpen = $state(false);
 
 	$effect(() => {
-		
 		$page.url.pathname;
 		isMobileSidebarOpen = false;
 	});

@@ -2,15 +2,16 @@
     import { studentsStore } from '$lib/stores/students/students.js';
     import { searchStore } from '$lib/components/shared/ui/search.js';
     import * as ls from 'lucide-svelte';
-    
-    import NewStudent from '$lib/components/shared/ui/buttons/NewStudent.svelte';
-    import StudentsTable from '$lib/components/admin/StudentsTable.svelte';
-    import StudentsGrid from '$lib/components/admin/StudentsGrid.svelte';
-    import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
+
+    import AddStudentModal from '$lib/components/admin/students/AddStudentModal.svelte';
+    import StudentsTable from '$lib/components/admin/students/StudentsTable.svelte';
+    import StudentsGrid from '$lib/components/admin/students/StudentsGrid.svelte';
     import ToggleButton from '$lib/components/shared/ui/ToggleButton.svelte';
+    import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
     
     let search = $state('');
     let view = $state('table');
+    let isAddNewStudentModalOpen = $state(false);
 
     let filteredStudents = $derived.by(() => {
         let filtered = $studentsStore.students;
@@ -42,6 +43,11 @@
 })
 </script>
 
+<AddStudentModal
+    bind:isOpen={isAddNewStudentModalOpen}
+    onClose={() => isAddNewStudentModalOpen = false}
+/>
+
 <div class="flex flex-col gap-8">
     <div class="flex flex-row items-center justify-between gap-4 w-full">
         <h1 class="text-2xl font-bold">{title}</h1>
@@ -54,7 +60,14 @@
                 options={['table', 'grid']}
                 icons={[ls.TableProperties, ls.LayoutGrid]}
             />
-            <NewStudent />
+            
+            <button
+                class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
+                onclick={() => isAddNewStudentModalOpen = true}
+            >
+                <ls.UserPlus class="size-5"/>
+                <span>Nuovo studente</span>
+            </button>
         </div>
     </div>
     

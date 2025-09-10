@@ -1,19 +1,15 @@
 <script>
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { studentsStore, levels } from '$lib/stores/students/students.js';
-    import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
-    import { createEventDispatcher } from 'svelte';
-    import * as ls from 'lucide-svelte';
-    import { slide } from 'svelte/transition';
 
     import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
-    import ColorPicker from '$lib/components/shared/ui/ColorPicker.svelte';
     import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
-    import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
     import PhoneNumber from '$lib/components/shared/ui/forms/PhoneNumber.svelte';
-    import FormInput from '$lib/components/shared/ui/forms/FormInput.svelte';
 
-    let isAddNewStudentModalOpen = $state(false);
+    let {
+        isOpen = $bindable(false),
+    } = $props();
+
     let firstName = $state('');
     let lastName = $state('');
     let fullName = $derived(`${firstName} ${lastName}`);
@@ -65,7 +61,6 @@
                 id: result.user.id,
                 first_name: firstName,
                 last_name: lastName,
-                role: 'student'
             });
             
             messagePopup.success('Studente aggiunto con successo');
@@ -80,33 +75,16 @@
             console.error('Error creating student:', error);
         } finally {
             isLoading = false;
-            isAddNewStudentModalOpen = false;
+            isOpen = false;
         }
     };
-
-//     const handleAddStudentSubmit = async () => {
-//         let student = {
-//             full_name: studentName,
-//             email: studentEmail,
-//             color: studentColor
-//         }
-//         await addStudent(student);
-//     }
-// </script>
-
-<button
-    class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
-    onclick={() => isAddNewStudentModalOpen = true}
->
-    <ls.UserPlus class="size-5"/>
-    <span>Nuovo studente</span>
-</button>
+</script>
 
 <AddModal 
-    isOpen={isAddNewStudentModalOpen}
+    bind:isOpen={isOpen}
     title="Nuovo studente"
     subtitle="Aggiungi un nuovo studente"
-    onClose={() => isAddNewStudentModalOpen = false}
+    onClose={() => isOpen = false}
     onSubmit={handleSubmit}
     classes="max-w-2xl"
 >

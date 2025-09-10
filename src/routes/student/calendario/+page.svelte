@@ -1,10 +1,10 @@
 <script>
-	import CalendarStudent from '$lib/components/students/calendars/CalendarStudent.svelte';
+	import ResponsiveCalendarStudent from '$lib/components/students/calendars/ResponsiveCalendarStudent.svelte';
 
 	let { data } = $props();
 	let { user } = $derived(data);
 </script>
 
-<div class="relative px-16 py-4">
-	<CalendarStudent user={user} />
+<div class="relative px-4 md:px-16 py-4">
+	<ResponsiveCalendarStudent {user} />
 </div>

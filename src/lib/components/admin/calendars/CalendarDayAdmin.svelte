@@ -91,7 +91,6 @@
 	}
 	
 	async function handleRefuseLecture(lecture, event) {
-		console.log('handleRefuseLecture', lecture, event);
 		let student = $studentsStore.students.find(student => student.id === lecture.student_id);
 		try {
 			const result = await lecturesStore.deleteLecture(lecture.id);

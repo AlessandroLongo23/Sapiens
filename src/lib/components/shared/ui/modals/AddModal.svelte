@@ -13,7 +13,11 @@
     } = $props();
 </script>
 
-<Modal bind:isOpen={isOpen} onClose={onClose} classes={classes}>
+<Modal 
+    bind:isOpen={isOpen} 
+    onClose={onClose} 
+    classes={classes}
+>
     <div class="flex flex-col bg-zinc-50 dark:bg-zinc-800 rounded-lg shadow-xl w-full">
         <div class="flex flex-row items-center justify-between p-6 border-b border-zinc-500/25">
             <div class="flex flex-row items-center gap-3 truncate">

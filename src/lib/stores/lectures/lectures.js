@@ -64,22 +64,34 @@ const createLecturesStore = () => {
                 });
             }
         },
+
         addLecture: async (lecture) => {
-            const { data, error } = await supabase.from('lectures').insert([lecture]).select().single();
+            const { data, error } = await supabase
+                .from('lectures')
+                .insert([lecture])
+                .select()
+                .single();
+
             if (error) {
                 console.error('Error adding lecture:', error.message);
                 throw new Error('Impossibile aggiungere la lezione.');
             }
             return data;
         },
+        
         deleteLecture: async (lectureId) => {
-            const { error } = await supabase.from('lectures').delete().eq('id', lectureId);
+            const { error } = await supabase
+                .from('lectures')
+                .delete()
+                .eq('id', lectureId);
+            
             if (error) {
                 console.error('Error deleting lecture:', error.message);
                 throw new Error('Impossibile eliminare la lezione.');
             }
             return true;
         },
+        
         updateLecture: async (lectureId, updatedLecture) => {
             const { data, error } = await supabase
                 .from('lectures')
@@ -94,6 +106,7 @@ const createLecturesStore = () => {
             }
             return data;
         },
+        
         selectLecture: (lectureId) => {
             selectedLectureStore.update(currentSelectedLecture => {
                 if (currentSelectedLecture?.id === lectureId) {

@@ -1,18 +1,15 @@
 <script>
+    import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { studentsStore } from '$lib/stores/students/students.js';
     import { lecturesStore } from '$lib/stores/lectures/lectures.js';
     import { levels } from '$lib/stores/students/students.js';
     import { cardStyle } from '$lib/stores/appearance.js';
-    import { createEventDispatcher } from 'svelte';
-    import { slide } from 'svelte/transition';
     import { goto } from '$app/navigation';
     import * as ls from 'lucide-svelte';
 
-    import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
-    import DeleteModal from '$lib/components/shared/ui/modals/DeleteModal.svelte';
-    import PhoneNumber from '$lib/components/shared/ui/forms/PhoneNumber.svelte';
-    import EditModal from '$lib/components/shared/ui/modals/EditModal.svelte';
-
+    import EditStudentModal from '$lib/components/admin/students/EditStudentModal.svelte';
+    import DeleteStudentModal from '$lib/components/admin/students/DeleteStudentModal.svelte';
+    
     let { students } = $props();
 
     let showEditModal = $state(false);
@@ -78,38 +75,10 @@
         showDeleteModal = true;
     }
 
-    async function handleUpdateStudent() {
-        if (!selectedStudent) return;
-        try {
-            const updated = await updateStudent(selectedStudent.id, editedStudent);
-            
-            const studentToUpdateInStore = { ...selectedStudent, ...updated };
-            studentsStore.updateStudent(selectedStudent.id, studentToUpdateInStore);
-
-            messagePopup.success('Studente aggiornato con successo!');
-            showEditModal = false;
-            selectedStudent = null;
-        } catch (error) {
-            console.error('Error updating student:', error);
-            messagePopup.error("Errore durante l'aggiornamento.");
-        }
-    }
-
-    async function handleDeleteStudent() {
-        if (!selectedStudent) return;
-        try {
-            await deleteStudent(selectedStudent.id);
-            studentsStore.deleteStudent(selectedStudent.id);
-            messagePopup.success('Studente eliminato con successo.');
-            selectedStudent = null;
-            showDeleteModal = false;
-        } catch (error) {
-            console.error('Error deleting student:', error);
-            messagePopup.error("Errore durante l'eliminazione.");
-        }
-    }
-
-    let sortedStudents = $derived(getSortedStudents(students));
+    let sortedStudents = $derived.by(() => {
+        if (students.length === 0) return [];
+        return getSortedStudents(students);
+    });
 
     
     //     e.stopPropagation();
@@ -228,82 +197,14 @@
     </table>
 </div>
 
-<EditModal 
-    bind:isOpen={showEditModal} 
-    title="Modifica Studente" 
-    subtitle="Aggiorna i dati dello studente" 
-    onSubmit={handleUpdateStudent}
-    onCancel={() => showEditModal = false}
-    onClose={() => showEditModal = false}
-    classes="max-w-2xl"
->
-    <div class="flex flex-col gap-4">
-        <div class="max-h-[60vh] pr-2 custom-scrollbar">
-            <div class="flex flex-col gap-6">
-                <div class="flex flex-row items-center gap-6 w-full">
-                    <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-name">Nome *</label>
-                        <input 
-                            type="text" 
-                            id="student-name" 
-                            class="w-full p-2 rounded-lg border border-zinc-500/25 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
-                            bind:value={editedStudent.first_name}
-                            required
-                        />
-                    </div>
 
-                    <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-name">Cognome *</label>
-                        <input 
-                            type="text" 
-                            id="student-name" 
-                            class="w-full p-2 rounded-lg border border-zinc-500/25 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
-                            bind:value={editedStudent.last_name}
-                            required
-                        />
-                    </div>
-                </div>
+<EditStudentModal   
+    bind:isOpen={showEditModal}
+    bind:editedStudent={editedStudent}
+    bind:selectedStudent={selectedStudent}
+/>
 
-                <div class="flex flex-row items-center gap-6 w-full">
-                    <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-phone">Telefono</label>
-                        <PhoneNumber
-                            value={editedStudent.phone}
-                            onChange={(value) => editedStudent.phone = value}
-                        />
-                    </div>
-                </div>
-
-                <div class="flex flex-row items-center gap-6 w-full">
-                    <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-city">Città</label>
-                        <input 
-                            type="text" 
-                            id="student-city" 
-                            class="w-full p-2 rounded-lg border border-zinc-500/25 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
-                            bind:value={editedStudent.city}
-                        />
-                    </div>
-
-                    <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-level">Livello scolastico</label>
-                        <CustomSelect
-                            options={levels}
-                            bind:value={editedStudent.level}
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</EditModal>
-
-<DeleteModal 
-    bind:isOpen={showDeleteModal} 
-    onConfirm={handleDeleteStudent}
-    onCancel={() => showDeleteModal = false}
-    onClose={() => showDeleteModal = false}
->
-    <p>Sei sicuro di voler eliminare lo studente <strong>{selectedStudent.first_name} {selectedStudent.last_name}</strong>?</p>
-    <p class="text-sm text-zinc-500 dark:text-zinc-400">Questa azione è irreversibile.</p>
-</DeleteModal>
+<DeleteStudentModal 
+    bind:isOpen={showDeleteModal}
+    bind:selectedStudent={selectedStudent}
+/>

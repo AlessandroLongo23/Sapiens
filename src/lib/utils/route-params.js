@@ -4,8 +4,6 @@ import { writable } from 'svelte/store';
 export function extractRouteParams(pathname) {
     const segments = pathname.split('/').filter(Boolean);
     
-    console.log(segments);
-
     const levelIndex = segments.findIndex(segment => 
         segment === 'superiori' || segment === 'universita'
     );

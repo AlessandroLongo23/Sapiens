@@ -4,12 +4,7 @@ import { json } from '@sveltejs/kit';
 import { Resend } from 'resend';
 import jwt from 'jsonwebtoken';
 
-console.log('RESEND_API_KEY exists:', !!env.RESEND_API_KEY);
-
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
-if (!resend) {
-    console.error('WARNING: Resend API client could not be initialized - RESEND_API_KEY is missing');
-}
 
 const SECRET_KEY = env.JWT_SECRET || 'aleripetizioni-lecture-actions-secret';
 
@@ -26,10 +21,7 @@ function generateActionToken(lectureId, action) {
 
 export async function POST({ request, url, cookies }) {
 	try {
-		// Create Supabase client for server-side use
 		const supabase = createClient(cookies);
-		
-		console.log('Supabase client initialized:', !!supabase);
 		
 		const formData = await request.json();
 
@@ -43,16 +35,6 @@ export async function POST({ request, url, cookies }) {
 			subject_id,
 		} = formData;
 		
-		console.log('Request data:', {
-			student_id,
-			first_name,
-			last_name,
-			date,
-			start_time,
-			end_time,
-			subject_id
-		});
-		
 		const { data: lectureData } = await supabase
 			.from('lectures')
 			.select('id, subject_id')
@@ -64,8 +46,6 @@ export async function POST({ request, url, cookies }) {
 			.limit(1);
 			
 		if (!lectureData || lectureData.length === 0) {
-			console.error('Lecture data not found in database - checking without time constraints');
-			
 			const { data: fallbackData } = await supabase
 				.from('lectures')
 				.select('id, subject_id')
@@ -76,7 +56,6 @@ export async function POST({ request, url, cookies }) {
 				.limit(1);
 				
 			if (!fallbackData || fallbackData.length === 0) {
-				console.error('Lecture data still not found - sending email without action links');
 				const dummyLecture = {
 					id: 'not-found',
 					subject_id: subject_id || null
@@ -128,7 +107,6 @@ export async function POST({ request, url, cookies }) {
 				});
 				
 				if (error) {
-					console.error('Resend API Error:', error);
 					return json({ error: `Error sending email: ${error.message}` }, { status: 500 });
 				}
 				
@@ -218,10 +196,7 @@ export async function POST({ request, url, cookies }) {
 		</body>
         `;
 
-		console.log('Attempting to send email with Resend API...');
-		
 		if (!resend) {
-			console.error('ERROR: Cannot send email - Resend API client is not initialized');
 			return json({ 
 				error: 'Email service is not configured. Please add RESEND_API_KEY to your environment variables.', 
 				lectureData: { 
@@ -246,8 +221,6 @@ export async function POST({ request, url, cookies }) {
 				console.error('Resend API Error:', error);
 				return json({ error: `Error sending email: ${error.message}` }, { status: 500 });
 			}
-			
-			console.log('Email sent successfully:', data);
 		} catch (emailError) {
 			console.error('Exception during email sending:', emailError);
 			return json({ 

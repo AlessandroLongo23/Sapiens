@@ -2,19 +2,11 @@ import { json } from '@sveltejs/kit';
 import { Resend } from 'resend';
 import { env } from '$env/dynamic/private';
 
-// Check if the API key exists and log its presence (not the actual key)
-console.log('RESEND_API_KEY exists in test endpoint:', !!env.RESEND_API_KEY);
-
-// Initialize Resend with better error handling
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 export async function GET() {
 	try {
-		console.log('Testing email with Resend API, key:', env.RESEND_API_KEY ? 'Present' : 'Missing');
-
-		// Check if resend client is available
 		if (!resend) {
-			console.error('ERROR: Cannot send test email - Resend API client is not initialized');
 			return json({ 
 				success: false,
 				error: 'Email service is not configured. Please add RESEND_API_KEY to your environment variables.'
@@ -47,7 +39,6 @@ export async function GET() {
 				}, { status: 500 });
 			}
 			
-			console.log('Test email sent successfully:', data);
 			return json({ 
 				success: true, 
 				messageId: data?.id,

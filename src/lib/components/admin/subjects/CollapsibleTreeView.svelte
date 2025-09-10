@@ -3,27 +3,20 @@
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
 
-    import TreeNode from './TreeNode.svelte';
-    
+    import TreeNode from '$lib/components/admin/subjects/TreeNode.svelte';
     
     let { selectedIds = [] } = $props();
-    
     
     let selected = $state(new Set(selectedIds));
     let expanded = $state(new Set());
     
-    
     const dispatch = createEventDispatcher();
     
-    
     const handleToggleExpand = (event) => {
-        console.log('Toggling expand', event.detail);
         expanded = event.detail.expanded;
     }
     
     const handleToggleSelect = (event) => {
-        console.log('Toggling select', event.detail);
-        
         let newSelected = new Set([...event.detail.selected]);
         
         if (!event.detail.wasSelected && event.detail.parentId) {
@@ -53,7 +46,6 @@
         dispatch('change', Array.from(selected));
     });
     
-    
     const expandAll = () => {
         const newExpanded = new Set();
         $contentStore.flatNodes.forEach(node => {
@@ -63,7 +55,6 @@
         });
         expanded = newExpanded;
     }
-    
     
     const collapseAll = () => {
         expanded = new Set();
@@ -84,7 +75,6 @@
     </div>
 {:else}
     <div class="tree-view">
-        
         <div class="flex justify-end mb-2 gap-2">
             <button
                 type="button"
@@ -103,7 +93,6 @@
                 Espandi tutto
             </button>
         </div>
-        
         
         {#each $contentStore.contentTree as node}
             <TreeNode 

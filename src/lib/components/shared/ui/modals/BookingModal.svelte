@@ -9,7 +9,10 @@
 
 	import { subjectOptionsByLevel, frequencyOptions, levelOptions } from '$lib/data.js';
 
-	let { isOpen = $bindable(false), title = 'Prenota una Lezione' } = $props();
+	let { 
+		isOpen = $bindable(false),
+		title = 'Prenota una Lezione' 
+	} = $props();
 
 	let currentStep = $state(1);
 	let isSubmitting = $state(false);
@@ -120,10 +123,7 @@
 	}
 
 	async function submitForm() {
-		if (!validateStep(4)) {
-			console.log('Form validation failed');
-			return;
-		}
+		if (!validateStep(4)) return;
 
 		isSubmitting = true;
 

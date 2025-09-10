@@ -5,51 +5,30 @@
 	import { subjectOptionsByLevel } from '$lib/data.js';
 	import * as ls from 'lucide-svelte';
 
-	import ColorPicker from '$lib/components/shared/ui/ColorPicker.svelte';
-	import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
-	import EditModal from '$lib/components/shared/ui/modals/EditModal.svelte';
+	import AddSubjectModal from '$lib/components/admin/subjects/AddSubjectModal.svelte';
+	import EditSubjectModal from '$lib/components/admin/subjects/EditSubjectModal.svelte';
+	import DeleteSubjectModal from '$lib/components/admin/subjects/DeleteSubjectModal.svelte';
 	import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
-	import NewSubject from '$lib/components/shared/ui/buttons/NewSubject.svelte';
+	
+	let isAddSubjectModalOpen = $state(false);
+	let isEditSubjectModalOpen = $state(false);
+	let isDeleteSubjectModalOpen = $state(false);
+	
+	let selectedSubject = $state(null);
 
-	let isAddSubjectOpen = $state(false);
-	let isEditSubjectOpen = $state(false);
-	let editingSubject = $state(null);
-	let formData = $state({
-		id: null,
-		name: '',
-		hex_color: '#3b82f6' 
-	});
-	
-	let isSubmitting = $state(false);
-	let errorMessage = $state('');
-	
     let sortColumn = $state('name');
     let sortDirection = $state('asc');
 
-	function addSubject() {
-		editingSubject = null;
-		formData = {
-			id: null,
-			name: '',
-			hex_color: '#3b82f6' 
-		};
-		isAddSubjectOpen = true;
-	}
-	
-	function editSubject(subject) {
-		editingSubject = subject;
-		formData = { ...subject };
-		isEditSubjectOpen = true;
-	}
-	
-	function closeAddSubjectModal() {
-		isAddSubjectOpen = false;
-	}
-	
-	function closeEditSubjectModal() {
-		isEditSubjectOpen = false;
+	function openEditSubjectModal(subject) {
+		selectedSubject = subject;
+		isEditSubjectModalOpen = true;
 	}
 
+	function openDeleteSubjectModal(subject) {
+		selectedSubject = subject;
+		isDeleteSubjectModalOpen = true;
+	}
+	
     function handleSort(column) {
         if (sortColumn === column) {
             sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
@@ -59,40 +38,6 @@
         }
     }
 	
-	async function handleSubmit(event) {
-		event.preventDefault();
-		isSubmitting = true;
-		errorMessage = '';
-		
-		try {
-			if (editingSubject) {
-				const { id, ...updates } = formData;
-				await subjectsStore.updateSubject(id, updates);
-                isEditSubjectOpen = false;
-			} else {
-				const { id, ...newSubject } = formData;
-				await subjectsStore.addSubject(newSubject);
-                isAddSubjectOpen = false;
-			}
-
-			messagePopup.success('Materia aggiornata con successo!');
-		} catch (error) {
-			errorMessage = error.message || 'An unknown error occurred';
-		} finally {
-			isSubmitting = false;
-		}
-	}
-	
-	async function deleteSubject(id) {
-		if (!confirm('Are you sure you want to delete this subject?')) return;
-		
-		try {
-			await subjectsStore.deleteSubject(id);
-		} catch (error) {
-			alert(error.message || 'An unknown error occurred');
-		}
-	}
-
     let sortedSubjects = $derived.by(() => {
         if (!$subjectsStore.subjects) return [];
 
@@ -127,6 +72,20 @@
     ];
 </script>
 
+<AddSubjectModal
+	bind:isOpen={isAddSubjectModalOpen}
+/>
+
+<EditSubjectModal
+	bind:isOpen={isEditSubjectModalOpen}
+	bind:selectedSubject={selectedSubject}
+/>
+
+<DeleteSubjectModal
+	bind:isOpen={isDeleteSubjectModalOpen}
+	bind:selectedSubject={selectedSubject}
+/>
+
 <div>
 	<div class="flex justify-between items-center mb-6">
 		<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Materie</h1>
@@ -140,7 +99,14 @@
 				Gestione Contenuti
 			</a>
 			<Searchbar placeholder="Cerca materia" bind:value={search} classes="w-80"/>
-			<NewSubject />
+			
+			<button
+				class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
+				onclick={isAddSubjectModalOpen = true}
+			>
+				<ls.Plus class="size-5"/>
+				<span>Nuova Materia</span>
+			</button>
 		</div>
 	</div>
 	
@@ -201,14 +167,14 @@
 							</td>
 							<td class="flex items-center px-4 py-2 text-center justify-center gap-2">
                                 <button 
-                                    onclick={() => editSubject(subject)}
+                                    onclick={() => openEditSubjectModal(subject)}
                                     class="font-medium p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 hover:text-zinc-900 dark:text-zinc-500"
                                     aria-label="Edit subject"
                                 >
                                     <ls.Pencil size={16} />
                                 </button>
                                 <button 
-                                    onclick={() => deleteSubject(subject.id)}
+                                    onclick={() => openDeleteSubjectModal(subject)}
                                     class="font-medium p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-700 text-red-600 hover:text-red-900 dark:text-red-500"
                                     aria-label="Delete subject"
                                 >
@@ -222,43 +188,3 @@
 		</table>
 	</div>
 </div>
-
-<EditModal 
-	isOpen={isEditSubjectOpen} 
-	onClose={closeEditSubjectModal}
-	onSubmit={handleSubmit}
-	title="Modifica Materia"
-	subtitle="Gestione Materie"
-	classes="max-w-xl bg-zinc-50 dark:bg-zinc-900 rounded-md"
->
-	<form onsubmit={handleSubmit} class="p-4 space-y-4">
-		<div class="flex flex-row gap-4 justify-between items-center">
-			<div class="flex-1">
-				<label for="name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Nome Materia
-				</label>
-				<input 
-					type="text" 
-					id="name"
-					bind:value={formData.name}
-					class="w-full px-3 py-2 border border-zinc-300 rounded shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100"
-					required
-				/>
-			</div>
-			
-			<div>
-				<label for="color" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Colore Materia
-				</label>
-				<ColorPicker 
-					selectedColor={formData.hex_color}
-					onColorSelect={(e) => formData.hex_color = e.hex}
-				/>
-			</div>
-		</div>
-		
-		{#if errorMessage}
-			<div class="text-red-500 text-sm">{errorMessage}</div>
-		{/if}
-	</form>
-</EditModal> 

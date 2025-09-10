@@ -8,12 +8,8 @@ const SECRET_KEY = env.JWT_SECRET || 'aleripetizioni-lecture-actions-secret';
 
 export async function GET({ url, cookies }) {
 	try {
-		// Create Supabase client for server-side use
 		const supabase = createClient(cookies);
 		
-		console.log('Supabase client initialized in refuse endpoint:', !!supabase);
-		
-		// Get the token and lecture ID from query parameters
 		const token = url.searchParams.get('token');
 		const lectureId = url.searchParams.get('id');
 
@@ -21,7 +17,6 @@ export async function GET({ url, cookies }) {
 			return json({ error: 'Missing required parameters' }, { status: 400 });
 		}
 
-		// Verify the token
 		try {
 			const decoded = jwt.verify(token, SECRET_KEY);
 			if (decoded.lectureId !== lectureId || decoded.action !== 'refuse') {
@@ -32,14 +27,12 @@ export async function GET({ url, cookies }) {
 			return json({ error: 'Invalid or expired token' }, { status: 403 });
 		}
 
-		// Get the lecture details before deleting (for display purposes)
 		const { data: lectureData } = await supabase
 			.from('lectures')
 			.select('date, start_time, end_time')
 			.eq('id', lectureId)
 			.single();
 
-		// Delete the lecture
 		const { error } = await supabase
 			.from('lectures')
 			.delete()
@@ -50,7 +43,6 @@ export async function GET({ url, cookies }) {
 			return json({ error: 'Failed to refuse lecture' }, { status: 500 });
 		}
 
-		// Return success response with a simple HTML page
 		return new Response(
 			`
 			<!DOCTYPE html>

@@ -1,17 +1,22 @@
 <script>
-	import { formatDateString } from '$lib/utils/date.svelte.js';
+	import { isSameDay, isToday, isPast, parseISO, setHours, setMinutes, format } from 'date-fns';
 	import { studentsStore } from '$lib/stores/students/students.js';
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { formatDateString } from '$lib/utils/date.svelte.js';
 	import { capitalize } from '$lib/utils/string.svelte.js';
-	import { isSameDay, isToday, isPast, parseISO, setHours, setMinutes, format } from 'date-fns';
-	import * as ls from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
+	import * as ls from 'lucide-svelte';
+	
 	import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
 
 	const dispatch = createEventDispatcher();
 
-	let { isOpen = false, selectedDay = null, user } = $props();
+	let { 
+		isOpen = $bindable(false), 
+		selectedDay = null, 
+		user 
+	} = $props();
 	
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);
@@ -24,7 +29,6 @@
 		if (isOpen && isToday(selectedDay)) {
 			timeInterval = setInterval(() => {
 				currentTime = new Date();
-				// Re-validate times when current time updates
 				if (formData.start_time && formData.end_time) {
 					validateTimes(formData.start_time, formData.end_time);
 				}
@@ -36,14 +40,12 @@
 		}
 	});
 	
-	// Run validation when modal opens
 	$effect(() => {
 		if (isOpen && formData.start_time && formData.end_time) {
 			validateTimes(formData.start_time, formData.end_time);
 		}
 	});
 	
-	// Run validation when subject changes
 	$effect(() => {
 		if (isOpen && formData.subject_id !== undefined) {
 			validateTimes(formData.start_time, formData.end_time);
@@ -116,14 +118,8 @@
 			}));
 	});
 
-	// Get available subjects
-	let availableSubjects = $derived.by(() => {
-		return $subjectsStore.subjects || [];
-	});
-	
-	// Format subjects for CustomSelect
 	let subjectOptions = $derived.by(() => {
-		return availableSubjects.map(subject => ({
+		return $subjectsStore.subjects.map(subject => ({
 			value: subject.id,
 			label: subject.name
 		}));
@@ -137,18 +133,16 @@
 		start_time: '15:00',
 		end_time: '16:00',
 		subject_id: '',
-		status: 'pending', // Setting status to pending for student-proposed lectures
+		status: 'pending',
 		level: '',
 		hourly_rate: 0,
 	});
 	
-	// Update form data when modal opens or selectedDay changes
 	$effect(() => {
 		if (isOpen && selectedDay) {
 			const student = $studentsStore.students.find(student => student.id === user.id);
 			
-			// Set hourly rate based on student level
-			let hourlyRate = 15; // Default for high school
+			let hourlyRate = 15;
 			if (student?.level === 'university') {
 				hourlyRate = 20;
 			}
@@ -160,7 +154,7 @@
 				date: formatDateString(selectedDay, 'yyyy-MM-dd'),
 				start_time: '15:00',
 				end_time: '16:00',
-				subject_id: availableSubjects.length > 0 ? availableSubjects[0].id : '',
+				subject_id: $subjectsStore.subjects.length > 0 ? $subjectsStore.subjects[0].id : '',
 				status: 'pending',
 				level: student?.level || 'high_school',
 				hourly_rate: hourlyRate,
@@ -215,7 +209,6 @@
 		isSubmitting = true;
 
 		try {
-			// First, add the lecture directly using the lecturesStore
 			const lectureData = {
 				student_id: formData.student_id,
 				subject_id: formData.subject_id,
@@ -242,8 +235,6 @@
 				status: 'pending'
 			};
 			
-			console.log('Sending email notification with data:', emailData);
-			
 			const emailResponse = await fetch('/api/request-lecture', {
 				method: 'POST',
 				headers: {
@@ -253,7 +244,6 @@
 			});
 
 			if (!emailResponse.ok) {
-				// Email notification failed, but lecture was added
 				console.warn('Email notification failed, but lecture was added successfully');
 			}
 

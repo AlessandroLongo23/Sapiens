@@ -1,18 +1,18 @@
 <script>
+    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
+    import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
+    import { createEventDispatcher } from 'svelte';
     import { slide } from 'svelte/transition';
     import * as ls from 'lucide-svelte';
-    import { createEventDispatcher } from 'svelte';
-    import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
-    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
     
+    import TreeNode from '$lib/components/admin/subjects/TreeNode.svelte';
+
     let { 
         node,
         expanded = new Set(),
         selected = new Set(),
         depth = 0
     } = $props();
-    
-    import TreeNode from '$lib/components/admin/TreeNode.svelte';
     
     const dispatch = createEventDispatcher();
     
@@ -22,7 +22,6 @@
             event.preventDefault();
         }
         
-        
         const newExpanded = new Set([...expanded]);
         
         if (newExpanded.has(nodeId)) {
@@ -30,7 +29,6 @@
         } else {
             newExpanded.add(nodeId);
         }
-        
         
         dispatch('toggleExpand', { expanded: newExpanded });
     }
@@ -40,27 +38,20 @@
             event.stopPropagation();
         }
         
-        
         const newSelected = new Set([...selected]);
         
         if (newSelected.has(nodeId)) {
-            
             newSelected.delete(nodeId);
-            
-            
             if (node.children && node.children.length > 0) {
                 recursiveDeselect(node, newSelected);
             }
         } else {
-            
             newSelected.add(nodeId);
-            
             
             if (node.children && node.children.length > 0) {
                 recursiveSelect(node, newSelected);
             }
         }
-        
         
         dispatch('toggleSelect', { 
             selected: newSelected,
@@ -70,7 +61,6 @@
             parentId: node.parent_id
         });
     }
-    
     
     function recursiveSelect(parentNode, selectedSet) {
         if (!parentNode.children) return;
@@ -82,7 +72,6 @@
             }
         }
     }
-    
     
     function recursiveDeselect(parentNode, selectedSet) {
         if (!parentNode.children) return;

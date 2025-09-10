@@ -68,17 +68,7 @@ export async function DELETE({ request, locals: { supabase } }) {
             SUPABASE_SERVICE_ROLE_KEY
         );
 
-        const { data: currentUser, error: currentUserError } = await supabaseAdmin
-            .from('students')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-        if (currentUserError || !currentUser) {
-            return json({ success: false, error: 'User not found in students table' }, { status: 403 });
-        }
-
-        if (currentUser.role !== 'admin') {
+        if (session?.user?.user_metadata?.role !== 'admin') {
             return json({ success: false, error: 'Unauthorized - Admin role required' }, { status: 403 });
         }
 
@@ -92,13 +82,12 @@ export async function DELETE({ request, locals: { supabase } }) {
         const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(id);
 
         if (authError) {
-            console.warn('Auth user deletion failed:', authError.message);
+            return json({ success: false, error: authError.message }, { status: 500 });
         }
 
         return json({ success: true });
-
     } catch (error) {
-        console.error('Error deleting student:', error);
+        console.error('Error deleting student:', error.message);
         return json({ success: false, error: error.message }, { status: 500 });
     }
 } 

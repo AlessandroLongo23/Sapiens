@@ -2,16 +2,14 @@
 	import { studentsStore } from '$lib/stores/students/students.js';
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { createEventDispatcher } from 'svelte';
 	import { format } from 'date-fns';
 	import { it } from 'date-fns/locale';
-	import { X } from 'lucide-svelte';
 	
 	import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
 	import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
 
 	let { 
-		isOpen = false, 
+		isOpen = $bindable(false), 
 		selectedDate = new Date(),
 		classes = ''
 	} = $props();
@@ -26,13 +24,10 @@
 		hourly_rate: 15,
 		level: 'medie',
 		paid: false,
-		status: 'accepted', // Admin-created lectures are automatically accepted
+		status: 'accepted',
 	});
 	
-	let isSubmitting = $state(false);
 	let errorMessage = $state('');
-	
-	const dispatch = createEventDispatcher();
 	
 	$effect(() => {
 		if (isOpen) {
@@ -46,17 +41,12 @@
 				hourly_rate: 25,
 				level: 'high_school',
 				paid: false,
-				status: 'accepted', // Admin-created lectures are automatically accepted
+				status: 'accepted',
 			};
 			
 			errorMessage = '';
 		}
 	});
-	
-	function closeModal() {
-		isOpen = false;
-		dispatch('close');
-	}
 	
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -65,30 +55,26 @@
 			return;
 		}
 		
-		isSubmitting = true;
 		errorMessage = '';
 		
 		try {
 			const { id, ...newLecture } = formData;
 			const result = await lecturesStore.addLecture(newLecture);
 			if (result) {
-				closeModal();
-				dispatch('lectureAdded', result);
+				isOpen = false;
 			} else {
 				errorMessage = 'Impossibile aggiungere la lezione';
 			}
 		} catch (error) {
 			errorMessage = error.message || 'Si è verificato un errore sconosciuto';
-		} finally {
-			isSubmitting = false;
 		}
 	}
 </script>
 
 <AddModal 
 	bind:isOpen={isOpen}
-	onClose={closeModal}
-	onCancel={closeModal}
+	onClose={() => isOpen = false}
+	onCancel={() => isOpen = false}
 	onSubmit={handleSubmit}
 	title="Nuova Lezione"
 	subtitle="Crea una nuova lezione"

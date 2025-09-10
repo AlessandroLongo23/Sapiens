@@ -1,47 +1,38 @@
 <script>
-    import { contentStore } from '$lib/stores/content/content.js';
-    import * as ls from 'lucide-svelte';
-    import { createEventDispatcher } from 'svelte';
-    import EditableTreeNode from './EditableTreeNode.svelte';
-    import ContextMenu from '../shared/ui/ContextMenu.svelte';
-    import { dragHandleZone } from 'svelte-dnd-action';
     import { reorderChildNodes } from '$lib/services/contentNodeService.js';
+    import { contentStore } from '$lib/stores/content/content.js';
+    import { dragHandleZone } from 'svelte-dnd-action';
+    import { createEventDispatcher } from 'svelte';
+    import * as ls from 'lucide-svelte';
     
+    import EditableTreeNode from '$lib/components/admin/subjects/EditableTreeNode.svelte';
+    import ContextMenu from '$lib/components/shared/ui/ContextMenu.svelte';
     
     let { selectedIds = [] } = $props();
     
-    
     let selected = $state(new Set(selectedIds));
     let expanded = $state(new Set());
-    
-    
     let showContextMenu = $state(false);
     let contextMenuX = $state(0);
     let contextMenuY = $state(0);
     
-    
     const dispatch = createEventDispatcher();
-    
     
     function handleToggleExpand(event) {
         expanded = event.detail.expanded;
     }
-    
     
     function handleToggleSelect(event) {
         selected = event.detail.selected;
         dispatch('change', Array.from(selected));
     }
     
-    
     function handleNodeAction(event) {
         const { action, nodeId, nodeType, node } = event.detail;
         dispatch('nodeAction', { action, nodeId, nodeType, node });
     }
     
-    
     function handleBackgroundContextMenu(event) {
-        
         if (event.target.classList.contains('tree-view')) {
             event.preventDefault();
             contextMenuX = event.clientX;
@@ -53,7 +44,6 @@
     function closeContextMenu() {
         showContextMenu = false;
     }
-    
     
     const backgroundContextMenuItems = [
         {
@@ -74,7 +64,6 @@
         }
     ];
     
-    
     function handleBackgroundAction(event) {
         const { action, data } = event.detail;
         
@@ -87,7 +76,6 @@
         }
     }
     
-    
     function expandAll() {
         const newExpanded = new Set();
         $contentStore.flatNodes.forEach(node => {
@@ -98,11 +86,9 @@
         expanded = newExpanded;
     }
     
-    
     function collapseAll() {
         expanded = new Set();
     }
-    
     
     function hasChildren(nodeId) {
         return $contentStore.flatNodes.some(node => node.parent_id === nodeId);

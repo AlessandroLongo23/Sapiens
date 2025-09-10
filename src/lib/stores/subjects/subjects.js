@@ -65,15 +65,23 @@ const createSubjectsStore = () => {
             }
         },
         addSubject: async (subject) => {
-            const { data, error } = await supabase.from('subjects').insert([subject]).select().single();
+            const { data, error } = await supabase
+                .from('subjects')
+                .insert([subject])
+                .select()
+                .single();
+                
             if (error) {
                 console.error('Error adding subject:', error.message);
                 throw new Error('Impossibile aggiungere la materia.');
             }
-            return data;
         },
         deleteSubject: async (subjectId) => {
-            const { error } = await supabase.from('subjects').delete().eq('id', subjectId);
+            const { error } = await supabase
+                .from('subjects')
+                .delete()
+                .eq('id', subjectId);
+            
             if (error) {
                 console.error('Error deleting subject:', error.message);
                 throw new Error('Impossibile eliminare la materia.');

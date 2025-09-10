@@ -8,7 +8,7 @@
     import * as ls from 'lucide-svelte';
     
     import CalendarActivity from '$lib/components/admin/calendars/CalendarActivity.svelte';
-    import CollapsibleTreeView from '$lib/components/admin/CollapsibleTreeView.svelte';
+    import CollapsibleTreeView from '$lib/components/admin/subjects/CollapsibleTreeView.svelte';
     import TopicProgressList from '$lib/components/admin/TopicProgressList.svelte';
 
     let studentId = $page.params.id;
@@ -224,8 +224,6 @@
             if (error) {
                 throw new Error(`Failed to assign topics: ${error.message}`);
             }
-            
-            console.log('Assigned topics saved successfully:', selectedTopicIds);
             
             currentAssignedTopics = [...selectedTopicIds];
             

@@ -1,9 +1,8 @@
 import { redirect } from '@sveltejs/kit'
 
-export const load = async ({ locals: { session, user, supabase } }) => {
+export const load = async ({ locals: { session, user } }) => {
     if (session) {
-        const { data: student } = await supabase.from('students').select('role').eq('id', user.id).single();
-        const redirectPath = student?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+        const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
         throw redirect(303, redirectPath);
     }
     
@@ -42,8 +41,7 @@ export const actions = {
             }
         }
 
-        const { data: student } = await supabase.from('students').select('role').eq('id', user.id).single();
-        const redirectPath = student?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+        const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
         throw redirect(303, redirectPath);
     },
 

@@ -189,7 +189,6 @@
 			loadingReview = true;
 			
 			if (!student?.id) {
-				console.log('No student ID available, skipping review fetch');
 				loadingReview = false;
 				return;
 			}

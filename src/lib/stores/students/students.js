@@ -76,22 +76,39 @@ const createStudentsStore = () => {
                 });
             }
         },
+
         addStudent: async (student) => {
-            const { data, error } = await supabase.from('students').insert([student]).select().single();
+            const { data, error } = await supabase
+                .from('students')
+                .insert([student])
+                .select()
+                .single();
+
             if (error) {
                 console.error('Error adding student:', error.message);
                 throw new Error('Impossibile aggiungere lo studente.');
             }
             return data;
         },
+
         deleteStudent: async (studentId) => {
-            const { error } = await supabase.from('students').delete().eq('id', studentId);
-            if (error) {
-                console.error('Error deleting student:', error.message);
-                throw new Error('Impossibile eliminare lo studente.');
+            const response = await fetch('/api/students', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: studentId })
+            });
+        
+            const result = await response.json();
+        
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to delete student');
             }
-            return true;
+        
+            return result;
         },
+
         updateStudent: async (studentId, updatedStudent) => {
             const { data, error } = await supabase
                 .from('students')
@@ -106,6 +123,7 @@ const createStudentsStore = () => {
             }
             return data;
         },
+
         selectStudent: (studentId) => {
             selectedStudentStore.update(currentSelectedStudent => {
                 if (currentSelectedStudent?.id === studentId) {

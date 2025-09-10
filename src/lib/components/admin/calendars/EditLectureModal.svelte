@@ -1,18 +1,17 @@
 <script>
+	import { selectedLectureStore } from '$lib/stores/lectures/lectures.js';
 	import { studentsStore } from '$lib/stores/students/students.js';
 	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
 	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { createEventDispatcher } from 'svelte';
+
 	import { format } from 'date-fns';
 	import { it } from 'date-fns/locale';
-	import { X } from 'lucide-svelte';
 	
 	import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
 	import EditModal from '$lib/components/shared/ui/modals/EditModal.svelte';
 
 	let { 
-		isOpen = false, 
-		lecture = null,
+		isOpen = $bindable(false), 
 		selectedDate = new Date(),
 		classes = ''
 	} = $props();
@@ -32,29 +31,22 @@
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	
-	const dispatch = createEventDispatcher();
-	
 	$effect(() => {
 		if (isOpen) {
 			formData = {
-				id: lecture.id,
-				student_id: lecture.student_id,
-				subject_id: lecture.subject_id,
-				date: format(lecture.date, 'yyyy-MM-dd', { locale: it }),
-				start_time: lecture.start_time,
-				end_time: lecture.end_time,
-				hourly_rate: lecture.hourly_rate,
-				level: lecture.level,
-				paid: lecture.paid,
+				id: $selectedLectureStore.id,
+				student_id: $selectedLectureStore.student_id,
+				subject_id: $selectedLectureStore.subject_id,
+				date: format($selectedLectureStore.date, 'yyyy-MM-dd', { locale: it }),
+				start_time: $selectedLectureStore.start_time,
+				end_time: $selectedLectureStore.end_time,
+				hourly_rate: $selectedLectureStore.hourly_rate,
+				level: $selectedLectureStore.level,
+				paid: $selectedLectureStore.paid,
 			};
 			errorMessage = '';
 		}
 	});
-	
-	function closeModal() {
-		isOpen = false;
-		dispatch('close');
-	}
 	
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -70,8 +62,7 @@
 			const { id, ...updates } = formData;
 			const result = await lecturesStore.updateLecture(id, updates);
 			if (result) {
-				closeModal();
-				dispatch('lectureUpdated', result);
+				isOpen = false;
 			} else {
 				errorMessage = 'Impossibile aggiornare la lezione';
 			}
@@ -91,8 +82,7 @@
 		try {
 			const result = await lecturesStore.deleteLecture(formData.id);
 			if (result) {
-				closeModal();
-				dispatch('lectureDeleted', formData.id);
+				isOpen = false;
 			} else {
 				errorMessage = 'Impossibile eliminare la lezione';
 			}
@@ -106,7 +96,7 @@
 
 <EditModal 
 	bind:isOpen={isOpen}
-	onClose={closeModal}
+	onClose={() => isOpen = false}
 	onSubmit={handleSubmit}
 	title="Modifica Lezione"
 	subtitle="Modifica la lezione selezionata"

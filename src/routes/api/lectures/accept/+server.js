@@ -8,12 +8,8 @@ const SECRET_KEY = env.JWT_SECRET || 'aleripetizioni-lecture-actions-secret';
 
 export async function GET({ url, cookies }) {
 	try {
-		// Create Supabase client for server-side use
 		const supabase = createClient(cookies);
 		
-		console.log('Supabase client initialized in accept endpoint:', !!supabase);
-		
-		// Get the token and lecture ID from query parameters
 		const token = url.searchParams.get('token');
 		const lectureId = url.searchParams.get('id');
 
@@ -21,7 +17,6 @@ export async function GET({ url, cookies }) {
 			return json({ error: 'Missing required parameters' }, { status: 400 });
 		}
 
-		// Verify the token
 		try {
 			const decoded = jwt.verify(token, SECRET_KEY);
 			if (decoded.lectureId !== lectureId || decoded.action !== 'accept') {
@@ -32,7 +27,6 @@ export async function GET({ url, cookies }) {
 			return json({ error: 'Invalid or expired token' }, { status: 403 });
 		}
 
-		// Update the lecture status to accepted
 		const { data, error } = await supabase
 			.from('lectures')
 			.update({ status: 'accepted' })
@@ -48,7 +42,6 @@ export async function GET({ url, cookies }) {
 			return json({ error: 'Lecture not found' }, { status: 404 });
 		}
 
-		// Return success response with a simple HTML page
 		return new Response(
 			`
 			<!DOCTYPE html>
