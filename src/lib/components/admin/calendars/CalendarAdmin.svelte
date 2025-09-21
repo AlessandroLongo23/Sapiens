@@ -3,7 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
-	import { cardStyle } from '$lib/stores/appearance.js';
+	import { cardStyle } from '$lib/const/appearance.js';
 	
 	import CalendarDay from '$lib/components/admin/calendars/CalendarDayAdmin.svelte';
 

@@ -1,7 +1,7 @@
 <script>
     import * as ls from 'lucide-svelte';
     import { goto } from '$app/navigation';
-    import { contentStore } from '$lib/stores/content/content.js';
+    import { contentStore } from '$lib/stores/content.js';
     import { page } from '$app/stores';
 
     let topic = $derived.by(() => {

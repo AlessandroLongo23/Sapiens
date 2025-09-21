@@ -1,6 +1,6 @@
 <script>
-	import { section_style } from '$lib/stores/appearance';
-	import { morgagniImages, dtuImages } from '$lib/data.js';
+	import { section_style } from '$lib/const/appearance';
+	import { morgagniImages, dtuImages } from '$lib/const/data.js';
 	import * as ls from 'lucide-svelte';
 
 	let {

@@ -1,6 +1,6 @@
 <script>
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
-    import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+    import { subjectsStore } from '$lib/stores/subjects.js';
 
     import EditModal from '$lib/components/shared/ui/modals/EditModal.svelte';
     import ColorPicker from '$lib/components/shared/ui/ColorPicker.svelte';

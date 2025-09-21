@@ -1,9 +1,10 @@
 <script>
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
-	import CalendarStudent from '$lib/components/students/calendars/CalendarStudent.svelte';
+
 	import MobileCalendarStudent from '$lib/components/students/calendars/MobileCalendarStudent.svelte';
 	import ScheduleLessonModal from '$lib/components/students/calendars/ScheduleLessonModal.svelte';
+	import CalendarStudent from '$lib/components/students/calendars/CalendarStudent.svelte';
 	
 	let { user } = $props();
 	

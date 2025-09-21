@@ -1,7 +1,7 @@
 <script>
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
 	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
-	import { designSystem } from '$lib/stores/appearance.js';
+	import { designSystem } from '$lib/const/appearance.js';
     import { ceilToMultiple } from '$lib/utils/auxiliary.js';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';

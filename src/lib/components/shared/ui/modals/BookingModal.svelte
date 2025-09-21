@@ -7,7 +7,7 @@
 	import FormButton from '$lib/components/shared/ui/forms/FormButton.svelte';
 	import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
 
-	import { subjectOptionsByLevel, frequencyOptions, levelOptions } from '$lib/data.js';
+	import { subjectOptionsByLevel, frequencyOptions, levelOptions } from '$lib/const/data.js';
 
 	let { 
 		isOpen = $bindable(false),

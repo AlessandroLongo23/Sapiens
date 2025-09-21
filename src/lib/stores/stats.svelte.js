@@ -1,12 +1,11 @@
 import { format, parseISO, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns';
-import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-import { subjectsStore } from '$lib/stores/subjects/subjects.js';
-import { studentsStore } from '$lib/stores/students/students.js';
+import { lecturesStore } from '$lib/stores/lectures.js';
+import { subjectsStore } from '$lib/stores/subjects.js';
+import { studentsStore } from '$lib/stores/students.js';
 import { calculateEarnings } from '$lib/utils/format.svelte.js';
 import { it } from 'date-fns/locale';
 
 class StatsStore {
-	
 	lectures = $state([]);
 	subjects = $state([]);
 	students = $state([]);
@@ -15,7 +14,6 @@ class StatsStore {
 	timeRange = $state(6);
 
 	constructor() {
-		
 		lecturesStore.subscribe((data) => {
 			this.lectures = data.lectures || [];
 		});

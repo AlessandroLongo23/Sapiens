@@ -1,8 +1,8 @@
 <script>
 	import { calendarView, isSelectedDate } from '$lib/utils/date.svelte.js';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { studentsStore } from '$lib/stores/students/students.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
+	import { studentsStore } from '$lib/stores/students.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
 	import { isToday, format, isSameDay, isPast, startOfToday, isFuture } from 'date-fns';
 	import { it } from 'date-fns/locale';
 	import { createEventDispatcher } from 'svelte';

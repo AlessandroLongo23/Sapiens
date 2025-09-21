@@ -1,13 +1,13 @@
 <script>
-	import { studentsStore } from '$lib/stores/students/students.js';
-	import { contentStore } from '$lib/stores/content/content.js';
+	import { studentsStore } from '$lib/stores/students.js';
+	import { contentStore } from '$lib/stores/content.js';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
 
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 	import ReviewBox from '$lib/components/ReviewBox.svelte';
-	import { fetchStudentReview } from '$lib/stores/reviews/reviews.svelte.js';
+	import { fetchStudentReview } from '$lib/stores/reviews.svelte.js';
 	import StreakWidget from '$lib/components/admin/widgets/StreakWidget.svelte';
 
 	let { data } = $props();

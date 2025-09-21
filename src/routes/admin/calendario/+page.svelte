@@ -1,6 +1,6 @@
 <script>
 	import { setSelectedDate, selectedDate } from '$lib/utils/date.svelte.js';
-	import { selectedLectureStore } from '$lib/stores/lectures/lectures.js';
+	import { selectedLectureStore } from '$lib/stores/lectures.js';
 	
 	import UpcomingLectures from '$lib/components/admin/widgets/UpcomingLectures.svelte';
 	import UnpaidLectures from '$lib/components/admin/widgets/UnpaidLectures.svelte';

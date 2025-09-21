@@ -1,9 +1,9 @@
 <script>
-	import { studentsStore } from '$lib/stores/students/students.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { studentsStore } from '$lib/stores/students.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { widgetStyle, designSystem } from '$lib/stores/appearance.js';
+	import { widgetStyle, designSystem } from '$lib/const/appearance.js';
 	import * as ls from 'lucide-svelte';
 
 	import EarningsGraph from '$lib/components/graphs/EarningsGraph.svelte';

@@ -1,9 +1,9 @@
 <script>
-    import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+    import { lecturesStore } from '$lib/stores/lectures.js';
     import { isAfter, isSameDay } from 'date-fns';
 
     import UpcomingLecture from '$lib/components/UpcomingLecture.svelte';
-    import { cardStyle } from '$lib/stores/appearance.js';
+    import { cardStyle } from '$lib/const/appearance.js';
 
     let filteredLectures = $derived.by(() => {
 		return $lecturesStore.lectures.sort((a, b) => {

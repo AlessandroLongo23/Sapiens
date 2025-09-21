@@ -1,109 +1,115 @@
 <script>
     import { onMount } from 'svelte';
+    import { prefixes } from '$lib/const/prefixes'
     import * as ls from 'lucide-svelte';
 
+    let { 
+        prefixCode = $bindable(null),
+        phoneNumber = $bindable(null), 
+        classes = $bindable(null),
+    } = $props();
     
-    let { value = '', onChange = () => {} } = $props();
-
-    
-    let prefix = $state('+39'); 
-    let number = $state('');
+    let prefix = $state({})
     let showPrefixDropdown = $state(false);
     let inputRef;
 
-    
-    const prefixes = [
-        { code: '+39', country: 'Italia', format: /(\d{0,3})(\d{0,3})(\d{0,4})/ },
-        { code: '+41', country: 'Svizzera', format: /(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/ },
-        { code: '+43', country: 'Austria', format: /(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,3})/ },
-        { code: '+33', country: 'Francia', format: /(\d{0,1})(\d{0,2})(\d{0,2})(\d{0,2})(\d{0,2})/ },
-        { code: '+49', country: 'Germania', format: /(\d{0,3})(\d{0,4})(\d{0,4})/ },
-        { code: '+44', country: 'Regno Unito', format: /(\d{0,2})(\d{0,4})(\d{0,4})/ },
-    ];
+    let searchQuery = $state('');
 
+    let filteredPrefixes = $derived(
+        prefixes
+            .filter(p => p.country.toLowerCase().includes(searchQuery.toLowerCase()))
+            .sort((a, b) => a.country.localeCompare(b.country))
+    );
+
+    onMount(() => {
+        prefix = prefixes.find(p => p.code == prefixCode)
+        if (prefix) {
+            selectPrefix(prefix);
+        }
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    });
+
+    const isLetter = (key) => {
+        return key.length === 1 && key.match(/[a-zA-Z]/);
+    };
     
     const formatNumber = (val) => {
-        
         const cleaned = val.replace(/\D/g, '');
-        
-        
-        const prefixFormat = prefixes.find(p => p.code === prefix)?.format || /(\d{0,3})(\d{0,3})(\d{0,4})/;
-        
-        
+        const prefixFormat = prefix.format;
         const matches = cleaned.match(prefixFormat);
         if (!matches) return cleaned;
-        
         
         return matches.slice(1).filter(group => group).join(' ');
     };
 
     const handleNumberInput = (e) => {
         const val = e.target.value.replace(/\s/g, '');
-        number = formatNumber(val);
-        
-        const fullNumber = `${prefix}${number.replace(/\s/g, '')}`;
-        onChange(fullNumber);
+        phoneNumber = formatNumber(val);
     };
-
     
     const selectPrefix = (newPrefix) => {
         prefix = newPrefix;
+        prefixCode = newPrefix.code;
+        phoneNumber = formatNumber(phoneNumber.replace(/\s/g, ''));
         showPrefixDropdown = false;
-        
-        
-        number = formatNumber(number.replace(/\s/g, ''));
-        
-        
-        const fullNumber = `${prefix}${number.replace(/\s/g, '')}`;
-        onChange(fullNumber);
-        
-        
+        searchQuery = '';
         inputRef?.focus();
     };
 
-    
     const handleClickOutside = (e) => {
         if (e.target.closest('.prefix-selector')) return;
         showPrefixDropdown = false;
+        searchQuery = '';
     };
-
-    onMount(() => {
-        
-        if (value) {
-            const match = value.match(/(\+\d{2})(.*)/);
-            if (match) {
-                prefix = match[1];
-                number = formatNumber(match[2]);
-            }
-        }
-
-        
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    });
 </script>
 
-<div class="flex flex-row items-stretch gap-2">
+<div class="flex flex-row gap-2 {classes}">
     <div class="relative prefix-selector">
         <button
             type="button"
             class="h-full px-3 flex items-center gap-1 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-500/25 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
-            onclick={() => showPrefixDropdown = !showPrefixDropdown}
+            onclick={() => {
+                showPrefixDropdown = !showPrefixDropdown;
+                searchQuery = '';
+            }}
+            onkeydown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    showPrefixDropdown = !showPrefixDropdown;
+                    searchQuery = '';
+                }
+
+                if (e.key === 'Backspace') {
+                    searchQuery = searchQuery.slice(0, -1);
+                } else if (e.key === 'Escape') {
+                    searchQuery = '';
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const buttons = document.querySelectorAll('[data-prefix-button]');
+                    if (buttons.length > 0) buttons[0].focus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const buttons = document.querySelectorAll('[data-prefix-button]');
+                    if (buttons.length > 0) buttons[buttons.length - 1].focus();
+                } else if (isLetter(e.key)) {
+                    searchQuery += e.key;
+                }
+            }}
         >
-            <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{prefix}</span>
+            <span class="text-zinc-900 dark:text-zinc-100">{prefix.code}</span>
             <ls.ChevronDown class="size-4 text-zinc-500" />
         </button>
 
         {#if showPrefixDropdown}
-            <div class="absolute max-h-36 overflow-y-auto scrollbar-hidden top-full left-0 mt-1 w-48 py-1 bg-white dark:bg-zinc-900 border border-zinc-500/25 rounded-lg shadow z-50">
-                {#each prefixes as { code, country }}
+            <div class="absolute max-h-72 overflow-y-auto scrollbar-hidden top-full left-0 mt-1 w-60 py-1 bg-white dark:bg-zinc-900 border border-zinc-500/25 rounded-lg shadow z-50">
+                {#each filteredPrefixes as prefix}
                     <button
                         type="button"
                         class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        onclick={() => selectPrefix(code)}
+                        onclick={() => selectPrefix(prefix)}
                     >
-                        <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{code}</span>
-                        <span class="text-sm text-zinc-500 ml-2">{country}</span>
+                        <span class="text-zinc-900 dark:text-zinc-100">{prefix.code}</span>
+                        <span class="text-sm text-zinc-500 ml-2">{prefix.country}</span>
                     </button>
                 {/each}
             </div>
@@ -113,9 +119,10 @@
     <input
         type="text"
         bind:this={inputRef}
-        placeholder="123 456 789"
-        class="flex-1 p-2.5 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border border-zinc-500/25 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/60 transition-colors"
-        value={number}
+        placeholder={prefix.placeholder || '000 000 0000'}
+        class="flex p-2.5 max-w-[12rem] rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border border-zinc-500/25 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/60 transition-colors"
+        value={phoneNumber}
         oninput={handleNumberInput}
+        aria-label="Phone number"
     />
 </div>

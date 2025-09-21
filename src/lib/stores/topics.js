@@ -1,9 +1,16 @@
-import { fetchTopics } from '$lib/stores/topics.svelte.js';
 import { supabase } from '$lib/supabase';
 import { writable } from 'svelte/store';
 
 export const selectedTopicStore = writable(null);
 export const hoveredTopicId = writable(null);
+
+async function fetchTopics() {
+    const { data, error } = await supabase
+        .from('topics')
+        .select('*');
+    if (error) throw new Error(error.message);
+    return data;
+}
 
 const createTopicsStore = () => {
     const { subscribe, set, update } = writable({

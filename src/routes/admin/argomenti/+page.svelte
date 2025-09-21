@@ -1,15 +1,17 @@
 <script>
 	import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
-	import { subjectOptionsByLevel } from '$lib/data.js';
+	import { searchStore } from '$lib/components/shared/ui/search.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
+	import { dataColumns } from '$lib/models/subjects.svelte.js';
 	import * as ls from 'lucide-svelte';
 
 	import AddSubjectModal from '$lib/components/admin/subjects/AddSubjectModal.svelte';
 	import EditSubjectModal from '$lib/components/admin/subjects/EditSubjectModal.svelte';
 	import DeleteSubjectModal from '$lib/components/admin/subjects/DeleteSubjectModal.svelte';
 	import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
-	
+	import Table from '$lib/components/admin/Table.svelte';
+
 	let isAddSubjectModalOpen = $state(false);
 	let isEditSubjectModalOpen = $state(false);
 	let isDeleteSubjectModalOpen = $state(false);
@@ -29,47 +31,31 @@
 		isDeleteSubjectModalOpen = true;
 	}
 	
-    function handleSort(column) {
-        if (sortColumn === column) {
-            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            sortColumn = column;
-            sortDirection = 'asc';
-        }
-    }
-	
-    let sortedSubjects = $derived.by(() => {
-        if (!$subjectsStore.subjects) return [];
+    let filteredSubjects = $derived.by(() => {
+        const allSubjects = $subjectsStore.subjects;
+        if (!allSubjects) return [];
+        if (!$searchStore.query) return allSubjects;
 
-        return [...$subjectsStore.subjects].sort((a, b) => {
-            let aValue, bValue;
+        const keys = ['name'];
+        const filtered = allSubjects.filter(subject => 
+            keys.some(key => String(subject[key])?.toLowerCase().includes($searchStore.query.toLowerCase()))
+        );
 
-            if (sortColumn === 'lectures_count') {
-                aValue = $lecturesStore.lectures.filter(lecture => lecture.subject_id === a.id).length;
-                bValue = $lecturesStore.lectures.filter(lecture => lecture.subject_id === b.id).length;
-            } else {
-                aValue = a[sortColumn] || '';
-                bValue = b[sortColumn] || '';
-            }
-
-            if (typeof aValue === 'string') aValue = aValue.toLowerCase();
-            if (typeof bValue === 'string') bValue = bValue.toLowerCase();
-
-            if (sortDirection === 'asc') {
-                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-            } else {
-                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-            }
-        });
+        return filtered;
     });
 
-	let search = $state('');
+    let title = $derived.by(() => {
+        if (!$searchStore.query)
+            return `Tutte le materie ${`(${filteredSubjects.length})`}`;
 
-    const columns = [
-        { label: 'Nome', key: 'name', sortable: true },
-        { label: 'Lezioni', key: 'lectures_count', sortable: true },
-		{ label: 'Livello', key: 'level', sortable: true }
-    ];
+        if (filteredSubjects.length === 0)
+            return 'Nessuna materia trovata';
+
+        if (filteredSubjects.length === 1)
+            return '1 materia trovata';
+
+        return `${filteredSubjects.length} materie trovate`;
+    });
 </script>
 
 <AddSubjectModal
@@ -86,30 +72,40 @@
 	bind:selectedSubject={selectedSubject}
 />
 
-<div>
-	<div class="flex justify-between items-center mb-6">
-		<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Materie</h1>
-		
-		<div class="flex flex-row items-center gap-4">
-			<a 
-				href="/admin/argomenti/contenuto" 
-				class="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-md text-sm flex items-center gap-1.5 transition-colors"
-			>
-				<ls.LayoutGrid class="size-4" />
-				Gestione Contenuti
-			</a>
-			<Searchbar placeholder="Cerca materia" bind:value={search} classes="w-80"/>
-			
-			<button
-				class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
-				onclick={isAddSubjectModalOpen = true}
-			>
-				<ls.Plus class="size-5"/>
-				<span>Nuova Materia</span>
-			</button>
-		</div>
-	</div>
+<div class="flex justify-between items-center mb-6">
+	<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{title}</h1>
 	
+	<div class="flex flex-row items-center gap-4">
+		<a 
+			href="/admin/argomenti/contenuto" 
+			class="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-md text-sm flex items-center gap-1.5 transition-colors"
+		>
+			<ls.LayoutGrid class="size-4" />
+			Gestione Contenuti
+		</a>
+		<Searchbar placeholder="Cerca materia" classes="w-80"/>
+		
+		<button
+			class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
+			onclick={isAddSubjectModalOpen = true}
+		>
+			<ls.Plus class="size-5"/>
+			<span>Nuova Materia</span>
+		</button>
+	</div>
+</div>
+
+<Table 
+	data={filteredSubjects}
+	columns={dataColumns}
+	isLoading={$subjectsStore.isLoading}
+	handleEditClick={openEditSubjectModal}
+	handleDeleteClick={openDeleteSubjectModal}
+	labelPlural="materie"
+	labelSingular="materia"
+/>
+
+<!-- <div>
 	<div class="bg-white dark:bg-zinc-900 shadow-sm rounded-lg overflow-x-auto">
         <table class="w-full text-sm text-left text-zinc-500 dark:text-zinc-400">
             <thead class="text-xs text-zinc-700 bg-zinc-50 dark:bg-zinc-800 dark:text-zinc-400">
@@ -162,9 +158,6 @@
 							<td class="px-4 py-2 text-right border-r border-zinc-200/50 dark:border-zinc-700/50">
 								{lecturesCount}
 							</td>
-							<td class="px-4 py-2 text-right border-r border-zinc-200/50 dark:border-zinc-700/50">
-								<!-- {Object.values(subjectOptionsByLevel).find(option => option.value === subject.level) || 'N/A'} -->
-							</td>
 							<td class="flex items-center px-4 py-2 text-center justify-center gap-2">
                                 <button 
                                     onclick={() => openEditSubjectModal(subject)}
@@ -187,4 +180,4 @@
 			</tbody>
 		</table>
 	</div>
-</div>
+</div> -->

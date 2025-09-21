@@ -1,5 +1,5 @@
 <script>
-    import { studentsStore } from '$lib/stores/students/students.js';
+    import { studentsStore } from '$lib/stores/students.js';
     import { searchStore } from '$lib/components/shared/ui/search.js';
     import * as ls from 'lucide-svelte';
 
@@ -20,7 +20,7 @@
             filtered = filtered.filter(student => 
                 student.first_name?.toLowerCase().includes($searchStore.query.toLowerCase()) ||
                 student.last_name?.toLowerCase().includes($searchStore.query.toLowerCase()) ||
-                student.phone?.toLowerCase().includes($searchStore.query.toLowerCase()) ||
+                student.phonePrefix?.concat(student.phoneNumber)?.toLowerCase().includes($searchStore.query.toLowerCase()) ||
                 student.level?.toLowerCase().includes($searchStore.query.toLowerCase()) ||
                 student.city?.toLowerCase().includes($searchStore.query.toLowerCase())
             );
@@ -31,7 +31,7 @@
 
     let title = $derived.by(() => {
         if (!$searchStore.query)
-            return 'Tutti gli studenti';
+            return `Tutti gli studenti ${`(${filteredStudents.length})`}`;
 
         if (filteredStudents.length === 0)
             return 'Nessuno studente trovato';
@@ -50,7 +50,7 @@
 
 <div class="flex flex-col gap-8">
     <div class="flex flex-row items-center justify-between gap-4 w-full">
-        <h1 class="text-2xl font-bold">{title}</h1>
+        <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{title}</h1>
 
         <div class="flex flex-row items-center gap-4">
             <Searchbar placeholder="Cerca studente" bind:value={search} classes="w-80"/>
@@ -62,11 +62,11 @@
             />
             
             <button
-                class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-50 rounded-lg border border-zinc-500/25"
+                class="flex flex-row items-center whitespace-nowrap justify-center px-4 py-2 gap-2 text-sm font-medium transition-all duration-200 ease-in-out bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg border border-zinc-500/25"
                 onclick={() => isAddNewStudentModalOpen = true}
             >
                 <ls.UserPlus class="size-5"/>
-                <span>Nuovo studente</span>
+                <span class="text-zinc-900 dark:text-zinc-50">Nuovo studente</span>
             </button>
         </div>
     </div>

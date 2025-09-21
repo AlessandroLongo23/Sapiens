@@ -1,5 +1,5 @@
 <script>
-    import { section_style } from '$lib/stores/appearance';
+    import { section_style } from '$lib/const/appearance';
     import * as ls from 'lucide-svelte';
 
     let {

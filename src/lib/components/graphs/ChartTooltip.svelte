@@ -1,5 +1,5 @@
 <script>
-    import { designSystem } from '$lib/stores/appearance.js';
+    import { designSystem } from '$lib/const/appearance.js';
     
     let { 
         visible,

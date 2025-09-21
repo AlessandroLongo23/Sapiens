@@ -1,6 +1,6 @@
 <script>
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
-    import { studentsStore } from '$lib/stores/students/students.js';
+    import { studentsStore } from '$lib/stores/students.js';
 
     import DeleteModal from '$lib/components/shared/ui/modals/DeleteModal.svelte';
 

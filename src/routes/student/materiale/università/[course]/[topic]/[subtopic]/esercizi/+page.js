@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { configs } from '$lib/exercises/config.js';
-import { contentStore } from '$lib/stores/content/content.js';
+import { contentStore } from '$lib/stores/content.js';
 
 const exerciseModules = import.meta.glob('/src/lib/exercises/*.svelte.js');
 

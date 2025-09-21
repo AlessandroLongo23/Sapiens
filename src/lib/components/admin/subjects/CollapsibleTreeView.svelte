@@ -1,5 +1,5 @@
 <script>
-    import { contentStore } from '$lib/stores/content/content.js';
+    import { contentStore } from '$lib/stores/content.js';
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
 

@@ -1,7 +1,7 @@
 <script>
 	import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
-    import { studentsStore } from '$lib/stores/students/students.js';
-    import { contentStore } from '$lib/stores/content/content.js';
+    import { studentsStore } from '$lib/stores/students.js';
+    import { contentStore } from '$lib/stores/content.js';
     import { supabase } from '$lib/supabase.js';
     import { page } from '$app/stores';
     import { onMount } from 'svelte';

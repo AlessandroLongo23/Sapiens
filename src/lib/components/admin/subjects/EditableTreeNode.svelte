@@ -1,11 +1,12 @@
 <script>
+    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
+    import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
+    import { createEventDispatcher } from 'svelte';
     import { slide } from 'svelte/transition';
     import * as ls from 'lucide-svelte';
-    import { createEventDispatcher } from 'svelte';
-    import ContextMenu from '../shared/ui/ContextMenu.svelte';
-    import { dragHandleZone, dragHandle } from 'svelte-dnd-action';
-    import { reorderChildNodes } from '$lib/services/contentNodeService.js';
     
+    import ContextMenu from '$lib/components/shared/ui/ContextMenu.svelte';
+    import EditableTreeNode from '$lib/components/admin/subjects/EditableTreeNode.svelte';
     
     let { 
         node,
@@ -14,12 +15,7 @@
         depth = 0
     } = $props();
     
-    
-    import EditableTreeNode from './EditableTreeNode.svelte';
-    
-    
     const dispatch = createEventDispatcher();
-    
     
     let showContextMenu = $state(false);
     let contextMenuX = $state(0);
@@ -31,7 +27,6 @@
             event.preventDefault();
         }
         
-        
         const newExpanded = new Set([...expanded]);
         
         if (newExpanded.has(nodeId)) {
@@ -39,7 +34,6 @@
         } else {
             newExpanded.add(nodeId);
         }
-        
         
         dispatch('toggleExpand', { expanded: newExpanded });
     }
@@ -49,7 +43,6 @@
             event.stopPropagation();
         }
         
-        
         const newSelected = new Set([...selected]);
         
         if (newSelected.has(nodeId)) {
@@ -58,13 +51,11 @@
             newSelected.add(nodeId);
         }
         
-        
         dispatch('toggleSelect', { selected: newSelected });
     }
     
     function handleContextMenu(event) {
         event.preventDefault();
-        
         
         contextMenuX = event.clientX;
         contextMenuY = event.clientY;
@@ -103,7 +94,6 @@
         }
     }
     
-    
     let contextMenuItems = $derived(() => {
         const childTypes = getChildNodeTypes(node.node_type);
         
@@ -121,7 +111,6 @@
                 data: { nodeId: node.id }
             }
         ];
-        
         
         if (childTypes.length > 0) {
             items.unshift(
@@ -154,7 +143,6 @@
     const hasChildren = $derived(!!(node.children && node.children.length > 0));
     const isExpanded = $derived(expanded.has(node.id));
     const isSelected = $derived(selected.has(node.id));
-
     
     function onReorderConsider(event) {
         if (!node.children) return;

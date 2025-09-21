@@ -9,18 +9,6 @@ async function fetchStudents() {
     return data;
 }
 
-export const roles = [
-    { label: 'Admin', value: 'admin' },
-    { label: 'Studente', value: 'student' }
-];
-
-export const levels = [
-    { label: 'Scuola Media', value: 'middle_school' },
-    { label: 'Scuole Superiori', value: 'high_school' },
-    { label: 'Università', value: 'university' },
-    { label: 'Altro', value: 'altro' }
-];
-
 export const selectedStudentStore = writable(null);
 
 const createStudentsStore = () => {

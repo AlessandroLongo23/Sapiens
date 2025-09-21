@@ -1,8 +1,8 @@
 <script>
 	import { isSameDay, isToday, isPast, parseISO, setHours, setMinutes, format } from 'date-fns';
-	import { studentsStore } from '$lib/stores/students/students.js';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { studentsStore } from '$lib/stores/students.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
 	import { formatDateString } from '$lib/utils/date.svelte.js';
 	import { capitalize } from '$lib/utils/string.svelte.js';
 	import { createEventDispatcher } from 'svelte';

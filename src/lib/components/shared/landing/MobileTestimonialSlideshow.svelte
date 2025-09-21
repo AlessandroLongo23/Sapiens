@@ -1,6 +1,6 @@
 <script>
 	import TestimonialCard from '$lib/components/cards/TestimonialCard.svelte';
-	import { studentsStore } from '$lib/stores/students/students.js';
+	import { studentsStore } from '$lib/stores/students.js';
 	import * as ls from 'lucide-svelte';
 
 	let { 

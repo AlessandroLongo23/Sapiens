@@ -37,7 +37,7 @@
             {@render children()}
         </div>
 
-        <div class="flex flex-row items-center justify-end gap-3 p-6 border-t border-500/25">
+        <div class="flex flex-row items-center justify-end gap-3 p-6 border-t border-zinc-500/25">
             <button 
                 type="button"
                 class="flex flex-row items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors text-zinc-900 dark:text-zinc-100"

@@ -1,6 +1,5 @@
 import { supabase } from '$lib/supabase.js';
 
-
 class ContentManager {
   contentTree = $state({});
   flatNodes = $state([]);
@@ -11,7 +10,6 @@ class ContentManager {
   constructor() {
     if (typeof window !== 'undefined') {
       this.fetchContent();
-      
       
       const subscription = supabase
         .channel('content_nodes_changes')
@@ -28,7 +26,6 @@ class ContentManager {
         .subscribe();
     }
   }
-  
   
   buildContentTree(nodes, parentId = null) {
     const result = [];

@@ -1,9 +1,7 @@
 <script>
-    import { levels } from '$lib/stores/students/students.js';
-    import { studentsStore } from '$lib/stores/students/students.js';
+    import { levels } from '$lib/models/students.svelte.js';
+    import { studentsStore } from '$lib/stores/students.js';
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
-    import { cardStyle } from '$lib/stores/appearance.js';
-    import * as ls from 'lucide-svelte';
 
     import EditModal from '$lib/components/shared/ui/modals/EditModal.svelte';
     import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
@@ -71,8 +69,8 @@
                     <div class="flex flex-grow flex-col gap-2">
                         <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-phone">Telefono</label>
                         <PhoneNumber
-                            value={editedStudent.phone}
-                            onChange={(value) => editedStudent.phone = value}
+                            bind:prefixCode={editedStudent.phonePrefix}
+                            bind:phoneNumber={editedStudent.phoneNumber}
                         />
                     </div>
                 </div>

@@ -1,9 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
 	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
-	import { designSystem } from '$lib/stores/appearance.js';
+	import { designSystem } from '$lib/const/appearance.js';
 	import ChartTooltip from '$lib/components/graphs/ChartTooltip.svelte';
 	import * as ls from 'lucide-svelte';
 

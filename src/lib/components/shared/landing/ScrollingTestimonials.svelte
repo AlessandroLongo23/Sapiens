@@ -2,7 +2,7 @@
 	import TestimonialCard from '$lib/components/cards/TestimonialCard.svelte';
 	import * as ls from 'lucide-svelte';
 	
-	import { studentsStore } from '$lib/stores/students/students.js';
+	import { studentsStore } from '$lib/stores/students.js';
 
 	let { 
 		className = '',

@@ -1,7 +1,7 @@
 <script>
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { designSystem } from '$lib/stores/appearance.js';
+	import { designSystem } from '$lib/const/appearance.js';
 	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';

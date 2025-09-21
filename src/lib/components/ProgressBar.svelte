@@ -1,5 +1,5 @@
 <script>
-	import { steps } from '$lib/data.js';
+	import { steps } from '$lib/const/data.js';
 
 	let { currentStep = 1, totalSteps = 4 } = $props();
 </script>

@@ -1,7 +1,7 @@
 <script>
 	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { studentsStore } from '$lib/stores/students/students.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+	import { studentsStore } from '$lib/stores/students.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
 

@@ -1,28 +1,25 @@
 <script>
-    import * as ls from 'lucide-svelte';
-    import { onMount } from 'svelte';
-    import EditableContentTree from '$lib/components/admin/EditableContentTree.svelte';
-    import ContentNodeForm from '$lib/components/admin/ContentNodeForm.svelte';
-    import DeleteConfirmationModal from '$lib/components/admin/DeleteConfirmationModal.svelte';
-    import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
-    import { contentStore } from '$lib/stores/content/content.js';
     import { createContentNode, updateContentNode, deleteContentNode, getNodeById } from '$lib/services/contentNodeService.js';
-    
+    import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
+    import { contentStore } from '$lib/stores/content.js';
+    import { onMount } from 'svelte';
+    import * as ls from 'lucide-svelte';
+
+    import EditableContentTree from '$lib/components/admin/subjects/EditableContentTree.svelte';
+    import DeleteConfirmationModal from '$lib/components/admin/DeleteConfirmationModal.svelte';
+    import ContentNodeForm from '$lib/components/admin/subjects/ContentNodeForm.svelte';
     
     let showCreateModal = $state(false);
     let showEditModal = $state(false);
     let showDeleteModal = $state(false);
     
-    
     let currentNode = $state(null);
     let currentNodeType = $state('level');
     let parentNode = $state(null);
     
-    
     let selectedIds = $state([]);
     
     onMount(() => {
-        
         contentStore.fetchContent();
     });
     
@@ -31,14 +28,11 @@
         
         switch (action) {
             case 'create':
-                
                 currentNodeType = nodeType;
                 currentNode = null;
                 parentNode = nodeId ? await getNodeById(nodeId) : null;
                 
-                
                 if (parentNode && parentNode.node_type === 'subject' && parentNode.path && parentNode.path[0] === 'universita') {
-                    
                     if (currentNodeType === 'year') {
                         currentNodeType = 'topic';
                     }
@@ -48,7 +42,6 @@
                 break;
                 
             case 'edit':
-                
                 currentNode = node || await getNodeById(nodeId);
                 currentNodeType = nodeType || currentNode.node_type;
                 parentNode = currentNode.parent_id ? await getNodeById(currentNode.parent_id) : null;
@@ -56,7 +49,6 @@
                 break;
                 
             case 'delete':
-                
                 currentNode = node || await getNodeById(nodeId);
                 showDeleteModal = true;
                 break;
@@ -144,7 +136,6 @@
         />
     </div>
     
-    
     {#if showCreateModal}
         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
@@ -158,7 +149,6 @@
             </div>
         </div>
     {/if}
-    
     
     {#if showEditModal}
         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
@@ -174,7 +164,6 @@
             </div>
         </div>
     {/if}
-    
     
     {#if showDeleteModal}
         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">

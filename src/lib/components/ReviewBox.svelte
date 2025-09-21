@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import * as ls from 'lucide-svelte';
-	import { addReview, updateReview } from '$lib/stores/reviews/reviews.svelte.js';
+	import { addReview, updateReview } from '$lib/stores/reviews.svelte.js';
 	
 	let { 
 		studentId = $bindable(''),

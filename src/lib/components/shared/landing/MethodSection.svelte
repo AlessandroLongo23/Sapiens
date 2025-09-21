@@ -1,6 +1,6 @@
 <script>
-    import { section_style } from '$lib/stores/appearance';
-	import { methodCards } from '$lib/data.js';
+    import { section_style } from '$lib/const/appearance';
+	import { methodCards } from '$lib/const/data.js';
 
 	let {
 		methodSection = $bindable(null),

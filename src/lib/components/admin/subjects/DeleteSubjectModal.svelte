@@ -1,5 +1,5 @@
 <script>
-    import { subjectsStore } from '$lib/stores/subjects/subjects.js';
+    import { subjectsStore } from '$lib/stores/subjects.js';
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
 
     import DeleteModal from '$lib/components/shared/ui/modals/DeleteModal.svelte';

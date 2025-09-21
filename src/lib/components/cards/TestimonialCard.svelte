@@ -1,5 +1,5 @@
 <script>
-    import { levels } from '$lib/stores/students/students.js';
+    import { levels } from '$lib/models/students.svelte.js';
 	import * as ls from 'lucide-svelte';
 	
 	let { review, student } = $props();

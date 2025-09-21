@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 
-export const load = async ({ locals: { session, user } }) => {
+export const load = async ({ locals: { session, user, supabase } }) => {
     if (session) {
         const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
         throw redirect(303, redirectPath);

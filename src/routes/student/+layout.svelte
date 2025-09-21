@@ -1,7 +1,7 @@
 <script>
-	import { studentsStore } from '$lib/stores/students/students.js';
+	import { studentsStore } from '$lib/stores/students.js';
 	import { motivational_messages } from '$lib/microcopy.js';
-	import { selectedTopic } from '$lib/stores/content/content.js';
+	import { selectedTopic } from '$lib/stores/content.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -73,7 +73,7 @@
 				action="/auth/logout"
 				method="POST"
 			>
-				<button
+				<!-- <button
 					type="submit"
 					class="bg-zinc-50 dark:bg-zinc-800 border hover:bg-zinc-200 dark:hover:bg-zinc-700 border-zinc-200 dark:border-zinc-700 text-red-500 dark:text-red-400 px-2 sm:px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer transition-all duration-100 ease-in-out"
 					disabled={isLoggingOut}
@@ -81,6 +81,21 @@
 					<span class="flex items-center justify-center sm:space-x-2">
 						<ls.LogOut class="w-4 h-4" />
 						<span class="hidden sm:inline">{isLoggingOut ? 'Uscendo...' : 'Logout'}</span>
+					</span>
+				</button> -->
+				<button
+					type="submit"
+					onclick={() => { isLoggingOut = true }}
+					disabled={isLoggingOut}
+					class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
+				>
+					<span class="flex items-center justify-center gap-2">
+						<span>{isLoggingOut ? 'Uscendo...' : 'Logout'}</span>
+						{#if isLoggingOut}
+							<ls.Loader2 class="w-4 h-4 animate-spin" />
+						{:else}
+							<ls.LogOut class="w-4 h-4" />
+						{/if}
 					</span>
 				</button>
 			</form>

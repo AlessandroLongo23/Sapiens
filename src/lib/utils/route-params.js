@@ -1,4 +1,4 @@
-import { contentStore } from '$lib/stores/content/content.js';
+import { contentStore } from '$lib/stores/content.js';
 import { writable } from 'svelte/store';
 
 export function extractRouteParams(pathname) {

@@ -1,5 +1,5 @@
 <script>
-    import { colors } from '$lib/stores/appearance.js';
+    import { colors } from '$lib/const/appearance.js';
     import { fade, scale } from 'svelte/transition';
     import { quintOut } from 'svelte/easing';
 

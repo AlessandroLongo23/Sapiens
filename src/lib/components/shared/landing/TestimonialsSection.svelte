@@ -1,6 +1,6 @@
 <script>
-	import { reviewsStore } from '$lib/stores/reviews/reviews.js';
-    import { section_style } from '$lib/stores/appearance';
+	import { reviewsStore } from '$lib/stores/reviews.js';
+    import { section_style } from '$lib/const/appearance';
 	import { onMount } from 'svelte';
 	
 	import MobileTestimonialSlideshow from '$lib/components/shared/landing/MobileTestimonialSlideshow.svelte';

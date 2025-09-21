@@ -1,11 +1,11 @@
 <script>
-	import { studentsStore } from '$lib/stores/students/students.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
+	import { studentsStore } from '$lib/stores/students.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { designSystem } from '$lib/stores/appearance.js';
+	import { designSystem } from '$lib/const/appearance.js';
 	import { format, parseISO } from 'date-fns';
 	import { it } from 'date-fns/locale';
 	import { Chart } from 'chart.js/auto';

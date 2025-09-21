@@ -1,7 +1,7 @@
 <script>
-    import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-    import { studentsStore } from '$lib/stores/students/students.js';
-    import { cardStyle } from '$lib/stores/appearance.js';
+    import { lecturesStore } from '$lib/stores/lectures.js';
+    import { studentsStore } from '$lib/stores/students.js';
+    import { cardStyle } from '$lib/const/appearance.js';
     import { CreditCard, User } from 'lucide-svelte';
 
     

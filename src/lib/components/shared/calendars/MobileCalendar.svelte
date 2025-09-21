@@ -4,8 +4,8 @@
 	import { format, isToday, isSameDay } from 'date-fns';
 	import { it } from 'date-fns/locale';
 	import * as ls from 'lucide-svelte';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { cardStyle } from '$lib/stores/appearance.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
+	import { cardStyle } from '$lib/const/appearance.js';
 	import MobileBottomSheet from '$lib/components/shared/ui/MobileBottomSheet.svelte';
 	import BottomSheetContent from '$lib/components/shared/calendars/BottomSheetContent.svelte';
 	

@@ -1,5 +1,5 @@
 import { supabase } from '$lib/supabase.js';
-import { contentStore } from '$lib/stores/content/content.js';
+import { contentStore } from '$lib/stores/content.js';
 
 /**
  * Creates a new content node

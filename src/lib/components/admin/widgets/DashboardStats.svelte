@@ -1,9 +1,9 @@
 <script>
 	import { formatCurrency, formatDateDisplay, calculateEarnings } from '$lib/utils/format.svelte.js';
-    import { cardStyle, designSystem } from '$lib/stores/appearance.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
-	import { studentsStore } from '$lib/stores/students/students.js';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';	
+    import { cardStyle, designSystem } from '$lib/const/appearance.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
+	import { studentsStore } from '$lib/stores/students.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';	
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { isSameDay } from 'date-fns';
 	import * as ls from 'lucide-svelte';

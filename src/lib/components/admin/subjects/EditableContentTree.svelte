@@ -1,6 +1,6 @@
 <script>
     import { reorderChildNodes } from '$lib/services/contentNodeService.js';
-    import { contentStore } from '$lib/stores/content/content.js';
+    import { contentStore } from '$lib/stores/content.js';
     import { dragHandleZone } from 'svelte-dnd-action';
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';

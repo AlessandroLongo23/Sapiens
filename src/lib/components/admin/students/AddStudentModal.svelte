@@ -1,6 +1,7 @@
 <script>
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
-    import { studentsStore, levels } from '$lib/stores/students/students.js';
+    import { studentsStore } from '$lib/stores/students.js';
+    import { levels } from '$lib/models/students.svelte.js';
 
     import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
     import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
@@ -14,9 +15,10 @@
     let lastName = $state('');
     let fullName = $derived(`${firstName} ${lastName}`);
     let email = $state('');
-    let phone = $state('');
     let password = $state('');
     let city = $state('');
+    let phonePrefix = $state('');
+    let phoneNumber = $state('');
     let level = $state('');
     let isLoading = $state(false);
 
@@ -29,8 +31,8 @@
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!firstName || !lastName || !email || !password) {
-            messagePopup.error('I campi Nome, Cognome, Email e Password sono obbligatori');
+        if (!firstName || !lastName || !email || !password || !phonePrefix || !phoneNumber) {
+            messagePopup.error('I campi Nome, Cognome, Email, Password e Telefono sono obbligatori');
             return;
         }
 
@@ -47,7 +49,8 @@
                         lastName,
                         email,
                         password,
-                        phone,
+                        phonePrefix: phonePrefix,
+                        phoneNumber: phoneNumber,
                         city,
                         level,
                     }
@@ -68,7 +71,8 @@
             firstName = '';
             lastName = '';
             email = '';
-            phone = '';
+            phonePrefix = '';
+            phoneNumber = '';
             password = '';
         } catch (error) {
             messagePopup.error('Errore durante la creazione dello studente: ' + error.message);
@@ -130,8 +134,9 @@
                     <div class="flex flex-grow flex-col gap-2">
                         <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-phone">Telefono</label>
                         <PhoneNumber
-                            value={phone}
-                            onChange={(value) => phone = value}
+                            bind:prefixCode={phonePrefix}
+                            bind:phoneNumber={phoneNumber}
+                            required
                         />
                     </div>
                 </div>

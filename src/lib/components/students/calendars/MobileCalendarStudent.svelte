@@ -4,9 +4,9 @@
 	import { format, isToday, isSameDay, isPast, isFuture, startOfToday } from 'date-fns';
 	import { it } from 'date-fns/locale';
 	import * as ls from 'lucide-svelte';
-	import { lecturesStore } from '$lib/stores/lectures/lectures.js';
-	import { subjectsStore } from '$lib/stores/subjects/subjects.js';
-	import { cardStyle } from '$lib/stores/appearance.js';
+	import { lecturesStore } from '$lib/stores/lectures.js';
+	import { subjectsStore } from '$lib/stores/subjects.js';
+	import { cardStyle } from '$lib/const/appearance.js';
 	import { fade, fly } from 'svelte/transition';
 	import { capitalize } from '$lib/utils/string.svelte.js';
 	import ScheduleLessonModal from './ScheduleLessonModal.svelte';
