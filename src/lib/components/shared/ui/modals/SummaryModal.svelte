@@ -2,7 +2,7 @@
 	import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
 	import * as ls from 'lucide-svelte';
 	import { goto } from '$app/navigation';
-	import { exercise_messages } from '$lib/microcopy.js';
+	import { exercise_messages } from '$lib/const/microcopy.js';
 
 	let {
 		isOpen = $bindable(false),
