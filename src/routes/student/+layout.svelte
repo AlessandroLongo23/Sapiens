@@ -1,6 +1,6 @@
 <script>
 	import { studentsStore } from '$lib/stores/students.js';
-	import { motivational_messages } from '$lib/microcopy.js';
+	import { motivational_messages } from '$lib/const/microcopy.js';
 	import { selectedTopic } from '$lib/stores/content.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
