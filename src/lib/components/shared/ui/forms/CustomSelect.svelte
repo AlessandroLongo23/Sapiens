@@ -1,42 +1,70 @@
 <script>
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
+    import * as ls from 'lucide-svelte';
 
     let { 
-        value = $bindable(null), 
-        options = [], 
-        placeholder = 'Select an option', 
+        value = $bindable(),
+        options = [],
+        labelKey = 'name',
+        valueKey = 'id',
+        placeholder = 'Seleziona un\'opzione', 
         isNullable = false,
         disabled = false,
         searchable = true,
+        addable = false,
         maxHeight = 'max-h-40',
-        classes = ''
+        classes = '',
+        onAddNewOption = () => {},
+        onchange = () => {}
     } = $props();
+
+    const getLabel = (option) => {
+        if (typeof labelKey === 'function') {
+            return labelKey(option);
+        }
+        return option[labelKey];
+    }
 
     let isOpen = $state(false);
     let searchQuery = $state('');
     let inputRef = $state(null);
     let selectRef = $state(null);
-    let optionLabel = $derived(options.find(option => option.value === value)?.label || placeholder);
-    let filteredOptions = $derived(
-        searchable && searchQuery 
-            ? options.filter(option => 
-                option.label.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-            : options
-    );
+    let selectedOptionLabel = $derived.by(() => {
+        let option = options.find(option => option[valueKey] === value);
+        if (!option) return placeholder;
+        return getLabel(option);
+    });
 
-    function handleOptionClick(option) {
-        if (value === option.value && isNullable) {
+    let filteredOptions = $derived.by(() => {
+        if (searchable && searchQuery) {
+            return options.filter(option => getLabel(option).toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+        return options;
+    });
+
+    const addNewOption = async (option) => {
+        let obj = new Object();
+        obj[labelKey] = getLabel(option);
+        obj[valueKey] = option.value;
+        delete obj.id;
+        let newOption = await onAddNewOption(obj);
+
+        handleOptionClick(newOption);
+    }
+
+    const handleOptionClick = (option) => {
+        if (value === option[valueKey] && isNullable) {
             value = null;
         } else {
-            value = option.value;
+            value = option[valueKey];
         }
         isOpen = false;
         searchQuery = '';
+        onchange(value);
     }
 
-    function handleKeydown(event) {
+    const handleKeydown = (event) => {
         if (!isOpen) {
             if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -56,7 +84,7 @@
 
     function handleSearchKeydown(event) {
         if (event.key === 'Enter' && filteredOptions.length > 0) {
-            handleOptionClick(filteredOptions[0]);
+            handleOptionClick(filteredOptions[0], valueKey);
         } else if (event.key === 'Escape') {
             isOpen = false;
             searchQuery = '';
@@ -67,9 +95,9 @@
         }
     }
 
-    function handleOptionKeydown(event, option, index) {
+    const handleOptionKeydown = (event, option, index) => {
         if (event.key === 'Enter') {
-            handleOptionClick(option);
+            handleOptionClick(option, valueKey);
         } else if (event.key === 'ArrowDown') {
             event.preventDefault();
             const buttons = document.querySelectorAll('[data-option-button]');
@@ -85,7 +113,7 @@
         }
     }
 
-    function handleClickOutside(event) {
+    const handleClickOutside = (event) => {
         if (selectRef && !selectRef.contains(event.target)) {
             isOpen = false;
             searchQuery = '';
@@ -126,8 +154,8 @@
         aria-haspopup="listbox"
         aria-expanded={isOpen}
     >
-        <span class="block truncate {value === null ? 'text-zinc-500' : 'text-zinc-900 dark:text-zinc-100'}">
-            {optionLabel}
+        <span class="block truncate {selectedOptionLabel === placeholder ? 'text-zinc-500' : 'text-zinc-900 dark:text-zinc-100'}">
+            {selectedOptionLabel}
         </span>
         <div class="flex items-center gap-2">
             {#if value !== null && isNullable}
@@ -137,17 +165,14 @@
                     onclick={(e) => {
                         e.stopPropagation();
                         value = null;
+                        onchange(null);
                     }}
-                    aria-label="Clear selection"
+                    aria-label="Cancella selezione"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-zinc-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+                    <ls.X class="h-4 w-4 text-zinc-500" />
                 </button>
             {/if}
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400 transition-transform duration-200 {isOpen ? 'rotate-180' : ''}" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
+            <ls.ChevronDown class="h-5 w-5 text-zinc-400 transition-transform duration-200 {isOpen ? 'rotate-180' : ''}" />
         </div>
     </div>
     
@@ -164,8 +189,9 @@
                             bind:value={searchQuery}
                             type="text"
                             class="w-full px-3 py-1.5 bg-zinc-50 dark:bg-zinc-700/50 border border-zinc-500/25 rounded-md text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                            placeholder="Type to search..."
+                            placeholder="Cerca..."
                             onkeydown={handleSearchKeydown}
+                            onchange={() => onchange(searchQuery)}
                         />
                         {#if searchQuery}
                             <button
@@ -174,9 +200,7 @@
                                 onclick={() => searchQuery = ''}
                                 aria-label="Clear search"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-zinc-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
+                                <ls.X class="h-4 w-4 text-zinc-400" />
                             </button>
                         {/if}
                     </div>
@@ -185,22 +209,34 @@
 
             <div class="{maxHeight} overflow-y-auto scrollbar-hidden">
                 {#if filteredOptions.length === 0}
-                    <div class="p-2 text-sm text-zinc-500 dark:text-zinc-400 text-center">
-                        No results found
-                    </div>
+                    {#if addable && searchQuery.length >= 3}
+                        <button
+                            type="button"
+                            class="w-full p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 cursor-pointer transition-colors text-left flex items-center justify-between group"
+                            onclick={() => addNewOption({label: searchQuery, value: searchQuery.toLowerCase().replace(/ /g, '-') })}
+                            onchange={() => onchange(searchQuery)}
+                        >
+                            <span class="text-zinc-900 dark:text-zinc-100">Aggiungi {searchQuery}</span>
+                        </button>
+                    {:else}
+                        <div class="p-2 text-sm text-zinc-500 dark:text-zinc-400 text-center">
+                            Nessun risultato
+                        </div>
+                    {/if}
                 {:else}
                     {#each filteredOptions as option, i}
                         <button 
                             type="button"
                             data-option-button
-                            class="w-full p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 cursor-pointer transition-colors text-left flex items-center justify-between group {value === option.value ? 'bg-zinc-100 dark:bg-zinc-700' : ''}"
+                            class="w-full p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 cursor-pointer transition-colors text-left flex items-center justify-between group {value === option[valueKey] ? 'bg-zinc-100 dark:bg-zinc-700' : ''}"
                             onclick={() => handleOptionClick(option)}
                             onkeydown={(e) => handleOptionKeydown(e, option, i)}
+                            onchange={() => onchange(option[valueKey])}
                         >
-                            <span class="text-zinc-900 dark:text-zinc-100">{option.label}</span>
-                            {#if value === option.value && isNullable}
+                            <span class="text-zinc-900 dark:text-zinc-100">{getLabel(option)}</span>
+                            {#if value === option[valueKey] && isNullable}
                                 <span class="text-sm text-zinc-500 dark:text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    Click to deselect
+                                    Clicca per deselezionare
                                 </span>
                             {/if}
                         </button>

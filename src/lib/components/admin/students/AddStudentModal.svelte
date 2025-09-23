@@ -2,10 +2,11 @@
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { studentsStore } from '$lib/stores/students.js';
     import { levels } from '$lib/models/students.svelte.js';
+    import * as ls from 'lucide-svelte';
 
     import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
-    import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
     import PhoneNumber from '$lib/components/shared/ui/forms/PhoneNumber.svelte';
+    import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
 
     let {
         isOpen = $bindable(false),
@@ -97,7 +98,12 @@
             <div class="flex flex-col gap-6">
                 <div class="flex flex-row items-center gap-6 w-full">
                     <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-name">Nome *</label>
+                        <div class="flex flex-row items-center gap-2">
+                            <ls.User class="w-4 h-4" />
+                            <label for="student-name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                Nome *
+                            </label>
+                        </div>
                         <input 
                             type="text" 
                             id="student-name" 
@@ -108,7 +114,12 @@
                     </div>
 
                     <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-name">Cognome *</label>
+                        <div class="flex flex-row items-center gap-2">
+                            <ls.User class="w-4 h-4" />
+                            <label for="student-name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                Cognome *
+                            </label>
+                        </div>
                         <input 
                             type="text" 
                             id="student-name" 
@@ -121,7 +132,12 @@
 
                 <div class="flex flex-row items-center gap-6 w-full">
                     <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-email">Email *</label>
+                        <div class="flex flex-row items-center gap-2">
+                            <ls.Mail class="w-4 h-4" />
+                            <label for="student-email" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                Email *
+                            </label>
+                        </div>
                         <input 
                             type="email" 
                             id="student-email" 
@@ -132,7 +148,12 @@
                     </div>
 
                     <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-phone">Telefono</label>
+                        <div class="flex flex-row items-center gap-2">
+                            <ls.Phone class="w-4 h-4" />
+                            <label for="student-phone" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                Telefono
+                            </label>
+                        </div>
                         <PhoneNumber
                             bind:prefixCode={phonePrefix}
                             bind:phoneNumber={phoneNumber}
@@ -143,7 +164,12 @@
 
                 <div class="flex flex-row items-center gap-6 w-full">
                     <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-city">Città</label>
+                        <div class="flex flex-row items-center gap-2">
+                            <ls.MapPin class="w-4 h-4" />
+                            <label for="student-city" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                Città
+                            </label>
+                        </div>
                         <input 
                             type="text" 
                             id="student-city" 
@@ -153,16 +179,29 @@
                     </div>
 
                     <div class="flex flex-grow flex-col gap-2">
-                        <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-level">Livello scolastico</label>
+                        <div class="flex flex-row items-center gap-2">
+                            <ls.GraduationCap class="w-4 h-4" />
+                            <label for="student-level" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                Livello scolastico
+                            </label>
+                        </div>
                         <CustomSelect
                             options={levels}
+                            placeholder="Seleziona un livello"
+                            labelKey='label'
+                            valueKey='value'
                             bind:value={level}
                         />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm text-zinc-900 dark:text-zinc-100" for="student-password">Password *</label>
+                    <div class="flex flex-row items-center gap-2">
+                        <ls.Lock class="w-4 h-4" />
+                        <label for="student-password" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            Password *
+                        </label>
+                    </div>
                     <input 
                         type="password" 
                         id="student-password" 

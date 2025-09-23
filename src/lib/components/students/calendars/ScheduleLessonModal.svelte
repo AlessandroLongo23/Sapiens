@@ -358,6 +358,8 @@
 											options={subjectOptions}
 											placeholder="Seleziona una materia"
 											searchable={true}
+											labelKey='name'
+											valueKey='id'
 											classes={validationError && !formData.subject_id ? "error" : ""}
 										/>
 									</div>

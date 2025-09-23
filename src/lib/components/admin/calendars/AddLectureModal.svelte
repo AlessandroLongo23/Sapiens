@@ -2,8 +2,10 @@
 	import { studentsStore } from '$lib/stores/students.js';
 	import { subjectsStore } from '$lib/stores/subjects.js';
 	import { lecturesStore } from '$lib/stores/lectures.js';
+	import { levels } from '$lib/models/students.svelte.js';
 	import { format } from 'date-fns';
 	import { it } from 'date-fns/locale';
+	import * as ls from 'lucide-svelte';
 	
 	import CustomSelect from '$lib/components/shared/ui/forms/CustomSelect.svelte';
 	import AddModal from '$lib/components/shared/ui/modals/AddModal.svelte';
@@ -81,10 +83,13 @@
 	classes="bg-zinc-50 dark:bg-zinc-900 w-full max-h-[90vh] overflow-y-auto rounded-md shadow-md {classes}"
 >
 	<form onsubmit={handleSubmit} class="space-y-4">
-		<div>
-			<label for="date" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-				Data
-			</label>
+		<div class="flex flex-col gap-2">
+			<div class="flex flex-row items-center gap-2">
+				<ls.Calendar class="w-4 h-4" />
+				<label for="date" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+					Data
+				</label>
+			</div>
 			<input 
 				type="date" 
 				id="date"
@@ -94,33 +99,48 @@
 			/>
 		</div>
 		
-		<div>
-			<label for="student" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-				Studente
-			</label>
+		<div class="flex flex-col gap-2">
+			<div class="flex flex-row items-center gap-2">
+				<ls.User class="w-4 h-4" />
+				<label for="student" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+					Studente
+				</label>
+			</div>
 			<CustomSelect
 				bind:value={formData.student_id}
+				options={$studentsStore.students}
+				labelKey={student => `${student.first_name} ${student.last_name}`}
+				valueKey="id"
+				placeholder="Seleziona uno studente"
 				searchable
-				options={$studentsStore.students.map(student => ({ label: `${student.first_name} ${student.last_name}`, value: student.id }))}
 			/>
 		</div>
 		
-		<div>
-			<label for="subject" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-				Materia
-			</label>
+		<div class="flex flex-col gap-2">
+			<div class="flex flex-row items-center gap-2">
+				<ls.BookOpen class="w-4 h-4" />
+				<label for="subject" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+					Materia
+				</label>
+			</div>
 			<CustomSelect
 				bind:value={formData.subject_id}
+				placeholder="Seleziona una materia"
+				labelKey="name"
+				valueKey="id"
 				searchable
-				options={$subjectsStore.subjects.map(subject => ({ label: subject.name, value: subject.id }))}
+				options={$subjectsStore.subjects}
 			/>
 		</div>
 		
 		<div class="grid grid-cols-2 gap-4">
-			<div>
-				<label for="start-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Inizio
-				</label>
+			<div class="flex flex-col gap-2">
+				<div class="flex flex-row items-center gap-2">
+					<ls.Clock class="w-4 h-4" />
+					<label for="start-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+						Inizio
+					</label>
+				</div>
 				<input 
 					type="time" 
 					id="start-time"
@@ -130,10 +150,13 @@
 				/>
 			</div>
 			
-			<div>
-				<label for="end-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Fine
-				</label>
+			<div class="flex flex-col gap-2">
+				<div class="flex flex-row items-center gap-2">
+					<ls.Clock class="w-4 h-4" />
+					<label for="end-time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+						Fine
+					</label>
+				</div>
 				<input 
 					type="time" 
 					id="end-time"
@@ -145,26 +168,31 @@
 		</div>
 		
 		<div class="flex flex-row items-center justify-between gap-4">			
-			<div>
-				<label for="level" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Livello
-				</label>
+			<div class="flex flex-col gap-2">
+				<div class="flex flex-row items-center gap-2">
+					<ls.GraduationCap class="w-4 h-4" />
+					<label for="level" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+						Livello
+					</label>
+				</div>
 				<CustomSelect
 					classes="min-w-60"
+					options={levels}
+					placeholder="Seleziona un livello"
+					labelKey='label'
+					valueKey='value'
 					bind:value={formData.level}
 					searchable={false}
-					options={[
-						{ label: 'Scuola Media', value: 'middle_school' },
-						{ label: 'Scuole Superiori', value: 'high_school' },
-						{ label: 'Università', value: 'university' }
-					]}
 				/>
 			</div>
 
-			<div>
-				<label for="rate" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Prezzo Orario (€)
-				</label>
+			<div class="flex flex-col gap-2">
+				<div class="flex flex-row items-center gap-2">
+					<ls.Euro class="w-4 h-4" />
+					<label for="rate" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+						Prezzo Orario (€)
+					</label>
+				</div>
 				<input 
 					type="number" 
 					id="rate"
@@ -176,10 +204,13 @@
 				/>
 			</div>
 
-			<div>
-				<label for="paid" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-					Pagato
-				</label>
+			<div class="flex flex-col gap-2">
+				<div class="flex flex-row items-center gap-2">
+					<ls.HandCoins class="w-4 h-4" />
+					<label for="paid" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+						Pagato
+					</label>
+				</div>
 				<input type="checkbox" id="paid" bind:checked={formData.paid} />
 			</div>
 		</div>
