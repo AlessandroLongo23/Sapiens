@@ -25,6 +25,23 @@ const handleSupabase = async ({ event, resolve }) => {
 			event.locals.user = null
 		} else {
 			event.locals.user = user
+			
+			const now = Math.floor(Date.now() / 1000);
+			const sessionExpiresAt = session.expires_at;
+			
+			if (sessionExpiresAt && sessionExpiresAt - now < 300) {
+				console.log('Refreshing session token');
+				try {
+					const { data, error } = await event.locals.supabase.auth.refreshSession();
+					if (error) {
+						console.error('Session refresh error:', error);
+					} else if (data && data.session) {
+						event.locals.session = data.session;
+					}
+				} catch (refreshError) {
+					console.error('Error refreshing session:', refreshError);
+				}
+			}
 		}
 	} else {
 		event.locals.user = null

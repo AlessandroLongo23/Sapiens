@@ -1,14 +1,5 @@
 import { redirect } from '@sveltejs/kit'
 
-export const load = async ({ locals: { session, user, supabase } }) => {
-    if (session) {
-        const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
-        throw redirect(303, redirectPath);
-    }
-    
-    return {};
-};
-
 export const actions = {
     signup: async ({ request, locals: { supabase } }) => {
         const formData = await request.formData()

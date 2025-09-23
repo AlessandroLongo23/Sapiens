@@ -7,8 +7,9 @@
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';
 	
-	import TopicCard from '$lib/components/cards/TopicCard.svelte';
+	import LogoutButton from '$lib/components/shared/ui/buttons/LogoutButton.svelte';
 	import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
+	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 
 	let { data, children } = $props();
 	let { user } = $derived(data);
@@ -52,6 +53,7 @@
 		{:else}
 			<h1 class="text-xl sm:text-3xl font-bold text-zinc-900 dark:text-white truncate max-w-[180px] sm:max-w-none">{$selectedTopic.title}</h1>
 		{/if}
+		
 		<div class="flex items-center gap-2 sm:gap-4">
 			<ThemeToggle />
 
@@ -69,37 +71,7 @@
 				</span>
 			</button>
 
-			<form
-				action="/auth/logout"
-				method="POST"
-			>
-				<!-- <button
-					type="submit"
-					class="bg-zinc-50 dark:bg-zinc-800 border hover:bg-zinc-200 dark:hover:bg-zinc-700 border-zinc-200 dark:border-zinc-700 text-red-500 dark:text-red-400 px-2 sm:px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer transition-all duration-100 ease-in-out"
-					disabled={isLoggingOut}
-				>
-					<span class="flex items-center justify-center sm:space-x-2">
-						<ls.LogOut class="w-4 h-4" />
-						<span class="hidden sm:inline">{isLoggingOut ? 'Uscendo...' : 'Logout'}</span>
-					</span>
-				</button> -->
-				<button
-					type="submit"
-					onclick={() => { isLoggingOut = true }}
-					disabled={isLoggingOut}
-					class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
-				>
-					<span class="flex items-center justify-center gap-2">
-						<span>{isLoggingOut ? 'Uscendo...' : 'Logout'}</span>
-						{#if isLoggingOut}
-							<ls.Loader2 class="w-4 h-4 animate-spin" />
-						{:else}
-							<ls.LogOut class="w-4 h-4" />
-						{/if}
-					</span>
-				</button>
-			</form>
-		</div>
+			<LogoutButton />
 	</header>
 
 	<div class="relative mt-18 min-h-[calc(100vh-4.5rem)]">

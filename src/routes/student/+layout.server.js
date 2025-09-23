@@ -1,5 +1,6 @@
-import { redirect } from '@sveltejs/kit';
-
-export const load = async ({ locals: { session, user } }) => {
-    return { session, user };
+export const load = async ({ locals: { session, user }, cookies }) => {
+    return {
+        session,
+        user
+    }
 }

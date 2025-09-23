@@ -1,19 +1,35 @@
 import { redirect } from '@sveltejs/kit';
 
-export const POST = async ({ locals: { supabase } }) => {
-    const { error } = await supabase.auth.signOut();
+export const POST = async ({ locals: { supabase }, request, cookies }) => {
+    const { error } = await supabase.auth.signOut({ 
+        scope: 'local'
+    });
     
-    console.log('Logging out');
-    console.log(error);
-
+    cookies.delete('supabase-auth-token', { path: '/' });
+    
     if (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500
-        });
+        const acceptHeader = request.headers.get('Accept') || '';
+        const wantsJson = acceptHeader.includes('application/json');
+        
+        if (wantsJson) {
+            return new Response(JSON.stringify({ error: error.message, redirectTo: '/' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+        
+        throw redirect(303, '/');
     }
 
-    return new Response(null, {
-        status: 303,
-        headers: { Location: '/' }
-    });
+    const acceptHeader = request.headers.get('Accept') || '';
+    const wantsJson = acceptHeader.includes('application/json');
+    
+    if (wantsJson) {
+        return new Response(JSON.stringify({ success: true, redirectTo: '/' }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+    
+    throw redirect(303, '/');
 }

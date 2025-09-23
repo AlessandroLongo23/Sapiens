@@ -21,11 +21,16 @@ export const load = async ({ data, depends, fetch }) => {
             },
         })
 
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError || !session) {
+        return { session: null, supabase, user: null }
+    }
+    
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     if (userError || !user) {
         return { session: null, supabase, user: null }
     }
 
-    const { data: { session } } = await supabase.auth.getSession()
     return { session, supabase, user }
 }
