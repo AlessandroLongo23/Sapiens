@@ -1,6 +1,7 @@
 <script>
 	import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { studentsStore } from '$lib/stores/students.js';
+    import { levels } from '$lib/models/students.svelte.js';
     import { contentStore } from '$lib/stores/content.js';
     import { supabase } from '$lib/supabase.js';
     import { page } from '$app/stores';
@@ -61,6 +62,14 @@
             studentAssignments = await fetchStudentAssignments();
             
             loading = false;
+
+            let { data: users, error: usersError } = await supabase
+                .from('auth')
+                .select('*')
+                .eq('id', studentId)
+                .single();
+
+            console.log(users, usersError);
         } catch (err) {
             console.error('Error loading student data:', err);
             error = err.message;
@@ -277,7 +286,7 @@
                 <div class="text-sm text-zinc-600 dark:text-zinc-400 mt-2 space-y-1">
                     <div class="flex items-center gap-1.5">
                         <ls.School class="size-4" />
-                        <span>{student.level}</span>
+                        <span>{levels.find(level => level.value === student.level)?.label || 'N/A'}</span>
                     </div>
                     
                     {#if student.city}

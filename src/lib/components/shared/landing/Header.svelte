@@ -87,11 +87,12 @@
 
 <header class="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 transition-transform duration-300" style="transform: translateY({isHeaderVisible ? '0' : '-100%'})">
 	<div class="w-full mx-auto flex items-center sm:justify-between justify-center p-4">
-		<a href="/" class="hidden sm:flex items-center gap-3">
+		<a href="/" class="flex-1/3 justify-start hidden sm:flex items-center gap-3">
 			<img src="/icon.png" alt="logo" class="size-8 rounded-md" />
 			<span class="font-semibold text-zinc-900 dark:text-zinc-100">Ale Ripetizioni</span>
 		</a>
-		<nav class="hidden sm:flex items-center gap-6 text-sm">
+
+		<nav class="flex-1/3 justify-center hidden sm:flex items-center gap-6 text-sm">
 			{#each sections as section}
 				<a 
 					href={`#${section.id}`} 
@@ -103,7 +104,8 @@
 				</a>
 			{/each}
 		</nav>
-		<div class="flex items-center gap-2 sm:gap-3">
+		
+		<div class="flex-1/3 justify-end flex items-center gap-2 sm:gap-3">
 			<ThemeToggle />
 			<button
 				onclick={() => { if (session) { accessPrivateRoute() } else { openAuthModal() } }}
