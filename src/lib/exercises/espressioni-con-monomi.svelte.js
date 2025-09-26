@@ -81,16 +81,13 @@ export class EspressioneMonomiEx extends Exercise {
 	}
 
 	generateQuestion() {
-		
 		const count = Math.floor(Math.random() * 3) + 1; 
 		const varsSet = new Set();
 		while (varsSet.size < count) varsSet.add(candidateVariables[Math.floor(Math.random() * candidateVariables.length)]);
 		this.vars = Array.from(varsSet).sort();
 
-		
 		const m1 = monomialWithIntegerCoeff(this.vars, 1, 9, 1, 4);
 		const m2 = monomialWithIntegerCoeff(this.vars, 1, 9, 1, 4);
-
 		
 		const exps12 = addExponents(m1.exponents, m2.exponents);
 		const prodCoeff = m1.coefficient.num * m2.coefficient.num;
@@ -101,9 +98,7 @@ export class EspressioneMonomiEx extends Exercise {
 		for (const v of this.vars) m3exps[v] = Math.floor(Math.random() * (exps12[v] + 1));
 		const m3 = { coefficient: makeInt(d), exponents: m3exps };
 
-		
 		const m4 = monomialWithFractionCoeff(this.vars, 1, 9, 2, 5, -2, 2);
-
 		
 		let exps = addExponents(m1.exponents, m2.exponents);
 		exps = subExponents(exps, m3.exponents);
@@ -113,7 +108,6 @@ export class EspressioneMonomiEx extends Exercise {
 		const c123 = divideFrac(c12, m3.coefficient); 
 		const c1234 = multiplyFrac(c123, m4.coefficient); 
 
-		
 		const m5 = { coefficient: monomialWithFractionCoeff(this.vars, 1, 9, 2, 5, 0, 0).coefficient, exponents: { ...exps } };
 		const plus = Math.random() < 0.5;
 
@@ -138,12 +132,10 @@ export class EspressioneMonomiEx extends Exercise {
 
 		const correctText = this.correctAnswer.textContent.replace(/^\$\$|\$\$/g, '');
 		const wrongs = new Set([correctText]);
-
 		
 		const tweak = simplifyFraction({ num: 1, den: Math.floor(Math.random() * 4) + 2 });
 		wrongs.add(formatMonomial(addFrac(this.resultCoeff, tweak), this.resultExps));
 		wrongs.add(formatMonomial(subFrac(this.resultCoeff, tweak), this.resultExps));
-
 		
 		const mutated = { ...this.resultExps };
 		const keys = Object.keys(mutated);
@@ -153,7 +145,6 @@ export class EspressioneMonomiEx extends Exercise {
 			if (mutated[v] === 0) delete mutated[v];
 			wrongs.add(formatMonomial(this.resultCoeff, mutated));
 		}
-
 		
 		wrongs.add(formatMonomial(simplifyFraction({ num: -this.resultCoeff.num, den: this.resultCoeff.den }), this.resultExps));
 

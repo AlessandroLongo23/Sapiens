@@ -118,13 +118,6 @@
 			}));
 	});
 
-	let subjectOptions = $derived.by(() => {
-		return $subjectsStore.subjects.map(subject => ({
-			value: subject.id,
-			label: subject.name
-		}));
-	});
-
 	let formData = $state({
 		student_id: user.id,
 		first_name: '',
@@ -355,7 +348,7 @@
 										</label>
 										<CustomSelect
 											bind:value={formData.subject_id}
-											options={subjectOptions}
+											options={$subjectsStore.subjects}
 											placeholder="Seleziona una materia"
 											searchable={true}
 											labelKey='name'

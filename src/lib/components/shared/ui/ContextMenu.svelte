@@ -1,22 +1,18 @@
 <script>
     import { onMount, createEventDispatcher } from 'svelte';
 
-    
     let { 
         x = 0, 
         y = 0, 
         items = [] 
     } = $props();
     
-    
     const dispatch = createEventDispatcher();
     
     let menuRef;
     
-    
     $effect(() => {
         if (!menuRef) return;
-        
         
         setTimeout(() => {
             if (!menuRef) return;
@@ -31,11 +27,9 @@
                 height: menuRef.offsetHeight
             };
             
-            
             if (x + menu.width > viewport.width) {
                 x = viewport.width - menu.width - 10;
             }
-            
             
             if (y + menu.height > viewport.height) {
                 y = viewport.height - menu.height - 10;
@@ -43,20 +37,17 @@
         }, 0);
     });
     
-    
     function handleClickOutside(e) {
         if (menuRef && !menuRef.contains(e.target)) {
             dispatch('close');
         }
     }
     
-    
     function handleKeyDown(e) {
         if (e.key === 'Escape') {
             dispatch('close');
         }
     }
-    
     
     onMount(() => {
         document.addEventListener('click', handleClickOutside);
@@ -67,7 +58,6 @@
             document.removeEventListener('keydown', handleKeyDown);
         };
     });
-    
     
     function handleMenuItemClick(item) {
         dispatch('action', { action: item.action, data: item.data });

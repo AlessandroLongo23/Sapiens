@@ -5,9 +5,9 @@
     import { onMount } from 'svelte';
     import * as ls from 'lucide-svelte';
 
-    import EditableContentTree from '$lib/components/admin/subjects/EditableContentTree.svelte';
+    import EditableContentTree from '$lib/components/admin/topics/EditableContentTree.svelte';
     import DeleteConfirmationModal from '$lib/components/admin/DeleteConfirmationModal.svelte';
-    import ContentNodeForm from '$lib/components/admin/subjects/ContentNodeForm.svelte';
+    import ContentNodeForm from '$lib/components/admin/topics/ContentNodeForm.svelte';
     
     let showCreateModal = $state(false);
     let showEditModal = $state(false);

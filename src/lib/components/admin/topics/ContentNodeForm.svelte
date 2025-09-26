@@ -2,7 +2,6 @@
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
     
-    
     let { 
         node = null,
         nodeType = 'level', 
@@ -10,17 +9,13 @@
         isNew = true,
     } = $props();
     
-    
     const dispatch = createEventDispatcher();
-    
     
     let title = $state(node?.title || '');
     let slug = $state(node?.slug || '');
     let description = $state(node?.description || '');
-    let icon = $state(node?.icon || '');
     let formValid = $state(false);
     let slugEdited = $state(false);
-    
     
     $effect(() => {
         if (title && !slugEdited) {
@@ -34,14 +29,12 @@
         }
     });
     
-    
     $effect(() => {
         formValid = !!title && !!slug;
     });
     
     function handleSubmit() {
         if (!formValid) return;
-        
         
         const nodeData = {
             ...(node?.id && { id: node.id }),
@@ -50,9 +43,7 @@
             slug,
             title,
             description,
-            icon
         };
-        
         
         dispatch('save', { node: nodeData, isNew });
     }
@@ -61,13 +52,11 @@
         dispatch('cancel');
     }
     
-    
     function getFormTitle() {
         const action = isNew ? 'New' : 'Edit';
         const type = getNodeTypeLabel(nodeType);
         return `${action} ${type}`;
     }
-    
     
     function getNodeTypeLabel(type) {
         const labels = {
@@ -106,7 +95,6 @@
         {/if}
         
         <div class="space-y-4">
-            
             <div>
                 <label for="title" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Title *</label>
                 <input 
@@ -118,7 +106,6 @@
                     required
                 />
             </div>
-            
             
             <div>
                 <label for="slug" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Slug *</label>
@@ -136,7 +123,6 @@
                 <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Used in URLs. Use lowercase letters, numbers, and hyphens only.</p>
             </div>
             
-            
             <div>
                 <label for="description" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Description</label>
                 <textarea 
@@ -145,26 +131,6 @@
                     class="w-full p-2.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 min-h-[100px]"
                     placeholder="Enter description"
                 ></textarea>
-            </div>
-            
-            
-            <div>
-                <label for="icon" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Icon URL</label>
-                <div class="flex gap-2">
-                    <input 
-                        id="icon" 
-                        type="text" 
-                        bind:value={icon}
-                        class="w-full p-2.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
-                        placeholder="/subjectsIcons/example.png"
-                    />
-                    {#if icon}
-                        <div class="h-10 w-10 border border-zinc-300 dark:border-zinc-600 rounded flex items-center justify-center bg-white dark:bg-zinc-800">
-                            <img src={icon} alt="Icon preview" class="h-8 w-8 object-contain" onerror={(e) => { e.target.src = ''; e.target.alt = 'Invalid URL'; }} />
-                        </div>
-                    {/if}
-                </div>
-                <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Path to icon image. Leave empty if not applicable.</p>
             </div>
         </div>
         

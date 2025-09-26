@@ -5,7 +5,7 @@
     import { createEventDispatcher } from 'svelte';
     import * as ls from 'lucide-svelte';
     
-    import EditableTreeNode from '$lib/components/admin/subjects/EditableTreeNode.svelte';
+    import EditableTreeNode from '$lib/components/admin/topics/EditableTreeNode.svelte';
     import ContextMenu from '$lib/components/shared/ui/ContextMenu.svelte';
     
     let { selectedIds = [] } = $props();

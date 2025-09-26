@@ -9,16 +9,13 @@ export async function load({ params }) {
 	const level = 'universita';
 	const subject = course;
 	
-	
 	let topicName;
 	let topicTitle;
 	let configPath;
 	
-	
 	if (subtopicKey) {
 		topicName = subtopicKey;
 		configPath = `${level}/${subject}/${topicKey}/${subtopicKey}`;
-		
 		
 		const coursePath = [level, subject];
 		const courseNode = $contentStore.flatNodes.find(node => 
@@ -35,7 +32,6 @@ export async function load({ params }) {
 			);
 			
 			if (topicNode) {
-				
 				const subtopicNode = $contentStore.flatNodes.find(node => 
 					node.node_type === 'subtopic' && 
 					node.parent_id === topicNode.id && 
@@ -52,7 +48,6 @@ export async function load({ params }) {
 	else {
 		topicName = topicKey;
 		configPath = `${level}/${subject}/${topicKey}`;
-		
 		
 		const coursePath = [level, subject];
 		const courseNode = $contentStore.flatNodes.find(node => 

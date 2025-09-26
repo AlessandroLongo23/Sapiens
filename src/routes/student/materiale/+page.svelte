@@ -1,4 +1,5 @@
 <script>
+	import { reviewsStore } from '$lib/stores/reviews.js';
 	import { studentsStore } from '$lib/stores/students.js';
 	import { contentStore } from '$lib/stores/content.js';
 	import { goto } from '$app/navigation';
@@ -7,7 +8,6 @@
 
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 	import ReviewBox from '$lib/components/ReviewBox.svelte';
-	import { fetchStudentReview } from '$lib/stores/reviews.svelte.js';
 	import StreakWidget from '$lib/components/admin/widgets/StreakWidget.svelte';
 
 	let { data } = $props();
@@ -53,7 +53,6 @@
 				...topic,
 				title: topic.title || '',
 				description: topic.description || '',
-				icon: topic.icon || '',
 				level: level,
 				subject: subject,
 				year: year,
@@ -64,7 +63,7 @@
 					acc[subtopic.slug] = {
 						title: subtopic.title,
 						description: subtopic.description,
-						icon: subtopic.icon
+						icon: '/subjectsIcons/' + subtopic.slug + '.png'
 					};
 					return acc;
 				}, {}),
@@ -130,13 +129,11 @@
 				});
 				break;
 			default:
-				
 				filtered.sort((a, b) => {
 					const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
 					const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
 					
 					if (aIndex !== bIndex) return aIndex - bIndex;
-					
 					
 					if (a.memory > 0 && a.memory < 100 && (b.memory === 0 || b.memory === 100)) return -1;
 					if (b.memory > 0 && b.memory < 100 && (a.memory === 0 || a.memory === 100)) return 1;
@@ -160,7 +157,6 @@
 		});
 		
 		Object.keys(grouped).forEach(key => {
-			
 			grouped[key].sort((a, b) => {
 				const aIndex = typeof a.child_index === 'number' ? a.child_index : Number.POSITIVE_INFINITY;
 				const bIndex = typeof b.child_index === 'number' ? b.child_index : Number.POSITIVE_INFINITY;
@@ -175,7 +171,6 @@
 
 	let streak = $state(5);
 	let nextMilestone = $state(7);
-	
 	
 	let studentReview = $state(null);
 	let hasReviewed = $state(false);
@@ -193,7 +188,7 @@
 				return;
 			}
 			
-			const review = await fetchStudentReview(student.id);
+			const review = $reviewsStore.reviews.find(r => r.student_id === student.id);
 			
 			if (review) {
 				studentReview = review;
@@ -224,12 +219,11 @@
 </script>
 
 <div class="bg-white dark:bg-zinc-900 min-h-screen pb-8 sm:pb-12">
-	<div class="px-3 sm:px-6 lg:px-8">
-		<div class="flex flex-col lg:flex-row justify-center">
-			<div class="hidden lg:block w-96 flex-shrink-0 p-4">
-				<div class="sticky top-24 space-y-6">
-					<StreakWidget streak={streak} nextMilestone={nextMilestone} />
-					
+	<div class="flex flex-col lg:flex-row justify-center">
+		<div class="hidden sm:block w-80">
+			<div class="hidden sm:flex flex-col fixed top-24 left-24 w-80 flex-shrink-0 gap-6">
+				<StreakWidget streak={streak} nextMilestone={nextMilestone} />
+				
 				{#if loadingReview}
 					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 flex justify-center items-center h-40">
 						<ls.Loader class="h-6 w-6 animate-spin text-purple-500" />
@@ -244,10 +238,10 @@
 						reviewId={reviewId}
 					/>
 				{/if}
-				</div>
 			</div>
+		</div>
 
-			<div class="flex-1 max-w-4xl px-2 sm:px-4 lg:px-8 mt-4 sm:mt-6">
+		<div class="flex-1 max-w-5xl px-2 sm:px-4 lg:px-8 mt-4 sm:mt-6">
 			<section class="mb-6 sm:mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-4 sm:p-6">
 				<div class="flex items-center justify-between mb-4">
 					<h2 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -261,11 +255,17 @@
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
 					{#each continuaTopics.slice(0, 3) as topic}
 						<button
-							onclick={() => goto(`/student/materiale/${topic.level}/${topic.subject}/${topic.year}/${topic.key}/`)}
-						 	class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm hover:shadow-md transition-all p-3 sm:p-4 flex gap-3 sm:gap-4 items-center"
+							onclick={() => {
+								if (topic.level === 'universita') {
+									goto(`/student/materiale/${topic.level}/${topic.subject}/${topic.key}/`);
+								} else {
+									goto(`/student/materiale/${topic.level}/${topic.subject}/${topic.year}/${topic.key}/`);
+								}
+							}}
+							class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm hover:shadow-md transition-all p-3 sm:p-4 flex gap-3 sm:gap-4 items-center"
 						>
 							<div class="w-12 h-12 sm:w-16 sm:h-16 overflow-hidden flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center rounded-lg">
-								<img src={topic.icon} alt={topic.title} class="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
+								<img src={'/subjectsIcons/' + topic.slug + '.png'} alt={topic.title} class="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
 							</div>
 							
 							<div class="flex-1 min-w-0">
@@ -410,7 +410,7 @@
 										<TopicCard
 											title={topic.title} 
 											description={topic.description} 
-											icon={topic.icon} 
+											icon={'/subjectsIcons/' + topic.slug + '.png'} 
 											path={topic.path}
 											level={topic.level}
 											subject={topic.subject}
@@ -441,7 +441,7 @@
 										<TopicCard
 											title={topic.title} 
 											description={topic.description} 
-											icon={topic.icon} 
+											icon={'/subjectsIcons/' + topic.slug + '.png'} 
 											path={topic.path}
 											level={topic.level}
 											subject={topic.subject}
@@ -466,7 +466,6 @@
 					</section>
 				{/if}
 			</section>
-			</div>
 		</div>
 	</div>
 </div>

@@ -15,9 +15,7 @@
         let yearSlug = pieces[pieces.indexOf(subjectSlug) + 1];
         let topicSlug = pieces[pieces.indexOf(yearSlug) + 1];
         
-        
         const path = [levelSlug, subjectSlug, yearSlug, topicSlug];
-        
         
         let topicNode = $contentStore.flatNodes.find(node => 
             node.node_type === 'topic' && 
@@ -50,7 +48,7 @@
                 id: node.id,
                 title: node.title || '',
                 description: node.description || '',
-                icon: node.icon || ''
+                icon: '/subjectsIcons/' + node.slug + '.png' || ''
             };
             return acc;
         }, {});
@@ -81,7 +79,7 @@
     <div class="flex flex-col md:flex-row gap-6 md:gap-8 mb-8 sm:mb-12">
         <div class="w-full md:w-1/3 lg:w-1/4 flex justify-center">
             <div class="relative w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg overflow-hidden">
-                <img src={topic.icon} alt={topic.title} class="w-full h-full object-contain p-6 sm:p-8" />
+                <img src={'/subjectsIcons/' + topic.slug + '.png'} alt={topic.title} class="w-full h-full object-contain p-6 sm:p-8" />
             </div>
         </div>
 

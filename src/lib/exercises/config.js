@@ -173,4 +173,28 @@ export const configs = {
 			args: []
 		}
 	},
+	'superiori/matematica/3/equazioni/equazioni-di-i-grado': {
+		'equal-to-zero': {
+			generator: 'FirstDegreeEquationEx',
+			count: 3,
+			args: []
+		},
+		'different-from-zero': {
+			generator: 'FirstDegreeEquationDifferentFromZeroEx',
+			count: 3,
+			args: []
+		}
+	},
+	'superiori/matematica/3/equazioni/equazioni-di-ii-grado': {
+		'equal-to-zero': {
+			generator: 'SecondDegreeEquationEx',
+			count: 3,
+			args: []
+		},
+		'different-from-zero': {
+			generator: 'SecondDegreeEquationDifferentFromZeroEx',
+			count: 0,
+			args: []
+		}
+	},
 };

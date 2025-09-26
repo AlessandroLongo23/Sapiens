@@ -5,7 +5,7 @@
     import { slide } from 'svelte/transition';
     import * as ls from 'lucide-svelte';
     
-    import TreeNode from '$lib/components/admin/subjects/TreeNode.svelte';
+    import TreeNode from '$lib/components/admin/topics/TreeNode.svelte';
 
     let { 
         node,

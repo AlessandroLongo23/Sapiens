@@ -1,7 +1,7 @@
 <script>
+	import { reviewsStore } from '$lib/stores/reviews.js';
 	import { createEventDispatcher } from 'svelte';
 	import * as ls from 'lucide-svelte';
-	import { addReview, updateReview } from '$lib/stores/reviews.svelte.js';
 	
 	let { 
 		studentId = $bindable(''),
@@ -37,7 +37,7 @@
 			const isEdit = hasReviewed && reviewId;
 			
 			if (isEdit) {
-				const updatedReview = await updateReview(reviewId, {
+				const updatedReview = $reviewsStore.updateReview(reviewId, {
 					rating,
 					review: reviewText
 				});
@@ -54,8 +54,8 @@
 					review: reviewText
 				};
 				
-				const createdReview = await addReview(newReview);
-				reviewId = createdReview?.id;
+				const createdReview = $reviewsStore.addReview(newReview);
+				reviewId = createdReview.id;
 				
 				hasReviewed = true;
 				
@@ -102,7 +102,7 @@
 
 <div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6">
 	<div class="flex items-center justify-between mb-4">
-		<h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+		<h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-4">
 			<div class="h-8 w-8 flex items-center justify-center bg-purple-500 text-white rounded-lg">
 				<ls.MessageSquare class="h-5 w-5" />
 			</div>

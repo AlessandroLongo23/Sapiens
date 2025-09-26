@@ -6,7 +6,7 @@
     import * as ls from 'lucide-svelte';
     
     import ContextMenu from '$lib/components/shared/ui/ContextMenu.svelte';
-    import EditableTreeNode from '$lib/components/admin/subjects/EditableTreeNode.svelte';
+    import EditableTreeNode from '$lib/components/admin/topics/EditableTreeNode.svelte';
     
     let { 
         node,
