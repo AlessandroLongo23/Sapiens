@@ -64,7 +64,7 @@
 			}
 
 			try {
-				const response = await fetch('/api/submit-review', {
+				const response = await fetch('/api/emails/submit-review', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

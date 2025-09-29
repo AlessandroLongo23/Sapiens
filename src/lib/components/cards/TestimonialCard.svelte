@@ -1,5 +1,5 @@
 <script>
-    import { levels } from '$lib/models/students.svelte.js';
+    import { levels } from '$lib/tables/students.svelte.js';
 	import * as ls from 'lucide-svelte';
 	
 	let { review, student } = $props();
@@ -32,7 +32,7 @@
         <div class="relative mr-4">
             <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:shadow-xl transition-all duration-300">
 				<span class="group-hover:scale-110 transition-transform duration-300">
-					{student.avatar || student.first_name.charAt(0).toUpperCase()}
+					{student.first_name.charAt(0).toUpperCase()}
 				</span>
 			</div>
             <div class="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300 scale-110"></div>

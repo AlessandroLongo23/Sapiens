@@ -80,15 +80,15 @@
 
     <div class="flex flex-col gap-1 text-sm text-zinc-600 dark:text-zinc-300">
         <div class="flex flex-row items-center gap-2">
-            <ls.User size={16} />
+            <ls.User class="size-4"/>
             {student.first_name} {student.last_name}
         </div>
         <div class="flex flex-row items-center gap-2">
-            <ls.BookOpen size={16} />
+            <ls.BookOpen class="size-4"/>
             {subject.name}
         </div>
         <div class="flex flex-row items-center gap-2 ">
-            <ls.School size={12}/>
+            <ls.School class="size-4"/>
             {lecture.level === 'high_school' ? 'Scuola Superiore' : 'Università'}
         </div>
     </div>

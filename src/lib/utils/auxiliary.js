@@ -43,3 +43,21 @@ Array.prototype.shuffle = function() {
 Array.prototype.random = function() {
 	return this[Math.floor(Math.random() * this.length)];
 }
+
+Number.prototype.toHours = function() {
+    let hours = Math.floor(this);
+    let minutes = Math.floor((this % 1 * 60));
+    return `${hours}h ${minutes}m`;
+}
+
+Number.prototype.toCurrency = function(symbol = '€') {
+    return `${this.toFixed(2)} ${symbol}`;
+}
+
+Set.prototype.join = function(joiner = ', ') {
+    return `${[...this].join(joiner)}`;
+}
+
+Set.prototype.sort = function() {
+    return new Set([...this].sort((a, b) => parseInt(a) - parseInt(b)));
+}

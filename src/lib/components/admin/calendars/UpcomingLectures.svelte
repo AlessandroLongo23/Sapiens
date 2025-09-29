@@ -1,9 +1,10 @@
 <script>
     import { lecturesStore } from '$lib/stores/lectures.js';
+    import { cardStyle } from '$lib/const/appearance.js';
     import { isAfter, isSameDay } from 'date-fns';
+	import * as ls from 'lucide-svelte';
 
     import UpcomingLecture from '$lib/components/UpcomingLecture.svelte';
-    import { cardStyle } from '$lib/const/appearance.js';
 
     let filteredLectures = $derived.by(() => {
 		return $lecturesStore.lectures.sort((a, b) => {
@@ -40,10 +41,15 @@
 	}
 </script>
 
-<div class={`p-4 max-h-[calc(100vh-120px)] overflow-y-scroll ${cardStyle}`}>
-    <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 mb-3">Prossime Lezioni</h2>
+<div class='flex flex-col p-4 max-h-[calc(100vh-120px)] overflow-y-scroll {cardStyle} gap-4'>
+    <div class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 flex items-center">
+        <ls.BookOpen class='size-5'/>
+        <span class="ml-2 text-zinc-800 dark:text-zinc-200">
+            Prossime Lezioni
+        </span>
+    </div>
     
-    <div class="space-y-3 pr-2">
+    <div class="flex flex-col gap-4">
         {#if filteredLectures.length === 0}
             <p class="text-zinc-500 dark:text-zinc-400 text-sm">Nessuna lezione programmata.<br>Clicca su un giorno per aggiungere una lezione.</p>
         {:else}

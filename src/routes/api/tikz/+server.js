@@ -11,12 +11,12 @@ async function compileTikz(tikzCode) {
     const tempFilePath = path.join(tempDir, `tikz-${Date.now()}.tex`);
 
     const latexDocument = `
-\\documentclass{standalone}
-\\usepackage{tikz}
-\\begin{document}
-${tikzCode}
-\\end{document}
-`;
+		\\documentclass{standalone}
+		\\usepackage{tikz}
+		\\begin{document}
+		${tikzCode}
+		\\end{document}
+	`;
 
     await fs.writeFile(tempFilePath, latexDocument);
 
@@ -38,7 +38,6 @@ ${tikzCode}
         await fs.rmdir(tempDir);
     }
 }
-
 
 export async function POST({ request }) {
 	const { tikz } = await request.json();

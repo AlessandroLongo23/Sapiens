@@ -2,14 +2,6 @@
 	import * as ls from 'lucide-svelte';
 	
 	let { value, label, icon, color } = $props();
-	
-	
-	// 	'clock': ls.Clock,
-	// 	'book-open': ls.BookOpen,
-	// 	'users': ls.Users
-	// };
-	
-	
 </script>
 
 <div class="relative glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center overflow-hidden group hover:scale-[1.02] transition-all duration-300 shadow-elegant">

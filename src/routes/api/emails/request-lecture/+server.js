@@ -130,8 +130,8 @@ export async function POST({ request, url, cookies }) {
 		const refuseToken = generateActionToken(lectureId, 'refuse');
 		
 		const baseUrl = "https://ale-ripetizioni.vercel.app";
-		const acceptUrl = `${baseUrl}/api/lectures/accept?token=${acceptToken}&id=${lectureId}`;
-		const refuseUrl = `${baseUrl}/api/lectures/refuse?token=${refuseToken}&id=${lectureId}`;
+		const acceptUrl = `${baseUrl}/api/emails/request-lecture/accept?token=${acceptToken}&id=${lectureId}`;
+		const refuseUrl = `${baseUrl}/api/emails/request-lecture/refuse?token=${refuseToken}&id=${lectureId}`;
 
 		const emailHtml = `
 		<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">

@@ -2,15 +2,6 @@ import { Exercise, Question, Answer } from './abstract.svelte.js';
 
 let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-Set.prototype.join = function(joiner = ', ') {
-    return `${[...this].join(joiner)}`;
-}
-
-Set.prototype.sort = function() {
-    return new Set([...this].sort((a, b) => parseInt(a) - parseInt(b)));
-}
-
-
 const setUnion = (A, B) => new Set([...A, ...B]);
 const setIntersection = (A, B) => new Set([...A].filter(x => B.has(x)));
 const setDifference = (A, B) => new Set([...A].filter(x => !B.has(x)));

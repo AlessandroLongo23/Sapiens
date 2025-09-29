@@ -19,7 +19,7 @@
 		{ name: 'Analytics', icon: ls.ChartArea },
 		{ name: 'Calendario', icon: ls.Calendar },
 		{ name: 'Studenti', icon: ls.Users },
-		{ name: 'Argomenti', icon: ls.BookOpen }
+		{ name: 'Materie', icon: ls.BookOpen }
 	];
 
 	$effect(() => {

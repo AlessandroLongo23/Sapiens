@@ -1,12 +1,13 @@
 import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
+import { Lecture } from '$lib/models/Lecture.svelte.js';
 
 async function fetchLectures() {
     const { data, error } = await supabase
         .from('lectures')
         .select('*');
     if (error) throw new Error(error.message);
-    return data;
+    return data.map(lecture => new Lecture(lecture));
 }
     
 export const selectedLectureStore = writable(null);
@@ -34,7 +35,7 @@ const createLecturesStore = () => {
                     
                     if (data) {
                         set({
-                            lectures: data,
+                            lectures: data.map(lecture => new Lecture(lecture)),
                             loading: false,
                             error: null
                         });
@@ -51,7 +52,7 @@ const createLecturesStore = () => {
             try {
                 const data = await fetchLectures();
                 set({
-                    lectures: data,
+                    lectures: data.map(lecture => new Lecture(lecture)),
                     loading: false,
                     error: null
                 });

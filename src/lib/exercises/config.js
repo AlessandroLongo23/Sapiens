@@ -188,12 +188,12 @@ export const configs = {
 	'superiori/matematica/3/equazioni/equazioni-di-ii-grado': {
 		'equal-to-zero': {
 			generator: 'SecondDegreeEquationEx',
-			count: 3,
+			count: 0,
 			args: []
 		},
 		'different-from-zero': {
 			generator: 'SecondDegreeEquationDifferentFromZeroEx',
-			count: 0,
+			count: 3,
 			args: []
 		}
 	},

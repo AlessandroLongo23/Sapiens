@@ -1,11 +1,12 @@
 import { gcd } from '$lib/utils/auxiliary';
+import * as rgx from "$lib/math/patterns";
 
 export class Fraction {
     num: number;
     den: number;
     value: number | null;
 
-    constructor(num: number, den: number) {
+    constructor(num: number, den: number = 1) {
         this.num = num;
         this.den = den;
         if (den != 0) {
@@ -13,15 +14,19 @@ export class Fraction {
         } else {
             this.value = null;
         }
+
+        this.simplify();
     }
 
     simplify(): void {
-        const c = gcd(Math.abs(this.num), Math.abs(this.den));
-        this.num /= c;
-        this.den /= c;
+        if (this.num % 1 == 0 && this.den % 1 == 0) {
+            const c = gcd(Math.abs(this.num), Math.abs(this.den));
+            this.num /= c;
+            this.den /= c;
+        }
     }
 
-    toString(): string {
+    toLatex(): string {
         if (this.value == null) {
             return 'N/D';
         } else if (this.value == 0) {
@@ -40,7 +45,15 @@ export class Fraction {
         }
         const num = this.num * other.den + other.num * this.den;
         const den = this.den * other.den;
-        return new Fraction(num, den);
+        const result = new Fraction(num, den);
+        result.simplify();
+        return result;
+    }
+
+    static add(a: Fraction, b: Fraction): Fraction {
+        const result = new Fraction(a.num * b.den + b.num * a.den, a.den * b.den);
+        result.simplify();
+        return result;
     }
     
     sub(other: Fraction | number): Fraction {
@@ -49,7 +62,15 @@ export class Fraction {
         }
         const num = this.num * other.den - other.num * this.den;
         const den = this.den * other.den;
-        return new Fraction(num, den);
+        const result = new Fraction(num, den);
+        result.simplify();
+        return result;
+    }
+
+    static sub(a: Fraction, b: Fraction): Fraction {
+        const result = new Fraction(a.num * b.den - b.num * a.den, a.den * b.den);
+        result.simplify();
+        return result;
     }
     
     mul(other: Fraction | number): Fraction {
@@ -116,6 +137,15 @@ export class Fraction {
         } else {
             return new Fraction(Number(value), 1);
         }
+    }
+
+    static fromLatex(value: string): Fraction {
+        const fractionPattern = rgx.fractionPattern;
+        const match = value.match(fractionPattern);
+        if (!match) throw new Error('Invalid fraction');
+
+        const [num, den] = match.slice(1).map(Number);
+        return new Fraction(num, den);
     }
 
     static inverse(fraction: Fraction): Fraction {

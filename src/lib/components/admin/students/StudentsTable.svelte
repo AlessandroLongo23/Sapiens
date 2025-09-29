@@ -2,7 +2,7 @@
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { studentsStore } from '$lib/stores/students.js';
     import { lecturesStore } from '$lib/stores/lectures.js';
-    import { dataColumns, levels } from '$lib/models/students.svelte.js';
+    import { dataColumns, levels } from '$lib/tables/students.svelte.js';
     import { cardStyle } from '$lib/const/appearance.js';
     import { goto } from '$app/navigation';
     import * as ls from 'lucide-svelte';

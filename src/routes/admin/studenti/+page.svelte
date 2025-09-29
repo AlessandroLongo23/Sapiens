@@ -50,7 +50,10 @@
 
 <div class="flex flex-col gap-8">
     <div class="flex flex-row items-center justify-between gap-4 w-full">
-        <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{title}</h1>
+        <div class="flex flex-row items-center gap-2 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+            <ls.Users/>
+            <span>{title}</span>
+        </div>
 
         <div class="flex flex-row items-center gap-4">
             <Searchbar placeholder="Cerca studente" bind:value={search} classes="w-80"/>

@@ -1,12 +1,13 @@
 import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
+import { Student } from '$lib/models/Student.svelte.js';
 
 async function fetchStudents() {
     const { data, error } = await supabase
         .from('students')
         .select('*');
     if (error) throw new Error(error.message);
-    return data;
+    return data.map(student => new Student(student));
 }
 
 export const selectedStudentStore = writable(null);
@@ -34,7 +35,7 @@ const createStudentsStore = () => {
                     
                     if (data) {
                         set({
-                            students: data,
+                            students: data.map(student => new Student(student)),
                             loading: false,
                             error: null
                         });
@@ -51,7 +52,7 @@ const createStudentsStore = () => {
             try {
                 const data = await fetchStudents();
                 set({
-                    students: data,
+                    students: data.map(student => new Student(student)),
                     loading: false,
                     error: null
                 });
@@ -76,7 +77,7 @@ const createStudentsStore = () => {
                 console.error('Error adding student:', error.message);
                 throw new Error('Impossibile aggiungere lo studente.');
             }
-            return data;
+            return new Student(data);
         },
 
         deleteStudent: async (studentId) => {
@@ -109,7 +110,7 @@ const createStudentsStore = () => {
                 console.error('Error updating student:', error.message);
                 throw new Error('Impossibile aggiornare lo studente.');
             }
-            return data;
+            return new Student(data);
         },
 
         selectStudent: (studentId) => {

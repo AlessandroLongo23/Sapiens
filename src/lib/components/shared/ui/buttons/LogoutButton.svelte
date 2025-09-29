@@ -15,7 +15,7 @@
     onclick={async () => { 
         isLoggingOut = true;
         try {
-            const response = await fetch('/auth/logout', {
+            const response = await fetch('/api/auth/logout', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json'

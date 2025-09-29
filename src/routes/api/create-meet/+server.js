@@ -24,11 +24,6 @@ function normalizePrivateKey(raw) {
     return key
 }
 
-/**
- * POST /api/create-meet
- * Body: { lectureId: string|number, summary: string, date: 'YYYY-MM-DD', start_time: 'HH:mm', end_time: 'HH:mm' }
- * Returns: { hangoutLink: string, eventId: string }
- */
 export async function POST({ request, locals: { supabase, user } }) {
     try {
         if (!user) {

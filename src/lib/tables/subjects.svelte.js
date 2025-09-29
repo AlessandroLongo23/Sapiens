@@ -39,6 +39,24 @@ export const dataColumns = [
         }
     },
     {
+        label: 'Ore',
+        key: 'hours',
+        sortable: true,
+        icon: ls.Clock,
+        display: subject => {
+            let lectures = [];
+            lecturesStore.subscribe(store =>  {
+                lectures = store.lectures;
+            });
+            let hours = lectures
+                .filter(lecture => lecture.subject_id === subject.id)
+                .reduce((acc, lecture) => {
+                    return acc + lecture.getDuration('number');
+                }, 0);
+            return hours.toHours();
+        }
+    },
+    {
         label: 'Guadagno',
         key: 'earnings',
         sortable: true,

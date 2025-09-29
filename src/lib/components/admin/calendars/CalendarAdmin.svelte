@@ -25,27 +25,36 @@
 	}
 </script>
 
-<div class={`w-full flex flex-col ${cardStyle}`}>
-	<div class="flex items-center justify-between p-4">
-		<h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 ps-2">
-			{formatDateString($calendarView, 'MMMM yyyy')}
-		</h2>
-		<div class="flex items-center space-x-2">
+<div class='w-full flex flex-col {cardStyle} gap-4 p-4'>
+	<div class="flex items-center justify-between">
+		<div class="flex-1 flex flex-row gap-2 items-center text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+			<ls.Calendar class='size-5'/>
+			<span class="text-zinc-800 dark:text-zinc-200">
+				Calendario
+			</span>
+		</div>
+
+		<div class="flex-1 flex flex-row gap-2 items-center justify-center">
 			<button 
 				onclick={prevMonth} 
 				class="p-2 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
 				aria-label="Previous month"
 			>
-				<ls.ChevronLeft size={20} />
+				<ls.ChevronLeft class="size-5" />
 			</button>
+			<div class="w-40 flex flex-row gap-2 items-center text-lg font-semibold text-zinc-900 dark:text-zinc-50 justify-center">
+				{formatDateString($calendarView, 'MMMM yyyy')}
+			</div>
 			<button 
 				onclick={nextMonth} 
 				class="p-2 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
 				aria-label="Next month"
 			>
-				<ls.ChevronRight size={20} />
+				<ls.ChevronRight class="size-5" />
 			</button>
 		</div>
+
+		<div class="flex-1"></div>
 	</div>
 	
 	<div class="grid grid-cols-7 gap-1 px-4 pb-2">

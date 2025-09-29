@@ -1,9 +1,10 @@
 <script>
-    import * as ls from 'lucide-svelte';
-    import { goto } from '$app/navigation';
+    import { getPlaceholderImage, getTopicIcon } from '$lib/utils/utils.svelte.js';
     import { contentStore } from '$lib/stores/content.js';
+    import { goto } from '$app/navigation';
     import { page } from '$app/stores';
-
+    import * as ls from 'lucide-svelte';
+    
     let topic = $derived.by(() => {
         if (!$contentStore.flatNodes || $contentStore.flatNodes.length === 0) {
             return null;
@@ -48,7 +49,6 @@
                 id: node.id,
                 title: node.title || '',
                 description: node.description || '',
-                icon: '/subjectsIcons/' + node.slug + '.png' || ''
             };
             return acc;
         }, {});
@@ -79,10 +79,9 @@
     <div class="flex flex-col md:flex-row gap-6 md:gap-8 mb-8 sm:mb-12">
         <div class="w-full md:w-1/3 lg:w-1/4 flex justify-center">
             <div class="relative w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg overflow-hidden">
-                <img src={'/subjectsIcons/' + topic.slug + '.png'} alt={topic.title} class="w-full h-full object-contain p-6 sm:p-8" />
+                <img src={getTopicIcon(topic) || getPlaceholderImage()} alt={topic.title} class="w-full h-full object-contain p-6 sm:p-8" />
             </div>
         </div>
-
         
         <div class="w-full md:w-2/3 lg:w-3/4 space-y-4 sm:space-y-6">
             <div>

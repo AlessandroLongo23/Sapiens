@@ -1,5 +1,5 @@
 <script>
-    import { levels } from '$lib/models/students.svelte.js';
+    import { levels } from '$lib/tables/students.svelte.js';
     import { studentsStore } from '$lib/stores/students.js';
     import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import * as ls from 'lucide-svelte';

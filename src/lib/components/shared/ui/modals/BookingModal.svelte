@@ -128,7 +128,7 @@
 		isSubmitting = true;
 
 		try {
-			const response = await fetch('/api/send-email', {
+			const response = await fetch('/api/emails/first-contact', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

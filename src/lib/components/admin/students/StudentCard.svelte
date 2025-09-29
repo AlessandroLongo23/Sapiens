@@ -1,6 +1,6 @@
 <script>
     import { lecturesStore } from '$lib/stores/lectures.js';
-    import { levels } from '$lib/models/students.svelte.js';
+    import { levels } from '$lib/tables/students.svelte.js';
     import * as ls from 'lucide-svelte';
     
     import MemoryBar from '$lib/components/MemoryBar.svelte';

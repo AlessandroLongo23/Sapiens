@@ -16,7 +16,6 @@ export async function POST({ request }) {
 			isEdit
 		} = reviewData;
 
-		
 		const starRating = '★'.repeat(rating) + '☆'.repeat(5 - rating);
 
 		const emailHtml = `

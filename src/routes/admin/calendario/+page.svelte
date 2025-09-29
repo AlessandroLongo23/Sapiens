@@ -2,7 +2,7 @@
 	import { setSelectedDate, selectedDate } from '$lib/utils/date.svelte.js';
 	import { selectedLectureStore } from '$lib/stores/lectures.js';
 	
-	import UpcomingLectures from '$lib/components/admin/widgets/UpcomingLectures.svelte';
+	import UpcomingLectures from '$lib/components/admin/calendars/UpcomingLectures.svelte';
 	import UnpaidLectures from '$lib/components/admin/widgets/UnpaidLectures.svelte';
 	import AddLectureModal from '$lib/components/admin/calendars/AddLectureModal.svelte';
 	import EditLectureModal from '$lib/components/admin/calendars/EditLectureModal.svelte';

@@ -3,7 +3,7 @@
 	import { searchStore } from '$lib/components/shared/ui/search.js';
 	import { lecturesStore } from '$lib/stores/lectures.js';
 	import { subjectsStore } from '$lib/stores/subjects.js';
-	import { dataColumns } from '$lib/models/subjects.svelte.js';
+	import { dataColumns } from '$lib/tables/subjects.svelte.js';
 	import * as ls from 'lucide-svelte';
 
 	import AddSubjectModal from '$lib/components/admin/subjects/AddSubjectModal.svelte';
@@ -73,11 +73,14 @@
 />
 
 <div class="flex justify-between items-center mb-6">
-	<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{title}</h1>
+	<div class="flex flex-row items-center gap-2 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+		<ls.BookOpen/>
+		<span>{title}</span>
+	</div>
 	
 	<div class="flex flex-row items-center gap-4">
 		<a 
-			href="/admin/argomenti/contenuto" 
+			href="/admin/materie/contenuto" 
 			class="px-4 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-md text-sm flex items-center gap-1.5 transition-colors"
 		>
 			<ls.LayoutGrid class="size-4" />

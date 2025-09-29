@@ -88,7 +88,7 @@
 			value: $subjectsStore.subjects.length,
 			backgroundColor: 'bg-[#F3E8FF]',
 			iconColor: 'text-[#8B5CF6]',
-			href: "/admin/argomenti",
+			href: "/admin/materie",
 		},
 	]
 })

@@ -1,4 +1,5 @@
 <script>
+	import { getPlaceholderImage, getTopicIcon } from '$lib/utils/utils.svelte.js';
 	import { reviewsStore } from '$lib/stores/reviews.js';
 	import { studentsStore } from '$lib/stores/students.js';
 	import { contentStore } from '$lib/stores/content.js';
@@ -63,7 +64,6 @@
 					acc[subtopic.slug] = {
 						title: subtopic.title,
 						description: subtopic.description,
-						icon: '/subjectsIcons/' + subtopic.slug + '.png'
 					};
 					return acc;
 				}, {}),
@@ -265,7 +265,7 @@
 							class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm hover:shadow-md transition-all p-3 sm:p-4 flex gap-3 sm:gap-4 items-center"
 						>
 							<div class="w-12 h-12 sm:w-16 sm:h-16 overflow-hidden flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center rounded-lg">
-								<img src={'/subjectsIcons/' + topic.slug + '.png'} alt={topic.title} class="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
+								<img src={getTopicIcon(topic) || getPlaceholderImage()} alt={topic.title} class="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
 							</div>
 							
 							<div class="flex-1 min-w-0">
@@ -410,7 +410,7 @@
 										<TopicCard
 											title={topic.title} 
 											description={topic.description} 
-											icon={'/subjectsIcons/' + topic.slug + '.png'} 
+											icon={getTopicIcon(topic) || getPlaceholderImage()} 
 											path={topic.path}
 											level={topic.level}
 											subject={topic.subject}
@@ -441,7 +441,7 @@
 										<TopicCard
 											title={topic.title} 
 											description={topic.description} 
-											icon={'/subjectsIcons/' + topic.slug + '.png'} 
+											icon={getTopicIcon(topic) || getPlaceholderImage()} 
 											path={topic.path}
 											level={topic.level}
 											subject={topic.subject}

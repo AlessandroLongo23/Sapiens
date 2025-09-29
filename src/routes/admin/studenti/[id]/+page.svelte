@@ -1,7 +1,7 @@
 <script>
 	import { messagePopup } from '$lib/components/shared/ui/messagePopup/messagePopup.js';
     import { studentsStore } from '$lib/stores/students.js';
-    import { levels } from '$lib/models/students.svelte.js';
+    import { levels } from '$lib/tables/students.svelte.js';
     import { contentStore } from '$lib/stores/content.js';
     import { supabase } from '$lib/supabase.js';
     import { page } from '$app/stores';
@@ -69,7 +69,6 @@
                 .eq('id', studentId)
                 .single();
 
-            console.log(users, usersError);
         } catch (err) {
             console.error('Error loading student data:', err);
             error = err.message;

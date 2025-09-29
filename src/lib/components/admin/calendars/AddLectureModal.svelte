@@ -2,7 +2,7 @@
 	import { studentsStore } from '$lib/stores/students.js';
 	import { subjectsStore } from '$lib/stores/subjects.js';
 	import { lecturesStore } from '$lib/stores/lectures.js';
-	import { levels } from '$lib/models/students.svelte.js';
+	import { levels } from '$lib/tables/students.svelte.js';
 	import { format } from 'date-fns';
 	import { it } from 'date-fns/locale';
 	import * as ls from 'lucide-svelte';

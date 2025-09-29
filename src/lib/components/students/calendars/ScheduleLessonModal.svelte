@@ -228,7 +228,7 @@
 				status: 'pending'
 			};
 			
-			const emailResponse = await fetch('/api/request-lecture', {
+			const emailResponse = await fetch('/api/emails/request-lecture', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
