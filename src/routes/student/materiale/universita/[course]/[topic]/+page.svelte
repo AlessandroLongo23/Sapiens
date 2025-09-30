@@ -1,5 +1,5 @@
 <script>
-    import { getPlaceholderImage } from '$lib/utils/.js';
+    import { getPlaceholderImage } from '$lib/utils/utils.svelte.js';
     import { contentStore } from '$lib/stores/content.js';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
