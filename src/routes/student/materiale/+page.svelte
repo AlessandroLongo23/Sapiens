@@ -256,7 +256,7 @@
 					{#each continuaTopics.slice(0, 3) as topic}
 						<button
 							onclick={() => {
-								if (topic.level === 'universita') {
+								if (topic.level === 'university') {
 									goto(`/student/materiale/${topic.level}/${topic.subject}/${topic.key}/`);
 								} else {
 									goto(`/student/materiale/${topic.level}/${topic.subject}/${topic.year}/${topic.key}/`);

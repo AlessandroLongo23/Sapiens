@@ -6,7 +6,7 @@ export class Fraction {
     den: number;
     value: number | null;
 
-    constructor(num: number, den: number = 1) {
+    constructor(num: number, den: number = 1, simplify_fraction: boolean = true) {
         this.num = num;
         this.den = den;
         if (den != 0) {
@@ -15,7 +15,9 @@ export class Fraction {
             this.value = null;
         }
 
-        this.simplify();
+        if (simplify_fraction) {
+            this.simplify();
+        }
     }
 
     simplify(): void {
@@ -124,7 +126,14 @@ export class Fraction {
         }
     }
 
-    static random(sign: string = null, num: number = null, den: number = null, min_value: number = 1, max_value: number = 10) {
+    static random(
+        sign: string = null, 
+        num: number = null, 
+        den: number = null, 
+        min_value: number = 1, 
+        max_value: number = 10,
+        simplify_fraction: boolean = true
+    ) {
         if (sign == null) {
             sign = Math.random() < 0.5 ? '+' : '-';
         }
@@ -145,7 +154,7 @@ export class Fraction {
             den = 1;
         }
 
-        return new Fraction(num, den);
+        return new Fraction(num, den, simplify_fraction);
     }
 
     static inverse(fraction: Fraction): Fraction {

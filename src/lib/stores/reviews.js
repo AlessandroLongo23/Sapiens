@@ -1,12 +1,13 @@
 import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
+import { Review } from '$lib/models/Review.svelte.js';
 
 async function fetchReviews() {
     const { data, error } = await supabase
         .from('reviews')
         .select('*');
     if (error) throw new Error(error.message);
-    return data;
+    return data.map(review => new Review(review));
 }
 
 export const selectedReviewStore = writable(null);
@@ -34,7 +35,7 @@ const createReviewsStore = () => {
                     
                     if (data) {
                         set({
-                            reviews: data,
+                            reviews: data.map(review => new Review(review)),
                             loading: false,
                             error: null
                         });
@@ -51,7 +52,7 @@ const createReviewsStore = () => {
             try {
                 const data = await fetchReviews();
                 set({
-                    reviews: data,
+                    reviews: data.map(review => new Review(review)),
                     loading: false,
                     error: null
                 });
@@ -70,7 +71,7 @@ const createReviewsStore = () => {
                 console.error('Error adding review:', error.message);
                 throw new Error('Impossibile aggiungere la recensione.');
             }
-            return data;
+            return new Review(data);
         },
         deleteReview: async (reviewId) => {
             const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
@@ -92,7 +93,7 @@ const createReviewsStore = () => {
                 console.error('Error updating review:', error.message);
                 throw new Error('Impossibile aggiornare la recensione.');
             }
-            return data;
+            return new Review(data);
         },
         selectReview: (reviewId) => {
             selectedReviewStore.update(currentSelectedReview => {

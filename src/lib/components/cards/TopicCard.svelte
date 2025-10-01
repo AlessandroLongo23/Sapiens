@@ -1,7 +1,8 @@
 <script>
+    import { selectedTopic } from '$lib/stores/content.js';
     import { goto } from '$app/navigation';
     import * as ls from 'lucide-svelte';
-    import { selectedTopic } from '$lib/stores/content.js';
+    
     import MemoryBar from '../MemoryBar.svelte';
     
     let { title, description, icon, path, level, subject, year, key, subtopics } = $props();
@@ -13,7 +14,6 @@
     });
 
     let isHovered = $state(false);
-
     
     let hasSubtopics = $derived(subtopics && Object.keys(subtopics || {}).length > 0);
     let subtopicCount = $derived(hasSubtopics ? Object.keys(subtopics).length : 0);
@@ -28,8 +28,8 @@
     onmouseleave={() => isHovered = false}
     onclick={() => {
         setTimeout(() => {
-            if (level === 'university') {
-                goto(`/student/materiale/${level}/${subject}/${key}/`);
+            if (level === 'universita') {
+                goto(`/student/materiale/${level}/${subject}/${year}/`);
             } else {
                 goto(`/student/materiale/${level}/${subject}/${year}/${key}/`);
             }

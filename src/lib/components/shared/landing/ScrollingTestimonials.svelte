@@ -1,20 +1,20 @@
 <script>
-	import TestimonialCard from '$lib/components/cards/TestimonialCard.svelte';
-	import * as ls from 'lucide-svelte';
-	
 	import { studentsStore } from '$lib/stores/students.js';
+	import { reviewsStore } from '$lib/stores/reviews.js';
+	import * as ls from 'lucide-svelte';
+
+	import TestimonialCard from '$lib/components/cards/TestimonialCard.svelte';
 
 	let { 
 		className = '',
-		reviews
 	} = $props();
 
 	const itemsPerPage = 3;
 	let isTransitioning = $state(true);
 
 	const groups = $derived(
-		Array.from({ length: Math.ceil(reviews.length / itemsPerPage) }, (_, i) =>
-			reviews.slice(i * itemsPerPage, (i + 1) * itemsPerPage)
+		Array.from({ length: Math.ceil($reviewsStore.reviews.length / itemsPerPage) }, (_, i) =>
+			$reviewsStore.reviews.slice(i * itemsPerPage, (i + 1) * itemsPerPage)
 		)
 	);
 
@@ -56,9 +56,9 @@
 			{#each displayGroups as group}
 				<div class="w-full flex-shrink-0">
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 items-start">
-						{#each group as testimonial}
-							{@const student = $studentsStore.students.find(s => s.id === testimonial.student_id)}
-							<TestimonialCard review={testimonial} student={student} />
+						{#each group as review}
+							{@const student = $studentsStore.students.find(s => s.id === review.student_id)}
+							<TestimonialCard review={review} student={student} />
 						{/each}
 					</div>
 				</div>

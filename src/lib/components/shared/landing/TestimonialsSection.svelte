@@ -20,19 +20,15 @@
 			<div class="w-16 sm:w-24 h-1 bg-gradient-to-r from-amber-500 to-orange-500 mx-auto rounded-full mt-4 sm:mt-6"></div>
 		</div>
 		
-		
 		<div class="block lg:hidden">
 			<MobileTestimonialSlideshow 
-				reviews={$reviewsStore.reviews}
 				duration={10000}
 				className="px-4"
 			/>
 		</div>
 		
-		
 		<div class="hidden lg:block">
 			<ScrollingTestimonials 
-				reviews={$reviewsStore.reviews}
 				scrollSpeed={30}
 				className="py-4"
 			/>

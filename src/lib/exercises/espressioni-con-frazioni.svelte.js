@@ -12,7 +12,6 @@ export class AddizioneESottrazioneEx extends Exercise {
 
     }
 
-
 	generateAnswers() {
 
 	}

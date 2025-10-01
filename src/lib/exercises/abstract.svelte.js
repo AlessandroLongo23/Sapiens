@@ -42,9 +42,36 @@ export class Answer {
         throw new Error('Abstract method not implemented');
     }
 
-    equals(other) {
-        return other instanceof Answer && 
-               this.textContent === other.textContent && 
-               this.isCorrect === other.isCorrect;
+    isEqual(other) {
+        return other instanceof Answer && this.textContent === other.textContent; 
+    }
+}
+
+export class AnswerSet extends Set {
+    constructor() {
+        super();
+    }
+
+    add(answer) {
+        let array = this.toArray();
+        if (array.some(a => a.isEqual(answer))) return;
+        super.add(answer);
+    }
+
+    remove(answer) {
+        this.delete(answer);
+    }
+
+    toArray() {
+        return Array.from(this);
+    }
+
+    select(n) {
+        let correctAnswer = this.toArray().find(a => a.isCorrect);
+        this.remove(correctAnswer);
+        let selected = [correctAnswer, ...this.toArray().extract(n - 1)];
+        this.add(correctAnswer);
+
+        return selected.shuffle();
     }
 }

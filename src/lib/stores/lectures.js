@@ -116,7 +116,7 @@ const createLecturesStore = () => {
                 
                 return lectureId ? { id: lectureId } : null;
             });
-        }
+        },
     };
 };
 

@@ -44,6 +44,16 @@ Array.prototype.random = function() {
 	return this[Math.floor(Math.random() * this.length)];
 }
 
+Array.prototype.extract = function(n) {
+	if (n < 0) {
+		return [];
+	}
+	if (n > this.length) {
+		return this;
+	}
+	return this.shuffle().slice(0, n);
+}
+
 Number.prototype.toHours = function() {
     let hours = Math.floor(this);
     let minutes = Math.floor((this % 1 * 60));

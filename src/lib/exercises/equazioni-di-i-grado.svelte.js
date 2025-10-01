@@ -1,5 +1,8 @@
-import { Exercise, Question, Answer } from './abstract.svelte.js';
+import { Exercise, Question, Answer, AnswerSet } from './abstract.svelte.js';
 import { Fraction } from '../math/Fraction.js';
+import { Polynomial } from '../math/Polynomial.js';
+import { Monomial } from '../math/Monomial.js';
+import { Equation } from '../math/Equation.js';
 
 export class FirstDegreeEquationEx extends Exercise {
 	constructor() {
@@ -7,54 +10,41 @@ export class FirstDegreeEquationEx extends Exercise {
 
 		this.generateQuestion();
 		this.generateAnswers();
-        this.answers.shuffle();
 	}
 
 	generateQuestion() {
         this.a = Math.floor(Math.random() * 10) + 1 * (Math.random() < 0.5 ? 1 : -1);
         this.b = Math.floor(Math.random() * 10) * (Math.random() < 0.5 ? 1 : -1);
 
-        let question = '';
-        if (this.a != 0) {
-            if (Math.abs(this.a) == 1) {
-                question += `${this.a > 0 ? '' : '-'}x `;
-            } else {
-                question += `${this.a}x `;
-            }
-        }
-        if (this.b != 0) {
-            question += `${this.b > 0 ? this.a == 0 ? '' : '+' : '-'} ${Math.abs(this.b)} `;
-        }
-        question += '= 0';
+        this.equation = new Equation(new Polynomial([
+            new Monomial(new Fraction(this.a), { x: 1 }),
+            new Monomial(new Fraction(this.b), {}),
+        ]), 0);
 
-        this.question = new Question(question);
+        this.question = new Question(this.equation.toLatex());
 	}
 
     generateCorrectAnswer() {
         this.solution = new Fraction(-this.b, this.a);
         this.solution.simplify();
 
-        this.answers.push(new Answer(`x = ${this.solution.toString()}`, true));
+        this.answers.add(new Answer(`x = ${this.solution.toLatex()}`, true));
     }
 
 	generateAnswers() {
-		this.answers = []
+		this.answers = new AnswerSet();
 
         this.generateCorrectAnswer();
 
-        let wrongAnswers = [];
-
-        wrongAnswers.push(new Answer(`x = ${this.solution.mul(-1).toString()}`, false));
+        this.answers.add(new Answer(`x = ${this.solution.mul(-1).toLatex()}`, false));
         try {
-            wrongAnswers.push(new Answer(`x = ${this.solution.inverse().mul(-1).toString()}`, false));
-            wrongAnswers.push(new Answer(`x = ${this.solution.inverse().toString()}`, false));
+            this.answers.add(new Answer(`x = ${this.solution.inverse().mul(-1).toLatex()}`, false));
+            this.answers.add(new Answer(`x = ${this.solution.inverse().toLatex()}`, false));
         } catch (e) {
             console.log(e);
         }
 
-        wrongAnswers = wrongAnswers.shuffle().slice(0, 3);
-
-        this.answers.push(...wrongAnswers);
+        this.answers = this.answers.select(4);
 	}
 }
 
@@ -64,7 +54,6 @@ export class FirstDegreeEquationDifferentFromZeroEx extends Exercise {
 
 		this.generateQuestion();
 		this.generateAnswers();
-        this.answers.shuffle();
 	}
 
 	generateQuestion() {
@@ -74,37 +63,21 @@ export class FirstDegreeEquationDifferentFromZeroEx extends Exercise {
         this.a2 = (Math.floor(Math.random() * 10)) * (Math.random() < 0.5 ? 1 : -1);
         this.b2 = (Math.floor(Math.random() * 10)) * (Math.random() < 0.5 ? 1 : -1);
 
-        let question = '';
-        if (this.a1 != 0) {
-            if (Math.abs(this.a1) == 1) {
-                question += `${this.a1 > 0 ? '' : '-'}x `;
-            } else {
-                question += `${this.a1}x `;
-            }
-        }
-        if (this.b1 != 0) {
-            question += `${this.b1 > 0 ? this.a1 == 0 ? '' : '+' : '-'} ${Math.abs(this.b1)} `;
-        } else if (this.a1 == 0) {
-            question += `0 `;
-        }
+        this.equation = new Equation(
+            new Polynomial(
+                [
+                    new Monomial(new Fraction(this.a1), { x: 1 }),
+                    new Monomial(new Fraction(this.b1), {}),
+                ]
+            ),
+            new Polynomial(
+                [
+                    new Monomial(new Fraction(this.a2), { x: 1 }),
+                    new Monomial(new Fraction(this.b2), {}),
+                ]
+            ));
 
-        question += `= `;
-
-        if (this.a2 != 0) {
-            if (Math.abs(this.a2) == 1) {
-                question += `${this.a2 > 0 ? '' : '-'}x `;
-            } else {
-                question += `${this.a2}x `;
-            }
-        }
-        if (this.b2 != 0) {
-            question += `${this.b2 > 0 ? this.a2 == 0 ? '' : '+' : '-'} ${Math.abs(this.b2)}`;
-        } else if (this.a2 == 0) {
-            question += `0 `;
-        }
-
-
-        this.question = new Question(question); 
+        this.question = new Question(this.equation.toLatex()); 
 	}
 
     generateCorrectAnswer() {
@@ -115,47 +88,36 @@ export class FirstDegreeEquationDifferentFromZeroEx extends Exercise {
 
         if (this.den == 0) {
             if (this.num == 0) {
-                this.answers.push(new Answer(`\\forall x \\in \\mathbb{R}`, true));
+                this.answers.add(new Answer(`\\forall x \\in \\mathbb{R}`, true));
             } else {
-                this.answers.push(new Answer(`\\text{Impossibile}`, true));
+                this.answers.add(new Answer(`\\text{Impossibile}`, true));
             }
         } else {
-            this.answers.push(new Answer(`x = ${this.solution.toString()}`, true));
+            this.answers.add(new Answer(`x = ${this.solution.toLatex()}`, true));
         }
     }
 
 	generateAnswers() {
-		this.answers = []
+		this.answers = new AnswerSet();
 
         this.generateCorrectAnswer();
 
-        let wrongAnswers = [];
-
         if (this.den == 0) {
-            wrongAnswers.push(new Answer(`x = ${this.solution.toString()}`, false));
+            this.answers.add(new Answer(`x = ${this.solution.toLatex()}`, false));
         } else {
-            wrongAnswers.push(new Answer(`\\text{Impossibile}`, false));
-            wrongAnswers.push(new Answer(`\\forall x \\in \\mathbb{R}`, false));
+            this.answers.add(new Answer(`\\text{Impossibile}`, false));
+            this.answers.add(new Answer(`\\forall x \\in \\mathbb{R}`, false));
         }
 
         try {
-            if (this.solution.notEquals(this.solution.inverse())) {
-                wrongAnswers.push(new Answer(`x = ${this.solution.inverse().toString()}`, false));
-            }
-
-            if (this.solution.notEquals(this.solution.inverse().mul(-1))) {
-                wrongAnswers.push(new Answer(`x = ${this.solution.inverse().mul(-1).toString()}`, false));
-            }
+            this.answers.add(new Answer(`x = ${this.solution.inverse().toLatex()}`, false));
+            this.answers.add(new Answer(`x = ${this.solution.inverse().mul(-1).toLatex()}`, false));
         } catch (e) {
             console.log(e);
         }
 
-        if (this.solution.notEquals(this.solution.mul(-1))) {
-            wrongAnswers.push(new Answer(`x = ${this.solution.mul(-1).toString()}`, false));
-        }
+        this.answers.add(new Answer(`x = ${this.solution.mul(-1).toLatex()}`, false));
 
-        wrongAnswers = wrongAnswers.shuffle().slice(0, 3);
-
-        this.answers.push(...wrongAnswers);
+        this.answers = this.answers.select(4);
 	}
 }

@@ -16,7 +16,7 @@ export class Polynomial {
             if (this.monomials[i].sign() == 0) continue;
 
             if (i > 0) {
-                latex += this.monomials[i].sign() >= 0 ? '+' : '';
+                latex += this.monomials[i].sign() >= 0 && latex.length > 0 ? '+' : '';
             }
             latex += this.monomials[i].toLatex();
         }

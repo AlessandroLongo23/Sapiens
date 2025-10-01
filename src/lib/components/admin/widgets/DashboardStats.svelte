@@ -55,43 +55,43 @@
 	});
 
 	let cardsData = $derived.by(() => {
-	return [
-		{
-			icon: ls.CreditCard,
-			label: 'TOTAL EARNINGS',
-			value: statsStore.totalEarnings + "€",
-			mobileValue: `${statsStore.totalEarnings}€`,
-			backgroundColor: 'bg-[#F0FDF4]',
-			iconColor: 'text-[#22C55E]',
-			href: null,
-		},
-		{
-			icon: ls.Clock,
-			label: 'HOURS TAUGHT',
-			value: statsStore.totalTime.hours + "h\n" + statsStore.totalTime.minutes + "m",
-			mobileValue: `${statsStore.totalTime.hours}h ${statsStore.totalTime.minutes}m`,
-			backgroundColor: 'bg-[#FEF3C7]',
-			iconColor: 'text-[#F59E0B]',
-			href: "/admin/calendario",
-		},
-		{
-			icon: ls.Users,
-			label: 'STUDENTS',
-			value: $studentsStore.students.length,
-			backgroundColor: 'bg-[#EFF6FF]',
-			iconColor: 'text-[#3B82F6]',
-			href: "/admin/studenti",
-		},
-		{
-			icon: ls.BookOpen,
-			label: 'SUBJECTS',
-			value: $subjectsStore.subjects.length,
-			backgroundColor: 'bg-[#F3E8FF]',
-			iconColor: 'text-[#8B5CF6]',
-			href: "/admin/materie",
-		},
-	]
-})
+		return [
+			{
+				icon: ls.CreditCard,
+				label: 'TOTAL EARNINGS',
+				value: statsStore.totalEarnings + "€",
+				mobileValue: `${statsStore.totalEarnings}€`,
+				backgroundColor: 'bg-[#F0FDF4]',
+				iconColor: 'text-[#22C55E]',
+				href: null,
+			},
+			{
+				icon: ls.Clock,
+				label: 'HOURS TAUGHT',
+				value: statsStore.totalTime.hours + "h\n" + statsStore.totalTime.minutes + "m",
+				mobileValue: `${statsStore.totalTime.hours}h ${statsStore.totalTime.minutes}m`,
+				backgroundColor: 'bg-[#FEF3C7]',
+				iconColor: 'text-[#F59E0B]',
+				href: "/admin/calendario",
+			},
+			{
+				icon: ls.Users,
+				label: 'STUDENTS',
+				value: $studentsStore.students.length,
+				backgroundColor: 'bg-[#EFF6FF]',
+				iconColor: 'text-[#3B82F6]',
+				href: "/admin/studenti",
+			},
+			{
+				icon: ls.BookOpen,
+				label: 'SUBJECTS',
+				value: $subjectsStore.subjects.length,
+				backgroundColor: 'bg-[#F3E8FF]',
+				iconColor: 'text-[#8B5CF6]',
+				href: "/admin/materie",
+			},
+		]
+	})
 </script>
 
 <div class="w-full grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">

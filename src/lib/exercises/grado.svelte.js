@@ -12,23 +12,18 @@ export class GradoEx extends Exercise {
 		const candidateVariables = ['x', 'y', 'z', 'a', 'b', 'c'];
 		const numberOfVariables = Math.floor(Math.random() * 3) + 1; 
 
-		
 		const variables = [];
 		while (variables.length < numberOfVariables) {
 			const v = candidateVariables[Math.floor(Math.random() * candidateVariables.length)];
 			if (!variables.includes(v)) variables.push(v);
 		}
-
 		
 		this.coefficient = Math.floor(Math.random() * 9) + 1;
-
 		
 		this.exponents = variables.map(() => Math.floor(Math.random() * 5) + 1); 
 
-		
 		this.degree = this.exponents.reduce((sum, e) => sum + e, 0);
 
-		
 		let monomial = this.coefficient === 1 ? '' : String(this.coefficient);
 		for (let i = 0; i < variables.length; i++) {
 			const variable = variables[i];
@@ -48,7 +43,6 @@ export class GradoEx extends Exercise {
 
 		answersSet.add(this.generateCorrectAnswer());
 
-		
 		const wrongNumbers = new Set();
 		const targetWrongCount = 3;
 		while (wrongNumbers.size < targetWrongCount) {
