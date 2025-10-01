@@ -26,6 +26,24 @@ export class Fraction {
         }
     }
 
+    static fromString(value: string): Fraction {
+        if (value.includes('/')) {
+            const [num, den] = value.split('/').map(Number);
+            return new Fraction(num, den);
+        } else {
+            return new Fraction(Number(value), 1);
+        }
+    }
+
+    static fromLatex(value: string): Fraction {
+        const fractionPattern = rgx.fractionPattern;
+        const match = value.match(fractionPattern);
+        if (!match) throw new Error('Invalid fraction');
+
+        const [num, den] = match.slice(1).map(Number);
+        return new Fraction(num, den);
+    }
+
     toLatex(): string {
         if (this.value == null) {
             return 'N/D';
@@ -127,24 +145,6 @@ export class Fraction {
             den = 1;
         }
 
-        return new Fraction(num, den);
-    }
-
-    static fromString(value: string): Fraction {
-        if (value.includes('/')) {
-            const [num, den] = value.split('/').map(Number);
-            return new Fraction(num, den);
-        } else {
-            return new Fraction(Number(value), 1);
-        }
-    }
-
-    static fromLatex(value: string): Fraction {
-        const fractionPattern = rgx.fractionPattern;
-        const match = value.match(fractionPattern);
-        if (!match) throw new Error('Invalid fraction');
-
-        const [num, den] = match.slice(1).map(Number);
         return new Fraction(num, den);
     }
 

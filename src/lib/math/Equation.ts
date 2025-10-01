@@ -23,6 +23,6 @@ export class Equation {
     }
 
     solve(): Fraction[] {
-        return [];
+        throw new Error('Abstract Method Error')
     }
 }

@@ -11,6 +11,7 @@ export class Student {
         this.phoneNumber = student.phoneNumber;
         this.level = student.level;
         this.gender = student.gender;
+        this.assigned_topics = student.assigned_topics;
     }
 
     getFullName() {
