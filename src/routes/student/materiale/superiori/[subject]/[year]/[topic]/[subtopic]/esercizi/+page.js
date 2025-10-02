@@ -2,7 +2,8 @@ import { error } from '@sveltejs/kit';
 import { configs } from '$lib/exercises/config.js';
 import { getContentFromParams } from '$lib/utils/route-params.js';
 
-const exerciseModules = import.meta.glob('/src/lib/exercises/*.svelte.js');
+const exerciseModulesJs = import.meta.glob('/src/lib/exercises/*.svelte.js');
+const exerciseModulesTs = import.meta.glob('/src/lib/exercises/*.svelte.ts');
 
 export async function load({ params }) {
 	const { subject, year, topic: topicKey, subtopic: subtopicKey } = params;
@@ -25,14 +26,16 @@ export async function load({ params }) {
 		topicTitle = topicName.replace(/-/g, ' ');
 	}
 
-	const modulePath = `/src/lib/exercises/${topicName}.svelte.js`;
+	const modulePathJs = `/src/lib/exercises/${topicName}.svelte.js`;
+	const modulePathTs = `/src/lib/exercises/${topicName}.svelte.ts`;
 
 	try {
-		const moduleImporter = exerciseModules[modulePath];
-		if (!moduleImporter) {
+		const moduleImporterJs = exerciseModulesJs[modulePathJs];
+		const moduleImporterTs = exerciseModulesTs[modulePathTs];
+		if (!moduleImporterJs && !moduleImporterTs) {
 			throw error(404, `Exercise module not found for topic: ${topicName}`);
 		}
-		const exerciseModule = await moduleImporter();
+		const exerciseModule = moduleImporterJs ? await moduleImporterJs() : await moduleImporterTs();
 
 		let topicConfig = configs[configPath];
 		if (!topicConfig) {

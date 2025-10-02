@@ -1,14 +1,8 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcd, gcdArray, mcmArray } from '$lib/utils/auxiliary.js';
+import { gcd, gcdArray, lcmArray } from '$lib/math/functions.js';
 
 export class FinitoEx extends Exercise {
-	constructor() {
-		super();
-
-		this.generateQuestion();
-		this.generateAnswers();
-        this.answers.shuffle();
-	}
+	constructor() { super(3); }
 
 	generateQuestion() {
         this.integer = Math.random() < 0.5 ? Math.floor(Math.random() * 10) : 0;
@@ -28,36 +22,19 @@ export class FinitoEx extends Exercise {
         this.answers.push(new Answer(`\\dfrac{${num}}{${den}}`, true));
     }
 
-	generateAnswers() {
-		this.answers = []
-
-        this.generateCorrectAnswer();
-
-        let wrongAnswers = new Map();
-
+	generateWrongAnswers() {
         for (let i = -2; i <= 2; i++) {
             let num = Math.round(this.num * 10 ** this.decimalDigits);
             let den = 10 ** (this.decimalDigits + i);
             if (num / den != this.num) {
-                let key = `${num}/${den}`;
-                wrongAnswers.set(key, new Answer(`\\dfrac{${num}}{${den}}`, false));
+                this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
             }
         }
-
-        wrongAnswers = Array.from(wrongAnswers.values()).shuffle().slice(0, 2);
-
-        this.answers.push(...wrongAnswers);
 	}
 }
 
 export class PeriodicoSempliceEx extends Exercise {
-	constructor() {
-		super();
-
-		this.generateQuestion();
-		this.generateAnswers();
-        this.answers.shuffle();
-	}
+	constructor() { super(3); }
 
     generateQuestion() {
         this.decimalDigits = Math.floor(Math.random() * 3) + 1;
@@ -75,39 +52,22 @@ export class PeriodicoSempliceEx extends Exercise {
         this.n = num / den;
     }
 
-    generateAnswers() {
-        this.answers = []
-
-        this.generateCorrectAnswer();
-
-        let wrongAnswers = new Map();
-
+    generateWrongAnswers() {
         for (let i = -2; i <= 2; i++) {
             let num = this.decimal;
             if (this.decimalDigits + i <= 0) continue;
 
             let den = '9'.repeat(this.decimalDigits + i);
             if (Math.abs(num / den - this.n) > 1e-10) {
-                let key = `${num}/${den}`;
-                wrongAnswers.set(key, new Answer(`\\dfrac{${num}}{${den}}`, false));
+                this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
             }
         }
-
-        wrongAnswers = Array.from(wrongAnswers.values()).shuffle().slice(0, 2);
-
-        this.answers.push(...wrongAnswers);
     }
 }
 
 export class PeriodicoMistoEx extends Exercise {
-    constructor() {
-        super();
+    constructor() { super(3); }
 
-        this.generateQuestion();
-        this.generateAnswers();
-        this.answers.shuffle();
-    }
-    
     generateQuestion() {
         this.integer = Math.random() < 0.5 ? Math.floor(Math.random() * 10) : 0;
         this.numPeriodicDigits = Math.floor(Math.random() * 2) + 1;
@@ -133,13 +93,7 @@ export class PeriodicoMistoEx extends Exercise {
         this.n = num / den;
     }
     
-    generateAnswers() {
-        this.answers = []
-
-        this.generateCorrectAnswer();
-
-        let wrongAnswers = [];
-
+    generateWrongAnswers() {
         let num = 0, den = 0;
         num += parseInt(this.integer) * 10 ** (this.numAperiodicDigits + this.numPeriodicDigits)
         num += parseInt(this.aperiodicDigits) * 10 ** this.numPeriodicDigits
@@ -147,13 +101,13 @@ export class PeriodicoMistoEx extends Exercise {
 
         if (this.numPeriodicDigits !== this.numAperiodicDigits) {
             den = '9'.repeat(this.numAperiodicDigits) + '0'.repeat(this.numPeriodicDigits);
-            wrongAnswers.push(new Answer(`\\dfrac{${num}}{${den}}`, false));
+            this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
         }
         den = '9'.repeat(this.numPeriodicDigits)
-        wrongAnswers.push(new Answer(`\\dfrac{${num}}{${den}}`, false));
+        this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
         if (this.integer != 0) {
             den = '9'.repeat(this.numPeriodicDigits) + '0'.repeat(this.numAperiodicDigits + 1);
-            wrongAnswers.push(new Answer(`\\dfrac{${num}}{${den}}`, false));
+            this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
         }
 
         num -= parseInt(this.integer) * 10 ** (this.numAperiodicDigits)
@@ -161,17 +115,13 @@ export class PeriodicoMistoEx extends Exercise {
 
         if (this.numPeriodicDigits !== this.numAperiodicDigits) {
             den = '9'.repeat(this.numAperiodicDigits) + '0'.repeat(this.numPeriodicDigits);
-            wrongAnswers.push(new Answer(`\\dfrac{${num}}{${den}}`, false));
+            this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
         }
         den = '9'.repeat(this.numPeriodicDigits)
-        wrongAnswers.push(new Answer(`\\dfrac{${num}}{${den}}`, false));
+        this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
         if (this.integer != 0) {
             den = '9'.repeat(this.numPeriodicDigits) + '0'.repeat(this.numAperiodicDigits + 1);
-            wrongAnswers.push(new Answer(`\\dfrac{${num}}{${den}}`, false));
+            this.answers.add(new Answer(`\\dfrac{${num}}{${den}}`, false));
         }
-
-        wrongAnswers = wrongAnswers.shuffle().slice(0, 3);
-
-        this.answers.push(...wrongAnswers);
     }
 }

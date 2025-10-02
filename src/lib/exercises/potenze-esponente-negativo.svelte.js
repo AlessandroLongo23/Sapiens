@@ -1,5 +1,5 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcd, gcdArray, mcmArray } from '$lib/utils/auxiliary.js';
+import { gcd, gcdArray, lcmArray } from '$lib/math/functions.js';
 import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
 
 export class PotenzeEsponenteNegativoEx extends Exercise {

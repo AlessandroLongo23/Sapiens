@@ -92,7 +92,7 @@ export class Quadratic extends Polynomial {
                 new Fraction(-this.b + Math.sqrt(this.delta), 2 * this.a)
             ];
         }
-        return this.solutions;
+        return this.solutions.sort((a, b) => a.value - b.value);
     }
 
     static random(ensureIntegerDelta: boolean = true, max_value: number = 10): Quadratic {

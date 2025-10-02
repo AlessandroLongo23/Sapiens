@@ -10,6 +10,7 @@ export class FirstDegreeEquationEx extends Exercise {
 
 		this.generateQuestion();
 		this.generateAnswers();
+        this.answers = this.answers.select(4);
 	}
 
 	generateQuestion() {
@@ -43,8 +44,6 @@ export class FirstDegreeEquationEx extends Exercise {
         } catch (e) {
             console.log(e);
         }
-
-        this.answers = this.answers.select(4);
 	}
 }
 
@@ -54,6 +53,7 @@ export class FirstDegreeEquationDifferentFromZeroEx extends Exercise {
 
 		this.generateQuestion();
 		this.generateAnswers();
+        this.answers = this.answers.select(4);
 	}
 
 	generateQuestion() {
@@ -117,7 +117,5 @@ export class FirstDegreeEquationDifferentFromZeroEx extends Exercise {
         }
 
         this.answers.add(new Answer(`x = ${this.solution.mul(-1).toLatex()}`, false));
-
-        this.answers = this.answers.select(4);
 	}
 }

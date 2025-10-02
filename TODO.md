@@ -6,6 +6,8 @@
 - [ ] refactor EarningsWidget code to be more organized, flexible and fast
 - [ ] track students activity (completing exercises)
 - [ ] add missing content
+- [ ] prospetto del guadagno mensile (oggi > ultima_lezione: 30 / oggi * ricavo else: 30 / ultima_lezione * ricavo)
+- [ ] rendere la lezione ricorrente (fino alla fine del mese)
 
 ## DONE
 

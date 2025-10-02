@@ -1,5 +1,5 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcdArray, mcmArray } from '$lib/utils/auxiliary.js';
+import { gcdArray, lcmArray } from '$lib/math/functions.js';
 
 const candidateVariables = ['x', 'y', 'z'];
 
@@ -51,7 +51,7 @@ function mcdMonomial(monomials) {
 }
 
 function mcmMonomial(monomials) {
-	const coeff = mcmArray(monomials.map((m) => Math.abs(m.coefficient)));
+	const coeff = lcmArray(monomials.map((m) => Math.abs(m.coefficient)));
 	const exps = {};
 	const vars = unionVariables(monomials);
 	for (const v of vars) {
@@ -66,11 +66,7 @@ function mcmMonomial(monomials) {
 }
 
 export class McmMonomiEx extends Exercise {
-	constructor() {
-		super();
-		this.generateQuestion();
-		this.generateAnswers();
-	}
+	constructor() { super(3); }
 
 	generateQuestion() {
 		const count = Math.random() < 0.5 ? 2 : 3;
@@ -83,20 +79,16 @@ export class McmMonomiEx extends Exercise {
 		const result = mcmMonomial(this.monomials);
 		const text = formatMonomial(result);
 		const ans = new Answer(text, true);
-		this.answers.push(ans);
+		this.answers.add(ans);
 		this.correctAnswer = ans;
 	}
 
-	generateAnswers() {
-		this.answers = [];
-		this.generateCorrectAnswer();
-
-		const correct = formatMonomial(mcmMonomial(this.monomials));
-		const distractors = new Set();
-
+	generateWrongAnswers() {
+		this.answers.add(formatMonomial(mcmMonomial(this.monomials)));
 		
 		const gcdMono = formatMonomial(mcdMonomial(this.monomials));
-		if (gcdMono !== correct) distractors.add(gcdMono);
+		if (gcdMono !== correct) 
+			this.answers.add(gcdMono);
 
 		
 		const lcm = mcmMonomial(this.monomials);
@@ -105,7 +97,7 @@ export class McmMonomiEx extends Exercise {
 			const v = vars[Math.floor(Math.random() * vars.length)];
 			const mutated = { coefficient: lcm.coefficient, exponents: { ...lcm.exponents } };
 			mutated.exponents[v] = Math.max(1, mutated.exponents[v] - 1 + (Math.random() < 0.5 ? -1 : 1));
-			distractors.add(formatMonomial(mutated));
+			this.answers.add(formatMonomial(mutated));
 		}
 
 		
@@ -113,24 +105,19 @@ export class McmMonomiEx extends Exercise {
 		for (const c of coeffVariants) {
 			if (c !== lcm.coefficient) {
 				const mutated = { coefficient: c, exponents: { ...lcm.exponents } };
-				distractors.add(formatMonomial(mutated));
+				this.answers.add(formatMonomial(mutated));
 			}
-			if (distractors.size >= 3) break;
+			if (this.answers.size >= 3) break;
 		}
 
-		for (const d of Array.from(distractors).slice(0, 3)) {
-			this.answers.push(new Answer(d, false));
+		for (const d of Array.from(this.answers).slice(0, 3)) {
+			this.answers.add(new Answer(d, false));
 		}
-		this.answers.shuffle();
 	}
 }
 
 export class McdMonomiEx extends Exercise {
-	constructor() {
-		super();
-		this.generateQuestion();
-		this.generateAnswers();
-	}
+	constructor() { super(3); }
 
 	generateQuestion() {
 		const count = Math.random() < 0.5 ? 2 : 3;
@@ -143,20 +130,14 @@ export class McdMonomiEx extends Exercise {
 		const result = mcdMonomial(this.monomials);
 		const text = formatMonomial(result);
 		const ans = new Answer(text, true);
-		this.answers.push(ans);
-		this.correctAnswer = ans;
+		this.answers.add(ans);
 	}
 
-	generateAnswers() {
-		this.answers = [];
-		this.generateCorrectAnswer();
-
-		const correct = formatMonomial(mcdMonomial(this.monomials));
-		const distractors = new Set();
-
+	generateWrongAnswers() {
+		this.answers.add(formatMonomial(mcdMonomial(this.monomials)));
 		
 		const lcmMono = formatMonomial(mcmMonomial(this.monomials));
-		if (lcmMono !== correct) distractors.add(lcmMono);
+		if (lcmMono !== correct) this.answers.add(lcmMono);
 
 		
 		const gcd = mcdMonomial(this.monomials);
@@ -166,7 +147,7 @@ export class McdMonomiEx extends Exercise {
 			const mutated = { coefficient: gcd.coefficient, exponents: { ...gcd.exponents } };
 			mutated.exponents[v] = Math.max(0, mutated.exponents[v] - 1);
 			if (mutated.exponents[v] === 0) delete mutated.exponents[v];
-			distractors.add(formatMonomial(mutated));
+			this.answers.add(formatMonomial(mutated));
 		}
 
 		
@@ -174,14 +155,13 @@ export class McdMonomiEx extends Exercise {
 		for (const c of coeffVariants) {
 			if (c !== gcd.coefficient) {
 				const mutated = { coefficient: c, exponents: { ...gcd.exponents } };
-				distractors.add(formatMonomial(mutated));
+				this.answers.add(formatMonomial(mutated));
 			}
-			if (distractors.size >= 3) break;
+			if (this.answers.size >= 3) break;
 		}
 
-		for (const d of Array.from(distractors).slice(0, 3)) {
-			this.answers.push(new Answer(d, false));
+		for (const d of Array.from(this.answers).slice(0, 3)) {
+			this.answers.add(new Answer(d, false));
 		}
-		this.answers.shuffle();
 	}
 }

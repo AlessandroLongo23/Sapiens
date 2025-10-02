@@ -1,4 +1,4 @@
-import { gcd } from '$lib/utils/auxiliary';
+import { gcd } from '$lib/math/functions';
 import * as rgx from "$lib/math/patterns";
 
 export class Fraction {

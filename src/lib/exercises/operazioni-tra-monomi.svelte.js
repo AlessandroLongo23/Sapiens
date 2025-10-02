@@ -42,9 +42,7 @@ function subExponents(a, b) {
 
 export class SommaESottrazioneMonomiEx extends Exercise {
 	constructor() {
-		super();
-		this.generateQuestion();
-		this.generateAnswers();
+		super(3);
 	}
 
 	generateQuestion() {

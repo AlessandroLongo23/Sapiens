@@ -30,7 +30,6 @@
             return null;
         }
         
-        
         const subtopicNodes = $contentStore.flatNodes
             .filter(node => 
                 node.node_type === 'subtopic' && 

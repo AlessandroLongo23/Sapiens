@@ -1,15 +1,9 @@
 import { Exercise, Question, Answer, AnswerSet } from './abstract.svelte.js';
-import { gcd, gcdArray, mcmArray } from '$lib/utils/auxiliary.js';
+import { gcd, gcdArray, lcmArray } from '$lib/math/functions.js';
 import { Fraction } from '$lib/math/Fraction.js';
 
 export class StessoDenominatoreEx extends Exercise {
-	constructor() {
-		super();
-
-		this.generateQuestion();
-		this.generateAnswers();
-        this.answers = this.answers.select(3);
-	}
+	constructor() { super(3); }
 
 	generateQuestion() {
         this.sign = Math.random() < 0.5 ? '+' : '-';
@@ -26,22 +20,19 @@ export class StessoDenominatoreEx extends Exercise {
         this.question = new Question(`${this.fraction1.toLatex()}\\ \\square\\ ${this.fraction2.toLatex()}`);
 	}
 
-	generateAnswers() {
-		this.answers = new AnswerSet();
+	generateCorrectAnswer() {
         this.answers.add(new Answer('>', this.fraction1.value > this.fraction2.value));
         this.answers.add(new Answer('<', this.fraction1.value < this.fraction2.value));
         this.answers.add(new Answer('=', this.fraction1.value == this.fraction2.value));
 	}
+
+    generateWrongAnswers() {
+        this.generateCorrectAnswer();
+    }
 }
 
 export class StessoNumeratoreEx extends Exercise {
-	constructor() {
-		super();
-
-		this.generateQuestion();
-		this.generateAnswers();
-        this.answers = this.answers.select(3);
-	}
+	constructor() { super(3); }
 
 	generateQuestion() {
         this.sign = Math.random() < 0.5 ? '+' : '-';
@@ -58,37 +49,37 @@ export class StessoNumeratoreEx extends Exercise {
         this.question = new Question(`${this.fraction1.toLatex()}\\ \\square\\ ${this.fraction2.toLatex()}`);
 	}
 
-	generateAnswers() {
-		this.answers = new AnswerSet();
+	generateCorrectAnswer() {
         this.answers.add(new Answer('>', this.fraction1.value > this.fraction2.value));
         this.answers.add(new Answer('<', this.fraction1.value < this.fraction2.value));
         this.answers.add(new Answer('=', this.fraction1.value == this.fraction2.value));
 	}
+
+    generateWrongAnswers() {
+        this.generateCorrectAnswer();
+    }
 }
 
 export class NumeratoreEDenominatoreDiversoEx extends Exercise {
-	constructor() {
-		super();
-
-		this.generateQuestion();
-		this.generateAnswers();
-        this.answers = this.answers.select(3);
-	}
+	constructor() { super(3); }
 
 	generateQuestion() {
-        let sign = Math.random() < 0.5 ? '+' : '-';
+        this.sign = Math.random() < 0.5 ? '+' : '-';
         do {
-            this.fraction1 = Fraction.random(sign, null, null, false);
-            this.fraction2 = Fraction.random(sign, null, null, false);
+            this.fraction1 = Fraction.random(this.sign, null, null, false);
+            this.fraction2 = Fraction.random(this.sign, null, null, false);
         } while (this.fraction1.num == this.fraction2.num || this.fraction1.den == this.fraction2.den);
 
         this.question = new Question(`${this.fraction1.toLatex()}\\ \\square\\ ${this.fraction2.toLatex()}`);
 	}
 
-    generateAnswers() {
-        this.answers = new AnswerSet();
+    generateCorrectAnswer() {
         this.answers.add(new Answer('>', this.fraction1.value > this.fraction2.value));
         this.answers.add(new Answer('<', this.fraction1.value < this.fraction2.value));
         this.answers.add(new Answer('=', this.fraction1.value == this.fraction2.value));
+    }
+
+    generateWrongAnswers() {
+        this.generateCorrectAnswer();
     }
 }

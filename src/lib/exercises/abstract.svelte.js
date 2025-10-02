@@ -1,18 +1,27 @@
 export class Exercise {
-	constructor() {
+	constructor(n) {
         this.question = new Question();
-        this.answers = [];
+        this.answers = new AnswerSet();
+
+        this.generateQuestion();
+        this.generateAnswers(n);
     }
 
     generateQuestion() {
         throw new Error('Abstract method not implemented');
     }
 
+    generateAnswers(n) {
+		this.generateCorrectAnswer();
+		this.generateWrongAnswers();
+        this.answers.select(n);
+    }
+    
     generateCorrectAnswer() {
         throw new Error('Abstract method not implemented');
     }
 
-    generateAnswers() {
+    generateWrongAnswers() {
         throw new Error('Abstract method not implemented');
     }
 }

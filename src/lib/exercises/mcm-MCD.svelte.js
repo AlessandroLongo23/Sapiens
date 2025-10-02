@@ -1,5 +1,5 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcd, gcdArray, mcmArray } from '$lib/utils/auxiliary.js';
+import { gcd, gcdArray, lcmArray } from '$lib/math/functions.js';
 
 export class McmEx extends Exercise {
 	constructor(numCount = 3, maxNum = 25) {
@@ -15,7 +15,7 @@ export class McmEx extends Exercise {
 	}
 
 	generateCorrectAnswer() {
-		this.answers.push(new Answer(mcmArray(this.numbers), true));
+		this.answers.push(new Answer(lcmArray(this.numbers), true));
 		this.correctAnswer = this.answers[0];
 	}
 
@@ -39,7 +39,7 @@ export class McmEx extends Exercise {
 		}
 
 		if (this.numbers.length > 2) {
-			const subsetmcm = mcmArray(this.numbers.slice(0, 2));
+			const subsetmcm = lcmArray(this.numbers.slice(0, 2));
 			if (subsetmcm !== this.correctAnswer) {
 				answersSet.add(new Answer(subsetmcm, false));
 			}
@@ -90,7 +90,7 @@ export class MCDEx extends Exercise {
 		const answersSet = new Set();
 		answersSet.add(this.correctAnswer);
 
-		const mcm = mcmArray(this.numbers);
+		const mcm = lcmArray(this.numbers);
 		if (mcm !== this.correctAnswer) {
 			answersSet.add(new Answer(mcm, false));
 		}

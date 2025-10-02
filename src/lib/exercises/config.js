@@ -3,22 +3,22 @@ export const configs = {
 		'addizione': {
 			generator: 'AddizioneEx',
 			count: 2,
-			args: [2]
+			args: []
 		},
 		'sottrazione': {
 			generator: 'SottrazioneEx',
 			count: 2,
-			args: [2]
+			args: []
 		},
 		'moltiplicazione': {
 			generator: 'MoltiplicazioneEx',
 			count: 2,
-			args: [2]
+			args: []
 		},
 		'divisione': {
 			generator: 'DivisioneEx',
 			count: 2,
-			args: [2]
+			args: []
 		}
 	},
 	'superiori/matematica/1/numeri-naturali/mcm-mcd': {

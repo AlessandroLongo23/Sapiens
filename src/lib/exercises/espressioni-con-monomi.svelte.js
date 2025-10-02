@@ -1,5 +1,5 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcd } from '$lib/utils/auxiliary.js';
+import { gcd } from '$lib/math/functions.js';
 
 const candidateVariables = ['x', 'y', 'z'];
 
@@ -74,11 +74,7 @@ function monomialWithFractionCoeff(vars, numMin = 1, numMax = 9, denMin = 2, den
 }
 
 export class EspressioneMonomiEx extends Exercise {
-	constructor() {
-		super();
-		this.generateQuestion();
-		this.generateAnswers();
-	}
+	constructor() { super(3); }
 
 	generateQuestion() {
 		const count = Math.floor(Math.random() * 3) + 1; 
@@ -122,20 +118,13 @@ export class EspressioneMonomiEx extends Exercise {
 
 	generateCorrectAnswer() {
 		const ans = new Answer(formatMonomial(this.resultCoeff, this.resultExps), true);
-		this.answers.push(ans);
-		this.correctAnswer = ans;
+		this.answers.add(ans);
 	}
 
-	generateAnswers() {
-		this.answers = [];
-		this.generateCorrectAnswer();
-
-		const correctText = this.correctAnswer.textContent.replace(/^\$\$|\$\$/g, '');
-		const wrongs = new Set([correctText]);
-		
+	generateWrongAnswers() {
 		const tweak = simplifyFraction({ num: 1, den: Math.floor(Math.random() * 4) + 2 });
-		wrongs.add(formatMonomial(addFrac(this.resultCoeff, tweak), this.resultExps));
-		wrongs.add(formatMonomial(subFrac(this.resultCoeff, tweak), this.resultExps));
+		this.answers.add(formatMonomial(addFrac(this.resultCoeff, tweak), this.resultExps));
+		this.answers.add(formatMonomial(subFrac(this.resultCoeff, tweak), this.resultExps));
 		
 		const mutated = { ...this.resultExps };
 		const keys = Object.keys(mutated);
@@ -143,16 +132,14 @@ export class EspressioneMonomiEx extends Exercise {
 			const v = keys[Math.floor(Math.random() * keys.length)];
 			mutated[v] = (mutated[v] || 0) + (Math.random() < 0.5 ? -1 : 1);
 			if (mutated[v] === 0) delete mutated[v];
-			wrongs.add(formatMonomial(this.resultCoeff, mutated));
+			this.answers.add(formatMonomial(this.resultCoeff, mutated));
 		}
 		
-		wrongs.add(formatMonomial(simplifyFraction({ num: -this.resultCoeff.num, den: this.resultCoeff.den }), this.resultExps));
+		this.answers.add(formatMonomial(simplifyFraction({ num: -this.resultCoeff.num, den: this.resultCoeff.den }), this.resultExps));
 
-		for (const t of Array.from(wrongs)) {
-			if (t !== correctText && this.answers.length < 3) this.answers.push(new Answer(t, false));
+		for (const t of Array.from(this.answers)) {
+			if (t !== correctText && this.answers.length < 3) this.answers.add(new Answer(t, false));
 		}
-
-		this.answers.shuffle();
 	}
 }
 

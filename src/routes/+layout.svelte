@@ -1,6 +1,6 @@
 <script>
 	import '../app.css';
-	import '$lib/utils/auxiliary.js';
+	import '$lib/utils/prototypes.js';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
