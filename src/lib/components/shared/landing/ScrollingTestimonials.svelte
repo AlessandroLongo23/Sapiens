@@ -57,8 +57,7 @@
 				<div class="w-full flex-shrink-0">
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 items-start">
 						{#each group as review}
-							{@const student = $studentsStore.students.find(s => s.id === review.student_id)}
-							<TestimonialCard review={review} student={student} />
+							<TestimonialCard review={review} />
 						{/each}
 					</div>
 				</div>

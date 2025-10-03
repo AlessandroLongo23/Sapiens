@@ -33,7 +33,7 @@
 			{#each $reviewsStore.reviews as testimonial}
 				{@const student = $studentsStore.students.find(s => s.id === testimonial.student_id)}
 				<div class="w-full flex-shrink-0 px-1">
-					<TestimonialCard review={testimonial} student={student} />
+					<TestimonialCard review={testimonial} />
 				</div>
 			{/each}
 		</div>

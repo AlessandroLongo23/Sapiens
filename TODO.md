@@ -3,6 +3,7 @@
 - [ ] admin calendar preferences
 - [ ] setup up aleripetizioni2024@gmail.com as the email receiver
 - [ ] add editor to write new content
+- [ ] move theory md files to supabase storage
 - [ ] refactor EarningsWidget code to be more organized, flexible and fast
 - [ ] track students activity (completing exercises)
 - [ ] add missing content

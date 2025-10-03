@@ -1,9 +1,12 @@
 <script>
+  	import { studentsStore } from '$lib/stores/students';
     import { levels } from '$lib/tables/students.svelte.js';
 	import * as ls from 'lucide-svelte';
 	
-	let { review, student } = $props();
+	let { review } = $props();
 	
+	let student = $derived($studentsStore.students.find(s => s.id === review.student_id)); 
+
 	const stars = Array.from({ length: 5 }, (_, i) => i < review.rating);
 </script>
 
@@ -32,7 +35,7 @@
         <div class="relative mr-4">
             <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:shadow-xl transition-all duration-300">
 				<span class="group-hover:scale-110 transition-transform duration-300">
-					{student.first_name.charAt(0).toUpperCase()}
+					{student?.first_name.charAt(0).toUpperCase()}
 				</span>
 			</div>
             <div class="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300 scale-110"></div>
@@ -40,10 +43,10 @@
 		
         <div class="relative">
             <div class="font-semibold text-zinc-800 dark:text-zinc-100 text-lg group-hover:text-zinc-900 dark:group-hover:text-white transition-colors duration-300">
-				{student.first_name} {student.last_name.charAt(0).toUpperCase()}.
+				{student?.first_name} {student?.last_name.charAt(0).toUpperCase()}.
 			</div>
             <div class="text-zinc-500 dark:text-zinc-400 text-sm font-medium group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors duration-300">
-				{levels.find(level => level.value === student.level)?.label || 'N/A'}
+				{levels.find(level => level.value === student?.level)?.label || 'N/A'}
 			</div>
 		</div>
 	</div>
