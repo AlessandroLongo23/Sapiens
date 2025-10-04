@@ -1,18 +1,16 @@
-import { Fraction } from "$lib/math/Fraction";
-import * as rgx from "$lib/math/patterns";
+import { Expression } from "$lib/math/algebra/Expression";
+import { Fraction } from "$lib/math/algebra/Fraction";
+import * as rgx from "$lib/math/core/patterns";
 
-export class Monomial {
-    coefficient: Fraction;
+export class Monomial extends Expression {
+    coefficient: Expression;
     variables: Record<string, number>;
 
-    constructor(coefficient: Fraction, variables: Record<string, number>) {
-        this.coefficient = coefficient;
-        this.variables = variables;
-    }
-    
-    static fromLatex(string: string): Monomial {
+    constructor(latex: string) {
+        super(latex);
+
         const regex = rgx.monomialPattern;
-        const match = string.match(regex);
+        const match = latex.match(regex);
 
         if (!match) {
             throw new Error("Invalid term format");
@@ -20,43 +18,21 @@ export class Monomial {
 
         let [, coeffStr, varsStr] = match;
 
-        const coefficient = Fraction.fromLatex(coeffStr);
+        this.coefficient = new Expression(coeffStr);
+        this.variables = {};
 
         const varRegex = rgx.monomialVariablesPattern;
-        const variables: Record<string, number> = {};
-
         let varMatch;
         while ((varMatch = varRegex.exec(varsStr)) !== null) {
             const variable = varMatch[1];
-            const exponent = varMatch[2] ? parseInt(varMatch[2], 10) : 1;
-            variables[variable] = exponent;
+            this.variables[variable] = varMatch[2] ? parseInt(varMatch[2], 10) : 1;
         }
-
-        return new Monomial(coefficient, variables);
     }
 
-    toLatex(): string {
-        let latex = ``;
-        const variables = Object.keys(this.variables)
-
-        if (this.coefficient.equals(1)) {
-            latex += variables.length > 0 ? '' : '1';
-        } else if (this.coefficient.equals(-1)) {
-            latex += variables.length > 0 ? '-' : '-1';
-        } else {
-            latex += this.coefficient.toLatex();
-        }
-
-        for (const variable of variables) {
-            if (this.variables[variable] === 1) {
-                latex += variable;
-            } else if (this.variables[variable] > 1) {
-                latex += `${variable}^{${this.variables[variable]}}`;
-            }
-        }
-        return latex;
+    static fromTerms(coefficient: Expression, variables: Record<string, number>): Monomial {
+        return new Monomial(`${coefficient.toLatex()}${Object.keys(variables).map(variable => `${variable}^{${variables[variable]}}`).join('')}`);
     }
-
+    
     static add(m1: Monomial, m2: Monomial): Monomial {
         if (Object.keys(m1.variables).length !== Object.keys(m2.variables).length) {
             throw new Error('Variables length mismatch');
@@ -81,14 +57,6 @@ export class Monomial {
         return new Monomial(Fraction.sub(m1.coefficient, m2.coefficient), m1.variables);
     }
 
-    static mul(m1: Monomial, m2: Monomial): Monomial {
-        throw new Error('Not implemented');
-    }
-
-    static div(m1: Monomial, m2: Monomial): Monomial {
-        throw new Error('Not implemented');
-    }
-
     sign(): number {
         if (this.coefficient.equals(0)) {
             return 0;
@@ -97,5 +65,9 @@ export class Monomial {
         } else {
             return -1;
         }
+    }
+
+    grade(): number {
+        return Object.values(this.variables).reduce((sum, exponent) => sum + exponent, 0);
     }
 }

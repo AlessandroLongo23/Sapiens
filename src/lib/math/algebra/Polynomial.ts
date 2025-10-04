@@ -1,13 +1,20 @@
-import { polynomialPattern } from "$lib/math/patterns";
-import { Monomial } from "$lib/math/Monomial";
-import { Fraction } from "$lib/math/Fraction";
+import { polynomialPattern } from "$lib/math/core/patterns";
+import { Expression } from "$lib/math/algebra/Expression";
+import { Monomial } from "$lib/math/algebra/Monomial";
+import { Fraction } from "$lib/math/algebra/Fraction";
 
-export class Polynomial {
+export class Polynomial extends Expression {
     monomials: Monomial[];
 
-    constructor(monomials: Monomial[]) {
+    constructor(latex: string) {
+        super(`${monomials.map(monomial => monomial.toLatex()).join(' + ')}`);
+
         this.monomials = monomials;
         this.simplify();
+    }
+
+    static fromMonomials(monomials: Monomial[]): Polynomial {
+        return new Polynomial(monomials);
     }
 
     toLatex(): string {
@@ -40,6 +47,7 @@ export class Polynomial {
     }
 
     simplify(): void {
+        // TODO: Move to CAS Simplify
         const monomials = this.monomials.map((monomial, i) => {
             const monomial2 = this.monomials.find((m) => Object.keys(m.variables).every((v) => monomial.variables[v] === m.variables[v]));
             const j = this.monomials.indexOf(monomial2);
@@ -92,9 +100,10 @@ export class Quadratic extends Polynomial {
                 new Fraction(-this.b + Math.sqrt(this.delta), 2 * this.a)
             ];
         }
-        return this.solutions.sort((a, b) => a.value - b.value);
+        return this.solutions.sort((a, b) => a.value.value - b.value.value);
     }
 
+    // TODO: Move to Random class
     static random(ensureIntegerDelta: boolean = true, max_value: number = 10): Quadratic {
         let quadratic: Quadratic;
         do {

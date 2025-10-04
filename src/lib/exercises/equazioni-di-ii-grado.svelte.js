@@ -1,8 +1,8 @@
 import { Exercise, Question, Answer, AnswerSet } from '$lib/exercises/abstract.svelte.js';
-import { Polynomial, Quadratic } from '$lib/math/Polynomial.js';
-import { Fraction } from '$lib/math/Fraction.js';
-import { Monomial } from '$lib/math/Monomial.js';
-import { Equation } from '$lib/math/Equation.js';
+import { Polynomial, Quadratic } from '$lib/math/algebra/Polynomial.js';
+import { Fraction } from '$lib/math/algebra/Fraction.js';
+import { Monomial } from '$lib/math/algebra/Monomial.js';
+import { Equation } from '$lib/math/algebra/Equation.js';
 
 export class SecondDegreeEquationEx extends Exercise {
 	constructor() { super(4);}

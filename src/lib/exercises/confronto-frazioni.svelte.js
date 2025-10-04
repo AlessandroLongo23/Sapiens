@@ -1,6 +1,6 @@
 import { Exercise, Question, Answer, AnswerSet } from './abstract.svelte.js';
-import { gcd, gcdArray, lcmArray } from '$lib/math/functions.js';
-import { Fraction } from '$lib/math/Fraction.js';
+import { gcd, gcdArray, lcmArray } from '$lib/math/core/utils.js';
+import { Fraction } from '$lib/math/algebra/Fraction.js';
 
 export class StessoDenominatoreEx extends Exercise {
 	constructor() { super(3); }

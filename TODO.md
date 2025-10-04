@@ -9,6 +9,7 @@
 - [ ] add missing content
 - [ ] prospetto del guadagno mensile (oggi > ultima_lezione: 30 / oggi * ricavo else: 30 / ultima_lezione * ricavo)
 - [ ] rendere la lezione ricorrente (fino alla fine del mese)
+- [ ] se uno inserisce un link ad una pagina privata, invece di redirezionare alla landing page, apre il modale di login e, se autenticato, manda alla pagina a cui stava provando ad accedere
 
 ## DONE
 

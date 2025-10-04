@@ -25,12 +25,12 @@ export const configs = {
 		'mcm': {
 			generator: 'McmEx',
 			count: 3,
-			args: [3, 15]
+			args: []
 		},
 		'mcd': {
 			generator: 'MCDEx',
 			count: 3,
-			args: [3, 15]
+			args: []
 		}
 	},
 	'superiori/matematica/1/numeri-naturali/potenze': {

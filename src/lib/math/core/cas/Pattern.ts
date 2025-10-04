@@ -1,6 +1,6 @@
-import type { ASTNode } from "$lib/math/validator/ASTNode";
-import { ASTNodeType, NumberNode, VariableNode, BinaryOpNode, UnaryOpNode, FunctionNode } from "$lib/math/validator/ASTNode";
-import { Operator } from "$lib/math/Operator";
+import type { ASTNode } from "$lib/math/core/validator/ASTNode";
+import { ASTNodeType, NumberNode, VariableNode, BinaryOpNode, UnaryOpNode, FunctionNode } from "$lib/math/core/validator/ASTNode";
+import { Operator } from "$lib/math/core/Operator";
 
 /**
  * Pattern matching utilities for symbolic manipulation
@@ -61,12 +61,35 @@ export function isNumber(node: ASTNode, value?: number): boolean {
 }
 
 /**
+ * Checks if a node is a fraction
+ */
+export function isFraction(node: ASTNode): boolean {
+    return isBinaryOp(node, Operator.FRACTION) || isBinaryOp(node, Operator.DFRACTION);
+}
+
+/**
  * Checks if a node is a variable
  */
 export function isVariable(node: ASTNode, name?: string): boolean {
     if (node.type !== ASTNodeType.VARIABLE) return false;
     if (name === undefined) return true;
     return (node as VariableNode).name === name;
+}
+
+/**
+ * Checks if a node is a unary operation
+ */
+export function isUnaryOp(node: ASTNode, operator?: Operator): boolean {
+    if (node.type !== ASTNodeType.UNARY_OP) return false;
+    if (operator === undefined) return true;
+    return (node as UnaryOpNode).operator === operator;
+}
+
+/**
+ * Checks if a node is a negative operation
+ */
+export function isNegative(node: ASTNode): boolean {
+    return isUnaryOp(node, Operator.SUBTRACTION) && (node as UnaryOpNode).isPrefix;
 }
 
 /**
@@ -105,8 +128,22 @@ export function isDivision(node: ASTNode): node is BinaryOpNode {
  * Gets the numeric value from a NumberNode, or undefined
  */
 export function getNumber(node: ASTNode): number | undefined {
-    if (node.type !== ASTNodeType.NUMBER) return undefined;
-    return (node as NumberNode).value;
+    if (node.type === ASTNodeType.NUMBER) {
+        return (node as NumberNode).value;
+    }
+    
+    // Handle negative numbers represented as unary operations: -(n)
+    if (node.type === ASTNodeType.UNARY_OP) {
+        const unary = node as UnaryOpNode;
+        if (unary.operator === Operator.SUBTRACTION && unary.isPrefix) {
+            const innerNumber = getNumber(unary.operand);
+            if (innerNumber !== undefined) {
+                return -innerNumber;
+            }
+        }
+    }
+    
+    return undefined;
 }
 
 /**

@@ -220,27 +220,6 @@
 
 <div class="bg-white dark:bg-zinc-900 min-h-screen pb-8 sm:pb-12">
 	<div class="flex flex-col lg:flex-row justify-center">
-		<div class="hidden sm:block w-80">
-			<div class="hidden sm:flex flex-col fixed top-24 left-24 w-80 flex-shrink-0 gap-6">
-				<StreakWidget streak={streak} nextMilestone={nextMilestone} />
-				
-				{#if loadingReview}
-					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 flex justify-center items-center h-40">
-						<ls.Loader class="h-6 w-6 animate-spin text-purple-500" />
-					</div>
-				{:else}
-					<ReviewBox 
-						studentId={student?.id}
-						studentName={`${student?.first_name || ''} ${student?.last_name || ''}`}
-						hasReviewed={hasReviewed}
-						existingRating={reviewRating}
-						existingReview={reviewText}
-						reviewId={reviewId}
-					/>
-				{/if}
-			</div>
-		</div>
-
 		<div class="flex-1 max-w-5xl px-2 sm:px-4 lg:px-8 mt-4 sm:mt-6">
 			<section class="mb-6 sm:mb-8 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-4 sm:p-6">
 				<div class="flex items-center justify-between mb-4">
@@ -466,6 +445,27 @@
 					</section>
 				{/if}
 			</section>
+		</div>
+
+		<div class="hidden sm:block w-80">
+			<div class="hidden sm:flex flex-col fixed top-24 right-24 w-80 flex-shrink-0 gap-6">
+				<StreakWidget streak={streak} nextMilestone={nextMilestone} />
+				
+				{#if loadingReview}
+					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 flex justify-center items-center h-40">
+						<ls.Loader class="h-6 w-6 animate-spin text-purple-500" />
+					</div>
+				{:else}
+					<ReviewBox 
+						studentId={student?.id}
+						studentName={`${student?.first_name || ''} ${student?.last_name || ''}`}
+						hasReviewed={hasReviewed}
+						existingRating={reviewRating}
+						existingReview={reviewText}
+						reviewId={reviewId}
+					/>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>

@@ -58,7 +58,7 @@ export async function load({ params }) {
 				const instance = new generator(...args);
 				exercises.push({
 					question: instance.question,
-					answers: instance.answers,
+					answers: instance.options,
 					correctAnswer: instance.correctAnswer
 				});
 			}

@@ -1,5 +1,5 @@
-import { Number } from "$lib/math/Number";
-import { Operator } from "$lib/math/Operator";
+import { Number } from "$lib/math/algebra/Number";
+import { Operator } from "$lib/math/core/Operator";
 
 // Abstract Syntax Tree Node types
 export enum ASTNodeType {
@@ -102,11 +102,11 @@ export class BinaryOpNode implements ASTNode {
         }
 
         const leftLatex = this.needsParentheses(this.left, true) 
-            ? `(${this.left.toLatex()})` 
+            ? `\\left(${this.left.toLatex()}\\right)` 
             : this.left.toLatex();
         
         const rightLatex = this.needsParentheses(this.right, false) 
-            ? `(${this.right.toLatex()})` 
+            ? `\\left(${this.right.toLatex()}\\right)` 
             : this.right.toLatex();
 
         // Handle power operator with curly braces
@@ -118,6 +118,24 @@ export class BinaryOpNode implements ASTNode {
     }
 
     private needsParentheses(node: ASTNode, isLeft: boolean): boolean {
+        // Unary operations (like negative numbers) need parentheses in several contexts
+        if (node.type === ASTNodeType.UNARY_OP) {
+            const unary = node as UnaryOpNode;
+            
+            // Always wrap unary operations when they're the base of a power
+            // e.g., (-5)^2, not -5^2
+            if (isLeft && this.operator === Operator.POWER) {
+                return true;
+            }
+            
+            // Wrap prefix unary operations (like negation) on the right side of most binary operators
+            // e.g., 2 × (-1), not 2 × -1
+            // e.g., (x+1)^{-3}, not (x+1)^-3
+            if (!isLeft && unary.isPrefix && unary.operator === Operator.SUBTRACTION) {
+                return true;
+            }
+        }
+        
         if (node.type !== ASTNodeType.BINARY_OP) return false;
         
         const childOp = (node as BinaryOpNode).operator;
@@ -139,6 +157,12 @@ export class BinaryOpNode implements ASTNode {
 
         // Add parentheses if child has lower precedence
         if (childPrec < currentPrec) return true;
+
+        // Special case: Power of a power needs parentheses on the base (left side)
+        // e.g., (a^m)^n, not a^m^n
+        if (currentOp === Operator.POWER && childOp === Operator.POWER && isLeft) {
+            return true;
+        }
 
         // For same precedence, add parentheses on the right for non-associative ops
         if (childPrec === currentPrec && !isLeft) {
@@ -190,14 +214,21 @@ export class UnaryOpNode implements ASTNode {
             // Prefix operators like -x
             if (this.operator === Operator.SUBTRACTION) {
                 // Add parentheses if operand is a binary operation
-                const needsParens = this.operand.type === ASTNodeType.BINARY_OP;
-                return needsParens ? `-(${operandLatex})` : `-${operandLatex}`;
+                // Exception: fractions don't need parentheses as they're already visually separated
+                const isFraction = this.operand.type === ASTNodeType.BINARY_OP && 
+                    ((this.operand as BinaryOpNode).operator === Operator.FRACTION || 
+                     (this.operand as BinaryOpNode).operator === Operator.DFRACTION);
+                const needsParens = this.operand.type === ASTNodeType.BINARY_OP && !isFraction;
+                return needsParens ? `-\\left(${operandLatex}\\right)` : `-${operandLatex}`;
             }
             return `${this.operator}${operandLatex}`;
         } else {
             // Postfix operators like x!
-            const needsParens = this.operand.type === ASTNodeType.BINARY_OP;
-            return needsParens ? `(${operandLatex})${this.operator}` : `${operandLatex}${this.operator}`;
+            const isFraction = this.operand.type === ASTNodeType.BINARY_OP && 
+                ((this.operand as BinaryOpNode).operator === Operator.FRACTION || 
+                 (this.operand as BinaryOpNode).operator === Operator.DFRACTION);
+            const needsParens = this.operand.type === ASTNodeType.BINARY_OP && !isFraction;
+            return needsParens ? `\\left(${operandLatex}\\right)${this.operator}` : `${operandLatex}${this.operator}`;
         }
     }
 }
@@ -265,7 +296,7 @@ export class FunctionNode implements ASTNode {
         }
         
         // Most functions use parentheses
-        return `${this.functionName}(${argLatex})`;
+        return `${this.functionName}\\left(${argLatex}\\right)`;
     }
 }
 

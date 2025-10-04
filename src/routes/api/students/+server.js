@@ -5,8 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function POST({ request, locals: { supabase } }) {
     try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user?.user_metadata?.role !== 'admin') {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user || user.user_metadata?.role !== 'admin') {
             return json({ success: false, error: 'Unauthorized' }, { status: 403 });
         }
 
@@ -53,8 +53,8 @@ export async function POST({ request, locals: { supabase } }) {
 
 export async function DELETE({ request, locals: { supabase } }) {
     try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user?.id) {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user?.id) {
             return json({ success: false, error: 'Not authenticated' }, { status: 401 });
         }
 
@@ -68,7 +68,7 @@ export async function DELETE({ request, locals: { supabase } }) {
             SUPABASE_SERVICE_ROLE_KEY
         );
 
-        if (session?.user?.user_metadata?.role !== 'admin') {
+        if (user?.user_metadata?.role !== 'admin') {
             return json({ success: false, error: 'Unauthorized - Admin role required' }, { status: 403 });
         }
 

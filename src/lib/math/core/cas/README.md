@@ -58,7 +58,68 @@ console.log(simplified2.toLatex()); // "2"
 const steps = expr2.getSimplificationSteps();
 console.log(steps);
 // ["2^{3} \\times 2^{2} : 2^{4}", "2^{5} : 2^{4}", "2"]
+
+### Fine-Grained Numeric Evaluation Control
+
+You can now control exactly which numeric operations get evaluated at the end of simplification:
+
+```typescript
+import { Expression, type NumericEvaluationOptions } from "$lib/math/Expression";
+
+// Example 1: Evaluate only multiplication, not powers
+const expr1 = new Expression('2^{3} \\times 2^{2}');
+const simplified1 = expr1.simplify({
+    evaluateNumerics: {
+        multiplication: true,
+        power: false  // Keep powers symbolic
+    }
+});
+console.log(simplified1.toLatex()); // "2^{5}" (power not evaluated)
+
+// Example 2: Evaluate everything except division
+const expr2 = new Expression('8 + 4 \\times 2 - 10 / 2');
+const simplified2 = expr2.simplify({
+    evaluateNumerics: {
+        addition: true,
+        subtraction: true,
+        multiplication: true,
+        division: false  // Keep division symbolic
+    }
+});
+console.log(simplified2.toLatex()); // "11 - 10 / 2"
+
+// Example 3: Don't evaluate anything (default CAS behavior)
+const expr3 = new Expression('2^{3} \\times 2^{2}');
+const simplified3 = expr3.simplify({
+    evaluateNumerics: false
+});
+console.log(simplified3.toLatex()); // "2^{5}" (symbolic only)
+
+// Example 4: Evaluate everything (default behavior)
+const expr4 = new Expression('2^{3} \\times 2^{2}');
+const simplified4 = expr4.simplify({
+    evaluateNumerics: true  // or omit for default
+});
+console.log(simplified4.toLatex()); // "32"
 ```
+
+#### Available Evaluation Options
+
+```typescript
+interface NumericEvaluationOptions {
+    addition?: boolean;       // Controls: a + b
+    subtraction?: boolean;    // Controls: a - b, -a
+    multiplication?: boolean; // Controls: a × b
+    division?: boolean;       // Controls: a / b, \frac{a}{b}, \dfrac{a}{b}
+    power?: boolean;          // Controls: a^b
+    factorial?: boolean;      // Controls: n!
+    trigonometric?: boolean;  // Controls: sin, cos, tan, etc.
+    logarithmic?: boolean;    // Controls: log, ln, exp
+    roots?: boolean;          // Controls: sqrt, cbrt
+}
+```
+
+Each option defaults to `false` when you provide a custom object. To enable specific operations, set them to `true`.
 
 ### Symbolic Power Simplification
 
@@ -143,7 +204,7 @@ To add new simplification rules (e.g., for fractions, trigonometry):
 1. **Create a new rules file** (e.g., `FractionRules.ts`):
 
 ```typescript
-import type { ASTNode } from "$lib/math/validator/ASTNode";
+import type { ASTNode } from "$lib/math/core/validator/ASTNode";
 
 export function simplifyFractions(node: ASTNode): ASTNode {
     // Implement your rules here

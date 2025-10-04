@@ -1,8 +1,8 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcd } from '$lib/math/functions.js';
+import { gcd } from '$lib/math/core/utils.js';
+import { Operator } from '$lib/math/core/Operator.js';
 
 const candidateVariables = ['x', 'y', 'z'];
-
 
 function simplifyFraction(frac) {
 	let num = frac.num;
@@ -107,10 +107,10 @@ export class EspressioneMonomiEx extends Exercise {
 		const m5 = { coefficient: monomialWithFractionCoeff(this.vars, 1, 9, 2, 5, 0, 0).coefficient, exponents: { ...exps } };
 		const plus = Math.random() < 0.5;
 
-		const group1 = `(${formatMonomial(m1.coefficient, m1.exponents)} \\times ${formatMonomial(m2.coefficient, m2.exponents)} : ${formatMonomial(m3.coefficient, m3.exponents)})`;
+		const group1 = `(${formatMonomial(m1.coefficient, m1.exponents)} ${Operator.MULTIPLICATION} ${formatMonomial(m2.coefficient, m2.exponents)} : ${formatMonomial(m3.coefficient, m3.exponents)})`;
 		const group2 = `${formatMonomial(m4.coefficient, m4.exponents)}`;
 		const group3 = `${formatMonomial(m5.coefficient, m5.exponents)}`;
-		this.question = new Question(`${group1} \\times ${group2} ${plus ? '+' : '-'} ${group3}`);
+		this.question = new Question(`${group1} ${Operator.MULTIPLICATION} ${group2} ${plus ? Operator.ADDITION : Operator.SUBTRACTION} ${group3}`);
 
 		this.resultCoeff = plus ? addFrac(c1234, m5.coefficient) : subFrac(c1234, m5.coefficient);
 		this.resultExps = { ...exps };

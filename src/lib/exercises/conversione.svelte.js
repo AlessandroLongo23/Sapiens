@@ -1,5 +1,5 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcd, gcdArray, lcmArray } from '$lib/math/functions.js';
+import { gcd, gcdArray, lcmArray } from '$lib/math/core/utils.js';
 
 export class FinitoEx extends Exercise {
 	constructor() { super(3); }

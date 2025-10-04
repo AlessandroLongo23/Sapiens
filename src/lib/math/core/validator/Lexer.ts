@@ -1,6 +1,6 @@
-import { Operator } from "$lib/math/Operator";
-import { TokenType } from "$lib/math/validator/TokenType";
-import type { Token } from "$lib/math/validator/Token";
+import { Operator } from "$lib/math/core/Operator";
+import { TokenType } from "$lib/math/core/validator/TokenType";
+import type { Token } from "$lib/math/core/validator/Token";
 
 
 export class Lexer {
@@ -96,6 +96,37 @@ export class Lexer {
             if (this.currentChar === '\\') {
                 const command = this.readLatexCommand();
                 
+                // Handle \left and \right delimiters
+                if (command === '\\left') {
+                    // Read the delimiter that follows
+                    const delimiterPos = this.position;
+                    const delimiter = this.input[delimiterPos];
+                    if (delimiter === '(' || delimiter === '[' || delimiter === '{') {
+                        this.advance();
+                        return {
+                            type: TokenType.LPAREN,
+                            value: '(',
+                            position: pos
+                        };
+                    }
+                    throw new Error(`Expected delimiter after \\left at position ${delimiterPos}`);
+                }
+                
+                if (command === '\\right') {
+                    // Read the delimiter that follows
+                    const delimiterPos = this.position;
+                    const delimiter = this.input[delimiterPos];
+                    if (delimiter === ')' || delimiter === ']' || delimiter === '}') {
+                        this.advance();
+                        return {
+                            type: TokenType.RPAREN,
+                            value: ')',
+                            position: pos
+                        };
+                    }
+                    throw new Error(`Expected delimiter after \\right at position ${delimiterPos}`);
+                }
+                
                 if (this.isFunction(command)) {
                     return {
                         type: TokenType.FUNCTION,
@@ -166,8 +197,8 @@ export class Lexer {
                 };
             }
 
-            // Parentheses
-            if (this.currentChar === '(' || this.currentChar === '{') {
+            // Parentheses and brackets
+            if (this.currentChar === '(' || this.currentChar === '{' || this.currentChar === '[') {
                 this.advance();
                 return {
                     type: TokenType.LPAREN,
@@ -176,7 +207,7 @@ export class Lexer {
                 };
             }
 
-            if (this.currentChar === ')' || this.currentChar === '}') {
+            if (this.currentChar === ')' || this.currentChar === '}' || this.currentChar === ']') {
                 this.advance();
                 return {
                     type: TokenType.RPAREN,

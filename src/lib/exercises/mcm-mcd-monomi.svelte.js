@@ -1,5 +1,5 @@
 import { Exercise, Question, Answer } from './abstract.svelte.js';
-import { gcdArray, lcmArray } from '$lib/math/functions.js';
+import { gcdArray, lcmArray } from '$lib/math/core/utils.js';
 
 const candidateVariables = ['x', 'y', 'z'];
 
