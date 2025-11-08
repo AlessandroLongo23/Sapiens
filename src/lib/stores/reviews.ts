@@ -2,12 +2,12 @@ import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 import { Review } from '$lib/models/Review.svelte.js';
 
-async function fetchReviews() {
+async function fetchReviews(): Promise<Review[]> {
     const { data, error } = await supabase
         .from('reviews')
         .select('*');
     if (error) throw new Error(error.message);
-    return data.map(review => new Review(review));
+    return data.map((review: any) => new Review(review));
 }
 
 export const selectedReviewStore = writable(null);
@@ -47,6 +47,7 @@ const createReviewsStore = () => {
 
     return {
         subscribe,
+
         fetchReviews: async () => {
             update(state => ({ ...state, loading: true }));
             try {
@@ -65,7 +66,8 @@ const createReviewsStore = () => {
                 });
             }
         },
-        addReview: async (review) => {
+
+        addReview: async (review: Partial<Review> | any) => {
             const { data, error } = await supabase.from('reviews').insert([review]).select().single();
             if (error) {
                 console.error('Error adding review:', error.message);
@@ -73,7 +75,8 @@ const createReviewsStore = () => {
             }
             return new Review(data);
         },
-        deleteReview: async (reviewId) => {
+
+        deleteReview: async (reviewId: string) => {
             const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
             if (error) {
                 console.error('Error deleting review:', error.message);
@@ -81,7 +84,8 @@ const createReviewsStore = () => {
             }
             return true;
         },
-        updateReview: async (reviewId, updatedReview) => {
+
+        updateReview: async (reviewId: string, updatedReview: Partial<Review> | any) => {
             const { data, error } = await supabase
                 .from('reviews')
                 .update(updatedReview)
@@ -95,15 +99,16 @@ const createReviewsStore = () => {
             }
             return new Review(data);
         },
-        selectReview: (reviewId) => {
-            selectedReviewStore.update(currentSelectedReview => {
-                if (currentSelectedReview?.id === reviewId) {
-                    return null;
-                }
+
+        // selectReview: (reviewId: string) => {
+        //     selectedReviewStore.update(currentSelectedReview => {
+        //         if (currentSelectedReview?.id === reviewId) {
+        //             return null;
+        //         }
                 
-                return reviewId ? { id: reviewId } : null;
-            });
-        }
+        //         return reviewId ? { id: reviewId } : null;
+        //     });
+        // }
     };
 };
 

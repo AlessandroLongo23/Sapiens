@@ -2,12 +2,12 @@ import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 import { Lecture } from '$lib/models/Lecture.svelte.js';
 
-async function fetchLectures() {
+async function fetchLectures(): Promise<Lecture[]> {
     const { data, error } = await supabase
         .from('lectures')
         .select('*');
     if (error) throw new Error(error.message);
-    return data.map(lecture => new Lecture(lecture));
+    return data.map((lecture: any) => new Lecture(lecture));
 }
     
 export const selectedLectureStore = writable(null);
@@ -35,7 +35,7 @@ const createLecturesStore = () => {
                     
                     if (data) {
                         set({
-                            lectures: data.map(lecture => new Lecture(lecture)),
+                            lectures: data.map((lecture: any) => new Lecture(lecture)),
                             loading: false,
                             error: null
                         });
@@ -52,7 +52,7 @@ const createLecturesStore = () => {
             try {
                 const data = await fetchLectures();
                 set({
-                    lectures: data.map(lecture => new Lecture(lecture)),
+                    lectures: data.map((lecture: any) => new Lecture(lecture)),
                     loading: false,
                     error: null
                 });
@@ -77,7 +77,8 @@ const createLecturesStore = () => {
                 console.error('Error adding lecture:', error.message);
                 throw new Error('Impossibile aggiungere la lezione.');
             }
-            return data;
+
+            return new Lecture(data);
         },
         
         deleteLecture: async (lectureId) => {
@@ -90,6 +91,7 @@ const createLecturesStore = () => {
                 console.error('Error deleting lecture:', error.message);
                 throw new Error('Impossibile eliminare la lezione.');
             }
+
             return true;
         },
         
@@ -105,18 +107,19 @@ const createLecturesStore = () => {
                 console.error('Error updating lecture:', error.message);
                 throw new Error('Impossibile aggiornare la lezione.');
             }
-            return data;
+
+            return new Lecture(data);
         },
         
-        selectLecture: (lectureId) => {
-            selectedLectureStore.update(currentSelectedLecture => {
-                if (currentSelectedLecture?.id === lectureId) {
-                    return null;
-                }
+        // selectLecture: (lectureId) => {
+        //     selectedLectureStore.update(currentSelectedLecture => {
+        //         if (currentSelectedLecture?.id === lectureId) {
+        //             return null;
+        //         }
                 
-                return lectureId ? { id: lectureId } : null;
-            });
-        },
+        //         return lectureId ? { id: lectureId } : null;
+        //     });
+        // }
     };
 };
 

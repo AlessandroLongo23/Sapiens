@@ -1,12 +1,13 @@
 import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
+import { Subject } from '$lib/models/Subject.svelte';
 
 async function fetchSubjects() {
     const { data, error } = await supabase
         .from('subjects')
         .select('*');
     if (error) throw new Error(error.message);
-    return data;
+    return data.map((subject: any) => new Subject(subject));
 }
 
 export const selectedSubjectStore = writable(null);
@@ -14,7 +15,7 @@ export const selectedSubjectStore = writable(null);
 const createSubjectsStore = () => {
     const { subscribe, set, update } = writable({
         subjects: [],
-        loading: true,
+        isLoading: true,
         error: null
     });
 
@@ -34,8 +35,8 @@ const createSubjectsStore = () => {
                     
                     if (data) {
                         set({
-                            subjects: data,
-                            loading: false,
+                            subjects: data.map((subject: Subject) => new Subject(subject)),
+                            isLoading: false,
                             error: null
                         });
                     }
@@ -46,25 +47,27 @@ const createSubjectsStore = () => {
 
     return {
         subscribe,
+
         fetchSubjects: async () => {
-            update(state => ({ ...state, loading: true }));
+            update(state => ({ ...state, isLoading: true }));
             try {
                 const data = await fetchSubjects();
                 set({
-                    subjects: data,
-                    loading: false,
+                    subjects: data.map((subject: Subject) => new Subject(subject)),
+                    isLoading: false,
                     error: null
                 });
             } catch (error) {
                 console.error('Error fetching subjects:', error);
                 set({
                     subjects: [],
-                    loading: false,
+                    isLoading: false,
                     error: error.message
                 });
             }
         },
-        addSubject: async (subject) => {
+        
+        addSubject: async (subject: Subject) => {
             const { data, error } = await supabase
                 .from('subjects')
                 .insert([subject])
@@ -75,8 +78,11 @@ const createSubjectsStore = () => {
                 console.error('Error adding subject:', error.message);
                 throw new Error('Impossibile aggiungere la materia.');
             }
+        
+            return new Subject(data);
         },
-        deleteSubject: async (subjectId) => {
+
+        deleteSubject: async (subjectId: string) => {
             const { error } = await supabase
                 .from('subjects')
                 .delete()
@@ -88,7 +94,8 @@ const createSubjectsStore = () => {
             }
             return true;
         },
-        updateSubject: async (subjectId, updatedSubject) => {
+
+        updateSubject: async (subjectId: string, updatedSubject: Subject) => {
             const { data, error } = await supabase
                 .from('subjects')
                 .update(updatedSubject)
@@ -101,17 +108,18 @@ const createSubjectsStore = () => {
                 throw new Error('Impossibile aggiornare la materia.');
             }
 
-            return data;
+            return new Subject(data);
         },
-        selectSubject: (subjectId) => {
-            selectedSubjectStore.update(currentSelectedSubject => {
-                if (currentSelectedSubject?.id === subjectId) {
-                    return null;
-                }
+
+        // selectSubject: (subjectId) => {
+        //     selectedSubjectStore.update(currentSelectedSubject => {
+        //         if (currentSelectedSubject?.id === subjectId) {
+        //             return null;
+        //         }
                 
-                return subjectId ? { id: subjectId } : null;
-            });
-        }
+        //         return subjectId ? { id: subjectId } : null;
+        //     });
+        // }
     };
 };
 

@@ -6,7 +6,7 @@
 
 <div class="relative glass-effect rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center overflow-hidden group hover:scale-[1.02] transition-all duration-300 shadow-elegant">
 	<div class="absolute -right-4 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-		<svelte:component this={icon} class="w-24 h-24 sm:w-28 sm:h-28 {color}" />
+		<icon class="w-24 h-24 sm:w-28 sm:h-28 {color}" />
 	</div>
 	
 	<div class="relative z-10">

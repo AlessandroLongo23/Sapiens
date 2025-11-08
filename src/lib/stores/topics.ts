@@ -81,7 +81,7 @@ const createTopicsStore = () => {
                 topics: state.topics.filter(topic => topic.id !== topicId)
             }));
         },
-        updateTopic: (topicId, updatedTopic) => {
+        updateTopic: (topicId: string, updatedTopic) => {
             selectedTopicStore.update(selectedTopic => 
                 selectedTopic?.id === topicId ? updatedTopic : selectedTopic
             );

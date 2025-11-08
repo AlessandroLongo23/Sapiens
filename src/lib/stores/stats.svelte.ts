@@ -2,16 +2,19 @@ import { format, parseISO, startOfMonth, endOfMonth, eachMonthOfInterval, subMon
 import { lecturesStore } from '$lib/stores/lectures.js';
 import { subjectsStore } from '$lib/stores/subjects.js';
 import { studentsStore } from '$lib/stores/students.js';
-import { calculateEarnings } from '$lib/utils/format.svelte.js';
 import { it } from 'date-fns/locale';
+import { Lecture } from '$lib/models/Lecture.svelte';
+import { Subject } from '$lib/models/Subject.svelte';
+import { Student } from '$lib/models/Student.svelte';
+import { designSystem } from '$lib/const/appearance';
 
-class StatsStore {
-	lectures = $state([]);
-	subjects = $state([]);
-	students = $state([]);
-	filterType = $state('all');
-	filterId = $state(null);
-	timeRange = $state(6);
+export class StatsStore {
+	lectures = $state<Lecture[]>([]);
+	subjects = $state<Subject[]>([]);
+	students = $state<Student[]>([]);
+	filterType = $state<string>('all');
+	filterId = $state<string | null>(null);
+	timeRange = $state<number>(6);
 
 	constructor() {
 		lecturesStore.subscribe((data) => {
@@ -26,14 +29,8 @@ class StatsStore {
 	}
 
 	totalTime = $derived.by(() => {
-		let total = this.lectures.reduce((total, lecture) => {
-			const startTime = lecture.start_time.split(':');
-			const endTime = lecture.end_time.split(':');
-			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
-			const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
-			const hours = endHour - startHour;
-			
-			return total + hours;
+		const total: number = this.lectures.reduce((total: number, lecture: Lecture) => {
+			return total + lecture.getDuration();
 		}, 0);
 
 		return {
@@ -44,8 +41,6 @@ class StatsStore {
 	
 	earningsByMonth = $derived.by(() => {
 		const lectures = this.lectures;
-		const subjects = this.subjects;
-		const students = this.students;
 		const timeRange = this.timeRange; 
 		const filterType = this.filterType; 
 		const filterId = this.filterId; 
@@ -58,27 +53,21 @@ class StatsStore {
 		
 		const months = eachMonthOfInterval({ start: startDate, end: endDate });
 		
-		const earningsData = months.map(month => ({
+		const earningsData = months.map((month: Date) => ({
 			month: format(month, 'MMM yyyy', { locale: it }),
 			earnings: 0,
 			date: month
 		}));
 		
-		lectures.forEach(lecture => {
+		lectures.forEach((lecture: Lecture) => {
 			if (filterType === 'student' && lecture.student_id !== filterId) return;
 			if (filterType === 'subject' && lecture.subject_id !== filterId) return;
 			
 			const lectureDate = parseISO(lecture.date);
 			if (lectureDate >= startDate && lectureDate <= endDate) {
-				const startTime = lecture.start_time.split(':');
-				const endTime = lecture.end_time.split(':');
-				const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
-				const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
-				const hours = endHour - startHour;
+				const earnings = lecture.getEarning();
 				
-				const earnings = hours * (lecture.hourly_rate || 0);
-				
-				const monthIndex = months.findIndex(month => 
+				const monthIndex = months.findIndex((month: Date) => 
 					month.getMonth() === lectureDate.getMonth() && 
 					month.getFullYear() === lectureDate.getFullYear()
 				);
@@ -93,8 +82,8 @@ class StatsStore {
 	});
 
 	totalEarnings = $derived.by(() => {
-		return this.lectures.reduce((total, lecture) => {
-			return total + calculateEarnings(lecture.start_time, lecture.end_time, lecture.hourly_rate);
+		return this.lectures.reduce((total: number, lecture: Lecture) => {
+			return total + lecture.getEarning();
 		}, 0).toFixed(2);
 	});
 
@@ -110,22 +99,18 @@ class StatsStore {
 
 		const months = eachMonthOfInterval({ start: startDate, end: endDate });
 		
-		const hoursData = months.map(month => ({
+		const hoursData = months.map((month: Date) => ({
 			month: format(month, 'MMM yyyy', { locale: it }),
 			hours: 0,
 			date: month
 		}));
 		
-		lectures.forEach(lecture => {
+		lectures.forEach((lecture: Lecture) => {
 			const lectureDate = parseISO(lecture.date);
 			if (lectureDate >= startDate && lectureDate <= endDate) {
-				const startTime = lecture.start_time.split(':');
-				const endTime = lecture.end_time.split(':');
-				const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
-				const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
-				const hours = endHour - startHour;
+				const hours: number = lecture.getDuration();
 				
-				const monthIndex = months.findIndex(month => 
+				const monthIndex = months.findIndex((month: Date) => 
 					month.getMonth() === lectureDate.getMonth() && 
 					month.getFullYear() === lectureDate.getFullYear()
 				);
@@ -140,42 +125,35 @@ class StatsStore {
 	});
 
 	topEarnings = $derived.by(() => {
-		const lectures = this.lectures;
-		const subjects = this.subjects;
-		const students = this.students;
-
-		if (!lectures?.length) return { bySubject: [], byStudent: [] };
+		if (!this.lectures?.length) return { bySubject: [], byStudent: [] };
 		
 		const bySubject = {};
 		const byStudent = {};
 		
-		lectures.forEach(lecture => {
-			const startTime = lecture.start_time.split(':');
-			const endTime = lecture.end_time.split(':');
-			const startHour = parseInt(startTime[0]) + parseInt(startTime[1]) / 60;
-			const endHour = parseInt(endTime[0]) + parseInt(endTime[1]) / 60;
-			const hours = endHour - startHour;
-			
-			const earnings = hours * (lecture.hourly_rate || 0);
+		this.lectures.forEach((lecture: Lecture) => {
+			const earnings: number = lecture.getEarning();
+			const hours: number = lecture.getDuration();
 			
 			if (!bySubject[lecture.subject_id]) {
-				const subject = subjects?.find(s => s.id === lecture.subject_id);
+				const subject: Subject = this.subjects?.find((s: Subject) => s.id === lecture.subject_id);
 				bySubject[lecture.subject_id] = {
 					id: lecture.subject_id,
-					name: subject ? subject.name : 'Unknown Subject',
+					name: subject?.name || 'Unknown Subject',
 					totalEarnings: 0,
-					hours: 0
+					color: subject?.hex_color || designSystem.colors.primary.green,
+					hours: 0,
 				};
 			}
 			bySubject[lecture.subject_id].totalEarnings += earnings;
 			bySubject[lecture.subject_id].hours += hours;
 			
 			if (!byStudent[lecture.student_id]) {
-				const student = students.find(s => s.id === lecture.student_id);
+				const student: Student = this.students?.find((s: Student) => s.id === lecture.student_id);
 				byStudent[lecture.student_id] = {
 					id: lecture.student_id,
-					name: student ? `${student.first_name} ${student.last_name}` : 'Unknown Student',
+					name: student?.getFullName() || 'Unknown Student',
 					totalEarnings: 0,
+					color: designSystem.colors.primary.green,
 					hours: 0
 				};
 			}
@@ -184,22 +162,22 @@ class StatsStore {
 		});
 		
 		const subjectArray = Object.values(bySubject)
-			.sort((a, b) => b.totalEarnings - a.totalEarnings)
+			.sort((a: any, b: any) => b.totalEarnings - a.totalEarnings)
 			.slice(0, 5);
 			
 		const studentArray = Object.values(byStudent)
-			.sort((a, b) => b.totalEarnings - a.totalEarnings)
+			.sort((a: any, b: any) => b.totalEarnings - a.totalEarnings)
 			.slice(0, 5);
 		
 		return { bySubject: subjectArray, byStudent: studentArray };
 	});
 	
-	setFilter(type, id = null) {
+	setFilter(type: string, id: string | null = null) {
 		this.filterType = type;
 		this.filterId = id;
 	}
 	
-	setTimeRange(months) {
+	setTimeRange(months: number) {
 		this.timeRange = months;
 	}
 }

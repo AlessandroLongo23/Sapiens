@@ -1,5 +1,5 @@
 <script>
-    import * as ls from 'lucide-svelte';
+    import { CircleAlert, Trash2, X } from 'lucide-svelte';
     import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
 
     let { 
@@ -10,9 +10,9 @@
         onCancel = () => {}, 
         confirmText = 'Elimina',
         cancelText = 'Annulla',
-        mainIcon = ls.CircleAlert,
+        mainIcon = CircleAlert,
         mainColor = 'red',
-        confirmIcon = ls.Trash2,
+        confirmIcon = Trash2,
         classes = '',
         children
     } = $props();
@@ -26,7 +26,7 @@
                     <div class="relative">
                         <div class="absolute inset-0 bg-{mainColor}-500/5 rounded-full p-1 custom-animate-ping"></div>
                         <div class="flex flex-row items-center justify-center bg-{mainColor}-500/10 rounded-full p-2">
-                            <svelte:component this={mainIcon} strokeWidth={1.5} class="size-8 text-{mainColor}-500"/>
+                            <mainIcon strokeWidth={1.5} class="size-8 text-{mainColor}-500"></mainIcon>
                         </div>
                     </div>
                 </div>
@@ -43,14 +43,14 @@
                     class="flex flex-row flex-grow items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors text-zinc-900 dark:text-zinc-100"
                     onclick={onCancel}
                 >
-                    <ls.X class="size-4"/>
+                    <X class="size-4"/>
                     {cancelText}
                 </button>
                 <button 
                     class="flex flex-row flex-grow items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg bg-{mainColor}-500 text-white hover:bg-{mainColor}-600 transition-colors"
                     onclick={onConfirm}
                 >
-                    <svelte:component this={confirmIcon} class="size-4"/>
+                    <confirmIcon class="size-4"></confirmIcon>
                     {confirmText}
                 </button>
             </div>

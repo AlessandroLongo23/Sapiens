@@ -80,7 +80,7 @@ const createStudentsStore = () => {
             return new Student(data);
         },
 
-        deleteStudent: async (studentId) => {
+        deleteStudent: async (studentId: string) => {
             const response = await fetch('/api/students', {
                 method: 'DELETE',
                 headers: {

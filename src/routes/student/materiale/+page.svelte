@@ -1,11 +1,11 @@
 <script>
+	import { Calculator, Laptop, Atom, FlaskConical, LineChart, BookOpen, Search, ChevronDown, GraduationCap } from 'lucide-svelte';
 	import { getPlaceholderImage, getTopicIcon } from '$lib/utils/utils.svelte.js';
 	import { reviewsStore } from '$lib/stores/reviews.js';
 	import { studentsStore } from '$lib/stores/students.js';
 	import { contentStore } from '$lib/stores/content.js';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import * as ls from 'lucide-svelte';
 
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
 	import ReviewBox from '$lib/components/ReviewBox.svelte';
@@ -21,11 +21,11 @@
 	let groupBy = $state("subject");
 
 	const subjectCategories = {
-		'matematica': { color: 'from-blue-500 to-blue-600', icon: ls.Calculator, name: 'Matematica' },
-		'informatica': { color: 'from-purple-500 to-purple-600', icon: ls.Laptop, name: 'Informatica' },
-		'fisica': { color: 'from-orange-500 to-orange-600', icon: ls.Atom, name: 'Fisica' },
-		'chimica': { color: 'from-green-500 to-green-600', icon: ls.Flask, name: 'Chimica' },
-		'Analisi I': { color: 'from-red-500 to-red-600', icon: ls.LineChart, name: 'Analisi I' },
+		'matematica': { color: 'from-blue-500 to-blue-600', icon: Calculator, name: 'Matematica' },
+		'informatica': { color: 'from-purple-500 to-purple-600', icon: Laptop, name: 'Informatica' },
+		'fisica': { color: 'from-orange-500 to-orange-600', icon: Atom, name: 'Fisica' },
+		'chimica': { color: 'from-green-500 to-green-600', icon: FlaskConical, name: 'Chimica' },
+		'Analisi I': { color: 'from-red-500 to-red-600', icon: LineChart, name: 'Analisi I' },
 	};
 
 	let allTopics = $derived.by(() => {
@@ -225,7 +225,7 @@
 				<div class="flex items-center justify-between mb-4">
 					<h2 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
 						<div class="text-blue-600">
-							<ls.BookOpen class="h-4 sm:h-5 w-4 sm:w-5" />
+							<BookOpen class="h-4 sm:h-5 w-4 sm:w-5" />
 						</div>
 						<span>Continua a studiare</span>
 					</h2>
@@ -272,7 +272,7 @@
 					<div class="flex items-center justify-between">
 						<h2 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
 							<div class="text-purple-600">
-								<ls.Search class="h-5 w-5" />
+								<Search class="h-5 w-5" />
 							</div>
 							<span>Cerca e filtra</span>
 						</h2>
@@ -297,7 +297,7 @@
 					
 					<div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
 						<div class="relative flex-1">
-							<ls.Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
+							<Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
 							<input 
 								type="text" 
 								placeholder="Cerca argomenti..."
@@ -318,7 +318,7 @@
 								<option value="alphabetical">A-Z</option>
 								<option value="level">Livello</option>
 							</select>
-							<ls.ChevronDown class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
+							<ChevronDown class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500 pointer-events-none" />
 						</div>
 					</div>
 				</div>
@@ -348,9 +348,9 @@
 									onclick={() => activeTab = groupKey}
 								>
 									{#if groupKey === 'university'}
-										<ls.GraduationCap class="h-3 w-3 sm:h-4 sm:w-4" />
+										<GraduationCap class="h-3 w-3 sm:h-4 sm:w-4" />
 									{:else}
-										<ls.BookOpen class="h-3 w-3 sm:h-4 sm:w-4" />
+										<BookOpen class="h-3 w-3 sm:h-4 sm:w-4" />
 									{/if}
 									{groupKey === 'university' ? 'Università' : `${groupKey}° anno`}
 								</button>
@@ -374,9 +374,9 @@
 										{:else if groupBy === 'year'}
 											<div class="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white">
 												{#if groupKey === 'university'}
-													<ls.GraduationCap class="h-5 w-5" />
+													<GraduationCap class="h-5 w-5" />
 												{:else}
-													<ls.BookOpen class="h-5 w-5" />
+													<BookOpen class="h-5 w-5" />
 												{/if}
 											</div>
 											<span>{groupKey === 'university' ? 'Università' : `${groupKey}° anno`}</span>
@@ -409,7 +409,7 @@
 								<div class="flex items-center justify-between mb-4">
 									<h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
 										<div class="text-blue-600">
-											<ls.Search class="h-5 w-5" />
+											<Search class="h-5 w-5" />
 										</div>
 										<span>Risultati ricerca ({filteredTopics.length})</span>
 									</h2>
@@ -433,7 +433,7 @@
 							{:else}
 								<div class="flex flex-col items-center justify-center py-16 text-center">
 									<div class="bg-zinc-100 dark:bg-zinc-700 rounded-full p-4 mb-6">
-										<ls.Search class="h-8 w-8 text-zinc-500 dark:text-zinc-400" />
+										<Search class="h-8 w-8 text-zinc-500 dark:text-zinc-400" />
 									</div>
 									<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Nessun argomento trovato</h3>
 									<p class="text-zinc-500 dark:text-zinc-400 max-w-md">
@@ -453,7 +453,7 @@
 				
 				{#if loadingReview}
 					<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm p-6 flex justify-center items-center h-40">
-						<ls.Loader class="h-6 w-6 animate-spin text-purple-500" />
+						<Loader class="h-6 w-6 animate-spin text-purple-500" />
 					</div>
 				{:else}
 					<ReviewBox 
