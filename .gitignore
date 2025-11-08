@@ -22,4 +22,9 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-aleripetizioni-6e15ddddf52c.json
+sapiens-6e15ddddf52c.json
+
+package-lock.json
+
+android/
+build/

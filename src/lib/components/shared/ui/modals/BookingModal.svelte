@@ -11,7 +11,7 @@
 
 	let { 
 		isOpen = $bindable(false),
-		title = 'Prenota una Lezione' 
+		title = 'Prenota una lezione privata' 
 	} = $props();
 
 	let currentStep = $state(1);
@@ -171,11 +171,10 @@
 					<ls.CheckCircle class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" />
 				</div>
 				<h3 class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-3 sm:mb-4">
-					Richiesta Inviata!
+					Richiesta inviata
 				</h3>
 				<p class="text-zinc-600 dark:text-zinc-300 text-base sm:text-lg mb-4 sm:mb-6 px-2">
-					Grazie per aver scelto i miei servizi. Ti contatterò entro 24 ore per organizzare la
-					prima lezione.
+					Grazie per la tua richiesta. Ti contatteremo entro 24 ore per organizzare la prima lezione.
 				</p>
 				<FormButton onclick={closeModal} variant="primary" size="lg"> Perfetto! </FormButton>
 			</div>
@@ -212,10 +211,10 @@
 					>
 						<div class="text-center mb-4 sm:mb-6">
 						<h4 class="text-lg sm:text-xl font-semibold text-zinc-800 dark:text-zinc-100 mb-2">
-								Seleziona il tuo livello di studio
+								Qual è il tuo livello di studio?
 							</h4>
 						<p class="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base px-2">
-								Scegli il livello che meglio rappresenta la tua situazione attuale
+								Scegli il livello che stai frequentando
 							</p>
 						</div>
 

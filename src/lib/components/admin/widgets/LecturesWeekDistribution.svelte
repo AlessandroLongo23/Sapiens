@@ -1,6 +1,6 @@
 <script>
 	import { lecturesStore } from '$lib/stores/lectures.js';
-	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
+	import { themeStore } from '$lib/components/shared/ui/theme/theme.ts';
 	import { designSystem } from '$lib/const/appearance.js';
     import { ceilToMultiple } from '$lib/utils/math.js';
 	import { onMount } from 'svelte';

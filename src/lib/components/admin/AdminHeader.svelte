@@ -35,7 +35,7 @@
 <header class="fixed flex flex-row top-0 left-0 right-0 z-50 px-4 md:px-6 py-3 md:py-4 bg-white dark:bg-[#121212] border-b border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm dark:shadow-md">
     <a href="/" class="flex-1/3 hidden sm:flex items-center gap-3">
         <img src="/icon.png" alt="logo" class="size-8 rounded-md" />
-        <span class="font-semibold text-zinc-900 dark:text-zinc-100">Ale Ripetizioni</span>
+        <span class="font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
     </a>
     
     <div class="flex flex-1/3 justify-center flex-row items-center gap-3 md:gap-4 ">

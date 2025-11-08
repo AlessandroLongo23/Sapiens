@@ -1,6 +1,6 @@
 {
-  "appId": "it.aleripetizioni.app",
-  "appName": "AleRipetizioni",
+  "appId": "it.sapiens.app",
+  "appName": "Sapiens",
   "webDir": "build",
   "server": {
     "androidScheme": "https"

@@ -12,6 +12,9 @@ export class Student {
         this.level = student.level;
         this.gender = student.gender;
         this.assigned_topics = student.assigned_topics;
+        this.subscription_plan = student.subscription_plan || 'free';
+        this.subscription_status = student.subscription_status || 'active';
+        this.stripe_customer_id = student.stripe_customer_id;
     }
 
     getFullName() {

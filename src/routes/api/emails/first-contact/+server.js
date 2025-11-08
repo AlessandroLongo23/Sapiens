@@ -56,7 +56,7 @@ export async function POST({ request }) {
 				</tr>
 				<tr>
 					<td align="center" style="padding: 20px; background-color: #f4f4f4; color: #666666; font-size: 12px;">
-						<p style="margin: 0;">Email inviata dal sito AleRipetizioni</p>
+						<p style="margin: 0;">Email inviata dal sito Sapiens</p>
 					</td>
 				</tr>
 			</table>
@@ -64,7 +64,7 @@ export async function POST({ request }) {
         `;
 
 		const { data, error } = await resend.emails.send({
-			from: 'AleRipetizioni <onboarding@resend.dev>',
+			from: 'Sapiens <onboarding@resend.dev>',
 			to: ['longoa02@gmail.com'],
 			subject: `Nuova Richiesta Lezione da ${firstName} ${lastName}`,
 			html: emailHtml

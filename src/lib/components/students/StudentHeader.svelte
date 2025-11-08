@@ -9,6 +9,7 @@
     
     import LogoutButton from '$lib/components/shared/ui/buttons/LogoutButton.svelte';
     import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
+    import SubscriptionBadge from '$lib/components/students/SubscriptionBadge.svelte';
 
     let { user } = $props();
     
@@ -21,6 +22,9 @@
 
         if ($page.url.pathname.startsWith('/student/materiale'))
             return 'materiale';
+
+        if ($page.url.pathname.startsWith('/student/chat'))
+            return 'chat';
 
         if ($page.url.pathname.startsWith('/student/esercizi'))
             return 'esercizi';
@@ -46,7 +50,7 @@
             <img src="/icon.png" alt="logo" class="size-8 rounded-md" />
         </a>
         
-        {#if current_page === 'calendario' || current_page === 'materiale'}
+        {#if current_page === 'calendario' || current_page === 'materiale' || current_page === 'chat'}
             <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4">
                 <h1 class="text-lg sm:text-2xl font-bold text-zinc-900 dark:text-white">Ciao {student?.first_name}!</h1>
                 <span class="hidden sm:inline text-zinc-700 dark:text-zinc-300 text-sm sm:text-xl">{motivational_message}</span>
@@ -57,7 +61,24 @@
     </div>
     
     <div class="flex items-center gap-2 sm:gap-4">
+        <button
+            onclick={() => goto('/student/subscription')}
+            class="hidden sm:block"
+        >
+            <SubscriptionBadge {user} />
+        </button>
+        
         <ThemeToggle />
+
+        <button
+            onclick={() => goto('/student/chat')}
+            class="bg-zinc-50 dark:bg-zinc-800 border hover:bg-zinc-200 dark:hover:bg-zinc-700 border-zinc-200 dark:border-zinc-700 text-zinc-700 px-2 sm:px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer transition-all duration-100 ease-in-out {current_page === 'chat' ? 'ring-2 ring-blue-500' : ''}"
+        >
+            <span class="flex items-center justify-center sm:space-x-2">
+                <ls.Bot class="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+                <span class="hidden sm:inline text-zinc-700 dark:text-zinc-300">Sapiens AI</span>
+            </span>
+        </button>
 
         <button
             onclick={() => goto(current_page === 'calendario' ? '/student/materiale' : '/student/calendario')}

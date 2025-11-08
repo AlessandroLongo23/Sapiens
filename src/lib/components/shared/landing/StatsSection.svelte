@@ -6,15 +6,16 @@
 	let {
 		stats,
 		statsSection = $bindable(null),
+        gradient = false,
 	} = $props();
 </script>
 
-<section id="stats" bind:this={statsSection} class="{section_style} hero-gradient relative">
+<section id="stats" bind:this={statsSection} class="{section_style} {gradient ? 'hero-gradient' : 'bg-white dark:bg-zinc-950'} relative">
 	<div class="max-w-6xl mx-auto">
         <div class="text-center mb-16 sm:mb-20">
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 dark:text-white mb-4 sm:mb-6">I Nostri Risultati</h2>
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 dark:text-white mb-4 sm:mb-6">Risultati concreti</h2>
             <p class="text-lg sm:text-xl text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto px-4">
-				Numeri che parlano da soli e testimoniano anni di dedizione nell'insegnamento
+				I numeri di chi ha scelto Sapiens per il proprio percorso di studio
 			</p>
 			<div class="w-16 sm:w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full mt-4 sm:mt-6"></div>
 		</div>

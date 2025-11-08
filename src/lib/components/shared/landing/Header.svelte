@@ -1,114 +1,104 @@
-<script>
+<script lang="ts">
+	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
     import { goto } from '$app/navigation';
     import * as ls from 'lucide-svelte';
-    import { onMount } from 'svelte';
 
     import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
-    import BookingModal from '$lib/components/shared/ui/modals/BookingModal.svelte';
+	import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
+	import SubjectMegaMenu from './SubjectMegaMenu.svelte';
 
     let { 
         session,
         isAuthModalOpen = $bindable(false),
-        isContactModalOpen = $bindable(false),
-        activeSection = $bindable('about')
     } = $props();
-    
-    let lastScrollY = 0;
-    let isHeaderVisible = $state(true);
-    let isProgrammaticScroll = $state(false);
-    
-    onMount(() => {
-        const handleScroll = () => {
-            if (!isProgrammaticScroll) {
-                const currentScrollY = window.scrollY;
-                if (currentScrollY > lastScrollY) {
-                    isHeaderVisible = false;
-                } else {
-                    isHeaderVisible = true;
-                }
-                lastScrollY = currentScrollY;
-            }
-        };
-        
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    });
-    
-    function handleSectionClick() {
-        isProgrammaticScroll = true;
-        isHeaderVisible = true;
-        
-        setTimeout(() => {
-            isProgrammaticScroll = false;
-            lastScrollY = window.scrollY;
-        }, 1000);
-    }
 
-    function openAuthModal() {
-		isAuthModalOpen = true;
+	const clickAccessButton = async () => {
+		if (session) { 
+			const redirectPath = session?.user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+			await goto(redirectPath);
+		} else { 
+			isAuthModalOpen = true;
+		} 
 	}
-	
-    const accessPrivateRoute = async () => {
-		const redirectPath = session?.user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
-		await goto(redirectPath);
-	}
+    
+	let hoveredLevel = $state<string | null>(null);
+	let headerRef = $state<HTMLElement | null>(null);
+	let headerHeight = $state(0);
 
-    const sections = [
-		{
-			id: 'about',
-			label: 'Chi sono',
-			icon: ls.User
-		},
-		{
-			id: 'subjects',	
-			label: 'Materie',
-			icon: ls.BookOpen
-		},
-		{
-			id: 'metodo',
-			label: 'Metodo',
-			icon: ls.Lightbulb
-		},
-		{
-			id: 'stats',
-			label: 'Risultati',
-			icon: ls.Calculator
-		},
-		{
-			id: 'testimonials',
-			label: 'Recensioni',
-			icon: ls.Star
+	function handleSubjectMouseEnter(levelId: string) {
+		hoveredLevel = levelId;
+		if (headerRef) {
+			headerHeight = headerRef.offsetHeight;
 		}
-	]
+	}
+
+	let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	function handleSubjectMouseLeave() {
+		hoverTimeout = setTimeout(() => {
+			hoveredLevel = null;
+		}, 500);
+	}
+
+	function handleMenuMouseEnter() {
+		if (hoverTimeout) {
+			clearTimeout(hoverTimeout);
+			hoverTimeout = null;
+		}
+	}
+
+	function handleMenuMouseLeave() {
+		hoveredLevel = null;
+	}
 </script>
 
-<header class="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 transition-transform duration-300" style="transform: translateY({isHeaderVisible ? '0' : '-100%'})">
+<header 
+	bind:this={headerRef}
+	class="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 transition-transform duration-300"
+>
 	<div class="w-full mx-auto flex items-center sm:justify-between justify-center p-4">
-		<a href="/" class="flex-1/3 justify-start hidden sm:flex items-center gap-3">
-			<img src="/icon.png" alt="logo" class="size-8 rounded-md" />
-			<span class="font-semibold text-zinc-900 dark:text-zinc-100">Ale Ripetizioni</span>
-		</a>
+		<div class="flex justify-start items-center gap-16">
+			<a href="/" class="justify-start hidden sm:flex items-center gap-3">
+				<img src="/icon.png" alt="logo" class="size-10 rounded-md" />
+				<span class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
+			</a>
 
-		<nav class="flex-1/3 justify-center hidden sm:flex items-center gap-6 text-sm">
-			{#each sections as section}
-				<a 
-					href={`#${section.id}`} 
-					class="relative nav-link group text-zinc-900 dark:text-zinc-100"
-					onclick={handleSectionClick}
-				>
-					{section.label}
-					<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-blue-500 rounded-full transition-opacity duration-200 {activeSection === section.id ? 'opacity-100' : 'opacity-0'}"></span>
-				</a>
-			{/each}
-		</nav>
-		
-		<div class="flex-1/3 justify-end flex items-center gap-2 sm:gap-3">
+			<nav class="flex justify-center items-center gap-12">
+				{#each contentTree as level}
+					<div
+						class="relative"
+						role="button"
+						tabindex="0"
+						onmouseenter={() => {
+							if (hoverTimeout) {
+								clearTimeout(hoverTimeout);
+								hoverTimeout = null;
+							}
+							handleSubjectMouseEnter(level.id);
+						}}
+						onmouseleave={handleSubjectMouseLeave}
+					>
+						<a 
+							href={`/${level.id}`} 
+							class="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 hover:text-pink-500 dark:hover:text-pink-400 transition-colors duration-200 cursor-pointer"
+						>
+							<level.icon class="size-4" />
+							<span class="font-medium">{EducationalLevelMap[level.id]}</span>
+						</a>
+					</div>
+				{/each}
+			</nav>
+		</div>
+
+		<div class="flex justify-end items-center gap-2 sm:gap-3">
+			<Searchbar 
+				placeholder="Cerca su Sapiens" 
+				hasKeyboardShortcut={false}
+				width='w-92'
+			/>
 			<ThemeToggle />
 			<button
-				onclick={() => { if (session) { accessPrivateRoute() } else { openAuthModal() } }}
+				onclick={clickAccessButton}
 				class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-xl font-semibold text-sm group cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
 			>
 				<span class="flex items-center justify-center gap-2">
@@ -120,16 +110,27 @@
 					{/if}
 				</span>
 			</button>
-			<button
-				onclick={() => { isContactModalOpen = true }}
-				class="btn-primary text-white px-4 sm:px-5 py-2 rounded-xl font-semibold shadow-elegant-lg group cursor-pointer"
-			>
-				<span class="flex items-center gap-2 text-sm">
-					<ls.Calendar class="w-4 h-4" />
-					<span class="hidden sm:inline">Prenota ora</span>
-					<span class="sm:hidden">Prenota</span>
-				</span>
-			</button>
 		</div>
     </div>
+	
+	<!-- Mega Menu -->
+	{#if hoveredLevel}
+		{@const level = contentTree.find(level => level.id === hoveredLevel)}
+		{#if level}
+			<div 
+				class="mega-menu-container"
+				role="menu"
+				tabindex="-1"
+				onmouseenter={handleMenuMouseEnter}
+				onmouseleave={handleMenuMouseLeave}
+			>
+				<SubjectMegaMenu
+					isOpen={true}
+					level={level}
+					headerHeight={headerHeight}
+					onClose={handleMenuMouseLeave}
+				/>
+			</div>
+		{/if}
+	{/if}
 </header>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import * as ls from 'lucide-svelte';
     import { searchStore } from '$lib/components/shared/ui/search.js';
     
@@ -6,12 +6,14 @@
     let isMac = $state(false);
 
     let { 
-        placeholder, 
+        placeholder = 'Cerca', 
         isNullable = true, 
-        classes = '' 
+        classes = '',
+        hasKeyboardShortcut = true,
+        width = 'w-full'
     } = $props();
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
             searchStore.toggleActive();
@@ -31,7 +33,7 @@
     });
 </script>
 
-<div class="relative flex items-center {classes}">
+<div class="relative flex items-center {classes} {width}">
     <div class="absolute left-2 text-zinc-400">
         <ls.Search class="size-5" />
     </div>
@@ -47,7 +49,7 @@
                placeholder:text-zinc-400
                outline-none transition-all duration-200"
         value={searchStore.query}
-        oninput={(e) => searchStore.setQuery(e.target.value)}
+        oninput={(e: Event) => searchStore.setQuery((e.target as HTMLInputElement).value)}
         onfocus={() => searchStore.isActive = true}
         onblur={() => !searchStore.query && (searchStore.isActive = false)}
     />
@@ -62,13 +64,15 @@
             <ls.X size={14} />
         </button>
     {:else}
-        <div
-            class="absolute right-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-md text-sm
-                   transition-colors duration-200 px-2 bg-zinc-200 dark:bg-zinc-800 border border-zinc-500/25"
-            onclick={() => searchStore.clear()}
-            aria-label="Clear search"
-        >
-            {isMac ? '⌘ + K' : 'Ctrl + K'}
-        </div>
+        {#if hasKeyboardShortcut}
+            <div
+                class="absolute right-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-md text-sm
+                    transition-colors duration-200 px-2 bg-zinc-200 dark:bg-zinc-800 border border-zinc-500/25"
+                onclick={() => searchStore.clear()}
+                aria-label="Clear search"
+            >
+                {isMac ? '⌘ + K' : 'Ctrl + K'}
+            </div>
+        {/if}
     {/if}
 </div>

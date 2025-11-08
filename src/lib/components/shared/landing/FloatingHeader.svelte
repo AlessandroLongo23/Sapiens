@@ -54,7 +54,7 @@
 	<div class="flex items-center sm:justify-between justify-center px-2 sm:px-4 py-3">
 		<a href="/" class="hidden sm:flex items-center gap-3">
 			<img src="/icon.png" alt="logo" class="size-8 rounded-md" />
-			<span class="font-semibold text-zinc-900 dark:text-zinc-100">Ale Ripetizioni</span>
+			<span class="font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
 		</a>
 		<nav class="hidden sm:flex items-center gap-6 text-sm">
 			{#each sections as section}

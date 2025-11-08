@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">AleRipetizioni</string>
-    <string name="title_activity_main">AleRipetizioni</string>
+    <string name="app_name">Sapiens</string>
+    <string name="title_activity_main">Sapiens</string>
     <string name="package_name">it.aleripetizioni.app</string>
     <string name="custom_url_scheme">it.aleripetizioni.app</string>
 </resources>

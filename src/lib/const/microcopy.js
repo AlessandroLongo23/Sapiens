@@ -1,18 +1,18 @@
 import { writable } from 'svelte/store';
 
 export const motivational_messages = writable([
-    'Bentornato!',
-    'Come va oggi?',
+    'Bentornato',
+    'Come stai oggi?',
     'Riprendiamo?',
-    'Dove eravamo rimasti?',
-    'Ancora un altro esercizio?',
+    'Continuiamo da dove avevi lasciato?',
+    'Sei pronto per il prossimo esercizio?',
     'Pronto a imparare qualcosa di nuovo?',
 ]);
 
 export const exercise_messages = writable([
-    ["Torniamo alla teoria...", "C'è da studiare!"],
-    ["Puoi fare di meglio!", "Prova ancora!"],
-    ["Ancora qualche esercizio!", "Non mollare!"],
-    ["Ci sei quasi!", "Continua così!"],
-    ["Perfetto!", "Neanche un errore!", "Bravissimo!"],
+    ["Ripassa la teoria", "Rileggi i concetti chiave"],
+    ["Ci sei quasi", "Riprova con calma"],
+    ["Continua ad allenarti", "Stai migliorando"],
+    ["Ottimo lavoro", "Vai avanti così"],
+    ["Perfetto", "Eccellente", "Tutto corretto"],
 ])

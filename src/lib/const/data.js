@@ -1,27 +1,28 @@
-import * as ls from 'lucide-svelte';
+import { PenLine, BookOpen, GraduationCap } from 'lucide-svelte';
+import { BookText, Bot, Clock, Target, Puzzle, HeartHandshake } from 'lucide-svelte';
 import { writable } from 'svelte/store';
 
 export const levelOptions = writable([
     {
         value: 'middle_school',
-        title: 'Scuola Media',
-        subtitle: 'Aiuto compiti e preparazione verifiche',
+        title: 'Scuola media',
+        subtitle: 'Supporto compiti e preparazione verifiche',
         price: '12€/ora',
-        icon: ls.PenLine
+        icon: PenLine
     },
     {
         value: 'high_school',
-        title: 'Scuola Superiore',
-        subtitle: 'Preparazione verifiche e interrogazioni, Recupero debiti formativi',
+        title: 'Scuola superiore',
+        subtitle: 'Preparazione verifiche, interrogazioni e recupero debiti',
         price: '15€/ora',
-        icon: ls.BookOpen
+        icon: BookOpen
     },
     {
         value: 'university',
         title: 'Università',
-        subtitle: 'Corsi universitari e preparazione esami',
+        subtitle: 'Preparazione esami universitari',
         price: '20€/ora',
-        icon: ls.GraduationCap
+        icon: GraduationCap
     }
 ]);
 
@@ -69,53 +70,53 @@ export const dtuImages = writable([
 ]);
 
 export const steps = writable([
-    { number: 1, title: "Livello", description: "Scegli il tuo livello di studio" },
-    { number: 2, title: "Materie", description: "Seleziona le materie di interesse" },
-    { number: 3, title: "Frequenza", description: "Scegli la frequenza delle lezioni" },
-    { number: 4, title: "Contatti", description: "I tuoi dati per essere contattato" }
+    { number: 1, title: "Livello", description: "Indica il tuo livello di studio" },
+    { number: 2, title: "Materie", description: "Seleziona le materie" },
+    { number: 3, title: "Frequenza", description: "Indica la frequenza delle lezioni" },
+    { number: 4, title: "Contatti", description: "I tuoi dati" }
 ]);
 
 export const frequencyOptions = writable([
-    { value: 'singola', title: 'Lezione Singola', subtitle: 'Una sola lezione (no svolgimento esami)' },
-    { value: 'breve', title: '2-5 Lezioni', subtitle: 'Aiuto a breve termine' },
-    { value: 'lungo', title: 'Supporto Continuativo', subtitle: 'Percorso personalizzato' }
+    { value: 'singola', title: 'Lezione singola', subtitle: 'Una sola lezione' },
+    { value: 'breve', title: '2-5 lezioni', subtitle: 'Supporto a breve termine' },
+    { value: 'lungo', title: 'Supporto continuativo', subtitle: 'Percorso personalizzato' }
 ]);
 
 export const methodCards = writable([
     { 
-        title: 'Materiale Completo',
+        title: 'Materiale completo',
         color: 'bg-gradient-to-br from-green-500 to-emerald-600',
-        icon: ls.BookText, 
-        description: 'Fornisco appunti dettagliati e materiale didattico personalizzato su tutti gli argomenti, permettendoti di concentrarti sulla comprensione anziché sulla trascrizione.'
+        icon: BookText, 
+        description: 'Teoria dettagliata e formulari su tutti gli argomenti. Ti concentri sulla comprensione, non sulla trascrizione.'
     },
     { 
-        title: 'Esercizi Illimitati', 
+        title: 'Esercizi illimitati', 
         color: 'bg-gradient-to-br from-blue-500 to-indigo-600',
-        icon: ls.Bot, 
-        description: 'Un\'IA dedicata genera esercizi illimitati con diversi livelli di difficoltà, permettendoti di raggiungere la completa padronanza.'
+        icon: Bot, 
+        description: 'Esercizi generati automaticamente con diversi livelli di difficoltà. Ti alleni fino a raggiungere la completa padronanza.'
     },
     { 
-        title: 'Ritmo Personalizzato', 
+        title: 'Ritmo personalizzato', 
         color: 'bg-gradient-to-br from-purple-500 to-pink-600',
-        icon: ls.Clock, 
-        description: 'Adatto il ritmo delle lezioni alle tue esigenze, assicurandomi che ogni concetto sia pienamente compreso prima di passare al successivo.'
+        icon: Clock, 
+        description: 'Studi al tuo ritmo. Ogni concetto è spiegato chiaramente prima di passare al successivo.'
     },
     { 
-        title: 'Obiettivi Chiari', 
+        title: 'Obiettivi chiari', 
         color: 'bg-gradient-to-br from-orange-500 to-red-600',
-        icon: ls.Target, 
-        description: 'Stabiliamo insieme obiettivi concreti e misurabili, con un percorso personalizzato per raggiungerli nel modo più efficace.'
+        icon: Target, 
+        description: 'Definisci obiettivi concreti e misurabili. Segui un percorso strutturato per raggiungerli con efficacia.'
     },
     { 
-        title: 'Metodo di Studio', 
+        title: 'Metodo di studio', 
         color: 'bg-gradient-to-br from-yellow-500 to-amber-600',
-        icon: ls.Puzzle, 
-        description: 'Ti insegno strategie efficaci di apprendimento che potrai applicare autonomamente anche dopo il nostro percorso insieme.'
+        icon: Puzzle, 
+        description: 'Impari strategie efficaci di apprendimento che puoi applicare in autonomia per qualsiasi materia.'
     },
     { 
-        title: 'Supporto Continuo', 
+        title: 'Supporto continuo', 
         color: 'bg-gradient-to-br from-pink-500 to-rose-600',
-        icon: ls.HeartHandshake, 
-        description: 'Rimango disponibile anche fuori dalle lezioni per rispondere ai tuoi dubbi e aiutarti a superare gli ostacoli nel percorso di apprendimento.' 
+        icon: HeartHandshake, 
+        description: 'Con Premium hai supporto disponibile anche fuori dalle lezioni per rispondere ai tuoi dubbi.' 
     }
 ]);

@@ -2,7 +2,7 @@
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { designSystem } from '$lib/const/appearance.js';
-	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
+	import { themeStore } from '$lib/components/shared/ui/theme/theme.ts';
 	import { Chart } from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import * as ls from 'lucide-svelte';

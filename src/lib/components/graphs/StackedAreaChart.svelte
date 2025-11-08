@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
-	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
+	import { themeStore } from '$lib/components/shared/ui/theme/theme.ts';
 	import { designSystem } from '$lib/const/appearance.js';
 	
 	let { 

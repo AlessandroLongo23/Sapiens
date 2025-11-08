@@ -3,7 +3,7 @@
 	import { subjectsStore } from '$lib/stores/subjects.js';
 	import { lecturesStore } from '$lib/stores/lectures.js';
 	import { formatCurrency } from '$lib/utils/format.svelte.js';
-	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
+	import { themeStore } from '$lib/components/shared/ui/theme/theme.ts';
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { designSystem } from '$lib/const/appearance.js';
 	import { format, parseISO } from 'date-fns';

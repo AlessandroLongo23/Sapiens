@@ -1,4 +1,4 @@
-package it.aleripetizioni.app;
+package it.sapiens.app;
 
 import com.getcapacitor.BridgeActivity;
 

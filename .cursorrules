@@ -191,3 +191,279 @@ Documentation
 - Paraglide.js Documentation: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/usage
 
 Refer to Svelte, SvelteKit, and Paraglide.js documentation for detailed information on components, internationalization, and best practices.
+
+
+# 🧠 SAPIENS DESIGN SYSTEM  
+**Version:** 1.0  
+**Stack:** Svelte + TailwindCSS  
+**Font:** Inter (preferred) / Geist (optional)
+
+---
+
+## 1. Brand Identity
+- **Essence:** “Smart help for smart learners.”
+- **Personality:** Calm · Competent · Friendly · Respectful · Trustworthy.
+- **Tone:** Encouraging and intelligent — the voice of a smart friend who helps, not a teacher who lectures.
+- **Target audience:** Students from middle school to university.
+- **Design goal:** Academic, structured, and professional — but warm, safe, and easy to navigate.
+
+---
+
+## 2. Color System
+
+| Role | Light mode | Dark mode | Notes |
+|------|-------------|------------|-------|
+| **Background** | `#F8FAFC` | `#0B0E11` | Soft neutral for comfortable reading |
+| **Surface** | `#FFFFFF` | `#12161B` | Cards, panels, modals |
+| **Text / Primary** | `#111827` | `#F9FAFB` | High contrast but not harsh |
+| **Text / Secondary** | `#4B5563` | `#9CA3AF` | For secondary content |
+| **Accent (Sapiens Pink)** | `#EC4899` | `#F472B6` | Matches the logo (Tailwind’s pink-500/400) |
+| **Border / Line** | `#E5E7EB` | `#1F2937` | Dividers, outlines |
+| **Success** | `#10B981` | `#34D399` | Confirmations, completed actions |
+| **Error** | `#EF4444` | `#F87171` | Validation, critical states |
+| **Warning** | `#F59E0B` | `#FBBF24` | Caution or attention |
+| **Info** | `#3B82F6` | `#60A5FA` | Helpful information |
+
+**Usage Notes**
+- Keep **Sapiens Pink** as the main accent — avoid overuse.  
+- Rely on **neutral tones** and **typographic hierarchy** rather than bright colors.  
+- Backgrounds are slightly off-white for better visual comfort.
+
+---
+
+## 3. Typography
+
+**Primary font:** [Inter](https://fonts.google.com/specimen/Inter)  
+**Alternative:** [Geist](https://vercel.com/font)
+
+| Role | Weight | Size (rem) | Line height | Example use |
+|------|---------|-------------|--------------|--------------|
+| Display (H1) | 700 | 2.25 | 1.2 | Page titles |
+| Heading (H2) | 600 | 1.75 | 1.3 | Section titles |
+| Heading (H3) | 600 | 1.5 | 1.4 | Subsections |
+| Body | 400 | 1 | 1.6 | Paragraphs |
+| Small | 500 | 0.875 | 1.5 | Captions, metadata |
+
+**Guidelines**
+- Use consistent vertical rhythm.  
+- Keep generous white space around text.  
+- Prefer sentence case for headings (e.g. “My Courses” not “MY COURSES”).
+
+---
+
+## 4. Spacing & Layout
+
+- **Base unit:** `4px` (Tailwind spacing scale).  
+- **Common values:** 8px, 16px, 24px, 32px.  
+- **Container widths:**
+  - Content: `max-w-5xl`
+  - Sidebar layouts: `max-w-7xl`
+- **Grid:** 12-column responsive grid with consistent gutters.  
+- **Alignment:** Keep consistent padding on both desktop and mobile views.
+
+---
+
+## 5. Radius, Shadows, and Depth
+
+**Border radius**
+- Small elements (inputs, tags): `rounded-md`
+- Buttons & cards: `rounded-xl`
+- Larger containers: `rounded-2xl`
+
+**Shadows**
+- Use soft, subtle shadows:
+  - `shadow-sm` for small elevation
+  - `shadow-md` for modals and dropdowns
+- Avoid heavy or colored shadows.
+
+---
+
+## 6. Interaction & Motion
+
+**Principles**
+- Smooth, minimal, purposeful.  
+- Motions should guide understanding — not distract.
+
+**Transitions**
+- Duration: `200–300ms`
+- Timing: `ease-in-out`
+- Properties: opacity, scale, background, or shadow.
+
+**Examples**
+```html
+<button class="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-md" />
+
+
+# Copy/microcopy directives
+Linee guida per copy e microcopy — SAPIENS
+
+Questa sezione è pensata per essere copiata/incollata nel tuo cursorrules.md. Contiene regole pratiche, esempi e anti-esempi per il tono, la voce del brand e i piccoli testi dell'interfaccia (microcopy). Serve a rendere coerente l’esperienza verbale di Sapiens: professionale, accogliente, chiara — la voce di un amico intelligente che ti guida nello studio.
+
+1. Identità verbale del brand
+
+Essenza: Sapiens è un compagno di studio affidabile e intelligente.
+Personalità: Calma · Competente · Abbordabile · Rispettosa · Incoraggiante.
+Scopo della comunicazione: aiutare chi studia a capire, muoversi e fare progressi con chiarezza e serenità.
+
+Regola d’oro: sii utile prima di essere carino. La microcopy deve ridurre l’ansia dello studente, non aumentarla.
+
+2. Tono e registro
+
+Persona grammaticale: tu (seconda persona singolare). Motivazione: più vicino allo studente, più naturale.
+
+Formalità: semi-formale — cortese ma non distante. Evitare tono accademico “autoreferenziale”.
+
+Lunghezza: frasi brevi, preferibilmente ≤ 20 parole.
+
+Voce: attiva («Salva il corso») non passiva («Il corso è stato salvato da te»).
+
+Tempo verbale: presente per istruzioni e stati; passato prossimo/perfetto per conferme di azioni concluse.
+
+Non usare: tono imperativo autoritario, linguaggio pomposo, gergo tecnico non necessario.
+
+3. Scelte lessicali (glossario di prodotto)
+
+Usa questi termini preferenziali per uniformare il linguaggio:
+
+Contesto	Preferire	Evitare
+Docente / insegnante	docente, tutor	“professore” (può suonare distante/autoritario)
+Lezioni individuali	lezione privata, lezione individuale	“ripetizione” (ha connotazioni negative per alcuni)
+Account premium	Premium / Sapiens Premium	“upgrade” come verbo troppo aggressivo
+Salvataggio / preferiti	Salva, Aggiungi ai preferiti	“Metti in archivio”
+Errori	Problema, Impossibile	Frasi che incolpano l’utente (“Hai sbagliato”)
+
+
+
+# 🧠 Prompt per la generazione di contenuti didattici — SAPIENS
+
+### Obiettivo
+Generare contenuti di studio in lingua italiana destinati a studenti delle scuole medie, superiori o università.  
+Il testo deve rispettare l’identità e la voce del brand **Sapiens**: chiaro, professionale ma amichevole, strutturato e accessibile.
+
+---
+
+### 🎓 Identità e tono del brand
+
+- **Voce:** un *compagno di studio intelligente*, non un professore.  
+- **Tono:** chiaro, rassicurante, curioso, mai rigido o paternalistico.  
+- **Personalità:** competente, affidabile, empatica, orientata alla comprensione.  
+- **Stile comunicativo:** spiegazioni semplici ma accurate, con esempi pratici.  
+- **Registro linguistico:** italiano corretto e fluido, adatto a studenti (14–25 anni).  
+- **Scopo del contenuto:** facilitare la comprensione, non impressionare con complessità.  
+- **Evita:** eccesso di tecnicismi, formule accademiche, linguaggio arido o troppo informale.
+
+---
+
+### 📘 Struttura del contenuto (linee guida generali)
+
+Ogni lezione o spiegazione dovrebbe includere:
+
+1. **Titolo chiaro e sintetico**
+   - Esempio: “Il Teorema di Pitagora e le sue applicazioni pratiche”
+
+2. **Introduzione breve**
+   - 2–3 frasi per contestualizzare l’argomento e spiegarne la rilevanza.
+   - Esempio: “Il Teorema di Pitagora è una delle basi della geometria. Serve a calcolare distanze e relazioni fra i lati di un triangolo rettangolo.”
+
+3. **Corpo principale**
+   - Organizzato in sezioni con sottotitoli (`###` o `####`) chiari.  
+   - Alternare spiegazioni teoriche, esempi pratici, e brevi esercizi guidati.  
+   - Ogni concetto deve essere spiegato in modo progressivo (dal semplice al complesso).  
+
+4. **Esempi concreti**
+   - Inserire almeno un esempio pratico o applicativo per ogni concetto chiave.
+   - Esempio: “Se un triangolo ha i cateti di 3 e 4 cm, l’ipotenusa sarà √(3² + 4²) = 5 cm.”
+
+5. **Riepilogo finale**
+   - 3–5 bullet point con le nozioni principali apprese.  
+   - Es.:  
+     - Il Teorema di Pitagora collega i lati di un triangolo rettangolo.  
+     - È valido solo per triangoli con un angolo retto.  
+     - Formula: \( a^2 + b^2 = c^2 \).
+
+6. **(Opzionale) Spunti di approfondimento**
+   - Link a concetti correlati o domande aperte per stimolare curiosità.
+
+---
+
+### ✏️ Stile linguistico e formattazione
+
+- Usa un linguaggio **diretto e conversazionale**, ma **sempre corretto**.
+- Prediligi **frasi brevi**, con soggetto e verbo espliciti.
+- Introduci concetti difficili con **metafore o esempi quotidiani**.
+- Usa **elenco puntato** per migliorare la leggibilità.
+- Evita parentesi e subordinate troppo lunghe.
+- Quando serve la formula matematica o il codice, formattala chiaramente (es. blocchi di codice o LaTeX inline).
+- Inserisci **termini tecnici solo quando indispensabili**, spiegandoli subito dopo.
+
+---
+
+### 💬 Esempi di tono
+
+**Do**
+> Immagina di voler calcolare la distanza fra due punti su una mappa: puoi usare il Teorema di Pitagora. È lo stesso principio che usano i GPS per stimare la distanza “in linea d’aria”.
+
+**Don't**
+> Il Teorema di Pitagora è una proposizione fondamentale della geometria euclidea che stabilisce una relazione invariabile fra le misure dei lati di un triangolo rettangolo.
+
+---
+
+### ⚙️ Parametri consigliati per generare contenuti
+
+- **Lingua:** Italiano  
+- **Livello:** specificare uno fra “scuola media”, “scuola superiore”, “università”  
+- **Tipologia:** lezione · sintesi · approfondimento · eserciziario  
+- **Lunghezza:** 400–800 parole per spiegazioni; 1000–1500 per approfondimenti  
+- **Output:** markdown (con titoli, elenchi, evidenziazioni e blocchi codice se necessario)
+
+---
+
+### 🧩 Prompt di base (da usare nei comandi generativi)
+
+> Crea un contenuto didattico per [livello scolastico] sull’argomento “[titolo o tema]”.  
+> Il testo deve essere scritto in **italiano chiaro e accessibile**, con il tono di **Sapiens** — un compagno di studio intelligente, rassicurante e competente.  
+> Segui la struttura:
+> 1. Titolo  
+> 2. Introduzione breve e motivante  
+> 3. Spiegazione suddivisa in sezioni ordinate e progressive  
+> 4. Esempi concreti e applicazioni  
+> 5. Riepilogo finale con punti chiave  
+> 6. (Facoltativo) Spunti o domande per riflettere  
+>
+> Mantieni uno stile **amichevole, ordinato, e didattico**.  
+> Non usare linguaggio accademico né eccessivamente tecnico.  
+> Se il tema è complesso, spiega i termini in modo semplice.  
+> Usa formattazione markdown per leggibilità.
+
+---
+
+### 💡 Esempio d’uso pratico
+
+**Prompt:**
+> Crea un contenuto per studenti delle scuole superiori sull’argomento “La fotosintesi clorofilliana”. Segui le linee guida Sapiens.
+
+**Output atteso (estratto):**
+```markdown
+# La fotosintesi clorofilliana
+
+La fotosintesi è il processo attraverso cui le piante producono il proprio nutrimento, trasformando l’energia del sole in energia chimica.  
+È un meccanismo essenziale per la vita sulla Terra.
+
+## Come funziona
+Durante la fotosintesi, le foglie assorbono anidride carbonica (CO₂) e acqua (H₂O), che vengono trasformate in glucosio e ossigeno grazie alla luce solare.
+
+**Formula:**
+6 CO₂ + 6 H₂O → C₆H₁₂O₆ + 6 O₂
+
+## Perché è importante
+- Mantiene l’equilibrio dei gas nell’atmosfera.  
+- Fornisce energia e materia a quasi tutti gli esseri viventi.  
+- È alla base delle catene alimentari.
+
+## Riepilogo
+- La fotosintesi trasforma luce in energia chimica.  
+- Avviene nelle foglie, grazie alla clorofilla.  
+- Produce ossigeno e glucosio, fondamentali per la vita.
+
+## Domanda per riflettere
+Come cambierebbe la vita sulla Terra se la fotosintesi si fermasse?

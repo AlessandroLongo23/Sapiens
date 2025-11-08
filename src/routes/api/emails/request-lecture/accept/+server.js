@@ -101,7 +101,7 @@ export async function GET({ url, cookies }) {
 							<p><strong>Data:</strong> ${data[0].date}</p>
 							<p><strong>Orario:</strong> ${data[0].start_time} - ${data[0].end_time}</p>
 						</div>
-						<a href="https://ale-ripetizioni.vercel.app/admin/calendario" class="button">Vai al Calendario</a>
+						<a href="https://sapiens.vercel.app/admin/calendario" class="button">Vai al Calendario</a>
 					</div>
 				</body>
 			</html>

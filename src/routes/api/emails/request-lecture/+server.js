@@ -62,7 +62,7 @@ export async function POST({ request, url, cookies }) {
 				};
 				
 				const { data, error } = await resend.emails.send({
-					from: 'AleRipetizioni <onboarding@resend.dev>',
+					from: 'Sapiens <onboarding@resend.dev>',
 					to: ['longoa02@gmail.com'],
 					subject: `Nuova Proposta di Lezione da ${first_name} ${last_name}`,
 					html: `
@@ -98,7 +98,7 @@ export async function POST({ request, url, cookies }) {
 							</tr>
 							<tr>
 								<td align="center" style="padding: 20px; background-color: #f4f4f4; color: #666666; font-size: 12px;">
-									<p style="margin: 0;">Email inviata dal sito AleRipetizioni</p>
+									<p style="margin: 0;">Email inviata dal sito Sapiens</p>
 								</td>
 							</tr>
 						</table>
@@ -129,7 +129,7 @@ export async function POST({ request, url, cookies }) {
 		const acceptToken = generateActionToken(lectureId, 'accept');
 		const refuseToken = generateActionToken(lectureId, 'refuse');
 		
-		const baseUrl = "https://ale-ripetizioni.vercel.app";
+		const baseUrl = "https://sapiens.vercel.app";
 		const acceptUrl = `${baseUrl}/api/emails/request-lecture/accept?token=${acceptToken}&id=${lectureId}`;
 		const refuseUrl = `${baseUrl}/api/emails/request-lecture/refuse?token=${refuseToken}&id=${lectureId}`;
 
@@ -189,7 +189,7 @@ export async function POST({ request, url, cookies }) {
 				</tr>
 				<tr>
 					<td align="center" style="padding: 20px; background-color: #f4f4f4; color: #666666; font-size: 12px;">
-						<p style="margin: 0;">Email inviata dal sito AleRipetizioni</p>
+						<p style="margin: 0;">Email inviata dal sito Sapiens</p>
 					</td>
 				</tr>
 			</table>
@@ -211,7 +211,7 @@ export async function POST({ request, url, cookies }) {
 		
 		try {
 			const { data, error } = await resend.emails.send({
-				from: 'AleRipetizioni <onboarding@resend.dev>',
+				from: 'Sapiens <onboarding@resend.dev>',
 				to: ['longoa02@gmail.com'],
 				subject: `Nuova Proposta di Lezione da ${first_name} ${last_name}`,
 				html: emailHtml

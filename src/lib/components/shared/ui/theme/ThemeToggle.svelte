@@ -1,6 +1,6 @@
 <script>
 	import * as ls from 'lucide-svelte';
-	import { themeStore } from '$lib/components/shared/ui/theme/theme.js';
+	import { themeStore } from '$lib/components/shared/ui/theme/theme.ts';
 
 	const toggleTheme = () => {
 		const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';

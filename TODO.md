@@ -1,24 +1,49 @@
 ## TO DO
 
-- [ ] admin calendar preferences
-- [ ] setup up aleripetizioni2024@gmail.com as the email receiver
+- [ ] add a lot of content
 - [ ] add editor to write new content
-- [ ] move theory md files to supabase storage
-- [ ] refactor EarningsWidget code to be more organized, flexible and fast
+- [ ] move theory md files to database
 - [ ] track students activity (completing exercises)
-- [ ] add missing content
-- [ ] prospetto del guadagno mensile (oggi > ultima_lezione: 30 / oggi * ricavo else: 30 / ultima_lezione * ricavo)
-- [ ] rendere la lezione ricorrente (fino alla fine del mese)
-- [ ] se uno inserisce un link ad una pagina privata, invece di redirezionare alla landing page, apre il modale di login e, se autenticato, manda alla pagina a cui stava provando ad accedere
+- [ ] se uno inserisce un link ad una pagina pro, controllo della subscription
 
-## DONE
+aggiungere mascotte, 4 personaggi. Ognuno una personalità diversa per l'AI (in futuro uno per ogni branca: matematica, fisica, informatica, chimica)
 
-- [x] fix supabase authentication
-- [x] move in the whole TutorTrack project
-- [x] add professor dashboard
-- [x] add content structure editing
-- [x] add student account creation
-- [x] students lectures proposals
-- [x] add calendar
-- [x] add form for students to add a new review
-- [x] fix reviews not showing (and Universita instead of Università)
+1. piano free (solo teoria, pubblicità)
+2. piano lite (anche esercizi, formulari)
+3. piano base (Sapiens AI)
+4. piano pro (anche ripetizioni e svolgimento esercizi)
+
+- breadcrumb
+- conoscenze pregresse
+- tanti link interni tra le pagine del contenuto
+- tizk -> webp
+- suddivisione in sotto-aree
+  - matematica
+    - algebra
+    - geometria
+    - probabilità
+
+  - fisica
+    - meccanica
+    - fluidodinamica
+    - relatività
+
+  - chimica ?
+  - informatica ? 
+
+## APP
+L'applicazione deve essere complementare al sito, non una copia
+- utente fa la foto con il telefono e immediatamente compare sul sito la soluzione
+- chat con me e invio di esercizi
+
+## Marketing
+- instagram
+- facebook
+- tiktok
+- youtube
+
+Contenuti:
+- shorts con brevi dimostrazioni o animazioni (manim)
+- video promozionali 
+
+## WEB APP
