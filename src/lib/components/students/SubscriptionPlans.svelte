@@ -1,6 +1,6 @@
 <script>
-	import { Check, Sparkles } from 'lucide-svelte';
-	import { SUBSCRIPTION_PLANS, formatPrice } from '$lib/stripe/config.js';
+	import { Check, Sparkles, X } from 'lucide-svelte';
+	import { SUBSCRIPTION_PLANS, formatPrice, FeaturesDescriptions, canAccessFeature, Features } from '$lib/stripe/config.js';
 
 	let { currentPlan = 'free', onSelectPlan } = $props();
 
@@ -61,10 +61,14 @@
 						</div>
 
 						<ul class="space-y-3 mb-8">
-							{#each plan.features as feature}
+							{#each Object.values(Features) as feature}
 								<li class="flex items-start gap-3">
-									<Check class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-									<span class="text-sm text-zinc-700 dark:text-zinc-300">{feature}</span>
+									{#if canAccessFeature(plan.id, feature)}
+										<Check class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+									{:else}
+										<X class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+									{/if}
+									<span class="text-sm text-zinc-700 dark:text-zinc-300">{FeaturesDescriptions[feature]}</span>
 								</li>
 							{/each}
 						</ul>
