@@ -48,11 +48,15 @@
 						</h3>
 
 						<div class="mb-6">
-							<span class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-								{formatPrice(plan.price, plan.currency)}
-							</span>
 							{#if plan.price > 0}
+								<span class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+									{formatPrice(plan.price, plan.currency)}
+								</span>
 								<span class="text-zinc-600 dark:text-zinc-400">/mese</span>
+							{:else}
+								<span class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+									Gratis
+								</span>
 							{/if}
 						</div>
 

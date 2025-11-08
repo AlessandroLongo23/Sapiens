@@ -102,14 +102,14 @@ The Sapiens website is structured into three main sections:
 ## 2. CONTENT SECTION (Dynamic Routing)
 
 ### Routing Structure
-**Pattern:** `/[level]/[subject_id]/[chapter]/[topic]/[subtopic]?/[content_type]?`
+**Pattern:** `/[level_id]/[subject_id]/[chapter_id]/[topic_id]/[subtopic_id]?/[content_type]?`
 
 **Parameters:**
-- `level`: `medie`, `superiori`, `universita` (Educational level - FIRST LAYER)
-- `subject_id`: `math`, `physics`, `chemistry`, `computer-science` (Subject - SECOND LAYER)
-- `chapter`: `algebra`, `geometria`, `meccanica`, etc. (Macro topic/chapter - THIRD LAYER)
-- `topic`: `equazioni-primo-grado`, `teorema-pitagora`, etc. (Specific topic - FOURTH LAYER)
-- `subtopic`: specific subtopic slug (optional subtopic - FIFTH LAYER)
+- `level_id`: `middle_school`, `high_school`, `university` (Educational level - FIRST LAYER)
+- `subject_id`: `math`, `physics`, `chemistry`, `computer-science`, ecc. (Subject - SECOND LAYER)
+- `chapter_id`: `algebra`, `geometria`, `meccanica`, etc. (Macro topic/chapter - THIRD LAYER)
+- `topic_id`: `equazioni-primo-grado`, `teorema-pitagora`, etc. (Specific topic - FOURTH LAYER)
+- `subtopic_id`: specific subtopic slug (optional subtopic - FIFTH LAYER)
 - `content_type`: `teoria`, `esercizi`, `formulario`, `schemi`, ecc. (type of )
 
 ### 2.1 Content Overview / Levels List
@@ -133,7 +133,7 @@ The Sapiens website is structured into three main sections:
 - **Status:** ❌ Missing (needs to be created)
 
 ### 2.3 Subject Page
-- **Route:** `/[level]/[subject_id]`
+- **Route:** `/[level]/[subject]`
   - Examples: `/superiori/math`, `/medie/physics`, `/universita/computer-science`
 - **Description:** Subject overview showing available chapters
 - **Content:** 
@@ -142,10 +142,10 @@ The Sapiens website is structured into three main sections:
   - Learning objectives
   - Prerequisites (if any)
   - Related subjects
-- **Status:** ⚠️ Partially exists (old structure `/[subject_id]`)
+- **Status:** ⚠️ Partially exists (old structure `/[subject]`)
 
 ### 2.4 Chapter Page
-- **Route:** `/[level]/[subject_id]/[chapter]`
+- **Route:** `/[level]/[subject]/[chapter]`
   - Examples: `/superiori/math/algebra`, `/superiori/math/geometria`, `/universita/physics/meccanica`
 - **Description:** Chapter overview showing topics within the chapter
 - **Content:** 
@@ -158,7 +158,7 @@ The Sapiens website is structured into three main sections:
 - **Status:** ❌ Missing (needs to be created)
 
 ### 2.5 Topic Page
-- **Route:** `/[level]/[subject_id]/[chapter]/[topic]`
+- **Route:** `/[level]/[subject]/[chapter]/[topic]`
   - Examples: 
     - `/superiori/math/algebra/equazioni-primo-grado`
     - `/medie/physics/meccanica/movimento-base`
@@ -174,7 +174,7 @@ The Sapiens website is structured into three main sections:
 - **Status:** ❌ Missing (needs to be created)
 
 ### 2.6 Subtopic / Content Detail Page
-- **Route:** `/[level]/[subject_id]/[chapter]/[topic]/[subtopic]`
+- **Route:** `/[level]/[subject]/[chapter]/[topic]/[subtopic]`
   - Examples: 
     - `/superiori/math/algebra/equazioni-primo-grado/teoria`
     - `/superiori/math/algebra/equazioni-primo-grado/esercizi`
@@ -585,7 +585,7 @@ All student routes are prefixed with `/student` and require authentication.
 
 ### Content Routing Pattern (Updated):
 ```
-/[level]/[subject_id]/[chapter]/[topic]/[subtopic]?/[content_type]
+/[level]/[subject]/[chapter]/[topic]/[subtopic]?/[content_type]
 ```
 
 ### Complete Route Examples:
@@ -642,7 +642,7 @@ Level (medie/superiori/universita)
 
 ### Database Schema Considerations:
 - Update `content_nodes` table to reflect new path structure
-- Path format: `[level, subject_id, chapter, topic, subtopic?]`
+- Path format: `[level, subject, chapter, topic, subtopic?]`
 - Remove year from path structure
 - Update indexes for efficient querying
 
@@ -660,8 +660,8 @@ Level (medie/superiori/universita)
 1. ✅ Update content routing structure (remove year, swap level/subject)
 2. ✅ Update data model (`subjects-topics.ts`)
 3. ✅ Create level overview pages (`/[level]`)
-4. ✅ Create chapter pages (`/[level]/[subject_id]/[chapter]`)
-5. ✅ Create topic pages (`/[level]/[subject_id]/[chapter]/[topic]`)
+4. ✅ Create chapter pages (`/[level]/[subject]/[chapter]`)
+5. ✅ Create topic pages (`/[level]/[subject]/[chapter]/[topic]`)
 
 ### Phase 2 (Important - Student Features):
 1. ✅ Create Zaino section (main page, Libri, Quaderni)

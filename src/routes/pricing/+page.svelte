@@ -85,25 +85,6 @@
 			</div>
 		{/if}
 
-		<div class="mb-8">
-			<h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-				Il tuo abbonamento
-			</h1>
-			<p class="text-zinc-600 dark:text-zinc-400">
-				Gestisci il tuo piano e aggiorna le preferenze
-			</p>
-		</div>
-
-		{#if subscription}
-			<div class="mb-12">
-				<SubscriptionStatus
-					plan={subscription.plan}
-					status={subscription.status}
-					onManageSubscription={handleManageSubscription}
-				/>
-			</div>
-		{/if}
-
 		<SubscriptionPlans
 			currentPlan={subscription?.plan || 'free'}
 			onSelectPlan={handleSelectPlan}

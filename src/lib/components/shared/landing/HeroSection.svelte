@@ -1,6 +1,6 @@
 <script>
 	import GrainyBackground from './background/GrainyBackground.svelte';
-	import * as ls from 'lucide-svelte';
+	import { GraduationCap, BookOpen, ChevronDown } from 'lucide-svelte';
 
     let { 
         heroSection = $bindable(null),
@@ -47,18 +47,18 @@
 				<!-- CTAs -->
 				<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
 					<a
-						href="/student/subscription"
+						href="/pricing"
 						class="group inline-flex items-center justify-center gap-2 bg-pink-500 hover:bg-pink-600 dark:bg-pink-400 dark:hover:bg-pink-500 text-white px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
 					>
-						<ls.GraduationCap class="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:rotate-12" />
+						<GraduationCap class="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:rotate-12" />
 						<span>Scopri i piani</span>
 					</a>
 
 					<a
-						href="/#materie"
+						href="/search"
 						class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#12161B] border border-gray-300 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-700 text-gray-900 dark:text-slate-50 px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
 					>
-						<ls.BookOpen class="w-5 h-5" />
+						<BookOpen class="w-5 h-5" />
 						<span>Esplora materiale</span>
 					</a>
 				</div>
@@ -98,11 +98,11 @@
 	</div>
 
 	<!-- Scroll indicator -->
-	<a 
+	<!-- <a 
 		href="#about" 
 		aria-label="Scopri di più"
 		class="hidden sm:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bottom-8 w-10 h-10 rounded-full border border-gray-300 dark:border-gray-800 bg-white/80 dark:bg-[#12161B]/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 shadow-sm hover:shadow-md hover:border-pink-500 dark:hover:border-pink-400 transition-all duration-300 ease-in-out animate-bounce"
 	>
-		<ls.ChevronDown class="w-5 h-5" />
-	</a>
+		<ChevronDown class="w-5 h-5" />
+	</a> -->
 </section>

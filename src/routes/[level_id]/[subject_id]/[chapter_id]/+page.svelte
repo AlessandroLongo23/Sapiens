@@ -1,0 +1,226 @@
+<script lang="ts">
+	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
+	import { fade, fly } from 'svelte/transition';
+	import { BookOpen } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+
+	import Breadcrumb from '$lib/components/shared/Breadcrumb.svelte';
+	import TopicCardNew from '$lib/components/cards/TopicCardNew.svelte';
+
+	let level_id = $derived(page.params.level_id);
+	let subject_id = $derived(page.params.subject_id);
+	let chapter_id = $derived(page.params.chapter_id);
+
+	let levelData = $derived.by(() => {
+		if (!level_id) return null;
+		return contentTree.find((l) => l.id === level_id);
+	});
+
+	let subjectData = $derived.by(() => {
+		if (!levelData || !subject_id) return null;
+		return levelData.subjects.find((s) => s.id === subject_id);
+	});
+
+	let chapterData = $derived.by(() => {
+		if (!subjectData || !chapter_id) return null;
+		return subjectData.chapters.find((c) => c.id === chapter_id);
+	});
+
+	let levelInfo = $derived.by(() => {
+		if (!levelData) return null;
+		return {
+			name: EducationalLevelMap[levelData.id],
+			icon: levelData.icon
+		};
+	});
+
+	let isLoading = $derived(!chapterData || !subjectData || !levelInfo);
+
+	let breadcrumbItems = $derived.by(() => {
+		if (!levelInfo || !subjectData || !chapterData) return [];
+		return [
+			{ label: 'Home', path: '/' },
+			{ label: levelInfo.name, path: `/${level_id}` },
+			{ label: subjectData.name, path: `/${level_id}/${subject_id}` },
+			{ label: chapterData.name }
+		];
+	});
+</script>
+
+<svelte:head>
+	<title>
+		{chapterData?.name || 'Capitolo'} - {subjectData?.name || 'Materia'} - {levelInfo?.name || 'Livello'} - Sapiens
+	</title>
+	<meta
+		name="description"
+		content="Esplora gli argomenti del capitolo {chapterData?.name || 'questo capitolo'} di {subjectData?.name || 'questa materia'} per {levelInfo?.name || 'questo livello'}."
+	/>
+</svelte:head>
+
+<div class="min-h-screen bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+		{#if isLoading}
+			<div class="flex justify-center items-center h-96">
+				<div
+					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"
+				></div>
+			</div>
+		{:else if chapterData && subjectData && levelInfo}
+			<!-- Header Section -->
+			<header
+				class="mb-8 sm:mb-12"
+				in:fade={{ duration: 300 }}
+			>
+				<!-- Breadcrumb Navigation -->
+				<Breadcrumb items={breadcrumbItems} />
+
+				<!-- Chapter Title and Icon -->
+				<div class="flex items-start gap-4 sm:gap-6 mb-6">
+					{#if chapterData.icon}
+						{@const ChapterIcon = chapterData.icon}
+						<div
+							class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-500/5 dark:from-pink-500/20 dark:to-pink-500/10 shadow-lg"
+						>
+							<ChapterIcon
+								class="w-8 h-8 sm:w-10 sm:h-10 text-pink-500 dark:text-pink-400"
+							/>
+						</div>
+					{/if}
+
+					<div class="flex-1">
+						<h1
+							class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-3"
+						>
+							{chapterData.name}
+						</h1>
+						<p
+							class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl"
+						>
+							Esplora gli argomenti di questo capitolo. Trova teoria, esercizi e risorse per
+							approfondire ogni concetto.
+						</p>
+					</div>
+				</div>
+
+				<!-- Stats -->
+				{#if chapterData.topics.length > 0}
+					<div
+						class="flex flex-wrap items-center gap-4 sm:gap-6 p-4 sm:p-6 rounded-xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800"
+					>
+						<div class="flex items-center gap-2">
+							<div
+								class="p-2 rounded-lg bg-pink-500/10 dark:bg-pink-500/20"
+							>
+								<BookOpen class="w-4 h-4 text-pink-500 dark:text-pink-400" />
+							</div>
+							<div>
+								<div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+									{chapterData.topics.length}
+								</div>
+								<div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+									{chapterData.topics.length === 1 ? 'Argomento' : 'Argomenti'}
+								</div>
+							</div>
+						</div>
+					</div>
+				{/if}
+			</header>
+
+			<!-- Topics Grid -->
+			{#if chapterData.topics.length > 0}
+				<section
+					class="mb-8"
+					in:fade={{ duration: 400, delay: 100 }}
+				>
+					<h2
+						class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6"
+					>
+						Argomenti disponibili
+					</h2>
+
+					<div
+						class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
+					>
+						{#each chapterData.topics as topic, index (topic.id)}
+							<div
+								in:fly={{ y: 20, duration: 400, delay: index * 50 }}
+							>
+								<TopicCardNew
+									topic={topic}
+									level_id={level_id}
+									subject_id={subject_id}
+									chapter_id={chapter_id}
+								/>
+							</div>
+						{/each}
+					</div>
+				</section>
+			{:else}
+				<!-- Empty State -->
+				<div
+					class="flex flex-col items-center justify-center py-16 text-center"
+					in:fade={{ duration: 300 }}
+				>
+					<div
+						class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-6"
+					>
+						<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
+					</div>
+					<h3
+						class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2"
+					>
+						Nessun argomento disponibile
+					</h3>
+					<p class="text-zinc-600 dark:text-zinc-400 max-w-md mb-6">
+						Al momento non ci sono argomenti disponibili per questo capitolo. Torna presto per
+						nuovi contenuti!
+					</p>
+					<button
+						onclick={() => goto(`/${level_id}/${subject_id}`)}
+						class="px-6 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-medium transition-colors duration-200"
+					>
+						Torna ai capitoli
+					</button>
+				</div>
+			{/if}
+		{:else}
+			<!-- 404 State -->
+			<div
+				class="flex flex-col items-center justify-center py-16 text-center"
+				in:fade={{ duration: 300 }}
+			>
+				<div
+					class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-6"
+				>
+					<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
+				</div>
+				<h3
+					class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2"
+				>
+					Capitolo non trovato
+				</h3>
+				<p class="text-zinc-600 dark:text-zinc-400 mb-6 max-w-md">
+					Il capitolo che stai cercando non esiste o non è disponibile.
+				</p>
+				<div class="flex gap-4">
+					{#if level_id && subject_id}
+						<button
+							onclick={() => goto(`/${level_id}/${subject_id}`)}
+							class="px-6 py-3 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium transition-colors duration-200"
+						>
+							Torna alla materia
+						</button>
+					{/if}
+					<button
+						onclick={() => goto('/')}
+						class="px-6 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-medium transition-colors duration-200"
+					>
+						Torna alla home
+					</button>
+				</div>
+			</div>
+		{/if}
+	</div>
+</div>
+

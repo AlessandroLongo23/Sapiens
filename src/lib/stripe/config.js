@@ -44,7 +44,7 @@ export const SUBSCRIPTION_PLANS = {
 		price: 19.99,
 		currency: 'EUR',
 		interval: 'month',
-		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_BASE, // Set in Stripe Dashboard
+		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_BASE,
 		features: [
 			'Tutto del Piano Lite',
 			'Sapiens AI - Chat illimitata',
@@ -65,7 +65,7 @@ export const SUBSCRIPTION_PLANS = {
 		price: 49.99,
 		currency: 'EUR',
 		interval: 'month',
-		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_PRO, // Set in Stripe Dashboard
+		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_PRO,
 		features: [
 			'Tutto del Piano Base',
 			'Ripetizioni 1-on-1 (1h/settimana)',

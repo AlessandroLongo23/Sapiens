@@ -16,7 +16,7 @@
     });
 
     let subject = $derived.by(() => {
-        return $subjectsStore.subjects.find(subject => subject.id === lecture.subject_id);
+        return $subjectsStore.subjects.find(s => s.id === lecture.subject_id);
     });
 
     let meetLink = $state(lecture?.meet_link ?? null);

@@ -62,7 +62,6 @@
         const labels = {
             'level': 'Level',
             'subject': 'Subject',
-            'year': 'Year',
             'topic': 'Topic',
             'subtopic': 'Subtopic'
         };

@@ -27,7 +27,7 @@
 	});
 	
 	function handleChapterClick(chapterId: string, subjectId: string) {
-		goto(`/${EducationalLevelMap[level.level]}/${subjectId}/${chapterId}`);
+		goto(`/${level.id}/${subjectId}/${chapterId}`);
 		onClose();
 	}
 	
@@ -61,14 +61,14 @@
 			onmouseleave={handleMouseLeave}
 		>
 			<!-- Header -->
-			<div class="px-8 py-5 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
+			<!-- <div class="px-8 py-5 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
 				<div class="mx-auto flex items-center gap-3">
 					<level.icon class="size-6 text-pink-500 dark:text-pink-400" />
 					<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
 						{EducationalLevelMap[level.id]}
 					</h3>
 				</div>
-			</div>
+			</div> -->
 			
 			<!-- Main Content -->
 			<div class="mx-auto flex min-h-[400px]">

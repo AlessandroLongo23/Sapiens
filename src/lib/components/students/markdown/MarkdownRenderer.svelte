@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import katex from 'katex';
 	import 'katex/dist/katex.min.css';
@@ -22,7 +22,7 @@
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				if (entry.isIntersecting) {
-					const img = entry.target;
+					const img = entry.target as HTMLImageElement;
 					img.src = img.dataset.src;
 					img.classList.remove('lazy-gif');
 					observer.unobserve(img);
@@ -41,7 +41,7 @@
 		
 		const tables = containerElement.querySelectorAll('.markdown-content table');
 		tables.forEach(table => {
-			const headerRow = table.querySelector('tr');
+			const headerRow = table.querySelector('tr') as HTMLTableRowElement;
 			if (headerRow) {
 				const columnCount = headerRow.children.length;
 				table.style.setProperty('--col-count', columnCount.toString());
@@ -49,10 +49,8 @@
 		});
 	}
 	
-	function handleGifClick(event) {
-		return;
-		
-		const gifElement = event.target;
+	function handleGifClick(event: MouseEvent) {
+		const gifElement = event.target as HTMLImageElement;
 		if (gifElement.classList.contains('markdown-gif')) {
 			if (expandedGif === gifElement.src) {
 				expandedGif = null;
@@ -126,7 +124,7 @@
 		}
 	});
 	
-	function scrollToSection(sectionId) {
+	function scrollToSection(sectionId: string) {
 		if (!containerElement) return;
 		
 		const section = containerElement.querySelector(`#${sectionId}`);
@@ -138,7 +136,7 @@
 		}
 	}
 	
-	function handleScroll(e) {
+	function handleScroll(e: Event) {
 		if (!containerElement) return;
 		
 		const scrollPosition = containerElement.scrollTop;
