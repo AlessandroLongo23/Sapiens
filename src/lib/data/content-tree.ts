@@ -190,37 +190,58 @@ export const contentTree: LevelNode[] = [
 		icon: University,
 		subjects: [
 			{
-				id: 'math',
-				name: 'Matematica',
+				id: 'analisi-1',
+				name: 'Analisi matematica I',
 				icon: Pi,
 				chapters: [
-					{ id: 'analisi-1', name: 'Analisi matematica I', icon: Calculator, topics: [] },
-					{ id: 'geometria-e-algebra-lineare', name: 'Geometria e algebra lineare', icon: Calculator, topics: [] },
-					{ id: 'analisi-2', name: 'Analisi matematica II', icon: Calculator, topics: [] },
-					{ id: 'calcolo-numerico', name: 'Calcolo numerico', icon: Calculator, topics: [] },
-					{ id: 'teoria-dei-segnali', name: 'Teoria dei Segnali', icon: Calculator, topics: [] },
+					{ id: 'successioni-serie', name: 'Successioni e serie', icon: Calculator, topics: [] },
+					{ id: 'limiti', name: 'Limiti', icon: Calculator, topics: [] },
+					{ id: 'derivate', name: 'Derivate', icon: Calculator, topics: [] },
+					{ id: 'integrali', name: 'Integrali', icon: Calculator, topics: [] },
+					{ id: 'equazioni-differenziali', name: 'Equazioni differenziali', icon: Calculator, topics: [] },
 				]
 			},
 			{
-				id: 'physics',
-				name: 'Fisica',
+				id: 'analisi-2',
+				name: 'Analisi matematica II',
+				icon: Pi,
+				chapters: [
+					{ id: 'integralidoppi', name: 'Integrali doppi', icon: Calculator, topics: [] },
+					{ id: 'integrali-tripli', name: 'Integrali tripli', icon: Calculator, topics: [] },
+					{ id: 'serie-di-Taylor', name: 'Serie di Taylor', icon: Calculator, topics: [] },
+				]
+			},
+			{
+				id: 'fisica-1',
+				name: 'Fisica I',
 				icon: Atom,
 				chapters: [
-					{ id: 'fisica-1', name: 'Fisica I', icon: Calculator, topics: [] },
-					{ id: 'fisica-2', name: 'Fisica II', icon: Calculator, topics: [] },
-					{ id: 'teoria-dei-circuiti', name: 'Teoria dei Circuiti', icon: Calculator, topics: [] },
+					{ id: 'cinematica-del-punto-materiale', name: 'Cinematica del punto materiale', icon: Calculator, topics: [] },
+					{ id: 'dinamica-del-punto-materiale', name: 'Dinamica del punto materiale', icon: Calculator, topics: [] },
+					{ id: 'lavoro-ed-energia', name: 'Lavoro ed energia', icon: Calculator, topics: [] },
+					{ id: 'meccanica-del-corpo-rigido', name: 'Meccanica del corpo rigido', icon: Calculator, topics: [] },
 				]
 			},
 			{
-				id: 'computer-science',
-				name: 'Informatica',
+				id: 'fisica-2',
+				name: 'Fisica II',
+				icon: Atom,
+				chapters: [
+					{ id: 'termodinamica', name: 'Termodinamica', icon: Calculator, topics: [] },
+					{ id: 'elettromagnetismo', name: 'Elettromagnetismo', icon: Calculator, topics: [] },
+					{ id: 'ottica', name: 'Ottica', icon: Calculator, topics: [] },
+				]
+			},
+			{
+				id: 'fondamenti-informatica',
+				name: 'Fondamenti di Informatica',
 				icon: CodeXml,
 				chapters: [
-					{ id: 'fondamenti-informatica', name: 'Fondamenti di Informatica', icon: Calculator, topics: [] },
-					{ id: 'database', name: 'Database', icon: Calculator, topics: [] },
-					{ id: 'programmazione', name: 'Programmazione', icon: Calculator, topics: [] },
-					{ id: 'sistemi-operativi', name: 'Sistemi Operativi', icon: Calculator, topics: [] },
-					{ id: 'reti-di-calcolatori', name: 'Reti di Calcolatori', icon: Calculator, topics: [] },
+					{ id: 'variabili-logiche', name: 'Variabili logiche', icon: Calculator, topics: [] },
+					{ id: 'funzioni-logiche', name: 'Funzioni logiche', icon: Calculator, topics: [] },
+					{ id: 'porte-logiche', name: 'Porte logiche', icon: Calculator, topics: [] },
+					{ id: 'reti-combinatorie', name: 'Reti combinatorie', icon: Calculator, topics: [] },
+					{ id: 'reti-sequenziali', name: 'Reti sequenziali', icon: Calculator, topics: [] },
 				]
 			}
 		]
