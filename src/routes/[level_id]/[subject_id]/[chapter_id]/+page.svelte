@@ -63,7 +63,7 @@
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
 				<div
-					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"
+					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"
 				></div>
 			</div>
 		{:else if chapterData && subjectData && levelInfo}
@@ -80,10 +80,10 @@
 					{#if chapterData.icon}
 						{@const ChapterIcon = chapterData.icon}
 						<div
-							class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-500/5 dark:from-pink-500/20 dark:to-pink-500/10 shadow-lg"
+							class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 shadow-lg"
 						>
 							<ChapterIcon
-								class="w-8 h-8 sm:w-10 sm:h-10 text-pink-500 dark:text-pink-400"
+								class="w-8 h-8 sm:w-10 sm:h-10 text-rose-500 dark:text-rose-400"
 							/>
 						</div>
 					{/if}
@@ -110,9 +110,9 @@
 					>
 						<div class="flex items-center gap-2">
 							<div
-								class="p-2 rounded-lg bg-pink-500/10 dark:bg-pink-500/20"
+								class="p-2 rounded-lg bg-rose-500/10 dark:bg-rose-500/20"
 							>
-								<BookOpen class="w-4 h-4 text-pink-500 dark:text-pink-400" />
+								<BookOpen class="w-4 h-4 text-rose-500 dark:text-rose-400" />
 							</div>
 							<div>
 								<div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -178,7 +178,7 @@
 					</p>
 					<button
 						onclick={() => goto(`/${level_id}/${subject_id}`)}
-						class="px-6 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-medium transition-colors duration-200"
+						class="px-6 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-colors duration-200"
 					>
 						Torna ai capitoli
 					</button>
@@ -214,7 +214,7 @@
 					{/if}
 					<button
 						onclick={() => goto('/')}
-						class="px-6 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-medium transition-colors duration-200"
+						class="px-6 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-colors duration-200"
 					>
 						Torna alla home
 					</button>

@@ -16,7 +16,7 @@
 >
 	<!-- Subtle background decoration -->
 	<div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20">
-		<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-500/10 dark:bg-pink-400/10 rounded-full blur-[120px]"></div>
+		<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-500/10 dark:bg-rose-400/10 rounded-full blur-[120px]"></div>
 		<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-400/10 rounded-full blur-[120px]"></div>
 	</div>
 
@@ -28,7 +28,7 @@
 				<div class="space-y-6">
 					<h1 class="text-4xl sm:text-5xl lg:text-[2.25rem] font-bold text-gray-900 dark:text-slate-50 leading-[1.2] tracking-tight">
 						Studia in autonomia con
-						<span class="block mt-2 text-pink-500 dark:text-pink-400">
+						<span class="block mt-2 text-rose-500 dark:text-rose-400">
 							materiale chiaro e completo
 						</span>
 					</h1>
@@ -42,7 +42,7 @@
 				<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
 					<a
 						href="/pricing"
-						class="group inline-flex items-center justify-center gap-2 bg-pink-500 hover:bg-pink-600 dark:bg-pink-400 dark:hover:bg-pink-500 text-white px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
+						class="group inline-flex items-center justify-center gap-2 bg-rose-500 hover:bg-rose-600 dark:bg-rose-400 dark:hover:bg-rose-500 text-white px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
 					>
 						<GraduationCap class="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:rotate-12" />
 						<span>Scopri i piani</span>
@@ -94,7 +94,7 @@
 	<!-- <a 
 		href="#about" 
 		aria-label="Scopri di più"
-		class="hidden sm:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bottom-8 w-10 h-10 rounded-full border border-gray-300 dark:border-gray-800 bg-white/80 dark:bg-[#12161B]/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 shadow-sm hover:shadow-md hover:border-pink-500 dark:hover:border-pink-400 transition-all duration-300 ease-in-out animate-bounce"
+		class="hidden sm:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bottom-8 w-10 h-10 rounded-full border border-gray-300 dark:border-gray-800 bg-white/80 dark:bg-[#12161B]/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 shadow-sm hover:shadow-md hover:border-rose-500 dark:hover:border-rose-400 transition-all duration-300 ease-in-out animate-bounce"
 	>
 		<ChevronDown class="w-5 h-5" />
 	</a> -->

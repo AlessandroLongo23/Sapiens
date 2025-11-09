@@ -90,7 +90,7 @@
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
 				<div
-					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"
+					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"
 				></div>
 			</div>
 		{:else if topicData && chapterData && subjectData && levelInfo}
@@ -105,10 +105,10 @@
 				<!-- Topic Title and Icon -->
 				<div class="flex items-start gap-4 sm:gap-6 mb-6">
 					<div
-						class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-500/5 dark:from-pink-500/20 dark:to-pink-500/10 shadow-lg"
+						class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 shadow-lg"
 					>
 						<BookOpen
-							class="w-8 h-8 sm:w-10 sm:h-10 text-pink-500 dark:text-pink-400"
+							class="w-8 h-8 sm:w-10 sm:h-10 text-rose-500 dark:text-rose-400"
 						/>
 					</div>
 
@@ -141,23 +141,23 @@
 					{#each contents as content }
 						<button
 							onclick={() => handleContentTypeClick(content.type)}
-							class="group relative overflow-hidden rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-pink-300 dark:hover:border-pink-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/10 p-6 sm:p-8 text-left"
+							class="group relative overflow-hidden rounded-xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-rose-300 dark:hover:border-rose-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/10 p-6 sm:p-8 text-left"
 							tabindex="0"
 						>
 							<div
-								class="absolute inset-0 bg-gradient-to-br from-pink-500/0 via-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:via-pink-500/3 group-hover:to-pink-500/5 transition-all duration-300"
+								class="absolute inset-0 bg-gradient-to-br from-rose-500/0 via-rose-500/0 to-rose-500/0 group-hover:from-rose-500/5 group-hover:via-rose-500/3 group-hover:to-rose-500/5 transition-all duration-300"
 							></div>
 
 							<div class="relative flex flex-col">
 								<div class="flex items-start justify-between mb-4">
-									<div class="p-3 rounded-xl bg-gradient-to-br from-pink-500/10 to-pink-500/5 dark:from-pink-500/20 dark:to-pink-500/10 group-hover:from-pink-500/20 group-hover:to-pink-500/10 dark:group-hover:from-pink-500/30 dark:group-hover:to-pink-500/20 transition-all duration-300">
+									<div class="p-3 rounded-xl bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 group-hover:from-rose-500/20 group-hover:to-rose-500/10 dark:group-hover:from-rose-500/30 dark:group-hover:to-rose-500/20 transition-all duration-300">
 										<content.icon
-											class="w-6 h-6 sm:w-7 sm:h-7 text-pink-500 dark:text-pink-400 transition-transform duration-300 group-hover:scale-110"
+											class="w-6 h-6 sm:w-7 sm:h-7 text-rose-500 dark:text-rose-400 transition-transform duration-300 group-hover:scale-110"
 										/>
 									</div>
 								</div>
 
-								<h3 class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors duration-300">
+								<h3 class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300">
 									{content.title}
 								</h3>
 
@@ -165,7 +165,7 @@
 									{content.description}
 								</p>
 
-								<div class="flex items-center gap-2 text-pink-500 dark:text-pink-400 font-medium text-sm sm:text-base mt-auto">
+								<div class="flex items-center gap-2 text-rose-500 dark:text-rose-400 font-medium text-sm sm:text-base mt-auto">
 									<span>{content.buttonText}</span>
 									<ChevronRight class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" />
 								</div>
@@ -190,7 +190,7 @@
 							{#if relatedTopic.id !== topic_id}
 								<button
 									onclick={() => goto(`/${level_id}/${subject_id}/${chapter_id}/${relatedTopic.id}`)}
-									class="px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:text-pink-500 dark:hover:text-pink-400 transition-colors duration-200 text-sm font-medium"
+									class="px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 text-sm font-medium"
 								>
 									{relatedTopic.name}
 								</button>
@@ -229,7 +229,7 @@
 					{/if}
 					<button
 						onclick={() => goto('/')}
-						class="px-6 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-medium transition-colors duration-200"
+						class="px-6 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-colors duration-200"
 					>
 						Torna alla home
 					</button>

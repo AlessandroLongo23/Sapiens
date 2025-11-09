@@ -24,12 +24,12 @@
 	onclick={handleClick}
 	onmouseenter={() => (isHovered = true)}
 	onmouseleave={() => (isHovered = false)}
-	class="group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-pink-300 dark:hover:border-pink-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/5"
+	class="group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-rose-300 dark:hover:border-rose-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/5"
 	tabindex="0"
 >
 	<!-- Gradient overlay on hover -->
 	<div
-		class="absolute inset-0 bg-gradient-to-br from-pink-500/0 via-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:via-pink-500/3 group-hover:to-pink-500/5 transition-all duration-300"
+		class="absolute inset-0 bg-gradient-to-br from-rose-500/0 via-rose-500/0 to-rose-500/0 group-hover:from-rose-500/5 group-hover:via-rose-500/3 group-hover:to-rose-500/5 transition-all duration-300"
 		transition:fade={{ duration: 300 }}
 	></div>
 
@@ -39,10 +39,10 @@
 			{#if subject.icon}
 				{@const SubjectIcon = subject.icon}
 				<div
-					class="p-3 rounded-xl bg-gradient-to-br from-pink-500/10 to-pink-500/5 dark:from-pink-500/20 dark:to-pink-500/10 group-hover:from-pink-500/20 group-hover:to-pink-500/10 dark:group-hover:from-pink-500/30 dark:group-hover:to-pink-500/20 transition-all duration-300"
+					class="p-3 rounded-xl bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 group-hover:from-rose-500/20 group-hover:to-rose-500/10 dark:group-hover:from-rose-500/30 dark:group-hover:to-rose-500/20 transition-all duration-300"
 				>
 					<SubjectIcon
-						class="w-6 h-6 sm:w-7 sm:h-7 text-pink-500 dark:text-pink-400 transition-transform duration-300 group-hover:scale-110"
+						class="w-6 h-6 sm:w-7 sm:h-7 text-rose-500 dark:text-rose-400 transition-transform duration-300 group-hover:scale-110"
 					/>
 				</div>
 			{/if}
@@ -58,7 +58,7 @@
 
 		<!-- Subject Name -->
 		<h3
-			class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors duration-300"
+			class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300"
 		>
 			{subject.name}
 		</h3>
@@ -109,7 +109,7 @@
 			class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
 		>
 			<svg
-				class="w-5 h-5 text-pink-500 dark:text-pink-400 transform group-hover:translate-x-1 transition-transform duration-300"
+				class="w-5 h-5 text-rose-500 dark:text-rose-400 transform group-hover:translate-x-1 transition-transform duration-300"
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"

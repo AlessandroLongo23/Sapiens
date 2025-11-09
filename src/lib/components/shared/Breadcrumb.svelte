@@ -26,7 +26,7 @@
 		{#if item.path}
 			<button
 				onclick={() => handleClick(item.path!)}
-				class="text-zinc-600 dark:text-zinc-400 hover:text-pink-500 dark:hover:text-pink-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 rounded"
+				class="text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 rounded"
 			>
 				{item.label}
 			</button>

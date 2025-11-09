@@ -92,7 +92,7 @@ void main() {
     vec2 centered = (uv - 0.5) * aspect;
     float luminosity = 0.42;
     float chroma = 0.08;
-    float hue = 350.0;
+    float hue = 16.0;
 
     float time = uTime * uSpeed;
     float noiseValue = fbm(vec3(centered * 2.0, time));

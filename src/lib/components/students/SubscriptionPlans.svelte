@@ -30,12 +30,12 @@
 			{#each plans as plan}
 				<div
 					class="relative bg-white dark:bg-zinc-800 rounded-2xl border-2 transition-all duration-200 {plan.popular
-						? 'border-pink-400 shadow-xl scale-105'
-						: 'border-zinc-200 dark:border-zinc-700'} {currentPlan === plan.id ? 'ring-2 ring-pink-400' : ''}"
+						? 'border-rose-400 shadow-xl scale-105'
+						: 'border-zinc-200 dark:border-zinc-700'} {currentPlan === plan.id ? 'ring-2 ring-rose-400' : ''}"
 				>
 					{#if plan.popular}
 						<div
-							class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
+							class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
 						>
 							<Sparkles class="w-4 h-4" />
 							Più popolare
@@ -69,7 +69,7 @@
 										{#if access}
 											<CheckCircle class="size-4 text-green-500 flex-shrink-0 mt-0.5" />
 										{:else}
-											<XCircle class="size-4 text-pink-500 flex-shrink-0 mt-0.5" />
+											<XCircle class="size-4 text-rose-500 flex-shrink-0 mt-0.5" />
 										{/if}
 										<!-- <Icon class="size-4 text-zinc-700 dark:text-zinc-300 flex-shrink-0 mt-0.5" /> -->
 										<span class="text-sm text-zinc-700 dark:text-zinc-300 {access ? '' : 'line-through'}">{FeaturesDetails[feature].name}</span>
@@ -83,7 +83,7 @@
 							onclick={() => handleSelectPlan(plan.id)}
 							disabled={plan.id === 'free' || currentPlan === plan.id}
 							class="w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 {plan.popular
-								? 'bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+								? 'bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
 								: 'bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-100'} disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{#if currentPlan === plan.id}

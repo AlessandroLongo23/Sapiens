@@ -53,7 +53,7 @@
 	<!-- Header -->
 	<div class="px-8 py-5 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
 		<div class="mx-auto flex items-center gap-3">
-			<level.icon class="size-6 text-pink-500 dark:text-pink-400" />
+			<level.icon class="size-6 text-rose-500 dark:text-rose-400" />
 			<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
 				{EducationalLevelMap[level.id]}
 			</h3>
@@ -69,12 +69,12 @@
 					onmouseenter={() => handleLevelHover(subjectData.id)}
 					class="
 						w-full flex items-center gap-2 text-left px-6 py-4 text-base font-medium transition-all duration-200
-						text-zinc-700 dark:text-zinc-300 hover:text-pink-500 dark:hover:text-pink-400
+						text-zinc-700 dark:text-zinc-300 hover:text-rose-500 dark:hover:text-rose-400
 						hover:bg-white dark:hover:bg-zinc-800 
 							border-l-3
 						{
 							selectedSubject === subjectData.id ? 
-								'bg-white dark:bg-zinc-800 border-pink-500 dark:border-pink-400 text-pink-500 dark:text-pink-400' : 
+								'bg-white dark:bg-zinc-800 border-rose-500 dark:border-rose-400 text-rose-500 dark:text-rose-400' : 
 								'border-transparent'
 						}
 					"
@@ -98,7 +98,7 @@
 								<span class="font-semibold line-clamp-1">
 									{index + 1}. {chapter.name}
 								</span>
-								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-pink-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full"></span>
+								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-rose-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full"></span>
 							</button>
 
 							<div class="flex flex-col gap-1.5">
@@ -107,7 +107,7 @@
 										onclick={() => handleTopicClick(currentSubjectData.id, chapter.id, topic.id)}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
 									>
-										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-pink-500 dark:group-hover:text-pink-400 line-clamp-1">
+										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 line-clamp-1">
 											{topic.name}
 										</span>
 									</button>
@@ -119,14 +119,14 @@
 										onclick={() => handleTopicClick(currentSubjectData.id, chapter.id, topic.id)}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
 									>
-										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-pink-500 dark:group-hover:text-pink-400 line-clamp-1">
+										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 line-clamp-1">
 											{topic.name}
 										</span>
 									</button>
 								{:else if chapter.topics.length > topicsPerChapter + 1}
 									<button
 										onclick={() => handleChapterClick(currentSubjectData.id, chapter.id)}
-										class="w-full flex items-center text-left py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-500 hover:text-pink-500 dark:hover:text-pink-400 transition-all duration-200"
+										class="w-full flex items-center text-left py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 transition-all duration-200"
 									>
 										<Plus class="size-3" />
 										<span>{chapter.topics.length - topicsPerChapter} argomenti</span>

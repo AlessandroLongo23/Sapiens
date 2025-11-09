@@ -53,7 +53,7 @@
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
 				<div
-					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"
+					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"
 				></div>
 			</div>
 		{:else if levelInfo}
@@ -65,7 +65,7 @@
 				<!-- Back Button -->
 				<button
 					onclick={() => goto('/')}
-					class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-pink-500 dark:hover:text-pink-400 transition-colors duration-200 mb-6 group"
+					class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 mb-6 group"
 				>
 					<ArrowLeft
 						class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-200"
@@ -78,10 +78,10 @@
 					{#if levelInfo.icon}
 						{@const LevelIcon = levelInfo.icon}
 						<div
-							class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-500/5 dark:from-pink-500/20 dark:to-pink-500/10 shadow-lg"
+							class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 shadow-lg"
 						>
 							<LevelIcon
-								class="w-8 h-8 sm:w-10 sm:h-10 text-pink-500 dark:text-pink-400"
+								class="w-8 h-8 sm:w-10 sm:h-10 text-rose-500 dark:text-rose-400"
 							/>
 						</div>
 					{/if}
@@ -107,9 +107,9 @@
 				>
 					<div class="flex items-center gap-2">
 						<div
-							class="p-2 rounded-lg bg-pink-500/10 dark:bg-pink-500/20"
+							class="p-2 rounded-lg bg-rose-500/10 dark:bg-rose-500/20"
 						>
-							<BookOpen class="w-4 h-4 text-pink-500 dark:text-pink-400" />
+							<BookOpen class="w-4 h-4 text-rose-500 dark:text-rose-400" />
 						</div>
 						<div>
 							<div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -252,7 +252,7 @@
 				</p>
 				<button
 					onclick={() => goto('/')}
-					class="px-6 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-medium transition-colors duration-200"
+					class="px-6 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-colors duration-200"
 				>
 					Torna alla home
 				</button>

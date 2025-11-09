@@ -94,7 +94,7 @@
             <div class="bg-white dark:bg-zinc-800 rounded-xl p-4 sm:p-6 shadow-md">
                 <div class="flex justify-between items-center mb-2 sm:mb-3">
                     <h2 class="text-base sm:text-xl font-semibold flex items-center text-zinc-900 dark:text-zinc-100">
-                        <ls.Brain class="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 text-pink-600" />
+                        <ls.Brain class="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 text-rose-600" />
                         Memory Bar
                     </h2>
                     <span class="text-xs sm:text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
