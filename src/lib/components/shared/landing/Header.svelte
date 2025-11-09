@@ -21,42 +21,58 @@
 		} 
 	}
     
-	let hoveredLevel = $state<string | null>(null);
+	let hoveredLevelId = $state<string | null>(null);
+	let hoveredLevel = $derived(contentTree.find(level => level.id === hoveredLevelId));
 	let headerRef = $state<HTMLElement | null>(null);
-	let headerHeight = $state(0);
+	let headerHeight = $derived(headerRef ? headerRef.offsetHeight : 0);
 
 	function handleSubjectMouseEnter(levelId: string) {
-		hoveredLevel = levelId;
-		if (headerRef) {
-			headerHeight = headerRef.offsetHeight;
-		}
+		hoveredLevelId = levelId;
 	}
 
 	let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
-	function handleSubjectMouseLeave() {
-		hoverTimeout = setTimeout(() => {
-			hoveredLevel = null;
-		}, 500);
-	}
+	// function handleSubjectMouseLeave() {
+	// 	hoverTimeout = setTimeout(() => {
+	// 		hoveredLevelId = null;
+	// 	}, 500);
+	// }
 
-	function handleMenuMouseEnter() {
-		if (hoverTimeout) {
-			clearTimeout(hoverTimeout);
-			hoverTimeout = null;
-		}
-	}
+	// function handleMenuMouseEnter() {
+	// 	if (hoverTimeout) {
+	// 		clearTimeout(hoverTimeout);
+	// 		hoverTimeout = null;
+	// 	}
+	// }
 
 	function handleMenuMouseLeave() {
-		hoveredLevel = null;
+		hoveredLevelId = null;
 	}
 </script>
 
 <header 
-	bind:this={headerRef}
+	role="menu"
+	tabindex="-1"
+	onmouseleave={handleMenuMouseLeave}
 	class="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 transition-transform duration-300"
 >
-	<div class="w-full mx-auto flex items-center sm:justify-between justify-center p-4">
+	<!-- Mega Menu -->
+	{#if hoveredLevel && headerHeight > 0}
+		<div 
+			class="absolute left-0 right-0 z-10"
+			style="top: {headerHeight}px;"
+		>
+			<SubjectMegaMenu
+				isOpen={true}
+				level={hoveredLevel}
+			/>
+		</div>
+	{/if}
+
+	<div 
+		bind:this={headerRef}
+		class="relative w-full mx-auto flex items-center sm:justify-between justify-center p-4 z-20 bg-white dark:bg-zinc-900"
+	>
 		<div class="flex justify-start items-center gap-16">
 			<a href="/" class="justify-start hidden sm:flex items-center gap-3">
 				<img src="/icon.png" alt="logo" class="size-10 rounded-md" />
@@ -76,14 +92,17 @@
 							}
 							handleSubjectMouseEnter(level.id);
 						}}
-						onmouseleave={handleSubjectMouseLeave}
 					>
 						<a 
 							href={`/${level.id}`} 
-							class="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 hover:text-pink-500 dark:hover:text-pink-400 transition-colors duration-200 cursor-pointer"
+							class="
+								flex items-center gap-2 transition-colors duration-200 cursor-pointer relative
+								{hoveredLevelId === level.id ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400'}
+							"
 						>
 							<level.icon class="size-4" />
 							<span class="font-medium">{EducationalLevelMap[level.id]}</span>
+							<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-pink-500 rounded-full transition-all duration-200 {hoveredLevelId === level.id ? 'opacity-100 w-full' : 'opacity-0 w-0'}"></span>
 						</a>
 					</div>
 				{/each}
@@ -112,25 +131,4 @@
 			</button>
 		</div>
     </div>
-	
-	<!-- Mega Menu -->
-	{#if hoveredLevel}
-		{@const level = contentTree.find(level => level.id === hoveredLevel)}
-		{#if level}
-			<div 
-				class="mega-menu-container"
-				role="menu"
-				tabindex="-1"
-				onmouseenter={handleMenuMouseEnter}
-				onmouseleave={handleMenuMouseLeave}
-			>
-				<SubjectMegaMenu
-					isOpen={true}
-					level={level}
-					headerHeight={headerHeight}
-					onClose={handleMenuMouseLeave}
-				/>
-			</div>
-		{/if}
-	{/if}
 </header>
