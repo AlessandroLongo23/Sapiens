@@ -1,3 +1,5 @@
+import { BookOpen, Pencil, TableOfContents, Sparkles, Users } from 'lucide-svelte';
+
 export enum Currency {
 	EURO = 'EUR',
 	DOLLAR = 'USD',
@@ -24,12 +26,27 @@ export enum Features {
 	TUTORING = 'tutoring',
 }
 
-export const FeaturesDescriptions: Record<Features, string> = {
-	[Features.THEORY]: 'Accesso alla teoria',
-	[Features.EXERCISES]: 'Esercizi interattivi',
-	[Features.FORMULARY]: 'Formulari completi',
-	[Features.AI_CHAT]: 'Chat con Sapiens AI',
-	[Features.TUTORING]: 'Ripetizioni settimanali',
+export const FeaturesDetails: Record<Features, { name: string; icon: typeof BookOpen }> = {
+	[Features.THEORY]: {
+		name: 'Accesso alla teoria',
+		icon: BookOpen,
+	},
+	[Features.EXERCISES]: {
+		name: 'Esercizi interattivi',
+		icon: Pencil,
+	},
+	[Features.FORMULARY]: {
+		name: 'Formulari completi',
+		icon: TableOfContents,
+	},
+	[Features.AI_CHAT]: {
+		name: 'Chat con Sapiens AI',
+		icon: Sparkles,
+	},	
+	[Features.TUTORING]: {
+		name: 'Ripetizioni settimanali',
+		icon: Users,
+	},
 }
 
 export const SUBSCRIPTION_PLANS = {

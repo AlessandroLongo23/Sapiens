@@ -51,21 +51,92 @@ export const contentTree: LevelNode[] = [
 						id: 'aritmetica', 
 						name: 'Aritmetica',
 						icon: Calculator,
-						topics: []
+						topics: [
+							{ id: 'numerazione-decimale', name: 'Sistema di numerazione decimale' },
+							{ id: 'quattro-operazioni', name: 'Le quattro operazioni' },
+							{ id: 'proprieta-operazioni', name: 'Proprietà delle operazioni' },
+							{ id: 'espressioni-aritmetiche', name: 'Espressioni aritmetiche' },
+							{ id: 'potenze-radice', name: 'Potenze e radice quadrata' }
+						]
 					},
 					{ 
 						id: 'frazioni', 
 						name: 'Frazioni e decimali',
 						icon: Calculator,
-						topics: []
+						topics: [
+							{ id: 'frazioni-proprie', name: 'Frazioni proprie, improprie e apparenti' },
+							{ id: 'frazioni-equivalenti', name: 'Frazioni equivalenti' },
+							{ id: 'operazioni-frazioni', name: 'Operazioni con le frazioni' },
+							{ id: 'numeri-decimali', name: 'Numeri decimali e frazioni' }
+						]
 					},
-					{ id: 'percentuali', name: 'Percentuali', icon: Calculator, topics: [] },
-					{ id: 'geometria-piana', name: 'Geometria piana', icon: Calculator, topics: [] },
-					{ id: 'aree-perimetri', name: 'Aree e perimetri', icon: Calculator, topics: [] },
-					{ id: 'proporzioni', name: 'Proporzioni', icon: Calculator, topics: [] },
-					{ id: 'equazioni-primo', name: 'Equazioni di primo grado', icon: Calculator, topics: [] },
-					{ id: 'geometria-solida', name: 'Geometria solida', icon: Calculator, topics: [] },
-					{ id: 'statistica', name: 'Statistica', icon: Calculator, topics: [] },
+					{ 
+						id: 'percentuali', 
+						name: 'Percentuali', 
+						icon: Calculator, 
+						topics: [
+							{ id: 'calcolo-percentuali', name: 'Calcolo delle percentuali' },
+							{ id: 'percentuali-problemi', name: 'Problemi con le percentuali' }
+						] 
+					},
+					{ 
+						id: 'geometria-piana', 
+						name: 'Geometria piana', 
+						icon: Calculator, 
+						topics: [
+							{ id: 'enti-fondamentali', name: 'Elementi fondamentali (punto, retta, piano)' },
+							{ id: 'angoli', name: 'Angoli (tipi e proprietà)' },
+							{ id: 'triangoli', name: 'Triangoli (classificazione e proprietà)' },
+							{ id: 'quadrilateri', name: 'Quadrilateri (proprietà)' },
+							{ id: 'cerchio', name: 'Cerchio e sue parti' }
+						] 
+					},
+					{ 
+						id: 'aree-perimetri', 
+						name: 'Aree e perimetri', 
+						icon: Calculator, 
+						topics: [
+							{ id: 'perimetro-poligoni', name: 'Perimetro dei poligoni' },
+							{ id: 'area-poligoni', name: 'Area dei poligoni' },
+							{ id: 'circonferenza-cerchio', name: 'Circonferenza e area del cerchio' }
+						] 
+					},
+					{ 
+						id: 'proporzioni', 
+						name: 'Proporzioni', 
+						icon: Calculator, 
+						topics: [
+							{ id: 'rapporto-proporzione', name: 'Rapporto e proporzione' },
+							{ id: 'problemi-proporzioni', name: 'Problemi con proporzioni' }
+						] 
+					},
+					{ 
+						id: 'equazioni-primo', 
+						name: 'Equazioni di primo grado', 
+						icon: Calculator, 
+						topics: [
+							{ id: 'equazioni-di-primo-grado', name: 'Equazioni di primo grado' },
+							{ id: 'problemi-equazioni', name: 'Problemi risolvibili con equazioni' }
+						] 
+					},
+					{ 
+						id: 'geometria-solida', 
+						name: 'Geometria solida', 
+						icon: Calculator, 
+						topics: [
+							{ id: 'solid-solidi', name: 'Solidi geometrici fondamentali' },
+							{ id: 'superficie-volume', name: 'Superficie e volume dei solidi' }
+						] 
+					},
+					{ 
+						id: 'statistica', 
+						name: 'Statistica', 
+						icon: Calculator, 
+						topics: [
+							{ id: 'media-moda-mediana', name: 'Media, moda e mediana' },
+							{ id: 'rappresentazione-dati', name: 'Rappresentazione dei dati (grafici)' }
+						] 
+					},
 				]
 			},
 			{
@@ -73,15 +144,42 @@ export const contentTree: LevelNode[] = [
 				name: 'Fisica',
 				icon: Atom,
 				chapters: [
-					{ id: 'movimento', name: 'Movimento e velocità', icon: Atom, topics: [] },
-					{ id: 'forze', name: 'Forze e movimento', icon: Atom, topics: [] },
-					{ id: 'energia', name: 'Energia', icon: Atom, topics: [] },
-					{ id: 'calore-temperatura', name: 'Calore e temperatura', icon: Atom, topics: [] },
-					{ id: 'onde', name: 'Onde e suono', icon: Atom, topics: [] },
-					{ id: 'luce', name: 'Luce e ottica', icon: Atom, topics: [] },
-					{ id: 'elettricita', name: 'Elettricità', icon: Atom, topics: [] },
-					{ id: 'magnetismo', name: 'Magnetismo', icon: Atom, topics: [] },
-					{ id: 'energie-rinnovabili', name: 'Energie rinnovabili', icon: Atom, topics: [] },
+					{ id: 'movimento', name: 'Movimento e velocità', icon: Atom, topics: [
+						{ id: 'velocita-media', name: 'Velocità media (rapporto spazio/tempo)' },
+						{ id: 'moto-uniforme', name: 'Moto rettilineo uniforme' }
+					] },
+					{ id: 'forze', name: 'Forze e movimento', icon: Atom, topics: [
+						{ id: 'leggi-dinamica', name: 'Leggi della dinamica di Newton' },
+						{ id: 'forza-elastica-frott', name: 'Forza elastica e forza di attrito' }
+					] },
+					{ id: 'energia', name: 'Energia', icon: Atom, topics: [
+						{ id: 'energia-cinetica-potenziale', name: 'Energia cinetica e potenziale' },
+						{ id: 'conservazione-energia', name: 'Legge di conservazione dell\'energia' }
+					] },
+					{ id: 'calore-temperatura', name: 'Calore e temperatura', icon: Atom, topics: [
+						{ id: 'temperatura-calore', name: 'Differenza tra temperatura e calore' },
+						{ id: 'cambi-di-stato', name: 'Passaggi di stato' }
+					] },
+					{ id: 'onde', name: 'Onde e suono', icon: Atom, topics: [
+						{ id: 'caratteristiche-onde', name: 'Caratteristiche delle onde' },
+						{ id: 'suono-propagazione', name: 'Suono: frequenza e propagazione' }
+					] },
+					{ id: 'luce', name: 'Luce e ottica', icon: Atom, topics: [
+						{ id: 'riflessione-rifrazione', name: 'Riflessione e rifrazione della luce' },
+						{ id: 'lenti-specchi', name: 'Lenti e specchi' }
+					] },
+					{ id: 'elettricita', name: 'Elettricità', icon: Atom, topics: [
+						{ id: 'carica-corrente', name: 'Carica elettrica e corrente' },
+						{ id: 'legge-ohm', name: 'Legge di Ohm e circuiti semplici' }
+					] },
+					{ id: 'magnetismo', name: 'Magnetismo', icon: Atom, topics: [
+						{ id: 'magneti', name: 'Magneti e campo magnetico' },
+						{ id: 'elettromagnetismo-base', name: 'Campi magnetici e leggi di base' }
+					] },
+					{ id: 'energie-rinnovabili', name: 'Energie rinnovabili', icon: Atom, topics: [
+						{ id: 'tipi-energie', name: 'Fonti di energia rinnovabile' },
+						{ id: 'energia-ambiente', name: 'Impatto ambientale delle energie rinnovabili' }
+					] },
 				]
 			},
 			{
@@ -89,15 +187,36 @@ export const contentTree: LevelNode[] = [
 				name: 'Chimica',
 				icon: Beaker,
 				chapters: [
-					{ id: 'materia-stati', name: 'Materia e stati di aggregazione', icon: Beaker, topics: [] },
-					{ id: 'elementi-composti', name: 'Elementi e composti', icon: Beaker, topics: [] },
-					{ id: 'reazioni', name: 'Reazioni chimiche', icon: Beaker, topics: [] },
-					{ id: 'acidi-basi', name: 'Acidi e basi', icon: Beaker, topics: [] },
-					{ id: 'soluzioni', name: 'Soluzioni', icon: Beaker, topics: [] },
-					{ id: 'chimica-ambiente', name: 'Chimica e ambiente', icon: Beaker, topics: [] },
-					{ id: 'tavola-periodica', name: 'Tavola periodica', icon: Beaker, topics: [] },
+					{ id: 'materia-stati', name: 'Materia e stati di aggregazione', icon: Beaker, topics: [
+						{ id: 'stati-aggregazione', name: 'Stati di aggregazione della materia' },
+						{ id: 'proprieta-materia', name: 'Proprietà della materia (massa, volume)' }
+					] },
+					{ id: 'elementi-composti', name: 'Elementi e composti', icon: Beaker, topics: [
+						{ id: 'elementi-atomici', name: 'Elementi, atomi e molecole' },
+						{ id: 'proprieta-elementi', name: 'Proprietà degli elementi chimici' }
+					] },
+					{ id: 'reazioni', name: 'Reazioni chimiche', icon: Beaker, topics: [
+						{ id: 'equazioni-chimiche', name: 'Equazioni chimiche' },
+						{ id: 'tipi-reattivi', name: 'Tipi di reazioni chimiche (esotermiche, endotermiche)' }
+					] },
+					{ id: 'acidi-basi', name: 'Acidi e basi', icon: Beaker, topics: [
+						{ id: 'ph', name: 'pH e indicatori acido-base' },
+						{ id: 'esempi-acidi-basi', name: 'Esempi di acidi e basi comuni' }
+					] },
+					{ id: 'soluzioni', name: 'Soluzioni', icon: Beaker, topics: [
+						{ id: 'solute-solvente', name: 'Soluzioni: soluto, solvente e solubilità' },
+						{ id: 'concentrazione', name: 'Concentrazione e percentuale di soluti' }
+					] },
+					{ id: 'chimica-ambiente', name: 'Chimica e ambiente', icon: Beaker, topics: [
+						{ id: 'inquinamento-cicli', name: 'Inquinamento e cicli biogeochimici' },
+						{ id: 'risorse-chimiche', name: 'Risorse chimiche e sostenibilità' }
+					] },
+					{ id: 'tavola-periodica', name: 'Tavola periodica', icon: Beaker, topics: [
+						{ id: 'organizzazione-tavola', name: 'Organizzazione della tavola periodica' },
+						{ id: 'proprieta-periodiche', name: 'Proprietà periodiche degli elementi' }
+					] },
 				]
-			},
+			}
 		]
 	},
 	{
@@ -137,7 +256,6 @@ export const contentTree: LevelNode[] = [
 						name: 'Algebra', 
 						icon: Pi, 
 						topics: [
-							{ id: 'insiemi-e-logica', name: 'Insiemi e logica' },
 							{ id: 'monomi-e-polinomi', name: 'Monomi e polinomi' },
 							{ id: 'equazioni-primo-grado', name: 'Equazioni di primo grado' },
 							{ id: 'equazioni-secondo-grado', name: 'Equazioni di secondo grado' },
@@ -152,7 +270,15 @@ export const contentTree: LevelNode[] = [
 							{ id: 'funzioni-logaritmiche', name: 'Funzioni logaritmiche' },
 						],
 					},
-					{ id: 'equazioni-sistemi', name: 'Equazioni e sistemi', icon: Pi, topics: [] },
+					{ 
+						id: 'equazioni-sistemi', 
+						name: 'Equazioni e sistemi', 
+						icon: Pi, 
+						topics: [
+							{ id: 'equazioni', name: 'Equazioni in una variabile' },
+							{ id: 'sistemi-equazioni', name: 'Sistemi di equazioni' }
+						]
+					},
 					{ 
 						id: 'geometria-analitica', 
 						name: 'Geometria analitica', 
@@ -160,10 +286,10 @@ export const contentTree: LevelNode[] = [
 						topics: [
 							{ id: 'il-piano-cartesiano', name: 'Il piano cartesiano' },
 							{ id: 'la-distanza-tra-due-punti', name: 'La distanza tra due punti' },
-							{ id: 'rette-passanti-per-origine-assi', name: 'Rette passanti per l\'origine degli assi' },
+							{ id: 'rette-passanti-per-origine-assi', name: 'Retta passante per l\'origine degli assi' },
 							{ id: 'equazioni-degli-assi', name: 'Equazioni degli assi' },
-							{ id: 'rette-parallele-asse-x', name: 'Rette parallele all\'asse x' },
-							{ id: 'rette-parallele-asse-y', name: 'Rette parallele all\'asse y' },
+							{ id: 'rette-parallele-asse-x', name: 'Retta parallela all\'asse x' },
+							{ id: 'rette-parallele-asse-y', name: 'Retta parallela all\'asse y' },
 							{ id: 'equazione-di-una-retta', name: 'Equazione di una retta' },
 							{ id: 'il-coefficiente-angolare', name: 'Il coefficiente angolare' },
 							{ id: 'rette-parallele-tra-loro', name: 'Rette parallele tra loro' },
@@ -193,15 +319,15 @@ export const contentTree: LevelNode[] = [
 						icon: Pi, 
 						topics: [
 							{ id: 'solidi-geometrici', name: 'Solidi geometrici' },
-							{ id: 'superfici-e-volumi-dei-solidi-geometrici', name: 'Superfici e volumi dei solidi geometrici' },
+							{ id: 'superfici-e-volumi-dei-solidi-geometrici', name: 'Superfici e volumi dei solidi geometrici' }
 						]
 					},
-					{
+					{ 
 						id: 'funzioni',
 						name: 'Funzioni',
 						icon: Pi,
 						topics: [
-							{ id: 'defizione-di-funzione', name: 'Definizione di funzione' },
+							{ id: 'definizione-funzione', name: 'Definizione di funzione' },
 							{ id: 'dominio-codominio-immagine', name: 'Dominio, codominio e immagine' },
 							{ id: 'funzioni-iniettive-suriettive-biettive', name: 'Funzioni iniettive, suriettive e biettive' },
 							{ id: 'funzioni-reali-di-variabile-reale', name: 'Funzioni reali di variabile reale' },
@@ -222,9 +348,37 @@ export const contentTree: LevelNode[] = [
 							{ id: 'limiti-notevoli', name: 'Limiti notevoli' },
 						] 
 					},
-					{ id: 'derivate', name: 'Derivate', icon: Pi, topics: [] },
-					{ id: 'integrali', name: 'Integrali', icon: Pi, topics: [] },
-					{ id: 'probabilita', name: 'Probabilità', icon: Pi, topics: [] },
+					{ 
+						id: 'derivate', 
+						name: 'Derivate', 
+						icon: Pi, 
+						topics: [
+							{ id: 'definizione-derivata', name: 'Definizione di derivata' },
+							{ id: 'regole-derivazione', name: 'Regole di derivazione' },
+							{ id: 'derivate-funzioni', name: 'Derivate di funzioni elementari' },
+							{ id: 'applicazioni-derivate', name: 'Applicazioni delle derivate' }
+						] 
+					},
+					{ 
+						id: 'integrali', 
+						name: 'Integrali', 
+						icon: Pi, 
+						topics: [
+							{ id: 'definizione-integrale', name: 'Definizione di integrale' },
+							{ id: 'integrali-indefiniti', name: 'Integrali indefiniti' },
+							{ id: 'integrali-definiti', name: 'Integrali definiti' },
+							{ id: 'teorema-fondamentale', name: 'Teorema fondamentale del calcolo' }
+						] 
+					},
+					{ 
+						id: 'probabilita', 
+						name: 'Probabilità', 
+						icon: Pi, 
+						topics: [
+							{ id: 'concetti-probabilita', name: 'Concetti di probabilità (evento, probabilità)' },
+							{ id: 'leggi-probabilita', name: 'Leggi della probabilità' }
+						] 
+					},
 				]
 			},
 			{
@@ -232,21 +386,56 @@ export const contentTree: LevelNode[] = [
 				name: 'Fisica',
 				icon: Atom,
 				chapters: [
-					{ id: 'cinematica', name: 'Cinematica', icon: Atom, topics: [] },
-					{ id: 'dinamica', name: 'Dinamica', icon: Atom, topics: [] },
-					{ id: 'lavoro-energia', name: 'Lavoro ed energia', icon: Atom, topics: [] },
-					{ id: 'termodinamica', name: 'Termodinamica', icon: Atom, topics: [] },
-					{ id: 'elettrostatica', name: 'Elettrostatica', icon: Atom, topics: [] },
-					{ id: 'onde-meccaniche', name: 'Onde meccaniche', icon: Atom, topics: [] },
-					{ id: 'elettromagnetismo', name: 'Elettromagnetismo', icon: Atom, topics: [] },
-					{ id: 'ottica', name: 'Ottica', icon: Atom, topics: [] },
-					{ id: 'termodinamica', name: 'Termodinamica', icon: Atom, topics: [] },
-					{ id: 'meccanica-razionale', name: 'Meccanica razionale', icon: Atom, topics: [] },
-					{ id: 'fisica-moderna', name: 'Fisica moderna', icon: Atom, topics: [] },
-					{ id: 'relativita', name: 'Relatività', icon: Atom, topics: [] },
-					{ id: 'meccanica-quantistica', name: 'Meccanica quantistica', icon: Atom, topics: [] },
-					{ id: 'fisica-nucleare', name: 'Fisica nucleare', icon: Atom, topics: [] },
-					{ id: 'astrofisica', name: 'Astrofisica', icon: Atom, topics: [] }
+					{ id: 'cinematica', name: 'Cinematica', icon: Atom, topics: [
+						{ id: 'velocita', name: 'Velocità e accelerazione' },
+						{ id: 'moto-uniforme-accelerato', name: 'Moto uniforme e uniformemente accelerato' }
+					] },
+					{ id: 'dinamica', name: 'Dinamica', icon: Atom, topics: [
+						{ id: 'leggi-newton', name: 'Leggi di Newton' },
+						{ id: 'forze', name: 'Forze (peso, attrito, tensione)' }
+					] },
+					{ id: 'lavoro-energia', name: 'Lavoro ed energia', icon: Atom, topics: [
+						{ id: 'lavoro', name: 'Lavoro e potenza' },
+						{ id: 'energia', name: 'Energia cinetica e potenziale' }
+					] },
+					{ id: 'termodinamica', name: 'Termodinamica', icon: Atom, topics: [
+						{ id: 'calore', name: 'Calore, temperatura e leggi dei gas' },
+						{ id: 'principi-termo', name: 'Primi due principi della termodinamica' }
+					] },
+					{ id: 'elettrostatica', name: 'Elettrostatica', icon: Atom, topics: [
+						{ id: 'carica-campo', name: 'Carica elettrica e campo elettrico' },
+						{ id: 'potenziale', name: 'Potenziale elettrico' }
+					] },
+					{ id: 'onde-meccaniche', name: 'Onde meccaniche', icon: Atom, topics: [
+						{ id: 'propagazione-onde', name: 'Propagazione delle onde' },
+						{ id: 'acustica', name: 'Acustica e suono' }
+					] },
+					{ id: 'elettromagnetismo', name: 'Elettromagnetismo', icon: Atom, topics: [
+						{ id: 'campi-magnetici', name: 'Campi magnetici e legge di Ampère' },
+						{ id: 'indu-faraday', name: 'Legge di Faraday e induzione elettromagnetica' }
+					] },
+					{ id: 'ottica', name: 'Ottica', icon: Atom, topics: [
+						{ id: 'riflessione', name: 'Riflessione e rifrazione' },
+						{ id: 'ottica-geometrica', name: 'Ottica geometrica' }
+					] },
+					{ id: 'meccanica-razionale', name: 'Meccanica razionale', icon: Atom, topics: [
+						{ id: 'lagrangiana', name: 'Principio di Lagrange' }
+					] },
+					{ id: 'fisica-moderna', name: 'Fisica moderna', icon: Atom, topics: [
+						{ id: 'modello-atomico', name: 'Modelli atomici' }
+					] },
+					{ id: 'relativita', name: 'Relatività', icon: Atom, topics: [
+						{ id: 'relativita-ristretta', name: 'Relatività ristretta' }
+					] },
+					{ id: 'meccanica-quantistica', name: 'Meccanica quantistica', icon: Atom, topics: [
+						{ id: 'quantizzazione-energia', name: 'Quantizzazione dell’energia' }
+					] },
+					{ id: 'fisica-nucleare', name: 'Fisica nucleare', icon: Atom, topics: [
+						{ id: 'radioattivita', name: 'Radioattività (alfa, beta, gamma)' }
+					] },
+					{ id: 'astrofisica', name: 'Astrofisica', icon: Atom, topics: [
+						{ id: 'evoluzione-stelle', name: 'Cicli di vita delle stelle' }
+					] }
 				]
 			},
 			{
@@ -254,15 +443,43 @@ export const contentTree: LevelNode[] = [
 				name: 'Informatica',
 				icon: CodeXml,
 				chapters: [
-					{ id: 'informatica', name: 'Informatica', icon: CodeXml, topics: [] },
-					{ id: 'sistemi-operativi', name: 'Sistemi operativi', icon: CodeXml, topics: [] },
-					{ id: 'internet-web', name: 'Internet e web', icon: CodeXml, topics: [] },
-					{ id: 'sicurezza', name: 'Sicurezza informatica', icon: CodeXml, topics: [] },
-					{ id: 'programmazione-visiva', name: 'Programmazione visuale', icon: CodeXml, topics: [] },
-					{ id: 'office', name: 'Strumenti office', icon: CodeXml, topics: [] },
-					{ id: 'multimedia', name: 'Multimedia', icon: CodeXml, topics: [] },
-					{ id: 'presentazioni', name: 'Presentazioni digitali', icon: CodeXml, topics: [] },
-					{ id: 'collaborazione-digitale', name: 'Collaborazione digitale', icon: CodeXml, topics: [] }
+					{ id: 'informatica', name: 'Informatica', icon: CodeXml, topics: [
+						{ id: 'hardware-software', name: 'Hardware e software' },
+						{ id: 'algoritmi', name: 'Algoritmi e pseudocodice' }
+					] },
+					{ id: 'sistemi-operativi', name: 'Sistemi operativi', icon: CodeXml, topics: [
+						{ id: 'processi-thread', name: 'Processi e thread' },
+						{ id: 'memoria-storage', name: 'Memoria e file system' }
+					] },
+					{ id: 'internet-web', name: 'Internet e web', icon: CodeXml, topics: [
+						{ id: 'internet', name: 'Internet e reti' },
+						{ id: 'http-html', name: 'HTTP e HTML di base' }
+					] },
+					{ id: 'sicurezza', name: 'Sicurezza informatica', icon: CodeXml, topics: [
+						{ id: 'virus-malware', name: 'Virus e malware' },
+						{ id: 'password-sicure', name: 'Password sicure e cifratura' }
+					] },
+					{ id: 'programmazione-visiva', name: 'Programmazione visuale', icon: CodeXml, topics: [
+						{ id: 'scratch', name: 'Programmazione a blocchi (Scratch)' },
+						{ id: 'diagrammi-flusso', name: 'Diagrammi di flusso' }
+					] },
+					{ id: 'office', name: 'Strumenti office', icon: CodeXml, topics: [
+						{ id: 'word', name: 'Elaboratore testi (Word)' },
+						{ id: 'excel', name: 'Foglio di calcolo (Excel)' },
+						{ id: 'powerpoint', name: 'Presentazioni (PowerPoint)' }
+					] },
+					{ id: 'multimedia', name: 'Multimedia', icon: CodeXml, topics: [
+						{ id: 'formati-multimediali', name: 'Formati immagine, audio e video' },
+						{ id: 'editing-base', name: 'Nozioni di editing multimediale' }
+					] },
+					{ id: 'presentazioni', name: 'Presentazioni digitali', icon: CodeXml, topics: [
+						{ id: 'creare-slide', name: 'Creazione di slide efficaci' },
+						{ id: 'tools-present', name: 'Strumenti per presentazioni' }
+					] },
+					{ id: 'collaborazione-digitale', name: 'Collaborazione digitale', icon: CodeXml, topics: [
+						{ id: 'cloud', name: 'Servizi cloud e condivisione' },
+						{ id: 'collab-tools', name: 'Strumenti collaborativi online' }
+					] }
 				]
 			},
 			{
@@ -270,21 +487,55 @@ export const contentTree: LevelNode[] = [
 				name: 'Chimica',
 				icon: Beaker,
 				chapters: [
-					{ id: 'atomo-struttura', name: 'Struttura dell\'atomo', icon: Beaker, topics: [] },
-					{ id: 'tavola-periodica', name: 'Tavola periodica', icon: Beaker, topics: [] },
-					{ id: 'legami-chimici', name: 'Legami chimici', icon: Beaker, topics: [] },
-					{ id: 'stechiometria', name: 'Stechiometria', icon: Beaker, topics: [] },
-					{ id: 'reazioni-redox', name: 'Reazioni redox', icon: Beaker, topics: [] },
-					{ id: 'chimica-organica', name: 'Chimica organica', icon: Beaker, topics: [] },
-					{ id: 'chimica-organica', name: 'Chimica organica', icon: Beaker, topics: [] },
-					{ id: 'chimica-fisica', name: 'Chimica fisica', icon: Beaker, topics: [] },
-					{ id: 'equilibrio-chimico', name: 'Equilibrio chimico', icon: Beaker, topics: [] },
-					{ id: 'cinetica-chimica', name: 'Cinetica chimica', icon: Beaker, topics: [] },
-					{ id: 'elettrochimica', name: 'Elettrochimica', icon: Beaker, topics: [] },
-					{ id: 'chimica-analitica', name: 'Chimica analitica', icon: Beaker, topics: [] },
-					{ id: 'biochimica', name: 'Biochimica', icon: Beaker, topics: [] },
-					{ id: 'chimica-ambientale', name: 'Chimica ambientale', icon: Beaker, topics: [] },
-					{ id: 'chimica-industriale', name: 'Chimica industriale', icon: Beaker, topics: [] },
+					{ id: 'atomo-struttura', name: 'Struttura dell\'atomo', icon: Beaker, topics: [
+						{ id: 'particelle-fondamentali', name: 'Protoni, neutroni ed elettroni' },
+						{ id: 'numero-massa', name: 'Numero atomico e numero di massa' }
+					] },
+					{ id: 'tavola-periodica', name: 'Tavola periodica', icon: Beaker, topics: [
+						{ id: 'gruppi-periodi', name: 'Gruppi e periodi' },
+						{ id: 'proprieta-periodiche', name: 'Proprietà periodiche (raggio, energia di ionizzazione)' }
+					] },
+					{ id: 'legami-chimici', name: 'Legami chimici', icon: Beaker, topics: [
+						{ id: 'legame-ionico', name: 'Legame ionico' },
+						{ id: 'legame-covalente', name: 'Legame covalente' }
+					] },
+					{ id: 'stechiometria', name: 'Stechiometria', icon: Beaker, topics: [
+						{ id: 'mole', name: 'Concetto di mole' },
+						{ id: 'equazioni-bilanciate', name: 'Bilanciamento delle reazioni chimiche' }
+					] },
+					{ id: 'reazioni-redox', name: 'Reazioni redox', icon: Beaker, topics: [
+						{ id: 'numero-ossidazione', name: 'Numero di ossidazione' },
+						{ id: 'reazioni-redox', name: 'Esempi di ossidoriduzione' }
+					] },
+					{ id: 'chimica-organica', name: 'Chimica organica', icon: Beaker, topics: [
+						{ id: 'idrocarburi', name: 'Idrocarburi (alcheni, alcani)' },
+						{ id: 'gruppi-funzionali', name: 'Gruppi funzionali principali' }
+					] },
+					{ id: 'chimica-fisica', name: 'Chimica fisica', icon: Beaker, topics: [
+						{ id: 'gas-ideali', name: 'Legge dei gas ideali' },
+						{ id: 'cinetica-chimica', name: 'Nozioni di cinetica chimica' }
+					] },
+					{ id: 'equilibrio-chimico', name: 'Equilibrio chimico', icon: Beaker, topics: [
+						{ id: 'costante-equilibrio', name: 'Costante di equilibrio chimico' }
+					] },
+					{ id: 'cinetica-chimica', name: 'Cinetica chimica', icon: Beaker, topics: [
+						{ id: 'velocita-reattiva', name: 'Velocità di reazione' }
+					] },
+					{ id: 'elettrochimica', name: 'Elettrochimica', icon: Beaker, topics: [
+						{ id: 'pile', name: 'Funzionamento di una pila' }
+					] },
+					{ id: 'chimica-analitica', name: 'Chimica analitica', icon: Beaker, topics: [
+						{ id: 'titolazioni', name: 'Titolazioni acido-base' }
+					] },
+					{ id: 'biochimica', name: 'Biochimica', icon: Beaker, topics: [
+						{ id: 'macromolecole-vita', name: 'Macromolecole del vivente (proteine, lipidi, carboidrati)' }
+					] },
+					{ id: 'chimica-ambientale', name: 'Chimica ambientale', icon: Beaker, topics: [
+						{ id: 'inquinanti-ambientali', name: 'Inquinanti in aria, acqua e suolo' }
+					] },
+					{ id: 'chimica-industriale', name: 'Chimica industriale', icon: Beaker, topics: [
+						{ id: 'processi-industriali', name: 'Processi chimici industriali (Haber, produzione amoniaca)' }
+					] },
 				]
 			}
 		]
@@ -298,11 +549,24 @@ export const contentTree: LevelNode[] = [
 				name: 'Analisi matematica I',
 				icon: Pi,
 				chapters: [
-					{ id: 'successioni-serie', name: 'Successioni e serie', icon: Pi, topics: [] },
-					{ id: 'limiti', name: 'Limiti', icon: Pi, topics: [] },
-					{ id: 'derivate', name: 'Derivate', icon: Pi, topics: [] },
-					{ id: 'integrali', name: 'Integrali', icon: Pi, topics: [] },
-					{ id: 'equazioni-differenziali', name: 'Equazioni differenziali', icon: Pi, topics: [] },
+					{ id: 'successioni-serie', name: 'Successioni e serie', icon: Pi, topics: [
+						{ id: 'successioni', name: 'Successioni di numeri reali' },
+						{ id: 'serie-numeriche', name: 'Serie numeriche e convergenza' }
+					] },
+					{ id: 'limiti', name: 'Limiti', icon: Pi, topics: [
+						{ id: 'limite-definizione', name: 'Definizione di limite di funzione' }
+					] },
+					{ id: 'derivate', name: 'Derivate', icon: Pi, topics: [
+						{ id: 'regole-derivazione-analisi', name: 'Regole e teoremi sulle derivate' }
+					] },
+					{ id: 'integrali', name: 'Integrali', icon: Pi, topics: [
+						{ id: 'integrali-definizione-analisi', name: 'Integrali definiti e indefiniti' },
+						{ id: 'teorema-fondamentale-analisi', name: 'Teorema fondamentale del calcolo' }
+					] },
+					{ id: 'equazioni-differenziali', name: 'Equazioni differenziali', icon: Pi, topics: [
+						{ id: 'ode-ordine1', name: 'Equazioni differenziali di 1º ordine' },
+						{ id: 'ode-ordine2', name: 'Equazioni differenziali di 2º ordine' }
+					] },
 				]
 			},
 			{
@@ -310,9 +574,15 @@ export const contentTree: LevelNode[] = [
 				name: 'Analisi matematica II',
 				icon: Pi,
 				chapters: [
-					{ id: 'integralidoppi', name: 'Integrali doppi', icon: Pi, topics: [] },
-					{ id: 'integrali-tripli', name: 'Integrali tripli', icon: Pi, topics: [] },
-					{ id: 'serie-di-Taylor', name: 'Serie di Taylor', icon: Pi, topics: [] },
+					{ id: 'integralidoppi', name: 'Integrali doppi', icon: Pi, topics: [
+						{ id: 'integrali-doppi', name: 'Integrali doppi in coordinate cartesiane e polari' }
+					] },
+					{ id: 'integrali-tripli', name: 'Integrali tripli', icon: Pi, topics: [
+						{ id: 'integrali-tripli', name: 'Integrali tripli e cambio di coordinate' }
+					] },
+					{ id: 'serie-di-Taylor', name: 'Serie di Taylor', icon: Pi, topics: [
+						{ id: 'serie-taylor', name: 'Serie di Taylor e Maclaurin' }
+					] }
 				]
 			},
 			{
@@ -320,10 +590,19 @@ export const contentTree: LevelNode[] = [
 				name: 'Fisica I',
 				icon: Atom,
 				chapters: [
-					{ id: 'cinematica-del-punto-materiale', name: 'Cinematica del punto materiale', icon: Atom, topics: [] },
-					{ id: 'dinamica-del-punto-materiale', name: 'Dinamica del punto materiale', icon: Atom, topics: [] },
-					{ id: 'lavoro-ed-energia', name: 'Lavoro ed energia', icon: Atom, topics: [] },
-					{ id: 'meccanica-del-corpo-rigido', name: 'Meccanica del corpo rigido', icon: Atom, topics: [] },
+					{ id: 'cinematica-del-punto-materiale', name: 'Cinematica del punto materiale', icon: Atom, topics: [
+						{ id: 'moto-1d', name: 'Moto in una dimensione' },
+						{ id: 'moto-parabolico', name: 'Moto di un proiettile' }
+					] },
+					{ id: 'dinamica-del-punto-materiale', name: 'Dinamica del punto materiale', icon: Atom, topics: [
+						{ id: 'principi-newton', name: 'Principi di Newton e sistemi di riferimento inerziali' }
+					] },
+					{ id: 'lavoro-ed-energia', name: 'Lavoro ed energia', icon: Atom, topics: [
+						{ id: 'lavoro-energia', name: 'Lavoro di una forza e conservazione dell\'energia' }
+					] },
+					{ id: 'meccanica-del-corpo-rigido', name: 'Meccanica del corpo rigido', icon: Atom, topics: [
+						{ id: 'rotazione', name: 'Moto rotazionale e momento d\'inerzia' }
+					] }
 				]
 			},
 			{
@@ -331,9 +610,17 @@ export const contentTree: LevelNode[] = [
 				name: 'Fisica II',
 				icon: Atom,
 				chapters: [
-					{ id: 'termodinamica', name: 'Termodinamica', icon: Atom, topics: [] },
-					{ id: 'elettromagnetismo', name: 'Elettromagnetismo', icon: Atom, topics: [] },
-					{ id: 'ottica', name: 'Ottica', icon: Atom, topics: [] },
+					{ id: 'termodinamica', name: 'Termodinamica', icon: Atom, topics: [
+						{ id: 'gas-ideali', name: 'Leggi dei gas perfetti' },
+						{ id: 'principi-td', name: 'Leggi della termodinamica' }
+					] },
+					{ id: 'elettromagnetismo', name: 'Elettromagnetismo', icon: Atom, topics: [
+						{ id: 'coulomb', name: 'Legge di Coulomb e campo elettrico' },
+						{ id: 'faraday', name: 'Legge di Faraday e induzione' }
+					] },
+					{ id: 'ottica', name: 'Ottica', icon: Atom, topics: [
+						{ id: 'ottica-wav', name: 'Propagazione delle onde luminose' }
+					] }
 				]
 			},
 			{
@@ -341,13 +628,23 @@ export const contentTree: LevelNode[] = [
 				name: 'Fondamenti di Informatica',
 				icon: CodeXml,
 				chapters: [
-					{ id: 'variabili-logiche', name: 'Variabili logiche', icon: CodeXml, topics: [] },
-					{ id: 'funzioni-logiche', name: 'Funzioni logiche', icon: CodeXml, topics: [] },
-					{ id: 'porte-logiche', name: 'Porte logiche', icon: CodeXml, topics: [] },
-					{ id: 'reti-combinatorie', name: 'Reti combinatorie', icon: CodeXml, topics: [] },
-					{ id: 'reti-sequenziali', name: 'Reti sequenziali', icon: CodeXml, topics: [] },
+					{ id: 'variabili-logiche', name: 'Variabili logiche', icon: CodeXml, topics: [
+						{ id: 'variabili-booleane', name: 'Variabili booleane (vero/falso)' }
+					] },
+					{ id: 'funzioni-logiche', name: 'Funzioni logiche', icon: CodeXml, topics: [
+						{ id: 'funzioni-boolean', name: 'Funzioni booleane e tavole di verità' }
+					] },
+					{ id: 'porte-logiche', name: 'Porte logiche', icon: CodeXml, topics: [
+						{ id: 'porte-base', name: 'Porte logiche di base (AND, OR, NOT)' }
+					] },
+					{ id: 'reti-combinatorie', name: 'Reti combinatorie', icon: CodeXml, topics: [
+						{ id: 'circuiti-combinatori', name: 'Circuiti combinatori elementari' }
+					] },
+					{ id: 'reti-sequenziali', name: 'Reti sequenziali', icon: CodeXml, topics: [
+						{ id: 'memorie-basiche', name: 'Memorie di base e flip-flop' }
+					] }
 				]
 			}
 		]
-	},
+	}
 ];

@@ -1,10 +1,10 @@
 <script>
 	import GrainyBackground from './background/GrainyBackground.svelte';
+	import { themeStore } from '$lib/components/shared/ui/theme/theme';
 	import { GraduationCap, BookOpen, ChevronDown } from 'lucide-svelte';
 
     let { 
         heroSection = $bindable(null),
-        isContactModalOpen = $bindable(false),
         stats,
         gradient = false,
     } = $props();
@@ -14,12 +14,6 @@
     bind:this={heroSection}
     class="relative min-h-screen flex items-center justify-center md:scroll-mt-32 pt-32 pb-24 px-6 lg:px-8 overflow-hidden"
 >
-	<GrainyBackground 
-		grain_amount={0.08}
-		grain_size={1.0}
-		speed={0.3}
-	/>
-
 	<!-- Subtle background decoration -->
 	<div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20">
 		<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-500/10 dark:bg-pink-400/10 rounded-full blur-[120px]"></div>
@@ -81,17 +75,16 @@
 			<!-- Image Column -->
 			<div class="hidden lg:block">
 				<div class="relative">
-					<div class="relative rounded-2xl overflow-hidden shadow-md">
+					<div class="relative overflow-hidden">
 						<img
-							src="/images/desktop.png"
+							src="/landing-page-2-removebg-preview.png"
 							alt="Anteprima della piattaforma educativa Sapiens"
 							loading="lazy"
 							decoding="async"
 							class="w-full h-auto object-cover"
+							style="filter: { $themeStore === 'dark' ? 'invert(1)' : 'none' }"
 						/>
 					</div>
-					<!-- Subtle glow effect -->
-					<div aria-hidden="true" class="absolute -inset-4 -z-10 bg-gradient-to-br from-pink-500/20 via-transparent to-blue-500/20 dark:from-pink-400/20 dark:to-blue-400/20 rounded-3xl blur-2xl opacity-50"></div>
 				</div>
 			</div>
 		</div>

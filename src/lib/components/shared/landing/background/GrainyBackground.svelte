@@ -17,8 +17,8 @@
 
     // Compute colors based on theme
     const colors = $derived.by(() => {
-        const isDark = $themeStore === 'dark';
-        
+        let isDark = $themeStore === 'dark' as const;
+
         // Pink gradient colors in OKLCH format
         // OKLCH: [Lightness (0-1), Chroma (0-0.4), Hue (radians)]
         // Pink hues are around 340-360 degrees = 5.93-6.28 radians
@@ -40,21 +40,22 @@
 
         const opacity = isDark ? 0.80 : 0.32;
 
-        return { color1, color2, color3, opacity };
+        return { color1, color2, color3, opacity, isDark };
     });
 
     const parameters = $derived.by(() => {
         return [
-            { name: 'uResolution', type: 'vec2' as const, value: 'resolution' as const },
-            { name: 'uOffset', type: 'vec2' as const, value: 'offset' as const },
-            { name: 'uTime', type: 'float' as const, value: 'time' as const },
-            { name: 'uGrainAmount', type: 'float' as const, value: grain_amount },
-            { name: 'uGrainSize', type: 'float' as const, value: grain_size },
-            { name: 'uSpeed', type: 'float' as const, value: speed },
-            { name: 'uColor1', type: 'vec3' as const, value: colors.color1 },
-            { name: 'uColor2', type: 'vec3' as const, value: colors.color2 },
-            { name: 'uColor3', type: 'vec3' as const, value: colors.color3 },
-            { name: 'uOpacity', type: 'float' as const, value: colors.opacity }
+            { name: 'uResolution', type: 'vec2', value: 'resolution' as const },
+            { name: 'uOffset', type: 'vec2', value: 'offset' as const },
+            { name: 'uTime', type: 'float', value: 'time' as const },
+            { name: 'uGrainAmount', type: 'float', value: grain_amount },
+            { name: 'uGrainSize', type: 'float', value: grain_size },
+            { name: 'uSpeed', type: 'float', value: speed },
+            { name: 'uColor1', type: 'vec3', value: colors.color1 },
+            { name: 'uColor2', type: 'vec3', value: colors.color2 },
+            { name: 'uColor3', type: 'vec3', value: colors.color3 },
+            { name: 'uOpacity', type: 'float', value: colors.opacity },
+            { name: 'uDark', type: 'float', value: colors.isDark ? 1.0 : 0.0 }
         ] as const;
     });
 </script>
@@ -67,5 +68,3 @@
         height="100%"
     />
 </div>
-
-<div class="absolute top-0 left-0 w-full h-full pointer-events-none z-10"></div>

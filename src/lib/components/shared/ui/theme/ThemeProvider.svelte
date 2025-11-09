@@ -5,7 +5,7 @@
     let { children } = $props();
 
     onMount(() => {
-        const storedTheme = localStorage.getItem('theme') || 'dark';
+        const storedTheme = localStorage.getItem('theme') || 'light';
         themeStore.setTheme(storedTheme);
 
         return themeStore.subscribe(theme => {
@@ -17,7 +17,7 @@
         if (typeof window === 'undefined') 
             return;
         
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
         
         return () => {
             mediaQuery.removeEventListener('change', handler);

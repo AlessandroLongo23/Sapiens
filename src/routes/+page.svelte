@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { statsStore } from '$lib/stores/stats.svelte.js';
 	import { studentsStore } from '$lib/stores/students.js';
-	import { subjectsStore } from '$lib/stores/subjects.js';
+	import { contentTree } from '$lib/data/content-tree';
 	import { BookOpen, Users } from 'lucide-svelte';
 
 	import AuthModal from '$lib/components/shared/ui/modals/AuthModal.svelte';
@@ -18,19 +18,17 @@
 	let heroSection = $state(null);
 
 	let stats = $derived({
-		subjects: {
-			value: $subjectsStore.subjects.length,
-			label: "Lezioni disponibili",
+		topics: {
+			value: contentTree
+				.flatMap(level => level.subjects)
+				.flatMap(subject => subject.chapters)
+				.reduce((acc: number, chapter) => acc + chapter.topics.length, 0),
+			label: "Argomenti disponibili",
 			icon: BookOpen,
 		},
-		hours: {
+		students: {
 			value: Math.floor(statsStore.totalTime.hours / 10) * 10 + "+",
 			label: "Studenti Iscritti",
-			icon: Users,
-		},
-		students: {
-			value: Math.floor($studentsStore.students.length / 5) * 5 + "+",
-			label: "Studenti Seguiti",
 			icon: Users,
 		}
 	});
@@ -40,7 +38,7 @@
 	<title>Sapiens</title>
 	<meta
 		name="description"
-		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre {stats.hours.value} ore di esperienza."
+		content="Materiale didattico di matematica, fisica, informatica e altre materie scientifiche."
 	/>
 </svelte:head>
 

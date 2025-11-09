@@ -2,10 +2,13 @@
 	import { fly, fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
-	
+	import { Plus } from 'lucide-svelte';
+
 	let {
 		isOpen = false,
 		level,
+		columnsCount = 3,
+		topicsPerChapter = 3
 	} = $props();
 
 
@@ -23,8 +26,12 @@
 		}
 	});
 	
-	function handleChapterClick(chapterId: string, subjectId: string) {
-		goto(`/${level.id}/${subjectId}/${chapterId}`);
+	function handleChapterClick(subject_id: string, chapter_id: string) {
+		goto(`/${level.id}/${subject_id}/${chapter_id}`);
+	}
+
+	function handleTopicClick(subject_id: string, chapter_id: string, topic_id: string) {
+		goto(`/${level.id}/${subject_id}/${chapter_id}/${topic_id}`);
 	}
 	
 	function handleLevelHover(subjectId: string) {
@@ -44,14 +51,14 @@
 	out:fade={{ duration: 150 }}
 >
 	<!-- Header -->
-	<!-- <div class="px-8 py-5 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
+	<div class="px-8 py-5 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
 		<div class="mx-auto flex items-center gap-3">
 			<level.icon class="size-6 text-pink-500 dark:text-pink-400" />
 			<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
 				{EducationalLevelMap[level.id]}
 			</h3>
 		</div>
-	</div> -->
+	</div>
 	
 	<!-- Main Content -->
 	<div class="mx-auto flex min-h-[400px]">
@@ -81,17 +88,51 @@
 		<!-- Right Content Area - chapters columns -->
 		<div class="flex-1 p-8">
 			{#if currentSubjectData}
-				<div class="grid gap-6 h-full" style="grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%;">
-					{#each currentSubjectData.chapters as chapter}
-						<div class="">
+				<div class="gap-6 h-full" style="column-count: {columnsCount}; column-gap: 1.5rem; width: 100%;">
+					{#each currentSubjectData.chapters as chapter, index}
+						<div class="flex flex-col gap-4 mb-8" style="break-inside: avoid;">
 							<button
-								onclick={() => handleChapterClick(chapter.id, currentSubjectData.id)}
-								class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-pink-500 dark:hover:text-pink-400 transition-all duration-200 group"
+								onclick={() => handleChapterClick(currentSubjectData.id, chapter.id)}
+								class="w-full text-left px-0 text-zinc-900 dark:text-zinc-100 transition-all duration-200 relative group"
 							>
-								<span class="group-hover:translate-x-1 transition-transform duration-200 inline-block">
-									{chapter.name}
+								<span class="font-semibold line-clamp-1">
+									{index + 1}. {chapter.name}
 								</span>
+								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-pink-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full"></span>
 							</button>
+
+							<div class="flex flex-col gap-1.5">
+								{#each chapter.topics.slice(0, topicsPerChapter) as topic}
+									<button
+										onclick={() => handleTopicClick(currentSubjectData.id, chapter.id, topic.id)}
+										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
+									>
+										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-pink-500 dark:group-hover:text-pink-400 line-clamp-1">
+											{topic.name}
+										</span>
+									</button>
+								{/each}
+
+								{#if chapter.topics.length == topicsPerChapter + 1}
+									{@const topic = chapter.topics[topicsPerChapter]}
+									<button
+										onclick={() => handleTopicClick(currentSubjectData.id, chapter.id, topic.id)}
+										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
+									>
+										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-pink-500 dark:group-hover:text-pink-400 line-clamp-1">
+											{topic.name}
+										</span>
+									</button>
+								{:else if chapter.topics.length > topicsPerChapter + 1}
+									<button
+										onclick={() => handleChapterClick(currentSubjectData.id, chapter.id)}
+										class="w-full flex items-center text-left py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-500 hover:text-pink-500 dark:hover:text-pink-400 transition-all duration-200"
+									>
+										<Plus class="size-3" />
+										<span>{chapter.topics.length - topicsPerChapter} argomenti</span>
+									</button>
+								{/if}
+							</div>
 						</div>
 					{/each}
 				</div>

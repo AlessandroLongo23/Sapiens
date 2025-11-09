@@ -6,6 +6,7 @@
 	
 	import SubscriptionPlans from '$lib/components/students/SubscriptionPlans.svelte';
 	import SubscriptionStatus from '$lib/components/students/SubscriptionStatus.svelte';
+	import GrainyBackground from '$lib/components/shared/landing/background/GrainyBackground.svelte';
 
 	let { data } = $props();
 	let { user, subscription } = $derived(data);
@@ -77,29 +78,34 @@
 	}
 </script>
 
-<div class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
-	<div class="max-w-7xl mx-auto px-4 py-8">
-		{#if error}
-			<div class="mb-6 p-4 bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-800 rounded-lg">
-				<p class="text-red-800 dark:text-red-200">{error}</p>
-			</div>
-		{/if}
+<svelte:head>
+	<title>Pricing - Sapiens</title>
+	<meta
+		name="description"
+		content="Piani di abbonamento per il materiale didattico online Sapiens."
+	/>
+</svelte:head>
 
-		<SubscriptionPlans
-			currentPlan={subscription?.plan || 'free'}
-			onSelectPlan={handleSelectPlan}
-		/>
+<div class="max-w-7xl mx-auto px-4 py-8 z-10">
+	{#if error}
+		<div class="mb-6 p-4 bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-800 rounded-lg">
+			<p class="text-red-800 dark:text-red-200">{error}</p>
+		</div>
+	{/if}
 
-		{#if isLoading}
-			<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-				<div class="bg-white dark:bg-zinc-800 rounded-lg p-8 flex flex-col items-center gap-4">
-					<Loader2 class="w-12 h-12 text-blue-600 animate-spin" />
-					<p class="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-						Reindirizzamento in corso...
-					</p>
-				</div>
+	<SubscriptionPlans
+		currentPlan={subscription?.plan || 'free'}
+		onSelectPlan={handleSelectPlan}
+	/>
+
+	{#if isLoading}
+		<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+			<div class="bg-white dark:bg-zinc-800 rounded-lg p-8 flex flex-col items-center gap-4">
+				<Loader2 class="w-12 h-12 text-blue-600 animate-spin" />
+				<p class="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+					Reindirizzamento in corso...
+				</p>
 			</div>
-		{/if}
-	</div>
+		</div>
+	{/if}
 </div>
-

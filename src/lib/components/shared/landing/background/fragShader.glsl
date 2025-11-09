@@ -13,6 +13,7 @@ uniform vec3 uColor3;
 uniform float uOpacity;
 uniform float uGrainAmount;
 uniform float uGrainSize;
+uniform bool uDark;
 
 vec2 getTexCoord() {
     vec2 uv = (gl_FragCoord.xy + uOffset) / uResolution;
@@ -100,7 +101,13 @@ void main() {
 
     float grain = (fract(sin(dot(centered, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 2.0;
     luminosity += grain * uGrainAmount * uGrainSize;
-    luminosity = clamp(luminosity - 0.05, 0.60, 1.0);
+    if (uDark) {
+        luminosity = 1.1 - luminosity;
+        luminosity = clamp(luminosity, 0.40, 0.70);
+        chroma = luminosity * 0.1;
+    } else {
+        luminosity = clamp(luminosity - 0.05, 0.60, 1.0);
+    }
 
     vec3 color = oklchToRgb(vec3(luminosity, chroma, hue));
     

@@ -89,10 +89,10 @@
 </script>
 
 <svelte:head>
-	<title>Sapiens</title>
+	<title>Contatti - Sapiens</title>
 	<meta
 		name="description"
-		content="Ripetizioni personalizzate in matematica, fisica, informatica e altre materie scientifiche. Tutor esperto Laureato all'Università degli Studi di Firenze con oltre {stats.hours.value} ore di esperienza."
+		content="Contattaci per qualsiasi dubbio o richiesta."
 	/>
 </svelte:head>
 
