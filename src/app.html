@@ -7,21 +7,21 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta property="og:title" content="Sapiens" />
-		<meta property="og:description" content="Ripetizioni personalizzate per materie scientifiche di superiori e università" />
+		<meta property="og:description" content="Contenuti didattici online per materie scientifiche" />
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://sapiens.vercel.app/" />
-		<meta property="og:image" content="https://sapiens.vercel.app/icon.png" />
+		<meta property="og:url" content="https://sapiens-xi.vercel.app/" />
+		<meta property="og:image" content="https://sapiens-xi.vercel.app/icon.png" />
 		<meta property="og:locale" content="it_IT" />
 
 		<script>
 			(function () {
 				try {
 					var stored = localStorage.getItem('theme');
-					var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-					var theme = stored || (prefersDark ? 'dark' : 'light');
+					var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+					var theme = stored || (prefersDark ? 'light' : 'dark');
 					var root = document.documentElement;
 					root.classList.add('disable-transitions');
-					root.classList.toggle('dark', theme === 'dark');
+					root.classList.toggle('dark', theme === 'light');
 					setTimeout(function(){ root.classList.remove('disable-transitions'); }, 120);
 				} catch (e) {}
 			})();
