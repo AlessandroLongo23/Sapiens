@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
 	import { Plus } from 'lucide-svelte';
+	import Latex from '$lib/components/shared/Latex.svelte';
 
 	let {
 		isOpen = false,
@@ -95,9 +96,7 @@
 								onclick={() => handleChapterClick(currentSubjectData.id, chapter.id)}
 								class="w-full text-left px-0 text-zinc-900 dark:text-zinc-100 transition-all duration-200 relative group"
 							>
-								<span class="font-semibold line-clamp-1">
-									{index + 1}. {chapter.name}
-								</span>
+								<Latex content={`${index + 1}. ${chapter.name}`} class="font-semibold line-clamp-1" />
 								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-rose-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full"></span>
 							</button>
 
@@ -107,9 +106,7 @@
 										onclick={() => handleTopicClick(currentSubjectData.id, chapter.id, topic.id)}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
 									>
-										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 line-clamp-1">
-											{topic.name}
-										</span>
+										<Latex content={topic.name} class="text-zinc-600 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 line-clamp-1" />
 									</button>
 								{/each}
 
@@ -119,9 +116,7 @@
 										onclick={() => handleTopicClick(currentSubjectData.id, chapter.id, topic.id)}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
 									>
-										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 line-clamp-1">
-											{topic.name}
-										</span>
+										<Latex content={topic.name} class="text-zinc-600 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 line-clamp-1" />
 									</button>
 								{:else if chapter.topics.length > topicsPerChapter + 1}
 									<button

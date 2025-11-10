@@ -6,7 +6,8 @@
 	import { page } from '$app/state';
 
 	import Breadcrumb from '$lib/components/shared/Breadcrumb.svelte';
-
+	import Latex from '$lib/components/shared/Latex.svelte';
+	
 	let level_id = $derived(page.params.level_id);
 	let subject_id = $derived(page.params.subject_id);
 	let chapter_id = $derived(page.params.chapter_id);
@@ -113,11 +114,10 @@
 					</div>
 
 					<div class="flex-1">
-						<h1
+						<Latex
 							class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-3"
-						>
-							{topicData.name}
-						</h1>
+							content={topicData.name}
+						/>
 						<p
 							class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl"
 						>
@@ -192,7 +192,7 @@
 									onclick={() => goto(`/${level_id}/${subject_id}/${chapter_id}/${relatedTopic.id}`)}
 									class="px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 text-sm font-medium"
 								>
-									{relatedTopic.name}
+									<Latex content={relatedTopic.name} />
 								</button>
 							{/if}
 						{/each}

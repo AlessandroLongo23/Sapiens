@@ -6,7 +6,8 @@
 	import { page } from '$app/state';
 
 	import Breadcrumb from '$lib/components/shared/Breadcrumb.svelte';
-	import TopicCardNew from '$lib/components/cards/TopicCardNew.svelte';
+	import TopicCard from '$lib/components/cards/TopicCard.svelte';
+	import Latex from '$lib/components/shared/Latex.svelte';
 
 	let level_id = $derived(page.params.level_id);
 	let subject_id = $derived(page.params.subject_id);
@@ -89,11 +90,10 @@
 					{/if}
 
 					<div class="flex-1">
-						<h1
+						<Latex
 							class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-3"
-						>
-							{chapterData.name}
-						</h1>
+							content={chapterData.name}
+						/>
 						<p
 							class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl"
 						>
@@ -146,7 +146,7 @@
 							<div
 								in:fly={{ y: 20, duration: 400, delay: index * 50 }}
 							>
-								<TopicCardNew
+								<TopicCard
 									topic={topic}
 									level_id={level_id}
 									subject_id={subject_id}

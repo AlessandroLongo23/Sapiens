@@ -2,7 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import type { ChapterNode } from '$lib/data/content-tree';
-
+	import Latex from '$lib/components/shared/Latex.svelte';
+	
 	let { chapter, level_id, subject_id, topicCount = 0 } = $props<{
 		chapter: ChapterNode;
 		level_id: string;
@@ -57,7 +58,7 @@
 		<h3
 			class="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300 line-clamp-2"
 		>
-			{chapter.name}
+			<Latex content={chapter.name} />
 		</h3>
 
 		<!-- Topics Count -->

@@ -1,86 +1,81 @@
-<script>
-    import { selectedTopic } from '$lib/stores/content.js';
-    import { goto } from '$app/navigation';
-    import * as ls from 'lucide-svelte';
-    
-    import MemoryBar from '../MemoryBar.svelte';
-    
-    let { title, description, icon, path, level, subject, year, key, subtopics } = $props();
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { fade } from 'svelte/transition';
+	import type { TopicNode } from '$lib/data/content-tree';
+	import { BookOpen } from 'lucide-svelte';
+	import Latex from '$lib/components/shared/Latex.svelte';
 
-    let memory = $state(Math.floor(Math.random() * 100));
-    let color = $derived.by(() => {
-        const hue = (memory / 100) * 120;
-        return `hsl(${hue}, 90%, 45%)`;
-    });
+	let { topic, level_id, subject_id, chapter_id } = $props<{
+		topic: TopicNode;
+		level_id: string;
+		subject_id: string;
+		chapter_id: string;
+	}>();
 
-    let isHovered = $state(false);
-    
-    let hasSubtopics = $derived(subtopics && Object.keys(subtopics || {}).length > 0);
-    let subtopicCount = $derived(hasSubtopics ? Object.keys(subtopics).length : 0);
+	let isHovered = $state(false);
+
+	function handleClick() {
+		goto(`/${level_id}/${subject_id}/${chapter_id}/${topic.id}`);
+	}
 </script>
 
-<div 
-    onkeydown={(e) => {}}
-    role="button"
-    tabindex="0"
-    class="topic-card w-full group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:shadow-lg transition-all duration-300"
-    onmouseenter={() => isHovered = true}
-    onmouseleave={() => isHovered = false}
-    onclick={() => {
-        setTimeout(() => {
-            if (level === 'universita') {
-                goto(`/student/materiale/${level}/${subject}/${year}/`);
-            } else {
-                goto(`/student/materiale/${level}/${subject}/${year}/${key}/`);
-            }
-        }, 100);
-    }}
+<button
+	onclick={handleClick}
+	onmouseenter={() => (isHovered = true)}
+	onmouseleave={() => (isHovered = false)}
+	class="group w-full relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-rose-300 dark:hover:border-rose-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-rose-500/5"
+	tabindex="0"
 >
-    <div class="absolute bottom-0 left-0 w-full h-1.5 bg-zinc-200 dark:bg-zinc-700">
-        <div class="h-full transition-all duration-500 ease-out" style="background-color: {color}; width: {memory}%;"></div>
-    </div>
-    
-    <div class="flex flex-col h-48 p-4">
-        {#if level === 'high_school' && year}
-            <div class="text-xs font-medium px-2.5 py-1 rounded-full w-fit {
-                subject === 'matematica' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
-                subject === 'informatica' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
-                subject === 'fisica' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
-                'bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200'
-            } mb-2.5 capitalize">
-                {year}° anno
-            </div>
-        {/if}
-        
-        <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100 line-clamp-1 mb-2">
-            {title}
-        </h3>
-        
-        <div class="flex-1 flex items-center justify-center my-2 relative">
-            <div class="w-20 h-20 flex items-center justify-center">
-                {#if icon}
-                    <img src={icon} alt={title} class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110" />
-                {:else}
-                    <div class="text-zinc-400 dark:text-zinc-500 text-5xl">
-                        <ls.BookOpen />
-                    </div>
-                {/if}
-            </div>
-        </div>
-    </div>
-</div>
+	<!-- Gradient overlay on hover -->
+	<div
+		class="absolute inset-0 bg-gradient-to-br from-rose-500/0 via-rose-500/0 to-rose-500/0 group-hover:from-rose-500/5 group-hover:via-rose-500/3 group-hover:to-rose-500/5 transition-all duration-300"
+		transition:fade={{ duration: 300 }}
+	></div>
+
+	<div class="relative flex flex-col p-5 sm:p-6">
+		<!-- Icon -->
+		<div class="mb-3">
+			<div
+				class="p-2.5 rounded-lg bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 group-hover:from-rose-500/20 group-hover:to-rose-500/10 dark:group-hover:from-rose-500/30 dark:group-hover:to-rose-500/20 transition-all duration-300 w-fit"
+			>
+				<BookOpen
+					class="w-5 h-5 sm:w-6 sm:h-6 text-rose-500 dark:text-rose-400 transition-transform duration-300 group-hover:scale-110"
+				/>
+			</div>
+		</div>
+
+		<!-- Topic Name -->
+		<h3
+			class="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300 line-clamp-2"
+		>
+			<Latex content={topic.name} />
+		</h3>
+
+		<!-- Arrow indicator -->
+		<div
+			class="absolute bottom-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+		>
+			<svg
+				class="w-4 h-4 text-rose-500 dark:text-rose-400 transform group-hover:translate-x-1 transition-transform duration-300"
+				fill="none"
+				stroke="currentColor"
+				viewBox="0 0 24 24"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M9 5l7 7-7 7"
+				/>
+			</svg>
+		</div>
+	</div>
+</button>
 
 <style>
-    .topic-card {
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .topic-card:hover {
-        transform: translateY(-4px);
-    }
-
-    .topic-card:active {
-        transform: translateY(2px);
-    }
+	button:focus-visible {
+		outline: 2px solid rgb(236 72 153);
+		outline-offset: 2px;
+	}
 </style>
+
