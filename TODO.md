@@ -17,19 +17,8 @@ aggiungere mascotte, 4 personaggi. Ognuno una personalità diversa per l'AI (in 
 - conoscenze pregresse
 - tanti link interni tra le pagine del contenuto
 - tizk -> webp
-- suddivisione in sotto-aree
-  - matematica
-    - algebra
-    - geometria
-    - probabilità
-
-  - fisica
-    - meccanica
-    - fluidodinamica
-    - relatività
-
-  - chimica ?
-  - informatica ? 
+- esercizi fine argomento e fine capitolo
+- struttura simile a khan academy
 
 ## APP
 L'applicazione deve essere complementare al sito, non una copia
@@ -47,3 +36,10 @@ Contenuti:
 - video promozionali 
 
 ## WEB APP
+
+
+=====================================================================================================================
+
+- [ ] cartella degli esercizi deve rispecchiare quella della teoria (da flat directory deve diventare gerarchica)
+- [ ] tradurre tutto in typescript
+- [ ] creare un nuovo database su supabase

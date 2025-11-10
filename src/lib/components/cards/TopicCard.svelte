@@ -23,7 +23,7 @@
     onkeydown={(e) => {}}
     role="button"
     tabindex="0"
-    class="topic-card group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:shadow-lg transition-all duration-300"
+    class="topic-card w-full group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:shadow-lg transition-all duration-300"
     onmouseenter={() => isHovered = true}
     onmouseleave={() => isHovered = false}
     onclick={() => {

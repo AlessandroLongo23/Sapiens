@@ -1,114 +1,17 @@
-export const configs = {
-	'superiori/matematica/1/numeri-naturali/operazioni-e-proprieta': {
-		'addizione': {
-			generator: 'AddizioneEx',
-			count: 2,
-			args: []
-		},
-		'sottrazione': {
-			generator: 'SottrazioneEx',
-			count: 2,
-			args: []
-		},
-		'moltiplicazione': {
-			generator: 'MoltiplicazioneEx',
-			count: 2,
-			args: []
-		},
-		'divisione': {
-			generator: 'DivisioneEx',
-			count: 2,
-			args: []
-		}
-	},
-	'superiori/matematica/1/numeri-naturali/mcm-mcd': {
-		'mcm': {
-			generator: 'McmEx',
-			count: 3,
-			args: []
-		},
-		'mcd': {
-			generator: 'MCDEx',
-			count: 3,
-			args: []
-		}
-	},
-	'superiori/matematica/1/numeri-naturali/potenze': {
-		'same-base': {
-			generator: 'PotenzaExSameBase',
-			count: 2,
-			args: [3]
-		},
-		'same-exponent': {
-			generator: 'PotenzaExSameExponent',
-			count: 2,
-			args: [2]
-		},
-		// 'different-base-exponent': {
-		// 	generator: 'PotenzaExGeneral',
-		// 	count: 2,
-		// 	args: [2]
-		// }
-	},
-	'superiori/matematica/1/numeri-razionali/confronto-frazioni': {
-		'stesso-numeratore': {
-			generator: 'StessoNumeratoreEx',
-			count: 2,
-			args: []
-		},
-		'stesso-denominatore': {
-			generator: 'StessoDenominatoreEx',
-			count: 2,
-			args: []
-		},
-		'numeratore-e-denominatore-diversi': {
-			generator: 'NumeratoreEDenominatoreDiversoEx',
-			count: 2,
-			args: []
-		}
-	},
-	'superiori/matematica/1/numeri-razionali/espressioni-con-frazioni': {
-		'addizione-e-sottrazione': {
-			generator: 'AddizioneESottrazioneEx',
-			count: 2,
-			args: []
-		},
-		'moltiplicazione-e-divisione': {
-			generator: 'MoltiplicazioneEDivisioneEx',
-			count: 2,
-			args: []
-		},
-		'potenze': {
-			generator: 'PotenzeEx',
-			count: 2,
-			args: []
-		},
-	},
-	'superiori/matematica/1/numeri-razionali/potenze-esponente-negativo': {
-		'stessa-base': {
-			generator: 'PotenzeEsponenteNegativoEx',
-			count: 6,
-			args: []
-		}
-	},
-	'superiori/matematica/1/numeri-razionali/conversione': {
-		'finito': {
-			generator: 'FinitoEx',
-			count: 2,
-			args: []
-		},
-		'periodico-semplice': {
-			generator: 'PeriodicoSempliceEx',
-			count: 2,
-			args: []
-		},
-		'periodico-misto': {
-			generator: 'PeriodicoMistoEx',
-			count: 2,
-			args: []
-		},
-	},
-	'superiori/matematica/1/insiemi-e-logica/operazioni': {
+export interface ExercisesConfig {
+	[key: string]: TopicConfig;
+}
+
+export interface TopicConfig {
+	[exerciseName: string]: {
+		generator: string;
+		count: number;
+		args: number[];
+	}
+}
+
+export const configs: ExercisesConfig = {
+	'high_school/math/insiemi-e-logica/insiemi-operazioni': {
 		'intersezione': {
 			generator: 'IntersezioneEx',
 			count: 2,
@@ -130,14 +33,123 @@ export const configs = {
 			args: []
 		}
 	},
-	'superiori/matematica/1/monomi/grado': {
+	'high_school/math/numeri-naturali/numeri-naturali-operazioni': {
+		'addizione': {
+			generator: 'AddizioneEx',
+			count: 2,
+			args: []
+		},
+		'sottrazione': {
+			generator: 'SottrazioneEx',
+			count: 2,
+			args: []
+		},
+		'moltiplicazione': {
+			generator: 'MoltiplicazioneEx',
+			count: 2,
+			args: []
+		},
+		'divisione': {
+			generator: 'DivisioneEx',
+			count: 2,
+			args: []
+		}
+	},
+	'high_school/math/numeri-naturali/numeri-naturali-mcm-mcd': {
+		'mcm': {
+			generator: 'McmEx',
+			count: 3,
+			args: []
+		},
+		'mcd': {
+			generator: 'MCDEx',
+			count: 3,
+			args: []
+		}
+	},
+	'high_school/math/numeri-naturali/numeri-naturali-potenze': {
+		'same-base': {
+			generator: 'PotenzaExSameBase',
+			count: 2,
+			args: [3]
+		},
+		'same-exponent': {
+			generator: 'PotenzaExSameExponent',
+			count: 2,
+			args: [2]
+		},
+		// 'different-base-exponent': {
+		// 	generator: 'PotenzaExGeneral',
+		// 	count: 2,
+		// 	args: [2]
+		// }
+	},
+	'high_school/math/numeri-razionali/numeri-razionali-confronto': {
+		'stesso-numeratore': {
+			generator: 'StessoNumeratoreEx',
+			count: 2,
+			args: []
+		},
+		'stesso-denominatore': {
+			generator: 'StessoDenominatoreEx',
+			count: 2,
+			args: []
+		},
+		'numeratore-e-denominatore-diversi': {
+			generator: 'NumeratoreEDenominatoreDiversoEx',
+			count: 2,
+			args: []
+		}
+	},
+	'high_school/math/numeri-razionali/numeri-razionali-espressioni': {
+		'addizione-e-sottrazione': {
+			generator: 'AddizioneESottrazioneEx',
+			count: 2,
+			args: []
+		},
+		'moltiplicazione-e-divisione': {
+			generator: 'MoltiplicazioneEDivisioneEx',
+			count: 2,
+			args: []
+		},
+		'potenze': {
+			generator: 'PotenzeEx',
+			count: 2,
+			args: []
+		},
+	},
+	'high_school/math/numeri-razionali/numeri-razionali-potenze': {
+		'stessa-base': {
+			generator: 'PotenzeEsponenteNegativoEx',
+			count: 6,
+			args: []
+		}
+	},
+	'high_school/math/numeri-razionali-conversione': {
+		'finito': {
+			generator: 'FinitoEx',
+			count: 2,
+			args: []
+		},
+		'periodico-semplice': {
+			generator: 'PeriodicoSempliceEx',
+			count: 2,
+			args: []
+		},
+		'periodico-misto': {
+			generator: 'PeriodicoMistoEx',
+			count: 2,
+			args: []
+		},
+	},
+	'high_school/math/monomi-polinomi/monomi-grado': {
 		'grado': {
 			generator: 'GradoEx',
 			count: 6,
 			args: []
 		}
 	},
-	'superiori/matematica/1/monomi/mcm-mcd-monomi': {
+	'high_school/math/monomi-polinomi/monomi-mcm-mcd': {
 		'mcm': {
 			generator: 'McmMonomiEx',
 			count: 2,
@@ -149,7 +161,7 @@ export const configs = {
 			args: []
 		}
 	},
-	'superiori/matematica/1/monomi/operazioni-tra-monomi': {
+	'high_school/math/monomi-polinomi/monomi-operazioni': {
 		'somma-e-sottrazione': {
 			generator: 'SommaESottrazioneMonomiEx',
 			count: 2,
@@ -166,14 +178,14 @@ export const configs = {
 			args: []
 		}
 	},
-	'superiori/matematica/1/monomi/espressioni-con-monomi': {
+	'high_school/math/monomi-polinomi/monomi-espressioni': {
 		'espressione': {
 			generator: 'EspressioneMonomiEx',
 			count: 4,
 			args: []
 		}
 	},
-	'superiori/matematica/3/equazioni/equazioni-di-i-grado': {
+	'high_school/math/equazioni-sistemi/equazioni-primo-grado': {
 		'equal-to-zero': {
 			generator: 'FirstDegreeEquationEx',
 			count: 3,
@@ -185,7 +197,7 @@ export const configs = {
 			args: []
 		}
 	},
-	'superiori/matematica/3/equazioni/equazioni-di-ii-grado': {
+	'high_school/math/equazioni-sistemi/equazioni-secondo-grado': {
 		'equal-to-zero': {
 			generator: 'SecondDegreeEquationEx',
 			count: 0,

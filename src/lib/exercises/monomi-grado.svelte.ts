@@ -1,6 +1,10 @@
 import { Exercise, Question, Answer } from '$lib/exercises/abstract.svelte.js';
 
 export class GradoEx extends Exercise {
+	coefficient: number;
+	exponents: number[];
+	degree: number;
+
 	constructor() { super(3); }
 
 	generateQuestion() {
@@ -32,7 +36,7 @@ export class GradoEx extends Exercise {
     }
 
 	generateCorrectAnswer() {
-		return new Answer(this.degree, true);
+		return new Answer(`${this.degree}`, true);
     }
 
 	generateWrongAnswers() {
@@ -48,7 +52,7 @@ export class GradoEx extends Exercise {
 		}
 
 		for (const wrong of wrongNumbers) {
-			this.answers.add(new Answer(wrong, false));
+			this.answers.add(new Answer(`${wrong}`, false));
 		}
 	}
 }

@@ -77,7 +77,7 @@
 				<div class="relative">
 					<div class="relative overflow-hidden">
 						<img
-							src="/landing-page-2-removebg-preview.png"
+							src="/landing-page.png"
 							alt="Anteprima della piattaforma educativa Sapiens"
 							loading="lazy"
 							decoding="async"

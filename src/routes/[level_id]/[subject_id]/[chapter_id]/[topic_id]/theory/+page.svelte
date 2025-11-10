@@ -8,11 +8,6 @@
     let { data } = $props();
     let { content, sections, error, title } = $derived(data);
     
-    $effect(() => {
-        console.log(data.content, data.error, content, sections, error, title);
-    });
-
-    let targetTheorySection = $state('');
     let activeTheorySection = $state('');
 
     const handleActiveSectionChange = (e: CustomEvent<{ sectionId: string }>) => {
@@ -26,9 +21,9 @@
     <title>{title || 'Teoria'}</title>
 </svelte:head>
 
-{#if data.error}
+{#if error}
     <div class="flex justify-center items-center h-full text-red-500">
-        <p>Errore: {data.error}</p>
+        <p>Errore: {error}</p>
     </div>
 {:else if data.content}
     <div class="flex flex-col gap-4 w-full justify-center items-center mx-auto bg-zinc-50">

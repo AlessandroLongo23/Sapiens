@@ -35,7 +35,7 @@
 				>
 					{#if plan.popular}
 						<div
-							class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
+							class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-600 to-rose-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
 						>
 							<Sparkles class="w-4 h-4" />
 							Più popolare
@@ -83,7 +83,7 @@
 							onclick={() => handleSelectPlan(plan.id)}
 							disabled={plan.id === 'free' || currentPlan === plan.id}
 							class="w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 {plan.popular
-								? 'bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+								? 'bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-lg hover:shadow-xl'
 								: 'bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-100'} disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{#if currentPlan === plan.id}

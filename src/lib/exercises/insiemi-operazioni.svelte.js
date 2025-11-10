@@ -266,7 +266,7 @@ export class EspressioneEx extends Exercise {
 		);
 	}
 
-	#evalExpression() {
+	evalExpression() {
 		const A = this.setA, B = this.setB, C = this.setC;
 		switch (this.expression) {
 			case '(A \\cup B) \\smallsetminus C':
@@ -287,7 +287,7 @@ export class EspressioneEx extends Exercise {
 	}
 
 	generateCorrectAnswer() {
-		const result = this.#evalExpression().sort();
+		const result = this.evalExpression().sort();
 		this.answers.push(new Answer(formatSetLatex(result), true));
 	}
 
@@ -297,7 +297,7 @@ export class EspressioneEx extends Exercise {
 		this.generateCorrectAnswer();
 
 		let wrongAnswers = new Map();
-		const correct = this.#evalExpression();
+		const correct = this.evalExpression();
 
 		const A = this.setA, B = this.setB, C = this.setC;
 

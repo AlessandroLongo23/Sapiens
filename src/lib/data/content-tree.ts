@@ -187,10 +187,15 @@ export const contentTree: LevelNode[] = [
 				name: 'Chimica',
 				icon: Beaker,
 				chapters: [
-					{ id: 'materia-stati', name: 'Materia e stati di aggregazione', icon: Beaker, topics: [
-						{ id: 'stati-aggregazione', name: 'Stati di aggregazione della materia' },
-						{ id: 'proprieta-materia', name: 'Proprietà della materia (massa, volume)' }
-					] },
+					{ 
+						id: 'materia-stati', 
+						name: 'Materia e stati di aggregazione', 
+						icon: Beaker, 
+						topics: [
+							{ id: 'stati-aggregazione', name: 'Stati di aggregazione della materia' },
+							{ id: 'proprieta-materia', name: 'Proprietà della materia (massa, volume)' }
+						] 
+					},
 					{ id: 'elementi-composti', name: 'Elementi e composti', icon: Beaker, topics: [
 						{ id: 'elementi-atomici', name: 'Elementi, atomi e molecole' },
 						{ id: 'proprieta-elementi', name: 'Proprietà degli elementi chimici' }
@@ -229,34 +234,83 @@ export const contentTree: LevelNode[] = [
 				icon: Pi,
 				chapters: [
 					{
-						id: 'fondamenti-matematici',
-						name: 'Fondamenti matematici',
+						id: 'insiemi-e-logica',
+						name: 'Insiemi e logica',
 						icon: Pi,
 						topics: [
-							{ id: 'insiemi-e-logica', name: 'Insiemi e logica' },
-							{ id: 'rappresentazione-insiemi', name: 'Rappresentazione degli insiemi' },
-							{ id: 'operazioni-e-relazioni-tra-insiemi', name: 'Operazioni e relazioni tra insiemi' },
+							{ id: 'prime-definizioni', name: 'Prime definizioni' },
+							{ id: 'insiemi-rappresentazione', name: 'Rappresentazione degli insiemi' },
+							{ id: 'insiemi-operazioni', name: 'Operazioni e relazioni tra insiemi' },
 							{ id: 'sottoinsiemi-ugualianza', name: 'Sottoinsiemi e uguaglianza' },
-							{ id: 'unione-insiemistica', name: 'Unione insiemistica' },
-							{ id: 'intersezione-insiemistica', name: 'Intersezione insiemistica' },
-							{ id: 'differenza-insiemistica', name: 'Differenza insiemistica' },
-							{ id: 'complementare-insiemistica', name: 'Complementare insiemistica' },
-							{ id: 'prodotto-cartesiano', name: 'Prodotto cartesiano' },
-							{ id: 'insiemi-numerici', name: 'Insiemi numerici' },
-							{ id: 'numeri-naturali', name: 'Numeri naturali' },
-							{ id: 'numeri-interi', name: 'Numeri interi' },
-							{ id: 'numeri-razionali', name: 'Numeri razionali' },
-							{ id: 'numeri-reali', name: 'Numeri reali' },
-							{ id: 'numeri-immaginari', name: 'Numeri immaginari' },
-							{ id: 'numeri-complessi', name: 'Numeri complessi' },
+							{ id: 'insiemi-unione', name: 'Unione insiemistica' },
+							{ id: 'insiemi-intersezione', name: 'Intersezione insiemistica' },
+							{ id: 'insiemi-differenza', name: 'Differenza insiemistica' },
+							{ id: 'insiemi-complementare', name: 'Complementare insiemistica' },
+							{ id: 'insiemi-prodotto-cartesiano', name: 'Prodotto cartesiano' },
 						]
 					},
-					{ 
-						id: 'algebra', 
-						name: 'Algebra', 
-						icon: Pi, 
+					{
+						id: 'numeri-naturali',
+						name: 'Numeri naturali \\mathbb{N}',
+						icon: Pi,
 						topics: [
-							{ id: 'monomi-e-polinomi', name: 'Monomi e polinomi' },
+							{ id: 'numeri-naturali-operazioni', name: 'Operazioni in \\mathbb{N}' },
+							{ id: 'numeri-naturali-mcm-mcd', name: 'MCD e MCM in \\mathbb{N}' },
+							{ id: 'numeri-naturali-potenze', name: 'Potenze in \\mathbb{N}' },
+						]
+					},
+					{
+						id: 'numeri-interi',
+						name: 'Numeri interi \\mathbb{Z}',
+						icon: Pi,
+						topics: [
+							{ id: 'numeri-interi-operazioni', name: 'Operazioni in \\mathbb{Z}' },
+							{ id: 'numeri-interi-potenze', name: 'Potenze in \\mathbb{Z}' },
+						]
+					},
+					{
+						id: 'numeri-razionali',
+						name: 'Numeri razionali \\mathbb{Q}',
+						icon: Pi,
+						topics: [
+							{ id: 'numeri-razionali-operazioni', name: 'Operazioni in \\mathbb{Q}' },
+							{ id: 'numeri-razionali-potenze', name: 'Potenze in \\mathbb{Q}' },
+							{ id: 'numeri-razionali-confronto-frazioni', name: 'Confronto tra frazioni' },
+							{ id: 'numeri-razionali-espressioni', name: 'Espressioni con frazioni' },
+							{ id: 'numeri-razionali-conversione', name: 'Conversione da numeri decimali a frazioni' },
+						]
+					},
+					{
+						id: 'numeri-reali',
+						name: 'Numeri reali \\mathbb{R}',
+						icon: Pi,
+						topics: [
+							{ id: 'numeri-reali-radici', name: 'Operazione di radice' },
+							{ id: 'numeri-reali-espressioni', name: 'Espressioni con reali' },
+						]
+					},
+					{
+						id: 'monomi-polinomi',
+						name: 'Monomi e polinomi',
+						icon: Pi,
+						topics: [
+							{ id: 'monomi', name: 'Monomi' },
+							{ id: 'monomi-grado', name: 'Grado di un monomio' },
+							{ id: 'monomi-operazioni', name: 'Operazioni tra monomi' },
+							{ id: 'monomi-potenza', name: 'Potenza di un monomio' },
+							{ id: 'monomi-mcm-mcd', name: 'MCD e MCM tra monomi' },
+							{ id: 'monomi-espressioni', name: 'Espressioni con monomi' },
+							{ id: 'polinomi', name: 'Polinomi' },
+							{ id: 'polinomi-grado', name: 'Grado di un polinomio' },
+							{ id: 'polinomi-operazioni', name: 'Operazioni tra polinomi' },
+							{ id: 'polinomi-espressioni', name: 'Espressioni con polinomi' },
+						],
+					},
+					{ 
+						id: 'equazioni-sistemi', 
+						name: 'Equazioni e sistemi', 
+						icon: Pi,
+						topics: [
 							{ id: 'equazioni-primo-grado', name: 'Equazioni di primo grado' },
 							{ id: 'equazioni-secondo-grado', name: 'Equazioni di secondo grado' },
 							{ id: 'sistemi-di-equazioni', name: 'Sistemi di equazioni' },
@@ -264,19 +318,6 @@ export const contentTree: LevelNode[] = [
 							{ id: 'disequazioni-secondo-grado', name: 'Disequazioni di secondo grado' },
 							{ id: 'disequazioni-razionali', name: 'Disequazioni razionali' },
 							{ id: 'sistemi-di-disequazioni', name: 'Sistemi di disequazioni' },
-							{ id: 'funzioni-lineari', name: 'Funzioni lineari' },
-							{ id: 'funzioni-quadratiche', name: 'Funzioni quadratiche' },
-							{ id: 'funzioni-esponenziali', name: 'Funzioni esponenziali' },
-							{ id: 'funzioni-logaritmiche', name: 'Funzioni logaritmiche' },
-						],
-					},
-					{ 
-						id: 'equazioni-sistemi', 
-						name: 'Equazioni e sistemi', 
-						icon: Pi, 
-						topics: [
-							{ id: 'equazioni', name: 'Equazioni in una variabile' },
-							{ id: 'sistemi-equazioni', name: 'Sistemi di equazioni' }
 						]
 					},
 					{ 
@@ -335,6 +376,10 @@ export const contentTree: LevelNode[] = [
 							{ id: 'funzioni-invertibili', name: 'Funzioni invertibili' },
 							{ id: 'funzioni-periodiche', name: 'Funzioni periodiche' },
 							{ id: 'funzioni-dispari-pari', name: 'Funzioni dispari e pari' },
+							{ id: 'funzioni-lineari', name: 'Funzioni lineari' },
+							{ id: 'funzioni-quadratiche', name: 'Funzioni quadratiche' },
+							{ id: 'funzioni-esponenziali', name: 'Funzioni esponenziali' },
+							{ id: 'funzioni-logaritmiche', name: 'Funzioni logaritmiche' },
 						]
 					},
 					{ 

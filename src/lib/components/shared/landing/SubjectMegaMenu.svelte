@@ -44,7 +44,7 @@
 </script>
 
 <div
-	class="w-full bg-white dark:bg-zinc-900 border-b border-t border-zinc-200 dark:border-zinc-700 shadow-lg pointer-events-auto"
+	class="w-full max-h-[80vh] overflow-hidden bg-white dark:bg-zinc-900 border-b border-t border-zinc-200 dark:border-zinc-700 shadow-lg pointer-events-auto"
 	role="menu"
 	tabindex="-1"
 	in:fly={{ y: -200, duration: 250, opacity: 0 }}
@@ -61,7 +61,7 @@
 	</div>
 	
 	<!-- Main Content -->
-	<div class="mx-auto flex min-h-[400px]">
+	<div class="mx-auto flex min-h-[400px] overflow-hidden">
 		<!-- Left Sidebar - Educational Levels -->
 		<div class="w-1/6 border-r border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30">
 			{#each subjects as subjectData}
@@ -86,7 +86,7 @@
 		</div>
 		
 		<!-- Right Content Area - chapters columns -->
-		<div class="flex-1 p-8">
+		<div class="flex-1 p-8 overflow-y-auto h-full">
 			{#if currentSubjectData}
 				<div class="gap-6 h-full" style="column-count: {columnsCount}; column-gap: 1.5rem; width: 100%;">
 					{#each currentSubjectData.chapters as chapter, index}

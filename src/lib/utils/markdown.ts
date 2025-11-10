@@ -1,9 +1,8 @@
 import MarkdownIt from 'markdown-it';
 import anchor from 'markdown-it-anchor';
 
-function protectMath(markdown) {
+function protectMath(markdown: string) {
 	const placeholders = [];
-	
 	
 	let processed = markdown.replace(/\$\$([\s\S]+?)\$\$/g, (match, content) => {
 		const placeholder = `DISPLAY_MATH_PLACEHOLDER_${placeholders.length}`;
@@ -23,7 +22,7 @@ function protectMath(markdown) {
 	return { processed, placeholders };
 }
 
-function restoreMath(html, placeholders) {
+function restoreMath(html: string, placeholders: { type: 'display' | 'inline', content: string }[]) {
 	let result = html;
 	
 	
@@ -41,7 +40,7 @@ function restoreMath(html, placeholders) {
 	return result;
 }
 
-function tableClassPlugin(md) {
+function tableClassPlugin(md: MarkdownIt) {
 	const originalTable = md.renderer.rules.table_open || function(tokens, idx, options, env, self) {
 		return self.renderToken(tokens, idx, options);
 	};
@@ -79,7 +78,7 @@ function tableClassPlugin(md) {
 }
 
 
-function admonitionPlugin(md) {
+function admonitionPlugin(md: MarkdownIt) {
 	const icons = {
 		note: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-5 w-5"><path d="M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z"/><path d="M15 3v6h6"/></svg>',
 		tip: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-5 w-5"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="M12 10v12"/></svg>',
@@ -177,7 +176,7 @@ function admonitionPlugin(md) {
 	});
 }
 
-function gifPlugin(md) {
+function gifPlugin(md: MarkdownIt) {
 	
 	const defaultRender = md.renderer.rules.image || function(tokens, idx, options, env, self) {
 		return self.renderToken(tokens, idx, options);
@@ -220,7 +219,7 @@ md.use(tableClassPlugin);
 md.use(admonitionPlugin);
 md.use(gifPlugin);
 
-export function renderMarkdown(markdownContent) {
+export function renderMarkdown(markdownContent: string) {
 	markdownContent = markdownContent.split('\n').slice(2).join('\n');
 
 	const { processed, placeholders } = protectMath(markdownContent);
@@ -230,7 +229,7 @@ export function renderMarkdown(markdownContent) {
 	return restoreMath(html, placeholders);
 }
 
-export function extractTableOfContents(markdownContent) {
+export function extractTableOfContents(markdownContent: string) {
 	if (!markdownContent) {
 		console.error('extractTableOfContents: Received empty content');
 		return [];
@@ -258,10 +257,18 @@ export function extractTableOfContents(markdownContent) {
 	return toc;
 }
 
-export function structureTableOfContents(flatToc) {
-	const sections = [];
-	let currentSection = null;
-	let currentH1Section = null;
+export interface ContentSection {
+	id: string;
+	title: string;
+	subsections: ContentSection[];
+	level: number;
+	parent?: ContentSection | null;
+}
+
+export function structureTableOfContents(flatToc: ContentSection[]) {
+	const sections: ContentSection[] = [];
+	let currentSection: ContentSection | null = null;
+	let currentH1Section: ContentSection | null = null;
 	
 	for (const item of flatToc) {
 		if (item.level === 1) {
@@ -270,20 +277,19 @@ export function structureTableOfContents(flatToc) {
 				id: item.id,
 				title: item.title,
 				subsections: [],
-				level: 1
+				level: 1,
+				parent: null
 			};
 			sections.push(currentH1Section);
 			currentSection = null; 
 		} else if (item.level === 2) {
-			
 			currentSection = {
 				id: item.id,
 				title: item.title,
 				subsections: [],
 				level: 2,
-				parent: currentH1Section ? currentH1Section.id : null
+				parent: currentH1Section || null
 			};
-			
 			
 			if (currentH1Section) {
 				currentH1Section.subsections.push(currentSection);
@@ -291,11 +297,12 @@ export function structureTableOfContents(flatToc) {
 				sections.push(currentSection);
 			}
 		} else if (item.level === 3 && currentSection) {
-			
 			currentSection.subsections.push({
 				id: item.id,
 				title: item.title,
-				level: 3
+				level: 3,
+				subsections: [],
+				parent: currentSection || null
 			});
 		}
 	}

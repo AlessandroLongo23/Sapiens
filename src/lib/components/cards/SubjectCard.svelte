@@ -24,7 +24,7 @@
 	onclick={handleClick}
 	onmouseenter={() => (isHovered = true)}
 	onmouseleave={() => (isHovered = false)}
-	class="group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-rose-300 dark:hover:border-rose-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/5"
+	class="group w-full relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-rose-300 dark:hover:border-rose-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/5"
 	tabindex="0"
 >
 	<!-- Gradient overlay on hover -->

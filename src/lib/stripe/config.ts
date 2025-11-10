@@ -104,7 +104,7 @@ export const SUBSCRIPTION_PLANS = {
 	PRO: {
 		id: 'pro',
 		name: 'Piano Pro',
-		price: 49.99,
+		price: 59.99,
 		currency: Currency.EURO,
 		interval: 'month',
 		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_PRO,

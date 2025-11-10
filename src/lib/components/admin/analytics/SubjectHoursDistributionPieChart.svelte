@@ -192,8 +192,6 @@
 						const value = viewMode === 'hours' ? item.hours : item.earnings;
 						const percentage = total > 0 ? (value / total) * 100 : 0;
 
-						console.log(t.caretX, t.caretY)
-
 						tooltipData = {
 							label: item.name,
 							hours: item.hours,
