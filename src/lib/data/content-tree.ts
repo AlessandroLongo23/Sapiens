@@ -323,7 +323,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'geometria-analitica', 
 						name: 'Geometria analitica', 
-						icon: Pi, 
+						icon: Pi,
 						topics: [
 							{ id: 'il-piano-cartesiano', name: 'Il piano cartesiano' },
 							{ id: 'la-distanza-tra-due-punti', name: 'La distanza tra due punti' },

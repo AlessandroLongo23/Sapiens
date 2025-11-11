@@ -60,7 +60,7 @@
     });
 </script>
 
-<div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
     <WebGlShader
         code={fragShaderSource}
         parameters={parameters}

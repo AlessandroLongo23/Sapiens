@@ -1,4 +1,4 @@
-import { BookOpen, Pencil, TableOfContents, Sparkles, Users } from 'lucide-svelte';
+import { MegaphoneOff, BookOpen, Pencil, TableOfContents, Sparkles, Users } from 'lucide-svelte';
 
 export enum Currency {
 	EURO = 'EUR',
@@ -20,6 +20,7 @@ export interface SubscriptionPlan {
 
 export enum Features {
 	THEORY = 'theory',
+	REMOVE_ADS = 'remove_ads',
 	EXERCISES = 'exercises',
 	FORMULARY = 'formulary',
 	AI_CHAT = 'ai_chat',
@@ -30,6 +31,10 @@ export const FeaturesDetails: Record<Features, { name: string; icon: typeof Book
 	[Features.THEORY]: {
 		name: 'Accesso alla teoria',
 		icon: BookOpen,
+	},
+	[Features.REMOVE_ADS]: {
+		name: 'Rimozione pubblicità',
+		icon: MegaphoneOff,
 	},
 	[Features.EXERCISES]: {
 		name: 'Esercizi interattivi',
@@ -44,10 +49,17 @@ export const FeaturesDetails: Record<Features, { name: string; icon: typeof Book
 		icon: Sparkles,
 	},	
 	[Features.TUTORING]: {
-		name: 'Ripetizioni settimanali',
+		name: 'Ripetizioni 1 a 1',
 		icon: Users,
 	},
 }
+
+export const PLAN_DESCRIPTIONS: Record<string, string> = {
+	free: 'Perfetto per iniziare. Accedi a tutti i contenuti teorici gratuitamente e scopri come Sapiens può aiutarti nello studio.',
+	lite: 'Ideale per chi vuole esercitarsi. Oltre alla teoria, hai accesso a esercizi interattivi e formulari completi per consolidare le tue conoscenze.',
+	base: 'Il piano più popolare. Include tutto di Lite più la chat con Sapiens AI per rispondere a tutte le tue domande in tempo reale.',
+	pro: 'La soluzione completa. Tutto di Base più ripetizioni settimanali con tutor dedicati per un supporto personalizzato e mirato.'
+};
 
 export const SUBSCRIPTION_PLANS = {
 	FREE: {
@@ -59,6 +71,7 @@ export const SUBSCRIPTION_PLANS = {
 		stripePriceId: null,
 		access: {
 			[Features.THEORY]: true,
+			[Features.REMOVE_ADS]: false,
 			[Features.EXERCISES]: false,
 			[Features.FORMULARY]: false,
 			[Features.AI_CHAT]: false,
@@ -76,6 +89,7 @@ export const SUBSCRIPTION_PLANS = {
 		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_LITE,
 		access: {
 			[Features.THEORY]: true,
+			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
 			[Features.FORMULARY]: true,
 			[Features.AI_CHAT]: false,
@@ -93,6 +107,7 @@ export const SUBSCRIPTION_PLANS = {
 		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_BASE,
 		access: {
 			[Features.THEORY]: true,
+			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
 			[Features.FORMULARY]: true,
 			[Features.AI_CHAT]: true,
@@ -110,6 +125,7 @@ export const SUBSCRIPTION_PLANS = {
 		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_PRO,
 		access: {
 			[Features.THEORY]: true,
+			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
 			[Features.FORMULARY]: true,
 			[Features.AI_CHAT]: true,
