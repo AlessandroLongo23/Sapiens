@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
 	import { Plus } from 'lucide-svelte';
-	import Latex from '$lib/components/shared/Latex.svelte';
+	import Latex from '$lib/components/shared/ui/Latex.svelte';
 
 	let {
 		isOpen = false,

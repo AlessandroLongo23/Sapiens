@@ -45,9 +45,6 @@ export async function load({ params }) {
 
 		return {
 			exercises,
-			level_id,
-			subject_id,
-			chapter_id,
 			topic_id
 		};
 	} catch (e) {

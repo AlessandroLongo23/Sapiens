@@ -1,4 +1,11 @@
-export const prefixes = [
+interface Prefix {
+    code: string;
+    country: string;
+    format: RegExp;
+    placeholder: string;
+}
+
+export const prefixes: Prefix[] = [
     { code: '+39', country: 'Italia', format: /(\d{0,3})(\d{0,3})(\d{0,4})/, placeholder: '000 000 0000' },
     { code: '+41', country: 'Svizzera', format: /(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/, placeholder: '00 000 00 00' },
     { code: '+43', country: 'Austria', format: /(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,3})/, placeholder: '0 000 000 000' },

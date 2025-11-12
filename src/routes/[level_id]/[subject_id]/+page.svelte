@@ -3,7 +3,7 @@
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
 	import { fade, fly } from 'svelte/transition';
 	import ChapterCard from '$lib/components/cards/ChapterCard.svelte';
-	import Breadcrumb from '$lib/components/shared/Breadcrumb.svelte';
+	import Breadcrumb from '$lib/components/shared/ui/Breadcrumb.svelte';
 	import { BookOpen } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 

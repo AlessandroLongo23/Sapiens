@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { statsStore } from '$lib/stores/stats.svelte.js';
-	import { studentsStore } from '$lib/stores/students.js';
 	import { contentTree } from '$lib/data/content-tree';
 	import { BookOpen, Users } from 'lucide-svelte';
 
@@ -27,7 +25,7 @@
 			icon: BookOpen,
 		},
 		students: {
-			value: Math.floor(statsStore.totalTime.hours / 10) * 10 + "+",
+			value: "300+",
 			label: "Studenti Iscritti",
 			icon: Users,
 		}

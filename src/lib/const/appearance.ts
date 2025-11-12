@@ -1,4 +1,3 @@
-
 export const designSystem = {
   colors: {
     primary: {
@@ -64,7 +63,6 @@ export const designSystem = {
   }
 };
 
-
 export const colors = [
     { hex: '#ef4444', name: 'Rosso' },
     { hex: '#f15a2a', name: 'Vermiglione' },
@@ -103,7 +101,6 @@ export const colors = [
     { hex: '#f04444', name: 'Scarlatto' },
     { hex: '#ef4444', name: 'Rosso' }
 ];
-
 
 export const cardStyle = 'bg-white border border-[#E5E7EB] dark:bg-[#121212] dark:border-[#2A2A2A] rounded-xl shadow-base transition-all hover:shadow-md dark:shadow-glow';
 

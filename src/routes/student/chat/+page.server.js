@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { checkFeatureAccess } from '$lib/utils/subscription.js';
+import { checkFeatureAccess } from '$lib/utils/subscription.svelte.js';
 
 export const load = async ({ locals: { user } }) => {
 	if (!user) {

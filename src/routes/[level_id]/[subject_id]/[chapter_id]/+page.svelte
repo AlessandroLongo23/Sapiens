@@ -5,9 +5,9 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 
-	import Breadcrumb from '$lib/components/shared/Breadcrumb.svelte';
+	import Breadcrumb from '$lib/components/shared/ui/Breadcrumb.svelte';
 	import TopicCard from '$lib/components/cards/TopicCard.svelte';
-	import Latex from '$lib/components/shared/Latex.svelte';
+	import Latex from '$lib/components/shared/ui/Latex.svelte';
 
 	let level_id = $derived(page.params.level_id);
 	let subject_id = $derived(page.params.subject_id);

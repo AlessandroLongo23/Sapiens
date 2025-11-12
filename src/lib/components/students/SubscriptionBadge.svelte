@@ -1,6 +1,6 @@
 <script>
 	import { Crown, Sparkles } from 'lucide-svelte';
-	import { getSubscriptionBadge } from '$lib/utils/subscription.js';
+	import { getSubscriptionBadge } from '$lib/utils/subscription.svelte.js';
 
 	let { user, showIcon = true } = $props();
 	

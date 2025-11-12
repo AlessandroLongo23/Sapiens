@@ -1,5 +1,11 @@
 import '$lib/utils/prototypes.js';
 
+export enum ProgressState {
+    UNANSWERED = 'unanswered',
+    CORRECT = 'correct',
+    INCORRECT = 'incorrect',
+}
+
 export class Exercise {
     question: Question;
     answers: AnswerSet;

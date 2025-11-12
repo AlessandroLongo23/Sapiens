@@ -5,7 +5,7 @@
 	
 	import SubscriptionPlans from '$lib/components/students/SubscriptionPlans.svelte';
 	import SubscriptionTable from '$lib/components/students/SubscriptionTable.svelte';
-	import BillingToggle from '$lib/components/shared/BillingToggle.svelte';
+	import BillingToggle from '$lib/components/shared/ui/BillingToggle.svelte';
 
 	let { data } = $props();
 	let { user, subscription } = $derived(data);
@@ -67,8 +67,8 @@
 			<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
 				Inizia gratis e passa a Premium quando vuoi. Puoi annullare in qualsiasi momento.
 				<br>
-				<span class="text-rose-500 dark:text-rose-400">
-					Con il semestrale, il primo mese è gratis!
+				<span class="text-base text-rose-500 dark:text-rose-400">
+					Con l'abbonamento semestrale, il primo mese te lo regaliamo!
 				</span>
 			</p>
 			
@@ -95,8 +95,12 @@
 			<h2 class="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-zinc-100">
 				Confronta i piani
 			</h2>
-			<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+			<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
 				Tutti i dettagli a colpo d'occhio per aiutarti a scegliere il piano perfetto per le tue esigenze.
+				<br>
+				<span class="text-base text-rose-500 dark:text-rose-400">
+					Con l'abbonamento semestrale, il primo mese te lo regaliamo!
+				</span>
 			</p>
 
 			<BillingToggle value={billingPeriod} onChange={(value) => billingPeriod = value} />

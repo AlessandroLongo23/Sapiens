@@ -1,18 +1,19 @@
-<script>
+<script lang="ts">
+	import { Answer, ProgressState } from '$lib/exercises/abstract.svelte';
+	import { sineOut } from 'svelte/easing';
+	import { tweened } from 'svelte/motion';
+	import { fade } from 'svelte/transition';
+	
 	import SegmentedProgressBar from '$lib/components/SegmentedProgressBar.svelte';
 	import AnswerButton from '$lib/components/shared/ui/buttons/AnswerButton.svelte';
 	import SummaryModal from '$lib/components/shared/ui/modals/SummaryModal.svelte';
 	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
 	
-	import { sineOut } from 'svelte/easing';
-	import { tweened } from 'svelte/motion';
-	import { fade } from 'svelte/transition';
-
 	let { data } = $props();
-	const { exercises, level_id, subject_id, chapter_id, topic_id } = data;
+	const { exercises, topic_id } = data;
 
 	let currentExerciseIndex = $state(0);
-	let progressStates = $state(Array(exercises.length).fill('unanswered'));
+	let progressStates = $state<ProgressState[]>(Array(exercises.length).fill(ProgressState.UNANSWERED));
 	let selectedAnswer = $state(null);
 	let isAnswering = $state(false);
 	let showSummaryModal = $state(false);
@@ -28,13 +29,13 @@
 
 	let currentExercise = $derived(exercises[Math.round($questionNumber)]);
 
-	function handleAnswer(answer) {
+	function handleAnswer(answer: Answer): void {
 		if (isAnswering) return;
 
 		isAnswering = true;
 		selectedAnswer = answer;
 
-		progressStates[currentExerciseIndex] = answer.isCorrect ? 'correct' : 'incorrect';
+		progressStates[currentExerciseIndex] = answer.isCorrect ? ProgressState.CORRECT : ProgressState.INCORRECT;
 
 		setTimeout(() => {
 			selectedAnswer = null;
@@ -48,14 +49,14 @@
 		}, 1500);
 	}
 
-	function getButtonState(answer) {
-		if (!isAnswering) return 'idle';
-		if (answer !== selectedAnswer) return 'idle';
+	function getButtonState(answer: Answer): ProgressState {
+		if (!isAnswering) return ProgressState.UNANSWERED;
+		if (answer !== selectedAnswer) return ProgressState.UNANSWERED;
 
-		return answer.isCorrect ? 'correct' : 'incorrect';
+		return answer.isCorrect ? ProgressState.CORRECT : ProgressState.INCORRECT;
 	}
 
-	let correctCount = $derived(progressStates.filter((s) => s === 'correct').length);
+	let correctCount = $derived(progressStates.filter((s) => s === ProgressState.CORRECT).length);
 </script>
 
 <svelte:head>
@@ -68,7 +69,7 @@
 	{#key currentExercise.question}
 		<div
 			class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-zinc-200"
-			in:fade={{ opacity: 0, duration: 500}}
+			in:fade={{ duration: 500}}
 		>
 			<MathRenderer content={currentExercise.question.textContent} />
 		</div>

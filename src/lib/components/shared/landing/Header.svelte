@@ -14,7 +14,8 @@
 
 	const clickAccessButton = async () => {
 		if (session) { 
-			const redirectPath = session?.user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+			// const redirectPath = session?.user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+			const redirectPath = '/student/dashboard';
 			await goto(redirectPath);
 		} else { 
 			isAuthModalOpen = true;

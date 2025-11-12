@@ -1,5 +1,5 @@
-import { renderMarkdown, extractTableOfContents, structureTableOfContents, type ContentSection } from '$lib/utils/markdown.js';
-import { getMarkdownPath, getTopicNode, type RouteParams } from '$lib/utils/route-params.js';
+import { renderMarkdown, extractTableOfContents, structureTableOfContents, type ContentSection } from '$lib/utils/markdown.svelte.js';
+import { getMarkdownPath, getTopicNode, type RouteParams } from '$lib/utils/route-params.svelte.js';
 import type { TopicNode } from '$lib/data/content-tree.js';
 
 interface ReturnValue {
