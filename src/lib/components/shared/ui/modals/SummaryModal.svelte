@@ -1,6 +1,6 @@
 <script>
 	import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
-	import * as ls from 'lucide-svelte';
+	import { CheckCircle, XCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { exercise_messages } from '$lib/const/microcopy.js';
 
@@ -45,11 +45,11 @@
 
 		<div class="flex gap-8 text-xl">
 			<div class="flex items-center gap-2 font-semibold text-green-600 dark:text-green-400">
-				<ls.CheckCircle class="w-7 h-7" />
+				<CheckCircle class="w-7 h-7" />
 				<span>{correctCount} Corrette</span>
 			</div>
 			<div class="flex items-center gap-2 font-semibold text-red-600 dark:text-red-400">
-				<ls.XCircle class="w-7 h-7" />
+				<XCircle class="w-7 h-7" />
 				<span>{incorrectCount} Sbagliate</span>
 			</div>
 		</div>

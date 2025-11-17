@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { prefixes } from '$lib/const/prefixes'
-    import * as ls from 'lucide-svelte';
+    import { ChevronDown } from 'lucide-svelte';
 
     let { 
         prefixCode = $bindable(null),
@@ -97,7 +97,7 @@
             }}
         >
             <span class="text-zinc-900 dark:text-zinc-100">{prefix.code}</span>
-            <ls.ChevronDown class="size-4 text-zinc-500" />
+            <ChevronDown class="size-4 text-zinc-500" />
         </button>
 
         {#if showPrefixDropdown}

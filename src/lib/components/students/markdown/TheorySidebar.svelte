@@ -2,7 +2,7 @@
 	import { contentService } from '$lib/services/contentService';
 	import { createEventDispatcher } from 'svelte';
 	import { slide } from 'svelte/transition';
-	import * as ls from 'lucide-svelte';
+	import { ChevronDown } from 'lucide-svelte';
 	
 	let sections = $derived(contentService.sections || []);
 	let isLoading = $derived(contentService.isLoading);
@@ -86,7 +86,7 @@
 									aria-label={expandedSections[section.id] ? "Collapse section" : "Expand section"}
 									title={expandedSections[section.id] ? "Collapse section" : "Expand section"}
 								>
-									<ls.ChevronDown 
+									<ChevronDown 
 										size={14} 
 										class="transition-transform duration-200 {expandedSections[section.id] ? 'rotate-180' : ''}"
 									/>
@@ -114,7 +114,7 @@
 													aria-label={expandedSections[subsection.id] ? "Collapse section" : "Expand section"}
 													title={expandedSections[subsection.id] ? "Collapse section" : "Expand section"}
 												>
-													<ls.ChevronDown 
+													<ChevronDown 
 														size={12} 
 														class="transition-transform duration-200 {expandedSections[subsection.id] ? 'rotate-180' : ''}"
 													/>

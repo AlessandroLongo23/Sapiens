@@ -1,7 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase.js';
-	import * as ls from 'lucide-svelte';
+	import { X } from 'lucide-svelte';
 	
 	import FormButton from '$lib/components/shared/ui/forms/FormButton.svelte';
 	import FormInput from '$lib/components/shared/ui/forms/FormInput.svelte';
@@ -68,9 +68,7 @@
 			class="group p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-300 cursor-pointer"
 			aria-label="close modal"
 		>
-			<ls.X
-				class="w-5 h-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors duration-300"
-			/>
+			<X class="size-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors duration-300"/>
 		</button>
 	</div>
 	

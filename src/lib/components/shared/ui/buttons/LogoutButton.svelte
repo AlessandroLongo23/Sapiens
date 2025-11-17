@@ -1,5 +1,5 @@
 <script>
-    import * as ls from 'lucide-svelte';
+    import { Loader, LogOut } from 'lucide-svelte';
     import { goto } from '$app/navigation';
 
     let isLoggingOut = $state(false);
@@ -31,8 +31,8 @@
 >
     <span>{isLoggingOut ? 'Uscendo...' : 'Logout'}</span>
     {#if isLoggingOut}
-        <ls.Loader class="w-4 h-4 animate-spin" />
+        <Loader class="size-4 animate-spin" />
     {:else}
-        <ls.LogOut class="w-4 h-4" />
+        <LogOut class="size-4" />
     {/if}
 </button>

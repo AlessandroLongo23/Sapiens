@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
-    import * as ls from 'lucide-svelte';
+    import { X, ChevronDown } from 'lucide-svelte';
 
     let { 
         value = $bindable(),
@@ -169,10 +169,10 @@
                     }}
                     aria-label="Cancella selezione"
                 >
-                    <ls.X class="h-4 w-4 text-zinc-500" />
+                    <X class="size-4 text-zinc-500" />
                 </button>
             {/if}
-            <ls.ChevronDown class="h-5 w-5 text-zinc-400 transition-transform duration-200 {isOpen ? 'rotate-180' : ''}" />
+            <ChevronDown class="size-5 text-zinc-400 transition-transform duration-200 {isOpen ? 'rotate-180' : ''}" />
         </div>
     </div>
     
@@ -200,7 +200,7 @@
                                 onclick={() => searchQuery = ''}
                                 aria-label="Clear search"
                             >
-                                <ls.X class="h-4 w-4 text-zinc-400" />
+                                <X class="size-4 text-zinc-400" />
                             </button>
                         {/if}
                     </div>
