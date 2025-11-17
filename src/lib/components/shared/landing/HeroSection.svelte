@@ -1,20 +1,26 @@
-<script>
-	import GrainyBackground from './background/GrainyBackground.svelte';
+<script lang="ts">
 	import { themeStore } from '$lib/components/shared/ui/theme/theme';
-	import { GraduationCap, BookOpen, ChevronDown } from 'lucide-svelte';
+	import { GraduationCap, BookOpen } from 'lucide-svelte';
+
+	interface Props {
+		heroSection: HTMLElement | null;
+		stats: {
+			value: string;
+			label: string;
+			icon: typeof GraduationCap;
+		}[];
+	}
 
     let { 
         heroSection = $bindable(null),
         stats,
-        gradient = false,
-    } = $props();
+    }: Props = $props();
 </script>
 
 <section
     bind:this={heroSection}
-    class="relative min-h-screen flex items-center justify-center md:scroll-mt-32 pt-32 pb-24 px-6 lg:px-8 overflow-hidden"
+    class="relative min-h-screen flex items-center justify-center pb-24 px-6 lg:px-8 overflow-hidden"
 >
-	<!-- Subtle background decoration -->
 	<div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20">
 		<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-500/10 dark:bg-rose-400/10 rounded-full blur-[120px]"></div>
 		<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-400/10 rounded-full blur-[120px]"></div>
@@ -22,9 +28,7 @@
 
 	<div class="relative max-w-7xl mx-auto w-full z-10">
 		<div class="grid lg:grid-cols-2 gap-16 items-center">
-			<!-- Content Column -->
 			<div class="text-center lg:text-left space-y-8">
-				<!-- Heading -->
 				<div class="space-y-6">
 					<h1 class="text-4xl sm:text-5xl lg:text-[2.25rem] font-bold text-gray-900 dark:text-slate-50 leading-[1.2] tracking-tight">
 						Studia in autonomia con
@@ -38,7 +42,6 @@
 					</p>
 				</div>
 
-				<!-- CTAs -->
 				<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
 					<a
 						href="/pricing"
@@ -57,12 +60,15 @@
 					</a>
 				</div>
 
-				<!-- Stats -->
 				<div class="flex items-center justify-center lg:justify-start gap-8 pt-8">
-					{#each Object.values(stats) as stat}
+					{#each stats as stat}
+						{@const StatIcon = stat.icon}
 						<div class="text-center lg:text-left">
-							<div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-slate-50">
-								{stat.value}
+							<div class="flex items-center gap-3">
+								<StatIcon class="size-6 text-rose-500 dark:text-rose-400" />
+								<div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-slate-50">
+									{stat.value}
+								</div>
 							</div>
 							<div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
 								{stat.label}
@@ -72,7 +78,6 @@
 				</div>
 			</div>
 
-			<!-- Image Column -->
 			<div class="hidden lg:block">
 				<div class="relative">
 					<div class="relative overflow-hidden">

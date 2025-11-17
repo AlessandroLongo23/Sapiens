@@ -1,6 +1,6 @@
 <script lang="ts">
-    import * as ls from 'lucide-svelte';
-    import { searchStore } from '$lib/components/shared/ui/search.js';
+    import { searchStore } from '$lib/components/shared/ui/search';
+    import { Search, X } from 'lucide-svelte';
     
     let inputRef;
     let isMac = $state(false);
@@ -35,7 +35,7 @@
 
 <div class="relative flex items-center {classes} {width}">
     <div class="absolute left-2 text-zinc-400">
-        <ls.Search class="size-5" />
+        <Search class="size-5" />
     </div>
     
     <input
@@ -48,10 +48,10 @@
                dark:text-zinc-100 text-zinc-900
                placeholder:text-zinc-400
                outline-none transition-all duration-200"
-        value={searchStore.query}
+        value={$searchStore.query}
         oninput={(e: Event) => searchStore.setQuery((e.target as HTMLInputElement).value)}
-        onfocus={() => searchStore.isActive = true}
-        onblur={() => !searchStore.query && (searchStore.isActive = false)}
+        onfocus={() => $searchStore.isActive = true}
+        onblur={() => !$searchStore.query && ($searchStore.isActive = false)}
     />
     
     {#if $searchStore.query && isNullable}
@@ -61,7 +61,7 @@
             onclick={() => searchStore.clear()}
             aria-label="Clear search"
         >
-            <ls.X size={14} />
+            <X size={14} />
         </button>
     {:else}
         {#if hasKeyboardShortcut}

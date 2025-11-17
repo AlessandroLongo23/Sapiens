@@ -2,17 +2,9 @@
 	import { contentTree } from '$lib/data/content-tree';
 	import { BookOpen, Users } from 'lucide-svelte';
 
-	import AuthModal from '$lib/components/shared/ui/modals/AuthModal.svelte';
-	import Header from '$lib/components/shared/landing/Header.svelte';
-
 	import HeroSection from '$lib/components/shared/landing/HeroSection.svelte';
 	import FooterSection from '$lib/components/shared/landing/FooterSection.svelte';
 
-	let isAuthModalOpen = $state(false);
-
-	let { data } = $props();
-	let { session } = $derived(data);
-	
 	let heroSection = $state(null);
 
 	let stats = $derived({
@@ -20,7 +12,8 @@
 			value: contentTree
 				.flatMap(level => level.subjects)
 				.flatMap(subject => subject.chapters)
-				.reduce((acc: number, chapter) => acc + chapter.topics.length, 0),
+				.reduce((acc: number, chapter) => acc + chapter.topics.length, 0)
+				.toString(),
 			label: "Argomenti disponibili",
 			icon: BookOpen,
 		},
@@ -40,17 +33,6 @@
 	/>
 </svelte:head>
 
-
-<AuthModal 
-	bind:isOpen={isAuthModalOpen} 
-	onClose={() => isAuthModalOpen = false} 
-/>
-
-<Header
-	bind:isAuthModalOpen={isAuthModalOpen}
-	session={session}
-/>
-
-<HeroSection bind:heroSection={heroSection} stats={stats} gradient={true}/>
+<HeroSection bind:heroSection={heroSection} stats={Object.values(stats)}/>
 
 <FooterSection />

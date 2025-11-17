@@ -6,9 +6,13 @@
 
 	import ThemeProvider from '$lib/components/shared/ui/theme/ThemeProvider.svelte';
 	import GrainyBackground from '$lib/components/shared/landing/background/GrainyBackground.svelte';
-	
+	import AuthModal from '$lib/components/shared/ui/modals/AuthModal.svelte';
+	import Header from '$lib/components/shared/landing/Header.svelte';
+
 	let { data, children } = $props();
 	let { session, supabase, user } = $derived(data)
+
+	let isAuthModalOpen = $state(false);
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange(async (event, _session) => {
@@ -35,7 +39,19 @@
 		speed={0.3}
 	/>
 
-	<div class="relative z-10">
-		{@render children()}
+	<AuthModal 
+		bind:isOpen={isAuthModalOpen} 
+		onClose={() => isAuthModalOpen = false} 
+	/>
+
+	<div class="flex flex-col relative z-10 h-screen">
+		<Header
+			bind:isAuthModalOpen={isAuthModalOpen}
+			session={session}
+		/>
+
+		<div class="overflow-y-auto">
+			{@render children()}
+		</div>
 	</div>
 </ThemeProvider>

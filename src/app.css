@@ -8,9 +8,9 @@
 @plugin '@tailwindcss/typography';
 
 /* Disable transitions/animations during theme toggle to avoid color fades */
-.disable-transitions *,
-.disable-transitions *::before,
-.disable-transitions *::after {
+.disable-transitions *:not(.theme-toggle-icon),
+.disable-transitions *:not(.theme-toggle-icon)::before,
+.disable-transitions *:not(.theme-toggle-icon)::after {
   transition: none !important;
   animation: none !important;
 }

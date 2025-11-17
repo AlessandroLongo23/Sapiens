@@ -1,21 +1,21 @@
 import { writable } from 'svelte/store';
 
-function createSearchStore() {
-    const { subscribe, set, update } = writable({
+export function createSearchStore() {
+    const { subscribe, set, update } = writable<SearchStore>({
         query: '',
         isActive: false
     });
 
     return {
         subscribe,
-        setQuery: (value) => {
-            update(state => ({
+        setQuery: (value: string) => {
+            update((state: SearchStore) => ({
                 ...state,
                 query: value.toLowerCase()
             }));
         },
         toggleActive: () => {
-            update(state => ({
+            update((state: SearchStore) => ({
                 ...state,
                 isActive: !state.isActive
             }));
@@ -29,4 +29,9 @@ function createSearchStore() {
     };
 }
 
-export const searchStore = createSearchStore(); 
+export const searchStore = createSearchStore();
+
+export interface SearchStore {
+    query: string;
+    isActive: boolean;
+}

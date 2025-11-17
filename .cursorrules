@@ -1,15 +1,15 @@
 
-You are an expert in Svelte 5, SvelteKit, Javascript, and modern web development.
+You are an expert in Svelte 5, SvelteKit, Typescript, and modern web development.
 
 Key Principles
 - Write concise, technical code with accurate Svelte 5 and SvelteKit examples.
 - Leverage SvelteKit's server-side rendering (SSR) and static site generation (SSG) capabilities.
-- Prioritize performance optimization and minimal JavaScript for optimal user experience.
+- Prioritize performance optimization and minimal Typescript for optimal user experience.
 - Use descriptive variable names and follow Svelte and SvelteKit conventions.
 - Organize files using SvelteKit's file-based routing system.
 
 Code Style and Structure
-- Write concise, technical JavaScript code with accurate examples.
+- Write concise, technical Typescript code with accurate examples.
 - Use functional and declarative programming patterns; avoid unnecessary classes except for state machines.
 - Prefer iteration and modularization over code duplication.
 - Structure files: component logic, markup, styles, helpers, types.
@@ -20,38 +20,38 @@ Naming Conventions
 - Use PascalCase for component names in imports and usage.
 - Use camelCase for variables, functions, and props.
 
-Javascript Usage
-- Use Javascript for all code;
+Typescript Usage
+- Use Typescript for all code;
 
 Svelte Runes
 - `$state`: Declare reactive state
-  ```Javascript
+  ```Typescript
   let count = $state(0);
   ```
 - `$derived`: Compute derived values
-  ```Javascript
+  ```Typescript
   let doubled = $derived(count * 2);
   ```
 - `$derived.by`: Compute derived values using a function value
-  ```Javascript
+  ```Typescript
   let doubled = $derived.by(count, (count) => count * 2);
   ```
 - `$effect`: Manage side effects and lifecycle
-  ```Javascript
+  ```Typescript
   $effect(() => {
     console.log(`Count is now ${count}`);
   });
   ```
 - `$props`: Declare component props
-  ```Javascript
+  ```Typescript
   let { optionalProp = 42, requiredProp } = $props();
   ```
 - `$bindable`: Create two-way bindable props
-  ```Javascript
+  ```Typescript
   let { bindableProp = $bindable() } = $props();
   ```
 - `$inspect`: Debug reactive state (development only)
-  ```Javascript
+  ```Typescript
   $inspect(count);
   ```
 
@@ -78,28 +78,28 @@ SvelteKit Project Structure
 
 Component Development
 - Create .svelte files for Svelte components.
-- Use .svelte.js files for component logic and state machines.
+- Use .svelte.ts files for component logic and state machines.
 - Implement proper component composition and reusability.
 - Use Svelte's props for data passing.
 - Leverage Svelte's reactive declarations for local state management.
 
 State Management
 - Use classes for complex state management (state machines):
-  ```Javascript
-  // counter.svelte.js
+  ```typescript
+  // counter.svelte.ts
   class Counter {
     count = $state(0);
     incrementor = $state(1);
     
-    increment() {
+    increment(): void {
       this.count += this.incrementor;
     }
     
-    resetCount() {
+    resetCount(): void {
       this.count = 0;
     }
     
-    resetIncrementor() {
+    resetIncrementor(): void {
       this.incrementor = 1;
     }
   }
@@ -108,8 +108,8 @@ State Management
   ```
 - Use in components:
   ```svelte
-  <script>
-  import { counter } from './counter.svelte.js';
+  <script lang="ts">
+    import { counter } from './counter.svelte.js';
   </script>
 
   <button onclick={() => counter.increment()}>
@@ -154,23 +154,10 @@ Forms and Actions
 - Implement proper client-side form validation using Svelte's reactive declarations.
 - Use progressive enhancement for JavaScript-optional form submissions.
 
-Internationalization (i18n) with Paraglide.js
-- Use Paraglide.js for internationalization: https://inlang.com/m/gerre34r/library-inlang-paraglideJs
-- Install Paraglide.js: `npm install @inlang/paraglide-js`
-- Set up language files in the `languages` directory.
-- Use the `t` function to translate strings:
-  ```svelte
-  <script>
-  import { t } from '@inlang/paraglide-js';
-  </script>
-
-  <p>{t('welcome_message')}</p>
-  ```
-- Support multiple languages and RTL layouts.
-- Ensure text scaling and font adjustments for accessibility.
 
 Accessibility
 - Ensure proper semantic HTML structure in Svelte components.
+- Ensure text scaling and font adjustments for accessibility.
 - Implement ARIA attributes where necessary.
 - Ensure keyboard navigation support for interactive elements.
 - Use Svelte's bind:this for managing focus programmatically.

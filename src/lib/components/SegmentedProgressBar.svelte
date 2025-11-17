@@ -1,10 +1,12 @@
-<script>
+<script lang="ts">
+	import { ProgressState } from '$lib/exercises/abstract.svelte';
+
 	let { states = [] } = $props();
 
-	const stateClasses = {
-		unanswered: 'bg-zinc-300 dark:bg-zinc-700',
-		correct: 'bg-green-500',
-		incorrect: 'bg-red-500'
+	const stateClasses: Record<ProgressState, string> = {
+		[ProgressState.UNANSWERED]: 'bg-zinc-300 dark:bg-zinc-700',
+		[ProgressState.CORRECT]: 'bg-green-500',
+		[ProgressState.INCORRECT]: 'bg-red-500'
 	};
 </script>
 

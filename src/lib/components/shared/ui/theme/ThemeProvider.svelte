@@ -1,11 +1,11 @@
-<script>
-    import { themeStore } from '$lib/components/shared/ui/theme/theme.ts';
+<script lang="ts">
+    import { themeStore } from '$lib/components/shared/ui/theme/theme';
     import { onMount } from 'svelte';
     
     let { children } = $props();
 
     onMount(() => {
-        const storedTheme = localStorage.getItem('theme') || 'light';
+        const storedTheme: string = localStorage.getItem('theme') || 'light';
         themeStore.setTheme(storedTheme);
 
         return themeStore.subscribe(theme => {
@@ -17,10 +17,16 @@
         if (typeof window === 'undefined') 
             return;
         
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+        const mediaQuery: MediaQueryList = window.matchMedia('(prefers-color-scheme: light)');
         
         return () => {
-            mediaQuery.removeEventListener('change', handler);
+            mediaQuery.removeEventListener('change', (event: MediaQueryListEvent): void => {
+                if (event.matches) {
+                    themeStore.setTheme('light');
+                } else {
+                    themeStore.setTheme('dark');
+                }
+            });
         };
     });
 </script>
