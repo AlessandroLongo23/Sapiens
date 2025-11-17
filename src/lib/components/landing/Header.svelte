@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { contentTree, EducationalLevelMap, type LevelNode } from '$lib/data/content-tree';
 
-    import ThemeToggle from '$lib/components/shared/ui/theme/ThemeToggle.svelte';
-	import Searchbar from '$lib/components/shared/ui/Searchbar.svelte';
-	import SubjectMegaMenu from './SubjectMegaMenu.svelte';
-	import LoginButton from '$lib/components/shared/ui/buttons/LoginButton.svelte';
+    import ThemeToggle from '$lib/components/ui/theme/ThemeToggle.svelte';
+	import Searchbar from '$lib/components/ui/Searchbar.svelte';
+	import SubjectMegaMenu from '$lib/components/landing/SubjectMegaMenu.svelte';
+	import LoginButton from '$lib/components/ui/buttons/LoginButton.svelte';
 
     let { 
         session,

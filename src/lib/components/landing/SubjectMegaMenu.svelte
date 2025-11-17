@@ -3,7 +3,7 @@
 	import { EducationalLevelMap, type LevelNode, type SubjectNode } from '$lib/data/content-tree';
 	import { Plus } from 'lucide-svelte';
 
-	import Latex from '$lib/components/shared/ui/Latex.svelte';
+	import Latex from '$lib/components/ui/Latex.svelte';
 
 	let {
 		level = $bindable<LevelNode>(),

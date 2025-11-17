@@ -2,8 +2,8 @@
 	import { contentTree } from '$lib/data/content-tree';
 	import { BookOpen, Users } from 'lucide-svelte';
 
-	import HeroSection from '$lib/components/shared/landing/HeroSection.svelte';
-	import FooterSection from '$lib/components/shared/landing/FooterSection.svelte';
+	import HeroSection from '$lib/components/landing/HeroSection.svelte';
+	import FooterSection from '$lib/components/landing/FooterSection.svelte';
 
 	let heroSection = $state(null);
 

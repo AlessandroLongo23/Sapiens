@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import type { ChapterNode } from '$lib/data/content-tree';
-	import Latex from '$lib/components/shared/ui/Latex.svelte';
+	import Latex from '$lib/components/ui/Latex.svelte';
 	
 	let { chapter, level_id, subject_id, topicCount = 0 } = $props<{
 		chapter: ChapterNode;

@@ -1,5 +1,5 @@
 <script>
-	import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
+	import Modal from '$lib/components/ui/modals/Modal.svelte';
 	import { CheckCircle, XCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { exercise_messages } from '$lib/const/microcopy.js';

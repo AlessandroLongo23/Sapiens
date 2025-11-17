@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ChevronRight } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
-	import Latex from '$lib/components/shared/ui/Latex.svelte';
+	import Latex from '$lib/components/ui/Latex.svelte';
 
 	export interface BreadcrumbItem {
 		label: string;

@@ -4,9 +4,9 @@
 	import { tweened } from 'svelte/motion';
 	import { fade } from 'svelte/transition';
 	
-	import SegmentedProgressBar from '$lib/components/SegmentedProgressBar.svelte';
-	import AnswerButton from '$lib/components/shared/ui/buttons/AnswerButton.svelte';
-	import SummaryModal from '$lib/components/shared/ui/modals/SummaryModal.svelte';
+	import SegmentedProgressBar from '$lib/components/students/SegmentedProgressBar.svelte';
+	import AnswerButton from '$lib/components/ui/buttons/AnswerButton.svelte';
+	import SummaryModal from '$lib/components/ui/modals/SummaryModal.svelte';
 	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
 	
 	let { data } = $props();

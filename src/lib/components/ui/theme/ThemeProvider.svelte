@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { themeStore } from '$lib/components/shared/ui/theme/theme';
+    import { themeStore } from '$lib/components/ui/theme/theme';
     import { onMount } from 'svelte';
     
     let { children } = $props();

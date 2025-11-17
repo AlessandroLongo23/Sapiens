@@ -5,7 +5,7 @@
 	
 	import SubscriptionPlans from '$lib/components/students/SubscriptionPlans.svelte';
 	import SubscriptionTable from '$lib/components/students/SubscriptionTable.svelte';
-	import BillingToggle from '$lib/components/shared/ui/BillingToggle.svelte';
+	import BillingToggle from '$lib/components/ui/BillingToggle.svelte';
 
 	let { data } = $props();
 	let { user, subscription } = $derived(data);

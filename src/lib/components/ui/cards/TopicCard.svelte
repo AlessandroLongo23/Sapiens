@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import type { TopicNode } from '$lib/data/content-tree';
 	import { BookOpen } from 'lucide-svelte';
-	import Latex from '$lib/components/shared/ui/Latex.svelte';
+	import Latex from '$lib/components/ui/Latex.svelte';
 
 	let { topic, level_id, subject_id, chapter_id } = $props<{
 		topic: TopicNode;

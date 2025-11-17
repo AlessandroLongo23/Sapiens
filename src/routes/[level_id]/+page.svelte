@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 
-	import SubjectCard from '$lib/components/cards/SubjectCard.svelte';
+	import SubjectCard from '$lib/components/ui/cards/SubjectCard.svelte';
 
 	let level_id = $derived(page.params.level_id);
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Sun, Moon } from 'lucide-svelte';
-	import { themeStore } from '$lib/components/shared/ui/theme/theme';
+	import { themeStore } from '$lib/components/ui/theme/theme';
 
 	const toggleTheme = (): void => {
 		const newTheme: string = document.documentElement.classList.contains('dark') ? 'light' : 'dark';

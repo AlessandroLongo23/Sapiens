@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { searchStore } from '$lib/components/shared/ui/search';
+    import { searchStore } from '$lib/components/ui/search';
     import { Search, X } from 'lucide-svelte';
     
     let inputRef;

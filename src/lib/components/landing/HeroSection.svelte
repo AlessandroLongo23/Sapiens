@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { themeStore } from '$lib/components/shared/ui/theme/theme';
+	import { themeStore } from '$lib/components/ui/theme/theme';
 	import { GraduationCap, BookOpen } from 'lucide-svelte';
 
 	interface Props {

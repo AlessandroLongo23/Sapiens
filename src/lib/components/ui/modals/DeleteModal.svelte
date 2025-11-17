@@ -1,6 +1,6 @@
 <script>
     import { CircleAlert, Trash2, X } from 'lucide-svelte';
-    import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
+    import Modal from '$lib/components/ui/modals/Modal.svelte';
 
     let { 
         isOpen = $bindable(false),

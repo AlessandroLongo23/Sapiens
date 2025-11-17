@@ -4,10 +4,10 @@
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	import ThemeProvider from '$lib/components/shared/ui/theme/ThemeProvider.svelte';
-	import GrainyBackground from '$lib/components/shared/landing/background/GrainyBackground.svelte';
-	import AuthModal from '$lib/components/shared/ui/modals/AuthModal.svelte';
-	import Header from '$lib/components/shared/landing/Header.svelte';
+	import ThemeProvider from '$lib/components/ui/theme/ThemeProvider.svelte';
+	import GrainyBackground from '$lib/components/landing/background/GrainyBackground.svelte';
+	import AuthModal from '$lib/components/ui/modals/AuthModal.svelte';
+	import Header from '$lib/components/landing/Header.svelte';
 
 	let { data, children } = $props();
 	let { session, supabase, user } = $derived(data)

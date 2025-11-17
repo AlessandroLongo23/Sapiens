@@ -3,9 +3,9 @@
 	import { supabase } from '$lib/supabase.js';
 	import { X } from 'lucide-svelte';
 	
-	import FormButton from '$lib/components/shared/ui/forms/FormButton.svelte';
-	import FormInput from '$lib/components/shared/ui/forms/FormInput.svelte';
-	import Modal from '$lib/components/shared/ui/modals/Modal.svelte';
+	import FormButton from '$lib/components/ui/forms/FormButton.svelte';
+	import FormInput from '$lib/components/ui/forms/FormInput.svelte';
+	import Modal from '$lib/components/ui/modals/Modal.svelte';
 
 	let { 
 		isOpen = $bindable(false),
