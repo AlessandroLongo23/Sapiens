@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { contentTree, EducationalLevelMap, type LevelNode } from '$lib/data/content-tree';
+	import { sendSearch, GLOBAL_SEARCH_KEY, HEADER_SEARCH_HEIGHT } from '$lib/animations/search-transition';
+	import { searchStore } from '$lib/components/ui/search';
 
     import ThemeToggle from '$lib/components/ui/theme/ThemeToggle.svelte';
 	import Searchbar from '$lib/components/ui/Searchbar.svelte';
@@ -84,12 +86,27 @@
 			</nav>
 		</div>
 
-		<div class="flex justify-end items-center gap-2 sm:gap-3">
-			<Searchbar 
-				placeholder="Cerca su Sapiens" 
-				hasKeyboardShortcut={false}
-				width='w-92'
-			/>
+		<div class="flex items-center justify-end gap-2 sm:gap-3 flex-1 sm:flex-none">
+			<div 
+				class="w-full sm:w-80 lg:w-96 shrink-0"
+				style={`height: ${HEADER_SEARCH_HEIGHT}px;`}
+			>
+				{#if !$searchStore?.isActive}
+					<div class="h-full" out:sendSearch={{ key: GLOBAL_SEARCH_KEY }}>
+						<Searchbar 
+							placeholder="Cerca su Sapiens" 
+							hasKeyboardShortcut={false}
+							width="w-full"
+							size="md"
+						/>
+					</div>
+				{:else}
+					<div 
+						class="h-full w-full rounded-lg border border-transparent" 
+						aria-hidden="true"
+					></div>
+				{/if}
+			</div>
 			<ThemeToggle />
 			<LoginButton 
 				bind:session

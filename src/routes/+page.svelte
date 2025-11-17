@@ -3,7 +3,6 @@
 	import { BookOpen, Users } from 'lucide-svelte';
 
 	import HeroSection from '$lib/components/landing/HeroSection.svelte';
-	import FooterSection from '$lib/components/landing/FooterSection.svelte';
 
 	let heroSection = $state(null);
 
@@ -34,5 +33,3 @@
 </svelte:head>
 
 <HeroSection bind:heroSection={heroSection} stats={Object.values(stats)}/>
-
-<FooterSection />

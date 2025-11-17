@@ -3,12 +3,15 @@
 	import '$lib/utils/prototypes.js';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { searchStore } from '$lib/components/ui/search';
 
 	import ThemeProvider from '$lib/components/ui/theme/ThemeProvider.svelte';
 	import GrainyBackground from '$lib/components/landing/background/GrainyBackground.svelte';
 	import AuthModal from '$lib/components/ui/modals/AuthModal.svelte';
 	import Header from '$lib/components/landing/Header.svelte';
-
+	import SearchOverlay from '$lib/components/ui/SearchOverlay.svelte';
+	import FooterSection from '$lib/components/landing/FooterSection.svelte';
+	
 	let { data, children } = $props();
 	let { session, supabase, user } = $derived(data)
 
@@ -45,13 +48,16 @@
 	/>
 
 	<div class="flex flex-col relative z-10 h-screen">
+		<SearchOverlay />
 		<Header
 			bind:isAuthModalOpen={isAuthModalOpen}
 			session={session}
 		/>
 
-		<div class="overflow-y-auto">
+		<div class={`flex-1 overflow-y-auto transition-opacity duration-300 ease-out ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
 			{@render children()}
+
+			<FooterSection />
 		</div>
 	</div>
 </ThemeProvider>
