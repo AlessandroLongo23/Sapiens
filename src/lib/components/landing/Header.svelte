@@ -9,12 +9,12 @@
 	import LoginButton from '$lib/components/ui/buttons/LoginButton.svelte';
 
     let { 
+		headerRef = $bindable(undefined),
         session,
         isAuthModalOpen = $bindable(false),
     } = $props();
     
 	let hoveredLevel = $state<LevelNode | null>(null);
-	let headerRef = $state<HTMLElement | null>(null);
 	let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	function handleSubjectMouseEnter(level: LevelNode): void {

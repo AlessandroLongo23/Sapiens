@@ -349,7 +349,7 @@ Ogni lezione o spiegazione dovrebbe includere:
    - Esempio: “Il Teorema di Pitagora e le sue applicazioni pratiche”
 
 2. **Introduzione breve**
-   - 2–3 frasi per contestualizzare l’argomento e spiegarne la rilevanza.
+   - 2–3 frasi per contestualizzare la lezione e spiegarne la rilevanza.
    - Esempio: “Il Teorema di Pitagora è una delle basi della geometria. Serve a calcolare distanze e relazioni fra i lati di un triangolo rettangolo.”
 
 3. **Corpo principale**
@@ -407,7 +407,7 @@ Ogni lezione o spiegazione dovrebbe includere:
 
 ### 🧩 Prompt di base (da usare nei comandi generativi)
 
-> Crea un contenuto didattico per [livello scolastico] sull’argomento “[titolo o tema]”.  
+> Crea un contenuto didattico per [livello scolastico] sulla lezione “[titolo o tema]”.  
 > Il testo deve essere scritto in **italiano chiaro e accessibile**, con il tono di **Sapiens** — un compagno di studio intelligente, rassicurante e competente.  
 > Segui la struttura:
 > 1. Titolo  
@@ -427,7 +427,7 @@ Ogni lezione o spiegazione dovrebbe includere:
 ### 💡 Esempio d’uso pratico
 
 **Prompt:**
-> Crea un contenuto per studenti delle scuole superiori sull’argomento “La fotosintesi clorofilliana”. Segui le linee guida Sapiens.
+> Crea un contenuto per studenti delle scuole superiori sulla lezione “La fotosintesi clorofilliana”. Segui le linee guida Sapiens.
 
 **Output atteso (estratto):**
 ```markdown

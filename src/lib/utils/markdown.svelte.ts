@@ -96,9 +96,9 @@ function admonitionPlugin(md: MarkdownIt) {
 			title: 'Nota'
 		},
 		tip: {
-			border: 'border-emerald-900/80',
-			header: 'bg-emerald-400/20',
-			content: 'bg-emerald-300/5',
+			border: 'border-teal-900/80',
+			header: 'bg-teal-400/20',
+			content: 'bg-teal-300/5',
 			title: 'Suggerimento'
 		},
 		warning: {

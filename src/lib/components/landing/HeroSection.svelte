@@ -21,11 +21,6 @@
     bind:this={heroSection}
     class="relative min-h-screen flex items-center justify-center pb-24 px-6 lg:px-8 overflow-hidden"
 >
-	<div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20">
-		<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-500/10 dark:bg-rose-400/10 rounded-full blur-[120px]"></div>
-		<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-400/10 rounded-full blur-[120px]"></div>
-	</div>
-
 	<div class="relative max-w-7xl mx-auto w-full z-10">
 		<div class="grid lg:grid-cols-2 gap-16 items-center">
 			<div class="text-center lg:text-left space-y-8">

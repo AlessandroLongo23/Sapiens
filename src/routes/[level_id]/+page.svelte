@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
-	import { ArrowLeft, BookOpen, GraduationCap } from 'lucide-svelte';
+	import { ArrowLeft, BookOpen, GraduationCap, Layers, FileText } from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -48,8 +48,13 @@
 	/>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
+	<!-- Background Pattern -->
+	<div class="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" 
+		style="background-image: radial-gradient(#6b7280 1px, transparent 1px); background-size: 24px 24px;">
+	</div>
+
+	<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
 				<div
@@ -58,14 +63,11 @@
 			</div>
 		{:else if levelInfo}
 			<!-- Header Section -->
-			<header
-				class="mb-8 sm:mb-12"
-				in:fade={{ duration: 300 }}
-			>
+			<header class="mb-12" in:fade={{ duration: 300 }}>
 				<!-- Back Button -->
 				<button
 					onclick={() => goto('/')}
-					class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 mb-6 group"
+					class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 mb-8 group w-fit"
 				>
 					<ArrowLeft
 						class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-200"
@@ -73,133 +75,67 @@
 					<span class="text-sm font-medium">Torna alla home</span>
 				</button>
 
-				<!-- Level Title and Icon -->
-				<div class="flex items-start gap-4 sm:gap-6 mb-6">
-					{#if levelInfo.icon}
-						{@const LevelIcon = levelInfo.icon}
-						<div
-							class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 shadow-lg"
-						>
-							<LevelIcon
-								class="w-8 h-8 sm:w-10 sm:h-10 text-rose-500 dark:text-rose-400"
-							/>
-						</div>
-					{/if}
+				<div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+					<div class="flex items-start gap-6">
+						{#if levelInfo.icon}
+							{@const LevelIcon = levelInfo.icon}
+							<div class="hidden sm:flex items-center justify-center w-20 h-20 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-rose-500 dark:text-rose-400">
+								<LevelIcon class="w-10 h-10" />
+							</div>
+						{/if}
 
-					<div class="flex-1">
-						<h1
-							class="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-3"
-						>
-							{levelInfo.name}
-						</h1>
-						<p
-							class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl"
-						>
-							Esplora i contenuti didattici disponibili per questo livello. Trova teoria,
-							esercizi e risorse per tutte le materie.
-						</p>
-					</div>
-				</div>
-
-				<!-- Stats -->
-				<div
-					class="flex flex-wrap items-center gap-4 sm:gap-6 p-4 sm:p-6 rounded-xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800"
-				>
-					<div class="flex items-center gap-2">
-						<div
-							class="p-2 rounded-lg bg-rose-500/10 dark:bg-rose-500/20"
-						>
-							<BookOpen class="w-4 h-4 text-rose-500 dark:text-rose-400" />
-						</div>
-						<div>
-							<div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-								{levelInfo.subjects.length}
-							</div>
-							<div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-								{levelInfo.subjects.length === 1 ? 'Materia' : 'Materie'}
-							</div>
-						</div>
-					</div>
-
-					<div class="flex items-center gap-2">
-						<div
-							class="p-2 rounded-lg bg-blue-500/10 dark:bg-blue-500/20"
-						>
-							<svg
-								class="w-4 h-4 text-blue-500 dark:text-blue-400"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-								/>
-							</svg>
-						</div>
-						<div>
-							<div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-								{totalChapters}
-							</div>
-							<div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-								{totalChapters === 1 ? 'Capitolo' : 'Capitoli'}
-							</div>
-						</div>
-					</div>
-
-					{#if totalTopics > 0}
-						<div class="flex items-center gap-2">
-							<div
-								class="p-2 rounded-lg bg-green-500/10 dark:bg-green-500/20"
-							>
-								<svg
-									class="w-4 h-4 text-green-500 dark:text-green-400"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-									/>
-								</svg>
-							</div>
-							<div>
-								<div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-									{totalTopics}
+						<div class="flex-1 space-y-4">
+							<div class="space-y-2">
+								<div class="flex items-center gap-3">
+									{#if levelInfo.icon}
+										{@const LevelIcon = levelInfo.icon}
+										<LevelIcon class="w-8 h-8 text-rose-500 dark:text-rose-400 sm:hidden" />
+									{/if}
+									<h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+										{levelInfo.name}
+									</h1>
 								</div>
-								<div class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-									{totalTopics === 1 ? 'Argomento' : 'Argomenti'}
+								<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
+									Esplora i contenuti didattici disponibili per questo livello. Trova teoria,
+									esercizi e risorse per tutte le materie.
+								</p>
+							</div>
+
+							<!-- Quick Stats -->
+							<div class="flex flex-wrap gap-3">
+								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+									<BookOpen class="w-4 h-4 text-rose-500" />
+									<span class="font-medium">{levelInfo.subjects.length}</span> Materie
 								</div>
+								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+									<Layers class="w-4 h-4 text-teal-500" />
+									<span class="font-medium">{totalChapters}</span> Capitoli
+								</div>
+								{#if totalTopics > 0}
+									<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+										<FileText class="w-4 h-4 text-indigo-500" />
+										<span class="font-medium">{totalTopics}</span> Lezioni
+									</div>
+								{/if}
 							</div>
 						</div>
-					{/if}
+					</div>
 				</div>
 			</header>
 
 			<!-- Subjects Grid -->
 			{#if levelInfo.subjects.length > 0}
-				<section
-					class="mb-8"
-					in:fade={{ duration: 400, delay: 100 }}
-				>
-					<h2
-						class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6"
-					>
-						Materie disponibili
-					</h2>
+				<section class="space-y-6" in:fade={{ duration: 400, delay: 100 }}>
+					<div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+						<h2 class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+							<BookOpen class="w-5 h-5 text-rose-500" />
+							Materie disponibili
+						</h2>
+					</div>
 
-					<div
-						class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-					>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{#each levelInfo.subjects as subject, index (subject.id)}
-							<div
-								in:fly={{ y: 20, duration: 400, delay: index * 50 }}
-							>
+							<div in:fly={{ y: 20, duration: 400, delay: index * 50 }} class="h-full">
 								<SubjectCard
 									subject={subject}
 									level_id={level_id}
@@ -211,21 +147,14 @@
 				</section>
 			{:else}
 				<!-- Empty State -->
-				<div
-					class="flex flex-col items-center justify-center py-16 text-center"
-					in:fade={{ duration: 300 }}
-				>
-					<div
-						class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-6"
-					>
+				<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>
+					<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-200 dark:ring-zinc-800">
 						<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
 					</div>
-					<h3
-						class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2"
-					>
+					<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
 						Nessuna materia disponibile
 					</h3>
-					<p class="text-zinc-600 dark:text-zinc-400 max-w-md">
+					<p class="text-zinc-600 dark:text-zinc-400 max-w-md mb-8">
 						Al momento non ci sono materie disponibili per questo livello. Torna presto per
 						nuovi contenuti!
 					</p>
@@ -233,26 +162,19 @@
 			{/if}
 		{:else}
 			<!-- 404 State -->
-			<div
-				class="flex flex-col items-center justify-center py-16 text-center"
-				in:fade={{ duration: 300 }}
-			>
-				<div
-					class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-6"
-				>
+			<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>
+				<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-200 dark:ring-zinc-800">
 					<GraduationCap class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
 				</div>
-				<h3
-					class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2"
-				>
+				<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
 					Livello non trovato
 				</h3>
-				<p class="text-zinc-600 dark:text-zinc-400 mb-6 max-w-md">
+				<p class="text-zinc-600 dark:text-zinc-400 mb-8 max-w-md">
 					Il livello che stai cercando non esiste o non è disponibile.
 				</p>
 				<button
 					onclick={() => goto('/')}
-					class="px-6 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-colors duration-200"
+					class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 				>
 					Torna alla home
 				</button>
@@ -260,4 +182,3 @@
 		{/if}
 	</div>
 </div>
-

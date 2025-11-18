@@ -17,7 +17,7 @@ aggiungere mascotte, 4 personaggi. Ognuno una personalità diversa per l'AI (in 
 - conoscenze pregresse
 - tanti link interni tra le pagine del contenuto
 - tizk -> webp
-- esercizi fine argomento e fine capitolo
+- esercizi fine lezione e fine capitolo
 - struttura simile a khan academy
 
 ## APP

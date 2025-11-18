@@ -119,7 +119,7 @@
 {#if isLoading}
 	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 		<div class="bg-white dark:bg-zinc-800 rounded-lg p-8 flex flex-col items-center gap-4">
-			<Loader2 class="w-12 h-12 text-blue-600 animate-spin" />
+			<Loader2 class="w-12 h-12 text-rose-600 animate-spin" />
 			<p class="text-lg font-medium text-zinc-900 dark:text-zinc-100">
 				Reindirizzamento in corso...
 			</p>

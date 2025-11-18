@@ -85,7 +85,7 @@ export const frequencyOptions = writable([
 export const methodCards = writable([
     { 
         title: 'Materiale completo',
-        color: 'bg-gradient-to-br from-green-500 to-emerald-600',
+        color: 'bg-gradient-to-br from-green-500 to-teal-600',
         icon: BookText, 
         description: 'Teoria dettagliata e formulari su tutti gli argomenti. Ti concentri sulla comprensione, non sulla trascrizione.'
     },

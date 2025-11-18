@@ -13,7 +13,7 @@
 				.flatMap(subject => subject.chapters)
 				.reduce((acc: number, chapter) => acc + chapter.topics.length, 0)
 				.toString(),
-			label: "Argomenti disponibili",
+			label: "Lezioni disponibili",
 			icon: BookOpen,
 		},
 		students: {

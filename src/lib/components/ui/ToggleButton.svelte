@@ -69,7 +69,7 @@
         {#each options as option, index}
             <button
                 bind:this={optionRefs[index]}
-                class="{optionClasses} relative flex items-center justify-center bg-transparent rounded-md cursor-pointer transition-colors duration-200 z-20 text-sm font-medium text-zinc-500 dark:text-zinc-400 whitespace-nowrap flex-1 min-h-8 box-border hover:text-zinc-900 dark:hover:text-zinc-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2 {value === option ? 'text-zinc-900 dark:text-zinc-100' : ''} sm:px-3 sm:text-xs sm:min-h-7"
+                class="{optionClasses} relative flex items-center justify-center bg-transparent rounded-md cursor-pointer transition-colors duration-200 z-20 text-sm font-medium text-zinc-500 dark:text-zinc-400 whitespace-nowrap flex-1 min-h-8 box-border hover:text-zinc-900 dark:hover:text-zinc-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-rose-500 focus-visible:outline-offset-2 {value === option ? 'text-zinc-900 dark:text-zinc-100' : ''} sm:px-3 sm:text-xs sm:min-h-7"
                 onclick={() => handleOptionClick(option)}
                 type="button"
             >

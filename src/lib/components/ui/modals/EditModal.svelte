@@ -49,7 +49,7 @@
 
             <button 
                 type="button"
-                class="flex flex-row items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
+                class="flex flex-row items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-teal-500 text-white hover:bg-teal-600 transition-colors"
                 onclick={onSubmit}
             >
                 <Check class="size-4"/>

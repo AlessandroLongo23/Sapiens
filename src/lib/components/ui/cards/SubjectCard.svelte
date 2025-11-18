@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { fade } from 'svelte/transition';
 	import type { SubjectNode } from '$lib/data/content-tree';
-    
+	import { BookOpen, ChevronRight } from 'lucide-svelte';
+
 	let { subject, level_id, chapterCount = 0 } = $props<{
 		subject: SubjectNode;
 		level_id: string;
@@ -24,111 +24,63 @@
 	onclick={handleClick}
 	onmouseenter={() => (isHovered = true)}
 	onmouseleave={() => (isHovered = false)}
-	class="group w-full relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-rose-300 dark:hover:border-rose-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/5"
+	class="group w-full h-full flex flex-col text-left relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all duration-300 hover:border-rose-200 dark:hover:border-rose-800 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1"
 	tabindex="0"
 >
-	<!-- Gradient overlay on hover -->
-	<div
-		class="absolute inset-0 bg-gradient-to-br from-rose-500/0 via-rose-500/0 to-rose-500/0 group-hover:from-rose-500/5 group-hover:via-rose-500/3 group-hover:to-rose-500/5 transition-all duration-300"
-		transition:fade={{ duration: 300 }}
+	<!-- Top accent line -->
+	<div 
+		class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-rose-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 	></div>
 
-	<div class="relative flex flex-col p-6 sm:p-8">
-		<!-- Icon and Badge -->
+	<div class="p-6 flex flex-col flex-1">
+		<!-- Header: Icon + Badge -->
 		<div class="flex items-start justify-between mb-4">
 			{#if subject.icon}
 				{@const SubjectIcon = subject.icon}
 				<div
-					class="p-3 rounded-xl bg-gradient-to-br from-rose-500/10 to-rose-500/5 dark:from-rose-500/20 dark:to-rose-500/10 group-hover:from-rose-500/20 group-hover:to-rose-500/10 dark:group-hover:from-rose-500/30 dark:group-hover:to-rose-500/20 transition-all duration-300"
+					class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/20 transition-colors duration-300"
 				>
-					<SubjectIcon
-						class="w-6 h-6 sm:w-7 sm:h-7 text-rose-500 dark:text-rose-400 transition-transform duration-300 group-hover:scale-110"
-					/>
-				</div>
-			{/if}
-
-			{#if chapterCount > 0}
-				<div
-					class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400"
-				>
-					{chapterCount} {chapterCount === 1 ? 'capitolo' : 'capitoli'}
+					<SubjectIcon class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
 				</div>
 			{/if}
 		</div>
 
-		<!-- Subject Name -->
-		<h3
-			class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300"
-		>
-			{subject.name}
-		</h3>
+		<!-- Content -->
+		<div class="flex-1">
+			<h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 leading-snug group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300">
+				{subject.name}
+			</h3>
+			
+			<!-- Optional description or stats text -->
+			<div class="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+				<span>{chapterCount} {chapterCount === 1 ? 'capitolo' : 'capitoli'}</span>
+				<span>•</span>
+				<span>{totalTopics} {totalTopics === 1 ? 'lezione' : 'lezioni'}</span>
+			</div>
+		</div>
 
-		<!-- Stats -->
-		<div class="flex items-center gap-4 mt-auto pt-4 text-sm text-zinc-600 dark:text-zinc-400">
-			<div class="flex items-center gap-1.5">
-				<svg
-					class="w-4 h-4"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-					/>
-				</svg>
-				<span class="font-medium">{subject.chapters.length}</span>
-				<span class="hidden sm:inline">capitoli</span>
+		<!-- Footer -->
+		<div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-sm">
+			<div class="flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
+				<BookOpen class="w-4 h-4" />
+				<span>Esplora la materia</span>
 			</div>
 
-			{#if totalTopics > 0}
-				<div class="flex items-center gap-1.5">
-					<svg
-						class="w-4 h-4"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-						/>
-					</svg>
-					<span class="font-medium">{totalTopics}</span>
-					<span class="hidden sm:inline">argomenti</span>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Arrow indicator -->
-		<div
-			class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-		>
-			<svg
-				class="w-5 h-5 text-rose-500 dark:text-rose-400 transform group-hover:translate-x-1 transition-transform duration-300"
-				fill="none"
-				stroke="currentColor"
-				viewBox="0 0 24 24"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M9 5l7 7-7 7"
-				/>
-			</svg>
+			<div class="transform translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 text-rose-500">
+				<ChevronRight class="w-5 h-5" />
+			</div>
 		</div>
 	</div>
 </button>
 
 <style>
+	@reference "../../../../app.css";
+
+	button {
+		outline: none;
+	}
+
 	button:focus-visible {
-		outline: 2px solid rgb(236 72 153);
-		outline-offset: 2px;
+		@apply ring-2 ring-rose-500 ring-offset-2 dark:ring-offset-zinc-950;
 	}
 </style>
-

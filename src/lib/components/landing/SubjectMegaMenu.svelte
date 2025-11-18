@@ -101,7 +101,7 @@
 										class="w-full flex items-center text-left py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 transition-all duration-200"
 									>
 										<Plus class="size-3" />
-										<span>{chapter.topics.length - topicsPerChapter} argomenti</span>
+										<span>{chapter.topics.length - topicsPerChapter} lezioni</span>
 									</a>
 								{/if}
 							</div>

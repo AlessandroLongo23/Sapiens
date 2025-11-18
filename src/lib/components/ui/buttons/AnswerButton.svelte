@@ -8,7 +8,7 @@
 
 	const stateClasses = {
 		idle: 'bg-white dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:border-blue-500',
-		selected: 'bg-blue-500 border-blue-600 text-white scale-105 shadow-lg',
+		// selected: 'bg-blue-500 border-blue-600 text-white scale-105 shadow-lg',
 		correct: 'bg-green-500 border-green-600 text-white scale-105 shadow-lg animate-pulse',
 		incorrect: 'bg-red-500 border-red-600 text-white scale-105 shadow-lg animate-shake'
 	};

@@ -15,6 +15,7 @@
 	let { data, children } = $props();
 	let { session, supabase, user } = $derived(data)
 
+	let headerRef = $state(undefined);
 	let isAuthModalOpen = $state(false);
 
 	onMount(() => {
@@ -50,12 +51,15 @@
 	<div class="flex flex-col relative z-10 h-screen">
 		<SearchOverlay />
 		<Header
+			bind:headerRef={headerRef}
 			bind:isAuthModalOpen={isAuthModalOpen}
 			session={session}
 		/>
 
 		<div class={`flex-1 overflow-y-auto transition-opacity duration-300 ease-out ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-			{@render children()}
+			<div style={`min-height: calc(100vh - ${headerRef?.offsetHeight ?? 0}px);`}>
+				{@render children()}
+			</div>
 
 			<FooterSection />
 		</div>
