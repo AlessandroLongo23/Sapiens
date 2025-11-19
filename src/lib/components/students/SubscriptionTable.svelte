@@ -25,7 +25,7 @@
 	const plans = Object.values(SUBSCRIPTION_PLANS);
 	const features = Object.values(Features);
 
-	const td_width = 'w-60';
+	const td_width = 'w-56';
 
 	async function handleSelectPlan(plan: SubscriptionPlan) {
 		if (plan.id === SUBSCRIPTION_PLANS.FREE.id || plan.id === currentPlan.id) return;
