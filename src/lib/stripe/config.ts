@@ -1,4 +1,4 @@
-import { MegaphoneOff, BookOpen, Pencil, TableOfContents, Sparkles, Users } from 'lucide-svelte';
+import { MegaphoneOff, BookOpen, Pencil, Zap, Sparkles, Users } from 'lucide-svelte';
 
 export enum Currency {
 	EURO = 'EUR',
@@ -22,14 +22,14 @@ export enum Features {
 	THEORY = 'theory',
 	REMOVE_ADS = 'remove_ads',
 	EXERCISES = 'exercises',
-	FORMULARY = 'formulary',
+	FLASHCARDS = 'flashcards',
 	AI_CHAT = 'ai_chat',
 	TUTORING = 'tutoring',
 }
 
 export const FeaturesDetails: Record<Features, { name: string; icon: typeof BookOpen }> = {
 	[Features.THEORY]: {
-		name: 'Accesso alla teoria',
+		name: 'Accesso a teoria e formulari',
 		icon: BookOpen,
 	},
 	[Features.REMOVE_ADS]: {
@@ -40,9 +40,9 @@ export const FeaturesDetails: Record<Features, { name: string; icon: typeof Book
 		name: 'Esercizi interattivi',
 		icon: Pencil,
 	},
-	[Features.FORMULARY]: {
-		name: 'Formulari completi',
-		icon: TableOfContents,
+	[Features.FLASHCARDS]: {
+		name: 'Flashcards',
+		icon: Zap,
 	},
 	[Features.AI_CHAT]: {
 		name: 'Chat con Sapiens AI',
@@ -73,7 +73,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: false,
 			[Features.EXERCISES]: false,
-			[Features.FORMULARY]: false,
+			[Features.FLASHCARDS]: false,
 			[Features.AI_CHAT]: false,
 			[Features.TUTORING]: false,
 		},
@@ -91,7 +91,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
-			[Features.FORMULARY]: true,
+			[Features.FLASHCARDS]: true,
 			[Features.AI_CHAT]: false,
 			[Features.TUTORING]: false,
 		},
@@ -109,7 +109,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
-			[Features.FORMULARY]: true,
+			[Features.FLASHCARDS]: true,
 			[Features.AI_CHAT]: true,
 			[Features.TUTORING]: false,
 		},
@@ -127,7 +127,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
-			[Features.FORMULARY]: true,
+			[Features.FLASHCARDS]: true,
 			[Features.AI_CHAT]: true,
 			[Features.TUTORING]: true,
 		},
