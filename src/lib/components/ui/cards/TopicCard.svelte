@@ -15,7 +15,7 @@
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`/${level_id}/${subject_id}/${chapter_id}/${topic.id}`);
+		goto(`/content/${level_id}/${subject_id}/${chapter_id}/${topic.id}/theory`);
 	}
 </script>
 

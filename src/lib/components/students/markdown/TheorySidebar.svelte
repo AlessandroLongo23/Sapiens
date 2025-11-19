@@ -1,13 +1,11 @@
 <script>
-	import { contentService } from '$lib/services/contentService';
 	import { createEventDispatcher } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { ChevronDown } from 'lucide-svelte';
+
+	import Latex from '$lib/components/ui/Latex.svelte';
 	
-	let sections = $derived(contentService.sections || []);
-	let isLoading = $derived(contentService.isLoading);
-	let error = $derived(contentService.error);
-	let { activeSection = '' } = $props();
+	let { sections = [], activeSection = '' } = $props();
 	
 	let expandedSections = $state({});
 	
@@ -49,39 +47,29 @@
 	}
 </script>
 
-<div class="h-full flex flex-col">
-	<div class="flex-1 overflow-y-auto p-3 bg-zinc-800/30">
-		<h3 class="font-medium text-xs text-white/80 uppercase tracking-wider mb-4">Table of Contents</h3>
-		
-		{#if isLoading}
-			<div class="p-3 text-sm text-zinc-400">
-				<p>Loading content...</p>
-			</div>
-		{:else if error}
-			<div class="p-3 text-sm text-red-400">
-				<p>Error loading content: {error}</p>
-			</div>
-		{:else if sections.length === 0}
+<div class="h-full flex flex-col w-full">
+	<div class="flex-1 overflow-y-auto p-6 no-scrollbar">
+		{#if sections.length === 0}
 			<div class="p-3 text-sm text-zinc-400">
 				<p>No sections available</p>
 			</div>
 		{:else}
-			<div class="theory-toc">
+			<div>
 				{#each sections as section}
-					<div class="mb-4">
+					<div class="mb-3">
 						<div class="flex items-center">
 							<button 
-								class="text-left flex-1 py-1.5 px-2 rounded text-sm
-									{isH1(section) ? 'font-bold' : 'font-medium'} 
-									{activeSection === section.id ? 'text-green-400' : 'text-zinc-400 hover:text-white'}"
+								class="text-left flex-1 py-1 rounded text-sm transition-colors
+									{isH1(section) ? 'font-semibold' : 'font-medium'} 
+									{activeSection === section.id ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-800'}"
 								onclick={() => scrollToSection(section.id)}
 							>
-								{section.title}
+								<Latex content={section.title} />
 							</button>
 							
 							{#if hasSubsections(section)}
 								<button 
-									class="p-1 rounded-md hover:bg-zinc-700/70 transition-all text-white/80 hover:text-white/100"
+									class="p-1 rounded-md hover:bg-zinc-100 transition-all text-zinc-400 hover:text-zinc-700"
 									onclick={(e) => toggleSection(section.id, e)}
 									aria-label={expandedSections[section.id] ? "Collapse section" : "Expand section"}
 									title={expandedSections[section.id] ? "Collapse section" : "Expand section"}
@@ -95,21 +83,21 @@
 						</div>
 						
 						{#if hasSubsections(section) && expandedSections[section.id]}
-							<div class="ml-3 border-l border-zinc-700/50 pl-2 mt-1" transition:slide={{ duration: 150 }}>
+							<div class="ml-3 border-l border-zinc-200 pl-2 mt-1" transition:slide={{ duration: 150 }}>
 								{#each section.subsections as subsection}
-									<div class="my-2">
+									<div class="my-1.5">
 										<div class="flex items-center">
 											<button 
-												class="text-left flex-1 py-1 px-2 rounded text-xs font-medium 
-													{activeSection === subsection.id ? 'text-green-400' : 'text-zinc-400 hover:text-white'}"
+												class="text-left flex-1 py-0.5 rounded text-xs font-medium transition-colors
+													{activeSection === subsection.id ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-800'}"
 												onclick={() => scrollToSection(subsection.id)}
 											>
-												{subsection.title}
+												<Latex content={subsection.title} />
 											</button>
 											
 											{#if hasSubsections(subsection)}
 												<button 
-													class="p-1 rounded-md hover:bg-zinc-700/70 transition-all text-white/80 hover:text-white/100"
+													class="p-0.5 rounded-md hover:bg-zinc-100 transition-all text-zinc-400 hover:text-zinc-700"
 													onclick={(e) => toggleSection(subsection.id, e)}
 													aria-label={expandedSections[subsection.id] ? "Collapse section" : "Expand section"}
 													title={expandedSections[subsection.id] ? "Collapse section" : "Expand section"}
@@ -123,14 +111,14 @@
 										</div>
 										
 										{#if hasSubsections(subsection) && expandedSections[subsection.id]}
-											<div class="ml-3 border-l border-zinc-700/50 pl-2 mt-1" transition:slide={{ duration: 150 }}>
+											<div class="ml-2 border-l border-zinc-200 pl-2 mt-1" transition:slide={{ duration: 150 }}>
 												{#each subsection.subsections as subsubsection}
 													<button 
-														class="text-left w-full py-1 px-2 rounded text-xs 
-															{activeSection === subsubsection.id ? 'text-green-400' : 'text-zinc-400 hover:text-white'}"
+														class="text-left w-full py-0.5 rounded text-xs transition-colors
+															{activeSection === subsubsection.id ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-800'}"
 														onclick={() => scrollToSection(subsubsection.id)}
 													>
-														{subsubsection.title}
+														<Latex content={subsubsection.title} />
 													</button>
 												{/each}
 											</div>
@@ -148,6 +136,6 @@
 
 <style>
 	button {
-		transition: all 0.15s ease;
+		outline: none;
 	}
-</style> 
+</style>

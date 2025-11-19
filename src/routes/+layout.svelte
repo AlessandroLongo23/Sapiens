@@ -56,7 +56,7 @@
 			session={session}
 		/>
 
-		<div class={`flex-1 overflow-y-auto transition-opacity duration-300 ease-out ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+		<div class={`flex-1 overflow-y-auto no-scrollbar transition-opacity duration-300 ease-out ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
 			<div style={`min-height: calc(100vh - ${headerRef?.offsetHeight ?? 0}px);`}>
 				{@render children()}
 			</div>

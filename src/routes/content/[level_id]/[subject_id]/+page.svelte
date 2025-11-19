@@ -1,50 +1,58 @@
 <script lang="ts">
-	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
-	import { ArrowLeft, BookOpen, GraduationCap, Layers, FileText } from 'lucide-svelte';
-	import { fade, fly } from 'svelte/transition';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-
-	import SubjectCard from '$lib/components/ui/cards/SubjectCard.svelte';
+	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
+	import { fade, fly } from 'svelte/transition';
+	import { BookOpen, Layers, FileText, Home, LibraryBig } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
+	
+	import ChapterCard from '$lib/components/ui/cards/ChapterCard.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 
 	let level_id = $derived(page.params.level_id);
+	let subject_id = $derived(page.params.subject_id);
 
 	let levelData = $derived.by(() => {
 		if (!level_id) return null;
 		return contentTree.find((l) => l.id === level_id);
 	});
 
+	let subjectData = $derived.by(() => {
+		if (!levelData || !subject_id) return null;
+		return levelData.subjects.find((s) => s.id === subject_id);
+	});
+
 	let levelInfo = $derived.by(() => {
 		if (!levelData) return null;
 		return {
 			name: EducationalLevelMap[levelData.id],
-			icon: levelData.icon,
-			subjects: levelData.subjects
+			icon: levelData.icon
 		};
 	});
 
-	let totalChapters = $derived(
-		levelInfo?.subjects.reduce((sum, subject) => sum + subject.chapters.length, 0) || 0
-	);
-
 	let totalTopics = $derived(
-		levelInfo?.subjects.reduce(
-			(sum, subject) =>
-				sum + subject.chapters.reduce((chSum, chapter) => chSum + chapter.topics.length, 0),
-			0
-		) || 0
+		subjectData?.chapters.reduce((sum, chapter) => sum + chapter.topics.length, 0) || 0
 	);
 
-	let isLoading = $derived(!levelInfo);
+	let isLoading = $derived(!subjectData || !levelInfo);
+
+	let breadcrumbItems = $derived.by(() => {
+		if (!levelInfo || !subjectData) return [];
+		return [
+			{ label: 'Home', path: '/', icon: Home },
+			{ label: 'Materiale didattico', path: '/content', icon: LibraryBig },
+			{ label: levelInfo.name, path: `/content/${level_id}`, icon: levelInfo.icon },
+			{ label: subjectData.name, icon: subjectData.icon }
+		];
+	});
 </script>
 
 <svelte:head>
 	<title>
-		{levelInfo?.name || 'Livello'} - Sapiens
+		{subjectData?.name || 'Materia'} - {levelInfo?.name || 'Livello'} - Sapiens
 	</title>
 	<meta
 		name="description"
-		content="Esplora i contenuti didattici per {levelInfo?.name || 'questo livello'}. Trova teoria, esercizi e risorse per tutte le materie disponibili."
+		content="Esplora i contenuti didattici di {subjectData?.name || 'questa materia'} per {levelInfo?.name || 'questo livello'}. Trova teoria, esercizi e risorse organizzate per capitoli."
 	/>
 </svelte:head>
 
@@ -57,59 +65,43 @@
 	<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
-				<div
-					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"
-				></div>
+				<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
 			</div>
-		{:else if levelInfo}
+		{:else if subjectData && levelInfo}
 			<!-- Header Section -->
 			<header class="mb-12" in:fade={{ duration: 300 }}>
-				<!-- Back Button -->
-				<button
-					onclick={() => goto('/')}
-					class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 mb-8 group w-fit"
-				>
-					<ArrowLeft
-						class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-200"
-					/>
-					<span class="text-sm font-medium">Torna alla home</span>
-				</button>
+				<Breadcrumb items={breadcrumbItems} />
 
-				<div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+				<div class="mt-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
 					<div class="flex items-start gap-6">
-						{#if levelInfo.icon}
-							{@const LevelIcon = levelInfo.icon}
+						{#if subjectData.icon}
+							{@const SubjectIcon = subjectData.icon}
 							<div class="hidden sm:flex items-center justify-center w-20 h-20 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-rose-500 dark:text-rose-400">
-								<LevelIcon class="w-10 h-10" />
+								<SubjectIcon class="w-10 h-10" />
 							</div>
 						{/if}
-
+						
 						<div class="flex-1 space-y-4">
 							<div class="space-y-2">
 								<div class="flex items-center gap-3">
-									{#if levelInfo.icon}
-										{@const LevelIcon = levelInfo.icon}
-										<LevelIcon class="w-8 h-8 text-rose-500 dark:text-rose-400 sm:hidden" />
+									{#if subjectData.icon}
+										{@const SubjectIcon = subjectData.icon}
+										<SubjectIcon class="w-8 h-8 text-rose-500 dark:text-rose-400 sm:hidden" />
 									{/if}
 									<h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-										{levelInfo.name}
+										{subjectData.name}
 									</h1>
 								</div>
 								<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
-									Esplora i contenuti didattici disponibili per questo livello. Trova teoria,
-									esercizi e risorse per tutte le materie.
+									Esplora i contenuti organizzati per capitoli. Trova teoria, esercizi e risorse per approfondire ogni lezione.
 								</p>
 							</div>
 
 							<!-- Quick Stats -->
 							<div class="flex flex-wrap gap-3">
 								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
-									<BookOpen class="w-4 h-4 text-rose-500" />
-									<span class="font-medium">{levelInfo.subjects.length}</span> Materie
-								</div>
-								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 									<Layers class="w-4 h-4 text-teal-500" />
-									<span class="font-medium">{totalChapters}</span> Capitoli
+									<span class="font-medium">{subjectData.chapters.length}</span> Capitoli
 								</div>
 								{#if totalTopics > 0}
 									<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
@@ -123,23 +115,24 @@
 				</div>
 			</header>
 
-			<!-- Subjects Grid -->
-			{#if levelInfo.subjects.length > 0}
+			<!-- Chapters Grid -->
+			{#if subjectData.chapters.length > 0}
 				<section class="space-y-6" in:fade={{ duration: 400, delay: 100 }}>
 					<div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
 						<h2 class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-							<BookOpen class="w-5 h-5 text-rose-500" />
-							Materie disponibili
+							<Layers class="w-5 h-5 text-teal-500" />
+							Capitoli disponibili
 						</h2>
 					</div>
 
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{#each levelInfo.subjects as subject, index (subject.id)}
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+						{#each subjectData.chapters as chapter, index (chapter.id)}
 							<div in:fly={{ y: 20, duration: 400, delay: index * 50 }} class="h-full">
-								<SubjectCard
-									subject={subject}
+								<ChapterCard
+									chapter={chapter}
 									level_id={level_id}
-									chapterCount={subject.chapters.length}
+									subject_id={subject_id}
+									topicCount={chapter.topics.length}
 								/>
 							</div>
 						{/each}
@@ -152,32 +145,47 @@
 						<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
 					</div>
 					<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
-						Nessuna materia disponibile
+						Nessun capitolo disponibile
 					</h3>
 					<p class="text-zinc-600 dark:text-zinc-400 max-w-md mb-8">
-						Al momento non ci sono materie disponibili per questo livello. Torna presto per
-						nuovi contenuti!
+						Al momento non ci sono capitoli disponibili per questa materia. Torna presto per nuovi contenuti!
 					</p>
+					<button
+						onclick={() => goto(`/content/${level_id}`)}
+						class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+					>
+						Torna alle materie
+					</button>
 				</div>
 			{/if}
 		{:else}
 			<!-- 404 State -->
 			<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>
 				<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-200 dark:ring-zinc-800">
-					<GraduationCap class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
+					<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
 				</div>
 				<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
-					Livello non trovato
+					Materia non trovata
 				</h3>
 				<p class="text-zinc-600 dark:text-zinc-400 mb-8 max-w-md">
-					Il livello che stai cercando non esiste o non è disponibile.
+					La materia che stai cercando non esiste o non è disponibile per questo livello.
 				</p>
-				<button
-					onclick={() => goto('/')}
-					class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-				>
-					Torna alla home
-				</button>
+				<div class="flex gap-4">
+					{#if level_id}
+						<button
+							onclick={() => goto(`/content/${level_id}`)}
+							class="px-6 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium transition-all duration-200"
+						>
+							Torna al livello
+						</button>
+					{/if}
+					<button
+						onclick={() => goto('/content')}
+						class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+					>
+						Torna alla home
+					</button>
+				</div>
 			</div>
 		{/if}
 	</div>

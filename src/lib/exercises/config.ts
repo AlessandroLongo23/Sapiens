@@ -84,7 +84,7 @@ export const configs: ExercisesConfig = {
 		// 	args: [2]
 		// }
 	},
-	'high_school/math/numeri-razionali/numeri-razionali-confronto': {
+	'high_school/math/numeri-razionali/numeri-razionali-confronto-frazioni': {
 		'stesso-numeratore': {
 			generator: 'StessoNumeratoreEx',
 			count: 2,

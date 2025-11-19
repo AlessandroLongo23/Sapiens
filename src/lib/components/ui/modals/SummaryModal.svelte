@@ -1,13 +1,15 @@
 <script>
-	import Modal from '$lib/components/ui/modals/Modal.svelte';
 	import { CheckCircle, XCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { exercise_messages } from '$lib/const/microcopy.js';
 
+	import Modal from '$lib/components/ui/modals/Modal.svelte';
+
 	let {
 		isOpen = $bindable(false),
 		correctCount = 0,
-		totalCount = 0
+		totalCount = 0,
+		href = ''
 	} = $props();
 
 	let incorrectCount = $derived(totalCount - correctCount);
@@ -57,7 +59,7 @@
 		<button
 			onclick={() => {
 				isOpen = false;
-				goto('/student/materiale');
+				goto(href);
 			}}
 			class="mt-4 btn-primary text-white px-8 py-3 rounded-xl font-semibold text-lg shadow-lg group"
 		>

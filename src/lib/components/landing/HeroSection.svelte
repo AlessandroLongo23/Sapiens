@@ -47,7 +47,7 @@
 					</a>
 
 					<a
-						href="/"
+						href="/content"
 						class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#12161B] border border-gray-300 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-700 text-gray-900 dark:text-slate-50 px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
 					>
 						<BookOpen class="w-5 h-5" />

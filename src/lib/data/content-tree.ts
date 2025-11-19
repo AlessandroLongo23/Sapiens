@@ -1,4 +1,23 @@
-import { Pi, University, Backpack, Calculator, Atom, Beaker, CodeXml, School } from "lucide-svelte";
+import { 
+	Atom, 
+	Backpack, 
+	Beaker, 
+	Blend, 
+	Calculator, 
+	CaseLower,
+	CodeXml, 
+	Cone,
+	Dices,
+	Equal,
+	Hash,
+	Infinity,
+	TriangleRight,
+	Move3D,
+	School, 
+	SquareFunction,
+	Pi, 
+	University,
+} from "lucide-svelte";
 
 export enum EducationalLevel {
 	MIDDLE_SCHOOL = 'middle_school',
@@ -14,6 +33,7 @@ export const EducationalLevelMap = {
 
 export interface LevelNode {
 	id: EducationalLevel;
+	name: string;
 	icon: typeof Pi;
 	subjects: SubjectNode[];
 }
@@ -40,6 +60,7 @@ export interface TopicNode {
 export const contentTree: LevelNode[] = [
 	{	
 		id: EducationalLevel.MIDDLE_SCHOOL,
+		name: EducationalLevelMap[EducationalLevel.MIDDLE_SCHOOL],
 		icon: Backpack,
 		subjects: [
 			{
@@ -226,6 +247,7 @@ export const contentTree: LevelNode[] = [
 	},
 	{
 		id: EducationalLevel.HIGH_SCHOOL,
+		name: EducationalLevelMap[EducationalLevel.HIGH_SCHOOL],
 		icon: School,
 		subjects: [
 			{
@@ -236,7 +258,7 @@ export const contentTree: LevelNode[] = [
 					{
 						id: 'insiemi-e-logica',
 						name: 'Insiemi e logica',
-						icon: Pi,
+						icon: Blend,
 						topics: [
 							{ id: 'prime-definizioni', name: 'Prime definizioni' },
 							{ id: 'insiemi-rappresentazione', name: 'Rappresentazione degli insiemi' },
@@ -252,7 +274,7 @@ export const contentTree: LevelNode[] = [
 					{
 						id: 'numeri-naturali',
 						name: 'Numeri naturali \\mathbb{N}',
-						icon: Pi,
+						icon: Hash,
 						topics: [
 							{ id: 'numeri-naturali-operazioni', name: 'Operazioni in \\mathbb{N}' },
 							{ id: 'numeri-naturali-mcm-mcd', name: 'MCD e MCM in \\mathbb{N}' },
@@ -262,7 +284,7 @@ export const contentTree: LevelNode[] = [
 					{
 						id: 'numeri-interi',
 						name: 'Numeri interi \\mathbb{Z}',
-						icon: Pi,
+						icon: Hash,
 						topics: [
 							{ id: 'numeri-interi-operazioni', name: 'Operazioni in \\mathbb{Z}' },
 							{ id: 'numeri-interi-potenze', name: 'Potenze in \\mathbb{Z}' },
@@ -271,7 +293,7 @@ export const contentTree: LevelNode[] = [
 					{
 						id: 'numeri-razionali',
 						name: 'Numeri razionali \\mathbb{Q}',
-						icon: Pi,
+						icon: Hash,
 						topics: [
 							{ id: 'numeri-razionali-operazioni', name: 'Operazioni in \\mathbb{Q}' },
 							{ id: 'numeri-razionali-potenze', name: 'Potenze in \\mathbb{Q}' },
@@ -283,7 +305,7 @@ export const contentTree: LevelNode[] = [
 					{
 						id: 'numeri-reali',
 						name: 'Numeri reali \\mathbb{R}',
-						icon: Pi,
+						icon: Hash,
 						topics: [
 							{ id: 'numeri-reali-radici', name: 'Operazione di radice' },
 							{ id: 'numeri-reali-espressioni', name: 'Espressioni con reali' },
@@ -292,7 +314,7 @@ export const contentTree: LevelNode[] = [
 					{
 						id: 'monomi-polinomi',
 						name: 'Monomi e polinomi',
-						icon: Pi,
+						icon: CaseLower,
 						topics: [
 							{ id: 'monomi', name: 'Monomi' },
 							{ id: 'monomi-grado', name: 'Grado di un monomio' },
@@ -309,7 +331,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'equazioni-sistemi', 
 						name: 'Equazioni e sistemi', 
-						icon: Pi,
+						icon: Equal,
 						topics: [
 							{ id: 'equazioni-primo-grado', name: 'Equazioni di primo grado' },
 							{ id: 'equazioni-secondo-grado', name: 'Equazioni di secondo grado' },
@@ -323,7 +345,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'geometria-analitica', 
 						name: 'Geometria analitica', 
-						icon: Pi,
+						icon: Move3D,
 						topics: [
 							{ id: 'il-piano-cartesiano', name: 'Il piano cartesiano' },
 							{ id: 'la-distanza-tra-due-punti', name: 'La distanza tra due punti' },
@@ -345,7 +367,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'trigonometria', 
 						name: 'Trigonometria', 
-						icon: Pi,
+						icon: TriangleRight,
 						topics: [
 							{ id: 'angoli-e-lati-dei-triangoli', name: 'Angoli e lati dei triangoli' },
 							{ id: 'teoremi-sui-triangoli', name: 'Teoremi sui triangoli' },
@@ -357,7 +379,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'geometria-solida', 
 						name: 'Geometria solida', 
-						icon: Pi, 
+						icon: Cone, 
 						topics: [
 							{ id: 'solidi-geometrici', name: 'Solidi geometrici' },
 							{ id: 'superfici-e-volumi-dei-solidi-geometrici', name: 'Superfici e volumi dei solidi geometrici' }
@@ -366,7 +388,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'funzioni',
 						name: 'Funzioni',
-						icon: Pi,
+						icon: SquareFunction,
 						topics: [
 							{ id: 'definizione-funzione', name: 'Definizione di funzione' },
 							{ id: 'dominio-codominio-immagine', name: 'Dominio, codominio e immagine' },
@@ -385,7 +407,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'limiti', 
 						name: 'Limiti', 
-						icon: Pi, 
+						icon: Infinity, 
 						topics: [
 							{ id: 'definizione-di-limite', name: 'Definizione di limite' },
 							{ id: 'teoremi-sui-limiti', name: 'Teoremi sui limiti' },
@@ -396,7 +418,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'derivate', 
 						name: 'Derivate', 
-						icon: Pi, 
+						icon: Infinity, 
 						topics: [
 							{ id: 'definizione-derivata', name: 'Definizione di derivata' },
 							{ id: 'regole-derivazione', name: 'Regole di derivazione' },
@@ -407,7 +429,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'integrali', 
 						name: 'Integrali', 
-						icon: Pi, 
+						icon: Infinity, 
 						topics: [
 							{ id: 'definizione-integrale', name: 'Definizione di integrale' },
 							{ id: 'integrali-indefiniti', name: 'Integrali indefiniti' },
@@ -418,7 +440,7 @@ export const contentTree: LevelNode[] = [
 					{ 
 						id: 'probabilita', 
 						name: 'Probabilità', 
-						icon: Pi, 
+						icon: Dices, 
 						topics: [
 							{ id: 'concetti-probabilita', name: 'Concetti di probabilità (evento, probabilità)' },
 							{ id: 'leggi-probabilita', name: 'Leggi della probabilità' }
@@ -587,6 +609,7 @@ export const contentTree: LevelNode[] = [
 	},
 	{
 		id: EducationalLevel.UNIVERSITY,
+		name: EducationalLevelMap[EducationalLevel.UNIVERSITY],
 		icon: University,
 		subjects: [
 			{

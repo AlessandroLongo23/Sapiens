@@ -40,6 +40,7 @@ Contenuti:
 
 =====================================================================================================================
 
-- [ ] cartella degli esercizi deve rispecchiare quella della teoria (da flat directory deve diventare gerarchica)
-- [ ] tradurre tutto in typescript
 - [ ] creare un nuovo database su supabase
+- [ ] aggiungere condivisione e commento su hovering degli heading della teoria (aggiungere #sezione al link)
+- [ ] implementare modo di aggiungere link interpagina nel markdown (e quindi parsing automatico dei prerequisiti)
+- [ ] quando si mettono i topics nel database, rimuovere le liste in favore dei puntatori ai padri (e poi ricostruire l'albero in locale)

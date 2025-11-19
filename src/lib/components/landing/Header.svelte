@@ -2,6 +2,7 @@
 	import { contentTree, EducationalLevelMap, type LevelNode } from '$lib/data/content-tree';
 	import { sendSearch, GLOBAL_SEARCH_KEY, HEADER_SEARCH_HEIGHT } from '$lib/animations/search-transition';
 	import { searchStore } from '$lib/components/ui/search';
+	import { page } from '$app/state';
 
     import ThemeToggle from '$lib/components/ui/theme/ThemeToggle.svelte';
 	import Searchbar from '$lib/components/ui/Searchbar.svelte';
@@ -24,6 +25,8 @@
 	function handleMenuMouseLeave(): void {
 		hoveredLevel = null;
 	}
+
+	let isRoot = $derived(page.url.pathname === '/');
 </script>
 
 <header 
@@ -55,6 +58,7 @@
 				<span class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
 			</a>
 
+			{#if !isRoot}
 			<nav class="flex justify-center items-center gap-12">
 				{#each contentTree as level}
 					<div
@@ -70,7 +74,7 @@
 						}}
 					>
 						<a 
-							href={`/${level.id}`} 
+							href={`/content/${level.id}`} 
 							onclick={handleMenuMouseLeave}
 							class="
 								flex items-center gap-2 transition-colors duration-200 cursor-pointer relative
@@ -82,8 +86,9 @@
 							<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-rose-500 rounded-full transition-all duration-200 {hoveredLevel?.id === level.id ? 'opacity-100 w-full' : 'opacity-0 w-0'}"></span>
 						</a>
 					</div>
-				{/each}
-			</nav>
+					{/each}
+				</nav>
+			{/if}
 		</div>
 
 		<div class="flex items-center justify-end gap-2 sm:gap-3 flex-1 sm:flex-none">

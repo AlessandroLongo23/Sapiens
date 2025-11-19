@@ -363,3 +363,13 @@ button, a {
 #profile-image {
   	filter: brightness(2.0) contrast(0.95);
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

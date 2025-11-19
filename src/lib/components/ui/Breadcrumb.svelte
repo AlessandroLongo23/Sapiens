@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { ChevronRight } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+	import type { Pi } from 'lucide-svelte';
+	
 	import Latex from '$lib/components/ui/Latex.svelte';
 
 	export interface BreadcrumbItem {
 		label: string;
 		path?: string; // If undefined, the item is not clickable (current page)
+		icon?: typeof Pi;
 	}
 
 	let { items = $bindable() } = $props<{
@@ -27,12 +30,18 @@
 		{#if item.path}
 			<button
 				onclick={() => handleClick(item.path!)}
-				class="text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 rounded"
+				class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 rounded"
 			>
+				{#if item.icon}
+					<item.icon class="size-4" />
+				{/if}
 				<Latex content={item.label} />
 			</button>
 		{:else}
-			<span class="text-zinc-900 dark:text-zinc-100 font-medium">
+			<span class="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 font-medium">
+				{#if item.icon}
+					<item.icon class="size-4" />
+				{/if}
 				<Latex content={item.label} />
 			</span>
 		{/if}

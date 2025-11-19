@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
 	import { fade, fly } from 'svelte/transition';
-	import { BookOpen, FileText } from 'lucide-svelte';
+	import { BookOpen, FileText, Home, LibraryBig } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 
@@ -41,10 +41,11 @@
 	let breadcrumbItems = $derived.by(() => {
 		if (!levelInfo || !subjectData || !chapterData) return [];
 		return [
-			{ label: 'Home', path: '/' },
-			{ label: levelInfo.name, path: `/${level_id}` },
-			{ label: subjectData.name, path: `/${level_id}/${subject_id}` },
-			{ label: chapterData.name }
+			{ label: 'Home', path: '/', icon: Home },
+			{ label: 'Materiale didattico', path: '/content', icon: LibraryBig },
+			{ label: levelInfo.name, path: `/content/${level_id}`, icon: levelInfo.icon },
+			{ label: subjectData.name, path: `/content/${level_id}/${subject_id}`, icon: subjectData.icon },
+			{ label: chapterData.name, icon: chapterData.icon }
 		];
 	});
 </script>
@@ -153,7 +154,7 @@
 						nuovi contenuti!
 					</p>
 					<button
-						onclick={() => goto(`/${level_id}/${subject_id}`)}
+						onclick={() => goto(`/content/${level_id}/${subject_id}`)}
 						class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 					>
 						Torna ai capitoli
@@ -175,14 +176,14 @@
 				<div class="flex gap-4">
 					{#if level_id && subject_id}
 						<button
-							onclick={() => goto(`/${level_id}/${subject_id}`)}
+							onclick={() => goto(`/content/${level_id}/${subject_id}`)}
 							class="px-6 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium transition-all duration-200"
 						>
 							Torna alla materia
 						</button>
 					{/if}
 					<button
-						onclick={() => goto('/')}
+						onclick={() => goto('/content')}
 						class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 					>
 						Torna alla home

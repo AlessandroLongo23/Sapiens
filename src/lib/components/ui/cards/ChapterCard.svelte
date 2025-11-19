@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { fade } from 'svelte/transition';
 	import type { ChapterNode } from '$lib/data/content-tree';
-	import Latex from '$lib/components/ui/Latex.svelte';
 	import { ChevronRight, FileText } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
+
+	import Latex from '$lib/components/ui/Latex.svelte';
 
 	let { chapter, level_id, subject_id, topicCount = 0 } = $props<{
 		chapter: ChapterNode;
@@ -15,7 +15,7 @@
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`/${level_id}/${subject_id}/${chapter.id}`);
+		goto(`/content/${level_id}/${subject_id}/${chapter.id}`);
 	}
 </script>
 

@@ -10,7 +10,7 @@
 	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
 	
 	let { data } = $props();
-	const { exercises, topic_id } = data;
+	const { exercises, topic_id, level_id, subject_id, chapter_id } = data;
 
 	let currentExerciseIndex = $state(0);
 	let progressStates = $state<ProgressState[]>(Array(exercises.length).fill(ProgressState.UNANSWERED));
@@ -63,7 +63,7 @@
 	<title>Esercizi su {topic_id}</title>
 </svelte:head>
 
-<div class="flex flex-col justify-between items-center w-full max-w-2xl mx-auto p-4 gap-8 min-h-[calc(100vh-10rem)]">
+<div class="flex flex-col justify-between items-center w-full p-4 gap-8 min-h-[calc(100vh-10rem)]">
 	<SegmentedProgressBar states={progressStates} />
 
 	{#key currentExercise.question}
@@ -88,4 +88,5 @@
 	bind:isOpen={showSummaryModal}
 	correctCount={correctCount}
 	totalCount={exercises.length}
+	href={`/${level_id}/${subject_id}/${chapter_id}/${topic_id}/theory`}
 />

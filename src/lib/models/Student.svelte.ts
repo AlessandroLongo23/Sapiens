@@ -38,4 +38,4 @@ export class Student {
     public getPhone(): string {
         return `${this.phonePrefix} ${this.phoneNumber}`;
     }
-}
+} 

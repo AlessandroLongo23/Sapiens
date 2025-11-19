@@ -39,7 +39,7 @@
 		<div class="w-1/6 border-r border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30">
 			{#each subjects as subject}
 				<a
-					href={`/${level.id}/${subject.id}`}
+					href={`/content/${level.id}/${subject.id}`}
 					onclick={level = null}
 					onmouseenter={() => handleSubjectHover(subject)}
 					class="
@@ -66,10 +66,11 @@
 					{#each selectedSubject.chapters as chapter, index}
 						<div class="flex flex-col gap-4 mb-8" style="break-inside: avoid;">
 							<a
-								href={`/${level.id}/${selectedSubject.id}/${chapter.id}`}
+								href={`/content/${level.id}/${selectedSubject.id}/${chapter.id}`}
 								onclick={level = null}
-								class="w-full text-left px-0 text-zinc-900 dark:text-zinc-100 transition-all duration-200 relative group"
+								class="w-full flex items-center gap-2 text-left px-0 text-zinc-900 dark:text-zinc-100 transition-all duration-200 relative group"
 							>
+								<chapter.icon class="size-4" />
 								<Latex content={`${index + 1}. ${chapter.name}`} class="font-semibold line-clamp-1" />
 								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-rose-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full"></span>
 							</a>
@@ -77,7 +78,7 @@
 							<div class="flex flex-col gap-1.5">
 								{#each chapter.topics.slice(0, topicsPerChapter) as topic}
 									<a
-										href={`/${level.id}/${selectedSubject.id}/${chapter.id}/${topic.id}`}
+										href={`/content/${level.id}/${selectedSubject.id}/${chapter.id}/${topic.id}/theory`}
 										onclick={level = null}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-200 group relative cursor-pointer"
 									>
@@ -88,7 +89,7 @@
 								{#if chapter.topics.length == topicsPerChapter + 1}
 									{@const topic = chapter.topics[topicsPerChapter]}
 									<a
-										href={`/${level.id}/${selectedSubject.id}/${chapter.id}/${topic.id}`}
+										href={`/content/${level.id}/${selectedSubject.id}/${chapter.id}/${topic.id}/theory`}
 										onclick={level = null}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
 									>
@@ -96,7 +97,7 @@
 									</a>
 								{:else if chapter.topics.length > topicsPerChapter + 1}
 									<a
-										href={`/${level.id}/${selectedSubject.id}/${chapter.id}`}
+										href={`/content/${level.id}/${selectedSubject.id}/${chapter.id}`}
 										onclick={level = null}
 										class="w-full flex items-center text-left py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 transition-all duration-200"
 									>
