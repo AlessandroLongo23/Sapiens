@@ -88,5 +88,5 @@
 	bind:isOpen={showSummaryModal}
 	correctCount={correctCount}
 	totalCount={exercises.length}
-	href={`/${level_id}/${subject_id}/${chapter_id}/${topic_id}/theory`}
+	href={`/content/${level_id}/${subject_id}/${chapter_id}/${topic_id}/theory`}
 />
