@@ -12,7 +12,8 @@
         width = 'w-full',
         autofocus = false,
         size = 'md',
-        classes = ''
+        classes = '',
+        closeOnBlur = true
     } = $props();
 
     const sizeClasses = {
@@ -82,7 +83,9 @@
     };
 
     const handleBlur = () => {
-        searchStore.deactivate();
+        if (closeOnBlur) {
+            searchStore.deactivate();
+        }
     };
 
     const handleClear = () => {

@@ -204,7 +204,7 @@ Refer to Svelte, SvelteKit, and Paraglide.js documentation for detailed informat
 | **Surface** | `#FFFFFF` | `#12161B` | Cards, panels, modals |
 | **Text / Primary** | `#111827` | `#F9FAFB` | High contrast but not harsh |
 | **Text / Secondary** | `#4B5563` | `#9CA3AF` | For secondary content |
-| **Accent (Sapiens Pink)** | `#EC4899` | `#F472B6` | Matches the logo (Tailwind’s pink-500/400) |
+| **Accent (Sapiens Rose)** | `#EC4899` | `#F472B6` | Matches the logo (Tailwind’s rose-500/400) |
 | **Border / Line** | `#E5E7EB` | `#1F2937` | Dividers, outlines |
 | **Success** | `#10B981` | `#34D399` | Confirmations, completed actions |
 | **Error** | `#EF4444` | `#F87171` | Validation, critical states |
@@ -212,7 +212,7 @@ Refer to Svelte, SvelteKit, and Paraglide.js documentation for detailed informat
 | **Info** | `#3B82F6` | `#60A5FA` | Helpful information |
 
 **Usage Notes**
-- Keep **Sapiens Pink** as the main accent — avoid overuse.  
+- Keep **Sapiens Rose** as the main accent — avoid overuse.  
 - Rely on **neutral tones** and **typographic hierarchy** rather than bright colors.  
 - Backgrounds are slightly off-white for better visual comfort.
 
