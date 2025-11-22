@@ -4,14 +4,19 @@
     import TheoryContent from '$lib/components/students/markdown/TheoryContent.svelte';
     import TheorySidebar from '$lib/components/students/markdown/TheorySidebar.svelte';
     import SidebarPortal from '$lib/components/layout/SidebarPortal.svelte';
+    import { layoutState } from '$lib/state/layout.svelte.js';
 
     let { data } = $props();
-    let { content, sections, error, title } = $derived(data);
+    let { 
+        content, 
+        sections, 
+        error, 
+        title 
+    } = $derived(data);
     
     let activeTheorySection = $state('');
     let targetSection = $state('');
-    let scrollY = $state(0);
-    let isScrolled = $derived(scrollY > 20);
+    let isScrolled = $derived(layoutState.scrollY > 20);
 
     let textContent = $derived(content ? content.replace(/<[^>]*>/g, '') : '');
     let wordCount = $derived(textContent.split(/\s+/).length);
@@ -27,12 +32,10 @@
     };
 </script>
 
-<svelte:window bind:scrollY />
 <svelte:head>
     <title>{title || 'Teoria'} | Sapiens</title>
 </svelte:head>
 
-<!-- Inject Left Sidebar into Layout -->
 <SidebarPortal side="left">
     <div class="mb-4 px-1">
         <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Indice</span>
@@ -53,15 +56,7 @@
     </div>
 {:else}
     <div class="px-6 md:px-10 pt-0 pb-8">
-        <div class="overflow-hidden transition-all duration-300 ease-in-out"
-            class:h-0={isScrolled}
-            class:opacity-0={isScrolled}
-            class:mt-0={isScrolled}
-            class:h-auto={!isScrolled}
-            class:opacity-100={!isScrolled}
-            class:mt-2={!isScrolled}
-            class:mb-4={!isScrolled}
-        >
+        <div class="overflow-hidden transition-all duration-300 ease-in-out {isScrolled ? 'h-0 opacity-0 mt-0' : 'h-auto opacity-100 mt-2'}">
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-sm text-zinc-500">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-2">

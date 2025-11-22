@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { fade, fly } from 'svelte/transition';
 	
 	let { 
@@ -11,13 +11,13 @@
 		backgroundBlur = 'none'
 	} = $props();
 
-	const handleBackdropClick = (e) => {
+	const handleBackdropClick = (e: MouseEvent) => {
 		if (closeOnOutsideClick && e.target === e.currentTarget) {
 			onClose();
 		}
 	}
 
-	function handleKeydown(event) {
+	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
 			onClose();
 		}
@@ -32,11 +32,11 @@
 		xl: 'backdrop-blur-xl'
 	}
 
-	function handleModalScroll(event) {
+	function handleModalScroll(event: WheelEvent | TouchEvent) {
 		event.stopPropagation();
 	}
 
-	function handleBackgroundScroll(event) {
+	function handleBackgroundScroll(event: WheelEvent | TouchEvent) {
 		event.preventDefault();
 		event.stopPropagation();
 	}

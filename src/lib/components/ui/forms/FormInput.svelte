@@ -9,7 +9,7 @@
 		required = false,
 		disabled = false,
 		error = '',
-		icon = null,
+		FormIcon = null,
 		onchange = null
 	} = $props();
 	
@@ -46,11 +46,10 @@
 		</label>
 	{/if}
 	
-	
 	<div class="relative">
-		{#if icon}
+		{#if FormIcon}
 			<div class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-				{@render icon({ class: `w-5 h-5 ${hasError ? 'text-red-500' : hasValue ? 'text-blue-600' : 'text-zinc-400'} transition-colors duration-300` })}
+				<FormIcon class="w-5 h-5 {hasError ? 'text-red-500' : hasValue ? 'text-blue-600' : 'text-zinc-400'} transition-colors duration-300" />
 			</div>
 		{/if}
 		
@@ -62,7 +61,7 @@
 			{placeholder}
 			{required}
 			{disabled}
-            class="w-full px-4 py-3 {icon ? 'pl-12' : ''} rounded-xl border-2 transition-all duration-300 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none {
+            class="w-full px-4 py-3 {FormIcon ? 'pl-12' : ''} rounded-xl border-2 transition-all duration-300 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none {
 				hasError 
 					? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20' 
 					: hasValue

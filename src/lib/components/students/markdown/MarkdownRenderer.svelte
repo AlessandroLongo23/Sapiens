@@ -178,7 +178,7 @@
 	@reference '../../../../app.css';
 	
 	:global(.markdown-content h2) {
-		@apply text-4xl font-bold text-zinc-950 dark:text-white mb-10 mt-24 pb-4 border-b border-rose-400/80;
+		@apply text-3xl font-bold text-zinc-950 dark:text-white mb-10 mt-24 pb-4 border-b border-rose-400/80;
 		scroll-margin-top: 1rem;
 	}
 	

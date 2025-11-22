@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase.js';
-	import { X } from 'lucide-svelte';
+	import { X, Mail, Lock, User } from 'lucide-svelte';
 	
 	import FormButton from '$lib/components/ui/forms/FormButton.svelte';
 	import FormInput from '$lib/components/ui/forms/FormInput.svelte';
@@ -10,13 +10,13 @@
 	let { 
 		isOpen = $bindable(false),
 		onClose = () => {},
-		register = false
+		register = $bindable(false)
 	} = $props();
 
 	let email = $state('');
 	let password = $state('');
-	let name = $state('')
-	let surname = $state('')
+	let name = $state('');
+	let surname = $state('');
 	let error = $state(null);
 	let loading = $state(false);
 	let isNavigating = $state(false);
@@ -24,17 +24,17 @@
 	const handleLogin = async (event) => {
 		if (isNavigating) return;
 
-		event.preventDefault();
+		// event?.preventDefault(); // Handled by handleSubmit
 		loading = true;
 		error = null;
 
 		try {
-			const { data: { user }, error: error } = await supabase.auth.signInWithPassword({ 
+			const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({ 
 				email, 
 				password 
 			});
 
-			if (error) throw error;
+			if (authError) throw authError;
 
 			isNavigating = true;
 			// const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
@@ -54,19 +54,17 @@
 	const handleRegister = async (event) => {
 		if (isNavigating) return;
 
-		event.preventDefault();
+		// event?.preventDefault(); // Handled by handleSubmit
 		loading = true;
 		error = null;
 
 		try {
-			const { data: { user }, error: error } = await supabase.auth.signUp({ 
+			const { data: { user }, error: authError } = await supabase.auth.signUp({ 
 				email,
-				name,
-				surname,
-				password 
+				password
 			});
 
-			if (error) throw error;
+			if (authError) throw authError;
 
 			isNavigating = true;
 			// const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
@@ -83,71 +81,111 @@
 		}
 	}
 
-	const switchMode = () => {
-		register = !register
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		if (register) {
+			handleRegister(e);
+		} else {
+			handleLogin(e);
+		}
 	}
 
+	const switchMode = () => {
+		register = !register
+		error = null;
+	}
 </script>
 
 <Modal 
 	bind:isOpen={isOpen} 
-	title={register ? 'Registra il tuo account' : "Accedi al tuo account"} 
-	size={register ? "md" : "sm"} 
-	backgroundBlur="xs" 
+	backgroundBlur="sm" 
 	onClose={onClose} 
-	classes="bg-white dark:bg-zinc-800 shadow-2xl rounded-2xl sm:rounded-3xl max-w-xs sm:max-w-sm"
+	classes="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl sm:rounded-3xl w-full max-w-[400px] p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800"
 >
-	<div class="flex justify-between items-center p-6 border-b border-zinc-100 dark:border-zinc-700 flex-shrink-0">
-		<h3
-			class="text-lg sm:text-xl font-bold bg-gradient-to-r from-zinc-800 to-zinc-900 dark:from-zinc-200 dark:to-zinc-100 bg-clip-text text-transparent"
-		>
-			{register ? "Registra il tuo account" : "Accedi al tuo account"}
-		</h3>
+	<div class="relative px-6 pt-10 pb-8">
+		<!-- Close Button -->
 		<button
-			onclick={onClose}
-			class="group p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-300 cursor-pointer"
+			onclick={() => onClose()}
+			class="absolute top-4 right-4 p-2 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all duration-200 cursor-pointer"
 			aria-label="close modal"
 		>
-			<X class="size-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors duration-300"/>
+			<X class="size-5" />
 		</button>
-	</div>
+		
+		<!-- Header -->
+		<div class="text-center mb-8">
+			<h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+				{register ? "Crea un account" : "Bentornato"}
+			</h3>
+			<p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+				{register ? "Inizia il tuo percorso di apprendimento." : "Accedi per continuare a studiare."}
+			</p>
+		</div>
 	
-	<div class="flex-1 flex flex-col w-full sm:max-w-md justify-center gap-2 p-6">
-		<form
-			onsubmit={(e) => {
-				e.preventDefault();
-				handleLogin(e);
-			}}
-			class="flex-1 flex flex-col w-full justify-center gap-4 text-foreground"
-		>
-			<div class="flex flex-col gap-2">
-				{#if register}
-				<FormInput type="name" placeholder="Name" bind:value={name} onchange={() => error = null} />
-				<FormInput type="surname" placeholder="Surname" bind:value={surname} onchange={() => error = null} />
-				{/if}
-				<FormInput type="email" placeholder="Email" bind:value={email} onchange={() => error = null} />
-				<FormInput type="password" placeholder="Password" bind:value={password} onchange={() => error = null} />
+		<!-- Form -->
+		<form onsubmit={handleSubmit} class="flex flex-col gap-4">
+			{#if register}
+				<div class="flex gap-3">
+					<div class="flex-1">
+						<FormInput 
+							type="text" 
+							placeholder="Nome" 
+							bind:value={name} 
+							FormIcon={User}
+							onchange={() => error = null} 
+						/>
+					</div>
+					<div class="flex-1">
+						<FormInput 
+							type="text" 
+							placeholder="Cognome" 
+							bind:value={surname} 
+							onchange={() => error = null} 
+						/>
+					</div>
+				</div>
+			{/if}
+			
+			<FormInput 
+				type="email" 
+				placeholder="Email" 
+				bind:value={email} 
+				FormIcon={Mail}
+				onchange={() => error = null} 
+			/>
+			<FormInput 
+				type="password" 
+				placeholder="Password" 
+				bind:value={password} 
+				FormIcon={Lock}
+				onchange={() => error = null} 
+			/>
+
+			<!-- Error Message -->
+			{#if error}
+				<div class="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-sm text-red-600 dark:text-red-400 text-center animate-in slide-in-from-top-2 fade-in duration-200">
+					{error}
+				</div>
+			{/if}
+
+			<!-- Submit Button -->
+			<div class="mt-2">
+				<FormButton disabled={loading} fullWidth size="md">
+					{loading ? 'Attendi...' : register ? 'Registrati' : 'Accedi'}
+				</FormButton>
 			</div>
 
-			<FormButton type="submit" disabled={loading}>
-				{loading ? 'Loading...' : 'Sign In'}
-			</FormButton>
-			<div class="d-flex justify-content-between">
-				{#if register}
-				<span class="d-block">Non sei ancora registrato?</span>
-				{:else}
-				<span class="d-block">Sei già registrato? Vai al</span>
-				{/if}
-				<a disabled={loading} onclick={switchMode}>
-					{loading ? 'Loading...' : register ? 'Registrati' : 'Login'}
-				</a>
+			<!-- Toggle Mode -->
+			<div class="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
+				{register ? "Hai già un account?" : "Non hai ancora un account?"}
+				<button 
+					type="button"
+					onclick={switchMode}
+					class="ml-1 font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-500 dark:hover:text-rose-400 hover:underline transition-colors focus:outline-none cursor-pointer"
+				>
+					{register ? 'Accedi' : 'Registrati'}
+				</button>
 			</div>
 		</form>
-
-		{#if error}
-			<p class="p-4 pb-2 bg-foreground/10 text-foreground text-center text-red-600">
-				{error}
-			</p>
-		{/if}
 	</div>
 </Modal>

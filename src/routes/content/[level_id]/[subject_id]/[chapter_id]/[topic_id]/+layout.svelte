@@ -8,17 +8,14 @@
     let { data, children } = $props();
     let { title } = $derived(data);
     
-    let scrollY = $state(0);
-    let isScrolled = $derived(scrollY > 20);
-
-    // Navigation paths
+    let isScrolled = $derived(layoutState.scrollY > 20);
+    
     let basePath = $derived(page.url.pathname.split('/').slice(0, 6).join('/')); // Get base topic path
     let theoryPath = $derived(`${basePath}/theory`);
     let exercisesPath = $derived(`${basePath}/exercises`);
     let formularyPath = $derived(`${basePath}/formulary`);
     let flashcardsPath = $derived(`${basePath}/flashcards`);
 
-    // Helper to check active path
     function isActive(path: string) {
         return page.url.pathname.includes(path);
     }
@@ -29,8 +26,6 @@
             : 'bg-white border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-900 hover:shadow-sm'}`;
 </script>
 
-<svelte:window bind:scrollY />
-
 <div class="relative flex w-full justify-center h-[calc(100vh-4.5rem)] overflow-hidden bg-zinc-50 font-sans text-zinc-900">
     <aside class="hidden lg:block fixed left-0 w-92 h-full border-r border-zinc-200 bg-zinc-50/50 py-6 px-4">
         {#if layoutState.leftSidebar}
@@ -38,43 +33,38 @@
         {/if}
     </aside>
 
-    <div class="mx-92 w-full overflow-y-scroll no-scrollbar border-r border-zinc-200/50 bg-white">
-        <header class="relative bg-white/95 backdrop-blur-md transition-all duration-300">
-            <div class="px-6 md:px-10 transition-all duration-300"
-                class:py-3={isScrolled}
-                class:py-8={!isScrolled}
-            >
-                <div class="flex flex-col gap-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <h1 class="font-bold text-zinc-900 leading-tight transition-all duration-300 origin-left"
-                            class:text-xl={isScrolled}
-                            class:text-3xl={!isScrolled}
-                        >
-                            <Latex content={title} />
-                        </h1>
+    <div 
+        class="relative mx-92 w-full overflow-y-scroll no-scrollbar border-r border-zinc-200/50 bg-white"
+        onscroll={(e) => layoutState.scrollY = e.currentTarget.scrollTop}
+    >
+        <header class="sticky top-0 z-50 transition-all duration-300">
+            <div class="flex flex-row items-center justify-between gap-4 px-6 md:px-10 bg-white transition-all duration-300 {isScrolled ? 'py-3' : 'py-8'}">
+                <h1 class="font-bold text-zinc-900 leading-tight transition-all duration-300 origin-left {isScrolled ? 'text-xl' : 'text-3xl'}">
+                    <Latex content={title} />
+                </h1>
 
-                        <div class="flex items-center gap-2 shrink-0 transition-all duration-300"
-                             class:scale-90={isScrolled}
-                        >
-                            <a href={theoryPath} class={getLinkClass(isActive('theory'))} title="Teoria">
-                                <Book size={18} strokeWidth={2.5} />
-                            </a>
-                            <a href={exercisesPath} class={getLinkClass(isActive('exercises'))} title="Esercizi">
-                                <PenLine size={18} strokeWidth={2.5} />
-                            </a>
-                            <a href={formularyPath} class={getLinkClass(isActive('formulary'))} title="Formulario">
-                                <Sigma size={18} strokeWidth={2.5} />
-                            </a>
-                            <a href={flashcardsPath} class={getLinkClass(isActive('flashcards'))} title="Flashcards">
-                                <Zap size={18} strokeWidth={2.5} />
-                            </a>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-2 shrink-0 transition-all duration-300 {isScrolled ? 'scale-90' : ''}">
+                    <a href={theoryPath} class={getLinkClass(isActive('theory'))} title="Teoria">
+                        <Book size={18} strokeWidth={2.5} />
+                    </a>
+                    <a href={exercisesPath} class={getLinkClass(isActive('exercises'))} title="Esercizi">
+                        <PenLine size={18} strokeWidth={2.5} />
+                    </a>
+                    <a href={formularyPath} class={getLinkClass(isActive('formulary'))} title="Formulario">
+                        <Sigma size={18} strokeWidth={2.5} />
+                    </a>
+                    <a href={flashcardsPath} class={getLinkClass(isActive('flashcards'))} title="Flashcards">
+                        <Zap size={18} strokeWidth={2.5} />
+                    </a>
                 </div>
             </div>
-        </header>
 
-        <main class="h-[calc(100vh-12rem)]">
+            {#if isScrolled}
+                <div class="relative w-full h-8 bg-gradient-to-b from-white to-transparent"></div>
+            {/if}
+        </header>
+        
+        <main class="min-h-[calc(100vh-12rem)]">
             {@render children()}
         </main>
     </div>

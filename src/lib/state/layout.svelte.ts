@@ -9,6 +9,7 @@ export const topicLayoutState = writable({
 export class TopicLayoutStore {
     leftSidebar = $state<import('svelte').Snippet | null>(null);
     rightSidebar = $state<import('svelte').Snippet | null>(null);
+    scrollY = $state(0);
 }
 
 export const layoutState = new TopicLayoutStore();
