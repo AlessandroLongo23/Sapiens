@@ -71,6 +71,22 @@
 		}
 	}
 	
+	function initializeTikZ() {
+		if (typeof window === 'undefined') return;
+		
+		const tikzjax = (window as any).tikzjax;
+		if (tikzjax && typeof tikzjax.process === 'function') {
+			tikzjax.process();
+		} else {
+			setTimeout(() => {
+				const tikzjaxRetry = (window as any).tikzjax;
+				if (tikzjaxRetry && typeof tikzjaxRetry.process === 'function') {
+					tikzjaxRetry.process();
+				}
+			}, 200);
+		}
+	}
+
 	$effect(() => {
 		if (content && containerElement) {
 			setTimeout(() => {
@@ -103,6 +119,8 @@
 				});
 				
 				setTableColumnCounts();
+				
+				initializeTikZ();
 			}, 100);
 		}
 	});
@@ -388,5 +406,13 @@
 	
 	:global(.markdown-content .admonition .content .katex) {
 		@apply text-zinc-700 dark:text-zinc-300;
+	}
+	
+	:global(.markdown-content .tikz-container) {
+		@apply my-6 overflow-x-auto;
+	}
+	
+	:global(.markdown-content .tikz-container svg) {
+		@apply max-w-full h-auto;
 	}
 </style> 

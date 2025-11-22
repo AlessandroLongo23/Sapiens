@@ -33,16 +33,14 @@ Esempio: $A \subseteq U$ e $B \subseteq U$ ($U$ è l’insieme universo).
 
 ```tikz
 \begin{tikzpicture}
-  \begin{scope}[shift={(0,0)}]
-    % Universo
-    \draw (-3,-2) rectangle (3,2) node[anchor=north east] {$U$};
-    % Insiemi A e B
-    \begin{scope}
-      \clip (-3,-2) rectangle (3,2);
-      \draw ( -1,0) circle (1.4) node[left] {$A$};
-      \draw (  1,0) circle (1.4) node[right] {$B$};
-    \end{scope}
-  \end{scope}
+\begin{scope}[shift={(0,0)}]
+\draw (-3,-2) rectangle (3,2) node[anchor=north east] {$U$};
+\begin{scope}
+\clip (-3,-2) rectangle (3,2);
+\draw ( -1,0) circle (1.4) node[left] {$A$};
+\draw (  1,0) circle (1.4) node[right] {$B$};
+\end{scope}
+\end{scope}
 \end{tikzpicture}
 ```
 

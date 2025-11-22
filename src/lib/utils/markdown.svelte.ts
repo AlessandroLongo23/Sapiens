@@ -1,6 +1,32 @@
 import MarkdownIt from 'markdown-it';
 import anchor from 'markdown-it-anchor';
 
+function protectTikZ(markdown: string) {
+	const tikzPlaceholders: { content: string, index: number }[] = [];
+	let index = 0;
+	
+	const tikzBlockRegex = /```tikz\n([\s\S]+?)```/g;
+	let processed = markdown.replace(tikzBlockRegex, (match, content) => {
+		const placeholder = `\n\n<div data-tikz-index="${index}"></div>\n\n`;
+		tikzPlaceholders.push({ content, index });
+		index++;
+		return placeholder;
+	});
+	
+	return { processed, tikzPlaceholders };
+}
+
+function restoreTikZ(html: string, tikzPlaceholders: { content: string, index: number }[]) {
+	let result = html;
+	
+	for (const { content, index } of tikzPlaceholders) {
+		const placeholderRegex = new RegExp(`<div data-tikz-index="${index}"></div>`, 'g');
+		result = result.replace(placeholderRegex, `<div class="tikz-container my-6 flex justify-center"><script type="text/tikz">\n${content}\n</script></div>`);
+	}
+	
+	return result;
+}
+
 function protectMath(markdown: string) {
 	const placeholders = [];
 	
@@ -11,7 +37,7 @@ function protectMath(markdown: string) {
 	});
 	
 	processed = processed.replace(/\$([^$]+?)\$/g, (match, content) => {
-		if (match.includes('DISPLAY_MATH_PLACEHOLDER')) {
+		if (match.includes('DISPLAY_MATH_PLACEHOLDER') || match.includes('data-tikz-index')) {
 			return match; 
 		}
 		const placeholder = `MATH_PLACEHOLDER_${placeholders.length}`;
@@ -204,6 +230,7 @@ function gifPlugin(md: MarkdownIt) {
 	};
 }
 
+
 const md = new MarkdownIt({
 	html: true,
 	linkify: false, 
@@ -222,11 +249,15 @@ md.use(gifPlugin);
 export function renderMarkdown(markdownContent: string) {
 	markdownContent = markdownContent.split('\n').slice(2).join('\n');
 
-	const { processed, placeholders } = protectMath(markdownContent);
+	const { processed: tikzProtected, tikzPlaceholders } = protectTikZ(markdownContent);
+	
+	const { processed, placeholders } = protectMath(tikzProtected);
 	
 	const html = md.render(processed);
 	
-	return restoreMath(html, placeholders);
+	const mathRestored = restoreMath(html, placeholders);
+	
+	return restoreTikZ(mathRestored, tikzPlaceholders);
 }
 
 export function extractTableOfContents(markdownContent: string) {
