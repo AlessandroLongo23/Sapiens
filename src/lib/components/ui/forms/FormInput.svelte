@@ -37,7 +37,6 @@
 </script>
 
 <div class="space-y-2">
-	
     {#if label}
         <label for={id} class="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-2">
 			{label}
@@ -49,13 +48,11 @@
 	
 	
 	<div class="relative">
-		
 		{#if icon}
 			<div class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
 				{@render icon({ class: `w-5 h-5 ${hasError ? 'text-red-500' : hasValue ? 'text-blue-600' : 'text-zinc-400'} transition-colors duration-300` })}
 			</div>
 		{/if}
-		
 		
         <input
 			bind:this={inputElement}
@@ -77,12 +74,10 @@
 			onblur={handleBlur}
 		/>
 		
-		
         <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-indigo-500/10 opacity-0 transition-opacity duration-300 pointer-events-none {
 			!hasError && (hasValue) ? 'opacity-100' : ''
 		}"></div>
 	</div>
-	
 	
 	{#if hasError}
 		<div class="flex items-center space-x-2 text-red-600 text-sm animate-in slide-in-from-top-1 duration-300">

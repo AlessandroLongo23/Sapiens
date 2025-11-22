@@ -617,24 +617,52 @@ export const contentTree: LevelNode[] = [
 				name: 'Analisi matematica I',
 				icon: Pi,
 				chapters: [
-					{ id: 'successioni-serie', name: 'Successioni e serie', icon: Pi, topics: [
-						{ id: 'successioni', name: 'Successioni di numeri reali' },
-						{ id: 'serie-numeriche', name: 'Serie numeriche e convergenza' }
-					] },
-					{ id: 'limiti', name: 'Limiti', icon: Pi, topics: [
-						{ id: 'limite-definizione', name: 'Definizione di limite di funzione' }
-					] },
-					{ id: 'derivate', name: 'Derivate', icon: Pi, topics: [
-						{ id: 'regole-derivazione-analisi', name: 'Regole e teoremi sulle derivate' }
-					] },
-					{ id: 'integrali', name: 'Integrali', icon: Pi, topics: [
-						{ id: 'integrali-definizione-analisi', name: 'Integrali definiti e indefiniti' },
-						{ id: 'teorema-fondamentale-analisi', name: 'Teorema fondamentale del calcolo' }
-					] },
-					{ id: 'equazioni-differenziali', name: 'Equazioni differenziali', icon: Pi, topics: [
-						{ id: 'ode-ordine1', name: 'Equazioni differenziali di 1º ordine' },
-						{ id: 'ode-ordine2', name: 'Equazioni differenziali di 2º ordine' }
-					] },
+					{ 
+						id: 'successioni-serie', 
+						name: 'Successioni e serie', 
+						icon: Pi, 
+						topics: 
+						[
+							{ id: 'successioni-definizione', name: 'Successioni di numeri reali' },
+							{ id: 'serie-numeriche-definizione', name: 'Serie numeriche e convergenza' }
+						]
+					},
+					{ 
+						id: 'limiti', 
+						name: 'Limiti', 
+						icon: Pi, 
+						topics: [
+							{ id: 'limite-definizione', name: 'Definizione di limite di funzione' }
+						]
+					},
+					{ 
+						id: 'derivate', 
+						name: 'Derivate', 
+						icon: Pi, 
+						topics: 
+						[
+							{ id: 'regole-derivazione-analisi', name: 'Regole e teoremi sulle derivate' }
+						]
+					},
+					{ 
+						id: 'integrali', 
+						name: 'Integrali', 
+						icon: Pi, 
+						topics: [
+							{ id: 'integrali-definizione-analisi', name: 'Integrali definiti e indefiniti' },
+							{ id: 'teorema-fondamentale-analisi', name: 'Teorema fondamentale del calcolo' }
+						] 
+					},
+					{ 
+						id: 'equazioni-differenziali', 
+						name: 'Equazioni differenziali', 
+						icon: Pi, 
+						topics: 
+						[
+							{ id: 'ode-ordine1', name: 'Equazioni differenziali di 1º ordine' },
+							{ id: 'ode-ordine2', name: 'Equazioni differenziali di 2º ordine' }
+						]
+					}
 				]
 			},
 			{

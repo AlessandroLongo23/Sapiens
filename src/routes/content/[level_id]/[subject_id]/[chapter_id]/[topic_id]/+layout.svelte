@@ -38,7 +38,7 @@
         {/if}
     </aside>
 
-    <div class="mx-92 min-w-0 overflow-y-scroll no-scrollbar border-r border-zinc-200/50 bg-white">
+    <div class="mx-92 w-full overflow-y-scroll no-scrollbar border-r border-zinc-200/50 bg-white">
         <header class="relative bg-white/95 backdrop-blur-md transition-all duration-300">
             <div class="px-6 md:px-10 transition-all duration-300"
                 class:py-3={isScrolled}
@@ -74,7 +74,7 @@
             </div>
         </header>
 
-        <main class="min-h-[calc(100vh-12rem)]">
+        <main class="h-[calc(100vh-12rem)]">
             {@render children()}
         </main>
     </div>

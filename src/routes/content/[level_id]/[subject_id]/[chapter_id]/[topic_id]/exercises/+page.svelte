@@ -63,7 +63,7 @@
 	<title>Esercizi su {topic_id}</title>
 </svelte:head>
 
-<div class="flex flex-col justify-between items-center w-full p-4 gap-8 min-h-[calc(100vh-10rem)]">
+<div class="flex flex-col justify-between items-center w-full h-full p-6 md:px-10">
 	<SegmentedProgressBar states={progressStates} />
 
 	{#key currentExercise.question}

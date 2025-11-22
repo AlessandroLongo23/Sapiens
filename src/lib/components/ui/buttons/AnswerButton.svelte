@@ -1,16 +1,16 @@
 <script>
+	import { ProgressState } from '$lib/exercises/abstract.svelte';
+
 	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
 
-	let { answer, state = 'idle', onclick } = $props(); 
+	let { answer, state = ProgressState.UNANSWERED, onclick } = $props(); 
 
-	const baseClasses =
-		'w-full max-w-sm text-base sm:text-lg font-semibold border-2 rounded-lg py-2 sm:py-4 px-6 sm:px-8 transition-all duration-300 ease-in-out transform focus:outline-none';
+	const baseClasses = 'w-full max-w-sm text-base sm:text-lg font-semibold border-2 rounded-lg py-2 sm:py-4 px-6 sm:px-8 transition-all duration-300 ease-in-out transform focus:outline-none';
 
 	const stateClasses = {
-		idle: 'bg-white dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:border-blue-500',
-		// selected: 'bg-blue-500 border-blue-600 text-white scale-105 shadow-lg',
-		correct: 'bg-green-500 border-green-600 text-white scale-105 shadow-lg animate-pulse',
-		incorrect: 'bg-red-500 border-red-600 text-white scale-105 shadow-lg animate-shake'
+		[ProgressState.UNANSWERED]: 'bg-white dark:bg-zinc-800 border-zinc-500/25 hover:bg-zinc-100 dark:hover:bg-zinc-700',
+		[ProgressState.CORRECT]: 'bg-green-500 border-green-600 text-white scale-105 shadow-lg animate-pulse',
+		[ProgressState.INCORRECT]: 'bg-red-500 border-red-600 text-white scale-105 shadow-lg animate-shake'
 	};
 </script>
 
