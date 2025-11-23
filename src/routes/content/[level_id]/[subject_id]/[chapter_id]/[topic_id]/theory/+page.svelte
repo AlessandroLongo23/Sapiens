@@ -30,6 +30,13 @@
     const handleSidebarSectionSelect = (e: CustomEvent<{ sectionId: string }>) => {
         targetSection = e.detail.sectionId;
     };
+
+    let prerequisites = $state([
+        'Algebra',
+        'Geometria',
+        'Trigonometria',
+        'Analisi',
+    ])
 </script>
 
 <svelte:head>
@@ -37,9 +44,6 @@
 </svelte:head>
 
 <SidebarPortal side="left">
-    <div class="mb-4 px-1">
-        <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Indice</span>
-    </div>
     <TheorySidebar 
         {sections} 
         activeSection={activeTheorySection} 
@@ -57,7 +61,16 @@
 {:else}
     <div class="px-6 md:px-10 pt-0 pb-8">
         <div class="overflow-hidden transition-all duration-300 ease-in-out {isScrolled ? 'h-0 opacity-0 mt-0' : 'h-auto opacity-100 mt-2'}">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-sm text-zinc-500">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 text-sm text-zinc-500">
+                <div class="flex items-center gap-2">
+                    <span>Prerequisiti:</span>
+                    {#each prerequisites as prerequisite}
+                        <span class="px-2 py-0.5 bg-zinc-50 border border-zinc-200 rounded-full text-xs font-medium text-zinc-600">
+                            {prerequisite}
+                        </span>
+                    {/each}
+                </div>
+
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-2">
                         <FileText class="size-4" />
@@ -68,13 +81,6 @@
                         <Clock class="size-4" />
                         <span class="font-medium text-zinc-900 dark:text-zinc-100">{readingTime} min lettura</span>
                     </div>
-                </div>
-                
-                <div class="flex items-center gap-2">
-                    <span class="text-zinc-400">Prerequisiti:</span>
-                    <span class="px-2 py-0.5 bg-zinc-50 border border-zinc-200 rounded text-xs font-medium text-zinc-600">
-                        Algebra di base
-                    </span>
                 </div>
             </div>
         </div>
