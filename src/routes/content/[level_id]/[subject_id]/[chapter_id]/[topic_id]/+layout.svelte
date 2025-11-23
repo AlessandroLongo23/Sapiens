@@ -1,16 +1,16 @@
 <script lang="ts">
     import { page } from '$app/state';
-    import { Book, PenLine, Sigma, Zap } from 'lucide-svelte';
+    import { Book, PenLine, Sigma, Zap, ArrowLeft, ArrowRight } from 'lucide-svelte';
     import { layoutState } from '$lib/state/layout.svelte.js';
     
     import Latex from '$lib/components/ui/Latex.svelte';
 
     let { data, children } = $props();
-    let { title } = $derived(data);
+    let { title, navigation } = $derived(data);
     
     let isScrolled = $derived(layoutState.scrollY > 20);
     
-    let basePath = $derived(page.url.pathname.split('/').slice(0, 6).join('/')); // Get base topic path
+    let basePath = $derived(page.url.pathname.split('/').slice(0, 6).join('/'));
     let theoryPath = $derived(`${basePath}/theory`);
     let exercisesPath = $derived(`${basePath}/exercises`);
     let formularyPath = $derived(`${basePath}/formulary`);
@@ -40,9 +40,18 @@
     >
         <header class="sticky top-0 z-20 transition-all duration-300">
             <div class="flex flex-row items-center justify-between gap-4 px-6 md:px-10 bg-white dark:bg-zinc-900 transition-all duration-300 {isScrolled ? 'py-3' : 'py-8'}">
-                <h1 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight transition-all duration-300 origin-left {isScrolled ? 'text-xl' : 'text-3xl'}">
-                    <Latex content={title} />
-                </h1>
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                    {#if navigation?.parent}
+                        <a href={navigation.parent.url} 
+                           class="flex items-center justify-center p-2 -ml-2 rounded-lg text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-500 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                           title={navigation.parent.label}>
+                           <ArrowLeft class="size-5" />
+                        </a>
+                    {/if}
+                    <h1 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight transition-all duration-300 origin-left {isScrolled ? 'text-xl' : 'text-3xl'} truncate">
+                        <Latex content={title} />
+                    </h1>
+                </div>
 
                 <div class="flex items-center gap-2 shrink-0 transition-all duration-300 {isScrolled ? 'scale-90' : ''}">
                     <a href={theoryPath} class={getLinkClass(isActive('theory'))} title="Teoria">
@@ -65,8 +74,42 @@
             {/if}
         </header>
         
-        <main class="flex-1">
-            {@render children()}
+        <main class="flex-1 flex flex-col">
+            <div class="flex-1">
+                {@render children()}
+            </div>
+
+            {#if navigation?.prev || navigation?.next}
+                <div class="grid grid-cols-2 gap-4 p-6 md:px-10 mt-8 border-t border-zinc-100 dark:border-zinc-800/50">
+                    {#if navigation.prev}
+                        <a href={navigation.prev.url} class="group flex flex-col items-start p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-rose-50/50 dark:hover:bg-rose-900/10 transition-all duration-200">
+                            <span class="flex items-center gap-2 text-xs font-medium text-zinc-400 group-hover:text-rose-500 transition-colors mb-1">
+                                <ArrowLeft size={14} />
+                                {navigation.prev.subLabel || 'Precedente'}
+                            </span>
+                            <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-left line-clamp-2">
+                                <Latex content={navigation.prev.label} />
+                            </span>
+                        </a>
+                    {:else}
+                        <div></div> 
+                    {/if}
+
+                    {#if navigation.next}
+                        <a href={navigation.next.url} class="group flex flex-col items-end p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-rose-50/50 dark:hover:bg-rose-900/10 transition-all duration-200">
+                            <span class="flex items-center gap-2 text-xs font-medium text-zinc-400 group-hover:text-rose-500 transition-colors mb-1">
+                                {navigation.next.subLabel || 'Successivo'}
+                                <ArrowRight size={14} />
+                            </span>
+                            <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-right line-clamp-2">
+                                <Latex content={navigation.next.label} />
+                            </span>
+                        </a>
+                    {:else}
+                        <div></div>
+                    {/if}
+                </div>
+            {/if}
         </main>
     </div>
 

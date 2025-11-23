@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
 	import { fade, fly } from 'svelte/transition';
-	import { BookOpen, FileText, Home, LibraryBig } from 'lucide-svelte';
+	import { BookOpen, FileText, Home, LibraryBig, ArrowLeft, ArrowRight } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { getChapterNavigation } from '$lib/utils/navigation';
 
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import TopicCard from '$lib/components/ui/cards/TopicCard.svelte';
@@ -27,6 +28,11 @@
 		if (!subjectData || !chapter_id) return null;
 		return subjectData.chapters.find((c) => c.id === chapter_id);
 	});
+    
+    let navigation = $derived.by(() => {
+        if (!level_id || !subject_id || !chapter_id) return null;
+        return getChapterNavigation(level_id, subject_id, chapter_id);
+    });
 
 	let levelInfo = $derived.by(() => {
 		if (!levelData) return null;
@@ -135,6 +141,39 @@
 						{/each}
 					</div>
 				</section>
+
+                <!-- Navigation Footer -->
+                {#if navigation && (navigation.prev || navigation.next)}
+                    <div class="grid grid-cols-2 gap-4 mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800" in:fade={{ duration: 400, delay: 200 }}>
+                        {#if navigation.prev}
+                            <a href={navigation.prev.url} class="group flex flex-col items-start p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-rose-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
+                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-rose-500 transition-colors mb-2">
+                                    <ArrowLeft size={14} />
+                                    Capitolo Precedente
+                                </span>
+                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-left">
+                                    <Latex content={navigation.prev.label} />
+                                </span>
+                            </a>
+                        {:else}
+                            <div></div> 
+                        {/if}
+
+                        {#if navigation.next}
+                            <a href={navigation.next.url} class="group flex flex-col items-end p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-rose-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
+                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-rose-500 transition-colors mb-2">
+                                    Capitolo Successivo
+                                    <ArrowRight size={14} />
+                                </span>
+                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-right">
+                                    <Latex content={navigation.next.label} />
+                                </span>
+                            </a>
+                        {:else}
+                            <div></div>
+                        {/if}
+                    </div>
+                {/if}
 			{:else}
 				<!-- Empty State -->
 				<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>

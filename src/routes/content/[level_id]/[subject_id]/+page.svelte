@@ -2,8 +2,9 @@
 	import { page } from '$app/state';
 	import { contentTree, EducationalLevelMap } from '$lib/data/content-tree';
 	import { fade, fly } from 'svelte/transition';
-	import { BookOpen, Layers, FileText, Home, LibraryBig } from 'lucide-svelte';
+	import { BookOpen, Layers, FileText, Home, LibraryBig, ArrowLeft, ArrowRight } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+    import { getSubjectNavigation } from '$lib/utils/navigation';
 	
 	import ChapterCard from '$lib/components/ui/cards/ChapterCard.svelte';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
@@ -20,6 +21,11 @@
 		if (!levelData || !subject_id) return null;
 		return levelData.subjects.find((s) => s.id === subject_id);
 	});
+
+    let navigation = $derived.by(() => {
+        if (!level_id || !subject_id) return null;
+        return getSubjectNavigation(level_id, subject_id);
+    });
 
 	let levelInfo = $derived.by(() => {
 		if (!levelData) return null;
@@ -63,7 +69,6 @@
 				<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
 			</div>
 		{:else if subjectData && levelInfo}
-			<!-- Header Section -->
 			<header class="mb-12" in:fade={{ duration: 300 }}>
 				<Breadcrumb items={breadcrumbItems} />
 
@@ -92,7 +97,6 @@
 								</p>
 							</div>
 
-							<!-- Quick Stats -->
 							<div class="flex flex-wrap gap-3">
 								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 									<Layers class="w-4 h-4 text-teal-500" />
@@ -110,7 +114,6 @@
 				</div>
 			</header>
 
-			<!-- Chapters Grid -->
 			{#if subjectData.chapters.length > 0}
 				<section class="space-y-6" in:fade={{ duration: 400, delay: 100 }}>
 					<div class="flex items-center justify-between border-b border-zinc-500/25 pb-4">
@@ -133,8 +136,39 @@
 						{/each}
 					</div>
 				</section>
+
+                {#if navigation && (navigation.prev || navigation.next)}
+                    <div class="grid grid-cols-2 gap-4 mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800" in:fade={{ duration: 400, delay: 200 }}>
+                        {#if navigation.prev}
+                            <a href={navigation.prev.url} class="group flex flex-col items-start p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-rose-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
+                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-rose-500 transition-colors mb-2">
+                                    <ArrowLeft size={14} />
+                                    Materia Precedente
+                                </span>
+                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-left">
+                                    {navigation.prev.label}
+                                </span>
+                            </a>
+                        {:else}
+                            <div></div> 
+                        {/if}
+
+                        {#if navigation.next}
+                            <a href={navigation.next.url} class="group flex flex-col items-end p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-rose-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
+                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-rose-500 transition-colors mb-2">
+                                    Materia Successiva
+                                    <ArrowRight size={14} />
+                                </span>
+                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-right">
+                                    {navigation.next.label}
+                                </span>
+                            </a>
+                        {:else}
+                            <div></div>
+                        {/if}
+                    </div>
+                {/if}
 			{:else}
-				<!-- Empty State -->
 				<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>
 					<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-500/25">
 						<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
@@ -154,7 +188,6 @@
 				</div>
 			{/if}
 		{:else}
-			<!-- 404 State -->
 			<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>
 				<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-500/25">
 					<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
