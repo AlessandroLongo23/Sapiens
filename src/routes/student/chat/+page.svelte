@@ -1,7 +1,7 @@
 <script>
 	import { Send, Bot, User, Loader2 } from 'lucide-svelte';
 	import { tick } from 'svelte';
-	import UpgradePrompt from '$lib/components/students/UpgradePrompt.svelte';
+	import UpgradePrompt from '$lib/components/subscription/UpgradePrompt.svelte';
 
 	let { data } = $props();
 	let { hasAccess } = $derived(data);

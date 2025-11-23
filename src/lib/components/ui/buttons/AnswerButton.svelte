@@ -1,7 +1,7 @@
 <script>
 	import { ProgressState } from '$lib/exercises/abstract.svelte';
 
-	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
+	import MathRenderer from '$lib/components/content/markdown/MathRenderer.svelte';
 
 	let { answer, state = ProgressState.UNANSWERED, onclick } = $props(); 
 

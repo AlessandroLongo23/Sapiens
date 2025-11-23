@@ -4,8 +4,8 @@
 	import { PUBLIC_STRIPE_PUBLISHABLE_KEY } from '$env/static/public';
 	import { Loader2 } from 'lucide-svelte';
 	
-	import SubscriptionPlans from '$lib/components/students/SubscriptionPlans.svelte';
-	import SubscriptionStatus from '$lib/components/students/SubscriptionStatus.svelte';
+	import SubscriptionPlans from '$lib/components/subscription/SubscriptionPlans.svelte';
+	import SubscriptionStatus from '$lib/components/subscription/SubscriptionStatus.svelte';
 
 	let { data } = $props();
 	let { user, subscription } = $derived(data);

@@ -43,10 +43,10 @@ Complete subscription system with 4 tiers:
 - `src/routes/api/stripe/webhook/+server.js` - Webhook handler
 
 **UI Components:**
-- `src/lib/components/students/SubscriptionPlans.svelte` - Pricing cards
-- `src/lib/components/students/SubscriptionStatus.svelte` - Current plan display
-- `src/lib/components/students/SubscriptionBadge.svelte` - Plan badge for header
-- `src/lib/components/students/UpgradePrompt.svelte` - Upgrade CTA component
+- `src/lib/components/subscription/SubscriptionPlans.svelte` - Pricing cards
+- `src/lib/components/subscription/SubscriptionStatus.svelte` - Current plan display
+- `src/lib/components/subscription/SubscriptionBadge.svelte` - Plan badge for header
+- `src/lib/components/subscription/UpgradePrompt.svelte` - Upgrade CTA component
 
 **Pages:**
 - `src/routes/student/subscription/+page.svelte` - Main subscription page
@@ -56,7 +56,7 @@ Complete subscription system with 4 tiers:
 
 **Updates to Existing Files:**
 - `src/lib/models/Student.svelte.js` - Added subscription fields
-- `src/lib/components/students/StudentHeader.svelte` - Added subscription badge
+- `src/lib/components/subscription/StudentHeader.svelte` - Added subscription badge
 - `src/routes/student/chat/+page.svelte` - Added access control UI
 
 ### 📦 Packages Installed

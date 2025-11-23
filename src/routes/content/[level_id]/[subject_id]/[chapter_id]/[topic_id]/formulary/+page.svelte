@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ContentComingSoon from '$lib/components/common/ContentComingSoon.svelte';
+    import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
 </script>
 
 <ContentComingSoon type="formulary" />

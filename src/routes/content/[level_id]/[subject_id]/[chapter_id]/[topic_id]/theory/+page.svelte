@@ -1,10 +1,10 @@
 <script lang="ts">
     import { FileText, Clock } from 'lucide-svelte';
 
-    import TheoryContent from '$lib/components/students/markdown/TheoryContent.svelte';
-    import TheorySidebar from '$lib/components/students/markdown/TheorySidebar.svelte';
-    import SidebarPortal from '$lib/components/layout/SidebarPortal.svelte';
-    import ContentComingSoon from '$lib/components/common/ContentComingSoon.svelte';
+    import TheoryContent from '$lib/components/content/markdown/TheoryContent.svelte';
+    import TheorySidebar from '$lib/components/content/markdown/TheorySidebar.svelte';
+    import SidebarPortal from '$lib/components/content/SidebarPortal.svelte';
+    import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
     import { layoutState } from '$lib/state/layout.svelte.js';
 
     let { data } = $props();

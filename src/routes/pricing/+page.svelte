@@ -3,8 +3,8 @@
 	import { BillingOption } from '$lib/data/billing-options';
 	import { Loader2 } from 'lucide-svelte';
 	
-	import SubscriptionPlans from '$lib/components/students/SubscriptionPlans.svelte';
-	import SubscriptionTable from '$lib/components/students/SubscriptionTable.svelte';
+	import SubscriptionPlans from '$lib/components/subscription/SubscriptionPlans.svelte';
+	import SubscriptionTable from '$lib/components/subscription/SubscriptionTable.svelte';
 	import BillingToggle from '$lib/components/ui/BillingToggle.svelte';
 
 	let { data } = $props();

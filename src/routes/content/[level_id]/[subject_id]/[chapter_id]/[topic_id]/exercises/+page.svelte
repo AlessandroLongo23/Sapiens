@@ -4,11 +4,11 @@
 	import { tweened } from 'svelte/motion';
 	import { fade } from 'svelte/transition';
 	
-	import SegmentedProgressBar from '$lib/components/students/SegmentedProgressBar.svelte';
+	import SegmentedProgressBar from '$lib/components/content/SegmentedProgressBar.svelte';
 	import AnswerButton from '$lib/components/ui/buttons/AnswerButton.svelte';
 	import SummaryModal from '$lib/components/ui/modals/SummaryModal.svelte';
-	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
-    import ContentComingSoon from '$lib/components/common/ContentComingSoon.svelte';
+	import MathRenderer from '$lib/components/content/markdown/MathRenderer.svelte';
+    import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
 	
 	let { data } = $props();
 	const { exercises, topic_id, level_id, subject_id, chapter_id } = data;
