@@ -8,12 +8,13 @@
 	import AnswerButton from '$lib/components/ui/buttons/AnswerButton.svelte';
 	import SummaryModal from '$lib/components/ui/modals/SummaryModal.svelte';
 	import MathRenderer from '$lib/components/students/markdown/MathRenderer.svelte';
+    import ContentComingSoon from '$lib/components/common/ContentComingSoon.svelte';
 	
 	let { data } = $props();
 	const { exercises, topic_id, level_id, subject_id, chapter_id } = data;
 
 	let currentExerciseIndex = $state(0);
-	let progressStates = $state<ProgressState[]>(Array(exercises.length).fill(ProgressState.UNANSWERED));
+	let progressStates = $state<ProgressState[]>(exercises ? Array(exercises.length).fill(ProgressState.UNANSWERED) : []);
 	let selectedAnswer = $state(null);
 	let isAnswering = $state(false);
 	let showSummaryModal = $state(false);
@@ -27,7 +28,7 @@
 		questionNumber.set(currentExerciseIndex);
 	});
 
-	let currentExercise = $derived(exercises[Math.round($questionNumber)]);
+	let currentExercise = $derived(exercises && exercises.length > 0 ? exercises[Math.round($questionNumber)] : null);
 
 	function handleAnswer(answer: Answer): void {
 		if (isAnswering) return;
@@ -41,7 +42,7 @@
 			selectedAnswer = null;
 			isAnswering = false;
 
-			if (currentExerciseIndex < exercises.length - 1) {
+			if (exercises && currentExerciseIndex < exercises.length - 1) {
 				currentExerciseIndex++;
 			} else {
 				showSummaryModal = true;
@@ -63,30 +64,34 @@
 	<title>Esercizi su {topic_id}</title>
 </svelte:head>
 
-<div class="flex flex-col justify-between items-center w-full h-full p-6 md:px-10">
-	<SegmentedProgressBar states={progressStates} />
+{#if !exercises || exercises.length === 0}
+    <ContentComingSoon type="exercises" />
+{:else}
+    <div class="flex flex-col justify-between items-center w-full h-full p-8 md:px-10">
+        <SegmentedProgressBar states={progressStates} />
 
-	{#key currentExercise.question}
-		<div
-			class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-zinc-200"
-			in:fade={{ duration: 500}}
-		>
-			<MathRenderer content={currentExercise.question.textContent} />
-		</div>
+        {#key currentExercise.question}
+            <div
+                class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-zinc-200"
+                in:fade={{ duration: 500}}
+            >
+                <MathRenderer content={currentExercise.question.textContent} />
+            </div>
 
-		<div class="sm:flex sm:flex-row grid grid-cols-2 justify-center items-center gap-4 w-full">
-			{#each currentExercise.answers as answer}
-				<div>
-					<AnswerButton answer={answer.textContent} state={getButtonState(answer)} onclick={() => handleAnswer(answer)} />
-				</div>
-			{/each}
-		</div>
-	{/key}
-</div>
+            <div class="sm:flex sm:flex-row grid grid-cols-2 justify-center items-center gap-4 w-full">
+                {#each currentExercise.answers as answer}
+                    <div>
+                        <AnswerButton answer={answer.textContent} state={getButtonState(answer)} onclick={() => handleAnswer(answer)} />
+                    </div>
+                {/each}
+            </div>
+        {/key}
+    </div>
 
-<SummaryModal
-	bind:isOpen={showSummaryModal}
-	correctCount={correctCount}
-	totalCount={exercises.length}
-	href={`/content/${level_id}/${subject_id}/${chapter_id}/${topic_id}/theory`}
-/>
+    <SummaryModal
+        bind:isOpen={showSummaryModal}
+        correctCount={correctCount}
+        totalCount={exercises.length}
+        href={`/content/${level_id}/${subject_id}/${chapter_id}/${topic_id}/theory`}
+    />
+{/if}

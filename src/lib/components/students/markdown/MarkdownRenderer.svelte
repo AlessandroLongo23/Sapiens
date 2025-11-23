@@ -225,7 +225,7 @@
 	}
 	
 	:global(.markdown-content img) {
-		@apply mt-4 rounded-lg overflow-hidden border border-zinc-700/50 bg-zinc-800/30 max-w-full h-auto;
+		@apply mt-4 rounded-lg overflow-hidden border border-zinc-500/25 bg-zinc-800/30 max-w-full h-auto;
 	}
 	
 	:global(.markdown-content blockquote) {
@@ -233,7 +233,7 @@
 	}
 
 	:global(.markdown-content hr) {
-		@apply my-8 border-zinc-700/20;
+		@apply my-8 border-zinc-500/25;
 	}
 	
 	:global(.markdown-content code) {
@@ -241,7 +241,7 @@
 	}
 	
 	:global(.markdown-content pre) {
-		@apply bg-zinc-200/50 p-4 rounded-md overflow-x-auto mb-6 border border-zinc-700/30;
+		@apply bg-zinc-200/50 p-4 rounded-md overflow-x-auto mb-6 border border-zinc-500/25;
 	}
 	
 	:global(.markdown-content pre code) {
@@ -258,11 +258,11 @@
 	}
 	
 	:global(.markdown-content th) {
-		@apply bg-zinc-800 text-left p-2 text-zinc-200 border border-zinc-700/50;
+		@apply bg-zinc-800 text-left p-2 text-zinc-200 border border-zinc-500/25;
 	}
 	
 	:global(.markdown-content td) {
-		@apply p-2 border border-zinc-700/50 text-zinc-300 text-center align-middle;
+		@apply p-2 border border-zinc-500/25 text-zinc-300 text-center align-middle;
 		width: calc(100% / var(--col-count, 10));
 	}
 	

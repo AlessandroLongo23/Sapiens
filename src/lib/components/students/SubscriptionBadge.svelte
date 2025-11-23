@@ -7,7 +7,7 @@
 	const badge = $derived(getSubscriptionBadge(user));
 
 	const colors = {
-		zinc: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-700',
+		zinc: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border-zinc-500/25',
 		blue: 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700',
 		purple: 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 border-purple-300 dark:border-purple-700',
 		amber: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white border-amber-500'

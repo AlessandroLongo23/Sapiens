@@ -17,13 +17,27 @@ export async function load({ params }) {
 		const moduleImporterJs = exerciseModulesJs[modulePathJs];
 		const moduleImporterTs = exerciseModulesTs[modulePathTs];
 		if (!moduleImporterJs && !moduleImporterTs) {
-			throw error(404, `Exercise module not found for topic: ${topic_id}`);
+			console.warn(`Exercise module not found for topic: ${topic_id}`);
+			return {
+				exercises: [],
+				topic_id,
+                level_id, 
+                subject_id, 
+                chapter_id
+			};
 		}
 		const exerciseModule = moduleImporterJs ? await moduleImporterJs() : await moduleImporterTs();
 
 		const topicConfig: TopicConfig = configs[configPath];
 		if (!topicConfig) {
-			throw error(404, `No exercise configuration found for ${configPath}`);
+			console.warn(`No exercise configuration found for ${configPath}`);
+			return {
+				exercises: [],
+				topic_id,
+                level_id, 
+                subject_id, 
+                chapter_id
+			};
 		}
 
 		let exercises: Exercise[] = [];
@@ -45,13 +59,19 @@ export async function load({ params }) {
 
 		return {
 			exercises,
-			topic_id
+			topic_id,
+            level_id, 
+            subject_id, 
+            chapter_id
 		};
 	} catch (e) {
 		console.error(e);
-		if (e.status) {
-			throw e;
-		}
-		throw error(500, `Failed to load exercises for ${topic_id}: ${e.message}`);
+		return {
+            exercises: [],
+            topic_id,
+            level_id, 
+            subject_id, 
+            chapter_id
+        };
 	}
 }

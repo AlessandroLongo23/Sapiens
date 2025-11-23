@@ -55,6 +55,7 @@ export interface ChapterNode {
 export interface TopicNode {
 	id: string;
 	name: string;
+	// prerequisites: SubjectNode[];
 }
 
 export const contentTree: LevelNode[] = [

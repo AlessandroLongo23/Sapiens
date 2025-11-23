@@ -33,7 +33,7 @@
 				{
 					plan.popular
 					? 'border-rose-400 shadow-xl scale-105'
-					: 'border-zinc-200 dark:border-zinc-700'
+					: 'border-zinc-500/25'
 				}"
 		>
 			{#if plan.popular}

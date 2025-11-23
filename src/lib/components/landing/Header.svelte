@@ -33,7 +33,7 @@
 	role="menu"
 	tabindex="-1"
 	onmouseleave={handleMenuMouseLeave}
-	class="z-30 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 transition-transform duration-300"
+	class="z-30 bg-white dark:bg-zinc-900 border-b border-zinc-500/25 transition-transform duration-300"
 >
 	{#if hoveredLevel}
 		<div 

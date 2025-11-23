@@ -23,7 +23,7 @@
 	onclick={handleClick}
 	onmouseenter={() => (isHovered = true)}
 	onmouseleave={() => (isHovered = false)}
-	class="group w-full h-full flex flex-col text-left relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all duration-300 hover:border-rose-200 dark:hover:border-rose-800 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1"
+	class="group w-full h-full flex flex-col text-left relative overflow-hidden rounded-2xl border border-zinc-500/25 bg-white dark:bg-zinc-900 transition-all duration-300 hover:border-rose-200 dark:hover:border-rose-800 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1"
 	tabindex="0"
 >
 	<!-- Top accent line -->
@@ -51,7 +51,7 @@
 		</div>
 
 		<!-- Footer -->
-		<div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-sm">
+		<div class="mt-6 pt-4 border-t border-zinc-500/25 flex items-center justify-between text-sm">
 			<span class="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
 				Vai alla lezione
 			</span>

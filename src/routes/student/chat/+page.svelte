@@ -116,7 +116,7 @@
 							inputMessage = 'Come si risolve un\'equazione di secondo grado?';
 							sendMessage();
 						}}
-						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
+						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-500/25 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
 					>
 						<p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
 							📐 Equazioni di secondo grado
@@ -130,7 +130,7 @@
 							inputMessage = 'Spiega il teorema di Pitagora';
 							sendMessage();
 						}}
-						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
+						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-500/25 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
 					>
 						<p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
 							📊 Teorema di Pitagora
@@ -144,7 +144,7 @@
 							inputMessage = 'Come si calcola la derivata di una funzione?';
 							sendMessage();
 						}}
-						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
+						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-500/25 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
 					>
 						<p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
 							📈 Derivate
@@ -158,7 +158,7 @@
 							inputMessage = 'Aiutami con la programmazione in Python';
 							sendMessage();
 						}}
-						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
+						class="p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-500/25 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left"
 					>
 						<p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
 							💻 Python
@@ -187,7 +187,7 @@
 					<div
 						class="max-w-[80%] rounded-2xl px-4 py-3 {message.role === 'user'
 							? 'bg-blue-600 text-white'
-							: 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700'}"
+							: 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-500/25'}"
 					>
 						<div class="prose prose-sm max-w-none {message.role === 'user' ? 'prose-invert' : 'dark:prose-invert'}">
 							{@html message.content.replace(/\n/g, '<br>')}
@@ -212,7 +212,7 @@
 						<Bot class="w-5 h-5 text-white" />
 					</div>
 					<div
-						class="bg-white dark:bg-zinc-800 rounded-2xl px-4 py-3 border border-zinc-200 dark:border-zinc-700"
+						class="bg-white dark:bg-zinc-800 rounded-2xl px-4 py-3 border border-zinc-500/25"
 					>
 						<div class="flex gap-1">
 							<div class="w-2 h-2 rounded-full bg-zinc-400 animate-bounce"></div>
@@ -226,7 +226,7 @@
 	</div>
 
 	{#if hasAccess}
-		<div class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 px-4 py-4">
+		<div class="border-t border-zinc-500/25 bg-white dark:bg-zinc-800 px-4 py-4">
 			<div class="max-w-4xl mx-auto">
 				<div class="flex gap-2">
 					<textarea
@@ -235,7 +235,7 @@
 						placeholder="Scrivi la tua domanda..."
 						disabled={isLoading}
 						rows="1"
-						class="flex-1 resize-none rounded-xl px-4 py-3 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-zinc-900 dark:text-zinc-100"
+						class="flex-1 resize-none rounded-xl px-4 py-3 bg-zinc-100 dark:bg-zinc-900 border border-zinc-500/25 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-zinc-900 dark:text-zinc-100"
 					></textarea>
 					<button
 						onclick={sendMessage}

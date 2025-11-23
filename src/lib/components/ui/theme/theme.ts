@@ -7,7 +7,6 @@ function createThemeStore() {
         subscribe,
         setTheme: (theme) => {
             document.documentElement.classList.add('disable-transitions');
-            
             document.documentElement.classList.toggle('dark', theme === 'dark');
             localStorage.setItem('theme', theme);
             set(theme);

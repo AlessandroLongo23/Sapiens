@@ -66,7 +66,7 @@
 					? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20' 
 					: hasValue
 						? 'border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
-                        : 'border-zinc-200 dark:border-zinc-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-zinc-300 dark:hover:border-zinc-600'
+                        : 'border-zinc-500/25 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 hover:border-zinc-500/50'
             } {disabled ? 'opacity-50 cursor-not-allowed bg-zinc-50 dark:bg-zinc-800' : ''}"
 			oninput={handleInput}
 			onfocus={handleFocus}

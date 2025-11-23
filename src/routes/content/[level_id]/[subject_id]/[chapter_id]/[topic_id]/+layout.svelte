@@ -21,26 +21,26 @@
     }
 
     const getLinkClass = (active: boolean) => 
-        `flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 border ${active 
-            ? 'bg-zinc-900 border-zinc-900 text-white shadow-md scale-105' 
-            : 'bg-white border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-900 hover:shadow-sm'}`;
+        `flex items-center justify-center size-10 rounded-xl transition-all duration-200 border ${active 
+            ? 'bg-zinc-900 dark:bg-zinc-100 border-zinc-500/25 text-white dark:text-zinc-900 shadow-md scale-105' 
+            : 'bg-white dark:bg-zinc-900 border-zinc-500/25 text-zinc-400 dark:text-zinc-500 hover:border-zinc-500/50 hover:text-zinc-900 dark:hover:text-zinc-100 hover:shadow-sm'}`;
 
 </script>
 
-<div class="relative flex w-full justify-center h-[calc(100vh-4.5rem)] overflow-hidden bg-zinc-50 font-sans text-zinc-900">
-    <aside class="hidden lg:block fixed left-0 w-1/4 h-full border-r border-zinc-200 bg-zinc-50/50 py-6 px-4">
+<div class="relative flex w-full justify-center h-[calc(100vh-4.5rem)] overflow-hidden font-sans text-zinc-900 dark:text-zinc-50 bg-white dark:bg-zinc-900">
+    <aside class="hidden lg:block fixed left-0 w-1/4 h-full py-6 px-4">
         {#if layoutState.leftSidebar}
             {@render layoutState.leftSidebar()}
         {/if}
     </aside>
 
     <div 
-        class="relative mx-[calc(1/4*100%)] w-full overflow-y-scroll no-scrollbar border-r border-zinc-200/50 bg-white"
+        class="relative flex flex-col justify-between mx-[calc(1/4*100%)] w-full h-full overflow-y-scroll no-scrollbar"
         onscroll={(e) => layoutState.scrollY = e.currentTarget.scrollTop}
     >
         <header class="sticky top-0 z-20 transition-all duration-300">
-            <div class="flex flex-row items-center justify-between gap-4 px-6 md:px-10 bg-white transition-all duration-300 {isScrolled ? 'py-3' : 'py-8'}">
-                <h1 class="font-bold text-zinc-900 leading-tight transition-all duration-300 origin-left {isScrolled ? 'text-xl' : 'text-3xl'}">
+            <div class="flex flex-row items-center justify-between gap-4 px-6 md:px-10 bg-white dark:bg-zinc-900 transition-all duration-300 {isScrolled ? 'py-3' : 'py-8'}">
+                <h1 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight transition-all duration-300 origin-left {isScrolled ? 'text-xl' : 'text-3xl'}">
                     <Latex content={title} />
                 </h1>
 
@@ -61,16 +61,16 @@
             </div>
 
             {#if isScrolled}
-                <div class="relative w-full h-8 bg-gradient-to-b from-white to-transparent"></div>
+                <div class="relative w-full h-8 bg-gradient-to-b from-white to-transparent dark:from-zinc-900 dark:to-transparent"></div>
             {/if}
         </header>
         
-        <main class="min-h-[calc(100vh-12rem)]">
+        <main class="flex-1">
             {@render children()}
         </main>
     </div>
 
-    <aside class="hidden lg:block fixed right-0 w-1/4 h-full border-l border-zinc-200 bg-zinc-50/50 overflow-y-auto py-6 px-4">
+    <aside class="hidden lg:block fixed right-0 w-1/4 h-full overflow-y-auto py-6 px-4">
         {#if layoutState.rightSidebar}
             {@render layoutState.rightSidebar()}
         {/if}

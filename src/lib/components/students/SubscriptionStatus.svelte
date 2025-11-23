@@ -25,7 +25,7 @@
 	};
 </script>
 
-<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
+<div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-500/25 p-6">
 	<div class="flex items-start justify-between mb-4">
 		<div class="flex items-center gap-3">
 			<div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">

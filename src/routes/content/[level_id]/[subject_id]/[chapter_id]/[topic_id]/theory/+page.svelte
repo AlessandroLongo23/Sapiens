@@ -4,6 +4,7 @@
     import TheoryContent from '$lib/components/students/markdown/TheoryContent.svelte';
     import TheorySidebar from '$lib/components/students/markdown/TheorySidebar.svelte';
     import SidebarPortal from '$lib/components/layout/SidebarPortal.svelte';
+    import ContentComingSoon from '$lib/components/common/ContentComingSoon.svelte';
     import { layoutState } from '$lib/state/layout.svelte.js';
 
     let { data } = $props();
@@ -52,12 +53,7 @@
 </SidebarPortal>
 
 {#if error}
-    <div class="flex justify-center items-center h-full text-red-500 py-20">
-        <div class="text-center">
-            <h2 class="text-xl font-bold mb-2">Si è verificato un errore</h2>
-            <p class="text-zinc-600">{error}</p>
-        </div>
-    </div>
+    <ContentComingSoon type="theory" />
 {:else}
     <div class="px-6 md:px-10 pt-0 pb-8">
         <div class="overflow-hidden transition-all duration-300 ease-in-out {isScrolled ? 'h-0 opacity-0 mt-0' : 'h-auto opacity-100 mt-2'}">
@@ -65,7 +61,7 @@
                 <div class="flex items-center gap-2">
                     <span>Prerequisiti:</span>
                     {#each prerequisites as prerequisite}
-                        <span class="px-2 py-0.5 bg-zinc-50 border border-zinc-200 rounded-full text-xs font-medium text-zinc-600">
+                        <span class="px-2 py-0.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-500/25 rounded-full text-xs font-medium text-zinc-600 dark:text-zinc-400">
                             {prerequisite}
                         </span>
                     {/each}
@@ -76,7 +72,7 @@
                         <FileText class="size-4" />
                         <span class="font-medium text-zinc-900 dark:text-zinc-100">{pagesCount} {pagesCount == 1 ? 'pagina' : 'pagine'}</span>
                     </div>
-                    <span class="size-1 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+                    <span class="size-1 rounded-full bg-zinc-300 dark:bg-zinc-600"></span>
                     <div class="flex items-center gap-2">
                         <Clock class="size-4" />
                         <span class="font-medium text-zinc-900 dark:text-zinc-100">{readingTime} min lettura</span>

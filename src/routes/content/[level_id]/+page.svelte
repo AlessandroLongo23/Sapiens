@@ -58,11 +58,6 @@
 </svelte:head>
 
 <div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
-	<!-- Background Pattern -->
-	<div class="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" 
-		style="background-image: radial-gradient(#6b7280 1px, transparent 1px); background-size: 24px 24px;">
-	</div>
-
 	<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
@@ -80,8 +75,8 @@
 					<div class="flex items-start gap-6">
 						{#if levelInfo.icon}
 							{@const LevelIcon = levelInfo.icon}
-							<div class="hidden sm:flex items-center justify-center w-20 h-20 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-rose-500 dark:text-rose-400">
-								<LevelIcon class="w-10 h-10" />
+							<div class="hidden sm:flex items-center justify-center size-32 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-500/25 text-rose-500 dark:text-rose-400">
+								<LevelIcon class="size-16" />
 							</div>
 						{/if}
 
@@ -104,16 +99,16 @@
 
 							<!-- Quick Stats -->
 							<div class="flex flex-wrap gap-3">
-								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 									<BookOpen class="w-4 h-4 text-rose-500" />
 									<span class="font-medium">{levelInfo.subjects.length}</span> Materie
 								</div>
-								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 									<Layers class="w-4 h-4 text-teal-500" />
 									<span class="font-medium">{totalChapters}</span> Capitoli
 								</div>
 								{#if totalTopics > 0}
-									<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+									<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 										<FileText class="w-4 h-4 text-indigo-500" />
 										<span class="font-medium">{totalTopics}</span> Lezioni
 									</div>
@@ -127,7 +122,7 @@
 			<!-- Subjects Grid -->
 			{#if levelInfo.subjects.length > 0}
 				<section class="space-y-6" in:fade={{ duration: 400, delay: 100 }}>
-					<div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+					<div class="flex items-center justify-between border-b border-zinc-500/25 pb-4">
 						<h2 class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
 							<BookOpen class="w-5 h-5 text-rose-500" />
 							Materie disponibili
@@ -149,7 +144,7 @@
 			{:else}
 				<!-- Empty State -->
 				<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>
-					<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-200 dark:ring-zinc-800">
+					<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-500/25">
 						<BookOpen class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
 					</div>
 					<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
@@ -164,7 +159,7 @@
 		{:else}
 			<!-- 404 State -->
 			<div class="flex flex-col items-center justify-center py-24 text-center" in:fade={{ duration: 300 }}>
-				<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-200 dark:ring-zinc-800">
+				<div class="p-6 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6 ring-1 ring-zinc-500/25">
 					<GraduationCap class="w-12 h-12 text-zinc-400 dark:text-zinc-600" />
 				</div>
 				<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">

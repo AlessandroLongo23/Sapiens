@@ -100,7 +100,7 @@
 	bind:isOpen={isOpen} 
 	backgroundBlur="sm" 
 	onClose={onClose} 
-	classes="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl sm:rounded-3xl w-full max-w-[400px] p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800"
+	classes="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl sm:rounded-3xl w-full max-w-[400px] p-0 overflow-hidden border border-zinc-500/25"
 >
 	<div class="relative px-6 pt-10 pb-8">
 		<!-- Close Button -->

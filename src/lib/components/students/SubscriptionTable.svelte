@@ -40,7 +40,7 @@
 	<div class="min-w-[800px]">
 		<table class="w-full border-collapse">
 			<thead>
-				<tr class="border-b-2 border-zinc-200 dark:border-zinc-700">
+				<tr class="border-b-2 border-zinc-500/25">
 					<th class="text-left py-4 px-6 font-semibold text-zinc-900 dark:text-zinc-100 bg-transparent">
 						Funzionalità
 					</th>
@@ -66,7 +66,7 @@
 			</thead>
 			<tbody>
 				<!-- Price Row -->
-				<tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50">
+				<tr class="border-b border-zinc-500/25 bg-zinc-50 dark:bg-zinc-900/50">
 					<td class="py-4 px-6 font-semibold text-zinc-900 dark:text-zinc-100">
 						Prezzo
 					</td>
@@ -101,7 +101,7 @@
 				<!-- Features Rows -->
 				{#each features as feature, index}
                     {@const Icon = FeaturesDetails[feature].icon}
-					<tr class="border-b border-zinc-200 dark:border-zinc-700 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900/30 {index % 2 === 0 ? 'bg-white dark:bg-zinc-800' : 'bg-zinc-50 dark:bg-zinc-900/50'}">
+					<tr class="border-b border-zinc-500/25 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900/30 {index % 2 === 0 ? 'bg-white dark:bg-zinc-800' : 'bg-zinc-50 dark:bg-zinc-900/50'}">
 						<td class="py-4 px-6">
 							<div class="flex items-center gap-3">
 								<Icon class="w-4 h-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0" />
@@ -125,7 +125,7 @@
 				<!-- Tutoring Hours Row (if applicable) -->
 				{#if plans.some(p => p.tutoring_hours > 0)}
                     {@const Icon = FeaturesDetails[Features.TUTORING].icon}
-					<tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50">
+					<tr class="border-b border-zinc-500/25 bg-zinc-50 dark:bg-zinc-900/50">
 						<td class="py-4 px-6">
 							<div class="flex items-center gap-3">
 								<Icon class="w-4 h-4 text-zinc-600 dark:text-zinc-400 flex-shrink-0" />
@@ -158,7 +158,7 @@
 								disabled={plan.id === SUBSCRIPTION_PLANS.FREE.id || currentPlan.id === plan.id}
 								class="w-full max-w-[140px] mx-auto py-2.5 px-4 rounded-xl font-semibold text-sm transition-all duration-200 {plan.popular
 									? 'bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-md hover:shadow-lg'
-									: 'bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-100'} disabled:opacity-50 disabled:cursor-not-allowed"
+									: 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-100'} disabled:opacity-50 disabled:cursor-not-allowed"
 							>
 								{#if currentPlan.id === plan.id}
 									Il tuo piano

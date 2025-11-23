@@ -20,13 +20,13 @@
 </script>
 
 <div
-	class="w-full max-h-[80vh] overflow-hidden bg-white dark:bg-zinc-900 border-b border-t border-zinc-200 dark:border-zinc-700 shadow-lg pointer-events-auto"
+	class="w-full max-h-[80vh] overflow-hidden bg-white dark:bg-zinc-900 border-b border-t border-zinc-500/25 shadow-lg pointer-events-auto"
 	role="menu"
 	tabindex="-1"
 	in:fly={{ y: -200, duration: 250, opacity: 0 }}
 	out:fade={{ duration: 150 }}
 >
-	<div class="px-8 py-5 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
+	<div class="px-8 py-5 border-b border-zinc-500/25 bg-zinc-50 dark:bg-zinc-800/50">
 		<div class="mx-auto flex items-center gap-3">
 			<level.icon class="size-6 text-rose-500 dark:text-rose-400" />
 			<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
@@ -36,7 +36,7 @@
 	</div>
 	
 	<div class="mx-auto flex min-h-[400px] overflow-hidden">
-		<div class="w-1/6 border-r border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/30">
+		<div class="w-1/6 border-r border-zinc-500/25 bg-zinc-50/50 dark:bg-zinc-800/30">
 			{#each subjects as subject}
 				<a
 					href={`/content/${level.id}/${subject.id}`}

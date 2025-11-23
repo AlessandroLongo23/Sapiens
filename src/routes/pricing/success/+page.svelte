@@ -18,7 +18,7 @@
 </script>
 
 <div class="min-h-screen bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center p-4">
-	<div class="max-w-md w-full bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-8 text-center">
+	<div class="max-w-md w-full bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-500/25 p-8 text-center">
 		<div class="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
 			<CheckCircle class="w-12 h-12 text-green-600 dark:text-green-400" />
 		</div>

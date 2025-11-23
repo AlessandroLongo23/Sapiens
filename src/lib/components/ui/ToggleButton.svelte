@@ -54,8 +54,8 @@
     }
 
     let highlighterStyle = $derived(getHighlighterStyle(value));
-    let highlighterClasses = $derived(style === '3d' ? 'shadow-lg' : 'border border-zinc-300 dark:border-zinc-700');
-    let containerClasses = $derived(style === '3d' ? 'shadow-inner' : 'border border-zinc-300 dark:border-zinc-700 gap-1');
+    let highlighterClasses = $derived(style === '3d' ? 'shadow-lg' : 'border border-zinc-500/25');
+    let containerClasses = $derived(style === '3d' ? 'shadow-inner' : 'border border-zinc-500/25 gap-1');
     let optionClasses = $derived(style === '3d' ? 'px-4 py-2' : 'px-3 py-1');
 </script>
 

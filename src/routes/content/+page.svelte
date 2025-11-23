@@ -35,11 +35,6 @@
 </svelte:head>
 
 <div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
-	<!-- Background Pattern -->
-	<div class="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" 
-		style="background-image: radial-gradient(#6b7280 1px, transparent 1px); background-size: 24px 24px;">
-	</div>
-
 	<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
@@ -55,8 +50,8 @@
 
 				<div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
 					<div class="flex items-start gap-6">
-                        <div class="hidden sm:flex items-center justify-center w-20 h-20 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-rose-500 dark:text-rose-400">
-                            <LibraryBig class="w-10 h-10" />
+                        <div class="hidden sm:flex items-center justify-center size-32 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-500/25 text-rose-500 dark:text-rose-400">
+                            <LibraryBig class="size-16" />
                         </div>
 
 						<div class="flex-1 space-y-4">
@@ -75,16 +70,16 @@
 
 							<!-- Quick Stats -->
 							<div class="flex flex-wrap gap-3">
-								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 									<BookOpen class="w-4 h-4 text-rose-500" />
 									<span class="font-medium">{totalSubjects}</span> Materie
 								</div>
-								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 									<Layers class="w-4 h-4 text-teal-500" />
 									<span class="font-medium">{totalChapters}</span> Capitoli
 								</div>
 								{#if totalTopics > 0}
-									<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
+									<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 										<FileText class="w-4 h-4 text-indigo-500" />
 										<span class="font-medium">{totalTopics}</span> Lezioni
 									</div>
@@ -98,7 +93,7 @@
 			<!-- Levels Grid -->
 			{#if contentTree.length > 0}
 				<section class="space-y-6" in:fade={{ duration: 400, delay: 100 }}>
-					<div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+					<div class="flex items-center justify-between border-b border-zinc-500/25 pb-4">
 						<h2 class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
 							<BookOpen class="w-5 h-5 text-rose-500" />
 							Livelli didattici disponibili

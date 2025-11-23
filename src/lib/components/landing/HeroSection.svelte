@@ -48,7 +48,7 @@
 
 					<a
 						href="/content"
-						class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#12161B] border border-gray-300 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-700 text-gray-900 dark:text-slate-50 px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
+						class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#12161B] border border-zinc-500/25 hover:border-zinc-500/50 text-gray-900 dark:text-slate-50 px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
 					>
 						<BookOpen class="w-5 h-5" />
 						<span>Esplora materiale</span>
@@ -94,7 +94,7 @@
 	<!-- <a 
 		href="#about" 
 		aria-label="Scopri di più"
-		class="hidden sm:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bottom-8 w-10 h-10 rounded-full border border-gray-300 dark:border-gray-800 bg-white/80 dark:bg-[#12161B]/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 shadow-sm hover:shadow-md hover:border-rose-500 dark:hover:border-rose-400 transition-all duration-300 ease-in-out animate-bounce"
+		class="hidden sm:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bottom-8 w-10 h-10 rounded-full border border-zinc-500/25 bg-white/80 dark:bg-[#12161B]/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 shadow-sm hover:shadow-md hover:border-rose-500 dark:hover:border-rose-400 transition-all duration-300 ease-in-out animate-bounce"
 	>
 		<ChevronDown class="w-5 h-5" />
 	</a> -->

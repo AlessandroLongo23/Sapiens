@@ -116,8 +116,8 @@
         type="text"
         placeholder={placeholder}
         class="w-full {sizeClasses[size].input} bg-white dark:bg-zinc-900 border rounded-lg
-               dark:border-zinc-800 border-zinc-200
-               dark:focus:border-zinc-700 focus:border-zinc-300
+               border-zinc-500/25
+               focus:border-zinc-500/50
                dark:text-zinc-100 text-zinc-900
                placeholder:text-zinc-400
                outline-none transition-all duration-200"

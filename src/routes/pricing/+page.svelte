@@ -88,7 +88,7 @@
 		</div>
 	</div>
 
-	<hr class="border-zinc-200 dark:border-zinc-700">
+	<hr class="border-zinc-500/25">
 
 	<div class="flex flex-col gap-12">
 		<div class="text-center flex flex-col gap-4">
@@ -106,7 +106,7 @@
 			<BillingToggle value={billingPeriod} onChange={(value) => billingPeriod = value} />
 		</div>
 
-		<div class="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-lg overflow-hidden p-6">
+		<div class="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-500/25 shadow-lg overflow-hidden p-6">
 			<SubscriptionTable
 				currentPlan={currentPlan}
 				onSelectPlan={handleSelectPlan}

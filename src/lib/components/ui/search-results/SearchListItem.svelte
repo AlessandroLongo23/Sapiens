@@ -11,7 +11,7 @@
 
 <a 
     href={`/content/${result.level.id}/${result.subject.id}/${result.chapter.id}/${result.topic.id}/theory`}
-    class="group flex items-center justify-between p-3 rounded-xl border border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:border-zinc-200 dark:hover:border-zinc-700/50 transition-all duration-200"
+    class="group flex items-center justify-between p-3 rounded-xl border border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:border-zinc-500/50 transition-all duration-200"
     {onclick}
 >
     <div class="flex items-center gap-4 min-w-0">

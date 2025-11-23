@@ -68,7 +68,7 @@
     <div class="relative prefix-selector">
         <button
             type="button"
-            class="h-full px-3 flex items-center gap-1 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-500/25 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
+            class="h-full px-3 flex items-center gap-1 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-500/25 hover:border-zinc-500/50 transition-colors"
             onclick={() => {
                 showPrefixDropdown = !showPrefixDropdown;
                 searchQuery = '';

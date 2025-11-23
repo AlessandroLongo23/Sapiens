@@ -1,5 +1,5 @@
 
-<footer class="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white relative overflow-hidden border-t border-zinc-800/50">
+<footer class="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white relative overflow-hidden border-t border-zinc-500/25">
 	<div class="absolute inset-0 opacity-5">
 		<div class="absolute inset-0" style="background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
 	</div>
@@ -82,7 +82,7 @@
 			</div>
 		</div>
 
-		<div class="border-t border-zinc-800/50 pt-8">
+		<div class="border-t border-zinc-500/25 pt-8">
 			<div class="flex flex-col sm:flex-row justify-between items-center gap-4">
 				<div class="text-center sm:text-left">
 					<p class="text-zinc-500 text-xs sm:text-sm">
