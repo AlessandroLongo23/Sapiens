@@ -1,18 +1,20 @@
 <script lang="ts">
     import { FileText, Clock } from 'lucide-svelte';
+    import { layoutState } from '$lib/state/layout.svelte.js';
 
     import TopicContent from '$lib/components/content/markdown/TopicContent.svelte';
     import TopicSidebar from '$lib/components/content/markdown/TopicSidebar.svelte';
-    import SidebarPortal from '$lib/components/content/SidebarPortal.svelte';
     import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
-    import { layoutState } from '$lib/state/layout.svelte.js';
+    import NavigationButtons from '$lib/components/content/NavigationButtons.svelte';
+    import SidebarPortal from '$lib/components/content/SidebarPortal.svelte';
 
     let { data } = $props();
     let { 
         content, 
-        sections, 
+        sections,
         error, 
-        title 
+        title,
+        navigation
     } = $derived(data);
     
     let activeFormularySection = $state('');
@@ -53,7 +55,7 @@
 </SidebarPortal>
 
 {#if error}
-    <ContentComingSoon type="formulary" />
+    <ContentComingSoon type="formulary" navigation={navigation} />
 {:else}
     <div class="px-6 md:px-10 pt-0 pb-8">
         <div class="overflow-hidden transition-all duration-300 ease-in-out {isScrolled ? 'h-0 opacity-0 mt-0' : 'h-auto opacity-100 mt-2'}">
@@ -96,3 +98,4 @@
         {/if}
     </div>
 {/if}
+<NavigationButtons navigation={navigation} />
