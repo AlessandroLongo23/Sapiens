@@ -2,10 +2,12 @@
 	import { themeStore } from '$lib/components/ui/theme/theme';
 	import { GraduationCap, BookOpen } from 'lucide-svelte';
 
+	import AnimatedCounter from '$lib/components/ui/AnimatedCounter.svelte';
+
 	interface Props {
 		heroSection: HTMLElement | null;
 		stats: {
-			value: string;
+			value: number;
 			label: string;
 			icon: typeof GraduationCap;
 		}[];
@@ -62,7 +64,7 @@
 							<div class="flex items-center gap-3">
 								<StatIcon class="size-6 text-rose-500 dark:text-rose-400" />
 								<div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-slate-50">
-									{stat.value}
+									<AnimatedCounter target={stat.value} duration={2000} />
 								</div>
 							</div>
 							<div class="text-sm text-gray-600 dark:text-gray-400 mt-1">

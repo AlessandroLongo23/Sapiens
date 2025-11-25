@@ -11,13 +11,12 @@
 			value: contentTree
 				.flatMap(level => level.subjects)
 				.flatMap(subject => subject.chapters)
-				.reduce((acc: number, chapter) => acc + chapter.topics.length, 0)
-				.toString(),
+				.reduce((acc: number, chapter) => acc + chapter.topics.length, 0),
 			label: "Lezioni disponibili",
 			icon: BookOpen,
 		},
 		students: {
-			value: "300+",
+			value: 300,
 			label: "Studenti Iscritti",
 			icon: Users,
 		}

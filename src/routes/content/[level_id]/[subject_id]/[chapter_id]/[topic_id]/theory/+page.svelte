@@ -1,18 +1,20 @@
 <script lang="ts">
     import { FileText, Clock } from 'lucide-svelte';
+    import { layoutState } from '$lib/state/layout.svelte.js';
 
     import TheoryContent from '$lib/components/content/markdown/TheoryContent.svelte';
     import TheorySidebar from '$lib/components/content/markdown/TheorySidebar.svelte';
     import SidebarPortal from '$lib/components/content/SidebarPortal.svelte';
     import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
-    import { layoutState } from '$lib/state/layout.svelte.js';
+    import NavigationButtons from '$lib/components/content/NavigationButtons.svelte';
 
     let { data } = $props();
     let { 
         content, 
         sections, 
         error, 
-        title 
+        title,
+        navigation
     } = $derived(data);
     
     let activeTheorySection = $state('');
@@ -53,7 +55,7 @@
 </SidebarPortal>
 
 {#if error}
-    <ContentComingSoon type="theory" />
+    <ContentComingSoon type="theory" navigation={navigation} />
 {:else}
     <div class="px-6 md:px-10 pt-0 pb-8">
         <div class="overflow-hidden transition-all duration-300 ease-in-out {isScrolled ? 'h-0 opacity-0 mt-0' : 'h-auto opacity-100 mt-2'}">
@@ -90,9 +92,10 @@
                 />
             </div>
         {:else}
-             <div class="flex flex-col items-center justify-center py-20 text-zinc-400">
+            <div class="flex flex-col items-center justify-center py-20 text-zinc-400">
                 <p>Nessun contenuto disponibile</p>
             </div>
         {/if}
     </div>
 {/if}
+<NavigationButtons navigation={navigation} />

@@ -9,10 +9,12 @@
 	import SummaryModal from '$lib/components/ui/modals/SummaryModal.svelte';
 	import MathRenderer from '$lib/components/content/markdown/MathRenderer.svelte';
     import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
+    import StartScreen from '$lib/components/content/StartScreen.svelte';
 	
 	let { data } = $props();
-	const { exercises, topic_id, level_id, subject_id, chapter_id } = data;
+	const { exercises, title, topic_id, level_id, subject_id, chapter_id, navigation } = data;
 
+    let hasStarted = $state(false);
 	let currentExerciseIndex = $state(0);
 	let progressStates = $state<ProgressState[]>(exercises ? Array(exercises.length).fill(ProgressState.UNANSWERED) : []);
 	let selectedAnswer = $state(null);
@@ -29,6 +31,7 @@
 	});
 
 	let currentExercise = $derived(exercises && exercises.length > 0 ? exercises[Math.round($questionNumber)] : null);
+    let estimatedTime = $derived(exercises ? `${Math.max(5, Math.ceil(exercises.length * 1.5))} min` : "5 min");
 
 	function handleAnswer(answer: Answer): void {
 		if (isAnswering) return;
@@ -61,18 +64,26 @@
 </script>
 
 <svelte:head>
-	<title>Esercizi su {topic_id}</title>
+    <title>Esercizi su {topic_id}</title>
 </svelte:head>
 
 {#if !exercises || exercises.length === 0}
-    <ContentComingSoon type="exercises" />
+    <ContentComingSoon type="exercises" navigation={navigation} />
+{:else if !hasStarted}
+    <StartScreen 
+        title="Esercizi: {title}" 
+        questionCount={exercises.length} 
+        estimatedTime={estimatedTime}
+        onStart={() => hasStarted = true}
+        type="exercise"
+    />
 {:else}
     <div class="flex flex-col justify-between items-center w-full h-full p-8 md:px-10">
         <SegmentedProgressBar states={progressStates} />
 
         {#key currentExercise.question}
             <div
-                class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-zinc-200"
+                class="text-xl sm:text-2xl font-bold text-zinc-800 dark:text-zinc-200"
                 in:fade={{ duration: 500}}
             >
                 <MathRenderer content={currentExercise.question.textContent} />

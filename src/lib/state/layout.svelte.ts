@@ -5,7 +5,6 @@ export const topicLayoutState = writable({
     rightSidebar: null,
 });
 
-// For Svelte 5 runes based approach (cleaner)
 export class TopicLayoutStore {
     leftSidebar = $state<import('svelte').Snippet | null>(null);
     rightSidebar = $state<import('svelte').Snippet | null>(null);

@@ -7,6 +7,7 @@
         ArrowLeft, BookOpen
     } from 'lucide-svelte';
     import { page } from '$app/stores';
+    import NavigationButtons from './NavigationButtons.svelte';
 
     type ContentType = 'theory' | 'exercises' | 'flashcards' | 'formulary';
 
@@ -14,24 +15,21 @@
         type = 'theory' as ContentType,
         title = undefined,
         description = undefined,
-        buttonText = undefined
+        buttonText = undefined,
+        navigation = undefined
     } = $props();
 
     let hasRequestedContent = $state(false);
 
     const handleRequestContent = () => {
         hasRequestedContent = true;
-        // In a real app, we would send a signal to the backend here
     };
 
-    // Get route params from the store
     let params = $derived($page.params);
     
-    // Construct navigation links
     let chapterUrl = $derived(`/content/${params.level_id}/${params.subject_id}/${params.chapter_id}`);
     let theoryUrl = $derived(`/content/${params.level_id}/${params.subject_id}/${params.chapter_id}/${params.topic_id}/theory`);
 
-    // Determine the "Back" action based on context
     let backAction = $derived.by(() => {
         if (type === 'theory') {
             return {
@@ -48,7 +46,6 @@
         }
     });
 
-    // Configuration based on type
     const config = $derived.by(() => {
         switch (type) {
             case 'exercises':
@@ -103,69 +100,59 @@
         }
     });
 
-    // Use props if provided, otherwise fall back to config
     let displayTitle = $derived(title || config.title);
     let displayDescription = $derived(description || config.description);
     let displayButtonText = $derived(buttonText || config.buttonText);
-
 </script>
 
-<div class="flex flex-col items-center justify-center h-full max-w-lg mx-auto px-6 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <div class="relative mb-8">
-        <div class={`absolute inset-0 blur-2xl rounded-full opacity-50 transform -translate-y-2 ${config.bgAccent}`}></div>
-        <div class="relative bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 p-5 rounded-2xl shadow-sm rotate-3 transition-transform hover:rotate-0 duration-500">
-            <config.MainIcon class={`size-8 ${config.accentColor}`} />
-        </div>
-        <div class={`absolute -top-3 -right-3 p-2 rounded-xl border border-white/10 -rotate-6 shadow-sm ${config.secondaryAccent} ${config.secondaryText}`}>
-            <config.SecondaryIcon class="size-4" />
-        </div>
-    </div>
-
-    <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-3 tracking-tight">
-        {displayTitle}
-    </h2>
-    
-    <p class="text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed max-w-md mx-auto">
-        {displayDescription}
-    </p>
-
-    <div class="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1 w-full max-w-sm mx-auto">
-        {#if hasRequestedContent}
-            <div class="flex items-center justify-center gap-2.5 py-3 text-emerald-600 dark:text-emerald-400 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700/50 animate-in zoom-in duration-300">
-                <CheckCircle2 class="size-5" />
-                <span class="font-medium">Messaggio ricevuto!</span>
+<div class="h-full flex flex-col justify-between">
+    <div class="flex flex-col flex-1 items-center justify-center max-w-lg mx-auto px-6 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div class="relative mb-8">
+            <div class={`absolute inset-0 blur-2xl rounded-full opacity-50 transform -translate-y-2 ${config.bgAccent}`}></div>
+            <div class="relative bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 p-5 rounded-2xl shadow-sm rotate-3 transition-transform hover:rotate-0 duration-500">
+                <config.MainIcon class={`size-8 ${config.accentColor}`} />
             </div>
-        {:else}
-            <button 
-                onclick={handleRequestContent}
-                class="group w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 hover:bg-white dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-xl border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all duration-200 hover:shadow-sm"
-            >
-                <span class="font-medium pl-1">{displayButtonText}</span>
-                <div class={`p-1.5 rounded-lg group-hover:scale-110 transition-transform ${config.bgAccent} ${config.accentColor}`}>
-                    <ArrowRight class="size-4" />
+            <div class={`absolute -top-3 -right-3 p-2 rounded-xl border border-white/10 -rotate-6 shadow-sm ${config.secondaryAccent} ${config.secondaryText}`}>
+                <config.SecondaryIcon class="size-4" />
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-3 tracking-tight">
+            {displayTitle}
+        </h2>
+        
+        <p class="text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed max-w-md mx-auto">
+            {displayDescription}
+        </p>
+
+        <div class="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1 w-full max-w-sm mx-auto">
+            {#if hasRequestedContent}
+                <div class="flex items-center justify-center gap-2.5 py-3 text-emerald-600 dark:text-emerald-400 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700/50 animate-in zoom-in duration-300">
+                    <CheckCircle2 class="size-5" />
+                    <span class="font-medium">Messaggio ricevuto!</span>
                 </div>
-            </button>
-        {/if}
+            {:else}
+                <button 
+                    onclick={handleRequestContent}
+                    class="group w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 hover:bg-white dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-xl border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all duration-200 hover:shadow-sm"
+                >
+                    <span class="font-medium pl-1">{displayButtonText}</span>
+                    <div class={`p-1.5 rounded-lg group-hover:scale-110 transition-transform ${config.bgAccent} ${config.accentColor}`}>
+                        <ArrowRight class="size-4" />
+                    </div>
+                </button>
+            {/if}
+        </div>
+        
+        <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-4 font-medium">
+            {#if hasRequestedContent}
+                Daremo priorità a questo contenuto.
+            {:else}
+                Clicca per farci sapere che è urgente.
+            {/if}
+        </p>
+    
     </div>
     
-    <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-4 font-medium">
-        {#if hasRequestedContent}
-            Daremo priorità a questo contenuto.
-        {:else}
-            Clicca per farci sapere che è urgente.
-        {/if}
-    </p>
-
-    <!-- Navigation Help -->
-    <div class="mt-12 pt-8 border-t border-zinc-100 dark:border-zinc-800/50 w-full flex flex-col items-center animate-in fade-in duration-1000 delay-300">
-        <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">Nel frattempo</span>
-        
-        <a 
-            href={backAction.url}
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200 group"
-        >
-            <backAction.icon class="size-4 transition-transform group-hover:-translate-x-0.5" />
-            {backAction.label}
-        </a>
-    </div>
+    <NavigationButtons navigation={navigation} />
 </div>
