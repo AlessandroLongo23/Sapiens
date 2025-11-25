@@ -1,8 +1,8 @@
 <script lang="ts">
     import { FileText, Clock } from 'lucide-svelte';
 
-    import TheoryContent from '$lib/components/content/markdown/TheoryContent.svelte';
-    import TheorySidebar from '$lib/components/content/markdown/TheorySidebar.svelte';
+    import TopicContent from '$lib/components/content/markdown/TopicContent.svelte';
+    import TopicSidebar from '$lib/components/content/markdown/TopicSidebar.svelte';
     import SidebarPortal from '$lib/components/content/SidebarPortal.svelte';
     import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
     import { layoutState } from '$lib/state/layout.svelte.js';
@@ -45,7 +45,7 @@
 </svelte:head>
 
 <SidebarPortal side="left">
-    <TheorySidebar 
+    <TopicSidebar 
         {sections} 
         activeSection={activeTheorySection} 
         on:sectionSelect={handleSidebarSectionSelect}
@@ -83,7 +83,7 @@
 
         {#if content}
             <div class="prose prose-zinc max-w-none prose-headings:font-bold prose-headings:text-zinc-900 prose-p:text-zinc-700 prose-a:text-blue-600 prose-img:rounded-xl">
-                <TheoryContent 
+                <TopicContent 
                     {content}
                     {targetSection}
                     on:activeSection={handleActiveSectionChange}
