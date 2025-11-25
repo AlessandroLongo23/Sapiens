@@ -41,13 +41,13 @@ export function getTopicNode(level_id: string, subject_id: string, chapter_id: s
         ?.topics.find(topic => topic.id === topic_id);
 }
 
-export function getMarkdownPath(params: RouteParams): string | null {
+export function getMarkdownPath(params: RouteParams, type: string = 'theory'): string | null {
     const { level_id, subject_id, chapter_id, topic_id } = params;
 
     const topicNode = getTopicNode(level_id, subject_id, chapter_id, topic_id);
     
     if (topicNode) {
-        return `/content/${level_id}/${subject_id}/${chapter_id}/${topic_id}.md`;
+        return `/content/${level_id}/${subject_id}/${chapter_id}/${topic_id}${type == "formulary" ? `-formulary` : ''}.md`;
     }
 
     return null;
