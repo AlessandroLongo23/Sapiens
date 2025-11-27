@@ -1,0 +1,324 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": true,
+  "collapse-color-groups": true,
+  "colorGroups": [
+    {
+      "query": "path: \"Magistrale/1st year/Autumn 13 weeks/Introduction to Machine Learning and Data Mining\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 4251020
+      }
+    },
+    {
+      "query": "path: \"Magistrale/1st year/Autumn 13 weeks/Computer Graphics\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 13383815
+      }
+    },
+    {
+      "query": "path: \"Magistrale/1st year/Autumn 13 weeks/Introduction to Deep Learning in Computer Vision\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 3567009
+      }
+    },
+    {
+      "query": "path: \"Magistrale/1st year/Autumn 13 weeks/UX Design Prototyping\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 7554373
+      }
+    },
+    {
+      "query": "path: \"Magistrale/1st year/Autumn 13 weeks/Deep Learning\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 9439897
+      }
+    },
+    {
+      "query": "path: \"Informatica teorica\"",
+      "color": {
+        "a": 1,
+        "rgb": 9228870
+      }
+    },
+    {
+      "query": "path: \"Elettronica digitale\"",
+      "color": {
+        "a": 1,
+        "rgb": 15500594
+      }
+    },
+    {
+      "query": "path: \"Intelligenza artificiale\"   ",
+      "color": {
+        "a": 1,
+        "rgb": 15650091
+      }
+    },
+    {
+      "query": "path: \"Human-Computer Interaction\"\"",
+      "color": {
+        "a": 1,
+        "rgb": 7655634
+      }
+    },
+    {
+      "query": "path: \"Software Quality\"",
+      "color": {
+        "a": 1,
+        "rgb": 4809936
+      }
+    },
+    {
+      "query": "path: \"Digitalization and Innovation\"   ",
+      "color": {
+        "a": 1,
+        "rgb": 5995945
+      }
+    },
+    {
+      "query": "path: \"Software Modeling and Design\"",
+      "color": {
+        "a": 1,
+        "rgb": 8567026
+      }
+    },
+    {
+      "query": "path: \"Social computing\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 4621963
+      }
+    },
+    {
+      "query": "path: \"Databases\"",
+      "color": {
+        "a": 1,
+        "rgb": 13410304
+      }
+    },
+    {
+      "query": "path: \"Analisi matematica I\"",
+      "color": {
+        "a": 1,
+        "rgb": 16228769
+      }
+    },
+    {
+      "query": "path: \"Analisi II e probabilità\"",
+      "color": {
+        "a": 1,
+        "rgb": 15882867
+      }
+    },
+    {
+      "query": "path: \"Fondamenti di automatica\"",
+      "color": {
+        "a": 1,
+        "rgb": 13898066
+      }
+    },
+    {
+      "query": "path: \"Statistica\"",
+      "color": {
+        "a": 1,
+        "rgb": 12331376
+      }
+    },
+    {
+      "query": "path: \"Fondamenti di segnali e trasmissione\"\"",
+      "color": {
+        "a": 1,
+        "rgb": 9320715
+      }
+    },
+    {
+      "query": "path: \"Calcolatori\"",
+      "color": {
+        "a": 1,
+        "rgb": 15760450
+      }
+    },
+    {
+      "query": "path: \"Sistemi operativi\"",
+      "color": {
+        "a": 1,
+        "rgb": 12405007
+      }
+    },
+    {
+      "query": "path: \"Primo anno/Programmazione\"",
+      "color": {
+        "a": 1,
+        "rgb": 16494637
+      }
+    },
+    {
+      "query": "path: \"Secondo anno/Algoritmi e strutture dati\"",
+      "color": {
+        "a": 1,
+        "rgb": 13863693
+      }
+    },
+    {
+      "query": "path: \"Fondamenti di informatica\"",
+      "color": {
+        "a": 1,
+        "rgb": 16763243
+      }
+    },
+    {
+      "query": "path: \"Teoria dei circuiti\"",
+      "color": {
+        "a": 1,
+        "rgb": 10457071
+      }
+    },
+    {
+      "query": "path: \"Fisica II\"",
+      "color": {
+        "a": 1,
+        "rgb": 1251774
+      }
+    },
+    {
+      "query": "path: \"Fisica I\"",
+      "color": {
+        "a": 1,
+        "rgb": 7167216
+      }
+    },
+    {
+      "query": "path: \"Geometria e algebra lineare\"",
+      "color": {
+        "a": 1,
+        "rgb": 13866903
+      }
+    },
+    {
+      "query": "path: \"Calcolo numerico\"",
+      "color": {
+        "a": 1,
+        "rgb": 11619948
+      }
+    },
+    {
+      "query": "path: \"Fondamenti di ricerca operativa\"",
+      "color": {
+        "a": 1,
+        "rgb": 9451350
+      }
+    },
+    {
+      "query": "path: \"Fondamenti di reti di telecomunicazioni\"",
+      "color": {
+        "a": 1,
+        "rgb": 15127833
+      }
+    },
+    {
+      "query": "path: \"Magistrale\"",
+      "color": {
+        "a": 1,
+        "rgb": 13224393
+      }
+    },
+    {
+      "query": "path: \"Superiori\"",
+      "color": {
+        "a": 1,
+        "rgb": 0
+      }
+    },
+    {
+      "query": "path: \"Books\"",
+      "color": {
+        "a": 1,
+        "rgb": 13305350
+      }
+    },
+    {
+      "query": "\"\"",
+      "color": {
+        "a": 1,
+        "rgb": 15461355
+      }
+    },
+    {
+      "query": "tag: Dimostrazioni",
+      "color": {
+        "a": 1,
+        "rgb": 8045168
+      }
+    },
+    {
+      "query": "tag: Quesiti",
+      "color": {
+        "a": 1,
+        "rgb": 8045168
+      }
+    },
+    {
+      "query": "tag: Formulario",
+      "color": {
+        "a": 1,
+        "rgb": 8045168
+      }
+    },
+    {
+      "query": "tag: DomandeOrale",
+      "color": {
+        "a": 1,
+        "rgb": 8045168
+      }
+    },
+    {
+      "query": "tag: Esercizi",
+      "color": {
+        "a": 1,
+        "rgb": 16753485
+      }
+    },
+    {
+      "query": "tag: Sezione",
+      "color": {
+        "a": 1,
+        "rgb": 10782442
+      }
+    },
+    {
+      "query": "tag: Capitolo",
+      "color": {
+        "a": 1,
+        "rgb": 3684408
+      }
+    },
+    {
+      "query": "tag: Corso",
+      "color": {
+        "a": 1,
+        "rgb": 13254447
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": true,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 2.4481288981289,
+  "lineSizeMultiplier": 1.99989604989605,
+  "collapse-forces": true,
+  "centerStrength": 0.74948024948025,
+  "repelStrength": 20,
+  "linkStrength": 0.953222453222453,
+  "linkDistance": 30,
+  "scale": 0.08100967960555563,
+  "close": true
+}

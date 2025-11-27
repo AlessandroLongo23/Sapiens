@@ -38,7 +38,7 @@ export function getTopicNavigation(
         parent: {
             label: chapter.name,
             subLabel: 'Capitolo',
-            url: `/content/${levelId}/${subjectId}/${chapterId}`
+            url: `/wiki/${levelId}/${subjectId}/${chapterId}`
         }
     };
 
@@ -47,7 +47,7 @@ export function getTopicNavigation(
         const prevTopic = chapter.topics[topicIndex - 1];
         result.prev = {
             label: prevTopic.name,
-            url: `/content/${levelId}/${subjectId}/${chapterId}/${prevTopic.id}/theory`
+            url: `/wiki/${levelId}/${subjectId}/${chapterId}/${prevTopic.id}/theory`
         };
     } else if (chapterIndex > 0) {
         // Previous Chapter (last topic)
@@ -57,7 +57,7 @@ export function getTopicNavigation(
             result.prev = {
                 label: prevTopic.name,
                 subLabel: prevChapter.name,
-                url: `/content/${levelId}/${subjectId}/${prevChapter.id}/${prevTopic.id}/theory`
+                url: `/wiki/${levelId}/${subjectId}/${prevChapter.id}/${prevTopic.id}/theory`
             };
         }
     }
@@ -67,7 +67,7 @@ export function getTopicNavigation(
         const nextTopic = chapter.topics[topicIndex + 1];
         result.next = {
             label: nextTopic.name,
-            url: `/content/${levelId}/${subjectId}/${chapterId}/${nextTopic.id}/theory`
+            url: `/wiki/${levelId}/${subjectId}/${chapterId}/${nextTopic.id}/theory`
         };
     } else if (chapterIndex < subject.chapters.length - 1) {
         // Next Chapter (first topic)
@@ -77,7 +77,7 @@ export function getTopicNavigation(
             result.next = {
                 label: nextTopic.name,
                 subLabel: nextChapter.name,
-                url: `/content/${levelId}/${subjectId}/${nextChapter.id}/${nextTopic.id}/theory`
+                url: `/wiki/${levelId}/${subjectId}/${nextChapter.id}/${nextTopic.id}/theory`
             };
         }
     }
@@ -105,7 +105,7 @@ export function getChapterNavigation(
         parent: {
             label: subject.name,
             subLabel: 'Materia',
-            url: `/content/${levelId}/${subjectId}`
+            url: `/wiki/${levelId}/${subjectId}`
         }
     };
 
@@ -113,7 +113,7 @@ export function getChapterNavigation(
         const prevChapter = subject.chapters[chapterIndex - 1];
         result.prev = {
             label: prevChapter.name,
-            url: `/content/${levelId}/${subjectId}/${prevChapter.id}`
+            url: `/wiki/${levelId}/${subjectId}/${prevChapter.id}`
         };
     }
 
@@ -121,7 +121,7 @@ export function getChapterNavigation(
         const nextChapter = subject.chapters[chapterIndex + 1];
         result.next = {
             label: nextChapter.name,
-            url: `/content/${levelId}/${subjectId}/${nextChapter.id}`
+            url: `/wiki/${levelId}/${subjectId}/${nextChapter.id}`
         };
     }
 
@@ -144,7 +144,7 @@ export function getSubjectNavigation(
         parent: {
             label: level.name,
             subLabel: 'Livello',
-            url: `/content/${levelId}`
+            url: `/wiki/${levelId}`
         }
     };
 
@@ -152,7 +152,7 @@ export function getSubjectNavigation(
         const prevSubject = level.subjects[subjectIndex - 1];
         result.prev = {
             label: prevSubject.name,
-            url: `/content/${levelId}/${prevSubject.id}`
+            url: `/wiki/${levelId}/${prevSubject.id}`
         };
     }
 
@@ -160,7 +160,7 @@ export function getSubjectNavigation(
         const nextSubject = level.subjects[subjectIndex + 1];
         result.next = {
             label: nextSubject.name,
-            url: `/content/${levelId}/${nextSubject.id}`
+            url: `/wiki/${levelId}/${nextSubject.id}`
         };
     }
 

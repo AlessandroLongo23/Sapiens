@@ -83,7 +83,7 @@ export const SUBSCRIPTION_PLANS = {
 	LITE: {
 		id: 'lite',
 		name: 'Piano Lite',
-		price: 9.99,
+		price: 4.99,
 		currency: Currency.EURO,
 		interval: 'month',
 		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_LITE,

@@ -24,7 +24,7 @@ This guide will help you set up Stripe subscriptions for your SvelteKit applicat
 - ❌ No AI chat
 - ❌ No tutoring
 
-### 2. Piano Lite (€9.99/month)
+### 2. Piano Lite (€4.99/month)
 - ✅ Everything in Free
 - ✅ Interactive exercises
 - ✅ Complete formula sheets
@@ -67,7 +67,7 @@ This guide will help you set up Stripe subscriptions for your SvelteKit applicat
    - Name: `Piano Lite`
    - Description: `Accesso a esercizi, formulari e statistiche`
    - Pricing model: `Recurring`
-   - Price: `€9.99`
+   - Price: `€4.99`
    - Billing period: `Monthly`
    - Click **Save product**
    - Copy the **Price ID** (starts with `price_...`)

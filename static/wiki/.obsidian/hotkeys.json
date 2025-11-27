@@ -1,0 +1,434 @@
+{
+  "theme:use-light": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "L"
+    }
+  ],
+  "theme:use-dark": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "D"
+    }
+  ],
+  "editor:cycle-list-checklist": [
+    {
+      "modifiers": [],
+      "key": "F4"
+    }
+  ],
+  "editor:toggle-numbered-list": [
+    {
+      "modifiers": [],
+      "key": "F6"
+    }
+  ],
+  "editor:toggle-blockquote": [
+    {
+      "modifiers": [],
+      "key": "F10"
+    }
+  ],
+  "obsidian-emoji-toolbar:emoji-picker:open-picker": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "E"
+    }
+  ],
+  "markdown:toggle-preview": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "R"
+    }
+  ],
+  "editor:swap-line-down": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "ArrowDown"
+    }
+  ],
+  "editor:swap-line-up": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "ArrowUp"
+    }
+  ],
+  "cmenu-plugin:underline": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "U"
+    }
+  ],
+  "highlightr-plugin:Grey": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "H"
+    }
+  ],
+  "outline:open": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "O"
+    }
+  ],
+  "highlightr-plugin:Gray": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "H"
+    }
+  ],
+  "highlightr-plugin:unhighlight": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "H"
+    }
+  ],
+  "workspace:copy-path": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "C"
+    }
+  ],
+  "obsidian-functionplot:insert-functionplot": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "P"
+    }
+  ],
+  "editor:set-heading-1": [
+    {
+      "modifiers": [],
+      "key": "F1"
+    }
+  ],
+  "editor:set-heading-2": [
+    {
+      "modifiers": [],
+      "key": "F2"
+    }
+  ],
+  "editor:set-heading-3": [
+    {
+      "modifiers": [],
+      "key": "F3"
+    }
+  ],
+  "persistent-graph:stop-graph-simulation": [],
+  "persistent-graph:run-graph-simulation": [],
+  "app:open-help": [],
+  "command-palette:open": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "Enter"
+    }
+  ],
+  "editor:open-link-in-new-leaf": [],
+  "editor:insert-wikilink": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "L"
+    }
+  ],
+  "obsidian-markdown-formatting-assistant-plugin:open-callouts-selector": [],
+  "obsidian-admonition:insert-admonition": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "7"
+    }
+  ],
+  "obsidian-markdown-formatting-assistant-plugin:open-command-selector": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "Enter"
+    }
+  ],
+  "editor:follow-link": [],
+  "obsidian-admonition:insert-Pro": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "P"
+    }
+  ],
+  "obsidian-admonition:insert-Esempio": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "E"
+    }
+  ],
+  "table-editor-obsidian:table-control-bar": [],
+  "obsidian-admonition:insert-Contro": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "C"
+    }
+  ],
+  "obsidian-admonition:insert-Attenzione": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "A"
+    }
+  ],
+  "obsidian-admonition:insert-Link": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "L"
+    }
+  ],
+  "obsidian-admonition:insert-Formula": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "F"
+    }
+  ],
+  "obsidian-admonition:insert-Nota": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "N"
+    }
+  ],
+  "workspace:edit-file-title": [
+    {
+      "modifiers": [
+        "Shift"
+      ],
+      "key": "F6"
+    }
+  ],
+  "switcher:open": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "P"
+    }
+  ],
+  "obsidian-admonition:insert-Teorema": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "T"
+    }
+  ],
+  "editor:toggle-bullet-list": [
+    {
+      "modifiers": [],
+      "key": "F5"
+    }
+  ],
+  "editor:insert-embed": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "E"
+    }
+  ],
+  "templater-obsidian:replace-in-file-templater": [],
+  "tag-word-cloud:recalcuate-word-distribution": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "R"
+    }
+  ],
+  "obsidian-admonition:insert-Dimostrazione": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "D"
+    }
+  ],
+  "app:toggle-right-sidebar": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "ArrowRight"
+    }
+  ],
+  "app:toggle-left-sidebar": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "ArrowLeft"
+    }
+  ],
+  "obsidian-admonition:insert-Fatto": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "B"
+    }
+  ],
+  "obsidian-git:push2": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "P"
+    }
+  ],
+  "obsidian-git:commit": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "C"
+    }
+  ],
+  "persistent-graph:save-node-positions": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "S"
+    }
+  ],
+  "persistent-graph:restore-node-positions": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "R"
+    }
+  ],
+  "obsidian-admonition:insert-Definizione-with-title": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "L"
+    }
+  ],
+  "obsidian-admonition:insert-Esercizio": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "W"
+    }
+  ],
+  "obsidian-admonition:insert-Solution": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "S"
+    }
+  ],
+  "obsidian-admonition:insert-Exercise": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "W"
+    }
+  ],
+  "obsidian-admonition:insert-Algorithm": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "A"
+    }
+  ]
+}

@@ -2,6 +2,10 @@
 	import { createEventDispatcher } from 'svelte';
 	import katex from 'katex';
 	import 'katex/dist/katex.min.css';
+    import { textSelection } from '$lib/utils/text-selection';
+	import type { Prompt } from '$lib/data/prompts';
+
+	import FloatingMenu from './FloatingMenu.svelte';
 	
 	let { 
 		content = '', 
@@ -172,6 +176,33 @@
 			}
 		}
 	}
+
+	let menuVisible = $state(false);
+    let menuPos = $state({ x: 0, y: 0 });
+
+    function onSelect(event) {
+        menuVisible = true;
+        menuPos = { 
+            x: event.left + (event.width / 2), 
+            y: event.top - 10
+        };
+    }
+
+	function handlePrompt(prompt: Prompt) {
+		console.log(prompt);
+	}
+
+	function hideMenu() {
+		menuVisible = false;
+	}
+
+	// Hide menu on scroll
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+		
+		window.addEventListener('scroll', hideMenu, true);
+		return () => window.removeEventListener('scroll', hideMenu, true);
+	});
 </script>
 
 <div 
@@ -179,7 +210,7 @@
 	bind:this={containerElement}
 	onscroll={handleScroll}
 >
-	<div class="max-w-4xl mx-auto">
+	<div class="max-w-4xl mx-auto" use:textSelection={{ onSelect, onDeselect: () => menuVisible = false }}>
 		{#if content}
 			<div class="content" id="content-container">
 				{@html content}
@@ -191,6 +222,12 @@
 		{/if}
 	</div>
 </div>
+
+<FloatingMenu 
+	isVisible={menuVisible}
+	position={menuPos}
+	onSelect={handlePrompt}
+/>
 
 <style lang="postcss">
 	@reference '../../../../app.css';

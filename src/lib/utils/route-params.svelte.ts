@@ -47,7 +47,7 @@ export function getMarkdownPath(params: RouteParams, type: string = 'theory'): s
     const topicNode = getTopicNode(level_id, subject_id, chapter_id, topic_id);
     
     if (topicNode) {
-        return `/content/${level_id}/${subject_id}/${chapter_id}/${topic_id}${type == "formulary" ? `-formulary` : ''}.md`;
+        return `/wiki/${level_id}/${subject_id}/${chapter_id}/${topic_id}${type == "formulary" ? `-formulary` : ''}.md`;
     }
 
     return null;

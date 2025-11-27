@@ -1,0 +1,169 @@
+{
+  "savedSettings": [],
+  "temporaryLocalGraphSetting": {
+    "filter": {
+      "searchQuery": "",
+      "showOrphans": true,
+      "showAttachments": false,
+      "depth": 1,
+      "linkType": "both"
+    },
+    "groups": [],
+    "display": {
+      "nodeSize": 3,
+      "linkThickness": 2,
+      "linkDistance": 100,
+      "nodeRepulsion": 2800,
+      "distanceFromFocal": 300,
+      "nodeHoverColor": "#ff0000",
+      "nodeHoverNeighbourColor": "#00ff00",
+      "linkHoverColor": "#0000ff",
+      "showExtension": false,
+      "showFullPath": false,
+      "showCenterCoordinates": true,
+      "showLinkArrow": true,
+      "dontMoveWhenDrag": false,
+      "dagOrientation": "null"
+    }
+  },
+  "temporaryGlobalGraphSetting": {
+    "filter": {
+      "searchQuery": "",
+      "showOrphans": true,
+      "showAttachments": false
+    },
+    "groups": [
+      {
+        "query": "path: \"Informatica teorica\"",
+        "color": "#d8ed54"
+      },
+      {
+        "query": "tag: #toTranscribe",
+        "color": "#25a234"
+      },
+      {
+        "query": "path: \"Elettronica digitale\"",
+        "color": "#3b6942"
+      },
+      {
+        "query": "path: \"Intelligenza artificiale\"   ",
+        "color": "#65615f"
+      },
+      {
+        "query": "path: \"Human-Computer Interaction\"",
+        "color": "#54348b"
+      },
+      {
+        "query": "path: \"Software Quality\"",
+        "color": "#e8f829"
+      },
+      {
+        "query": "path: \"Digitalization and Innovation\"   ",
+        "color": "#53b1c5"
+      },
+      {
+        "query": "path: \"Software Modeling and Design\"",
+        "color": "#adc638"
+      },
+      {
+        "query": "path: \"Social computing\"  ",
+        "color": "#161c72"
+      },
+      {
+        "query": "path: \"Databases\"",
+        "color": "#7c91c3"
+      },
+      {
+        "query": "path: \"Analisi matematica I\"",
+        "color": "#cd7d25"
+      },
+      {
+        "query": "path: \"Analisi II e probabilità\"",
+        "color": "#dc69e0"
+      },
+      {
+        "query": "path: \"Fondamenti di automatica\"",
+        "color": "#7bd698"
+      },
+      {
+        "query": "path: \"Statistica\"",
+        "color": "#4f61e8"
+      },
+      {
+        "query": "path: \"Fondamenti di segnali e trasmissione\"\"",
+        "color": "#ab13c0"
+      },
+      {
+        "query": "path: \"Calcolatori\"",
+        "color": "#32941e"
+      },
+      {
+        "query": "path: \"Sistemi operativi\"",
+        "color": "#83496e"
+      },
+      {
+        "query": "path: \"Primo anno/Programmazione\"",
+        "color": "#f31dd5"
+      },
+      {
+        "query": "path: \"Secondo anno/Algoritmi e strutture dati\"",
+        "color": "#5a4f52"
+      },
+      {
+        "query": "path: \"Fondamenti di informatica\"",
+        "color": "#913b0b"
+      },
+      {
+        "query": "path: \"Teoria dei circuiti\"",
+        "color": "#16fa67"
+      },
+      {
+        "query": "path: \"Fisica II\"",
+        "color": "#7350c2"
+      },
+      {
+        "query": "path: \"Fisica I\"",
+        "color": "#34f960"
+      },
+      {
+        "query": "path: \"Geometria e algebra lineare\"",
+        "color": "#5ee30a"
+      },
+      {
+        "query": "path: \"Calcolo numerico\"",
+        "color": "#9384c0"
+      },
+      {
+        "query": "path: \"Fondamenti di ricerca operativa\"",
+        "color": "#64720e"
+      },
+      {
+        "query": "path: \"Fondamenti di reti di telecomunicazioni\"",
+        "color": "#67a8b2"
+      }
+    ],
+    "display": {
+      "nodeSize": 4.6,
+      "linkThickness": 1,
+      "linkDistance": 10,
+      "nodeRepulsion": 2700,
+      "distanceFromFocal": 100,
+      "nodeHoverColor": "#ff004c",
+      "nodeHoverNeighbourColor": "#9be4b3",
+      "linkHoverColor": "#a8a8a8",
+      "showExtension": false,
+      "showFullPath": false,
+      "showCenterCoordinates": true,
+      "showLinkArrow": true,
+      "dontMoveWhenDrag": false,
+      "dagOrientation": "null"
+    }
+  },
+  "pluginSetting": {
+    "maxNodeNumber": 25000,
+    "searchEngine": "default",
+    "rightClickToPan": true,
+    "commandLeftClickNode": "openNodeInNewTab",
+    "commandRightClickNode": "focusNode"
+  }
+}

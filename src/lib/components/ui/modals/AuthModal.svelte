@@ -38,7 +38,7 @@
 
 			isNavigating = true;
 			// const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
-			const redirectPath = '/student/dashboard';
+			const redirectPath = '/admin';
 			await goto(redirectPath);
 		} catch (err) {
 			error = err.message;
@@ -68,7 +68,7 @@
 
 			isNavigating = true;
 			// const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
-			const redirectPath = '/student/dashboard';
+			const redirectPath = '/admin';
 			await goto(redirectPath);
 		} catch (err) {
 			error = err.message;

@@ -49,7 +49,7 @@
 					</a>
 
 					<a
-						href="/content"
+						href="/wiki"
 						class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#12161B] border border-zinc-500/25 hover:border-zinc-500/50 text-gray-900 dark:text-slate-50 px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
 					>
 						<BookOpen class="w-5 h-5" />

@@ -27,8 +27,8 @@
 
     let params = $derived($page.params);
     
-    let chapterUrl = $derived(`/content/${params.level_id}/${params.subject_id}/${params.chapter_id}`);
-    let theoryUrl = $derived(`/content/${params.level_id}/${params.subject_id}/${params.chapter_id}/${params.topic_id}/theory`);
+    let chapterUrl = $derived(`/wiki/${params.level_id}/${params.subject_id}/${params.chapter_id}`);
+    let theoryUrl = $derived(`/wiki/${params.level_id}/${params.subject_id}/${params.chapter_id}/${params.topic_id}/theory`);
 
     let backAction = $derived.by(() => {
         if (type === 'theory') {

@@ -221,7 +221,7 @@ The Sapiens website is structured into three main sections:
 All student routes are prefixed with `/student` and require authentication.
 
 ### 3.1 Student Dashboard
-- **Route:** `/student` or `/student/dashboard`
+- **Route:** `/admin` or `/student/dashboard`
 - **Description:** Main dashboard with overview of student's activity
 - **Content:**
   - Welcome message with student name

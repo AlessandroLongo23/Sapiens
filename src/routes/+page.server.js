@@ -33,7 +33,7 @@ export const actions = {
         }
 
         // const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
-        const redirectPath = '/student/dashboard';
+        const redirectPath = '/admin';
         throw redirect(303, redirectPath);
     },
 

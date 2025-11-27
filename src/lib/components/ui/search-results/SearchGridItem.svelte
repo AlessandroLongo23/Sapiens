@@ -9,7 +9,7 @@
 </script>
 
 <a 
-    href={`/content/${result.level.id}/${result.subject.id}/${result.chapter.id}/${result.topic.id}/theory`}
+    href={`/wiki/${result.level.id}/${result.subject.id}/${result.chapter.id}/${result.topic.id}/theory`}
     class="group flex flex-col gap-3 p-4 rounded-xl border border-zinc-500/25 bg-white dark:bg-zinc-900/50 hover:border-rose-200 dark:hover:border-rose-900/30 hover:shadow-sm transition-all duration-200"
     {onclick}
 >

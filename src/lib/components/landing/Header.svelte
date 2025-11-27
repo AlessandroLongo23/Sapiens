@@ -8,6 +8,7 @@
 	import Searchbar from '$lib/components/ui/Searchbar.svelte';
 	import SubjectMegaMenu from '$lib/components/landing/SubjectMegaMenu.svelte';
 	import LoginButton from '$lib/components/ui/buttons/LoginButton.svelte';
+	import LogoutButton from '$lib/components/ui/buttons/LogoutButton.svelte';
 
     let { 
 		headerRef = $bindable(undefined),
@@ -26,7 +27,11 @@
 		hoveredLevel = null;
 	}
 
-	let isContent = $derived(page.url.pathname.includes('/content'));
+	let isMegaMenuVisible = $derived(
+		page.url.pathname.includes('/wiki') || 
+		page.url.pathname.includes('/admin') ||
+		page.url.pathname.includes('/student')
+	);
 </script>
 
 <header 
@@ -58,7 +63,7 @@
 				<span class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
 			</a>
 
-			{#if isContent}
+			{#if isMegaMenuVisible}
 				<nav class="flex justify-center items-center gap-12">
 					{#each contentTree as level}
 						<div
@@ -74,7 +79,7 @@
 							}}
 						>
 							<a 
-								href={`/content/${level.id}`} 
+								href={`/wiki/${level.id}`} 
 								onclick={handleMenuMouseLeave}
 								class="
 									flex items-center gap-2 transition-colors duration-200 cursor-pointer relative
@@ -117,6 +122,9 @@
 				bind:session
 				bind:isAuthModalOpen
 			/>
+			{#if session}
+				<LogoutButton />
+			{/if}
 		</div>
     </div>
 </header>

@@ -19,7 +19,7 @@ Complete subscription system with 4 tiers:
 
 #### Plans:
 1. **Free** (€0/month) - Theory access only
-2. **Lite** (€9.99/month) - Exercises + Formulas
+2. **Lite** (€4.99/month) - Exercises + Formulas
 3. **Base** (€19.99/month) - AI Chat + Priority support ⭐ Most Popular
 4. **Pro** (€49.99/month) - Everything + 1-on-1 tutoring
 

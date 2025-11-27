@@ -10,7 +10,7 @@
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`/content/${level.id}`);
+		goto(`/wiki/${level.id}`);
 	}
 
     let totalSubjects = $derived(level.subjects.length);

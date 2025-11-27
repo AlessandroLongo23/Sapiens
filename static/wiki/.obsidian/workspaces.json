@@ -1,0 +1,333 @@
+{
+  "workspaces": {
+    "My Layouts": {
+      "main": {
+        "id": "62708a6b56f86069",
+        "type": "split",
+        "children": [
+          {
+            "id": "9232c0676c196d6b",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "c5420afb0337188f",
+                "type": "leaf",
+                "state": {
+                  "type": "graph",
+                  "state": {}
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical"
+      },
+      "left": {
+        "id": "97282a557bb5f849",
+        "type": "split",
+        "children": [
+          {
+            "id": "d158ca2325848324",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "57e08a67dbb5d908",
+                "type": "leaf",
+                "state": {
+                  "type": "file-explorer",
+                  "state": {
+                    "sortOrder": "alphabetical"
+                  }
+                }
+              },
+              {
+                "id": "a42e42fec51ab0a2",
+                "type": "leaf",
+                "state": {
+                  "type": "search",
+                  "state": {
+                    "query": "",
+                    "matchingCase": false,
+                    "explainSearch": false,
+                    "collapseAll": false,
+                    "extraContext": false,
+                    "sortOrder": "alphabetical"
+                  }
+                }
+              },
+              {
+                "id": "b361b4dfa4bbea03",
+                "type": "leaf",
+                "state": {
+                  "type": "starred",
+                  "state": {}
+                }
+              },
+              {
+                "id": "519068935d743840",
+                "type": "leaf",
+                "state": {
+                  "type": "recent-files",
+                  "state": {}
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "horizontal",
+        "width": 447.5
+      },
+      "right": {
+        "id": "d458455586b0d4e3",
+        "type": "split",
+        "children": [
+          {
+            "id": "68b0e0cbab7d1881",
+            "type": "tabs",
+            "dimension": 59.825750242013555,
+            "children": [
+              {
+                "id": "74e584293b89a9ba",
+                "type": "leaf",
+                "state": {
+                  "type": "outline",
+                  "state": {}
+                }
+              },
+              {
+                "id": "21bb5f5f27d9fe13",
+                "type": "leaf",
+                "state": {
+                  "type": "tag",
+                  "state": {
+                    "sortOrder": "frequency",
+                    "useHierarchy": false
+                  }
+                }
+              },
+              {
+                "id": "114475a61959e6b2",
+                "type": "leaf",
+                "state": {
+                  "type": "backlink",
+                  "state": {
+                    "collapseAll": false,
+                    "extraContext": false,
+                    "sortOrder": "alphabetical",
+                    "showSearch": false,
+                    "searchQuery": "",
+                    "backlinkCollapsed": false,
+                    "unlinkedCollapsed": true
+                  }
+                }
+              },
+              {
+                "id": "15896e787afa51cb",
+                "type": "leaf",
+                "state": {
+                  "type": "outgoing-link",
+                  "state": {
+                    "linksCollapsed": true,
+                    "unlinkedCollapsed": true
+                  }
+                }
+              },
+              {
+                "id": "1b1d8473ea138c3d",
+                "type": "leaf",
+                "state": {
+                  "type": "advanced-tables-toolbar",
+                  "state": {}
+                }
+              },
+              {
+                "id": "030104e908c50f1b",
+                "type": "leaf",
+                "state": {
+                  "type": "todo",
+                  "state": {}
+                }
+              }
+            ]
+          },
+          {
+            "id": "aa74ffd2e422dba1",
+            "type": "tabs",
+            "dimension": 40.174249757986445,
+            "children": [
+              {
+                "id": "76b013ceff4a6f3b",
+                "type": "leaf",
+                "state": {
+                  "type": "localgraph",
+                  "state": {
+                    "options": {
+                      "collapse-filter": true,
+                      "search": "",
+                      "localJumps": 2,
+                      "localBacklinks": true,
+                      "localForelinks": true,
+                      "localInterlinks": false,
+                      "showTags": false,
+                      "showAttachments": false,
+                      "hideUnresolved": false,
+                      "collapse-color-groups": true,
+                      "colorGroups": [
+                        {
+                          "query": "path: \"Fondamenti di reti di telecomunicazioni\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 6669176
+                          }
+                        },
+                        {
+                          "query": "path: \"Fondamenti di segnali e trasmissione\"\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 2441093
+                          }
+                        },
+                        {
+                          "query": "path: \"Fisica II\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 11481784
+                          }
+                        },
+                        {
+                          "query": "path:\"Algoritmi e strutture dati\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 9090577
+                          }
+                        },
+                        {
+                          "query": "path:\"Fondamenti di ricerca operativa\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 34979
+                          }
+                        },
+                        {
+                          "query": "path:\"Calcolo numerico\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 5494225
+                          }
+                        },
+                        {
+                          "query": "path:\"Teoria dei circuiti\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 9274879
+                          }
+                        },
+                        {
+                          "query": "path:\"Geometria e algebra lineare\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 9039080
+                          }
+                        },
+                        {
+                          "query": "path:\"Fisica I\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 12021990
+                          }
+                        },
+                        {
+                          "query": "path:\"Fondamenti di informatica\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 16768384
+                          }
+                        },
+                        {
+                          "query": "path:\"Programmazione\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 16564253
+                          }
+                        },
+                        {
+                          "query": "path: \"Sistemi operativi\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 15230742
+                          }
+                        },
+                        {
+                          "query": "path:\"Calcolatori\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 15701084
+                          }
+                        },
+                        {
+                          "query": "path: \"Fondamenti di automatica\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 14226452
+                          }
+                        },
+                        {
+                          "query": "path:\"Analisi II e probabilità\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 15479860
+                          }
+                        },
+                        {
+                          "query": "path:\"Analisi matematica I\"",
+                          "color": {
+                            "a": 1,
+                            "rgb": 15754083
+                          }
+                        }
+                      ],
+                      "collapse-display": false,
+                      "showArrow": true,
+                      "textFadeMultiplier": -0.7,
+                      "nodeSizeMultiplier": 1.5164711466739,
+                      "lineSizeMultiplier": 1.50567234013698,
+                      "collapse-forces": true,
+                      "centerStrength": 0.688343391876314,
+                      "repelStrength": 20,
+                      "linkStrength": 1,
+                      "linkDistance": 30,
+                      "scale": 0.5998578717540586,
+                      "close": true
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "horizontal",
+        "width": 387.5
+      },
+      "left-ribbon": {
+        "hiddenItems": {
+          "graph:Open graph view": false,
+          "command-palette:Open command palette": true,
+          "templater-obsidian:Templater": false,
+          "switcher:Open quick switcher": true,
+          "publish:Publish changes": true,
+          "canvas:Create new canvas": false,
+          "daily-notes:Open today's daily note": true,
+          "templates:Insert template": false,
+          "markdown-importer:Open format converter": true,
+          "table-editor-obsidian:Advanced Tables Toolbar": false,
+          "obsidian-markdown-formatting-assistant-plugin:Open Markdown Formatting Assistant": false,
+          "obsidian-textgenerator-plugin:Generate Text!": false,
+          "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false,
+          "workspaces:Manage workspace layouts": false
+        }
+      },
+      "active": "57e08a67dbb5d908"
+    }
+  },
+  "active": "My Layouts"
+}
