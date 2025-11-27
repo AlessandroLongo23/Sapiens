@@ -4,6 +4,8 @@ import { json } from '@sveltejs/kit';
 import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { createClient } from '@supabase/supabase-js';
+import fs from 'fs/promises';
+import path from 'path';
 
 // --- 1. Credenziali e Setup ---
 
@@ -251,10 +253,30 @@ export async function POST({ request }) {
             statusMessage = "Perfetta (Originale)";
         }
         
+        // Salva il file markdown in static/drafts/[topic_name].md
+        try {
+            // Sanitizza il nome del topic per il filename
+            const sanitizedTopicName = lessonTopic
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            
+            const draftsDir = path.join(process.cwd(), 'static', 'drafts');
+            await fs.mkdir(draftsDir, { recursive: true });
+            
+            const filePath = path.join(draftsDir, `${sanitizedTopicName}.md`);
+            await fs.writeFile(filePath, finalLessonContent, 'utf-8');
+            
+            console.log(`Draft salvato in: ${filePath}`);
+        } catch (saveError) {
+            console.error("Errore nel salvataggio del file:", saveError);
+            // Non blocchiamo la risposta se il salvataggio fallisce
+        }
+        
         return json({ 
             success: true, 
             topic: lessonTopic,
-            status: correctionStatus,
+            status: statusMessage,
             // Restituisce la lezione finale in formato Markdown
             lesson_markdown: finalLessonContent 
         }, { status: 200 });
