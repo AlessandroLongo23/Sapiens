@@ -4,6 +4,7 @@
 	import 'katex/dist/katex.min.css';
     import { textSelection } from '$lib/utils/text-selection';
 	import type { Prompt } from '$lib/data/prompts';
+	import { aiSidebar } from '$lib/state/ai-sidebar.svelte.js';
 
 	import FloatingMenu from './FloatingMenu.svelte';
 	
@@ -16,6 +17,7 @@
 	let containerElement;
 	let activeSection = $state('');
 	let expandedGif = $state(null);
+	let selectedText = $state('');
 	
 	const dispatch = createEventDispatcher();
 	
@@ -180,8 +182,9 @@
 	let menuVisible = $state(false);
     let menuPos = $state({ x: 0, y: 0 });
 
-    function onSelect(event) {
+    function onSelect(event: { text: string; top: number; left: number; width: number }) {
         menuVisible = true;
+		selectedText = event.text;
         menuPos = { 
             x: event.left + (event.width / 2), 
             y: event.top - 10
@@ -189,11 +192,15 @@
     }
 
 	function handlePrompt(prompt: Prompt) {
-		console.log(prompt);
+		if (selectedText) {
+			aiSidebar.setPendingPrompt(prompt, selectedText);
+		}
+		hideMenu();
 	}
 
 	function hideMenu() {
 		menuVisible = false;
+		selectedText = '';
 	}
 
 	// Hide menu on scroll

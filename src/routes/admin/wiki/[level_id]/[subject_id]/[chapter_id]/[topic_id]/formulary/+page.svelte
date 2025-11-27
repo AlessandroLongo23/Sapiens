@@ -98,4 +98,3 @@
         {/if}
     </div>
 {/if}
-<NavigationButtons navigation={navigation} />

@@ -7,6 +7,7 @@
     import SidebarPortal from '$lib/components/content/SidebarPortal.svelte';
     import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
     import NavigationButtons from '$lib/components/content/NavigationButtons.svelte';
+    import AISidebar from '$lib/components/content/AISidebar.svelte';
 
     let { data } = $props();
     let { 
@@ -54,6 +55,9 @@
     />
 </SidebarPortal>
 
+<SidebarPortal side="right">
+    <AISidebar />
+</SidebarPortal>
 
 {#if error}
     <ContentComingSoon type="theory" navigation={navigation} />

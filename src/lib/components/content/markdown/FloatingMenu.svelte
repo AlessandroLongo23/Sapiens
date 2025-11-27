@@ -6,6 +6,12 @@
         position = $bindable({ x: 0, y: 0 }),
         onSelect = $bindable((prompt: Prompt) => {}),
     } = $props();
+
+    function handleClick(prompt: Prompt) {
+        // Clear the text selection
+        window.getSelection()?.removeAllRanges();
+        onSelect(prompt);
+    }
 </script>
 
 {#if isVisible}
@@ -21,11 +27,11 @@
 		>
 			{#each Object.values(contextualMenuPrompts) as prompt}
 				{@const Icon = prompt.icon}
-				<button onclick={() => onSelect(prompt)} class="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg
-					text-zinc-700 dark:text-zinc-200
-					hover:bg-rose-50 dark:hover:bg-rose-500/10
-					transition-colors"
-				>
+			<button onclick={() => handleClick(prompt)} class="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg
+				text-zinc-700 dark:text-zinc-200
+				hover:bg-rose-50 dark:hover:bg-rose-500/10
+				transition-colors"
+			>
 					<Icon class="size-4 text-rose-500" />
 					<span>{prompt.label}</span>
 				</button>
