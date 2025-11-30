@@ -69,7 +69,7 @@
         });
 
         // Process inline code `code`
-        html = html.replace(/`([^`]+)`/g, '<code class="bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-sm text-rose-500 dark:text-rose-400 font-mono">$1</code>');
+        html = html.replace(/`([^`]+)`/g, '<code class="bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-sm text-crimson-500 dark:text-crimson-400 font-mono">$1</code>');
 
         // Process headers
         html = html.replace(/^### (.+)$/gm, '<h4 class="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">$1</h4>');

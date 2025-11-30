@@ -66,7 +66,7 @@
 	<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
-				<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
+				<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-crimson-500"></div>
 			</div>
 		{:else if subjectData && levelInfo}
 			<header class="mb-12" in:fade={{ duration: 300 }}>
@@ -76,7 +76,7 @@
 					<div class="flex items-start gap-6">
 						{#if subjectData.icon}
 							{@const SubjectIcon = subjectData.icon}
-							<div class="hidden sm:flex items-center justify-center size-32 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-500/25 text-rose-500 dark:text-rose-400">
+							<div class="hidden sm:flex items-center justify-center size-32 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-500/25 text-crimson-500 dark:text-crimson-400">
 								<SubjectIcon class="size-16" />
 							</div>
 						{/if}
@@ -86,7 +86,7 @@
 								<div class="flex items-center gap-3">
 									{#if subjectData.icon}
 										{@const SubjectIcon = subjectData.icon}
-										<SubjectIcon class="w-8 h-8 text-rose-500 dark:text-rose-400 sm:hidden" />
+										<SubjectIcon class="w-8 h-8 text-crimson-500 dark:text-crimson-400 sm:hidden" />
 									{/if}
 									<h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
 										{subjectData.name}
@@ -140,12 +140,12 @@
                 {#if navigation && (navigation.prev || navigation.next)}
                     <div class="grid grid-cols-2 gap-4 mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800" in:fade={{ duration: 400, delay: 200 }}>
                         {#if navigation.prev}
-                            <a href={navigation.prev.url} class="group flex flex-col items-start p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-rose-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
-                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-rose-500 transition-colors mb-2">
+                            <a href={navigation.prev.url} class="group flex flex-col items-start p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-crimson-500/30 dark:hover:border-crimson-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-crimson-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
+                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-crimson-500 transition-colors mb-2">
                                     <ArrowLeft size={14} />
                                     Materia Precedente
                                 </span>
-                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-left">
+                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-crimson-600 dark:group-hover:text-crimson-400 transition-colors text-left">
                                     {navigation.prev.label}
                                 </span>
                             </a>
@@ -154,12 +154,12 @@
                         {/if}
 
                         {#if navigation.next}
-                            <a href={navigation.next.url} class="group flex flex-col items-end p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-rose-500/30 dark:hover:border-rose-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-rose-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
-                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-rose-500 transition-colors mb-2">
+                            <a href={navigation.next.url} class="group flex flex-col items-end p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-crimson-500/30 dark:hover:border-crimson-500/30 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-lg hover:shadow-crimson-500/5 transition-all duration-300 bg-white/50 dark:bg-zinc-900/50">
+                                <span class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-zinc-400 group-hover:text-crimson-500 transition-colors mb-2">
                                     Materia Successiva
                                     <ArrowRight size={14} />
                                 </span>
-                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors text-right">
+                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-crimson-600 dark:group-hover:text-crimson-400 transition-colors text-right">
                                     {navigation.next.label}
                                 </span>
                             </a>
@@ -181,7 +181,7 @@
 					</p>
 					<button
 						onclick={() => goto(`/wiki/${level_id}`)}
-						class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+						class="px-6 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 					>
 						Torna alle materie
 					</button>
@@ -209,7 +209,7 @@
 					{/if}
 					<button
 						onclick={() => goto('/wiki')}
-						class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+						class="px-6 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 					>
 						Torna alla home
 					</button>

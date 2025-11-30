@@ -45,7 +45,7 @@
 						Funzionalità
 					</th>
 					{#each plans as plan}
-						<th class="text-center py-4 px-6 {td_width} {plan.popular ? 'bg-rose-50 dark:bg-rose-950/20 rounded-t-lg' : 'bg-transparent'}">
+						<th class="text-center py-4 px-6 {td_width} {plan.popular ? 'bg-crimson-50 dark:bg-crimson-950/20 rounded-t-lg' : 'bg-transparent'}">
 							<div class="flex flex-col items-center gap-2">
 								<div class="relative">
 									<span class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
@@ -53,7 +53,7 @@
 									</span>
 									{#if plan.popular}
 										<div
-											class="absolute -top-2 -right-8 bg-gradient-to-r from-pink-600 to-rose-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1"
+											class="absolute -top-2 -right-8 bg-gradient-to-r from-pink-600 to-crimson-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1"
 										>
 											<Sparkles class="w-3 h-3" />
 										</div>
@@ -72,7 +72,7 @@
 					</td>
 					{#each plans as plan}
                         {@const displayPrice = getDisplayPrice(plan, billingPeriod)}
-						<td class="py-4 px-6 text-center {plan.popular ? 'bg-rose-50 dark:bg-rose-950/20' : ''}">
+						<td class="py-4 px-6 text-center {plan.popular ? 'bg-crimson-50 dark:bg-crimson-950/20' : ''}">
 							{#if plan.price > 0}
 								<div class="flex flex-col items-center gap-1">
 									<div class="flex items-baseline gap-1">
@@ -111,7 +111,7 @@
 							</div>
 						</td>
 						{#each plans as plan}
-							<td class="py-4 px-6 text-center {plan.popular ? 'bg-rose-50 dark:bg-rose-950/20' : ''}">
+							<td class="py-4 px-6 text-center {plan.popular ? 'bg-crimson-50 dark:bg-crimson-950/20' : ''}">
 								{#if canAccessFeature(plan.id, feature)}
 									<CheckCircle class="w-5 h-5 text-green-500 mx-auto" />
 								{:else}
@@ -135,7 +135,7 @@
 							</div>
 						</td>
 						{#each plans as plan}
-							<td class="py-4 px-6 text-center {plan.popular ? 'bg-rose-50 dark:bg-rose-950/20' : ''}">
+							<td class="py-4 px-6 text-center {plan.popular ? 'bg-crimson-50 dark:bg-crimson-950/20' : ''}">
 								{#if plan.tutoring_hours > 0}
 									<span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
 										{plan.tutoring_hours}h
@@ -152,12 +152,12 @@
 				<tr>
 					<td class="py-6 px-6"></td>
 					{#each plans as plan}
-						<td class="py-6 px-6 text-center {plan.popular ? 'bg-rose-50 dark:bg-rose-950/20 rounded-b-lg' : ''}">
+						<td class="py-6 px-6 text-center {plan.popular ? 'bg-crimson-50 dark:bg-crimson-950/20 rounded-b-lg' : ''}">
 							<button
 								onclick={() => handleSelectPlan(plan)}
 								disabled={plan.id === SUBSCRIPTION_PLANS.FREE.id || currentPlan.id === plan.id}
 								class="w-full max-w-[140px] mx-auto py-2.5 px-4 rounded-xl font-semibold text-sm transition-all duration-200 {plan.popular
-									? 'bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-md hover:shadow-lg'
+									? 'bg-gradient-to-r from-pink-600 to-crimson-600 hover:from-pink-700 hover:to-crimson-700 text-white shadow-md hover:shadow-lg'
 									: 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-100'} disabled:opacity-50 disabled:cursor-not-allowed"
 							>
 								{#if currentPlan.id === plan.id}

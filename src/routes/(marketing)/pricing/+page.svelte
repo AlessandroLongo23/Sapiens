@@ -67,7 +67,7 @@
 			<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
 				Inizia gratis e passa a Premium quando vuoi. Puoi annullare in qualsiasi momento.
 				<br>
-				<span class="text-base text-rose-500 dark:text-rose-400">
+				<span class="text-base text-crimson-500 dark:text-crimson-400">
 					Con l'abbonamento semestrale, il primo mese te lo regaliamo!
 				</span>
 			</p>
@@ -98,7 +98,7 @@
 			<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
 				Tutti i dettagli a colpo d'occhio per aiutarti a scegliere il piano perfetto per le tue esigenze.
 				<br>
-				<span class="text-base text-rose-500 dark:text-rose-400">
+				<span class="text-base text-crimson-500 dark:text-crimson-400">
 					Con l'abbonamento semestrale, il primo mese te lo regaliamo!
 				</span>
 			</p>
@@ -119,7 +119,7 @@
 {#if isLoading}
 	<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 		<div class="bg-white dark:bg-zinc-800 rounded-lg p-8 flex flex-col items-center gap-4">
-			<Loader2 class="w-12 h-12 text-rose-600 animate-spin" />
+			<Loader2 class="w-12 h-12 text-crimson-600 animate-spin" />
 			<p class="text-lg font-medium text-zinc-900 dark:text-zinc-100">
 				Reindirizzamento in corso...
 			</p>

@@ -30,7 +30,7 @@
 		{#if item.path}
 			<button
 				onclick={() => handleClick(item.path!)}
-				class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors duration-200 rounded"
+				class="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-crimson-500 dark:hover:text-crimson-400 transition-colors duration-200 rounded"
 			>
 				{#if item.icon}
 					<item.icon class="size-4" />

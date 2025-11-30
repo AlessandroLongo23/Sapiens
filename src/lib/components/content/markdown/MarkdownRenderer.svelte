@@ -240,7 +240,7 @@
 	@reference '../../../../app.css';
 	
 	:global(.markdown-content h2) {
-		@apply text-3xl font-bold text-zinc-950 dark:text-white mb-10 mt-24 pb-4 border-b border-rose-400/80;
+		@apply text-3xl font-bold text-zinc-950 dark:text-white mb-10 mt-24 pb-4 border-b border-crimson-400/80;
 		scroll-margin-top: 1rem;
 	}
 	
@@ -273,7 +273,7 @@
 	}
 	
 	:global(.markdown-content blockquote) {
-		@apply border-l-4 border-rose-500/30 pl-4 italic text-zinc-400 my-4;
+		@apply border-l-4 border-crimson-500/30 pl-4 italic text-zinc-400 my-4;
 	}
 
 	:global(.markdown-content hr) {
@@ -281,7 +281,7 @@
 	}
 	
 	:global(.markdown-content code) {
-		@apply font-mono text-sm bg-zinc-200 px-1.5 py-0.5 rounded text-rose-400;
+		@apply font-mono text-sm bg-zinc-200 px-1.5 py-0.5 rounded text-crimson-400;
 	}
 	
 	:global(.markdown-content pre) {
@@ -293,7 +293,7 @@
 	}
 	
 	:global(.markdown-content a) {
-		@apply text-rose-400 hover:text-rose-300 underline;
+		@apply text-crimson-400 hover:text-crimson-300 underline;
 	}
 	
 	:global(.markdown-content table) {

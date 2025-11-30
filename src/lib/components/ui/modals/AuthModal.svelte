@@ -181,7 +181,7 @@
 				<button 
 					type="button"
 					onclick={switchMode}
-					class="ml-1 font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-500 dark:hover:text-rose-400 hover:underline transition-colors focus:outline-none cursor-pointer"
+					class="ml-1 font-semibold text-crimson-600 hover:text-crimson-500 dark:text-crimson-500 dark:hover:text-crimson-400 hover:underline transition-colors focus:outline-none cursor-pointer"
 				>
 					{register ? 'Accedi' : 'Registrati'}
 				</button>

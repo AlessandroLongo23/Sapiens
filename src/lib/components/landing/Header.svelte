@@ -88,7 +88,7 @@
 							>
 								<level.icon class="size-4" />
 								<span class="font-medium">{EducationalLevelMap[level.id]}</span>
-								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-rose-500 rounded-full transition-all duration-200 {hoveredLevel?.id === level.id ? 'opacity-100 w-full' : 'opacity-0 w-0'}"></span>
+								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-crimson-500 rounded-full transition-all duration-200 {hoveredLevel?.id === level.id ? 'opacity-100 w-full' : 'opacity-0 w-0'}"></span>
 							</a>
 						</div>
 					{/each}

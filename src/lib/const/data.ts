@@ -97,7 +97,7 @@ export const methodCards = writable([
     },
     { 
         title: 'Ritmo personalizzato', 
-        color: 'bg-gradient-to-br from-purple-500 to-rose-600',
+        color: 'bg-gradient-to-br from-purple-500 to-crimson-600',
         icon: Clock, 
         description: 'Studi al tuo ritmo. Ogni concetto è spiegato chiaramente prima di passare al successivo.'
     },
@@ -115,7 +115,7 @@ export const methodCards = writable([
     },
     { 
         title: 'Supporto continuo', 
-        color: 'bg-gradient-to-br from-rose-500 to-rose-600',
+        color: 'bg-gradient-to-br from-crimson-500 to-crimson-600',
         icon: HeartHandshake, 
         description: 'Con Premium hai supporto disponibile anche fuori dalle lezioni per rispondere ai tuoi dubbi.' 
     }

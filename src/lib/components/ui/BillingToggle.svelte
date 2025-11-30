@@ -27,7 +27,7 @@
 		aria-checked={value === BillingOption.SEMESTER}
 		aria-label="Seleziona periodo di fatturazione"
 		onclick={() => handleToggle(value === BillingOption.MONTHLY ? BillingOption.SEMESTER : BillingOption.MONTHLY)}
-		class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors {value === BillingOption.SEMESTER ? 'bg-rose-500' : 'bg-zinc-300 dark:bg-zinc-600'}"
+		class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors {value === BillingOption.SEMESTER ? 'bg-crimson-500' : 'bg-zinc-300 dark:bg-zinc-600'}"
 	>
 		<span
 			class="inline-block h-6 w-6 transform rounded-full bg-white transition-transform {value === BillingOption.SEMESTER ? 'translate-x-7' : 'translate-x-1'}"

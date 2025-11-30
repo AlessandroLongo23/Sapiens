@@ -119,7 +119,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-crimson-500 to-crimson-600 flex items-center justify-center">
                 <Sparkles class="w-4 h-4 text-white" />
             </div>
             <div>
@@ -146,7 +146,7 @@
         {#if aiSidebar.messages.length === 0}
             <!-- Empty State -->
             <div class="flex flex-col items-center justify-center h-full text-center px-4">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center mb-4 shadow-lg shadow-rose-500/20">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-crimson-500 to-crimson-600 flex items-center justify-center mb-4 shadow-lg shadow-crimson-500/20">
                     <MessageSquare class="w-7 h-7 text-white" />
                 </div>
                 <h4 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
@@ -162,7 +162,7 @@
                         onclick={() => {
                             aiSidebar.inputValue = 'Puoi spiegarmi questo concetto in modo più semplice?';
                         }}
-                        class="px-3 py-1.5 text-xs font-medium rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors"
+                        class="px-3 py-1.5 text-xs font-medium rounded-full bg-crimson-50 dark:bg-crimson-500/10 text-crimson-600 dark:text-crimson-400 hover:bg-crimson-100 dark:hover:bg-crimson-500/20 transition-colors"
                     >
                         Semplifica
                     </button>
@@ -170,7 +170,7 @@
                         onclick={() => {
                             aiSidebar.inputValue = 'Puoi farmi un esempio pratico?';
                         }}
-                        class="px-3 py-1.5 text-xs font-medium rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors"
+                        class="px-3 py-1.5 text-xs font-medium rounded-full bg-crimson-50 dark:bg-crimson-500/10 text-crimson-600 dark:text-crimson-400 hover:bg-crimson-100 dark:hover:bg-crimson-500/20 transition-colors"
                     >
                         Esempio
                     </button>
@@ -178,7 +178,7 @@
                         onclick={() => {
                             aiSidebar.inputValue = 'Perché questo è importante?';
                         }}
-                        class="px-3 py-1.5 text-xs font-medium rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors"
+                        class="px-3 py-1.5 text-xs font-medium rounded-full bg-crimson-50 dark:bg-crimson-500/10 text-crimson-600 dark:text-crimson-400 hover:bg-crimson-100 dark:hover:bg-crimson-500/20 transition-colors"
                     >
                         Approfondisci
                     </button>
@@ -189,14 +189,14 @@
             {#each aiSidebar.messages as message (message.id)}
                 <div class="flex gap-2.5 {message.role === 'user' ? 'flex-row-reverse' : ''}">
                     {#if message.role === 'assistant'}
-                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-crimson-500 to-crimson-600 flex items-center justify-center flex-shrink-0 shadow-sm">
                             <Bot class="w-4 h-4 text-white" />
                         </div>
                     {/if}
 
                     <div
                         class="max-w-[85%] rounded-2xl px-3.5 py-2.5 {message.role === 'user'
-                            ? 'bg-rose-500 text-white rounded-br-md'
+                            ? 'bg-crimson-500 text-white rounded-br-md'
                             : 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-bl-md shadow-sm'}"
                     >
                         {#if message.role === 'assistant'}
@@ -231,12 +231,12 @@
                 placeholder="Scrivi una domanda..."
                 disabled={aiSidebar.isLoading}
                 rows="1"
-                class="flex-1 resize-none rounded-xl px-3.5 py-2.5 bg-zinc-100 dark:bg-zinc-800 border-0 focus:outline-none focus:ring-2 focus:ring-rose-500/50 disabled:opacity-50 disabled:cursor-not-allowed text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
+                class="flex-1 resize-none rounded-xl px-3.5 py-2.5 bg-zinc-100 dark:bg-zinc-800 border-0 focus:outline-none focus:ring-2 focus:ring-crimson-500/50 disabled:opacity-50 disabled:cursor-not-allowed text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
             ></textarea>
             <button
                 onclick={() => sendMessage()}
                 disabled={!aiSidebar.inputValue.trim() || aiSidebar.isLoading}
-                class="p-2.5 bg-rose-500 hover:bg-rose-600 disabled:bg-zinc-200 dark:disabled:bg-zinc-700 disabled:cursor-not-allowed text-white disabled:text-zinc-400 rounded-xl transition-colors flex-shrink-0"
+                class="p-2.5 bg-crimson-500 hover:bg-crimson-600 disabled:bg-zinc-200 dark:disabled:bg-zinc-700 disabled:cursor-not-allowed text-white disabled:text-zinc-400 rounded-xl transition-colors flex-shrink-0"
             >
                 {#if aiSidebar.isLoading}
                     <Loader2 class="w-4 h-4 animate-spin" />

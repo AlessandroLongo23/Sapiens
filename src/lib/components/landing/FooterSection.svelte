@@ -22,19 +22,19 @@
 				<nav class="flex flex-col space-y-3">
 					<a 
 						href="/" 
-						class="text-zinc-400 hover:text-rose-400 transition-colors duration-200 text-sm sm:text-base"
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
 						Home
 					</a>
 					<a 
 						href="/pricing" 
-						class="text-zinc-400 hover:text-rose-400 transition-colors duration-200 text-sm sm:text-base"
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
 						Prezzi
 					</a>
 					<a 
 						href="/faq" 
-						class="text-zinc-400 hover:text-rose-400 transition-colors duration-200 text-sm sm:text-base"
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
 						FAQ
 					</a>
@@ -48,13 +48,13 @@
 				<nav class="flex flex-col space-y-3">
 					<a 
 						href="/contacts" 
-						class="text-zinc-400 hover:text-rose-400 transition-colors duration-200 text-sm sm:text-base"
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
 						Contatti
 					</a>
 					<a 
 						href="/faq" 
-						class="text-zinc-400 hover:text-rose-400 transition-colors duration-200 text-sm sm:text-base"
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
 						Domande frequenti
 					</a>
@@ -68,13 +68,13 @@
 				<nav class="flex flex-col space-y-3">
 					<a 
 						href="/terms" 
-						class="text-zinc-400 hover:text-rose-400 transition-colors duration-200 text-sm sm:text-base"
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
 						Termini e condizioni
 					</a>
 					<a 
 						href="/privacy" 
-						class="text-zinc-400 hover:text-rose-400 transition-colors duration-200 text-sm sm:text-base"
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
 						Privacy Policy
 					</a>

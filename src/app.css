@@ -7,6 +7,19 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+@theme {
+  --color-crimson-50: oklch(0.969 0.015 21.000);  
+  --color-crimson-100: oklch(0.941 0.030 21.000);  
+  --color-crimson-200: oklch(0.892 0.058 21.000);  
+  --color-crimson-300: oklch(0.810 0.117 21.000);  
+  --color-crimson-400: oklch(0.712 0.194 21.000);  
+  --color-crimson-500: oklch(0.645 0.246 21.000);  
+  --color-crimson-600: oklch(0.586 0.252 21.000);  
+  --color-crimson-700: oklch(0.514 0.222 21.000); 
+  --color-crimson-800: oklch(0.455 0.188 21.000);  
+  --color-crimson-900: oklch(0.410 0.159 21.000);  
+  --color-crimson-950: oklch(0.271 0.105 21.000);
+}
 /* Disable transitions/animations during theme toggle to avoid color fades */
 .disable-transitions *:not(.theme-toggle-icon),
 .disable-transitions *:not(.theme-toggle-icon)::before,

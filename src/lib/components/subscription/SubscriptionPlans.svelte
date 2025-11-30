@@ -32,13 +32,13 @@
 			class="relative bg-white dark:bg-zinc-800 rounded-2xl border-2 transition-all duration-200 
 				{
 					plan.popular
-					? 'border-rose-400 shadow-xl scale-105'
+					? 'border-crimson-400 shadow-xl scale-105'
 					: 'border-zinc-500/25'
 				}"
 		>
 			{#if plan.popular}
 				<div
-					class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-600 to-rose-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
+					class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-600 to-crimson-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1"
 				>
 					<Sparkles class="w-4 h-4" />
 					Più popolare
@@ -66,7 +66,7 @@
 										<span class="text-sm text-zinc-500 dark:text-zinc-500 line-through">
 											{formatPrice(plan.price * 6, plan.currency)}
 										</span>
-										<span class="text-sm text-rose-500 dark:text-rose-400 ml-2 font-medium">
+										<span class="text-sm text-crimson-500 dark:text-crimson-400 ml-2 font-medium">
 											Risparmi {formatPrice((plan.price * 6) - displayPrice.price, plan.currency)}
 										</span>
 									</div>
@@ -88,7 +88,7 @@
 					onclick={() => handleSelectPlan(plan)}
 					disabled={plan.id === SUBSCRIPTION_PLANS.FREE.id || currentPlan.id === plan.id}
 					class="w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 {plan.popular
-						? 'bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-lg hover:shadow-xl'
+						? 'bg-gradient-to-r from-pink-600 to-crimson-600 hover:from-pink-700 hover:to-crimson-700 text-white shadow-lg hover:shadow-xl'
 						: 'bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-100'} disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					{#if currentPlan.id === plan.id}

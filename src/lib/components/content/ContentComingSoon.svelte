@@ -92,8 +92,8 @@
                     buttonText: 'Mi serve questa lezione!',
                     MainIcon: Hammer,
                     SecondaryIcon: Sparkles,
-                    accentColor: 'text-rose-500',
-                    bgAccent: 'bg-rose-100 dark:bg-rose-900/20',
+                    accentColor: 'text-crimson-500',
+                    bgAccent: 'bg-crimson-100 dark:bg-crimson-900/20',
                     secondaryAccent: 'bg-amber-100 dark:bg-amber-900/30',
                     secondaryText: 'text-amber-600 dark:text-amber-400'
                 };

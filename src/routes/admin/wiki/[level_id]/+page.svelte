@@ -62,7 +62,7 @@
 		{#if isLoading}
 			<div class="flex justify-center items-center h-96">
 				<div
-					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"
+					class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-crimson-500"
 				></div>
 			</div>
 		{:else if levelInfo}
@@ -75,7 +75,7 @@
 					<div class="flex items-start gap-6">
 						{#if levelInfo.icon}
 							{@const LevelIcon = levelInfo.icon}
-							<div class="hidden sm:flex items-center justify-center size-32 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-500/25 text-rose-500 dark:text-rose-400">
+							<div class="hidden sm:flex items-center justify-center size-32 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-500/25 text-crimson-500 dark:text-crimson-400">
 								<LevelIcon class="size-16" />
 							</div>
 						{/if}
@@ -85,7 +85,7 @@
 								<div class="flex items-center gap-3">
 									{#if levelInfo.icon}
 										{@const LevelIcon = levelInfo.icon}
-										<LevelIcon class="w-8 h-8 text-rose-500 dark:text-rose-400 sm:hidden" />
+										<LevelIcon class="w-8 h-8 text-crimson-500 dark:text-crimson-400 sm:hidden" />
 									{/if}
 									<h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
 										{levelInfo.name}
@@ -100,7 +100,7 @@
 							<!-- Quick Stats -->
 							<div class="flex flex-wrap gap-3">
 								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
-									<BookOpen class="w-4 h-4 text-rose-500" />
+									<BookOpen class="w-4 h-4 text-crimson-500" />
 									<span class="font-medium">{levelInfo.subjects.length}</span> Materie
 								</div>
 								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
@@ -124,7 +124,7 @@
 				<section class="space-y-6" in:fade={{ duration: 400, delay: 100 }}>
 					<div class="flex items-center justify-between border-b border-zinc-500/25 pb-4">
 						<h2 class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-							<BookOpen class="w-5 h-5 text-rose-500" />
+							<BookOpen class="w-5 h-5 text-crimson-500" />
 							Materie disponibili
 						</h2>
 					</div>
@@ -170,7 +170,7 @@
 				</p>
 				<button
 					onclick={() => goto('/wiki')}
-					class="px-6 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+					class="px-6 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 				>
 					Torna alla home
 				</button>
