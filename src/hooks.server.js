@@ -1,6 +1,13 @@
 import { redirect, error } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import { createClient } from '$lib/supabase'
+// import { migrateContent } from '$lib/migration.js'
+
+// try {
+// 	migrateContent();
+// } catch {
+// 	console.log('Errore')
+// }
 
 const handleSupabase = async ({ event, resolve }) => {
 	event.locals.supabase = createClient(event.cookies)
