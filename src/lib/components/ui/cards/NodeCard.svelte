@@ -1,21 +1,19 @@
-<script lang="ts">
+<script>
 	import { goto } from '$app/navigation';
-	import type { LevelNode } from '$lib/data/content-tree';
 	import { BookOpen, ChevronRight } from 'lucide-svelte';
 
-	let { level } = $props<{
-		level: LevelNode;
-	}>();
+	let { node } = $props();
 
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`/wiki/${level.id}`);
+		goto(`./${node.slug}`);
 	}
-
+/*
     let totalSubjects = $derived(level.subjects.length);
     let totalChapters = $derived(level.subjects.reduce((sum, subject) => sum + subject.chapters.length, 0));
     let totalTopics = $derived(level.subjects.reduce((sum, subject) => sum + subject.chapters.reduce((chSum, chapter) => chSum + chapter.topics.length, 0), 0));
+	*/
 </script>
 
 <button
@@ -32,7 +30,7 @@
 	<div class="p-6 flex flex-col flex-1">
 		<!-- Header: Icon + Badge -->
 		<div class="flex flex-row items-center justify-start gap-4 mb-4">
-			{#if level.icon}
+			{#if node.icon}
 				<div
 					class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/20 transition-colors duration-300"
 				>
@@ -42,16 +40,21 @@
 
 			<div class="flex flex-col">
 				<h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 leading-snug group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300">
-					{level.name}
+					{node.title}
 				</h3>
-				
+				{#if node.type == 'level'}
 				<div class="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
 					<span>{totalSubjects} {totalSubjects === 1 ? 'materia' : 'materie'}</span>
+					{#if node.type === 'level' || node.type == 'subject'}
 					<span>•</span>
 					<span>{totalChapters} {totalChapters === 1 ? 'capitolo' : 'capitoli'}</span>
+					{/if}
+					{#if node.type == 'level' || node.type == 'subject' || node.type == 'chapter'}
 					<span>•</span>
 					<span>{totalTopics} {totalTopics === 1 ? 'lezione' : 'lezioni'}</span>
+					{/if}
 				</div>
+				{/if}
 			</div>
 		</div>
 

@@ -13,12 +13,12 @@
 	import FooterSection from '$lib/components/landing/FooterSection.svelte';
 	
 	let { data, children } = $props();
-	let { session, supabase, user } = $derived(data)
+	let { session, user } = $derived(data)
 
 	let headerRef = $state(undefined);
 	let isAuthModalOpen = $state(false);
-
-	onMount(() => {
+/*
+	onMount(async () => {}
 		const { data } = supabase.auth.onAuthStateChange(async (event, _session) => {
 			const { data: { user: authUser }, error } = await supabase.auth.getUser()
 			
@@ -34,6 +34,7 @@
 
 		return () => data.subscription.unsubscribe()
 	})
+		*/
 </script>
 
 <ThemeProvider>

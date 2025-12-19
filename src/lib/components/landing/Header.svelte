@@ -86,7 +86,7 @@
 									{hoveredLevel?.id === level.id ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400'}
 								"
 							>
-								<level.icon class="size-4" />
+								<!-- <level.icon class="size-4" /> -->
 								<span class="font-medium">{EducationalLevelMap[level.id]}</span>
 								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-rose-500 rounded-full transition-all duration-200 {hoveredLevel?.id === level.id ? 'opacity-100 w-full' : 'opacity-0 w-0'}"></span>
 							</a>

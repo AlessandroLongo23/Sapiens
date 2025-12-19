@@ -1,11 +1,10 @@
 import { redirect, error } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
-import { createClient } from '$lib/supabase'
+import supabase from '$lib/supabase'
 
 const handleSupabase = async ({ event, resolve }) => {
-	event.locals.supabase = createClient(event.cookies)
 
-	const { data: { session }, error: sessionError } = await event.locals.supabase.auth.getSession()
+	const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
 	if (sessionError) {
 		console.error('Session error:', sessionError)
@@ -17,10 +16,10 @@ const handleSupabase = async ({ event, resolve }) => {
 	event.locals.session = session
 
 	if (session) {
-		const { data: { user }, error: userError } = await event.locals.supabase.auth.getUser()
+		const { data: { user }, error: userError } = await supabase.auth.getUser()
 		if (userError) {
 			console.error('User fetch error:', userError)
-			await event.locals.supabase.auth.signOut()
+			await supabase.auth.signOut()
 			event.locals.session = null
 			event.locals.user = null
 		} else {
@@ -32,7 +31,7 @@ const handleSupabase = async ({ event, resolve }) => {
 			if (sessionExpiresAt && sessionExpiresAt - now < 300) {
 				console.log('Refreshing session token');
 				try {
-					const { data, error } = await event.locals.supabase.auth.refreshSession();
+					const { data, error } = await supabase.auth.refreshSession();
 					if (error) {
 						console.error('Session refresh error:', error);
 					} else if (data && data.session) {

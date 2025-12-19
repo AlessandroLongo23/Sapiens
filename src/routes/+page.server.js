@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit'
+import supabase from '$lib/supabase'
 
 export const actions = {
     signup: async ({ request, locals: { supabase } }) => {
@@ -19,7 +20,7 @@ export const actions = {
         }
     },
     
-    login: async ({ request, locals: { supabase } }) => {
+    login: async ({ request, locals}) => {
         const formData = await request.formData()
         const email = formData.get('email')
         const password = formData.get('password')
@@ -37,7 +38,7 @@ export const actions = {
         throw redirect(303, redirectPath);
     },
 
-    logout: async ({ locals: { supabase } }) => {
+    logout: async () => {
         const { error } = await supabase.auth.signOut()
         if (error) {
             return {
