@@ -14,17 +14,13 @@ export async function GET({ url, locals, params}) {
             "topic": 0
         }
         let err = {}
-        try{
-            
+        try {
             let counts = await countNodesByType();
             counts.map((count) => analytics[count.node_type] = count.node_count)
-            console.log('analytics', analytics)
             return json(analytics)
-        }catch(err){
+        } catch(err) {
             console.log('node id supabase error', err)
         }
-
-
     } catch (err) {
         console.log(err)
         throw error(500, err)

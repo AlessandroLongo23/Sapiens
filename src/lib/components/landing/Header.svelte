@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { contentTree, EducationalLevelMap, type LevelNode } from '$lib/data/content-tree';
 	import { sendSearch, GLOBAL_SEARCH_KEY, HEADER_SEARCH_HEIGHT } from '$lib/animations/search-transition';
 	import { searchStore } from '$lib/components/ui/search';
 	import { page } from '$app/state';
@@ -14,12 +13,13 @@
 		headerRef = $bindable(undefined),
         session,
         isAuthModalOpen = $bindable(false),
+		tree,
     } = $props();
     
-	let hoveredLevel = $state<LevelNode | null>(null);
+	let hoveredLevel = $state(null);
 	let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
-	function handleSubjectMouseEnter(level: LevelNode): void {
+	function handleSubjectMouseEnter(level): void {
 		hoveredLevel = level;
 	}
 
@@ -46,6 +46,7 @@
 			style="top: {headerRef.offsetHeight || 0}px;"
 		>
 			<SubjectMegaMenu
+				tree={tree}
 				bind:level={hoveredLevel}
 				columnsCount={5}
 				topicsPerChapter={4}
@@ -63,9 +64,9 @@
 				<span class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
 			</a>
 
-			{#if isMegaMenuVisible}
+			{#if isMegaMenuVisible && tree?.length > 0}
 				<nav class="flex justify-center items-center gap-12">
-					{#each contentTree as level}
+					{#each tree as level}
 						<div
 							class="relative"
 							role="button"
@@ -79,15 +80,14 @@
 							}}
 						>
 							<a 
-								href={`/wiki/${level.id}`} 
+								href={`/wiki/${level.slug}`} 
 								onclick={handleMenuMouseLeave}
 								class="
 									flex items-center gap-2 transition-colors duration-200 cursor-pointer relative
 									{hoveredLevel?.id === level.id ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400'}
 								"
 							>
-								<!-- <level.icon class="size-4" /> -->
-								<span class="font-medium">{EducationalLevelMap[level.id]}</span>
+								<span class="font-medium">{level.title}</span>
 								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-rose-500 rounded-full transition-all duration-200 {hoveredLevel?.id === level.id ? 'opacity-100 w-full' : 'opacity-0 w-0'}"></span>
 							</a>
 						</div>

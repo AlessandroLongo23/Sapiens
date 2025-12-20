@@ -17,15 +17,15 @@
         <div class="p-1 rounded-md bg-zinc-50 dark:bg-zinc-800/50 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/20 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
             <result.subject.icon size={14} />
         </div>
-        <span class="font-medium">{result.subject.name}</span>
+        <span class="font-medium">{result.subject.title}</span>
     </div>
     
     <div class="flex flex-col gap-1">
         <div class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors leading-tight">
-            <Latex content={result.topic.name} />
+            <Latex content={result.topic.title} />
         </div>
         <div class="text-xs text-zinc-500 dark:text-zinc-500 truncate">
-            In <span class="italic">{result.chapter.name}</span>
+            In <span class="italic">{result.chapter.title}</span>
         </div>
     </div>
 </a>

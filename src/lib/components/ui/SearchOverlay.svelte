@@ -70,7 +70,7 @@
         if (!query) return [];
         
         return flattenTopics().filter(
-            ({ topic }) => topic.name.toLowerCase().includes(query)
+            ({ topic }) => topic.title.toLowerCase().includes(query)
         );
     });
 </script>

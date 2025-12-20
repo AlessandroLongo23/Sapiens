@@ -13,7 +13,7 @@
 	import FooterSection from '$lib/components/landing/FooterSection.svelte';
 	
 	let { data, children } = $props();
-	let { session, user } = $derived(data)
+	let { session, user, tree } = $derived(data)
 
 	let headerRef = $state(undefined);
 	let isAuthModalOpen = $state(false);
@@ -55,6 +55,7 @@
 			bind:headerRef={headerRef}
 			bind:isAuthModalOpen={isAuthModalOpen}
 			session={session}
+			tree={tree}
 		/>
 
 		<div class={`flex-1 overflow-y-auto no-scrollbar transition-opacity duration-300 ease-out ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>

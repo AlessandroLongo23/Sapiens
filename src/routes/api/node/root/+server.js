@@ -14,17 +14,15 @@ export async function GET({ url, locals, params}) {
             const {data, error} = await supabase
                 .from('content_nodes')
                 .select('*')
-                .is('parent_id', null)
                 .order('position', {ascending: true})
-            console.log('query result', data, error)
+            // console.log('query result', data, error)
             docs = data
             err = error
-            console.log('query root', docs)
+            // console.log('query root', docs)
         }catch(err){
             console.log('node id supabase error', err)
         }
         return json(docs)
-
     } catch (err) {
         console.log(err)
         throw error(500, err)

@@ -1,22 +1,34 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { BookOpen, ChevronRight } from 'lucide-svelte';
+	
+	import LevelCard from './LevelCard.svelte';
+	import SubjectCard from './SubjectCard.svelte';
+	import ChapterCard from './ChapterCard.svelte';
+	import TopicCard from './TopicCard.svelte';
 
-	let { node } = $props();
+	let { node, href } = $props();
 
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`./${node.slug}`);
+		goto(href);
 	}
-/*
-    let totalSubjects = $derived(level.subjects.length);
-    let totalChapters = $derived(level.subjects.reduce((sum, subject) => sum + subject.chapters.length, 0));
-    let totalTopics = $derived(level.subjects.reduce((sum, subject) => sum + subject.chapters.reduce((chSum, chapter) => chSum + chapter.topics.length, 0), 0));
-	*/
 </script>
 
-<button
+{#if node.type == 'level'}
+	<LevelCard level={node} href={href} />
+{/if}
+{#if node.type == 'subject'}
+	<SubjectCard subject={node} href={href} />
+{/if}
+{#if node.type == 'chapter'}
+	<ChapterCard chapter={node} href={href} />
+{/if}
+{#if node.type == 'topic'}
+	<TopicCard topic={node} href={href} />
+{/if}
+<!-- <button
 	onclick={handleClick}
 	onmouseenter={() => (isHovered = true)}
 	onmouseleave={() => (isHovered = false)}
@@ -28,13 +40,12 @@
 	></div>
 
 	<div class="p-6 flex flex-col flex-1">
-		<!-- Header: Icon + Badge -->
 		<div class="flex flex-row items-center justify-start gap-4 mb-4">
 			{#if node.icon}
 				<div
 					class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/20 transition-colors duration-300"
 				>
-					<!--<level.icon class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />-->
+					<level.icon class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
 				</div>
 			{/if}
 
@@ -43,17 +54,17 @@
 					{node.title}
 				</h3>
 				{#if node.type == 'level'}
-				<div class="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
-					<span>{totalSubjects} {totalSubjects === 1 ? 'materia' : 'materie'}</span>
-					{#if node.type === 'level' || node.type == 'subject'}
-					<span>•</span>
-					<span>{totalChapters} {totalChapters === 1 ? 'capitolo' : 'capitoli'}</span>
-					{/if}
-					{#if node.type == 'level' || node.type == 'subject' || node.type == 'chapter'}
-					<span>•</span>
-					<span>{totalTopics} {totalTopics === 1 ? 'lezione' : 'lezioni'}</span>
-					{/if}
-				</div>
+					<div class="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+						<span>{totalSubjects} {totalSubjects === 1 ? 'materia' : 'materie'}</span>
+						{#if node.type === 'level' || node.type == 'subject'}
+							<span>•</span>
+							<span>{totalChapters} {totalChapters === 1 ? 'capitolo' : 'capitoli'}</span>
+						{/if}
+						{#if node.type == 'level' || node.type == 'subject' || node.type == 'chapter'}
+							<span>•</span>
+							<span>{totalTopics} {totalTopics === 1 ? 'lezione' : 'lezioni'}</span>
+						{/if}
+					</div>
 				{/if}
 			</div>
 		</div>
@@ -87,4 +98,4 @@
 	button:focus-visible {
 		@apply ring-2 ring-rose-500 ring-offset-2 dark:ring-offset-zinc-950;
 	}
-</style>
+</style> -->
