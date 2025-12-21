@@ -12,6 +12,8 @@ export interface ContentNode {
     position: number;
     icon?: string | Component;
     description?: string;
+    theory?: string;
+    formulary?: string;
     children: ContentNode[];
 }
 
