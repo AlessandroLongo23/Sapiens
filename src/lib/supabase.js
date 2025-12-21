@@ -1,22 +1,26 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-export const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-    cookies: {
-        get: (key) => cookies.get(key),
-        set: (key, value, options) => {
-            cookies.set(key, value, {
-                ...options,
-                path: '/',
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                maxAge: 60 * 60 * 24 * 7
-            })
-        },
-        remove: (key) => cookies.delete(key, { path: '/' })
-    }
-})
+export function createClient(cookies) {
+    return createSupabaseClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+        cookies: cookies ? {
+            get: (key) => cookies.get(key),
+            set: (key, value, options) => {
+                cookies.set(key, value, {
+                    ...options,
+                    path: '/',
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    maxAge: 60 * 60 * 24 * 7
+                })
+            },
+            remove: (key) => cookies.delete(key, { path: '/' })
+        } : undefined
+    });
+}
+
+export const supabase = createSupabaseClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY)
 
 export const types = ["level", "subject", "chapter", "topic"]
 
