@@ -6,6 +6,7 @@
 
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import NodeCard from '$lib/components/ui/cards/NodeCard.svelte';
+	import Latex from '$lib/components/ui/Latex.svelte';
 
 	let { data } = $props();
 	let node = $derived(data.node);
@@ -13,7 +14,6 @@
 
 	let isLoading = $derived(!node);
 
-	// Build breadcrumb paths from accumulated slugs
 	let breadcrumbItems = $derived.by(() => {
 		if (!node) return [];
 		const items = [
@@ -27,13 +27,11 @@
 		return items;
 	});
 
-	// Count children by type for stats display
 	let stats = $derived.by(() => {
 		if (!node?.children) return null;
 		return countByType(node.children);
 	});
-
-	// Labels for each stat type based on current node type
+	
 	const statConfig: Record<NodeType, { key: keyof typeof stats; label: string; icon: typeof BookOpen; color: string }[]> = {
 		level: [
 			{ key: 'subject', label: 'Materie', icon: BookOpen, color: 'text-rose-500' },
@@ -96,7 +94,7 @@
 										<NodeIcon class="w-8 h-8 text-rose-500 dark:text-rose-400 sm:hidden" />
 									{/if}
 									<h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-										{node.name}
+										<Latex content={node.title} />
 									</h1>
 								</div>
 								<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
