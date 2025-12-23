@@ -6,13 +6,10 @@
     import Latex from '$lib/components/ui/Latex.svelte';
 
     let { data, children } = $props();
-    let { title, navigation } = $derived(data);
-    
+    let { title, navigation, node } = $derived(data);
+
     let isScrolled = $derived(layoutState.scrollY > 20);
 
-    // TODO: Add logic for hierarchy error
-    let hierarchyError = $state(false);
-    
     let basePath = $derived(page.url.pathname.split('/').slice(0, 6).join('/'));
     let theoryPath = $derived(`${basePath}/theory`);
     let exercisesPath = $derived(`${basePath}/exercises`);
@@ -27,12 +24,12 @@
         `flex items-center justify-center size-10 rounded-xl transition-all duration-200 border ${active 
             ? 'bg-zinc-900 dark:bg-zinc-100 border-zinc-500/25 text-white dark:text-zinc-900 shadow-md scale-105' 
             : 'bg-white dark:bg-zinc-900 border-zinc-500/25 text-zinc-400 dark:text-zinc-500 hover:border-zinc-500/50 hover:text-zinc-900 dark:hover:text-zinc-100 hover:shadow-sm'}`;
-
 </script>
 
-{#if hierarchyError}
-    <!-- TODO: Add hierarchy error component -->
-    <!-- <HierarchyErrorComponent /> -->
+{#if node.type !== 'topic'}
+    <div class="flex-1">
+        {@render children()}
+    </div>
 {:else}
     <div class="relative flex w-full justify-center h-[calc(100vh-4.5rem)] overflow-hidden font-sans text-zinc-900 dark:text-zinc-50 bg-white dark:bg-zinc-900">
         <aside class="hidden lg:block fixed left-0 w-1/4 h-full py-6 px-4">
@@ -50,9 +47,10 @@
                     <div class="flex items-center gap-4 flex-1 min-w-0">
                         {#if navigation?.parent}
                             <a href={navigation.parent.url} 
-                            class="flex items-center justify-center p-2 -ml-2 rounded-lg text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-500 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 transition-all"
-                            title={navigation.parent.label}>
-                            <ArrowLeft class="size-5" />
+                                class="flex items-center justify-center p-2 -ml-2 rounded-lg text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-500 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                                title={navigation.parent.label}
+                            >
+                                <ArrowLeft class="size-5" />
                             </a>
                         {/if}
                         <h1 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight transition-all duration-300 origin-left {isScrolled ? 'text-xl' : 'text-3xl'} truncate">

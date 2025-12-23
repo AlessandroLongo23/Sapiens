@@ -3,19 +3,20 @@
 	import type { LevelNode } from '$lib/data/content-tree';
 	import { BookOpen, ChevronRight } from 'lucide-svelte';
 
-	let { level } = $props<{
+	let { level, href } = $props<{
 		level: LevelNode;
+		href: string;
 	}>();
 
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`/wiki/${level.id}`);
+		goto(href);
 	}
 
-    let totalSubjects = $derived(level.subjects.length);
-    let totalChapters = $derived(level.subjects.reduce((sum, subject) => sum + subject.chapters.length, 0));
-    let totalTopics = $derived(level.subjects.reduce((sum, subject) => sum + subject.chapters.reduce((chSum, chapter) => chSum + chapter.topics.length, 0), 0));
+    let totalSubjects = $derived(level.children.length);
+    let totalChapters = $derived(level.children.reduce((sum, subject) => sum + subject.children.length, 0));
+    let totalTopics = $derived(level.children.reduce((sum, subject) => sum + subject.children.reduce((chSum, chapter) => chSum + chapter.children.length, 0), 0));
 </script>
 
 <button
@@ -36,13 +37,13 @@
 				<div
 					class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 group-hover:bg-crimson-50 dark:group-hover:bg-crimson-900/20 transition-colors duration-300"
 				>
-					<level.icon class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
+					<!--<level.icon class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />-->
 				</div>
 			{/if}
 
 			<div class="flex flex-col">
 				<h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 leading-snug group-hover:text-crimson-600 dark:group-hover:text-crimson-400 transition-colors duration-300">
-					{level.name}
+					{level.title}
 				</h3>
 				
 				<div class="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2">

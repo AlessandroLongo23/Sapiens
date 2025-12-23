@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { createClient } from '@supabase/supabase-js';
+import supabase from '$lib/supabase'; 
 import fs from 'fs/promises';
 import path from 'path';
 

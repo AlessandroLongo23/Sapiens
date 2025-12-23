@@ -20,12 +20,12 @@
         </div>
         <div class="flex flex-col min-w-0 gap-0.5">
             <span class="text-base font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-crimson-600 dark:group-hover:text-crimson-400 transition-colors truncate">
-                 <Latex content={result.topic.name} />
+                 <Latex content={result.topic.title} />
             </span>
             <div class="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-500">
-                <span class="font-medium">{result.subject.name}</span>
+                <span class="font-medium">{result.subject.title}</span>
                 <span class="text-zinc-300 dark:text-zinc-700">•</span>
-                <span class="truncate italic">{result.chapter.name}</span>
+                <span class="truncate italic">{result.chapter.title}</span>
             </div>
         </div>
     </div>

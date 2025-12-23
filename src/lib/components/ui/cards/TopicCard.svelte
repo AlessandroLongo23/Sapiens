@@ -1,21 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { fade } from 'svelte/transition';
 	import type { TopicNode } from '$lib/data/content-tree';
 	import { BookOpen, ChevronRight } from 'lucide-svelte';
 	import Latex from '$lib/components/ui/Latex.svelte';
 
-	let { topic, level_id, subject_id, chapter_id } = $props<{
+	let { topic, href } = $props<{
 		topic: TopicNode;
-		level_id: string;
-		subject_id: string;
-		chapter_id: string;
+		href: string;
 	}>();
 
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`/wiki/${level_id}/${subject_id}/${chapter_id}/${topic.id}/theory`);
+		goto(href + '/theory');
 	}
 </script>
 
@@ -26,13 +23,11 @@
 	class="group w-full h-full flex flex-col text-left relative overflow-hidden rounded-2xl border border-zinc-500/25 bg-white dark:bg-zinc-900 transition-all duration-300 hover:border-crimson-200 dark:hover:border-crimson-800 hover:shadow-xl hover:shadow-crimson-500/5 hover:-translate-y-1"
 	tabindex="0"
 >
-	<!-- Top accent line -->
 	<div 
 		class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-crimson-500 to-crimson-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 	></div>
 
 	<div class="p-6 flex flex-col flex-1">
-		<!-- Header: Icon -->
 		<div class="mb-4">
 			<div
 				class="p-3 w-fit rounded-xl bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 group-hover:bg-crimson-50 dark:group-hover:bg-crimson-900/20 transition-colors duration-300"
@@ -43,14 +38,12 @@
 			</div>
 		</div>
 
-		<!-- Content -->
 		<div class="flex-1">
 			<h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2 leading-snug group-hover:text-crimson-600 dark:group-hover:text-crimson-400 transition-colors duration-300 line-clamp-2">
-				<Latex content={topic.name} />
+				<Latex content={topic.title} />
 			</h3>
 		</div>
 
-		<!-- Footer -->
 		<div class="mt-6 pt-4 border-t border-zinc-500/25 flex items-center justify-between text-sm">
 			<span class="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
 				Vai alla lezione

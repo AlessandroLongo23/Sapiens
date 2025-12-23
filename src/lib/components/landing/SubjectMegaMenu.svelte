@@ -1,20 +1,27 @@
 <script lang="ts">
 	import { fly, fade } from 'svelte/transition';
-	import { EducationalLevelMap, type LevelNode, type SubjectNode } from '$lib/data/content-tree';
+	import type { ContentNode } from '$lib/utils/tree';
 	import { Plus } from 'lucide-svelte';
 
 	import Latex from '$lib/components/ui/Latex.svelte';
 
 	let {
-		level = $bindable<LevelNode>(),
+		tree,
+		level = $bindable<ContentNode | null>(),
 		columnsCount = 3,
 		topicsPerChapter = 3
 	} = $props();
-
-	let subjects = $derived(level?.subjects || []);
-	let selectedSubject = $derived<SubjectNode | null>(subjects.length > 0 ? subjects[0] : null);
 	
-	function handleSubjectHover(subject: SubjectNode): void {
+	// Subjects are children of a level node
+	let subjects = $derived(level?.children || []);
+	let selectedSubject = $state<ContentNode | null>(null);
+	
+	// Auto-select first subject when level changes
+	$effect(() => {
+		selectedSubject = subjects.length > 0 ? subjects[0] : null;
+	});
+	
+	function handleSubjectHover(subject: ContentNode): void {
 		selectedSubject = subject;
 	}
 </script>
@@ -28,9 +35,8 @@
 >
 	<div class="px-8 py-5 border-b border-zinc-500/25 bg-zinc-50 dark:bg-zinc-800/50">
 		<div class="mx-auto flex items-center gap-3">
-			<level.icon class="size-6 text-crimson-500 dark:text-crimson-400" />
 			<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-				{EducationalLevelMap[level.id]}
+				{level?.title}
 			</h3>
 		</div>
 	</div>
@@ -39,8 +45,8 @@
 		<div class="w-1/6 border-r border-zinc-500/25 bg-zinc-50/50 dark:bg-zinc-800/30">
 			{#each subjects as subject}
 				<a
-					href={`/wiki/${level.id}/${subject.id}`}
-					onclick={level = null}
+					href={`/wiki/${level?.slug}/${subject.slug}`}
+					onclick={() => level = null}
 					onmouseenter={() => handleSubjectHover(subject)}
 					class="
 						w-full flex items-center gap-2 text-left px-6 py-4 text-base font-medium transition-all duration-200
@@ -54,55 +60,55 @@
 						}
 					"
 				>
-					<subject.icon class="size-4" />
-					<span class="font-medium">{subject.name}</span>
+					<span class="font-medium">{subject.title}</span>
 				</a>
 			{/each}
 		</div>
 		
 		<div class="flex-1 p-8 overflow-y-auto h-full">
 			{#if selectedSubject}
+				{@const chapters = selectedSubject.children || []}
 				<div class="gap-6 h-full" style="column-count: {columnsCount}; column-gap: 1.5rem; width: 100%;">
-					{#each selectedSubject.chapters as chapter, index}
+					{#each chapters as chapter, index}
+						{@const topics = chapter.children || []}
 						<div class="flex flex-col gap-4 mb-8" style="break-inside: avoid;">
 							<a
-								href={`/wiki/${level.id}/${selectedSubject.id}/${chapter.id}`}
-								onclick={level = null}
+								href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}`}
+								onclick={() => level = null}
 								class="w-full flex items-center gap-2 text-left px-0 text-zinc-900 dark:text-zinc-100 transition-all duration-200 relative group"
 							>
-								<chapter.icon class="size-4" />
-								<Latex content={`${index + 1}. ${chapter.name}`} class="font-semibold line-clamp-1" />
+								<Latex content={`${index + 1}. ${chapter.title}`} class="font-semibold line-clamp-1" />
 								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-crimson-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full"></span>
 							</a>
 
 							<div class="flex flex-col gap-1.5">
-								{#each chapter.topics.slice(0, topicsPerChapter) as topic}
+								{#each topics.slice(0, topicsPerChapter) as topic}
 									<a
-										href={`/wiki/evel.id}/${selectedSubject.id}/${chapter.id}/${topic.id}/theory`}
-										onclick={level = null}
+										href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}/${topic.slug}/theory`}
+										onclick={() => level = null}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-200 group relative cursor-pointer"
 									>
-										<Latex content={topic.name} class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1" />
+										<Latex content={topic.title} class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1" />
 									</a>
 								{/each}
 
-								{#if chapter.topics.length == topicsPerChapter + 1}
-									{@const topic = chapter.topics[topicsPerChapter]}
+								{#if topics.length == topicsPerChapter + 1}
+									{@const topic = topics[topicsPerChapter]}
 									<a
-										href={`/wiki/${level.id}/${selectedSubject.id}/${chapter.id}/${topic.id}/theory`}
-										onclick={level = null}
+										href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}/${topic.slug}/theory`}
+										onclick={() => level = null}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
 									>
-										<Latex content={topic.name} class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1" />
+										<Latex content={topic.title} class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1" />
 									</a>
-								{:else if chapter.topics.length > topicsPerChapter + 1}
+								{:else if topics.length > topicsPerChapter + 1}
 									<a
-										href={`/wiki/${level.id}/${selectedSubject.id}/${chapter.id}`}
-										onclick={level = null}
+										href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}`}
+										onclick={() => level = null}
 										class="w-full flex items-center text-left py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-500 hover:text-crimson-500 dark:hover:text-crimson-400 transition-all duration-200"
 									>
 										<Plus class="size-3" />
-										<span>{chapter.topics.length - topicsPerChapter} lezioni</span>
+										<span>{topics.length - topicsPerChapter} lezioni</span>
 									</a>
 								{/if}
 							</div>

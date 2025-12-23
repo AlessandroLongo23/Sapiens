@@ -3,20 +3,20 @@
 	import type { SubjectNode } from '$lib/data/content-tree';
 	import { BookOpen, ChevronRight } from 'lucide-svelte';
 
-	let { subject, level_id, chapterCount = 0 } = $props<{
+	let { subject, href } = $props<{
 		subject: SubjectNode;
-		level_id: string;
-		chapterCount?: number;
 	}>();
 
 	let isHovered = $state(false);
 
 	function handleClick() {
-		goto(`/wiki/${level_id}/${subject.id}`);
+		goto(href);
 	}
 
+	let chapterCount = $derived(subject.children.length);
+
 	let totalTopics = $derived(
-		subject.chapters.reduce((sum, chapter) => sum + chapter.topics.length, 0)
+		subject.children.reduce((sum, chapter) => sum + chapter.children.length, 0)
 	);
 </script>
 
@@ -46,7 +46,7 @@
 
 			<div class="flex flex-col">
 				<h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 leading-snug group-hover:text-crimson-600 dark:group-hover:text-crimson-400 transition-colors duration-300">
-					{subject.name}
+					{subject.title}
 				</h3>
 				
 				<!-- Optional description or stats text -->

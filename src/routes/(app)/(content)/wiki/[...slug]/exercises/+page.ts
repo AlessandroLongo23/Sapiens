@@ -5,39 +5,30 @@ import type { Exercise } from '$lib/exercises/abstract.svelte.js';
 const exerciseModulesJs = import.meta.glob('/src/lib/exercises/*.svelte.js');
 const exerciseModulesTs = import.meta.glob('/src/lib/exercises/*.svelte.ts');
 
-export async function load({ params }) {
-	const { level_id, subject_id, chapter_id, topic_id } = params;
+export async function load({ parent }) {
+	const { node, pathSegments } = await parent();
 	
-	let configPath = `${level_id}/${subject_id}/${chapter_id}/${topic_id}`;
-	
-	const modulePathJs = `/src/lib/exercises/${topic_id}.svelte.js`;
-	const modulePathTs = `/src/lib/exercises/${topic_id}.svelte.ts`;
+	const configPath = pathSegments.map((n: { slug: string }) => n.slug).join('/');
+	const topicSlug = node.slug;
+
+	const modulePathJs = `/src/lib/exercises/${topicSlug}.svelte.js`;
+	const modulePathTs = `/src/lib/exercises/${topicSlug}.svelte.ts`;
 
 	try {
 		const moduleImporterJs = exerciseModulesJs[modulePathJs];
 		const moduleImporterTs = exerciseModulesTs[modulePathTs];
+		
 		if (!moduleImporterJs && !moduleImporterTs) {
-			console.warn(`Exercise module not found for topic: ${topic_id}`);
-			return {
-				exercises: [],
-				topic_id,
-                level_id, 
-                subject_id, 
-                chapter_id
-			};
+			console.warn(`Exercise module not found for topic: ${topicSlug}`);
+			return { exercises: [] };
 		}
+		
 		const exerciseModule = moduleImporterJs ? await moduleImporterJs() : await moduleImporterTs();
 
 		const topicConfig: TopicConfig = configs[configPath];
 		if (!topicConfig) {
 			console.warn(`No exercise configuration found for ${configPath}`);
-			return {
-				exercises: [],
-				topic_id,
-                level_id, 
-                subject_id, 
-                chapter_id
-			};
+			return { exercises: [] };
 		}
 
 		let exercises: Exercise[] = [];
@@ -46,7 +37,7 @@ export async function load({ params }) {
 			const generatorInstance = exerciseModule[generator];
 
 			if (!generatorInstance) {
-				throw error(500, `Generator '${generator}' not found in ${topic_id}.svelte.js`);
+				throw error(500, `Generator '${generator}' not found in ${topicSlug}.svelte.js`);
 			}
 
 			for (let i = 0; i < count; i++) {
@@ -57,21 +48,9 @@ export async function load({ params }) {
 		
 		exercises.shuffle();
 
-		return {
-			exercises,
-			topic_id,
-            level_id, 
-            subject_id, 
-            chapter_id
-		};
+		return { exercises };
 	} catch (e) {
 		console.error(e);
-		return {
-            exercises: [],
-            topic_id,
-            level_id, 
-            subject_id, 
-            chapter_id
-        };
+		return { exercises: [] };
 	}
 }
