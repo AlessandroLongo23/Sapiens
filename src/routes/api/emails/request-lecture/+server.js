@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { createClient } from '$lib/supabase';
+import { supabase } from '$lib/supabase';
 import { json } from '@sveltejs/kit';
 import { Resend } from 'resend';
 import jwt from 'jsonwebtoken';
@@ -19,9 +19,8 @@ function generateActionToken(lectureId, action) {
 	);
 }
 
-export async function POST({ request, url, cookies }) {
+export async function POST({ request, url }) {
 	try {
-		const supabase = createClient(cookies);
 		
 		const formData = await request.json();
 

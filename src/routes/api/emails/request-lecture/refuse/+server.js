@@ -1,14 +1,13 @@
 import { json } from '@sveltejs/kit';
-import { createClient } from '$lib/supabase';
+import { supabase } from '$lib/supabase';
 import { env } from '$env/dynamic/private';
 import jwt from 'jsonwebtoken';
 
 // Secret key for verifying tokens
 const SECRET_KEY = env.JWT_SECRET || 'aleripetizioni-lecture-actions-secret';
 
-export async function GET({ url, cookies }) {
+export async function GET({ url }) {
 	try {
-		const supabase = createClient(cookies);
 		
 		const token = url.searchParams.get('token');
 		const lectureId = url.searchParams.get('id');

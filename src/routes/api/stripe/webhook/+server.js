@@ -1,12 +1,10 @@
 import { json } from '@sveltejs/kit';
 import { stripe } from '$lib/stripe/server.js';
 import { STRIPE_WEBHOOK_SECRET } from '$env/static/private';
-import { createClient } from '$lib/supabase.js';
+import { supabase } from '$lib/supabase.js';
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request, cookies }) {
-	const supabase = createClient(cookies);
-	
 	let event;
 
 	try {
