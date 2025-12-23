@@ -1,13 +1,12 @@
 import { redirect } from '@sveltejs/kit'
-import supabase from '$lib/supabase'
 
 export const actions = {
-    signup: async ({ request, locals: { supabase } }) => {
+    signup: async ({ request, locals }) => {
         const formData = await request.formData()
         const email = formData.get('email')
         const password = formData.get('password')
 
-        const { error } = await supabase.auth.signUp({ email, password })
+        const { error } = await locals.supabase.auth.signUp({ email, password })
         if (error) {
             return {
                 success: false,
@@ -20,12 +19,12 @@ export const actions = {
         }
     },
     
-    login: async ({ request, locals}) => {
+    login: async ({ request, locals }) => {
         const formData = await request.formData()
         const email = formData.get('email')
         const password = formData.get('password')
 
-        const { data: { user }, error } = await supabase.auth.signInWithPassword({ email, password })
+        const { data: { user }, error } = await locals.supabase.auth.signInWithPassword({ email, password })
         if (error) {
             return {
                 success: false,
@@ -33,13 +32,12 @@ export const actions = {
             }
         }
 
-        // const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
         const redirectPath = '/admin';
         throw redirect(303, redirectPath);
     },
 
-    logout: async () => {
-        const { error } = await supabase.auth.signOut()
+    logout: async ({ locals }) => {
+        const { error } = await locals.supabase.auth.signOut()
         if (error) {
             return {
                 success: false,
@@ -49,4 +47,4 @@ export const actions = {
         
         throw redirect(303, '/')
     }
-} 
+}

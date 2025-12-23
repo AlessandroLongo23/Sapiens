@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { supabase } from '$lib/supabase';
+import supabase from '$lib/supabase';
 import { Review } from '$lib/models/Review.svelte.js';
 
 async function fetchReviews(): Promise<Review[]> {

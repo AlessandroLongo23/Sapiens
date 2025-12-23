@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { supabase } from '$lib/supabase.js';
+	import { invalidateAll } from '$app/navigation';
+	import { createBrowserSupabaseClient } from '$lib/supabase.js';
 	import { X, Mail, Lock, User } from 'lucide-svelte';
 	
 	import FormButton from '$lib/components/ui/forms/FormButton.svelte';
@@ -17,14 +17,16 @@
 	let password = $state('');
 	let name = $state('');
 	let surname = $state('');
-	let error = $state(null);
+	let error = $state<string | null>(null);
 	let loading = $state(false);
 	let isNavigating = $state(false);
 
-	const handleLogin = async (event) => {
+	// Create browser client for auth operations
+	const supabase = createBrowserSupabaseClient();
+
+	const handleLogin = async () => {
 		if (isNavigating) return;
 
-		// event?.preventDefault(); // Handled by handleSubmit
 		loading = true;
 		error = null;
 
@@ -37,12 +39,16 @@
 			if (authError) throw authError;
 
 			isNavigating = true;
-			// const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+			
+			// Invalidate all load functions to refresh session data
+			await invalidateAll();
+			
+			// Redirect using window.location to ensure cookies are sent with the new request
 			const redirectPath = '/admin';
-			await goto(redirectPath);
-		} catch (err) {
+			window.location.href = redirectPath;
+		} catch (err: any) {
 			error = err.message;
-			if (error.includes('Invalid login')) {
+			if (error?.includes('Invalid login')) {
 				error = 'Email o password errate. Riprova';
 			}
 		} finally {
@@ -51,28 +57,37 @@
 		}
 	}
 
-	const handleRegister = async (event) => {
+	const handleRegister = async () => {
 		if (isNavigating) return;
 
-		// event?.preventDefault(); // Handled by handleSubmit
 		loading = true;
 		error = null;
 
 		try {
 			const { data: { user }, error: authError } = await supabase.auth.signUp({ 
 				email,
-				password
+				password,
+				options: {
+					data: {
+						name,
+						surname
+					}
+				}
 			});
 
 			if (authError) throw authError;
 
 			isNavigating = true;
-			// const redirectPath = user?.user_metadata?.role === 'admin' ? '/admin/analytics' : '/student/materiale';
+			
+			// Invalidate all load functions to refresh session data
+			await invalidateAll();
+			
+			// Redirect using window.location to ensure cookies are sent with the new request
 			const redirectPath = '/admin';
-			await goto(redirectPath);
-		} catch (err) {
+			window.location.href = redirectPath;
+		} catch (err: any) {
 			error = err.message;
-			if (error.includes('Invalid Registration')) {
+			if (error?.includes('Invalid Registration')) {
 				error = 'Email o password errate. Riprova';
 			}
 		} finally {
@@ -81,12 +96,12 @@
 		}
 	}
 
-	const handleSubmit = (e) => {
+	const handleSubmit = (e: Event) => {
 		e.preventDefault();
 		if (register) {
-			handleRegister(e);
+			handleRegister();
 		} else {
-			handleLogin(e);
+			handleLogin();
 		}
 	}
 

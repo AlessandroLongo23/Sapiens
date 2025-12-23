@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { supabase } from '$lib/supabase';
+import supabase from '$lib/supabase';
 import { Student } from '$lib/models/Student.svelte.js';
 
 async function fetchStudents() {
