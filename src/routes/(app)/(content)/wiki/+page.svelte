@@ -72,7 +72,7 @@
 								</div>
 								<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 									<Layers class="w-4 h-4 text-teal-500" />
-									<span class="font-medium">{analytics["chapter"]} Capitol</span>i
+									<span class="font-medium">{analytics["chapter"]} Capitoli</span>
 								</div>
 									<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 border border-zinc-500/25 text-sm text-zinc-700 dark:text-zinc-300 backdrop-blur-sm">
 										<FileText class="w-4 h-4 text-indigo-500" />
