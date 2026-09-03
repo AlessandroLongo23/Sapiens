@@ -47,9 +47,9 @@
 
 			<div class="flex flex-col justify-between h-full p-6">
 				<div class="flex flex-col gap-2">
-					<h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+					<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
 						{plan.name}
-					</h3>
+					</h2>
 
 					<div class="mb-6">
 						{#if plan.price > 0}

@@ -1,5 +1,19 @@
 import { redirect } from '@sveltejs/kit'
 import supabase from '$lib/supabase'
+import { getFlatNodes } from '$lib/server/content'
+
+/** Counts for the hero, from the same content table the library uses. */
+export const load = async () => {
+    const counts = { level: 0, subject: 0, chapter: 0, topic: 0 }
+    try {
+        for (const node of await getFlatNodes()) {
+            if (node.type in counts) counts[node.type]++
+        }
+    } catch (err) {
+        console.error('landing counts unavailable:', err)
+    }
+    return { counts }
+}
 
 export const actions = {
     signup: async ({ request, locals: { supabase } }) => {
@@ -14,12 +28,12 @@ export const actions = {
                 error: error.message
             }
         }
-        
+
         return {
             success: true
         }
     },
-    
+
     login: async ({ request, locals}) => {
         const formData = await request.formData()
         const email = formData.get('email')
@@ -46,7 +60,7 @@ export const actions = {
                 error: error.message
             }
         }
-        
+
         throw redirect(303, '/')
     }
-} 
+}
