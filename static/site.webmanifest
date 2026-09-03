@@ -1,0 +1,14 @@
+{
+	"name": "Sapiens",
+	"short_name": "Sapiens",
+	"description": "Materiale didattico per medie, superiori e università",
+	"lang": "it",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#ff3666",
+	"icons": [
+		{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+		{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+	]
+}

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts are self-hosted: see the @fontsource imports in src/routes/+layout.svelte. */
 
 @import 'tailwindcss';
 
@@ -39,7 +39,7 @@
 }
 
 * {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 .font-mono {
@@ -385,4 +385,23 @@ button, a {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+/* Skip link: visible only when focused */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0.5rem;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #18181b;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.skip-link:focus {
+  left: 0.5rem;
+  outline: 2px solid oklch(0.645 0.246 21.000);
+  outline-offset: 2px;
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { themeStore } from '$lib/components/ui/theme/theme';
 	import { GraduationCap, BookOpen } from 'lucide-svelte';
+	import landing from '$lib/assets/landing.png?enhanced';
 
 	import AnimatedCounter from '$lib/components/ui/AnimatedCounter.svelte';
 
@@ -13,11 +13,28 @@
 		}[];
 	}
 
-    let { 
+    let {
         heroSection = $bindable(null),
         stats,
     }: Props = $props();
+
+	// The screenshot is the largest element of the desktop hero: preload the
+	// AVIF candidates so the browser starts fetching before the CSS lands.
+	const imageSizes = '(min-width: 1024px) 50vw, 1px';
 </script>
+
+<svelte:head>
+	{#if landing.sources.avif}
+		<link
+			rel="preload"
+			as="image"
+			type="image/avif"
+			imagesrcset={landing.sources.avif}
+			imagesizes={imageSizes}
+			media="(min-width: 1024px)"
+		/>
+	{/if}
+</svelte:head>
 
 <section
     bind:this={heroSection}
@@ -42,17 +59,17 @@
 				<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
 					<a
 						href="/pricing"
-						class="group inline-flex items-center justify-center gap-2 bg-crimson-500 hover:bg-crimson-600 dark:bg-crimson-400 dark:hover:bg-crimson-500 text-white px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
+						class="group inline-flex items-center justify-center gap-2 bg-crimson-600 hover:bg-crimson-700 dark:bg-crimson-600 dark:hover:bg-crimson-700 text-white px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500 focus-visible:ring-offset-2"
 					>
-						<GraduationCap class="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:rotate-12" />
+						<GraduationCap class="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:rotate-12" aria-hidden="true" />
 						<span>Scopri i piani</span>
 					</a>
 
 					<a
-						href="/wiki"
-						class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#12161B] border border-zinc-500/25 hover:border-zinc-500/50 text-gray-900 dark:text-slate-50 px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02]"
+						href="/materiale"
+						class="group inline-flex items-center justify-center gap-2 bg-white dark:bg-[#12161B] border border-zinc-500/25 hover:border-zinc-500/50 text-gray-900 dark:text-slate-50 px-8 py-4 rounded-xl font-medium text-base shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500 focus-visible:ring-offset-2"
 					>
-						<BookOpen class="w-5 h-5" />
+						<BookOpen class="w-5 h-5" aria-hidden="true" />
 						<span>Esplora materiale</span>
 					</a>
 				</div>
@@ -62,7 +79,7 @@
 						{@const StatIcon = stat.icon}
 						<div class="text-center lg:text-left">
 							<div class="flex items-center gap-3">
-								<StatIcon class="size-6 text-crimson-500 dark:text-crimson-400" />
+								<StatIcon class="size-6 text-crimson-500 dark:text-crimson-400" aria-hidden="true" />
 								<div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-slate-50">
 									<AnimatedCounter target={stat.value} duration={2000} />
 								</div>
@@ -78,10 +95,11 @@
 			<div class="hidden lg:block">
 				<div class="relative">
 					<div class="relative overflow-hidden">
-						<img
-							src="/landing new 2.png"
-							alt="Anteprima della piattaforma educativa Sapiens"
-							loading="lazy"
+						<enhanced:img
+							src={landing}
+							alt="Una lezione di Sapiens aperta nel browser, con indice a sinistra e teoria al centro"
+							sizes={imageSizes}
+							fetchpriority="high"
 							decoding="async"
 							class="w-full h-auto object-cover"
 						/>
@@ -90,13 +108,4 @@
 			</div>
 		</div>
 	</div>
-
-	<!-- Scroll indicator -->
-	<!-- <a 
-		href="#about" 
-		aria-label="Scopri di più"
-		class="hidden sm:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bottom-8 w-10 h-10 rounded-full border border-zinc-500/25 bg-white/80 dark:bg-[#12161B]/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 shadow-sm hover:shadow-md hover:border-crimson-500 dark:hover:border-crimson-400 transition-all duration-300 ease-in-out animate-bounce"
-	>
-		<ChevronDown class="w-5 h-5" />
-	</a> -->
 </section>
