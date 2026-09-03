@@ -37,7 +37,10 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 		{ loc: CONTENT_ROOT, lastmod: day(latestUpdate(all)) },
 		{ loc: '/pricing' },
 		{ loc: '/faq' },
-		{ loc: '/contacts' }
+		{ loc: '/contacts' },
+		{ loc: '/terms' },
+		{ loc: '/privacy' },
+		{ loc: '/cookie' }
 	];
 
 	walkTree(tree, (node, ancestors) => {
