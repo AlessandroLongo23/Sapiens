@@ -13,6 +13,7 @@ const LEVEL_LONG: Record<string, string> = {
 	university: "l'università"
 };
 
+/** Short forms used inside titles only; URLs derive from the level title (see $lib/seo/slug). */
 const LEVEL_SHORT: Record<string, string> = {
 	middle_school: 'medie',
 	high_school: 'superiori',
