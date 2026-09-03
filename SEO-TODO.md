@@ -27,7 +27,7 @@ Ticked items are done in code and verified against the production build. Everyth
 ## Phase 2 — Crawlability
 
 - [x] Task 6 — Level, subject, chapter and lesson cards are `<a href>` in the server-rendered HTML (`LevelCard`, `SubjectCard`, `ChapterCard`, `TopicCard`). Breadcrumb segments are links. No `goto()` navigation is left in cards or breadcrumbs.
-- [x] Task 7 — `/materiale/<livello>/<materia>/<capitolo>/<lezione>` with `medie` / `superiori` / `universita`; sub-views `esercizi`, `formulario`, `flashcards`. One utility (`$lib/seo/slug.ts`) generates and resolves every URL for the router, the sitemap, the cards, the menu and the redirects. Every `/wiki/...` path 301s to its new equivalent (`hooks.server.js`); unknown ones 404. Non-canonical spellings (database slugs, upper case) 301 to the canonical path.
+- [x] Task 7 — `/materiale/<livello>/<materia>/<capitolo>/<lezione>`, every segment from the node title (see Round 2); sub-views `esercizi`, `formulario`, `flashcards`. One utility (`$lib/seo/slug.ts`) generates and resolves every URL for the router, the sitemap, the cards, the menu and the redirects. Every `/wiki/...` path 301s to its new equivalent (`hooks.server.js`); unknown ones 404. Non-canonical spellings (database slugs, upper case) 301 to the canonical path.
 - [x] Task 8 — No `sapiens-xi` string in source or build output; every absolute URL derives from `SITE_URL`.
 - [x] Task 9 — Linked breadcrumbs (`<nav><ol>`) on index pages plus `BreadcrumbList` JSON-LD; lesson pages emit the same JSON-LD (they keep the back arrow instead of a visual trail).
 - [x] Task 10 — `/robots.txt` and `/sitemap.xml` (content-driven, with `lastmod`; index + chunked sitemaps kick in above 10 000 URLs).
@@ -59,12 +59,12 @@ Ticked items are done in code and verified against the production build. Everyth
 - [x] Exactly one `<title>` per page; none say `Nodo` or `Pricing`.
 - [x] Exactly one `<h1>` on `/`, `/materiale`, level/subject/chapter/lesson pages, esercizi, formulario, flashcards, `/faq`, `/contacts`, `/pricing`, `/terms`, `/privacy`, the 404 page.
 - [x] Unique hand-written or node-derived description on every public page.
-- [x] Crawl from `/` (linkinator, recursive): 848 distinct pages, 0 broken links: 90 index pages (1 + 3 + 10 + 76), 188 lessons, 188 × esercizi/formulario/flashcards, 6 marketing pages.
+- [x] Crawl from `/` (linkinator, recursive, re-run after round 2): 850 distinct pages, 0 broken links: 90 index pages (1 + 3 + 10 + 76), 188 lessons, 188 × esercizi/formulario/flashcards, 8 marketing and legal pages.
 - [x] No `<button>` or `<div onclick>` navigation between content pages.
 - [x] `/wiki`, `/wiki/high_school`, `/wiki/high_school/math`, `/wiki/.../theory`, `/wiki/.../exercises`, `/wiki/university/analisi-2/serie-di-Taylor` all answer 301 to the Italian URL; `/wiki/nope/nope` answers 404.
 - [x] No `sapiens-xi` string in source or build.
 - [x] `rel="canonical"` absolute and self-referencing on every route (from `SITE_URL`).
-- [x] `/robots.txt` 200 `text/plain`; `/sitemap.xml` 200 `application/xml` with 126 URLs (5 static + 3 levels + 10 subjects + 76 chapters + 18 lessons with theory + 13 esercizi + 1 formulario). The crawl reaches 848 pages because the 170 lessons without theory and their empty sub-views are linked but `noindex`, and therefore left out of the sitemap on purpose.
+- [x] `/robots.txt` 200 `text/plain`; `/sitemap.xml` 200 `application/xml` with 129 URLs (8 static + 3 levels + 10 subjects + 76 chapters + 18 lessons with theory + 13 esercizi + 1 formulario). The crawl reaches 850 pages because the 170 lessons without theory and their empty sub-views are linked but `noindex`, and therefore left out of the sitemap on purpose.
 - [x] `/this-does-not-exist` returns a real 404 with the error page.
 - [x] `grep -r 'src="http://'`: 0 hits.
 - [x] Zero KaTeX/TikZ JavaScript or CSS in the route-node closure of `/pricing`, `/faq`, `/contacts`, `/`.
@@ -73,15 +73,58 @@ Ticked items are done in code and verified against the production build. Everyth
 - [x] Light OS theme → light UI; dark OS theme → dark UI (both the inline script and `ThemeProvider` query `dark`).
 - [x] Lighthouse mobile (local preview, simulated throttling): SEO 100 on every page; Accessibility 100 on `/`, subject, lesson, `/pricing`, `/faq`; Performance 94 (`/`), 92 (`/pricing`), 94 (`/faq`), 81 (subject page, LCP 4.2 s), 65 (lesson page, LCP 6.1 s). CLS 0 and TBT ≤ 140 ms everywhere. The two content pages miss the ≥ 90 target locally: the remaining cost is KaTeX (258 KB JS on index pages, plus its fonts on lessons) and the 40 KB global stylesheet. Numbers on Vercel with edge caching, HTTP/2 and compression will differ; re-measure on the deployment.
 
-## Decisions for the owner
+## Decisions for the owner (round 1, now resolved)
 
-- DECISION 1 (paywall). Implemented from the plan config in `src/lib/stripe/config.ts`: Free = theory + formulario, Premium = esercizi, flashcards, AI chat, tutoring. Nothing in the code enforces the gate today (every visitor gets the exercises), so the `isAccessibleForFree: false` markup on esercizi pages describes the published offer, not the current behaviour. Either enforce the gate (`checkFeatureAccess` exists in `$lib/utils/subscription.svelte.ts`) or set `access.exercises = true` on the Free plan; the markup follows the config.
-- DECISION 2 (slugs). Levels use `medie` / `superiori` / `universita`; subjects derive from their title (`matematica`, `fisica`, `analisi-matematica-i`, `fondamenti-di-informatica`); chapters and lessons keep the curated database slugs, normalised to lowercase ASCII (`serie-di-Taylor` → `serie-di-taylor`). The brief asked to slugify chapters and lessons from titles as well; that would turn `Operazioni in \mathbb{N}` into `operazioni-in` (three lessons would share it) and change 168 of 277 slugs into longer forms such as `elementi-fondamentali-punto-retta-piano`. To switch anyway, change `publicSegment()` in `src/lib/seo/slug.ts`; redirects and the sitemap follow.
-- Lessons without theory (170 of 188) are linked and reachable but `noindex`; the same goes for empty esercizi/formulario pages and all flashcards pages. This is deliberate: 170 "Stiamo ancora scrivendo" pages in the index would read as thin content. Each page flips to indexable the moment content is saved in the admin area.
-- `/terms` and `/privacy` exist with one `<h1>`, title, description and only the facts the code proves (services used, plans, trial, cancellation). They are `noindex` until the legal entity, controller identity, retention periods and revision date are added (HTML comments in the files list what is missing).
-- The landing page still shows "300 Studenti Iscritti", a figure carried over from the old page. It is flagged in `src/routes/+page.svelte`; replace it with a real count or remove it.
-- The hardcoded "Prerequisiti: Algebra, Geometria, Trigonometria, Analisi" row shown on every lesson was removed: it was the same four words on every page regardless of the lesson.
-- `import.meta.env.PUBLIC_STRIPE_PRICE_*` in `src/lib/stripe/config.ts` is always `undefined` (Vite only exposes `VITE_`-prefixed variables that way), so checkout cannot find a price id. Pre-existing; use `$env/dynamic/public` or `$env/static/public`.
+The owner answered on 2026-09-03; the outcome of each point is in "Round 2" below.
+
+- DECISION 1 (paywall): enforce it, with an in-place upgrade card instead of a redirect. Done.
+- DECISION 2 (slugs): one readable convention for every node type. Done: every segment derives from the title.
+- Lessons without theory: keep them visible. They were never hidden; they stay linked, reachable and `noindex` until text exists.
+- `/terms` and `/privacy`: rewritten after reading the Lume implementation and the rules for minors. Indexable now; the legal identity fields still need the owner (see Owner actions).
+- "300 Studenti Iscritti": replaced by content counts from the database. Switch to student numbers later (see `ROADMAP.md`).
+- Mobile-first, gamification, short videos, native apps: logged in `ROADMAP.md`.
+
+## Round 2 (2026-09-03): owner decisions applied
+
+### Slugs: one convention for everything
+
+- Every URL segment is the node's title, slugified (`src/lib/seo/slug.ts`): `/materiale/scuola-superiore/matematica/insiemi-e-logica/prime-definizioni`, `/materiale/universita/analisi-matematica-1/limiti/definizione-di-limite-di-funzione`. Rules: LaTeX resolved to text, parentheticals dropped (`Triangoli (classificazione e proprietà)` → `triangoli`), apostrophes become hyphens (`struttura-dell-atomo`), a trailing roman numeral becomes a digit (`analisi-matematica-1`, `fisica-2`), and a blackboard-bold set letter is kept only when the title does not already name the set (`operazioni-in-n`, but `numeri-naturali`). Checked against all 277 nodes: no two siblings share a slug; the longest path is 102 characters.
+- The database `slug` column is now an internal key only (exercise configs, redirects). A URL typed with database slugs still resolves and answers 301 to the canonical one; every `/wiki/...` path still redirects.
+- Renaming a title moves the page. `PATH_ALIASES` in `slug.ts` takes `old path → new path` entries and the hook answers 301 for them (and for their sub-views), so old links keep working after a rename.
+- `medie` / `superiori` / `universita` are gone from URLs (they were never deployed); `levelShort` in `meta.ts` still uses the short forms inside `<title>` only.
+
+### Paywall, enforced
+
+- Auth moved to cookie sessions (`@supabase/ssr`): `hooks.server.js` builds one Supabase client per request and validates the session with Supabase Auth, so server loads and API routes finally see who is asking. Before, the server used one shared client with no cookie access and `locals.user` was always null in production (which is also why `/admin` bounced every login).
+- The subscription lives in `auth.users.app_metadata.subscription` (`plan`, `status`, Stripe ids, `trialUsedAt`), written only by the Stripe webhook with the service role. The old `user_metadata.subscription_plan` was editable by the user through the Supabase client, so it could not gate anything. `$lib/auth/entitlements.ts` is the only place that decides who gets what; `app_metadata.role = 'admin'` bypasses every gate and is required for `/admin`.
+- Exercises (`.../esercizi`): rendered per request (no ISR: `config.isr = false` on that page only), generated only when the plan includes them. Otherwise the page shows the upgrade card over a blurred, inert preview of the start screen. The page stays indexable when a generator exists, with `isAccessibleForFree: false` and `hasPart` on `#esercizi` as before, and Googlebot sees the same HTML as any anonymous visitor.
+- Sapiens AI: `/api/chat` answers 401 without a login and 403 without the Base plan; the sidebar shows the compact upgrade card in both cases. Flashcards have no content yet, so they keep the "in arrivo" screen; the gate is a two-line addition when they exist.
+- The upgrade card (`Paywall.svelte`): the plan that includes the feature, one true sentence about what it does, the other features of that plan, price, "7 giorni gratis, senza carta", one button. Anonymous visitors get the login/registration modal first and the checkout continues on its own; the Stripe success page polls `/api/me` until the webhook has written the plan, refreshes the session and sends the student back to the page they came from. No timers, no fake counters, a plain "Torna alla teoria" link.
+- Checkout fixes on the way: the pricing page sent `plan` while the API read `planId`; success and cancel URLs pointed to `/student/...`, which never existed; the price ids came from `import.meta.env` and were always undefined (now `$env/dynamic/public`); the 7-day trial "senza carta" promised on the pricing page was not configured in Stripe (now `trial_period_days` + `payment_method_collection: 'if_required'`, once per account); the semester toggle charged the monthly price (now optional `PUBLIC_STRIPE_PRICE_*_SEMESTER` ids; the toggle appears only when they exist); `/api/stripe/portal` did not exist (it does now). Duplicate `(student)/subscription/success|cancel` routes were removed.
+- Residual: the exercise generators are client-side JavaScript chunks, so a determined person can fetch and run them with developer tools. Moving generation to an API is the next step if that ever matters.
+
+### Landing counters
+
+- "300 Studenti Iscritti" is gone. The hero shows Materie, Capitoli and Lezioni pubblicate, all from the database; the last one counts lessons with theory text, so it never overstates what exists and grows on every save.
+
+### Legal pages and cookies (from the Lume implementation, adapted to a consumer service used by minors)
+
+- `src/lib/config/legal.ts`: legal identity (name from `PUBLIC_LEGAL_NAME`, address, VAT and privacy email from env, empty fields not rendered), document versions (`LEGAL_VERSIONS`), the list of processors. Lume kept the same things in `src/lib/const/legal.ts` and `legalVersions.ts`.
+- `/privacy`: controller, no-DPO statement with the art. 37 reasoning, a table of data / purpose / legal basis / retention for every processing the code performs, a section on minors (14 years, art. 2-quinquies Codice privacy: a parent creates the account below that age), processors table with transfer safeguards, security, rights with the one-month deadline and the Garante, no automated decisions, versioning.
+- `/terms`: written for consumers, many of them minors, which Lume's B2B terms could not be: age rule at signup, free content without an account, prices and premium features read from the plan config, trial once per account and what happens when it ends, automatic renewal with 30 days' notice on price changes, 14-day right of withdrawal with full refund of the first charge (Lume excluded it, which is lawful only for VAT-registered customers), cancellation from the Stripe portal, content licence, Sapiens AI disclaimer, Pro tutoring hour, availability, liability within art. 1229 c.c., Italian law and the consumer's own court. No EU ODR link: the platform was shut down in July 2025.
+- `/cookie`: the actual cookies and storage (`sb-…-auth-token`, `sapiens-cookie-consent`, `theme` in localStorage), Vercel Analytics without cookies, Stripe on its own domain, a "Gestisci cookie" button.
+- Signup asks for two explicit confirmations (terms and privacy read; at least 14 years old or a parent creating the account) and records the document versions and a timestamp in `user_metadata.legal`. Lume records acceptances in a dedicated table with IP and user agent; that upgrade is in `ROADMAP.md`.
+- Cookie banner (`CookieBanner.svelte`, same shape as Lume's): a floating card at the bottom, Personalizza / Rifiuta / Accetta with equal weight, analytics off by default in the custom view, the choice stored six months in a first-party cookie with the policy version (a refusal too), re-asked on version bump, reopened from the footer link on every page. Improved over Lume: focus moves into the card and back, Escape closes it once a choice exists, `prefers-reduced-motion` is respected, and, the part Lume got wrong, Vercel Analytics and Speed Insights are imported only after consent (`$lib/consent/analytics.ts`); nothing analytics-related is in the HTML before that.
+
+### Verification (production build, `npm run build && npm run preview`)
+
+- [x] Build and the placeholder check pass (277 nodes). svelte-check: 223 errors / 12 warnings, all in pre-existing files (254 at the start of the round; the touched files are clean).
+- [x] New URLs answer 200; database-slug, upper-case and `/wiki` spellings answer 301 to the title-derived path; an unknown segment answers 404.
+- [x] Crawl: 850 pages, 0 broken links.
+- [x] Anonymous request to an esercizi page: one upgrade card, "piano Lite", "7 giorni gratis, senza carta", `inert` preview, `index, follow`, `isAccessibleForFree: false`, `cssSelector: #esercizi`. Theory pages carry no card. `/subscription`, `/home`, `/admin` answer 303 to `/` without a session; `/api/me` returns `{user: null}`; `/api/chat` answers 401; `/api/stripe/checkout` answers 401 with `login_required`.
+- [x] Vercel output: the esercizi route is a plain function; theory, formulario, flashcards and index pages keep the ISR function.
+- [x] `/privacy`, `/terms`, `/cookie`: one `<h1>`, indexable, in the sitemap (129 URLs). No banner markup and no analytics script in the server HTML.
+- [ ] Not verifiable here: a real Stripe checkout and webhook round trip, and Supabase Auth email confirmation. Both need the keys and a deployment (see Owner actions).
 
 ## Deliberately not done
 
@@ -230,10 +273,13 @@ Every level, subject and chapter below has an empty `description` in `content_no
 - [ ] Set `PUBLIC_GSC_VERIFICATION` (Google Search Console HTML-tag token) in Vercel, or drop the verification file into `static/`.
 - [ ] Verify the property in Search Console, submit `https://<domain>/sitemap.xml`, request indexing for `/materiale` and the ten subject pages.
 - [ ] Run the Rich Results Test (https://search.google.com/test/rich-results) on a subject page, a lesson with theory, `/faq` and `/pricing` of the preview deployment.
-- [ ] Enable Web Analytics and Speed Insights in the Vercel project (the code already injects both; the scripts 404 outside Vercel).
-- [ ] Decide DECISION 1 and DECISION 2 above.
-- [ ] Complete `/terms` and `/privacy` (legal entity, controller, retention, revision date), then remove `noindex` from their `<Seo>`.
+- [ ] Enable Web Analytics and Speed Insights in the Vercel project. They load only after a visitor accepts statistics in the cookie banner, so expect lower counts than page views.
+- [ ] Legal identity: set `PUBLIC_LEGAL_NAME` (defaults to "Alessandro Longo"), `PUBLIC_LEGAL_ADDRESS`, `PUBLIC_LEGAL_VAT` and `PUBLIC_PRIVACY_EMAIL` in Vercel, and confirm the legal form. Read `/privacy` and `/terms` once: they state the refund and withdrawal rules the code and the law imply; change the copy if you want different ones.
+- [ ] Supabase: set `app_metadata.role = "admin"` on your own user (Authentication → Users → edit user, "App metadata"): `/admin` now requires it, and `user_metadata.role` no longer counts. Decide whether "Confirm email" stays on for new signups (the modal handles both).
+- [ ] Stripe: create the three monthly prices (and the semester ones, when wanted) and set `PUBLIC_STRIPE_PRICE_LITE|BASE|PRO[_SEMESTER]`; point the webhook at `/api/stripe/webhook` with the events `checkout.session.completed` and `customer.subscription.*`; set `STRIPE_WEBHOOK_SECRET` and `SUPABASE_SERVICE_ROLE_KEY` in Vercel. Then do one test checkout end to end.
+- [ ] `PUBLIC_STRIPE_PRICE_*` were undefined on the live site since the beginning (`import.meta.env`); every paid plan was unbuyable. Fixed in code, but the values must exist in Vercel.
 - [ ] Review the ten subject texts in `src/lib/content/subject-copy.ts` and the ten FAQ answers in `src/routes/(marketing)/faq/+page.svelte`.
 - [ ] Optionally set `PUBLIC_CONTACT_EMAIL` to show an address on `/contacts` (the form works without it and emails the address configured in `api/emails/first-contact`).
-- [ ] Security, unrelated to SEO but found on the way: the signed-in areas listed in `PRIVATE_PATH_PREFIXES` are not protected by `handleAuth`, and `src/lib/supabase.js` uses one shared server-side client for every request. Both predate this work.
+- [x] Security: the signed-in areas are now behind `handleAuth` (`requiresLogin` in `site.ts`), and auth uses a per-request cookie client. The shared anonymous client in `src/lib/supabase.js` is still used for public content reads, which is what it is for.
+- [ ] Watch the Vercel function count: esercizi pages run per request now (one function, cheap), everything else under `/materiale` stays on ISR.
 - [ ] Write the 170 missing lessons (all chapters except six in Scuola superiore / Matematica) and the descriptions below; each becomes indexable automatically.
