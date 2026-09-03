@@ -5,6 +5,7 @@
     import { textSelection } from '$lib/utils/text-selection';
 	import type { Prompt } from '$lib/data/prompts';
 	import { aiSidebar } from '$lib/state/ai-sidebar.svelte.js';
+	import { processTikzWhenVisible } from '$lib/utils/tikzjax';
 
 	import FloatingMenu from './FloatingMenu.svelte';
 	
@@ -77,21 +78,7 @@
 		}
 	}
 	
-	function initializeTikZ() {
-		if (typeof window === 'undefined') return;
-		
-		const tikzjax = (window as any).tikzjax;
-		if (tikzjax && typeof tikzjax.process === 'function') {
-			tikzjax.process();
-		} else {
-			setTimeout(() => {
-				const tikzjaxRetry = (window as any).tikzjax;
-				if (tikzjaxRetry && typeof tikzjaxRetry.process === 'function') {
-					tikzjaxRetry.process();
-				}
-			}, 200);
-		}
-	}
+	let stopTikz: (() => void) | null = null;
 
 	$effect(() => {
 		if (content && containerElement) {
@@ -125,8 +112,9 @@
 				});
 				
 				setTableColumnCounts();
-				
-				initializeTikZ();
+
+				stopTikz?.();
+				stopTikz = processTikzWhenVisible(container as HTMLElement);
 			}, 100);
 		}
 	});

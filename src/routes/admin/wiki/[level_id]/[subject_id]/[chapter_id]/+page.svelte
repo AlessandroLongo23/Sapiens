@@ -48,9 +48,9 @@
 		if (!levelInfo || !subjectData || !chapterData) return [];
 		return [
 			{ label: 'Home', path: '/', icon: Home },
-			{ label: 'Materiale didattico', path: '/wiki', icon: LibraryBig },
-			{ label: levelInfo.name, path: `/wiki/${level_id}`, icon: levelInfo.icon },
-			{ label: subjectData.name, path: `/wiki/${level_id}/${subject_id}`, icon: subjectData.icon },
+			{ label: 'Materiale didattico', path: '/materiale', icon: LibraryBig },
+			{ label: levelInfo.name, path: `/materiale/${level_id}`, icon: levelInfo.icon },
+			{ label: subjectData.name, path: `/materiale/${level_id}/${subject_id}`, icon: subjectData.icon },
 			{ label: chapterData.name, icon: chapterData.icon }
 		];
 	});
@@ -188,7 +188,7 @@
 						nuovi contenuti!
 					</p>
 					<button
-						onclick={() => goto(`/wiki/${level_id}/${subject_id}`)}
+						onclick={() => goto(`/materiale/${level_id}/${subject_id}`)}
 						class="px-6 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 					>
 						Torna ai capitoli
@@ -210,14 +210,14 @@
 				<div class="flex gap-4">
 					{#if level_id && subject_id}
 						<button
-							onclick={() => goto(`/wiki/${level_id}/${subject_id}`)}
+							onclick={() => goto(`/materiale/${level_id}/${subject_id}`)}
 							class="px-6 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-500/25 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium transition-all duration-200"
 						>
 							Torna alla materia
 						</button>
 					{/if}
 					<button
-						onclick={() => goto('/wiki')}
+						onclick={() => goto('/materiale')}
 						class="px-6 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 					>
 						Torna alla home

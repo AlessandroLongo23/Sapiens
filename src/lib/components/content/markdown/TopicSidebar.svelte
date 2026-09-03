@@ -56,7 +56,7 @@
 						<button 
 							class="text-left flex-1 py-1 rounded text-sm transition-colors
 								{isH1(section) ? 'font-semibold' : 'font-medium'} 
-								{activeSection === section.id ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'}"
+								{activeSection === section.id ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}"
 							onclick={() => scrollToSection(section.id)}
 						>
 							<Latex content={section.title} />
@@ -84,7 +84,7 @@
 									<div class="flex items-center">
 										<button 
 											class="text-left flex-1 py-0.5 rounded text-xs font-medium transition-colors
-												{activeSection === subsection.id ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'}"
+												{activeSection === subsection.id ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}"
 											onclick={() => scrollToSection(subsection.id)}
 										>
 											<Latex content={subsection.title} />

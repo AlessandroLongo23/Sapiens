@@ -1,22 +1,23 @@
 <script lang="ts">
-    import { 
+    import {
         Hammer, Sparkles, CheckCircle2, ArrowRight,
         Dumbbell, Zap,
         Layers, Brain,
         Calculator, Sigma,
         ArrowLeft, BookOpen
     } from 'lucide-svelte';
-    import { page } from '$app/stores';
     import NavigationButtons from './NavigationButtons.svelte';
 
     type ContentType = 'theory' | 'exercises' | 'flashcards' | 'formulary';
 
-    let { 
+    let {
         type = 'theory' as ContentType,
         title = undefined,
         description = undefined,
         buttonText = undefined,
-        navigation = undefined
+        navigation = undefined,
+        chapterUrl = '/materiale',
+        theoryUrl = undefined
     } = $props();
 
     let hasRequestedContent = $state(false);
@@ -25,25 +26,19 @@
         hasRequestedContent = true;
     };
 
-    let params = $derived($page.params);
-    
-    let chapterUrl = $derived(`/wiki/${params.level_id}/${params.subject_id}/${params.chapter_id}`);
-    let theoryUrl = $derived(`/wiki/${params.level_id}/${params.subject_id}/${params.chapter_id}/${params.topic_id}/theory`);
-
     let backAction = $derived.by(() => {
-        if (type === 'theory') {
+        if (type === 'theory' || !theoryUrl) {
             return {
                 label: 'Torna al capitolo',
                 url: chapterUrl,
                 icon: ArrowLeft
             };
-        } else {
-            return {
-                label: 'Torna alla teoria',
-                url: theoryUrl,
-                icon: BookOpen
-            };
         }
+        return {
+            label: 'Torna alla teoria',
+            url: theoryUrl,
+            icon: BookOpen
+        };
     });
 
     const config = $derived.by(() => {
@@ -110,49 +105,57 @@
         <div class="relative mb-8">
             <div class={`absolute inset-0 blur-2xl rounded-full opacity-50 transform -translate-y-2 ${config.bgAccent}`}></div>
             <div class="relative bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 p-5 rounded-2xl shadow-sm rotate-3 transition-transform hover:rotate-0 duration-500">
-                <config.MainIcon class={`size-8 ${config.accentColor}`} />
+                <config.MainIcon class={`size-8 ${config.accentColor}`} aria-hidden="true" />
             </div>
             <div class={`absolute -top-3 -right-3 p-2 rounded-xl border border-white/10 -rotate-6 shadow-sm ${config.secondaryAccent} ${config.secondaryText}`}>
-                <config.SecondaryIcon class="size-4" />
+                <config.SecondaryIcon class="size-4" aria-hidden="true" />
             </div>
         </div>
 
         <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-3 tracking-tight">
             {displayTitle}
         </h2>
-        
+
         <p class="text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed max-w-md mx-auto">
             {displayDescription}
         </p>
 
         <div class="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1 w-full max-w-sm mx-auto">
             {#if hasRequestedContent}
-                <div class="flex items-center justify-center gap-2.5 py-3 text-emerald-600 dark:text-emerald-400 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700/50 animate-in zoom-in duration-300">
-                    <CheckCircle2 class="size-5" />
+                <div class="flex items-center justify-center gap-2.5 py-3 text-emerald-600 dark:text-emerald-400 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700/50 animate-in zoom-in duration-300" role="status">
+                    <CheckCircle2 class="size-5" aria-hidden="true" />
                     <span class="font-medium">Messaggio ricevuto!</span>
                 </div>
             {:else}
-                <button 
+                <button
+                    type="button"
                     onclick={handleRequestContent}
-                    class="group w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 hover:bg-white dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-xl border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all duration-200 hover:shadow-sm"
+                    class="group w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-800 hover:bg-white dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-xl border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all duration-200 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500"
                 >
                     <span class="font-medium pl-1">{displayButtonText}</span>
                     <div class={`p-1.5 rounded-lg group-hover:scale-110 transition-transform ${config.bgAccent} ${config.accentColor}`}>
-                        <ArrowRight class="size-4" />
+                        <ArrowRight class="size-4" aria-hidden="true" />
                     </div>
                 </button>
             {/if}
         </div>
-        
-        <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-4 font-medium">
+
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-4 font-medium">
             {#if hasRequestedContent}
                 Daremo priorità a questo contenuto.
             {:else}
                 Clicca per farci sapere che è urgente.
             {/if}
         </p>
-    
+
+        <a
+            href={backAction.url}
+            class="mt-6 inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-crimson-600 dark:hover:text-crimson-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500 rounded"
+        >
+            <backAction.icon class="size-4" aria-hidden="true" />
+            {backAction.label}
+        </a>
     </div>
-    
+
     <NavigationButtons navigation={navigation} />
 </div>

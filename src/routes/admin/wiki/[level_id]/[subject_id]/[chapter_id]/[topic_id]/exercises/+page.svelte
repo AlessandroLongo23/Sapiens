@@ -103,6 +103,6 @@
         bind:isOpen={showSummaryModal}
         correctCount={correctCount}
         totalCount={exercises.length}
-        href={`/wiki/${level_id}/${subject_id}/${chapter_id}/${topic_id}/theory`}
+        href={`/materiale/${level_id}/${subject_id}/${chapter_id}/${topic_id}/theory`}
     />
 {/if}

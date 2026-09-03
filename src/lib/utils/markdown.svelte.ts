@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it';
 import anchor from 'markdown-it-anchor';
+import katex from 'katex';
 
 function protectTikZ(markdown: string) {
 	const tikzPlaceholders: { content: string, index: number }[] = [];
@@ -28,7 +29,7 @@ function restoreTikZ(html: string, tikzPlaceholders: { content: string, index: n
 }
 
 function protectMath(markdown: string) {
-	const placeholders = [];
+	const placeholders: { type: 'display' | 'inline'; content: string }[] = [];
 	
 	let processed = markdown.replace(/\$\$([\s\S]+?)\$\$/g, (match, content) => {
 		const placeholder = `DISPLAY_MATH_PLACEHOLDER_${placeholders.length}`;
@@ -48,21 +49,40 @@ function protectMath(markdown: string) {
 	return { processed, placeholders };
 }
 
+/**
+ * Math is rendered with KaTeX at markdown time, so the server response already
+ * contains the typeset formula (no client-side re-render, readable by crawlers).
+ * The MathML twin is kept for assistive technology; its TeX annotation is
+ * dropped so raw LaTeX never ends up in the page text.
+ */
+function renderMath(tex: string, displayMode: boolean): string {
+	try {
+		return katex
+			.renderToString(tex, { displayMode, throwOnError: false, output: 'htmlAndMathml' })
+			.replace(/<annotation encoding="application\/x-tex">[\s\S]*?<\/annotation>/g, '');
+	} catch (e) {
+		console.error('KaTeX rendering error:', e);
+		return escapeHtml(tex);
+	}
+}
+
+function escapeHtml(value: string): string {
+	return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function restoreMath(html: string, placeholders: { type: 'display' | 'inline', content: string }[]) {
 	let result = html;
-	
-	
+
 	result = result.replace(/DISPLAY_MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
 		const { content } = placeholders[parseInt(index)];
-		return `<div class="katex-display"><span class="katex-equation">${content}</span></div>`;
+		return `<div class="katex-display">${renderMath(content, true)}</div>`;
 	});
-	
-	
+
 	result = result.replace(/MATH_PLACEHOLDER_(\d+)/g, (_, index) => {
 		const { content } = placeholders[parseInt(index)];
-		return `<span class="katex-inline">${content}</span>`;
+		return renderMath(content, false);
 	});
-	
+
 	return result;
 }
 
@@ -260,14 +280,14 @@ export function renderMarkdown(markdownContent: string) {
 	return restoreTikZ(mathRestored, tikzPlaceholders);
 }
 
-export function extractTableOfContents(markdownContent: string) {
+export function extractTableOfContents(markdownContent: string): TocEntry[] {
 	if (!markdownContent) {
 		console.error('extractTableOfContents: Received empty content');
 		return [];
 	}
 	
 	const lines = markdownContent.split(/\r?\n/);
-	const toc = [];
+	const toc: TocEntry[] = [];
 	const headerRegex = /^(#{1,6})\s+(.+)$/;
 	
 	for (let i = 0; i < lines.length; i++) {
@@ -288,6 +308,12 @@ export function extractTableOfContents(markdownContent: string) {
 	return toc;
 }
 
+export interface TocEntry {
+	id: string;
+	title: string;
+	level: number;
+}
+
 export interface ContentSection {
 	id: string;
 	title: string;
@@ -296,7 +322,7 @@ export interface ContentSection {
 	parent?: ContentSection | null;
 }
 
-export function structureTableOfContents(flatToc: ContentSection[]) {
+export function structureTableOfContents(flatToc: TocEntry[]): ContentSection[] {
 	const sections: ContentSection[] = [];
 	let currentSection: ContentSection | null = null;
 	let currentH1Section: ContentSection | null = null;

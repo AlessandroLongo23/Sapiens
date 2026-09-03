@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { supabase } from '$lib/supabase.js';
 	import { X, Mail, Lock, User } from 'lucide-svelte';
+
+	// The Supabase client is loaded when the form is submitted, so every public
+	// page stays free of the auth library until someone actually signs in.
+	const getSupabase = async () => (await import('$lib/supabase.js')).supabase;
 	
 	import FormButton from '$lib/components/ui/forms/FormButton.svelte';
 	import FormInput from '$lib/components/ui/forms/FormInput.svelte';
@@ -29,9 +32,10 @@
 		error = null;
 
 		try {
-			const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({ 
-				email, 
-				password 
+			const supabase = await getSupabase();
+			const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
+				email,
+				password
 			});
 
 			if (authError) throw authError;
@@ -59,7 +63,8 @@
 		error = null;
 
 		try {
-			const { data: { user }, error: authError } = await supabase.auth.signUp({ 
+			const supabase = await getSupabase();
+			const { data: { user }, error: authError } = await supabase.auth.signUp({
 				email,
 				password
 			});

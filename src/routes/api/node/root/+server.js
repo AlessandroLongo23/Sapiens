@@ -1,30 +1,15 @@
-import { error } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
-import supabase from '$lib/supabase';
+import { getFlatNodes } from '$lib/server/content';
 
-export async function GET({ url, locals, params}) {
-    const user = locals.user
-    try {
-        const searchParams = url.searchParams
-        let slug = params.slug
-        let docs = {}
-        let err = {}
-
-        try{
-            const {data, error} = await supabase
-                .from('content_nodes')
-                .select('*')
-                .order('position', {ascending: true})
-            // console.log('query result', data, error)
-            docs = data
-            err = error
-            // console.log('query root', docs)
-        }catch(err){
-            console.log('node id supabase error', err)
-        }
-        return json(docs)
-    } catch (err) {
-        console.log(err)
-        throw error(500, err)
-    }
+/**
+ * Flat list of content nodes without lesson text (titles, slugs, descriptions,
+ * positions, has_theory / has_formulary). Used by the search overlay on pages
+ * that did not load the tree themselves.
+ */
+export async function GET({ setHeaders }) {
+    const nodes = await getFlatNodes();
+    setHeaders({
+        'Cache-Control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600'
+    });
+    return json(nodes);
 }

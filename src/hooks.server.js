@@ -1,6 +1,28 @@
-import { redirect, error } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import supabase from '$lib/supabase'
+import { getContentTree } from '$lib/server/content'
+import { oldWikiPathToNew } from '$lib/seo/slug'
+import { isPrivatePath } from '$lib/config/site'
+
+/**
+ * Old `/wiki/...` URLs (English level and subject slugs, `/theory` suffix)
+ * are redirected permanently to their `/materiale/...` equivalent. A path that
+ * matches no node falls through and gets a real 404.
+ */
+const handleLegacyWiki = async ({ event, resolve }) => {
+	const { pathname, search } = event.url
+
+	if (pathname === '/wiki' || pathname.startsWith('/wiki/')) {
+		const tree = await getContentTree()
+		const target = oldWikiPathToNew(tree, pathname)
+		if (target) {
+			redirect(301, target + search)
+		}
+	}
+
+	return resolve(event)
+}
 
 const handleSupabase = async ({ event, resolve }) => {
 
@@ -24,10 +46,10 @@ const handleSupabase = async ({ event, resolve }) => {
 			event.locals.user = null
 		} else {
 			event.locals.user = user
-			
+
 			const now = Math.floor(Date.now() / 1000);
 			const sessionExpiresAt = session.expires_at;
-			
+
 			if (sessionExpiresAt && sessionExpiresAt - now < 300) {
 				console.log('Refreshing session token');
 				try {
@@ -61,4 +83,22 @@ const handleAuth = async ({ event, resolve }) => {
 	return resolve(event)
 }
 
-export const handle = sequence(handleSupabase, handleAuth)
+/**
+ * Authenticated, checkout and API routes carry `X-Robots-Tag: noindex` in
+ * addition to the robots meta tag, so responses without HTML are covered too.
+ */
+const handleRobotsHeader = async ({ event, resolve }) => {
+	const response = await resolve(event)
+
+	if (isPrivatePath(event.url.pathname)) {
+		try {
+			response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+		} catch {
+			// Immutable headers (static asset responses): nothing to do.
+		}
+	}
+
+	return response
+}
+
+export const handle = sequence(handleLegacyWiki, handleRobotsHeader, handleSupabase, handleAuth)

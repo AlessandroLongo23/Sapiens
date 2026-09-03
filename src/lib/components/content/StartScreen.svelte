@@ -40,7 +40,7 @@
         }
     };
 
-    let config = $derived(typeConfig[type] || typeConfig.exercise);
+    let config = $derived(typeConfig[type as ExerciseType] || typeConfig.exercise);
     let Icon = $derived(config.icon);
 </script>
 
@@ -54,9 +54,9 @@
             <Icon class="w-10 h-10 {config.color}" strokeWidth={2.5} />
         </div>
 
-        <h1 class="text-3xl font-bold text-zinc-900 dark:text-white mb-3 tracking-tight">
+        <h2 class="text-3xl font-bold text-zinc-900 dark:text-white mb-3 tracking-tight">
             <Latex content={title} />
-        </h1>
+        </h2>
 
         <p class="text-zinc-500 dark:text-zinc-400 mb-8 leading-relaxed">
             {description}

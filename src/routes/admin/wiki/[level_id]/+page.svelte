@@ -41,7 +41,7 @@
 		if (!levelInfo) return [];
 		return [
 			{ label: 'Home', path: '/', icon: Home },
-			{ label: 'Materiale didattico', path: '/wiki', icon: LibraryBig },
+			{ label: 'Materiale didattico', path: '/materiale', icon: LibraryBig },
 			{ label: levelInfo.name, icon: levelInfo.icon }
 		];
 	});
@@ -169,7 +169,7 @@
 					Il livello che stai cercando non esiste o non è disponibile.
 				</p>
 				<button
-					onclick={() => goto('/wiki')}
+					onclick={() => goto('/materiale')}
 					class="px-6 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
 				>
 					Torna alla home

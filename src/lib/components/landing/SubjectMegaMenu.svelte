@@ -1,61 +1,64 @@
 <script lang="ts">
 	import { fly, fade } from 'svelte/transition';
 	import type { ContentNode } from '$lib/utils/tree';
+	import { nodePath, plainTitle } from '$lib/seo/slug';
 	import { Plus } from 'lucide-svelte';
 
-	import Latex from '$lib/components/ui/Latex.svelte';
-
 	let {
-		tree,
 		level = $bindable<ContentNode | null>(),
 		columnsCount = 3,
 		topicsPerChapter = 3
 	} = $props();
-	
+
 	// Subjects are children of a level node
 	let subjects = $derived(level?.children || []);
 	let selectedSubject = $state<ContentNode | null>(null);
-	
+
 	// Auto-select first subject when level changes
 	$effect(() => {
 		selectedSubject = subjects.length > 0 ? subjects[0] : null;
 	});
-	
+
 	function handleSubjectHover(subject: ContentNode): void {
 		selectedSubject = subject;
 	}
+
+	function close(): void {
+		level = null;
+	}
 </script>
 
+{#if level}
 <div
 	class="w-full max-h-[80vh] overflow-hidden bg-white dark:bg-zinc-900 border-b border-t border-zinc-500/25 shadow-lg pointer-events-auto"
-	role="menu"
-	tabindex="-1"
+	aria-label="Materie di {level.title}"
 	in:fly={{ y: -200, duration: 250, opacity: 0 }}
 	out:fade={{ duration: 150 }}
 >
 	<div class="px-8 py-5 border-b border-zinc-500/25 bg-zinc-50 dark:bg-zinc-800/50">
 		<div class="mx-auto flex items-center gap-3">
-			<h3 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-				{level?.title}
-			</h3>
+			<p class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+				{level.title}
+			</p>
 		</div>
 	</div>
-	
+
 	<div class="mx-auto flex min-h-[400px] overflow-hidden">
 		<div class="w-1/6 border-r border-zinc-500/25 bg-zinc-50/50 dark:bg-zinc-800/30">
-			{#each subjects as subject}
+			{#each subjects as subject (subject.id)}
 				<a
-					href={`/wiki/${level?.slug}/${subject.slug}`}
-					onclick={() => level = null}
+					href={nodePath([level, subject])}
+					onclick={close}
 					onmouseenter={() => handleSubjectHover(subject)}
+					onfocus={() => handleSubjectHover(subject)}
 					class="
 						w-full flex items-center gap-2 text-left px-6 py-4 text-base font-medium transition-all duration-200
 						text-zinc-700 dark:text-zinc-300 hover:text-crimson-500 dark:hover:text-crimson-400
-						hover:bg-white dark:hover:bg-zinc-800 
+						hover:bg-white dark:hover:bg-zinc-800
 							border-l-3
 						{
-							selectedSubject?.id === subject.id ? 
-								'bg-white dark:bg-zinc-800 border-crimson-500 dark:border-crimson-400 text-crimson-500 dark:text-crimson-400' : 
+							selectedSubject?.id === subject.id ?
+								'bg-white dark:bg-zinc-800 border-crimson-500 dark:border-crimson-400 text-crimson-500 dark:text-crimson-400' :
 								'border-transparent'
 						}
 					"
@@ -64,50 +67,50 @@
 				</a>
 			{/each}
 		</div>
-		
+
 		<div class="flex-1 p-8 overflow-y-auto h-full">
 			{#if selectedSubject}
 				{@const chapters = selectedSubject.children || []}
 				<div class="gap-6 h-full" style="column-count: {columnsCount}; column-gap: 1.5rem; width: 100%;">
-					{#each chapters as chapter, index}
+					{#each chapters as chapter, index (chapter.id)}
 						{@const topics = chapter.children || []}
 						<div class="flex flex-col gap-4 mb-8" style="break-inside: avoid;">
 							<a
-								href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}`}
-								onclick={() => level = null}
+								href={nodePath([level, selectedSubject, chapter])}
+								onclick={close}
 								class="w-full flex items-center gap-2 text-left px-0 text-zinc-900 dark:text-zinc-100 transition-all duration-200 relative group"
 							>
-								<Latex content={`${index + 1}. ${chapter.title}`} class="font-semibold line-clamp-1" />
-								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-crimson-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full"></span>
+								<span class="font-semibold line-clamp-1">{index + 1}. {plainTitle(chapter.title)}</span>
+								<span class="absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 bg-crimson-500 rounded-full transition-all duration-200 opacity-0 w-0 group-hover:opacity-100 group-hover:w-full" aria-hidden="true"></span>
 							</a>
 
 							<div class="flex flex-col gap-1.5">
-								{#each topics.slice(0, topicsPerChapter) as topic}
+								{#each topics.slice(0, topicsPerChapter) as topic (topic.id)}
 									<a
-										href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}/${topic.slug}/theory`}
-										onclick={() => level = null}
+										href={nodePath([level, selectedSubject, chapter, topic])}
+										onclick={close}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-200 group relative cursor-pointer"
 									>
-										<Latex content={topic.title} class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1" />
+										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1">{plainTitle(topic.title)}</span>
 									</a>
 								{/each}
 
 								{#if topics.length == topicsPerChapter + 1}
 									{@const topic = topics[topicsPerChapter]}
 									<a
-										href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}/${topic.slug}/theory`}
-										onclick={() => level = null}
+										href={nodePath([level, selectedSubject, chapter, topic])}
+										onclick={close}
 										class="w-full text-left px-3 ps-0 hover:ps-3 py-1.5 rounded-lg text-sm  hover:bg-zinc-100 dark:hover:bg-zinc-800  transition-all duration-200 group relative"
 									>
-										<Latex content={topic.title} class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1" />
+										<span class="text-zinc-600 dark:text-zinc-400 group-hover:text-crimson-500 dark:group-hover:text-crimson-400 line-clamp-1">{plainTitle(topic.title)}</span>
 									</a>
 								{:else if topics.length > topicsPerChapter + 1}
 									<a
-										href={`/wiki/${level?.slug}/${selectedSubject.slug}/${chapter.slug}`}
-										onclick={() => level = null}
+										href={nodePath([level, selectedSubject, chapter])}
+										onclick={close}
 										class="w-full flex items-center text-left py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-500 hover:text-crimson-500 dark:hover:text-crimson-400 transition-all duration-200"
 									>
-										<Plus class="size-3" />
+										<Plus class="size-3" aria-hidden="true" />
 										<span>{topics.length - topicsPerChapter} lezioni</span>
 									</a>
 								{/if}
@@ -119,3 +122,4 @@
 		</div>
 	</div>
 </div>
+{/if}

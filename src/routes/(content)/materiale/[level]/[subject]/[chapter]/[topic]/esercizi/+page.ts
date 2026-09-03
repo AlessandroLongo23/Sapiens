@@ -5,33 +5,34 @@ import type { Exercise } from '$lib/exercises/abstract.svelte.js';
 const exerciseModulesJs = import.meta.glob('/src/lib/exercises/*.svelte.js');
 const exerciseModulesTs = import.meta.glob('/src/lib/exercises/*.svelte.ts');
 
+/** @type {import('./$types').PageLoad} */
 export async function load({ parent }) {
-	const { node, pathSegments } = await parent();
-	
-	const configPath = pathSegments.map((n: { slug: string }) => n.slug).join('/');
-	const topicSlug = node.slug;
+	const { node, dbPath } = await parent();
 
+	if (node.type !== 'topic') {
+		throw error(404, 'Pagina non trovata.');
+	}
+
+	const topicSlug = node.slug;
 	const modulePathJs = `/src/lib/exercises/${topicSlug}.svelte.js`;
 	const modulePathTs = `/src/lib/exercises/${topicSlug}.svelte.ts`;
 
 	try {
 		const moduleImporterJs = exerciseModulesJs[modulePathJs];
 		const moduleImporterTs = exerciseModulesTs[modulePathTs];
-		
+
 		if (!moduleImporterJs && !moduleImporterTs) {
-			console.warn(`Exercise module not found for topic: ${topicSlug}`);
 			return { exercises: [] };
 		}
-		
-		const exerciseModule = moduleImporterJs ? await moduleImporterJs() : await moduleImporterTs();
 
-		const topicConfig: TopicConfig = configs[configPath];
+		const exerciseModule = (moduleImporterJs ? await moduleImporterJs() : await moduleImporterTs()) as Record<string, any>;
+
+		const topicConfig: TopicConfig = configs[dbPath];
 		if (!topicConfig) {
-			console.warn(`No exercise configuration found for ${configPath}`);
 			return { exercises: [] };
 		}
 
-		let exercises: Exercise[] = [];
+		const exercises: Exercise[] = [];
 		for (const config of Object.values(topicConfig)) {
 			const { generator, count, args } = config;
 			const generatorInstance = exerciseModule[generator];
@@ -45,7 +46,7 @@ export async function load({ parent }) {
 				exercises.push(instance);
 			}
 		}
-		
+
 		exercises.shuffle();
 
 		return { exercises };

@@ -20,7 +20,7 @@
 
     let breadcrumbItems = $derived([
         { label: 'Home', path: '/', icon: Home },
-        { label: 'Materiale didattico', path: '/wiki', icon: LibraryBig }
+        { label: 'Materiale didattico', path: '/materiale', icon: LibraryBig }
     ]);
 </script>
 
