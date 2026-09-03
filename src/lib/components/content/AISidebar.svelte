@@ -1,8 +1,18 @@
 <script lang="ts">
     import { Send, Bot, Loader2, Sparkles, X, Trash2, MessageSquare } from 'lucide-svelte';
     import { tick } from 'svelte';
+    import { page } from '$app/state';
     import { aiSidebar, type Message } from '$lib/state/ai-sidebar.svelte.js';
+    import { authState } from '$lib/state/auth.svelte';
+    import { hasFeature } from '$lib/auth/entitlements';
+    import { Features } from '$lib/stripe/config';
     import MarkdownMessage from '$lib/components/ui/MarkdownMessage.svelte';
+    import Paywall from '$lib/components/subscription/Paywall.svelte';
+
+    // The chat is part of the paid plans. The server decides for real
+    // (/api/chat answers 401/403); this only chooses what to show.
+    let apiRefused = $state(false);
+    let locked = $derived(apiRefused || !hasFeature(authState.user, Features.AI_CHAT));
 
     let chatContainer = $state<HTMLElement | null>(null);
     let inputElement = $state<HTMLTextAreaElement | null>(null);
@@ -76,6 +86,11 @@
                 body: JSON.stringify({ messages: apiMessages })
             });
 
+            if (response.status === 401 || response.status === 403) {
+                apiRefused = true;
+                aiSidebar.clearMessages();
+                return;
+            }
             if (!response.ok) {
                 throw new Error('Errore nella risposta del server');
             }
@@ -138,6 +153,18 @@
         {/if}
     </div>
 
+    {#if !authState.ready}
+        <div class="flex-1" aria-busy="true"></div>
+    {:else if locked}
+        <div class="flex-1 overflow-y-auto">
+            <Paywall
+                feature={Features.AI_CHAT}
+                returnTo={page.url.pathname}
+                benefit="Seleziona un passaggio della lezione e chiedi una spiegazione diversa, un esempio o un approfondimento, subito."
+                compact
+            />
+        </div>
+    {:else}
     <!-- Chat Container -->
     <div
         bind:this={chatContainer}
@@ -246,4 +273,5 @@
             </button>
         </div>
     </div>
+    {/if}
 </div>

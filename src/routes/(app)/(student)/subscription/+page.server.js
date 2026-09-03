@@ -1,21 +1,9 @@
-export const load = async ({ locals: { user }, parent }) => {
-	await parent();
-	
-	if (!user) {
-		return {
-			subscription: null
-		};
-	}
+import { subscriptionOf } from '$lib/auth/entitlements';
 
-	// In a real app, you would fetch this from your database
-	// For now, we'll use mock data
-	const subscription = {
-		plan: user.user_metadata?.subscription_plan || 'free',
-		status: user.user_metadata?.subscription_status || 'active'
-	};
-
+/** @type {import('./$types').PageServerLoad} */
+export const load = async ({ locals }) => {
+	const { user } = await locals.safeGetSession();
 	return {
-		subscription
+		subscription: user ? subscriptionOf(user) : null
 	};
 };
-

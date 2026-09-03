@@ -1,4 +1,14 @@
 import { MegaphoneOff, BookOpen, Pencil, Zap, Sparkles, Users } from 'lucide-svelte';
+import { env } from '$env/dynamic/public';
+
+/** Days of free trial on a first paid subscription (no card required). */
+export const TRIAL_DAYS = 7;
+
+/** Months paid for a six-month subscription (the sixth is free). */
+export const SEMESTER_MONTHS_CHARGED = 5;
+
+/** Stripe price ids come from the environment; a plan without one cannot be bought. */
+const priceId = (name: string): string | null => (env as Record<string, string | undefined>)[name] || null;
 
 export enum Currency {
 	EURO = 'EUR',
@@ -12,7 +22,10 @@ export interface SubscriptionPlan {
 	price: number;
 	currency: Currency;
 	interval: string;
+	/** Monthly price id. */
 	stripePriceId: string | null;
+	/** Six-month price id; the semester option is offered only when set. */
+	stripePriceIdSemester: string | null;
 	access: Record<Features, boolean>;
 	tutoring_hours: number;
 	popular: boolean;
@@ -69,6 +82,7 @@ export const SUBSCRIPTION_PLANS = {
 		currency: Currency.EURO,
 		interval: 'month',
 		stripePriceId: null,
+		stripePriceIdSemester: null,
 		access: {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: false,
@@ -86,7 +100,8 @@ export const SUBSCRIPTION_PLANS = {
 		price: 4.99,
 		currency: Currency.EURO,
 		interval: 'month',
-		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_LITE,
+		stripePriceId: priceId('PUBLIC_STRIPE_PRICE_LITE'),
+		stripePriceIdSemester: priceId('PUBLIC_STRIPE_PRICE_LITE_SEMESTER'),
 		access: {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: true,
@@ -104,7 +119,8 @@ export const SUBSCRIPTION_PLANS = {
 		price: 19.99,
 		currency: Currency.EURO,
 		interval: 'month',
-		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_BASE,
+		stripePriceId: priceId('PUBLIC_STRIPE_PRICE_BASE'),
+		stripePriceIdSemester: priceId('PUBLIC_STRIPE_PRICE_BASE_SEMESTER'),
 		access: {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: true,
@@ -122,7 +138,8 @@ export const SUBSCRIPTION_PLANS = {
 		price: 59.99,
 		currency: Currency.EURO,
 		interval: 'month',
-		stripePriceId: import.meta.env.PUBLIC_STRIPE_PRICE_PRO,
+		stripePriceId: priceId('PUBLIC_STRIPE_PRICE_PRO'),
+		stripePriceIdSemester: priceId('PUBLIC_STRIPE_PRICE_PRO_SEMESTER'),
 		access: {
 			[Features.THEORY]: true,
 			[Features.REMOVE_ADS]: true,
@@ -147,6 +164,16 @@ export function getPlanById(planId: string): SubscriptionPlan {
 export function canAccessFeature(userPlan: string, feature: Features) {
 	const plan = getPlanById(userPlan);
 	return plan?.access?.[feature] || false;
+}
+
+/** The plan a Stripe price id belongs to, or null for an unknown price. */
+export function getPlanByPriceId(priceId: string | null | undefined): SubscriptionPlan | null {
+	if (!priceId) return null;
+	return (
+		Object.values(SUBSCRIPTION_PLANS).find(
+			(plan) => plan.stripePriceId === priceId || plan.stripePriceIdSemester === priceId
+		) ?? null
+	);
 }
 
 export function formatPrice(price: number, currency: Currency = Currency.EURO) {

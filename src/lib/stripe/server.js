@@ -7,7 +7,13 @@ export const stripe = new Stripe(STRIPE_SECRET_KEY, {
 });
 
 /**
- * Create a checkout session for a subscription
+ * Create a checkout session for a subscription.
+ *
+ * With `trialDays` > 0 the card is not collected (`payment_method_collection:
+ * 'if_required'`): the trial simply ends if no card is added, matching the
+ * "senza carta di credito" promise on the pricing page. `subscriptionMetadata`
+ * travels on the subscription object, so every later webhook event carries
+ * the user id and plan without a lookup.
  */
 export async function createCheckoutSession({
 	priceId,
@@ -15,11 +21,12 @@ export async function createCheckoutSession({
 	customerEmail,
 	successUrl,
 	cancelUrl,
-	metadata = {}
+	metadata = {},
+	subscriptionMetadata = {},
+	trialDays = 0
 }) {
 	const sessionConfig = {
 		mode: 'subscription',
-		payment_method_types: ['card'],
 		line_items: [
 			{
 				price: priceId,
@@ -28,8 +35,21 @@ export async function createCheckoutSession({
 		],
 		success_url: successUrl,
 		cancel_url: cancelUrl,
-		metadata
+		metadata,
+		subscription_data: {
+			metadata: subscriptionMetadata
+		},
+		allow_promotion_codes: true,
+		locale: 'it'
 	};
+
+	if (trialDays > 0) {
+		sessionConfig.subscription_data.trial_period_days = trialDays;
+		sessionConfig.subscription_data.trial_settings = {
+			end_behavior: { missing_payment_method: 'cancel' }
+		};
+		sessionConfig.payment_method_collection = 'if_required';
+	}
 
 	// Use existing customer or create new one
 	if (customerId) {
@@ -37,9 +57,6 @@ export async function createCheckoutSession({
 	} else if (customerEmail) {
 		sessionConfig.customer_email = customerEmail;
 	}
-
-	// Allow promotional codes
-	sessionConfig.allow_promotion_codes = true;
 
 	return await stripe.checkout.sessions.create(sessionConfig);
 }
@@ -55,20 +72,23 @@ export async function createPortalSession(customerId, returnUrl) {
 }
 
 /**
- * Get or create a Stripe customer
+ * Get or create a Stripe customer. The user id is kept in the customer's
+ * metadata so any Stripe object can be traced back to the account.
  */
 export async function getOrCreateCustomer(email, metadata = {}) {
-	// Check if customer already exists
 	const existingCustomers = await stripe.customers.list({
 		email: email,
 		limit: 1
 	});
 
 	if (existingCustomers.data.length > 0) {
-		return existingCustomers.data[0];
+		const customer = existingCustomers.data[0];
+		if (metadata.userId && customer.metadata?.userId !== metadata.userId) {
+			return await stripe.customers.update(customer.id, { metadata: { ...customer.metadata, ...metadata } });
+		}
+		return customer;
 	}
 
-	// Create new customer
 	return await stripe.customers.create({
 		email,
 		metadata
@@ -101,4 +121,3 @@ export async function cancelSubscription(subscriptionId) {
 export async function updateSubscription(subscriptionId, params) {
 	return await stripe.subscriptions.update(subscriptionId, params);
 }
-

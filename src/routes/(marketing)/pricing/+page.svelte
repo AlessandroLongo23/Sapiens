@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '$lib/stripe/config';
+	import { SUBSCRIPTION_PLANS, getPlanById, TRIAL_DAYS, type SubscriptionPlan } from '$lib/stripe/config';
 	import { BillingOption } from '$lib/data/billing-options';
 	import { Loader2 } from 'lucide-svelte';
 	import { SITE_NAME } from '$lib/config/site';
 	import { productOffersJsonLd } from '$lib/seo/jsonld';
+	import { requestCheckout } from '$lib/subscription/checkout';
 
 	import Seo from '$lib/components/seo/Seo.svelte';
 	import SubscriptionPlans from '$lib/components/subscription/SubscriptionPlans.svelte';
@@ -11,12 +12,18 @@
 	import BillingToggle from '$lib/components/ui/BillingToggle.svelte';
 
 	let { data } = $props();
-	let { user, subscription } = $derived(data);
 
 	let isLoading = $state<boolean>(false);
 	let error = $state<string | null>(null);
 	let billingPeriod = $state<BillingOption>(BillingOption.MONTHLY);
-	let currentPlan = $state<SubscriptionPlan>(SUBSCRIPTION_PLANS.FREE);
+	let currentPlan = $derived<SubscriptionPlan>(
+		data.subscription && ['active', 'trialing'].includes(data.subscription.status)
+			? getPlanById(data.subscription.plan)
+			: SUBSCRIPTION_PLANS.FREE
+	);
+
+	// The six-month option exists only once its Stripe prices are configured.
+	const semesterAvailable = Object.values(SUBSCRIPTION_PLANS).some((p) => p.stripePriceIdSemester);
 
 	// Structured data reflects the published monthly prices of the paid plans only.
 	const offers = productOffersJsonLd(
@@ -30,33 +37,21 @@
 		'/pricing'
 	);
 
-	const description =
-		'Piano Free con teoria e formulari gratis. Piani Lite, Base e Pro con esercizi interattivi, flashcard, chat con Sapiens AI e lezioni individuali. Prova gratuita di 7 giorni, disdici quando vuoi.';
+	const description = `Piano Free con teoria e formulari gratis. Piani Lite, Base e Pro con esercizi interattivi, flashcard, chat con Sapiens AI e lezioni individuali. Prova gratuita di ${TRIAL_DAYS} giorni, disdici quando vuoi.`;
 
 	async function handleSelectPlan(plan: SubscriptionPlan) {
 		isLoading = true;
 		error = null;
 
 		try {
-			const response = await fetch('/api/stripe/checkout', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ plan: plan.id })
+			await requestCheckout({
+				planId: plan.id,
+				billing: billingPeriod === BillingOption.SEMESTER ? 'semester' : 'monthly',
+				returnTo: '/subscription'
 			});
-
-			if (!response.ok) {
-				const data = await response.json();
-				throw new Error(data.error || 'Errore durante la creazione della sessione');
-			}
-
-			const { sessionId, url } = await response.json();
-
-			window.location.href = url;
 		} catch (err) {
-			console.error('Error selecting plan:', err);
-			error = err.message;
+			error = err instanceof Error ? err.message : 'Errore durante la creazione della sessione';
+		} finally {
 			isLoading = false;
 		}
 	}
@@ -78,13 +73,17 @@
 			</h1>
 			<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
 				Inizia gratis e passa a Premium quando vuoi. Puoi annullare in qualsiasi momento.
-				<br>
-				<span class="text-base text-crimson-500 dark:text-crimson-400">
-					Con l'abbonamento semestrale, il primo mese te lo regaliamo!
-				</span>
+				{#if semesterAvailable}
+					<br>
+					<span class="text-base text-crimson-500 dark:text-crimson-400">
+						Con l'abbonamento semestrale, il primo mese te lo regaliamo!
+					</span>
+				{/if}
 			</p>
 
-			<BillingToggle value={billingPeriod} onChange={(value) => billingPeriod = value} />
+			{#if semesterAvailable}
+				<BillingToggle value={billingPeriod} onChange={(value) => billingPeriod = value} />
+			{/if}
 		</div>
 
 		<SubscriptionPlans
@@ -95,7 +94,7 @@
 
 		<div class="text-center">
 			<p class="text-sm text-zinc-600 dark:text-zinc-400">
-				Prova gratuita di 7 giorni per tutti i piani Premium. Non serve la carta di credito.
+				Prova gratuita di {TRIAL_DAYS} giorni per tutti i piani Premium. Non serve la carta di credito.
 			</p>
 		</div>
 	</div>
@@ -109,13 +108,7 @@
 			</h2>
 			<p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
 				Tutti i dettagli a colpo d'occhio per aiutarti a scegliere il piano perfetto per le tue esigenze.
-				<br>
-				<span class="text-base text-crimson-500 dark:text-crimson-400">
-					Con l'abbonamento semestrale, il primo mese te lo regaliamo!
-				</span>
 			</p>
-
-			<BillingToggle value={billingPeriod} onChange={(value) => billingPeriod = value} />
 		</div>
 
 		<div class="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-500/25 shadow-lg overflow-hidden p-6">

@@ -1,35 +1,19 @@
-import { redirect } from '@sveltejs/kit';
+import { json, redirect } from '@sveltejs/kit';
 
-export const POST = async ({ locals: { supabase }, request, cookies }) => {
-    const { error } = await supabase.auth.signOut({ 
-        scope: 'local'
-    });
-    
-    cookies.delete('supabase-auth-token', { path: '/' });
-    
-    if (error) {
-        const acceptHeader = request.headers.get('Accept') || '';
-        const wantsJson = acceptHeader.includes('application/json');
-        
-        if (wantsJson) {
-            return new Response(JSON.stringify({ error: error.message, redirectTo: '/' }), {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-        
-        throw redirect(303, '/');
-    }
+/** Signs out and clears the auth cookies (the per-request client removes them). */
 
-    const acceptHeader = request.headers.get('Accept') || '';
-    const wantsJson = acceptHeader.includes('application/json');
-    
-    if (wantsJson) {
-        return new Response(JSON.stringify({ success: true, redirectTo: '/' }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
-    
-    throw redirect(303, '/');
-}
+/** @type {import('./$types').RequestHandler} */
+export const POST = async ({ locals: { supabase }, request }) => {
+	const { error } = await supabase.auth.signOut({ scope: 'local' });
+
+	const wantsJson = (request.headers.get('Accept') || '').includes('application/json');
+
+	if (error) {
+		console.error('logout failed:', error.message);
+		if (wantsJson) return json({ error: error.message, redirectTo: '/' }, { status: 500 });
+		throw redirect(303, '/');
+	}
+
+	if (wantsJson) return json({ success: true, redirectTo: '/' });
+	throw redirect(303, '/');
+};

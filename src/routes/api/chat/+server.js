@@ -1,16 +1,26 @@
 import { json } from '@sveltejs/kit';
 import OpenAI from 'openai';
 import { OPENAI_API_KEY } from '$env/static/private';
+import { Features } from '$lib/stripe/config.js';
+import { hasFeature, requiredPlanFor } from '$lib/auth/entitlements';
 
 const openai = new OpenAI({
 	apiKey: OPENAI_API_KEY
 });
 
 /** @type {import('./$types').RequestHandler} */
-export async function POST({ request, locals: { user } }) {
-	// Check if user is authenticated
+export async function POST({ request, locals }) {
+	const { user } = await locals.safeGetSession();
 	if (!user) {
-		return json({ error: 'Non autenticato' }, { status: 401 });
+		return json({ error: 'Accedi per usare Sapiens AI.', code: 'login_required' }, { status: 401 });
+	}
+
+	// The chat is part of the paid plans (see $lib/stripe/config).
+	if (!hasFeature(user, Features.AI_CHAT)) {
+		return json(
+			{ error: 'Sapiens AI è incluso nei piani a pagamento.', code: 'upgrade_required', requiredPlan: requiredPlanFor(Features.AI_CHAT).id },
+			{ status: 403 }
+		);
 	}
 
 	try {

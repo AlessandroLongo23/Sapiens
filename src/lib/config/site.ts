@@ -65,6 +65,18 @@ export function isPrivatePath(pathname: string): boolean {
 	return PRIVATE_PATH_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
 }
 
+/**
+ * Areas that need a signed-in user (the hook redirects anonymous visitors to
+ * `/`). API routes and the checkout result pages handle their own state.
+ */
+export const AUTH_REQUIRED_PREFIXES = PRIVATE_PATH_PREFIXES.filter(
+	(p) => p !== '/api' && !p.startsWith('/pricing/')
+);
+
+export function requiresLogin(pathname: string): boolean {
+	return AUTH_REQUIRED_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
+}
+
 export function absoluteUrl(path: string): string {
 	if (/^https?:\/\//.test(path)) return path;
 	return SITE_URL + (path.startsWith('/') ? path : '/' + path);

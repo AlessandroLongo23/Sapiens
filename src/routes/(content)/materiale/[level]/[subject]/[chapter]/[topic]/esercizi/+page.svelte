@@ -15,14 +15,15 @@
 	import MathRenderer from '$lib/components/content/markdown/MathRenderer.svelte';
 	import ContentComingSoon from '$lib/components/content/ContentComingSoon.svelte';
 	import StartScreen from '$lib/components/content/StartScreen.svelte';
+	import Paywall from '$lib/components/subscription/Paywall.svelte';
 
 	let { data } = $props();
-	const { exercises, node, ancestors, paths, parentLink, navigation } = data;
+	const { exercises, available, locked, node, ancestors, paths, parentLink, navigation } = data;
 
 	let hasStarted = $state(false);
 	let currentExerciseIndex = $state(0);
 	let progressStates = $state<ProgressState[]>(exercises ? Array(exercises.length).fill(ProgressState.UNANSWERED) : []);
-	let selectedAnswer = $state(null);
+	let selectedAnswer = $state<Answer | null>(null);
 	let isAnswering = $state(false);
 	let showSummaryModal = $state(false);
 
@@ -36,7 +37,7 @@
 	});
 
 	let currentExercise = $derived(exercises && exercises.length > 0 ? exercises[Math.round($questionNumber)] : null);
-	let estimatedTime = $derived(exercises ? `${Math.max(5, Math.ceil(exercises.length * 1.5))} min` : "5 min");
+	let estimatedTime = $derived(exercises && exercises.length ? `${Math.max(5, Math.ceil(exercises.length * 1.5))} min` : '10 min');
 
 	function handleAnswer(answer: Answer): void {
 		if (isAnswering) return;
@@ -67,16 +68,15 @@
 
 	let correctCount = $derived(progressStates.filter((s) => s === ProgressState.CORRECT).length);
 
-	const hasExercises = !!exercises && exercises.length > 0;
 	const [, subject, chapter] = ancestors;
 	const title = subviewTitle('Esercizi', node, ancestors);
-	const description = hasExercises
-		? `${exercises.length} esercizi interattivi su ${plainTitle(node.title)} (${plainTitle(chapter?.title)}, ${plainTitle(subject?.title)}) con correzione immediata. Ripassa la teoria e mettiti alla prova.`
+	const description = available
+		? `Esercizi interattivi su ${plainTitle(node.title)} (${plainTitle(chapter?.title)}, ${plainTitle(subject?.title)}) con correzione immediata. Ripassa la teoria e mettiti alla prova.`
 		: `Esercizi su ${plainTitle(node.title)} in preparazione. Nel frattempo leggi la teoria della lezione.`;
 
 	// Exercises are part of the paid plans (see $lib/stripe/config); the markup declares the gated part.
 	const exercisesFree = SUBSCRIPTION_PLANS.FREE.access[Features.EXERCISES];
-	const jsonLd = hasExercises
+	const jsonLd = available
 		? learningResourceJsonLd(node, ancestors, {
 				description,
 				resourceType: 'Esercizi',
@@ -87,10 +87,23 @@
 		: undefined;
 </script>
 
-<Seo {title} {description} path={paths.exercises} noindex={!hasExercises} {jsonLd} />
+<Seo {title} {description} path={paths.exercises} noindex={!available} {jsonLd} />
 
-{#if !hasExercises}
+{#if !available}
 	<ContentComingSoon type="exercises" {navigation} chapterUrl={parentLink.url} theoryUrl={paths.theory} />
+{:else if locked}
+	<div id="esercizi" class="h-full">
+		<Paywall
+			feature={Features.EXERCISES}
+			returnTo={paths.exercises}
+			backUrl={paths.theory}
+			benefit="Esercizi generati ogni volta diversi, con correzione immediata: il modo più rapido per scoprire se la teoria è chiara davvero."
+		>
+			{#snippet preview()}
+				<StartScreen title="Esercizi: {node.title}" questionCount={10} estimatedTime="15 min" onStart={() => {}} type="exercise" />
+			{/snippet}
+		</Paywall>
+	</div>
 {:else if !hasStarted}
 	<StartScreen
 		title="Esercizi: {node.title}"

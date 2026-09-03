@@ -5,8 +5,14 @@ import type { Exercise } from '$lib/exercises/abstract.svelte.js';
 const exerciseModulesJs = import.meta.glob('/src/lib/exercises/*.svelte.js');
 const exerciseModulesTs = import.meta.glob('/src/lib/exercises/*.svelte.ts');
 
+/**
+ * `available`: this lesson has an exercise generator.
+ * `locked`: it has one, but the visitor's plan does not include exercises;
+ * nothing is generated and the generator module is not loaded.
+ */
+
 /** @type {import('./$types').PageLoad} */
-export async function load({ parent }) {
+export async function load({ parent, data }) {
 	const { node, dbPath } = await parent();
 
 	if (node.type !== 'topic') {
@@ -14,23 +20,20 @@ export async function load({ parent }) {
 	}
 
 	const topicSlug = node.slug;
-	const modulePathJs = `/src/lib/exercises/${topicSlug}.svelte.js`;
-	const modulePathTs = `/src/lib/exercises/${topicSlug}.svelte.ts`;
+	const moduleImporterJs = exerciseModulesJs[`/src/lib/exercises/${topicSlug}.svelte.js`];
+	const moduleImporterTs = exerciseModulesTs[`/src/lib/exercises/${topicSlug}.svelte.ts`];
+	const topicConfig: TopicConfig | undefined = configs[dbPath];
+	const available = !!topicConfig && !!(moduleImporterJs || moduleImporterTs);
+
+	if (!available) {
+		return { ...data, exercises: [] as Exercise[], available: false, locked: false };
+	}
+	if (!data.access.exercises) {
+		return { ...data, exercises: [] as Exercise[], available: true, locked: true };
+	}
 
 	try {
-		const moduleImporterJs = exerciseModulesJs[modulePathJs];
-		const moduleImporterTs = exerciseModulesTs[modulePathTs];
-
-		if (!moduleImporterJs && !moduleImporterTs) {
-			return { exercises: [] };
-		}
-
 		const exerciseModule = (moduleImporterJs ? await moduleImporterJs() : await moduleImporterTs()) as Record<string, any>;
-
-		const topicConfig: TopicConfig = configs[dbPath];
-		if (!topicConfig) {
-			return { exercises: [] };
-		}
 
 		const exercises: Exercise[] = [];
 		for (const config of Object.values(topicConfig)) {
@@ -49,9 +52,9 @@ export async function load({ parent }) {
 
 		exercises.shuffle();
 
-		return { exercises };
+		return { ...data, exercises, available: true, locked: false };
 	} catch (e) {
 		console.error(e);
-		return { exercises: [] };
+		return { ...data, exercises: [] as Exercise[], available: false, locked: false };
 	}
 }

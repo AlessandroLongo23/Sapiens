@@ -10,6 +10,7 @@
 	import { searchStore } from '$lib/components/ui/search';
 	import { GSC_VERIFICATION } from '$lib/config/site';
 	import { organizationJsonLd, webSiteJsonLd } from '$lib/seo/jsonld';
+	import { authState } from '$lib/state/auth.svelte';
 
 	import ThemeProvider from '$lib/components/ui/theme/ThemeProvider.svelte';
 	import GrainyBackground from '$lib/components/landing/background/GrainyBackground.svelte';
@@ -17,14 +18,21 @@
 	import Header from '$lib/components/landing/Header.svelte';
 	import SearchOverlay from '$lib/components/ui/SearchOverlay.svelte';
 	import FooterSection from '$lib/components/landing/FooterSection.svelte';
+	import CookieBanner from '$lib/components/consent/CookieBanner.svelte';
 	import JsonLd from '$lib/components/seo/JsonLd.svelte';
 
 	let { children } = $props();
 
 	let headerRef = $state(undefined);
-	let isAuthModalOpen = $state(false);
 
 	const siteJsonLd = [organizationJsonLd(), webSiteJsonLd()];
+
+	// Login state is read from the cookie session after hydration; the auth
+	// library is loaded only when a session cookie exists or a login starts.
+	onMount(() => {
+		if (document.cookie.includes('-auth-token')) authState.init();
+		else authState.ready = true;
+	});
 
 	// The WebGL grain background is decorative and costs seconds of main-thread
 	// time on phones: start it once the page is idle, and never for visitors who
@@ -62,17 +70,12 @@
 		/>
 	{/if}
 
-	<AuthModal
-		bind:isOpen={isAuthModalOpen}
-		onClose={() => isAuthModalOpen = false}
-	/>
+	<AuthModal />
+	<CookieBanner />
 
 	<div class="flex flex-col relative z-10 h-screen">
 		<SearchOverlay />
-		<Header
-			bind:headerRef={headerRef}
-			bind:isAuthModalOpen={isAuthModalOpen}
-		/>
+		<Header bind:headerRef={headerRef} />
 
 		<div class={`flex-1 overflow-y-auto no-scrollbar transition-opacity duration-300 ease-out ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
 			<main id="contenuto" style={`min-height: calc(100vh - ${headerRef?.offsetHeight ?? 0}px);`}>

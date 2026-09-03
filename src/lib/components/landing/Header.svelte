@@ -3,6 +3,7 @@
 	import { searchStore } from '$lib/components/ui/search';
 	import { page } from '$app/state';
 	import { nodePath } from '$lib/seo/slug';
+	import { authState } from '$lib/state/auth.svelte';
 	import type { ContentNode } from '$lib/utils/tree';
 
 	import ThemeToggle from '$lib/components/ui/theme/ThemeToggle.svelte';
@@ -12,13 +13,11 @@
 	import LogoutButton from '$lib/components/ui/buttons/LogoutButton.svelte';
 
 	let {
-		headerRef = $bindable(undefined),
-		isAuthModalOpen = $bindable(false)
+		headerRef = $bindable(undefined)
 	} = $props();
 
 	// The content tree is loaded only by the /materiale routes; other pages ship none of it.
 	let tree = $derived((page.data.tree ?? []) as ContentNode[]);
-	let session = $derived(page.data.session ?? null);
 
 	let hoveredLevel = $state<ContentNode | null>(null);
 
@@ -113,11 +112,8 @@
 				{/if}
 			</div>
 			<ThemeToggle />
-			<LoginButton
-				{session}
-				bind:isAuthModalOpen
-			/>
-			{#if session}
+			<LoginButton />
+			{#if authState.user}
 				<LogoutButton />
 			{/if}
 		</div>

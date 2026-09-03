@@ -1,43 +1,29 @@
-import { canAccessFeature, getPlanById } from '$lib/stripe/config.js';
+import { Features, getPlanById } from '$lib/stripe/config.js';
+import { effectivePlan, hasFeature, subscriptionOf } from '$lib/auth/entitlements';
+import type { User } from '@supabase/supabase-js';
 
 /**
- * Check if user can access a specific feature based on their subscription
+ * Thin wrappers kept for the existing call sites. The rules live in
+ * `$lib/auth/entitlements` and read `app_metadata`, never `user_metadata`.
  */
-export function checkFeatureAccess(user, feature) {
-	const userPlan = user?.user_metadata?.subscription_plan || 'free';
-	const subscriptionStatus = user?.user_metadata?.subscription_status || 'active';
 
-	// If subscription is not active, revert to free plan
-	if (subscriptionStatus !== 'active' && subscriptionStatus !== 'trialing') {
-		return canAccessFeature('free', feature);
-	}
-
-	return canAccessFeature(userPlan, feature);
+export function checkFeatureAccess(user: User | null | undefined, feature: Features | string): boolean {
+	return hasFeature(user, feature as Features);
 }
 
-/**
- * Get user's current subscription plan
- */
-export function getUserPlan(user) {
-	const planId = user?.user_metadata?.subscription_plan || 'free';
-	return getPlanById(planId);
+export function getUserPlan(user: User | null | undefined) {
+	return effectivePlan(user);
 }
 
-/**
- * Check if user needs to upgrade for a feature
- */
-export function needsUpgrade(user, feature) {
+export function needsUpgrade(user: User | null | undefined, feature: Features | string): boolean {
 	return !checkFeatureAccess(user, feature);
 }
 
-/**
- * Get subscription status badge info
- */
-export function getSubscriptionBadge(user) {
-	const plan = getUserPlan(user);
-	const status = user?.user_metadata?.subscription_status || 'active';
+export function getSubscriptionBadge(user: User | null | undefined) {
+	const claim = subscriptionOf(user);
+	const plan = getPlanById(claim.plan);
 
-	const badges = {
+	const badges: Record<string, { text: string; color: string }> = {
 		free: { text: 'Gratuito', color: 'zinc' },
 		lite: { text: 'Lite', color: 'blue' },
 		base: { text: 'Base', color: 'purple' },
@@ -45,9 +31,8 @@ export function getSubscriptionBadge(user) {
 	};
 
 	return {
-		...badges[plan.id],
-		status,
+		...(badges[plan.id] ?? badges.free),
+		status: claim.status,
 		planName: plan.name
 	};
 }
-
