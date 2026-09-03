@@ -73,7 +73,7 @@
 
 	<h2>1. Chi tratta i tuoi dati</h2>
 	<p>
-		Il titolare del trattamento è <strong>{LEGAL.legalName}</strong>{#if LEGAL.address}, {LEGAL.address}{/if}{#if LEGAL.vatNumber}, P. IVA {LEGAL.vatNumber}{/if}.
+		Il titolare del trattamento è <strong>{LEGAL.legalName}</strong>{#if LEGAL.address}, {LEGAL.address}{/if}{#if LEGAL.vatNumber}, {LEGAL.vatNumber}{/if}, con sede in {LEGAL.establishment}.
 		Per qualsiasi richiesta sui dati personali
 		{#if LEGAL.privacyEmail}
 			scrivi a <a href="mailto:{LEGAL.privacyEmail}">{LEGAL.privacyEmail}</a>
@@ -203,8 +203,11 @@
 		<li>revocare il consenso alle statistiche, dal link "Gestisci cookie" in fondo a ogni pagina.</li>
 	</ul>
 	<p>
-		Rispondiamo entro un mese (art. 12.3 GDPR). Se ritieni che il trattamento violi la legge, puoi rivolgerti al
-		<a href={LEGAL.supervisoryAuthority.url} rel="noopener">{LEGAL.supervisoryAuthority.name}</a>.
+		Rispondiamo entro un mese (art. 12.3 GDPR). Se ritieni che il trattamento violi la legge, puoi rivolgerti
+		all'autorità di controllo del paese in cui abiti, per l'Italia il
+		<a href={LEGAL.localAuthority.url} rel="noopener">{LEGAL.localAuthority.name}</a>, oppure all'autorità capofila
+		del paese in cui {SITE_NAME} ha sede, <a href={LEGAL.supervisoryAuthority.url} rel="noopener">{LEGAL.supervisoryAuthority.name}</a>:
+		le due collaborano (artt. 56 e 60-66 GDPR).
 	</p>
 
 	<h2>9. Decisioni automatizzate</h2>

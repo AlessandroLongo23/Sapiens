@@ -23,7 +23,15 @@ export const LEGAL = {
 	digitalConsentAge: 14,
 	/** No DPO: the thresholds of art. 37 GDPR (large-scale monitoring or special categories) are not met. */
 	dpoDesignated: false,
+	/** Country of establishment (the Stripe account and the owner's residence are Danish). */
+	establishment: 'Danimarca',
+	/** Lead supervisory authority, from the country of establishment (one-stop-shop, art. 56 GDPR). */
 	supervisoryAuthority: {
+		name: 'Datatilsynet (autorità danese per la protezione dei dati)',
+		url: 'https://www.datatilsynet.dk'
+	},
+	/** Italian users can also complain to their own authority; the two cooperate (artt. 60-66 GDPR). */
+	localAuthority: {
 		name: 'Garante per la protezione dei dati personali',
 		url: 'https://www.garanteprivacy.it'
 	}

@@ -24,8 +24,8 @@
 
 	<h2>1. Chi offre il servizio</h2>
 	<p>
-		{SITE_NAME} è offerto da <strong>{LEGAL.legalName}</strong>{#if LEGAL.address}, {LEGAL.address}{/if}{#if LEGAL.vatNumber}, P. IVA {LEGAL.vatNumber}{/if}
-		("noi"). Per contattarci usa la pagina <a href="/contacts">Contatti</a>{#if LEGAL.privacyEmail} o scrivi a <a href="mailto:{LEGAL.privacyEmail}">{LEGAL.privacyEmail}</a>{/if}.
+		{SITE_NAME} è offerto da <strong>{LEGAL.legalName}</strong>{#if LEGAL.address}, {LEGAL.address}{/if}{#if LEGAL.vatNumber}, {LEGAL.vatNumber}{/if},
+		con sede in {LEGAL.establishment} ("noi"). Per contattarci usa la pagina <a href="/contacts">Contatti</a>{#if LEGAL.privacyEmail} o scrivi a <a href="mailto:{LEGAL.privacyEmail}">{LEGAL.privacyEmail}</a>{/if}.
 	</p>
 
 	<h2>2. Cosa offre {SITE_NAME}</h2>
@@ -61,7 +61,7 @@
 	</ul>
 
 	<h2>5. Piani Premium, prezzi e prova gratuita</h2>
-	<p>I piani a pagamento e i loro prezzi mensili, IVA inclusa, sono:</p>
+	<p>I piani a pagamento e i loro prezzi mensili sono prezzi finali, senza costi aggiuntivi:</p>
 	<ul>
 		{#each plans as plan (plan.id)}
 			<li>{plan.name}: {formatPrice(plan.price, plan.currency)} al mese</li>
@@ -162,9 +162,10 @@
 
 	<h2>15. Legge applicabile e foro</h2>
 	<p>
-		Queste condizioni sono regolate dalla legge italiana. Per le controversie con i consumatori è competente il
-		giudice del luogo di residenza o domicilio del consumatore (art. 66-bis del Codice del consumo). Prima di
-		qualsiasi causa, proviamo a risolvere il problema insieme: scrivici.
+		Queste condizioni sono regolate dalla legge italiana, ferme restando le norme inderogabili a tutela dei
+		consumatori del paese in cui abiti (art. 6 del Regolamento (CE) 593/2008). Per le controversie con i consumatori
+		è competente il giudice del luogo di residenza o domicilio del consumatore. Prima di qualsiasi causa, proviamo a
+		risolvere il problema insieme: scrivici.
 	</p>
 
 	<h2>16. Modifiche a queste condizioni</h2>
