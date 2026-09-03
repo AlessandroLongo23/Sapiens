@@ -1,3 +1,8 @@
+<script lang="ts">
+	import CookieManageLink from '$lib/components/consent/CookieManageLink.svelte';
+
+	const linkClass = 'text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base text-left';
+</script>
 
 <footer class="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white relative overflow-hidden border-t border-zinc-500/25">
 	<div class="absolute inset-0 opacity-5">
@@ -76,8 +81,15 @@
 						href="/privacy" 
 						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>
-						Privacy Policy
+						Privacy
 					</a>
+					<a 
+						href="/cookie" 
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
+					>
+						Cookie policy
+					</a>
+					<CookieManageLink class={linkClass} />
 				</nav>
 			</div>
 		</div>
