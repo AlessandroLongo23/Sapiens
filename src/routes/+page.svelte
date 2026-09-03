@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BookOpen, Users } from 'lucide-svelte';
+	import { BookOpen, Layers, LibraryBig } from 'lucide-svelte';
 
 	import Seo from '$lib/components/seo/Seo.svelte';
 	import HeroSection from '$lib/components/landing/HeroSection.svelte';
@@ -8,17 +8,23 @@
 
 	let heroSection = $state(null);
 
+	// Content figures only, straight from the database: the library is what
+	// exists today, and every number here grows as lessons are published.
 	let stats = $derived([
 		{
-			value: data.counts?.topic ?? 0,
-			label: 'Lezioni disponibili',
-			icon: BookOpen
+			value: data.counts?.subject ?? 0,
+			label: 'Materie',
+			icon: LibraryBig
 		},
 		{
-			// OWNER: hardcoded figure carried over from the previous landing page; replace with a real count or remove.
-			value: 300,
-			label: 'Studenti Iscritti',
-			icon: Users
+			value: data.counts?.chapter ?? 0,
+			label: 'Capitoli',
+			icon: Layers
+		},
+		{
+			value: data.counts?.published ?? 0,
+			label: 'Lezioni pubblicate',
+			icon: BookOpen
 		}
 	]);
 </script>

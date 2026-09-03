@@ -74,7 +74,7 @@
 					</a>
 				</div>
 
-				<div class="flex items-center justify-center lg:justify-start gap-8 pt-8">
+				<div class="flex flex-wrap items-center justify-center lg:justify-start gap-x-8 gap-y-4 pt-8">
 					{#each stats as stat}
 						{@const StatIcon = stat.icon}
 						<div class="text-center lg:text-left">
