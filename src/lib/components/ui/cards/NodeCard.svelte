@@ -1,101 +1,20 @@
-<script>
-	import { goto } from '$app/navigation';
-	import { BookOpen, ChevronRight } from 'lucide-svelte';
-	
+<script lang="ts">
+	import type { ContentNode } from '$lib/utils/tree';
+
 	import LevelCard from './LevelCard.svelte';
 	import SubjectCard from './SubjectCard.svelte';
 	import ChapterCard from './ChapterCard.svelte';
 	import TopicCard from './TopicCard.svelte';
 
-	let { node, href } = $props();
-
-	let isHovered = $state(false);
-
-	function handleClick() {
-		goto(href);
-	}
+	let { node, href } = $props<{ node: ContentNode; href: string }>();
 </script>
 
 {#if node.type == 'level'}
-	<LevelCard level={node} href={href} />
+	<LevelCard level={node} {href} />
+{:else if node.type == 'subject'}
+	<SubjectCard subject={node} {href} />
+{:else if node.type == 'chapter'}
+	<ChapterCard chapter={node} {href} />
+{:else if node.type == 'topic'}
+	<TopicCard topic={node} {href} />
 {/if}
-{#if node.type == 'subject'}
-	<SubjectCard subject={node} href={href} />
-{/if}
-{#if node.type == 'chapter'}
-	<ChapterCard chapter={node} href={href} />
-{/if}
-{#if node.type == 'topic'}
-	<TopicCard topic={node} href={href} />
-{/if}
-<!-- <button
-	onclick={handleClick}
-	onmouseenter={() => (isHovered = true)}
-	onmouseleave={() => (isHovered = false)}
-	class="group w-full h-full flex flex-col text-left relative overflow-hidden rounded-2xl border border-zinc-500/25 bg-white dark:bg-zinc-900 transition-all duration-300 hover:border-rose-200 dark:hover:border-rose-800 hover:shadow-xl hover:shadow-rose-500/5 hover:-translate-y-1"
-	tabindex="0"
->
-	<div 
-		class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-rose-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-	></div>
-
-	<div class="p-6 flex flex-col flex-1">
-		<div class="flex flex-row items-center justify-start gap-4 mb-4">
-			{#if node.icon}
-				<div
-					class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-rose-500 dark:group-hover:text-rose-400 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/20 transition-colors duration-300"
-				>
-					<level.icon class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
-				</div>
-			{/if}
-
-			<div class="flex flex-col">
-				<h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 leading-snug group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300">
-					{node.title}
-				</h3>
-				{#if node.type == 'level'}
-					<div class="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
-						<span>{totalSubjects} {totalSubjects === 1 ? 'materia' : 'materie'}</span>
-						{#if node.type === 'level' || node.type == 'subject'}
-							<span>•</span>
-							<span>{totalChapters} {totalChapters === 1 ? 'capitolo' : 'capitoli'}</span>
-						{/if}
-						{#if node.type == 'level' || node.type == 'subject' || node.type == 'chapter'}
-							<span>•</span>
-							<span>{totalTopics} {totalTopics === 1 ? 'lezione' : 'lezioni'}</span>
-						{/if}
-					</div>
-				{/if}
-			</div>
-		</div>
-
-		<div class="flex-1">
-			<span class="text-sm text-zinc-500 dark:text-zinc-400">
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. 
-			</span>
-		</div>
-
-		<div class="mt-6 pt-4 border-t border-zinc-500/25 flex items-center justify-between text-sm">
-			<div class="flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
-				<BookOpen class="w-4 h-4" />
-				<span>Esplora il livello</span>
-			</div>
-
-			<div class="transform translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 text-rose-500">
-				<ChevronRight class="w-5 h-5" />
-			</div>
-		</div>
-	</div>
-</button>
-
-<style>
-	@reference "../../../../app.css";
-
-	button {
-		outline: none;
-	}
-
-	button:focus-visible {
-		@apply ring-2 ring-rose-500 ring-offset-2 dark:ring-offset-zinc-950;
-	}
-</style> -->

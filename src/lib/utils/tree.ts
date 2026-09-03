@@ -1,19 +1,26 @@
 import type { Component } from 'svelte';
 
-// Node types matching your database schema
+// Node types matching the `content_nodes` table
 export type NodeType = 'level' | 'subject' | 'chapter' | 'topic';
 
 export interface ContentNode {
     id: string;
     parent_id: string | null;
+    /** Database slug (curated, e.g. `high_school`, `math`, `numeri-naturali`). Public URLs derive from it, see $lib/seo/slug. */
     slug: string;
+    /** Raw title, may contain LaTeX (`Numeri naturali \mathbb{N}`). */
     title: string;
     type: NodeType;
     position: number;
     icon?: string | Component;
-    description?: string;
-    theory?: string;
-    formulary?: string;
+    description?: string | null;
+    updated_at?: string | null;
+    /** Set by the server: the lesson has theory text / a formulary. */
+    has_theory?: boolean;
+    has_formulary?: boolean;
+    /** Only present on the node being rendered, never on the tree. */
+    theory?: string | null;
+    formulary?: string | null;
     children: ContentNode[];
 }
 
@@ -35,7 +42,7 @@ export function reconstructTree(nodes: Omit<ContentNode, 'children'>[]): Content
     // Second pass: link children to parents
     for (const node of nodes) {
         const nodeWithChildren = nodeMap.get(node.id)!;
-        
+
         if (node.parent_id == null) {
             rootNodes.push(nodeWithChildren);
         } else {
@@ -64,7 +71,7 @@ export function reconstructTree(nodes: Omit<ContentNode, 'children'>[]): Content
 }
 
 /**
- * Finds a node in the tree by traversing the slug path.
+ * Finds a node in the tree by traversing the database slug path.
  * Returns the node and the path of ancestors.
  */
 export function findNodeByPath(
@@ -106,7 +113,7 @@ export function findNodeById(tree: ContentNode[], id: string): ContentNode | nul
  */
 export function getNodesByType(tree: ContentNode[], type: NodeType): ContentNode[] {
     const results: ContentNode[] = [];
-    
+
     const traverse = (nodes: ContentNode[]) => {
         for (const node of nodes) {
             if (node.type === type) {
@@ -115,7 +122,7 @@ export function getNodesByType(tree: ContentNode[], type: NodeType): ContentNode
             traverse(node.children);
         }
     };
-    
+
     traverse(tree);
     return results;
 }
@@ -142,4 +149,17 @@ export function countByType(tree: ContentNode[]): Record<NodeType, number> {
     return counts;
 }
 
-
+/**
+ * Walks the tree depth-first, calling `visit` with every node and its ancestors (node included).
+ */
+export function walkTree(
+    tree: ContentNode[],
+    visit: (node: ContentNode, ancestors: ContentNode[]) => void,
+    ancestors: ContentNode[] = []
+): void {
+    for (const node of tree) {
+        const chain = [...ancestors, node];
+        visit(node, chain);
+        if (node.children.length > 0) walkTree(node.children, visit, chain);
+    }
+}
