@@ -1,10 +1,18 @@
 import Stripe from 'stripe';
 import { STRIPE_SECRET_KEY } from '$env/static/private';
 
-// Initialize Stripe
+// One client instance, pinned to the API version the code was written against.
 export const stripe = new Stripe(STRIPE_SECRET_KEY, {
-	apiVersion: '2024-11-20.acacia'
+	apiVersion: '2026-08-26.dahlia'
 });
+
+/** Label for Checkout Sessions in the Dashboard: a fixed name plus eight random letters. */
+function integrationIdentifier(label) {
+	const letters = 'abcdefghijklmnopqrstuvwxyz';
+	let suffix = '';
+	for (let i = 0; i < 8; i++) suffix += letters[Math.floor(Math.random() * letters.length)];
+	return `${label}-${suffix}`;
+}
 
 /**
  * Create a checkout session for a subscription.
@@ -13,7 +21,8 @@ export const stripe = new Stripe(STRIPE_SECRET_KEY, {
  * 'if_required'`): the trial simply ends if no card is added, matching the
  * "senza carta di credito" promise on the pricing page. `subscriptionMetadata`
  * travels on the subscription object, so every later webhook event carries
- * the user id and plan without a lookup.
+ * the user id and plan without a lookup. Payment method types are left to
+ * the Dashboard settings on purpose (no `payment_method_types`).
  */
 export async function createCheckoutSession({
 	priceId,
@@ -40,7 +49,8 @@ export async function createCheckoutSession({
 			metadata: subscriptionMetadata
 		},
 		allow_promotion_codes: true,
-		locale: 'it'
+		locale: 'it',
+		integration_identifier: integrationIdentifier('sapiens-premium')
 	};
 
 	if (trialDays > 0) {

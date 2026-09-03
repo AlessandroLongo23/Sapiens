@@ -5,10 +5,11 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && node scripts/check-placeholder.mjs",
+		"build": "vite build && node scripts/check-placeholder.mjs && node scripts/check-secrets.mjs",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:placeholder": "node scripts/check-placeholder.mjs",
+		"check:secrets": "node scripts/check-secrets.mjs",
 		"generate:images": "node scripts/generate-images.mjs",
 		"prepare": "svelte-kit sync || echo ''",
 		"cap:sync": "npx cap sync",
@@ -68,7 +69,7 @@
 		"openai": "^6.2.0",
 		"p5": "^1.11.11",
 		"resend": "^4.6.0",
-		"stripe": "^17.6.0",
+		"stripe": "^22.6.1",
 		"svelte-dnd-action": "^0.9.64",
 		"svelte-katex": "^0.1.2"
 	}

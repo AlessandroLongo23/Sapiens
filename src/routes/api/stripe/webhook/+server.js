@@ -20,6 +20,20 @@ function isoDate(unixSeconds) {
 	return typeof unixSeconds === 'number' ? new Date(unixSeconds * 1000).toISOString() : undefined;
 }
 
+/** Since API 2025-03-31 the period lives on the subscription items. */
+function periodEnd(subscription) {
+	const fromItems = subscription.items?.data?.map((i) => i.current_period_end).filter((n) => typeof n === 'number');
+	if (fromItems?.length) return isoDate(Math.max(...fromItems));
+	return isoDate(subscription.current_period_end);
+}
+
+/** The subscription an invoice belongs to, across API versions. */
+function invoiceSubscriptionId(invoice) {
+	const nested = invoice.parent?.subscription_details?.subscription;
+	const value = nested ?? invoice.subscription;
+	return typeof value === 'string' ? value : (value?.id ?? null);
+}
+
 /** The user id a subscription belongs to: from its metadata, else from the customer's. */
 async function userIdFor(subscription) {
 	if (subscription.metadata?.userId) return subscription.metadata.userId;
@@ -66,7 +80,7 @@ async function applySubscription(subscription) {
 		status: subscription.status,
 		customerId,
 		subscriptionId: subscription.id,
-		currentPeriodEnd: isoDate(subscription.current_period_end),
+		currentPeriodEnd: periodEnd(subscription),
 		...(subscription.trial_start ? { trialUsedAt: isoDate(subscription.trial_start) } : {})
 	});
 }
@@ -106,6 +120,18 @@ export async function POST({ request }) {
 			case 'customer.subscription.trial_will_end':
 				await applySubscription(event.data.object);
 				break;
+
+			// Renewals and failed renewals: re-read the subscription so the
+			// claim follows Stripe even if a subscription event was missed.
+			case 'invoice.paid':
+			case 'invoice.payment_failed': {
+				const subscriptionId = invoiceSubscriptionId(event.data.object);
+				if (subscriptionId) {
+					const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+					await applySubscription(subscription);
+				}
+				break;
+			}
 
 			default:
 				break;
