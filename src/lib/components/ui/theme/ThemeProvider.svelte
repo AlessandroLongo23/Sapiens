@@ -1,33 +1,25 @@
 <script lang="ts">
     import { themeStore } from '$lib/components/ui/theme/theme';
     import { onMount } from 'svelte';
-    
+
     let { children } = $props();
 
     onMount(() => {
-        const storedTheme: string = localStorage.getItem('theme') || 'light';
-        themeStore.setTheme(storedTheme);
+        const stored: string | null = localStorage.getItem('theme');
+        const media: MediaQueryList | null = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        const systemTheme = (): string => (media?.matches ? 'dark' : 'light');
 
-        return themeStore.subscribe(theme => {
-            localStorage.setItem('theme', theme);
-        });
-    });
+        themeStore.setTheme(stored || systemTheme());
 
-    $effect(() => {
-        if (typeof window === 'undefined') 
-            return;
-        
-        const mediaQuery: MediaQueryList = window.matchMedia('(prefers-color-scheme: light)');
-        
-        return () => {
-            mediaQuery.removeEventListener('change', (event: MediaQueryListEvent): void => {
-                if (event.matches) {
-                    themeStore.setTheme('light');
-                } else {
-                    themeStore.setTheme('dark');
-                }
-            });
+        // Follow the OS only while the user has not picked a theme explicitly.
+        const followSystem = (event: MediaQueryListEvent): void => {
+            if (!localStorage.getItem('theme-explicit')) {
+                themeStore.setTheme(event.matches ? 'dark' : 'light');
+            }
         };
+        media?.addEventListener('change', followSystem);
+
+        return () => media?.removeEventListener('change', followSystem);
     });
 </script>
 

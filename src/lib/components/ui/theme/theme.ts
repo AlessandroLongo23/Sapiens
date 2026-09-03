@@ -5,12 +5,19 @@ function createThemeStore() {
 
     return {
         subscribe,
-        setTheme: (theme) => {
+        /**
+         * Apply a theme. Only an explicit choice (the toggle) is persisted, so a
+         * visitor who never touched the toggle keeps following the OS setting.
+         */
+        setTheme: (theme: string, explicit = false) => {
             document.documentElement.classList.add('disable-transitions');
             document.documentElement.classList.toggle('dark', theme === 'dark');
-            localStorage.setItem('theme', theme);
+            if (explicit) {
+                localStorage.setItem('theme', theme);
+                localStorage.setItem('theme-explicit', '1');
+            }
             set(theme);
-            
+
             setTimeout(() => {
                 document.documentElement.classList.remove('disable-transitions');
             }, 100);
