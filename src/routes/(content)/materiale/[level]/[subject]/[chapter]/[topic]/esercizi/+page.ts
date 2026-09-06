@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { configs, type TopicConfig } from '$lib/exercises/config.js';
-import type { Exercise } from '$lib/exercises/abstract.svelte.js';
+import { optionsOf, type Exercise } from '$lib/exercises/abstract.svelte.js';
 
 const exerciseModulesJs = import.meta.glob('/src/lib/exercises/*.svelte.js');
 const exerciseModulesTs = import.meta.glob('/src/lib/exercises/*.svelte.ts');
@@ -46,6 +46,7 @@ export async function load({ parent, data }) {
 
 			for (let i = 0; i < count; i++) {
 				const instance: Exercise = new generatorInstance(...args);
+				instance.options = optionsOf(instance);
 				exercises.push(instance);
 			}
 		}

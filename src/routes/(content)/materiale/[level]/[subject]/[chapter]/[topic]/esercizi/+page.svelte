@@ -124,7 +124,7 @@
 				<MathRenderer content={currentExercise.question.textContent} />
 			</div>
 
-			<div class="sm:flex sm:flex-row grid grid-cols-2 justify-center items-center gap-4 w-full">
+			<div class="grid grid-cols-2 gap-4 w-full max-w-2xl mx-auto justify-items-center">
 				{#each currentExercise.options as answer}
 					<div>
 						<AnswerButton answer={answer.textContent} state={getButtonState(answer)} onclick={() => handleAnswer(answer)} />

@@ -60,6 +60,28 @@ export class Answer {
     }
 }
 
+/**
+ * The answer options of an exercise, whatever generation of generator built it.
+ * Newer generators fill `options` through the base class; the older ones
+ * (insiemi, monomi operazioni, equazioni di primo grado, espressioni con
+ * frazioni) override `generateAnswers` and keep an array in `answers`.
+ * Returns at most `n` options with the correct one always included.
+ */
+export function optionsOf(exercise: Exercise, n = 4): Answer[] {
+    if (Array.isArray(exercise.options) && exercise.options.length > 0) return exercise.options;
+    const raw: unknown = exercise.answers;
+    const all: Answer[] = Array.isArray(raw)
+        ? raw
+        : raw instanceof Set
+            ? Array.from(raw as Set<Answer>)
+            : [];
+    if (all.length <= n) return all;
+    const correct = all.find((a) => a.isCorrect);
+    const wrong = all.filter((a) => a !== correct).slice(0, correct ? n - 1 : n);
+    const picked = correct ? [correct, ...wrong] : wrong;
+    return picked.shuffle ? picked.shuffle() : picked;
+}
+
 export class AnswerSet extends Set {
     constructor() {
         super();
