@@ -53,6 +53,8 @@
 			email,
 			password,
 			options: {
+				// The confirmation link comes back to the same host (localhost while testing, the site in production).
+				emailRedirectTo: `${window.location.origin}/`,
 				data: {
 					first_name: name.trim(),
 					last_name: surname.trim(),
