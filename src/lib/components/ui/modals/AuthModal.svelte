@@ -12,6 +12,8 @@
 	import Modal from '$lib/components/ui/modals/Modal.svelte';
 
 	let register = $derived(authState.modalRegister);
+	// Registration needs both confirmations before the button does anything.
+	let canSubmit = $derived(!register || (acceptedTerms && ageDeclared));
 
 	let email = $state('');
 	let password = $state('');
@@ -182,7 +184,7 @@
 			{/if}
 
 			<div class="mt-2">
-				<FormButton disabled={loading} fullWidth size="md">
+				<FormButton disabled={loading || !canSubmit} fullWidth size="md">
 					{loading ? 'Attendi…' : register ? 'Registrati' : 'Accedi'}
 				</FormButton>
 			</div>
