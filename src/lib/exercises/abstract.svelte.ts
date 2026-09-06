@@ -9,7 +9,7 @@ export enum ProgressState {
 export class Exercise {
     question: Question;
     answers: AnswerSet;
-    options: Answer[];
+    options: Answer[] = [];
 
 	constructor(n: number) {
         this.question = new Question();
@@ -89,8 +89,9 @@ export class AnswerSet extends Set {
 
     override add(answer: Answer): this {
         let array = this.toArray();
-        if (array.some(a => a.isEqual(answer))) return;
+        if (array.some(a => a.isEqual(answer))) return this;
         super.add(answer);
+        return this;
     }
 
     remove(answer: Answer): void {
