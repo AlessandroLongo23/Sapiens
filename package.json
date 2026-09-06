@@ -10,6 +10,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:placeholder": "node scripts/check-placeholder.mjs",
 		"check:secrets": "node scripts/check-secrets.mjs",
+		"test:e2e": "playwright test",
 		"generate:images": "node scripts/generate-images.mjs",
 		"prepare": "svelte-kit sync || echo ''",
 		"cap:sync": "npx cap sync",
@@ -20,6 +21,7 @@
 	"devDependencies": {
 		"@fontsource-variable/inter": "^5.3.0",
 		"@fontsource/jetbrains-mono": "^5.3.0",
+		"@playwright/test": "^1.63.0",
 		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/adapter-vercel": "^5.10.3",
 		"@sveltejs/enhanced-img": "^0.6.1",
