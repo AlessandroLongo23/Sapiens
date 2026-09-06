@@ -116,6 +116,12 @@ The owner answered on 2026-09-03; the outcome of each point is in "Round 2" belo
 - Signup asks for two explicit confirmations (terms and privacy read; at least 14 years old or a parent creating the account) and records the document versions and a timestamp in `user_metadata.legal`. Lume records acceptances in a dedicated table with IP and user agent; that upgrade is in `ROADMAP.md`.
 - Cookie banner (`CookieBanner.svelte`, same shape as Lume's): a floating card at the bottom, Personalizza / Rifiuta / Accetta with equal weight, analytics off by default in the custom view, the choice stored six months in a first-party cookie with the policy version (a refusal too), re-asked on version bump, reopened from the footer link on every page. Improved over Lume: focus moves into the card and back, Escape closes it once a choice exists, `prefers-reduced-motion` is respected, and, the part Lume got wrong, Vercel Analytics and Speed Insights are imported only after consent (`$lib/consent/analytics.ts`); nothing analytics-related is in the HTML before that.
 
+### End-to-end tests (`npm run test:e2e`, added 2026-09-06)
+
+- Playwright against the production build, the Stripe sandbox and the real Supabase project with throwaway users (`tests/e2e/`). Ten tests, about a minute: public pages, redirects, sitemap, robots, auth bounces, cookie banner with analytics gated; then the whole Premium path with a fresh account: upgrade card, login, Checkout with the trial, webhook, `plan: lite, status: trialing` in `app_metadata`, exercises unlocked and answered to the summary, Sapiens AI refused for Lite (403), cancellation at period end from the portal. The suite refuses a live Stripe key.
+- Two bugs it found on the first run, both fixed: four older exercise generators produced questions with no answer buttons on the public page (they never filled `options`), and at laptop widths the row of four answers slid under the lesson sidebar and could not be clicked.
+- The manual run by the owner on 2026-09-06 (registration with email confirmation, Checkout, activation) also passed; the local server needs `NODE_OPTIONS=--max-http-header-size=131072` because localhost cookies from every local project add up past Node's 16 KB default.
+
 ### Verification (production build, `npm run build && npm run preview`)
 
 - [x] Build and the placeholder check pass (277 nodes). svelte-check: 223 errors / 12 warnings, all in pre-existing files (254 at the start of the round; the touched files are clean).
