@@ -103,6 +103,12 @@ and deep links from `sapiens.../materiale/...` into the app.
 
 ## Business
 
+- Business setup checklist (details and reasoning in the 2026-09-04 chat with the owner): CVR as a
+  personally owned business on virk.dk, Danish VAT registration (buying Vercel, Supabase or OpenAI
+  services from abroad requires it from the first invoice, reverse charge), then the EU small-enterprise
+  VAT exemption for Italian sales (EX number from SKAT) or, failing that, OSS with Stripe Tax at the
+  Italian rate; EUR settlement in Stripe with a EUR bank account so payouts skip conversion; one session
+  with a revisor about virksomhedsordningen before the first payout.
 - Semester prices in Stripe (`PUBLIC_STRIPE_PRICE_*_SEMESTER`); the toggle appears on its own once set.
 - The Pro plan's weekly tutoring hour needs a booking flow (calendar, Meet link); `api/create-meet`
   exists as a starting point.
