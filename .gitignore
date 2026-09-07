@@ -36,3 +36,4 @@ static/zaino_reference/
 test-results/
 playwright-report/
 tests/e2e/.stripe-listen.pid
+screenshots/

@@ -9,6 +9,9 @@ dotenv.config();
  *
  *   npm run build && npm run test:e2e
  *
+ * `mobile.spec.ts` runs on the iPhone and Pixel projects only; everything
+ * else on desktop Chromium.
+ *
  * `.env` must hold the sandbox Stripe key (never a live one: the suite
  * refuses to start otherwise), the matching CLI webhook secret, and the
  * Supabase service role key used to create and delete test users.
@@ -30,13 +33,21 @@ export default defineConfig({
 		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure'
 	},
-	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-	webServer: {
-		command: 'npm run preview -- --port 4173',
-		url: 'http://localhost:4173/robots.txt',
-		reuseExistingServer: true,
-		timeout: 60_000,
-		// Cookies on localhost are shared by every local project; Node's 16 KB header limit is too small.
-		env: { NODE_OPTIONS: '--max-http-header-size=131072' }
-	}
+	projects: [
+		{ name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: /mobile\.spec\.ts$/ },
+		// The phone suite runs on an iPhone (WebKit) and a Pixel (Chromium).
+		{ name: 'iphone', use: { ...devices['iPhone 14'] }, testMatch: /mobile\.spec\.ts$/ },
+		{ name: 'pixel', use: { ...devices['Pixel 7'] }, testMatch: /mobile\.spec\.ts$/ }
+	],
+	// With E2E_BASE_URL set (a dev server, say) no preview server is started.
+	webServer: process.env.E2E_BASE_URL
+		? undefined
+		: {
+				command: 'npm run preview -- --port 4173',
+				url: 'http://localhost:4173/robots.txt',
+				reuseExistingServer: true,
+				timeout: 60_000,
+				// Cookies on localhost are shared by every local project; Node's 16 KB header limit is too small.
+				env: { NODE_OPTIONS: '--max-http-header-size=131072' }
+			}
 });

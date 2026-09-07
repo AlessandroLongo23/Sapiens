@@ -55,6 +55,12 @@ export async function subscriptionClaim(userId: string) {
 	return (data.user?.app_metadata?.subscription ?? null) as null | { plan: string; status: string };
 }
 
+/** Opens a page and waits until the client has hydrated, so taps and keys are handled. */
+export async function gotoHydrated(page: Page, path: string) {
+	await page.goto(path);
+	await page.waitForSelector('html[data-hydrated]', { state: 'attached' });
+}
+
 /** Signs in through the site's own modal. */
 export async function loginViaModal(page: Page, user: TestUser) {
 	await page.getByRole('button', { name: 'Accedi' }).first().click();
