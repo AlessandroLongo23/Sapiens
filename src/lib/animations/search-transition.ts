@@ -2,7 +2,7 @@ import { quintOut } from 'svelte/easing';
 import { crossfade } from 'svelte/transition';
 
 export const GLOBAL_SEARCH_KEY = 'global-search';
-export const HEADER_SEARCH_HEIGHT = 40; // px
+export const HEADER_SEARCH_HEIGHT = 36; // px, matches the h-10 input with the compact spacing token
 export const SEARCH_OVERLAY_OFFSET = 32; // px
 
 const [sendSearch, receiveSearch] = crossfade({
