@@ -38,6 +38,12 @@
 						Prezzi
 					</a>
 					<a 
+						href="/ripetizioni" 
+						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
+					>
+						Ripetizioni
+					</a>
+					<a 
 						href="/faq" 
 						class="text-zinc-400 hover:text-crimson-400 transition-colors duration-200 text-sm sm:text-base"
 					>

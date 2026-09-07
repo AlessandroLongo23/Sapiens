@@ -9,7 +9,7 @@ test.describe('public pages', () => {
 	});
 
 	test('library and legal pages render with one h1 each', async ({ page }) => {
-		for (const path of ['/materiale', '/materiale/scuola-superiore/matematica', '/pricing', '/faq', '/contacts', '/terms', '/privacy', '/cookie']) {
+		for (const path of ['/materiale', '/materiale/scuola-superiore/matematica', '/ripetizioni', '/ripetizioni/diventa-tutor', '/pricing', '/faq', '/contacts', '/terms', '/privacy', '/cookie']) {
 			const res = await page.goto(path);
 			expect(res?.status(), path).toBe(200);
 			await expect(page.locator('h1'), path).toHaveCount(1);
@@ -33,7 +33,7 @@ test.describe('public pages', () => {
 	});
 
 	test('signed-in areas bounce anonymous visitors', async ({ request }) => {
-		for (const path of ['/subscription', '/home', '/admin']) {
+		for (const path of ['/subscription', '/home', '/admin', '/leads', '/dashboard', '/profile-editor', '/richieste', '/admin/tutors']) {
 			const res = await request.get(path, { maxRedirects: 0 });
 			expect(res.status(), path).toBe(303);
 		}

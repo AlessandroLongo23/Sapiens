@@ -112,5 +112,7 @@ and deep links from `sapiens.../materiale/...` into the app.
 - Semester prices in Stripe (`PUBLIC_STRIPE_PRICE_*_SEMESTER`); the toggle appears on its own once set.
 - The Pro plan's weekly tutoring hour needs a booking flow (calendar, Meet link); `api/create-meet`
   exists as a starting point.
+- Tutoring marketplace: research on every Italian platform, the legal and tax memo, the economics and the
+  recommended introduction-fee design are in `MARKETPLACE.md` (2026-09-06). Not built.
 - Student numbers on the landing page: switch the third counter from "Lezioni pubblicate" to
   "Studenti iscritti" when the real count (from `auth.users`) is a number worth showing.

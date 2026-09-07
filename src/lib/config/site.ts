@@ -34,6 +34,9 @@ export const GSC_VERIFICATION: string = env.PUBLIC_GSC_VERIFICATION || '';
 /** Public path of the content library. */
 export const CONTENT_ROOT = '/materiale';
 
+/** Public path of the tutoring marketplace (list of tutors and their profiles). */
+export const TUTORING_ROOT = '/ripetizioni';
+
 /**
  * Path prefixes that must never be indexed: authenticated areas, checkout
  * results, API. Used by the robots meta, the X-Robots-Tag header, robots.txt
@@ -49,6 +52,7 @@ export const PRIVATE_PATH_PREFIXES = [
 	'/library',
 	'/settings',
 	'/subscription',
+	'/richieste',
 	'/dashboard',
 	'/billing',
 	'/leads',

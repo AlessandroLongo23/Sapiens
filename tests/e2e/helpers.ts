@@ -17,14 +17,23 @@ export interface TestUser {
 	password: string;
 }
 
-export async function createTestUser(label: string): Promise<TestUser> {
+export async function createTestUser(
+	label: string,
+	options: { admin?: boolean; /** Plan id to grant directly, as the Stripe webhook would (`lite`, `base`, `pro`). */ subscription?: string } = {}
+): Promise<TestUser> {
 	const email = `e2e-${label}-${Date.now()}@example.com`;
 	const password = `Pw-${Math.random().toString(36).slice(2)}-${Date.now()}`;
+	// `app_metadata` is what the entitlement checks read: `role` for the admin
+	// area, `subscription` for the paid features.
+	const app_metadata: Record<string, unknown> = {};
+	if (options.admin) app_metadata.role = 'admin';
+	if (options.subscription) app_metadata.subscription = { plan: options.subscription, status: 'active' };
 	const { data, error } = await supabaseAdmin().auth.admin.createUser({
 		email,
 		password,
 		email_confirm: true,
-		user_metadata: { first_name: 'Test', last_name: label }
+		user_metadata: { first_name: 'Test', last_name: label },
+		...(Object.keys(app_metadata).length ? { app_metadata } : {})
 	});
 	if (error || !data.user) throw new Error(`could not create test user: ${error?.message}`);
 	return { id: data.user.id, email, password };

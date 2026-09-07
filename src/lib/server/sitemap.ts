@@ -2,7 +2,8 @@ import { getContentTree, latestUpdate } from '$lib/server/content';
 import { walkTree, type ContentNode } from '$lib/utils/tree';
 import { nodePath, subviewPath, dbPath } from '$lib/seo/slug';
 import { configs } from '$lib/exercises/config';
-import { absoluteUrl, CONTENT_ROOT } from '$lib/config/site';
+import { absoluteUrl, CONTENT_ROOT, TUTORING_ROOT } from '$lib/config/site';
+import { getPublishedTutors, latestTutorUpdate } from '$lib/server/tutoring';
 
 export interface SitemapUrl {
 	loc: string;
@@ -32,9 +33,13 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 	const all: ContentNode[] = [];
 	walkTree(tree, (n) => all.push(n));
 
+	const tutors = await getPublishedTutors();
+
 	const urls: SitemapUrl[] = [
 		{ loc: '/' },
 		{ loc: CONTENT_ROOT, lastmod: day(latestUpdate(all)) },
+		{ loc: TUTORING_ROOT, lastmod: day(latestTutorUpdate(tutors)) },
+		{ loc: `${TUTORING_ROOT}/diventa-tutor` },
 		{ loc: '/pricing' },
 		{ loc: '/faq' },
 		{ loc: '/contacts' },
@@ -53,6 +58,10 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 			urls.push({ loc: nodePath(ancestors), lastmod: day(latestUpdate(descendants(node))) });
 		}
 	});
+
+	for (const tutor of tutors) {
+		urls.push({ loc: `${TUTORING_ROOT}/${tutor.slug}`, lastmod: day(tutor.updated_at) });
+	}
 
 	return urls.map((u) => ({ ...u, loc: absoluteUrl(u.loc) }));
 }
