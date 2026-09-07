@@ -38,7 +38,7 @@
 
 <section
     bind:this={heroSection}
-    class="relative min-h-screen flex items-center justify-center pb-24 px-6 lg:px-8 overflow-hidden"
+    class="relative lg:min-h-screen flex items-center justify-center pt-10 pb-16 lg:pt-0 lg:pb-24 px-5 sm:px-6 lg:px-8 overflow-hidden"
 >
 	<div class="relative max-w-7xl mx-auto w-full z-10">
 		<div class="grid lg:grid-cols-2 gap-2 items-center">

@@ -3,6 +3,8 @@
 	import { searchStore } from '$lib/components/ui/search';
 	import { page } from '$app/state';
 	import { nodePath } from '$lib/seo/slug';
+	import { CONTENT_ROOT, TUTORING_ROOT } from '$lib/config/site';
+	import { Menu, Search } from 'lucide-svelte';
 	import { authState } from '$lib/state/auth.svelte';
 	import type { ContentNode } from '$lib/utils/tree';
 
@@ -11,15 +13,27 @@
 	import SubjectMegaMenu from '$lib/components/landing/SubjectMegaMenu.svelte';
 	import LoginButton from '$lib/components/ui/buttons/LoginButton.svelte';
 	import LogoutButton from '$lib/components/ui/buttons/LogoutButton.svelte';
+	import MobileMenu from '$lib/components/landing/MobileMenu.svelte';
 
+	/**
+	 * Site header. Below `md` it is a phone bar: logo, a search field that
+	 * opens the overlay, and a menu button for everything else; the parent
+	 * can slide it away while the page scrolls down (`hidden`). From `md`
+	 * up it is the full desktop bar with the level menu and account buttons.
+	 */
 	let {
-		headerRef = $bindable(undefined)
+		headerRef = $bindable(undefined),
+		/** Slide the bar out of view (phones only). */
+		hidden = false,
+		/** Lesson pages on phones: no site header at all, the lesson has its own. */
+		immersive = false
 	} = $props();
 
 	// The content tree is loaded only by the /materiale routes; other pages ship none of it.
 	let tree = $derived((page.data.tree ?? []) as ContentNode[]);
 
 	let hoveredLevel = $state<ContentNode | null>(null);
+	let menuOpen = $state(false);
 
 	function handleMenuMouseLeave(): void {
 		hoveredLevel = null;
@@ -38,7 +52,9 @@
 <header
 	onmouseleave={handleMenuMouseLeave}
 	onkeydown={handleKeydown}
-	class="z-30 bg-white dark:bg-zinc-900 border-b border-zinc-500/25 transition-transform duration-300"
+	class="sticky top-0 z-30 bg-white dark:bg-zinc-900 border-b border-zinc-500/25 transition-transform duration-300 ease-out {hidden
+		? 'max-md:-translate-y-full'
+		: ''} {immersive ? 'max-md:hidden' : ''}"
 >
 	{#if hoveredLevel}
 		<div
@@ -55,17 +71,21 @@
 
 	<div
 		bind:this={headerRef}
-		class="relative w-full mx-auto flex items-center sm:justify-between justify-center p-3 z-20 bg-white dark:bg-zinc-900"
+		class="relative z-20 flex w-full items-center gap-2 px-3 py-2 md:justify-between md:gap-4 md:p-3 bg-white dark:bg-zinc-900"
 	>
-		<div class="flex justify-start items-center gap-16">
-			<a href="/" class="justify-start hidden sm:flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500">
+		<div class="flex min-w-0 items-center gap-2 md:gap-10">
+			<a
+				href="/"
+				class="flex shrink-0 items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500"
+				aria-label="Sapiens, pagina iniziale"
+			>
 				<img src="/favicon.svg" alt="" width="40" height="40" class="size-10 rounded-md" />
-				<span class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
+				<span class="hidden md:inline text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Sapiens</span>
 			</a>
 
 			{#if isMegaMenuVisible}
-				<nav aria-label="Livelli didattici">
-					<ul class="flex justify-center items-center gap-12">
+				<nav aria-label="Livelli didattici" class="hidden lg:block">
+					<ul class="flex justify-center items-center gap-8">
 						{#each tree as level (level.id)}
 							<li class="relative">
 								<a
@@ -88,21 +108,47 @@
 					</ul>
 				</nav>
 			{/if}
+
+			<!-- Tablets have no room for the level menu: the short links stand in for it until `lg`. -->
+			<nav aria-label="Sezioni" class="{isMegaMenuVisible ? 'hidden md:flex lg:hidden xl:flex' : 'hidden md:flex'} items-center gap-6 whitespace-nowrap">
+				<a
+					href={CONTENT_ROOT}
+					class="{isMegaMenuVisible ? 'lg:hidden' : ''} font-medium transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500 {page.url.pathname.startsWith(CONTENT_ROOT) ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'}"
+				>
+					Materiale
+				</a>
+				<a
+					href={TUTORING_ROOT}
+					aria-current={page.url.pathname.startsWith(TUTORING_ROOT) ? 'page' : undefined}
+					class="font-medium transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500 {page.url.pathname.startsWith(TUTORING_ROOT) ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'}"
+				>
+					Ripetizioni
+				</a>
+			</nav>
 		</div>
 
-		<div class="flex items-center justify-end gap-2 sm:gap-3 flex-1 sm:flex-none">
-			<div
-				class="w-full sm:w-80 lg:w-96 shrink-0"
-				style={`height: ${HEADER_SEARCH_HEIGHT}px;`}
-			>
+		<div class="flex min-w-0 flex-1 items-center justify-end gap-2 md:flex-none md:gap-3">
+			<div class="min-w-0 flex-1 md:flex-none md:w-64 lg:w-72 xl:w-96 h-[40px] md:h-auto" style="--search-h: {HEADER_SEARCH_HEIGHT}px;">
 				{#if !$searchStore?.isActive}
-					<div class="h-full" out:sendSearch={{ key: GLOBAL_SEARCH_KEY }}>
-						<Searchbar
-							placeholder="Cerca su Sapiens"
-							hasKeyboardShortcut={false}
-							width="w-full"
-							size="md"
-						/>
+					<div class="h-full md:h-[var(--search-h)]" out:sendSearch={{ key: GLOBAL_SEARCH_KEY }}>
+						<!-- Phones: a field-shaped button; the real input is in the overlay, where it gets the keyboard. -->
+						<button
+							type="button"
+							onclick={() => searchStore.activate()}
+							class="md:hidden flex h-full w-full items-center gap-2 rounded-xl border border-zinc-500/25 bg-zinc-50 dark:bg-zinc-800 px-3 text-left text-base text-zinc-500 dark:text-zinc-400 active:bg-zinc-100 dark:active:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500"
+							aria-label="Cerca su Sapiens"
+						>
+							<Search class="size-5 shrink-0" aria-hidden="true" />
+							<span class="truncate">Cerca su Sapiens</span>
+						</button>
+						<div class="hidden md:block h-full">
+							<Searchbar
+								placeholder="Cerca su Sapiens"
+								hasKeyboardShortcut={false}
+								width="w-full"
+								size="md"
+							/>
+						</div>
 					</div>
 				{:else}
 					<div
@@ -111,11 +157,27 @@
 					></div>
 				{/if}
 			</div>
-			<ThemeToggle />
-			<LoginButton />
-			{#if authState.user}
-				<LogoutButton />
-			{/if}
+
+			<div class="hidden md:flex items-center gap-3">
+				<ThemeToggle />
+				<LoginButton />
+				{#if authState.user}
+					<LogoutButton />
+				{/if}
+			</div>
+
+			<button
+				type="button"
+				onclick={() => (menuOpen = true)}
+				class="md:hidden flex size-[44px] shrink-0 items-center justify-center rounded-xl border border-zinc-500/25 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 active:bg-zinc-200 dark:active:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500"
+				aria-label="Apri il menu"
+				aria-haspopup="dialog"
+				aria-expanded={menuOpen}
+			>
+				<Menu class="size-6" aria-hidden="true" />
+			</button>
 		</div>
 	</div>
 </header>
+
+<MobileMenu bind:open={menuOpen} />

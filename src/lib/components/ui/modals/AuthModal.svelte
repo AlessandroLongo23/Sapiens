@@ -108,9 +108,9 @@
 	isOpen={authState.modalOpen}
 	backgroundBlur="sm"
 	onClose={close}
-	classes="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl sm:rounded-3xl w-full max-w-[420px] p-0 overflow-hidden border border-zinc-500/25"
+	classes="bg-white dark:bg-zinc-900 shadow-2xl rounded-t-3xl sm:rounded-3xl w-full sm:max-w-[420px] p-0 border border-zinc-500/25 pb-safe sm:pb-0"
 >
-	<div class="relative px-6 pt-10 pb-8" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+	<div class="relative px-5 pt-8 pb-6 sm:px-6 sm:pt-10 sm:pb-8" role="dialog" aria-modal="true" aria-labelledby="auth-title">
 		<button
 			type="button"
 			onclick={close}

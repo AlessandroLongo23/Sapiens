@@ -44,17 +44,17 @@
     let Icon = $derived(config.icon);
 </script>
 
-<div class="flex flex-col items-center justify-center w-full h-full min-h-[60vh] p-6">
+<div class="flex flex-col items-center justify-center w-full h-full min-h-[60dvh] p-4 sm:p-6">
     <div 
         in:fly={{ y: 20, duration: 500, easing: cubicOut }}
-        class="max-w-md w-full bg-white dark:bg-zinc-900 rounded-3xl shadow-xl border border-zinc-100 dark:border-zinc-800 overflow-hidden p-8 md:p-10 text-center"
+        class="max-w-md w-full bg-white dark:bg-zinc-900 rounded-3xl shadow-xl border border-zinc-100 dark:border-zinc-800 overflow-hidden p-6 sm:p-8 md:p-10 text-center"
     >
         
         <div class="mx-auto w-20 h-20 rounded-full {config.bg} flex items-center justify-center mb-6">
             <Icon class="w-10 h-10 {config.color}" strokeWidth={2.5} />
         </div>
 
-        <h2 class="text-3xl font-bold text-zinc-900 dark:text-white mb-3 tracking-tight">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white mb-3 tracking-tight">
             <Latex content={title} />
         </h2>
 
@@ -77,7 +77,7 @@
 
         <button
             onclick={onStart}
-            class="w-full py-4 px-6 rounded-xl font-semibold shadow-lg shadow-zinc-200 dark:shadow-none transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 {config.button}"
+            class="w-full min-h-[52px] py-4 px-6 rounded-xl font-semibold shadow-lg shadow-zinc-200 dark:shadow-none transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 {config.button}"
         >
             <Play class="w-5 h-5 fill-current" />
             <span>Inizia {config.label}</span>

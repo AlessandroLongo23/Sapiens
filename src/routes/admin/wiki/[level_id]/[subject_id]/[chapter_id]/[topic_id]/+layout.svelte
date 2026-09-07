@@ -27,7 +27,7 @@
 
 </script>
 
-<div class="relative flex w-full justify-center h-[calc(100vh-4.5rem)] overflow-hidden font-sans text-zinc-900 dark:text-zinc-50 bg-white dark:bg-zinc-900">
+<div class="relative flex w-full justify-center h-[calc(100vh-3.75rem)] overflow-hidden font-sans text-zinc-900 dark:text-zinc-50 bg-white dark:bg-zinc-900">
     <aside class="hidden lg:block fixed left-0 w-1/4 h-full py-6 px-4">
         {#if layoutState.leftSidebar}
             {@render layoutState.leftSidebar()}

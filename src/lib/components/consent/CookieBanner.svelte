@@ -58,14 +58,16 @@
 	}
 
 	const buttonBase =
-		'inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900';
+		'inline-flex min-h-[44px] items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900';
 	const secondary = `${buttonBase} bg-zinc-100 dark:bg-zinc-800 border border-zinc-500/25 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700`;
 	const primary = `${buttonBase} bg-crimson-600 hover:bg-crimson-700 text-white`;
+	const textButton =
+		'inline-flex min-h-[44px] items-center justify-center rounded-xl px-3 text-sm font-medium text-zinc-600 dark:text-zinc-300 underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson-500';
 	let flyIn = $derived(reduceMotion ? { duration: 0 } : { y: 24, duration: 240 });
 </script>
 
 {#if consentState.hydrated && consentState.bannerOpen}
-	<div class="pointer-events-none fixed inset-x-4 bottom-4 z-[60] md:inset-x-auto md:left-1/2 md:bottom-6 md:w-[min(40rem,calc(100vw-3rem))] md:-translate-x-1/2">
+	<div class="pointer-events-none fixed inset-x-3 above-tabbar z-[60] md:inset-x-auto md:left-1/2 md:bottom-6 md:w-[min(40rem,calc(100vw-3rem))] md:-translate-x-1/2" style="--tabbar-h: 4.25rem;">
 		<div
 			bind:this={card}
 			role="dialog"
@@ -75,7 +77,7 @@
 			onkeydown={onKeydown}
 			in:fly={flyIn}
 			out:fade={{ duration: reduceMotion ? 0 : 150 }}
-			class="pointer-events-auto rounded-2xl border border-zinc-500/25 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-2xl shadow-black/10 dark:shadow-black/40 p-5 md:p-6"
+			class="pointer-events-auto rounded-2xl border border-zinc-500/25 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-2xl shadow-black/10 dark:shadow-black/40 p-4 md:p-6"
 		>
 			{#if consentState.customizeOpen}
 				<form onsubmit={saveCustom} class="flex flex-col gap-5">
@@ -136,10 +138,12 @@
 						</div>
 					</div>
 
-					<div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
-						<button type="button" onclick={() => consentState.openCustomize()} class="{secondary} order-3 sm:order-1">Personalizza</button>
-						<button type="button" onclick={reject} class="{secondary} order-2">Rifiuta</button>
-						<button type="button" onclick={accept} class="{primary} order-1 sm:order-3">Accetta</button>
+					<div class="flex flex-col gap-2 sm:flex-row sm:justify-end sm:items-center">
+						<button type="button" onclick={() => consentState.openCustomize()} class="{textButton} order-2 sm:order-1">Personalizza</button>
+						<div class="order-1 sm:order-2 grid grid-cols-2 gap-2">
+							<button type="button" onclick={reject} class={secondary}>Rifiuta</button>
+							<button type="button" onclick={accept} class={primary}>Accetta</button>
+						</div>
 					</div>
 				</div>
 			{/if}

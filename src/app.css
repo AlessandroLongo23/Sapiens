@@ -444,3 +444,56 @@ button, a {
   outline: 2px solid oklch(0.645 0.246 21.000);
   outline-offset: 2px;
 }
+
+/* ---- Mobile foundations ------------------------------------------------
+   Students open Sapiens on a phone first. Everything below is shared by the
+   mobile shell (header, bottom tab bars, sheets) and the lesson reader. */
+:root {
+  /* Height of the bottom navigation bars (global tabs and lesson tabs). */
+  --tabbar-h: 3.5rem;
+  /* Home-indicator inset on iPhones; zero elsewhere. */
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+a,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* iOS zooms into any field smaller than 16px: keep form controls at 16px on touch screens. */
+@media (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: max(1rem, 16px);
+  }
+}
+
+/* Room for a bottom tab bar, plus the home indicator. */
+@utility pb-tabbar {
+  padding-bottom: calc(var(--tabbar-h) + var(--safe-b));
+}
+/* Sits right above a bottom tab bar. */
+@utility above-tabbar {
+  bottom: calc(var(--tabbar-h) + var(--safe-b));
+}
+/* Sits at the bottom edge, above the home indicator only. */
+@utility pb-safe {
+  padding-bottom: var(--safe-b);
+}
+
+/* Horizontal scrollers (wide tables, display math) on narrow screens. */
+.scroll-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  max-width: 100%;
+}

@@ -7,6 +7,8 @@
 	import interWoff2 from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 	import '$lib/utils/prototypes.js';
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+	import { afterNavigate } from '$app/navigation';
 	import { searchStore } from '$lib/components/ui/search';
 	import { GSC_VERIFICATION } from '$lib/config/site';
 	import { organizationJsonLd, webSiteJsonLd } from '$lib/seo/jsonld';
@@ -16,6 +18,7 @@
 	import GrainyBackground from '$lib/components/landing/background/GrainyBackground.svelte';
 	import AuthModal from '$lib/components/ui/modals/AuthModal.svelte';
 	import Header from '$lib/components/landing/Header.svelte';
+	import MobileTabBar from '$lib/components/landing/MobileTabBar.svelte';
 	import SearchOverlay from '$lib/components/ui/SearchOverlay.svelte';
 	import FooterSection from '$lib/components/landing/FooterSection.svelte';
 	import CookieBanner from '$lib/components/consent/CookieBanner.svelte';
@@ -27,9 +30,40 @@
 
 	const siteJsonLd = [organizationJsonLd(), webSiteJsonLd()];
 
+	// Lesson pages take the whole phone screen: no site header and no tab
+	// bar, the lesson brings its own. Wider screens keep the site header.
+	let immersive = $derived(page.route.id?.includes('/[topic]') ?? false);
+
+	// The page scrolls inside this element, not the window. On phones the
+	// header slides away while scrolling down and comes back on the first
+	// scroll up, like the browser's own bar.
+	let scroller = $state(undefined);
+	let headerHidden = $state(false);
+	let lastScrollTop = 0;
+
+	function onScroll(event) {
+		const top = event.currentTarget.scrollTop;
+		const delta = top - lastScrollTop;
+		if (top < 64) headerHidden = false;
+		else if (delta > 8) headerHidden = true;
+		else if (delta < -8) headerHidden = false;
+		lastScrollTop = top;
+	}
+
+	// A new page starts at the top; going back keeps the position the browser
+	// restored, and a jump within the page (the skip link) is left alone.
+	afterNavigate(({ type, from, to }) => {
+		headerHidden = false;
+		const samePage = from?.url.pathname === to?.url.pathname;
+		if (type !== 'popstate' && !samePage && scroller) scroller.scrollTop = 0;
+		lastScrollTop = scroller?.scrollTop ?? 0;
+	});
+
 	// Login state is read from the cookie session after hydration; the auth
 	// library is loaded only when a session cookie exists or a login starts.
 	onMount(() => {
+		// Marks the page as interactive (the end-to-end tests wait for it).
+		document.documentElement.dataset.hydrated = 'true';
 		if (document.cookie.includes('-auth-token')) authState.init();
 		else authState.ready = true;
 	});
@@ -73,16 +107,25 @@
 	<AuthModal />
 	<CookieBanner />
 
-	<div class="flex flex-col relative z-10 h-screen">
+	<div class="flex flex-col relative z-10 h-dvh">
 		<SearchOverlay />
-		<Header bind:headerRef={headerRef} />
 
-		<div class={`flex-1 overflow-y-auto no-scrollbar transition-opacity duration-300 ease-out ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-			<main id="contenuto" style={`min-height: calc(100vh - ${headerRef?.offsetHeight ?? 0}px);`}>
+		<div
+			bind:this={scroller}
+			onscroll={onScroll}
+			class={`flex-1 overflow-y-auto no-scrollbar transition-opacity duration-300 ease-out ${immersive ? '' : 'pb-tabbar md:pb-0'} ${$searchStore?.isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+		>
+			<Header bind:headerRef={headerRef} hidden={headerHidden} {immersive} />
+
+			<main id="contenuto" style={`min-height: calc(100dvh - ${headerRef?.offsetHeight ?? 0}px);`}>
 				{@render children()}
 			</main>
 
 			<FooterSection />
 		</div>
+
+		{#if !immersive && !$searchStore?.isActive}
+			<MobileTabBar />
+		{/if}
 	</div>
 </ThemeProvider>

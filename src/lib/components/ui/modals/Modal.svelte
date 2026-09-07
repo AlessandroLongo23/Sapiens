@@ -1,21 +1,40 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	
-	let { 
+	import { media } from '$lib/state/media.svelte';
+	import { portal } from '$lib/utils/portal';
+
+	/**
+	 * Dialog container. On phones the panel is anchored to the bottom edge
+	 * and slides up like a sheet, with its own scrolling and room for the
+	 * home indicator; from `sm` up it is centred.
+	 */
+	let {
 		isOpen = $bindable(false),
-		classes = '', 
-		onClose = () => {}, 
+		classes = '',
+		onClose = () => {},
 		isInstantTransition = false,
-		closeOnOutsideClick = true, 
-		children, 
+		closeOnOutsideClick = true,
+		children,
 		backgroundBlur = 'none'
 	} = $props();
 
-	const handleBackdropClick = (e: MouseEvent) => {
-		if (closeOnOutsideClick && e.target === e.currentTarget) {
-			onClose();
-		}
-	}
+	// Focus moves into the panel when it opens (so Escape reaches it) and
+	// back to where it was when it closes.
+	let panel = $state<HTMLElement | null>(null);
+	let previousFocus: HTMLElement | null = null;
+
+	$effect(() => {
+		if (!isOpen) return;
+		previousFocus = document.activeElement as HTMLElement | null;
+		tick().then(() => {
+			if (panel && !panel.contains(document.activeElement)) panel.focus({ preventScroll: true });
+		});
+		return () => {
+			previousFocus?.focus?.({ preventScroll: true });
+			previousFocus = null;
+		};
+	});
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
@@ -32,31 +51,29 @@
 		xl: 'backdrop-blur-xl'
 	}
 
-	function handleModalScroll(event: WheelEvent | TouchEvent) {
-		event.stopPropagation();
-	}
-
-	function handleBackgroundScroll(event: WheelEvent | TouchEvent) {
-		event.preventDefault();
-		event.stopPropagation();
-	}
+	let duration = $derived(isInstantTransition || media.reducedMotion ? 0 : 260);
+	let offset = $derived(media.sm ? 15 : '100%');
 </script>
 
 {#if isOpen}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="fixed inset-0 bg-black/25 {backgroundBlurClasses[backgroundBlur]} z-50"
-		onclick={handleBackdropClick}
-		onwheel={handleBackgroundScroll}
-		ontouchmove={handleBackgroundScroll}
+		use:portal
+		class="fixed inset-0 z-50 flex flex-col justify-end sm:items-center sm:justify-center"
 		onkeydown={handleKeydown}
-		role="presentation"
-		transition:fade|local={{ duration: isInstantTransition ? 0 : 100 }}
 	>
-		<div 
-			class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full duration-200 {classes}"
-			onwheel={handleModalScroll}	
-			ontouchmove={handleModalScroll}
-			transition:fly|local={{ duration: isInstantTransition ? 0 : 300, y: 15 }}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<div
+			class="absolute inset-0 bg-black/25 {backgroundBlurClasses[backgroundBlur]} touch-none"
+			onclick={() => closeOnOutsideClick && onClose()}
+			role="presentation"
+			transition:fade|local={{ duration: isInstantTransition ? 0 : 100 }}
+		></div>
+		<div
+			bind:this={panel}
+			tabindex="-1"
+			class="relative z-10 w-full max-h-[calc(100dvh-var(--safe-t)-1rem)] sm:max-h-[92dvh] overflow-y-auto overscroll-contain outline-none sm:mx-auto {classes}"
+			transition:fly|local={{ duration, y: offset }}
 		>
 			{@render children()}
 		</div>

@@ -81,7 +81,7 @@
 	};
 </script>
 
-<div class="flex flex-col h-[calc(100vh-4.5rem)] bg-zinc-50 dark:bg-zinc-900">
+<div class="flex flex-col h-[calc(100dvh-3.75rem)] bg-zinc-50 dark:bg-zinc-900">
 	{#if !hasAccess}
 		<div class="flex-1 overflow-y-auto px-4 py-6 max-w-4xl mx-auto w-full">
 			<UpgradePrompt 

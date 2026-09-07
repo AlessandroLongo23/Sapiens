@@ -52,7 +52,12 @@
         },
     }
 
-    const focusInput = () => requestAnimationFrame(() => inputRef?.focus());
+    // Focus right away (phones only show the keyboard for a focus that
+    // follows a tap closely), then once more after the next paint.
+    const focusInput = () => {
+        inputRef?.focus();
+        requestAnimationFrame(() => inputRef?.focus());
+    };
     const blurInput = () => inputRef?.blur();
 
     const handleShortcutToggle = () => {

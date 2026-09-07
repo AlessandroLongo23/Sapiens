@@ -32,7 +32,7 @@
 			class="relative bg-white dark:bg-zinc-800 rounded-2xl border-2 transition-all duration-200 
 				{
 					plan.popular
-					? 'border-crimson-400 shadow-xl scale-105'
+					? 'border-crimson-400 shadow-xl md:scale-105'
 					: 'border-zinc-500/25'
 				}"
 		>
