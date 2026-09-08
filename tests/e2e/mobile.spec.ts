@@ -17,6 +17,15 @@ const CONSENT = {
 	path: '/'
 };
 
+/** What a copy would put on the clipboard, without touching the real one. */
+async function copyOf(page: Page): Promise<string> {
+	return page.evaluate(() => {
+		const data = new DataTransfer();
+		document.dispatchEvent(new ClipboardEvent('copy', { clipboardData: data, bubbles: true, cancelable: true }));
+		return data.getData('text/plain');
+	});
+}
+
 async function noHorizontalOverflow(page: Page, label: string) {
 	const { doc, vw } = await page.evaluate(() => ({ doc: document.documentElement.scrollWidth, vw: window.innerWidth }));
 	expect(doc, `${label} scrolls sideways`).toBeLessThanOrEqual(vw);
@@ -179,6 +188,47 @@ test.describe('lesson reader', () => {
 
 		await menu.getByRole('button', { name: 'Semplifica' }).dispatchEvent('pointerdown');
 		await expect(sheet).toBeVisible();
+	});
+
+	test('a tap takes a whole formula, and a second one lets it go', async ({ page }) => {
+		await gotoHydrated(page, THEORY_PATH);
+		const formula = page.locator('#content-container .formula').first();
+		await formula.scrollIntoViewIfNeeded();
+		await formula.tap();
+		// Held on its own, so it wears the outline, and the menu offers to ask about it.
+		await expect(formula).toHaveAttribute('data-picked', 'alone');
+		await expect(page.getByRole('toolbar', { name: 'Chiedi a Sapiens AI' })).toBeVisible();
+		// What comes off it is the LaTeX, not the glyph spans it is drawn with.
+		expect(await copyOf(page)).toBe(`$${await formula.getAttribute('data-tex')}$`);
+
+		await formula.tap();
+		await expect(formula).not.toHaveAttribute('data-picked', /.*/);
+		await expect(page.getByRole('toolbar', { name: 'Chiedi a Sapiens AI' })).toBeHidden();
+	});
+
+	test('a selection that stops inside a formula rounds out to its edges', async ({ page }) => {
+		await gotoHydrated(page, THEORY_PATH);
+		const formula = page.locator('#content-container .formula').first();
+		await formula.scrollIntoViewIfNeeded();
+		// A finger dragged from the start of the line into the middle of the formula.
+		await page.evaluate(() => {
+			const target = document.querySelector('#content-container .formula')!;
+			const glyph = document.createTreeWalker(target.querySelector('.katex-html')!, NodeFilter.SHOW_TEXT).nextNode()!;
+			document.dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'touch', bubbles: true }));
+			const range = document.createRange();
+			range.setStart(target.closest('p')!.firstChild!, 0);
+			range.setEnd(glyph, glyph.nodeValue!.length);
+			const selection = window.getSelection()!;
+			selection.removeAllRanges();
+			selection.addRange(range);
+			document.dispatchEvent(new PointerEvent('pointerup', { pointerType: 'touch', bubbles: true }));
+		});
+		// Part of a longer passage, and the selection now ends past the formula.
+		await expect(formula).toHaveAttribute('data-picked', 'part');
+		await expect
+			.poll(() => page.evaluate(() => !document.querySelector('#content-container .formula')!.contains(window.getSelection()!.getRangeAt(0).endContainer)))
+			.toBe(true);
+		expect(await copyOf(page)).toContain(`$${await formula.getAttribute('data-tex')}$`);
 	});
 
 	test('exercise runner: equal answers in one or two columns, then the summary sheet', async ({ page }) => {

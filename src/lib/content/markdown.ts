@@ -55,11 +55,26 @@ function protect(markdown: string) {
 	return { text, math, tikz };
 }
 
+/**
+ * Every formula is wrapped, and the wrapper carries its source. The reader
+ * treats a formula as one object: click it and the whole thing is taken, drag
+ * through it and it comes along entire. What a selection then hands the
+ * assistant or the clipboard is `$a^{-n}$`, not the `a−n` its glyph spans
+ * spell out. The MathML twin cannot supply it, since its TeX annotation is
+ * stripped so raw LaTeX never lands in the page text.
+ */
+function formula(tex: string, display: boolean): string {
+	const source = escapeHtml(tex);
+	return display
+		? `<div class="katex-display formula" data-tex="${source}" data-block>${renderTex(tex, true)}</div>`
+		: `<span class="formula" data-tex="${source}">${renderTex(tex, false)}</span>`;
+}
+
 function restore(html: string, math: Placeholder[], tikz: string[]): string {
 	return html
 		.replace(/MATHPLACEHOLDER(\d+)END/g, (_, i: string) => {
 			const { display, content } = math[Number(i)];
-			return display ? `<div class="katex-display">${renderTex(content, true)}</div>` : renderTex(content, false);
+			return formula(content, display);
 		})
 		.replace(/<div data-tikz="(\d+)"><\/div>/g, (_, i: string) => `<div class="tikz-container my-6 flex justify-center"><script type="text/tikz">\n${tikz[Number(i)]}\n</script></div>`);
 }

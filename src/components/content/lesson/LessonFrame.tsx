@@ -55,6 +55,7 @@ export function LessonFrame({ titleHtml, parentLink, paths, left, withAssistant 
 	const aiOpen = useAISidebar((s) => s.isOpen);
 	const openAi = useAISidebar((s) => s.open);
 	const closeAi = useAISidebar((s) => s.close);
+	const setAssistant = useAISidebar((s) => s.setAvailable);
 	const scroller = useRef<HTMLDivElement>(null);
 	const compact = scrollY > 20;
 	const progress = Math.round(scrollProgress * 100);
@@ -75,6 +76,12 @@ export function LessonFrame({ titleHtml, parentLink, paths, left, withAssistant 
 		resetSections();
 	}, [pathname, setScroll, setTocOpen, resetSections]);
 	useEffect(() => () => closeAi(), [closeAi]);
+	// Only the theory page carries an assistant. Elsewhere the reader still
+	// selects and copies, but nothing offers to ask about the selection.
+	useEffect(() => {
+		setAssistant(withAssistant);
+		return () => setAssistant(false);
+	}, [withAssistant, setAssistant]);
 
 	const sections = [
 		{ href: paths.theory, label: 'Teoria', icon: Book },

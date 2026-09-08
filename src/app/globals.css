@@ -130,6 +130,11 @@
 	--info-soft: var(--color-sky-50);
 	--info-fg: var(--color-sky-700);
 	--info-edge: var(--color-sky-200);
+	/* Selecting to read: the highlight a lesson paints under a drag, and the
+	   two states a formula shows when it is the target of one. */
+	--select: color-mix(in oklab, var(--accent) 18%, transparent);
+	--formula-hover: color-mix(in oklab, var(--accent) 8%, transparent);
+	--formula-edge: color-mix(in oklab, var(--accent) 32%, transparent);
 	--tabbar-h: var(--spacing-tabbar);
 	--safe-b: var(--spacing-safe-b);
 	--safe-t: var(--spacing-safe-t);
@@ -170,6 +175,9 @@
 	--info-soft: color-mix(in oklab, var(--color-sky-900) 30%, transparent);
 	--info-fg: var(--color-sky-300);
 	--info-edge: var(--color-sky-800);
+	--select: color-mix(in oklab, var(--color-crimson-400) 30%, transparent);
+	--formula-hover: color-mix(in oklab, var(--color-crimson-400) 12%, transparent);
+	--formula-edge: color-mix(in oklab, var(--color-crimson-400) 45%, transparent);
 }
 
 @theme inline {
@@ -412,6 +420,96 @@ a,
 }
 .markdown-content .katex-display > .katex {
 	font-size: 1.21em;
+}
+
+/* A formula is one object, not the row of glyph spans it is built from. The
+   browser paints a drag through KaTeX as a ragged strip of little rectangles
+   that stops halfway down a fraction, so once the reader has marked a formula
+   as taken the native highlight inside it steps aside and the wrapper draws
+   its own: a rounded block a hover offers, a click takes whole, and a drag
+   lights entire the moment it runs into it. Without the script the native
+   highlight is still there, ragged but present. */
+.markdown-content ::selection {
+	background: var(--select);
+}
+.markdown-content .formula[data-picked]::selection,
+.markdown-content .formula[data-picked] ::selection {
+	background: transparent;
+}
+.markdown-content .formula {
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+}
+/* The glyphs ride above the highlight the wrapper paints under them. */
+.markdown-content .formula > * {
+	position: relative;
+}
+/* An inline formula sits in a line of prose, so its highlight is a
+   pseudo-element bled a little past the glyphs: lighting it up cannot move
+   the words around it. */
+.markdown-content .formula:not([data-block]) {
+	position: relative;
+	border-radius: 0.35em;
+}
+.markdown-content .formula:not([data-block])::before {
+	content: '';
+	position: absolute;
+	inset: -0.14em -0.28em;
+	border-radius: inherit;
+	background: transparent;
+	pointer-events: none;
+	transition:
+		background 0.15s ease,
+		box-shadow 0.15s ease;
+}
+.markdown-content .formula:not([data-block])[data-picked]::before {
+	background: var(--select);
+}
+/* Held on its own, by a click or by a drag that took nothing else: the
+   outline says the whole formula came along, and the block blooms in under
+   the glyphs. Inside a longer passage the fill alone keeps the highlight
+   reading as one band. */
+.markdown-content .formula:not([data-block])[data-picked='alone']::before {
+	box-shadow: inset 0 0 0 1px var(--formula-edge);
+	animation: formula-pick 0.18s var(--ease-out-soft) both;
+}
+/* A display formula scrolls sideways when it outgrows the column, and a
+   background stays with the box while an absolutely placed highlight would
+   slide out from under the glyphs. */
+.markdown-content .formula[data-block] {
+	border-radius: var(--radius-xl);
+	transition:
+		background 0.15s ease,
+		box-shadow 0.15s ease;
+}
+.markdown-content .formula[data-block][data-picked] {
+	background: var(--select);
+}
+.markdown-content .formula[data-block][data-picked='alone'] {
+	box-shadow: inset 0 0 0 1px var(--formula-edge);
+}
+/* The offer, on a pointer that can hover. A finger has nothing to hover with
+   and gets the same block on the tap itself. */
+@media (hover: hover) and (pointer: fine) {
+	.markdown-content .formula:not([data-block]):hover::before {
+		background: var(--formula-hover);
+	}
+	.markdown-content .formula[data-block]:hover {
+		background: var(--formula-hover);
+	}
+}
+@keyframes formula-pick {
+	from {
+		opacity: 0;
+		transform: scale(0.94);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.markdown-content .formula,
+	.markdown-content .formula::before {
+		transition: none;
+		animation: none;
+	}
 }
 .markdown-content .tikz-container {
 	@apply my-6 overflow-x-auto;

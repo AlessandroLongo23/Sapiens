@@ -21,6 +21,21 @@ const SUGGESTIONS = [
 const iconButton = 'flex items-center justify-center rounded-lg text-fg-faint transition-colors hover:bg-surface-3 hover:text-fg-muted active:bg-surface-3 focus-ring';
 
 /**
+ * The line that stands in for the selection in the conversation. A selection
+ * carries its formulas as `$…$`, and half of one left behind by the cut would
+ * typeset as a stray dollar, so the cut falls before the formula it would
+ * otherwise break.
+ */
+function preview(text: string, limit = 50): string {
+	const line = text.replace(/\s+/g, ' ').trim();
+	if (line.length <= limit) return line;
+	const cut = line.slice(0, limit);
+	const whole = [...cut.matchAll(/\$\$[\s\S]*?\$\$|\$[^$]*?\$/g)].map((m) => [m.index, m.index + m[0].length] as const);
+	const broken = [...cut].findIndex((c, i) => c === '$' && !whole.some(([from, to]) => i >= from && i < to));
+	return `${(broken < 0 ? cut : cut.slice(0, broken)).trim()}...`;
+}
+
+/**
  * The study assistant. Beside the lesson on wide screens; inside a bottom
  * sheet on phones, where `onClose` adds the close button and the panel
  * fills the sheet. The chat is part of the paid plans: the server decides
@@ -95,8 +110,7 @@ export function AISidebar({ onClose }: { onClose?: () => void }) {
 	const sendPending = useEffectEvent((pending: NonNullable<typeof pendingPrompt>) => {
 		const { prompt, selectedText } = pending;
 		clearPendingPrompt();
-		const preview = `${selectedText.slice(0, 50)}${selectedText.length > 50 ? '...' : ''}`;
-		send(`${prompt.prompt}\n\n${selectedText}`, `${prompt.label}: "${preview}"`);
+		send(`${prompt.prompt}\n\n${selectedText}`, `${prompt.label}: "${preview(selectedText)}"`);
 	});
 	useEffect(() => {
 		// The state updates that follow come from the network response, not from this effect.

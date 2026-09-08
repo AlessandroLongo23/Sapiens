@@ -5,6 +5,7 @@ import { useLessonLayout } from '@/lib/state/lesson-layout';
 import { useAISidebar } from '@/lib/state/ai-sidebar';
 import { useReducedMotion } from '@/lib/hooks/use-media';
 import { textSelection, type SelectionReport } from '@/lib/utils/text-selection';
+import { copyAsTex, formulaTaps, paintFormulas, rangeToText, snapToFormulas } from '@/lib/utils/formulas';
 import { processTikzWhenVisible } from '@/lib/utils/tikzjax';
 import type { Prompt } from '@/lib/data/prompts';
 import { FloatingMenu, type MenuPosition } from './FloatingMenu';
@@ -65,6 +66,7 @@ export function LessonBody({ html }: { html: string }) {
 	const jumpTo = useLessonLayout((s) => s.jumpTo);
 	const reducedMotion = useReducedMotion();
 	const setPendingPrompt = useAISidebar((s) => s.setPendingPrompt);
+	const assistant = useAISidebar((s) => s.available);
 	const [menu, setMenu] = useState<MenuPosition | null>(null);
 	const selected = useRef('');
 
@@ -102,23 +104,46 @@ export function LessonBody({ html }: { html: string }) {
 		return () => cancelAnimationFrame(frame);
 	}, [scrollY, activeSection, setActiveSection]);
 
-	// Text selection → the assistant's actions.
+	// Text selection → the assistant's actions. Formulas ride along as whole
+	// objects: lit as one block while the drag runs through them, taken entire
+	// on a click, and read back as the LaTeX they were written in.
 	useEffect(() => {
 		const el = container.current;
 		if (!el) return;
 		const onSelect = (r: SelectionReport) => {
 			selected.current = r.text;
+			// A page without an assistant (the formulary, the exercises) still
+			// selects and copies formulas whole; there is just nobody to ask.
+			if (!assistant) return;
 			// Mouse: above the selection. Finger: below its last line, clear of the OS callout.
 			setMenu(r.touch ? { x: r.left + r.width / 2, y: r.bottom + 12, touch: true } : { x: r.left + r.width / 2, y: r.top - 10, touch: false });
 		};
 		const hide = () => setMenu(null);
-		const { destroy } = textSelection(el, { onSelect, onDeselect: hide });
+		const { destroy } = textSelection(el, {
+			onSelect,
+			onDeselect: hide,
+			onRange: (range) => paintFormulas(el, range),
+			settle: (selection) => snapToFormulas(selection, el),
+			read: rangeToText
+		});
+		const stopTaps = formulaTaps(el);
+		const stopCopy = copyAsTex(el);
+		// Escape lets go of a picked formula without having to find blank space to click.
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key !== 'Escape') return;
+			window.getSelection()?.removeAllRanges();
+			setMenu(null);
+		};
 		window.addEventListener('scroll', hide, true);
+		window.addEventListener('keydown', onKey);
 		return () => {
 			destroy();
+			stopTaps();
+			stopCopy();
 			window.removeEventListener('scroll', hide, true);
+			window.removeEventListener('keydown', onKey);
 		};
-	}, []);
+	}, [assistant]);
 
 	const choose = (prompt: Prompt) => {
 		if (selected.current) setPendingPrompt(prompt, selected.current);

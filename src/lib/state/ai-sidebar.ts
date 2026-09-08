@@ -9,6 +9,8 @@ interface AISidebarState {
 	messages: Message[];
 	isLoading: boolean;
 	isOpen: boolean;
+	/** An assistant is mounted on this page: without one there is nobody to ask. */
+	available: boolean;
 	pendingPrompt: PendingPrompt;
 	inputValue: string;
 	addUserMessage: (content: string) => void;
@@ -22,6 +24,7 @@ interface AISidebarState {
 	setLoading: (loading: boolean) => void;
 	open: () => void;
 	close: () => void;
+	setAvailable: (available: boolean) => void;
 }
 
 const id = () => `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -34,6 +37,7 @@ export const useAISidebar = create<AISidebarState>((set) => ({
 	messages: [],
 	isLoading: false,
 	isOpen: false,
+	available: false,
 	pendingPrompt: null,
 	inputValue: '',
 	addUserMessage: (content) => set((s) => ({ messages: [...s.messages, { id: id(), role: 'user', content }] })),
@@ -46,5 +50,6 @@ export const useAISidebar = create<AISidebarState>((set) => ({
 	setInput: (inputValue) => set({ inputValue }),
 	setLoading: (isLoading) => set({ isLoading }),
 	open: () => set({ isOpen: true }),
-	close: () => set({ isOpen: false })
+	close: () => set({ isOpen: false }),
+	setAvailable: (available) => set({ available })
 }));
