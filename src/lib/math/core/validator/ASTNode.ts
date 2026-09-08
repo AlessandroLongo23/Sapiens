@@ -1,5 +1,5 @@
-import { Number } from "$lib/math/algebra/Number";
-import { Operator } from "$lib/math/core/Operator";
+import { Number } from "@/lib/math/algebra/Number";
+import { Operator } from "@/lib/math/core/Operator";
 
 // Abstract Syntax Tree Node types
 export enum ASTNodeType {

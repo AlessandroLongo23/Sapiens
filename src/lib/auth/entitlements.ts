@@ -1,5 +1,5 @@
 import type { User } from '@supabase/supabase-js';
-import { SUBSCRIPTION_PLANS, Features, getPlanById, type SubscriptionPlan } from '$lib/stripe/config';
+import { SUBSCRIPTION_PLANS, Features, getPlanById, type SubscriptionPlan } from '@/lib/stripe/config';
 
 /**
  * What a user is allowed to use, from the subscription claim the Stripe

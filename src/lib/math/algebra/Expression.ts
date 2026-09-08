@@ -1,10 +1,10 @@
-import { simplify as casSimplify, getSimplificationSteps, type SimplificationOptions, type NumericEvaluationOptions } from "$lib/math/core/cas/Simplifier";
-import { evaluateWithSteps, evaluateWithContext, getVariables } from "$lib/math/core/validator/StepEvaluator";
-import { ExpressionParser } from "$lib/math/core/validator/ExpressionParser";
-import type { ASTNode } from "$lib/math/core/validator/ASTNode";
-import { BinaryOpNode, NumberNode, UnaryOpNode } from "$lib/math/core/validator/ASTNode";
-import { Operator } from "$lib/math/core/Operator";
-import type { Number } from "$lib/math/algebra/Number";
+import { simplify as casSimplify, getSimplificationSteps, type SimplificationOptions, type NumericEvaluationOptions } from "@/lib/math/core/cas/Simplifier";
+import { evaluateWithSteps, evaluateWithContext, getVariables } from "@/lib/math/core/validator/StepEvaluator";
+import { ExpressionParser } from "@/lib/math/core/validator/ExpressionParser";
+import type { ASTNode } from "@/lib/math/core/validator/ASTNode";
+import { BinaryOpNode, NumberNode, UnaryOpNode } from "@/lib/math/core/validator/ASTNode";
+import { Operator } from "@/lib/math/core/Operator";
+import type { Number } from "@/lib/math/algebra/Number";
 
 // Re-export for convenience
 export type { SimplificationOptions, NumericEvaluationOptions };

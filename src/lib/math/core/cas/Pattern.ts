@@ -1,6 +1,6 @@
-import type { ASTNode } from "$lib/math/core/validator/ASTNode";
-import { ASTNodeType, NumberNode, VariableNode, BinaryOpNode, UnaryOpNode, FunctionNode } from "$lib/math/core/validator/ASTNode";
-import { Operator } from "$lib/math/core/Operator";
+import type { ASTNode } from "@/lib/math/core/validator/ASTNode";
+import { ASTNodeType, NumberNode, VariableNode, BinaryOpNode, UnaryOpNode, FunctionNode } from "@/lib/math/core/validator/ASTNode";
+import { Operator } from "@/lib/math/core/Operator";
 
 /**
  * Pattern matching utilities for symbolic manipulation

@@ -11,7 +11,7 @@ test.describe('tutoring marketplace', () => {
 	test('list renders, filters live in the URL and a shared URL filters on load', async ({ page }) => {
 		await page.goto('/ripetizioni');
 		await expect(page.locator('h1')).toHaveText('Ripetizioni');
-		const cards = page.locator('ul[aria-label="Tutor disponibili"] > li');
+		const cards = page.getByRole('list', { name: 'Tutor disponibili' }).getByRole('listitem');
 		const total = await cards.count();
 		expect(total).toBeGreaterThan(0);
 
@@ -43,8 +43,8 @@ test.describe('tutoring marketplace', () => {
 		expect((await request.post('/api/tutoring/requests', { data: {} })).status()).toBe(401);
 
 		await page.goto('/ripetizioni');
-		// The cookie banner is a dialog too: dismiss it so it neither matches nor overlaps.
-		await page.getByRole('dialog', { name: 'Cookie e privacy' }).getByRole('button', { name: 'Rifiuta' }).click();
+		// The cookie banner is a non-modal region: dismiss it so it does not overlap the list.
+		await page.getByRole('region', { name: 'Cookie e privacy' }).getByRole('button', { name: 'Rifiuta' }).click();
 		await page.getByRole('button', { name: 'Chiedi aiuto' }).first().click();
 		const dialog = page.getByRole('dialog', { name: /Chiedi aiuto a/ });
 		await dialog.locator('#req-name').fill('Studente Anonimo');

@@ -1,4 +1,4 @@
-import { Number } from "$lib/math/algebra/Number";
+import { Number } from "@/lib/math/algebra/Number";
 
 export const gcd = (a: number | Number, b: number | Number): Number => {
 	if (typeof a === 'number') a = new Number(a);

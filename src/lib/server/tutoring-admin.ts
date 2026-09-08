@@ -1,8 +1,18 @@
-import { env } from '$env/dynamic/private';
-import { PUBLIC_SUPABASE_URL } from '$env/static/public';
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { TUTOR_LEVELS, TUTOR_MODES, TUTOR_SUBJECTS, type TutorLevel, type TutorMode } from '$lib/tutoring/config';
+import 'server-only';
+import { revalidatePath } from 'next/cache';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { TUTORING_ROOT } from '@/lib/config/site';
+import { adminClient as serviceClient } from './supabase';
+import { TUTOR_LEVELS, TUTOR_MODES, TUTOR_SUBJECTS, type TutorLevel, type TutorMode } from '@/lib/tutoring/config';
 import { invalidateTutorCache } from './tutoring';
+
+/** A profile changed: the in-memory list and the cached list and profile pages are refreshed, so staff decisions show at once. */
+function refreshTutorPages(row: unknown) {
+	invalidateTutorCache();
+	revalidatePath(TUTORING_ROOT);
+	const slug = (row as { slug?: unknown } | null)?.slug;
+	if (typeof slug === 'string' && slug) revalidatePath(`${TUTORING_ROOT}/${slug}`);
+}
 
 /**
  * Writes and private reads of the marketplace, with the service role. Every
@@ -19,16 +29,12 @@ export class TutoringError extends Error {
 	}
 }
 
-let client: SupabaseClient | null = null;
-
 export function adminClient(): SupabaseClient {
-	if (!env.SUPABASE_SERVICE_ROLE_KEY) throw new TutoringError(503, 'Servizio non disponibile. Riprova più tardi.');
-	if (!client) {
-		client = createClient(PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
-			auth: { persistSession: false, autoRefreshToken: false }
-		});
+	try {
+		return serviceClient() as unknown as SupabaseClient;
+	} catch {
+		throw new TutoringError(503, 'Servizio non disponibile. Riprova più tardi.');
 	}
-	return client;
 }
 
 export type TutorStatus = 'draft' | 'pending' | 'published' | 'suspended';
@@ -248,7 +254,7 @@ export async function saveOwnTutor(userId: string, input: TutorProfileInput, acc
 			.select(TUTOR_COLUMNS)
 			.single();
 		if (error) fail('tutor update failed', error);
-		invalidateTutorCache();
+		refreshTutorPages(data);
 		return toTutor(data as Record<string, unknown>);
 	}
 
@@ -265,7 +271,7 @@ export async function saveOwnTutor(userId: string, input: TutorProfileInput, acc
 		.select(TUTOR_COLUMNS)
 		.single();
 	if (error) fail('tutor insert failed', error);
-	invalidateTutorCache();
+	refreshTutorPages(data);
 	return toTutor(data as Record<string, unknown>);
 }
 
@@ -362,8 +368,10 @@ export async function respondToRequest(tutorId: string, requestId: string, actio
 		.eq('id', row.id)
 		.eq('status', 'pending')
 		.select(REQUEST_COLUMNS)
-		.single();
+		.maybeSingle();
 	if (updateError) fail('request update failed', updateError);
+	// Zero rows: another response landed between the read and the write.
+	if (!updated) throw new TutoringError(409, 'Questa richiesta è già stata gestita.');
 	return updated as RequestRow;
 }
 
@@ -455,7 +463,7 @@ export async function setTutorReview(id: string, patch: { status?: unknown; veri
 	const { data, error } = await adminClient().from('tutors').update(update).eq('id', id).select(TUTOR_COLUMNS).maybeSingle();
 	if (error) fail('tutor review failed', error);
 	if (!data) throw new TutoringError(404, 'Tutor non trovato.');
-	invalidateTutorCache();
+	refreshTutorPages(data);
 	return toTutor(data as Record<string, unknown>);
 }
 

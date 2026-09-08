@@ -1,4 +1,4 @@
-import type { Expression } from "$lib/math/algebra/Expression.js";
+import type { Expression } from "@/lib/math/algebra/Expression.js";
 
 export class Equation {
     left: Expression;
@@ -25,7 +25,7 @@ export class Equation {
      * @returns a record of variables and their solutions
      */
 
-    solve(variables: string[]): Record<string, Number> {
+    solve(_variables: string[]): Record<string, number> {
         throw new Error('Not implemented');
     }
 }

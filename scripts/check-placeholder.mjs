@@ -3,7 +3,7 @@
  * Fails when placeholder text ("lorem ipsum") appears in the source tree, in
  * the build output, or in the content database.
  *
- * Runs after `vite build` (see package.json) so a deployment cannot ship
+ * Runs after `next build` (see package.json) so a deployment cannot ship
  * filler text again. Set SKIP_PLACEHOLDER_DB=1 to skip the database check.
  */
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
@@ -14,9 +14,9 @@ dotenv.config();
 
 const ROOT = process.cwd();
 const PATTERN = /lorem\s+ipsum/i;
-const SCAN_DIRS = ['src', 'static', '.svelte-kit/output', 'build', '.vercel/output'];
-const SKIP_DIRS = new Set(['node_modules', '.git', 'android', 'sapiens backup']);
-const TEXT_EXT = /\.(svelte|ts|js|mjs|cjs|json|md|html|css|txt|xml|svx)$/i;
+const SCAN_DIRS = ['src', 'public', '.next/server'];
+const SKIP_DIRS = new Set(['node_modules', '.git', 'android']);
+const TEXT_EXT = /\.(tsx|ts|js|mjs|cjs|json|md|html|css|txt|xml)$/i;
 
 const hits = [];
 

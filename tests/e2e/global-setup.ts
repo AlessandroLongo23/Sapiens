@@ -8,7 +8,7 @@ import { writeFileSync } from 'node:fs';
  */
 export default async function globalSetup() {
 	const key = process.env.STRIPE_SECRET_KEY ?? '';
-	if (/^(sk|rk)_live_/.test(key)) {
+	if (/_live_/.test(key)) {
 		throw new Error('STRIPE_SECRET_KEY is a live key: the e2e suite only runs against a sandbox.');
 	}
 	if (!key) throw new Error('STRIPE_SECRET_KEY (sandbox) is missing from .env');
@@ -32,6 +32,10 @@ export default async function globalSetup() {
 		};
 		child.stdout?.on('data', onData);
 		child.stderr?.on('data', onData);
+		child.on('error', (err: NodeJS.ErrnoException) => {
+			clearTimeout(timer);
+			reject(new Error(err.code === 'ENOENT' ? 'The Stripe CLI is not installed (`brew install stripe/stripe-cli/stripe`); set E2E_SKIP_STRIPE_LISTEN=1 to run without webhooks.' : `stripe listen failed: ${err.message}`));
+		});
 		child.on('exit', (code) => {
 			clearTimeout(timer);
 			reject(new Error(`stripe listen exited with code ${code}`));

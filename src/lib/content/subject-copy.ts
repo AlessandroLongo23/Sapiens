@@ -1,5 +1,5 @@
 /**
- * Editorial copy for subject index pages (Task 21). Each text is written for
+ * Editorial copy for subject index pages. Each text is written for
  * one subject at one level and describes only the chapters that exist in the
  * database for it. Keyed by `<level slug>/<subject slug>` (database slugs).
  *

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * End-to-end tests against the production build served by `vite preview`,
+ * End-to-end tests against the production build served by `next start`,
  * with the Stripe sandbox and the real Supabase project (throwaway users).
  *
  *   npm run build && npm run test:e2e
@@ -39,15 +39,16 @@ export default defineConfig({
 		{ name: 'iphone', use: { ...devices['iPhone 14'] }, testMatch: /mobile\.spec\.ts$/ },
 		{ name: 'pixel', use: { ...devices['Pixel 7'] }, testMatch: /mobile\.spec\.ts$/ }
 	],
-	// With E2E_BASE_URL set (a dev server, say) no preview server is started.
+	// With E2E_BASE_URL set (a dev server, say) no server is started. A server
+	// already on 4173 is never reused: one left over from an earlier build
+	// serves chunk names that no longer exist and fails (or passes) for the
+	// wrong build, which is exactly what the pre-push hook must not do.
 	webServer: process.env.E2E_BASE_URL
 		? undefined
 		: {
-				command: 'npm run preview -- --port 4173',
+				command: 'npm run preview',
 				url: 'http://localhost:4173/robots.txt',
-				reuseExistingServer: true,
-				timeout: 60_000,
-				// Cookies on localhost are shared by every local project; Node's 16 KB header limit is too small.
-				env: { NODE_OPTIONS: '--max-http-header-size=131072' }
+				reuseExistingServer: false,
+				timeout: 60_000
 			}
 });

@@ -49,16 +49,16 @@ test('free account: still locked, then Checkout with the trial unlocks it', asyn
 	await expect(page.locator('#paywall-title')).toHaveCount(0);
 	await page.getByRole('button', { name: 'Inizia Esercizi' }).click();
 
-	// Answer every question with its first option; the summary appears at the end.
+	// Answer every question with its first option; the summary sheet appears at the end.
+	const summary = page.getByRole('dialog');
 	for (let i = 0; i < 12; i++) {
-		const summary = page.getByText(/Corrette/);
 		if (await summary.isVisible().catch(() => false)) break;
 		const option = page.locator('#esercizi button').first();
 		await option.waitFor({ state: 'visible' });
 		await option.click();
 		await page.waitForTimeout(1700);
 	}
-	await expect(page.getByText(/Corrette/)).toBeVisible();
+	await expect(summary.getByRole('img', { name: /risposte corrette su/ })).toBeVisible();
 });
 
 test('Lite does not include Sapiens AI: the sidebar shows the Base card and the API refuses', async ({ page }) => {
@@ -77,7 +77,7 @@ test('account page shows the plan and the portal cancels at period end', async (
 	await page.getByRole('button', { name: 'Rifiuta' }).click();
 	await loginViaModal(page, user!);
 	await page.goto('/subscription');
-	await expect(page.locator('h3', { hasText: 'Piano Lite' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Piano Lite' }).first()).toBeVisible();
 	await expect(page.getByText('Periodo di prova')).toBeVisible();
 
 	await page.getByRole('button', { name: 'Gestisci abbonamento' }).click();

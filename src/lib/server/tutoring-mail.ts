@@ -1,6 +1,7 @@
-import { env } from '$env/dynamic/private';
+import 'server-only';
 import { Resend } from 'resend';
-import { levelName, modeName, subjectName } from '$lib/tutoring/config';
+import { escapeHtml } from '@/lib/utils/escape';
+import { levelName, modeName, subjectName } from '@/lib/tutoring/config';
 import type { RequestRow } from './tutoring-admin';
 
 /**
@@ -9,11 +10,14 @@ import type { RequestRow } from './tutoring-admin';
  * acceptance emails, in both directions.
  */
 
-const FROM = 'Sapiens <onboarding@resend.dev>';
+/**
+ * The sender, on a domain verified in Resend. The fallback is Resend's test
+ * sender, which delivers to the account owner only: fine for development,
+ * useless in production, so MAIL_FROM is required there.
+ */
+export const MAIL_FROM = process.env.MAIL_FROM || 'Sapiens <onboarding@resend.dev>';
 
-function esc(text: string): string {
-	return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+const esc = escapeHtml;
 
 function layout(title: string, body: string): string {
 	return `
@@ -39,16 +43,17 @@ function summary(req: Pick<RequestRow, 'subject' | 'level' | 'mode'>): [string, 
 }
 
 async function send(to: string | null | undefined, subject: string, html: string): Promise<void> {
-	if (!to || !env.RESEND_API_KEY) return;
+	if (!to || !process.env.RESEND_API_KEY) return;
 	try {
-		const resend = new Resend(env.RESEND_API_KEY);
-		await resend.emails.send({
-			from: FROM,
+		const resend = new Resend(process.env.RESEND_API_KEY);
+		const { error } = await resend.emails.send({
+			from: MAIL_FROM,
 			to: [to],
-			...(env.TUTORING_NOTIFY_EMAIL ? { bcc: [env.TUTORING_NOTIFY_EMAIL] } : {}),
+			...(process.env.TUTORING_NOTIFY_EMAIL ? { bcc: [process.env.TUTORING_NOTIFY_EMAIL] } : {}),
 			subject,
 			html
 		});
+		if (error) console.error('tutoring email rejected:', error);
 	} catch (err) {
 		console.error('tutoring email failed:', err);
 	}

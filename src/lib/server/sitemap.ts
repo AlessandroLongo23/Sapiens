@@ -1,9 +1,11 @@
-import { getContentTree, latestUpdate } from '$lib/server/content';
-import { walkTree, type ContentNode } from '$lib/utils/tree';
-import { nodePath, subviewPath, dbPath } from '$lib/seo/slug';
-import { configs } from '$lib/exercises/config';
-import { absoluteUrl, CONTENT_ROOT, TUTORING_ROOT } from '$lib/config/site';
-import { getPublishedTutors, latestTutorUpdate } from '$lib/server/tutoring';
+import 'server-only';
+import { escapeHtml } from '@/lib/utils/escape';
+import { getContentTree, latestUpdate } from '@/lib/server/content';
+import { walkTree, type ContentNode } from '@/lib/utils/tree';
+import { nodePath, subviewPath, dbPath } from '@/lib/seo/slug';
+import { configs } from '@/lib/exercises/config';
+import { absoluteUrl, CONTENT_ROOT, isPrivatePath, TUTORING_ROOT } from '@/lib/config/site';
+import { getPublishedTutors, latestTutorUpdate } from '@/lib/server/tutoring';
 
 export interface SitemapUrl {
 	loc: string;
@@ -63,12 +65,12 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 		urls.push({ loc: `${TUTORING_ROOT}/${tutor.slug}`, lastmod: day(tutor.updated_at) });
 	}
 
-	return urls.map((u) => ({ ...u, loc: absoluteUrl(u.loc) }));
+	// Private areas (see PRIVATE_PATH_PREFIXES) never appear here, whatever gets
+	// pushed above. Filtered before absoluteUrl, which takes a path.
+	return urls.filter((u) => !isPrivatePath(u.loc)).map((u) => ({ ...u, loc: absoluteUrl(u.loc) }));
 }
 
-function escapeXml(value: string): string {
-	return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+const escapeXml = escapeHtml;
 
 export function renderUrlset(urls: SitemapUrl[]): string {
 	const entries = urls

@@ -1,5 +1,5 @@
-import { TUTORING_ROOT } from '$lib/config/site';
-import type { ContentNode } from '$lib/utils/tree';
+import { TUTORING_ROOT } from '@/lib/config/site';
+import type { ContentNode } from '@/lib/utils/tree';
 
 /**
  * From a lesson to the tutors who teach it: the library's subject slugs

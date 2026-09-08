@@ -1,6 +1,6 @@
-import { SITE_NAME } from '$lib/config/site';
-import { plainTitle } from '$lib/seo/slug';
-import { countByType, type ContentNode } from '$lib/utils/tree';
+import { SITE_NAME } from '@/lib/config/site';
+import { plainTitle } from '@/lib/seo/slug';
+import { countByType, type ContentNode } from '@/lib/utils/tree';
 
 /**
  * Title and description templates per node type (Tasks 3, 4 and 18).

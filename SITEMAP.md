@@ -561,7 +561,7 @@ All student routes are prefixed with `/student` and require authentication.
 - **Status:** ❌ Missing (recommended)
 
 ### 6.2 404 Page
-- **Route:** `+error.svelte` (SvelteKit error page)
+- **Route:** `src/app/not-found.tsx` (Next.js not-found page)
 - **Description:** Custom 404 error page
 - **Content:**
   - Friendly error message
@@ -571,7 +571,7 @@ All student routes are prefixed with `/student` and require authentication.
 - **Status:** ⚠️ Should be customized
 
 ### 6.3 500 Page
-- **Route:** `+error.svelte` (server errors)
+- **Route:** `src/app/error.tsx` (server errors)
 - **Description:** Custom 500 error page
 - **Content:**
   - Error message

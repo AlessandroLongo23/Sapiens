@@ -33,7 +33,7 @@ test.describe('shell', () => {
 
 		const tabBar = page.getByRole('navigation', { name: 'Navigazione principale' });
 		await expect(tabBar).toBeVisible();
-		for (const name of ['Home', 'Materiale', 'Ripetizioni']) {
+		for (const name of ['Home', 'Materiale', 'Zaino', 'Ripetizioni']) {
 			const box = await tabBar.getByRole('link', { name }).boundingBox();
 			expect(box!.height, `${name} tab height`).toBeGreaterThanOrEqual(44);
 		}
@@ -104,7 +104,7 @@ test.describe('shell', () => {
 	});
 
 	test('pages of every kind fit the screen', async ({ page }) => {
-		for (const path of ['/materiale', '/materiale/scuola-superiore/matematica', '/pricing', '/faq', '/contacts', '/ripetizioni/diventa-tutor']) {
+		for (const path of ['/materiale', '/materiale/scuola-superiore/matematica', '/pricing', '/faq', '/contacts', '/ripetizioni/diventa-tutor', '/zaino']) {
 			await gotoHydrated(page, path);
 			await noHorizontalOverflow(page, path);
 			await expect(page.locator('h1'), path).toHaveCount(1);
@@ -143,7 +143,7 @@ test.describe('lesson reader', () => {
 		// Progress bar moved off zero.
 		const progress = page.getByRole('progressbar', { name: 'Avanzamento della lettura' });
 		await expect(progress).toBeVisible();
-		expect(Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
+		await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
 	});
 
 	test('the assistant opens in a sheet from the section bar and from a text selection', async ({ page }) => {

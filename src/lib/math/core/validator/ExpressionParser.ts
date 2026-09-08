@@ -1,7 +1,7 @@
-import { Operator } from "$lib/math/core/Operator";
-import { TokenType } from "$lib/math/core/validator/TokenType";
-import type { Token } from "$lib/math/core/validator/Token";
-import { Lexer } from "$lib/math/core/validator/Lexer";
+import { Operator } from "@/lib/math/core/Operator";
+import { TokenType } from "@/lib/math/core/validator/TokenType";
+import type { Token } from "@/lib/math/core/validator/Token";
+import { Lexer } from "@/lib/math/core/validator/Lexer";
 import { 
     type ASTNode, 
     NumberNode, 
@@ -9,7 +9,7 @@ import {
     BinaryOpNode, 
     UnaryOpNode, 
     FunctionNode 
-} from "$lib/math/core/validator/ASTNode";
+} from "@/lib/math/core/validator/ASTNode";
 
 export class ExpressionParser {
     private lexer: Lexer;

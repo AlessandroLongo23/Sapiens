@@ -4,14 +4,14 @@
 //   node scripts/mobile-screenshots.mjs
 //   TARGETS=iphonese,galaxys24 FULL=1 node scripts/mobile-screenshots.mjs
 //
-// BASE (default http://localhost:5173) is the server to hit, OUT the folder
+// BASE (default http://localhost:3000) is the server to hit, OUT the folder
 // for the images (default screenshots/), TARGETS a comma-separated list of
 // the profiles below, FULL=1 for full-page captures, CONSENT=0 to keep the
 // cookie banner. Every page is also checked for sideways overflow.
 import { chromium, webkit, devices } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 
-const BASE = process.env.BASE ?? 'http://localhost:5173';
+const BASE = process.env.BASE ?? 'http://localhost:3000';
 const OUT = process.env.OUT ?? 'screenshots';
 mkdirSync(OUT, { recursive: true });
 

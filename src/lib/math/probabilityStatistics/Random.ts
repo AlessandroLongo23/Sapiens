@@ -1,5 +1,5 @@
-import { Number } from "$lib/math/algebra/Number";
-import { Sampler } from "$lib/math/probabilityStatistics/Sampler";
+import { Number } from "@/lib/math/algebra/Number";
+import { Sampler } from "@/lib/math/probabilityStatistics/Sampler";
 
 export class Random {
     /**

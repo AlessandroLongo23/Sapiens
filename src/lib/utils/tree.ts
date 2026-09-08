@@ -1,5 +1,3 @@
-import type { Component } from 'svelte';
-
 // Node types matching the `content_nodes` table
 export type NodeType = 'level' | 'subject' | 'chapter' | 'topic';
 
@@ -12,7 +10,6 @@ export interface ContentNode {
     title: string;
     type: NodeType;
     position: number;
-    icon?: string | Component;
     description?: string | null;
     updated_at?: string | null;
     /** Set by the server: the lesson has theory text / a formulary. */
@@ -71,30 +68,6 @@ export function reconstructTree(nodes: Omit<ContentNode, 'children'>[]): Content
 }
 
 /**
- * Finds a node in the tree by traversing the database slug path.
- * Returns the node and the path of ancestors.
- */
-export function findNodeByPath(
-    tree: ContentNode[],
-    slugPath: string[]
-): { node: ContentNode | null; ancestors: ContentNode[] } {
-    let currentLayer = tree;
-    const ancestors: ContentNode[] = [];
-    let currentNode: ContentNode | null = null;
-
-    for (const slug of slugPath) {
-        currentNode = currentLayer.find(n => n.slug === slug) ?? null;
-        if (!currentNode) {
-            return { node: null, ancestors };
-        }
-        ancestors.push(currentNode);
-        currentLayer = currentNode.children;
-    }
-
-    return { node: currentNode, ancestors };
-}
-
-/**
  * Finds a node anywhere in the tree by its ID.
  */
 export function findNodeById(tree: ContentNode[], id: string): ContentNode | null {
@@ -108,24 +81,6 @@ export function findNodeById(tree: ContentNode[], id: string): ContentNode | nul
     return null;
 }
 
-/**
- * Gets all nodes of a specific type from the tree.
- */
-export function getNodesByType(tree: ContentNode[], type: NodeType): ContentNode[] {
-    const results: ContentNode[] = [];
-
-    const traverse = (nodes: ContentNode[]) => {
-        for (const node of nodes) {
-            if (node.type === type) {
-                results.push(node);
-            }
-            traverse(node.children);
-        }
-    };
-
-    traverse(tree);
-    return results;
-}
 
 /**
  * Counts nodes by type in the tree.

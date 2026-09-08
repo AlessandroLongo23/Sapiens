@@ -1,5 +1,5 @@
-import type { ContentNode } from '$lib/utils/tree';
-import { CONTENT_ROOT } from '$lib/config/site';
+import type { ContentNode } from '@/lib/utils/tree';
+import { CONTENT_ROOT } from '@/lib/config/site';
 
 /**
  * Everything that turns a content node into a URL, or a URL back into a node,
@@ -135,6 +135,15 @@ export interface ResolvedPath {
  * public segment first and the raw database slug second, so old-style or
  * hand-typed paths still resolve (and can then be redirected).
  */
+/** A URL segment decoded; malformed percent-encoding stays as typed (and then matches nothing) instead of throwing. */
+export function safeDecode(segment: string): string {
+	try {
+		return decodeURIComponent(segment);
+	} catch {
+		return segment;
+	}
+}
+
 export function resolvePublicPath(tree: ContentNode[], segments: string[]): ResolvedPath {
 	let layer = tree;
 	const ancestors: ContentNode[] = [];
@@ -142,7 +151,7 @@ export function resolvePublicPath(tree: ContentNode[], segments: string[]): Reso
 	let current: ContentNode | null = null;
 
 	for (const raw of segments) {
-		const segment = decodeURIComponent(raw).toLowerCase();
+		const segment = safeDecode(raw).toLowerCase();
 		let match = layer.find((n) => publicSegment(n) === segment) ?? null;
 		if (!match) {
 			match = layer.find((n) => n.slug.toLowerCase() === segment) ?? null;

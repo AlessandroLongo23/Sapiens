@@ -8,11 +8,13 @@
 const SCRIPT_URL = 'https://tikzjax.com/v1/tikzjax.js';
 const FONTS_URL = 'https://tikzjax.com/v1/fonts.css';
 
+type TikzJaxWindow = Window & { tikzjax?: { process?: () => void } };
+
 let loading: Promise<void> | null = null;
 
 export function loadTikzJax(): Promise<void> {
 	if (typeof window === 'undefined') return Promise.resolve();
-	if ((window as any).tikzjax) return Promise.resolve();
+	if ((window as TikzJaxWindow).tikzjax) return Promise.resolve();
 	if (loading) return loading;
 
 	loading = new Promise<void>((resolve, reject) => {
@@ -48,7 +50,7 @@ export function processTikzWhenVisible(container: HTMLElement): () => void {
 	const run = () => {
 		loadTikzJax()
 			.then(() => {
-				const tikzjax = (window as any).tikzjax;
+				const tikzjax = (window as TikzJaxWindow).tikzjax;
 				if (tikzjax && typeof tikzjax.process === 'function') tikzjax.process();
 			})
 			.catch((err) => console.error(err));

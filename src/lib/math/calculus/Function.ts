@@ -1,5 +1,5 @@
-import type { Expression } from "$lib/math/algebra/Expression";
-import type { Number } from "$lib/math/algebra/Number";
+import type { Expression } from "@/lib/math/algebra/Expression";
+import type { Number } from "@/lib/math/algebra/Number";
 
 export class Function {
     name: string;
@@ -20,7 +20,7 @@ export class Function {
         return `${this.name}(${this.variables.join(',')})=${this.expression.toLatex()}`;
     }
 
-    static fromLatex(string: string): Function {
+    static fromLatex(_string: string): Function {
         // TODO: Think about this and how to implement it
         throw new Error('Not implemented');
         // const match = string.match(functionPattern);

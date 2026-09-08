@@ -1,8 +1,9 @@
 {
   "appId": "it.sapiens.app",
   "appName": "Sapiens",
-  "webDir": "build",
+  "webDir": "public",
   "server": {
+    "url": "https://sapiens-edu.vercel.app",
     "androidScheme": "https"
   },
   "plugins": {

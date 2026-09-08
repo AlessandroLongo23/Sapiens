@@ -1,6 +1,6 @@
-import { error } from '@sveltejs/kit';
-import supabase from '$lib/supabase';
-import { reconstructTree, type ContentNode } from '$lib/utils/tree';
+import 'server-only';
+import { supabase } from './supabase';
+import { reconstructTree, type ContentNode } from '@/lib/utils/tree';
 
 /**
  * Server-side access to the content tree.
@@ -33,7 +33,7 @@ async function fetchFlatNodes(): Promise<FlatNode[]> {
 	const failure = nodesRes.error ?? theoryRes.error ?? formularyRes.error;
 	if (failure) {
 		console.error('content_nodes query failed:', failure.message);
-		throw error(503, 'Contenuti temporaneamente non disponibili.');
+		throw new Error('Contenuti temporaneamente non disponibili.');
 	}
 
 	const withTheory = new Set((theoryRes.data ?? []).map((r) => r.id as string));
@@ -94,6 +94,19 @@ export function slimTree(tree: ContentNode[]): ContentNode[] {
 	});
 }
 
+/**
+ * The tree every page hands to the shell for the header menu. A content
+ * outage costs the menu its levels, not the page: the header falls back to
+ * the plain `Materiale` link when the tree comes back empty.
+ */
+export async function getMenuTree(): Promise<ContentNode[]> {
+	try {
+		return slimTree(await getContentTree());
+	} catch {
+		return [];
+	}
+}
+
 export interface TopicContent {
 	theory: string | null;
 	formulary: string | null;
@@ -110,7 +123,7 @@ export async function getTopicContent(id: string): Promise<TopicContent> {
 
 	if (err) {
 		console.error('content_nodes content query failed:', err.message);
-		throw error(503, 'Contenuti temporaneamente non disponibili.');
+		throw new Error('Contenuti temporaneamente non disponibili.');
 	}
 
 	const clean = (v: unknown) => (typeof v === 'string' && v.trim() ? v : null);

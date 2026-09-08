@@ -11,14 +11,27 @@ import { join, relative } from 'node:path';
 
 const ROOT = process.cwd();
 const PATTERNS = [
-	{ name: 'Stripe secret or restricted key', re: /\b[sr]k_(live|test)_[A-Za-z0-9]{16,}/ },
+	{ name: 'Stripe secret or restricted key', re: /\b(sk|rk|rkcs)_(live|test)_[A-Za-z0-9]{16,}/ },
 	{ name: 'Stripe webhook secret', re: /\bwhsec_[A-Za-z0-9]{16,}/ },
 	{ name: 'Supabase access token', re: /\bsbp_[A-Za-z0-9]{20,}/ },
-	{ name: 'Supabase service role JWT', re: /eyJ[A-Za-z0-9_-]{20,}\.eyJ[A-Za-z0-9_-]*service_role[A-Za-z0-9_-]*\./ }
+	{ name: 'Supabase secret key', re: /\bsb_secret_[A-Za-z0-9_-]{20,}/ },
+	{ name: 'OpenAI key', re: /\bsk-(proj-)?[A-Za-z0-9_-]{32,}/ },
+	{ name: 'Resend key', re: /\bre_[A-Za-z0-9]{8,}_[A-Za-z0-9]{16,}/ },
+	// Any JWT whose payload carries a privileged role (the base64 payload is decoded, not pattern-matched).
+	{ name: 'Supabase service role JWT', re: /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}/g, check: jwtHasPrivilegedRole }
 ];
-const SCAN = ['src', 'static', 'scripts', '.env.example', '.svelte-kit/output', '.vercel/output'];
-const SKIP_DIRS = new Set(['node_modules', '.git', 'android', 'sapiens backup']);
-const TEXT_EXT = /\.(svelte|ts|js|mjs|cjs|json|md|html|css|txt|xml|svx|example)$/i;
+
+function jwtHasPrivilegedRole(token) {
+	try {
+		const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8'));
+		return payload.role === 'service_role' || payload.role === 'supabase_admin';
+	} catch {
+		return false;
+	}
+}
+const SCAN = ['src', 'public', 'scripts', '.env.example', '.next/server'];
+const SKIP_DIRS = new Set(['node_modules', '.git', 'android']);
+const TEXT_EXT = /\.(tsx|ts|js|mjs|cjs|json|md|html|css|txt|xml|example)$/i;
 
 const hits = [];
 
@@ -26,9 +39,10 @@ function scanFile(full) {
 	const stats = statSync(full);
 	if (stats.size > 20_000_000) return;
 	const text = readFileSync(full, 'utf8');
-	for (const { name, re } of PATTERNS) {
-		const match = text.match(re);
-		if (match) hits.push(`${relative(ROOT, full)}: ${name} ("${match[0].slice(0, 12)}…")`);
+	for (const { name, re, check } of PATTERNS) {
+		const matches = re.global ? text.match(re) ?? [] : [text.match(re)?.[0]].filter(Boolean);
+		const match = matches.find((m) => !check || check(m));
+		if (match) hits.push(`${relative(ROOT, full)}: ${name} ("${match.slice(0, 12)}…")`);
 	}
 }
 

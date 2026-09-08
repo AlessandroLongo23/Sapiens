@@ -20,16 +20,6 @@ Array.prototype.extract = function(n) {
 	return this.shuffle().slice(0, n);
 }
 
-Number.prototype.toHours = function() {
-    let hours = Math.floor(this);
-    let minutes = Math.floor((this % 1 * 60));
-    return `${hours}h ${minutes}m`;
-}
-
-Number.prototype.toCurrency = function(symbol = '€') {
-    return `${this.toFixed(2)} ${symbol}`;
-}
-
 Set.prototype.join = function(joiner = ', ') {
     return `${[...this].join(joiner)}`;
 }

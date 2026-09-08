@@ -18,18 +18,6 @@ interface Array<T> {
     extract(n: number): T[];
 }
 
-interface Number {
-    /**
-     * Converts a number to hours and minutes format
-     */
-    toHours(): string;
-
-    /**
-     * Converts a number to currency format
-     * @param symbol - Currency symbol (default: '€')
-     */
-    toCurrency(symbol?: string): string;
-}
 
 interface Set<T> {
     /**

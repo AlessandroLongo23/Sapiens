@@ -4,6 +4,12 @@ Ideas and decisions that should outlive a single chat. Written 2026-09-03, on br
 from the owner's notes on mobile-first, gamification, short videos and native apps. Nothing here is
 built yet unless it says so. `SEO-TODO.md` tracks what was done in the SEO overhaul.
 
+## Stack (2026-09-07)
+
+The app was ported from SvelteKit to Next.js 16 (App Router, React 19) with Tailwind 4; see README.md for the
+layering (tokens, semantic tokens, components, screens). References below to SvelteKit modules (`$service-worker`,
+adapters) map to their Next.js equivalents.
+
 ## Direction
 
 Sapiens should work best on the device the student has in hand. Today that is a phone: the app is
@@ -13,7 +19,7 @@ the same progress, so switching devices costs nothing.
 
 The order that keeps the codebase small: make the web app mobile-first, ship it as an installable PWA,
 then wrap the same code with Capacitor for the stores. Capacitor for Android is already in
-`package.json` (`npm run build:mobile`); a native rewrite would mean a second content pipeline and a
+`package.json` (`npm run cap:sync`); a native rewrite would mean a second content pipeline and a
 second paywall, and is not worth it before the product has proven retention.
 
 ## Now (this branch)
@@ -41,9 +47,9 @@ The current layout was designed on a laptop. Before any new feature, a pass over
 
 ## Next: installable PWA
 
-`static/site.webmanifest` and the icon set exist. Missing: a service worker that caches the app shell
+`public/site.webmanifest` and the icon set exist. Missing: a service worker that caches the app shell
 and the last lessons read, so a lesson opens with no signal; an "Installa Sapiens" prompt shown after
-the second visit, not the first. SvelteKit's `$service-worker` module is enough; no library needed.
+the second visit, not the first. A hand-written service worker in `public/` is enough; no library needed.
 
 ## Gamification (Duolingo-style practice)
 
@@ -79,7 +85,7 @@ Vertical, 30 seconds to 2 minutes, one concept each, linked to the lesson they e
 ## Native apps
 
 When retention on the PWA justifies it: Capacitor builds for Android (configured) and iOS (to add),
-same SvelteKit bundle, plus native push, app-store billing rules (Apple requires in-app purchase for
+same Next.js deployment, plus native push, app-store billing rules (Apple requires in-app purchase for
 digital subscriptions sold inside the iOS app; the web checkout cannot be linked from the iOS app),
 and deep links from `sapiens.../materiale/...` into the app.
 
@@ -110,8 +116,8 @@ and deep links from `sapiens.../materiale/...` into the app.
   Italian rate; EUR settlement in Stripe with a EUR bank account so payouts skip conversion; one session
   with a revisor about virksomhedsordningen before the first payout.
 - Semester prices in Stripe (`PUBLIC_STRIPE_PRICE_*_SEMESTER`); the toggle appears on its own once set.
-- The Pro plan's weekly tutoring hour needs a booking flow (calendar, Meet link); `api/create-meet`
-  exists as a starting point.
+- The Pro plan's weekly tutoring hour needs a booking flow (calendar, Meet link); the old
+  `api/create-meet` endpoint was dropped in the port and would have to be rewritten.
 - Tutoring marketplace: research on every Italian platform, the legal and tax memo, the economics and the
   recommended introduction-fee design are in `MARKETPLACE.md` (2026-09-06). Not built.
 - Student numbers on the landing page: switch the third counter from "Lezioni pubblicate" to

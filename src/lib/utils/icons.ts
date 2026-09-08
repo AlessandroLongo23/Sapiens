@@ -1,23 +1,24 @@
 import {
+	Atom,
 	Backpack,
+	Beaker,
+	BookOpen,
+	Calculator,
+	CodeXml,
+	Layers,
+	LibraryBig,
+	Pi,
 	School,
 	University,
-	Pi,
-	Atom,
-	Beaker,
-	CodeXml,
-	Calculator,
-	Layers,
-	BookOpen,
-	LibraryBig
-} from 'lucide-svelte';
-import type { ContentNode } from '$lib/utils/tree';
+	type LucideIcon
+} from 'lucide-react';
+import type { ContentNode } from '@/lib/utils/tree';
 
-export type IconComponent = typeof LibraryBig;
+export type IconComponent = LucideIcon;
 
 /**
  * Icons for content nodes. The database stores no icon, so the icon is chosen
- * from the node's slug and type (the same mapping the old in-code tree used).
+ * from the node's slug and type.
  */
 const BY_SLUG: Record<string, IconComponent> = {
 	middle_school: Backpack,
@@ -34,12 +35,7 @@ const BY_SLUG: Record<string, IconComponent> = {
 	'fondamenti-informatica': CodeXml
 };
 
-const BY_TYPE: Record<string, IconComponent> = {
-	level: LibraryBig,
-	subject: Calculator,
-	chapter: Layers,
-	topic: BookOpen
-};
+const BY_TYPE: Record<string, IconComponent> = { level: LibraryBig, subject: Calculator, chapter: Layers, topic: BookOpen };
 
 export function iconFor(node: Pick<ContentNode, 'slug' | 'type'> | null | undefined): IconComponent {
 	if (!node) return LibraryBig;

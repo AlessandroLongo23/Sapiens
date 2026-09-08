@@ -1,7 +1,7 @@
-import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, OG_IMAGE, absoluteUrl } from '$lib/config/site';
-import { plainTitle, nodePath } from '$lib/seo/slug';
-import { levelSchemaLabel } from '$lib/seo/meta';
-import type { ContentNode } from '$lib/utils/tree';
+import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, OG_IMAGE, absoluteUrl } from '@/lib/config/site';
+import { plainTitle, nodePath } from '@/lib/seo/slug';
+import { levelSchemaLabel } from '@/lib/seo/meta';
+import type { ContentNode } from '@/lib/utils/tree';
 
 /**
  * Typed JSON-LD builders. Every builder returns a plain object; the <JsonLd>

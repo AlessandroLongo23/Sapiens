@@ -1,5 +1,5 @@
-import { Number } from "$lib/math/algebra/Number";
-import { Expression } from "$lib/math/algebra/Expression";
+import { Number } from "@/lib/math/algebra/Number";
+import { Expression } from "@/lib/math/algebra/Expression";
 
 export class Complex extends Expression {
     real: Number;
@@ -16,7 +16,7 @@ export class Complex extends Expression {
         return `${this.real.toLatex()} + ${this.imaginary.toLatex()}i`;
     }
 
-    static fromLatex(string: string): Complex {
+    static fromLatex(_string: string): Complex {
         // TODO: Implement this
         throw new Error('Not implemented');
     }

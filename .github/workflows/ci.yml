@@ -1,0 +1,43 @@
+# Runs on every push: the same steps as the git hooks in .husky, on a clean
+# machine. Make `checks` a required status check on `master` so production on
+# Vercel only ever receives commits that passed here.
+name: CI
+
+on: [push]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Public values, inlined into the bundle by next.config.ts.
+      PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+      PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+      # tests/e2e/global-setup.ts refuses to start without the sandbox Stripe
+      # key and the service role, even for the smoke suite (which uses neither).
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      E2E_SKIP_STRIPE_LISTEN: '1'
+      HUSKY: '0'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run lint
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:smoke
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7

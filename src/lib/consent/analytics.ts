@@ -1,5 +1,4 @@
-import { dev } from '$app/environment';
-import { consentState } from '$lib/consent/consent.svelte';
+import { analyticsAllowed } from './consent';
 
 /**
  * Vercel Web Analytics and Speed Insights are loaded only after the visitor
@@ -10,16 +9,12 @@ import { consentState } from '$lib/consent/consent.svelte';
 let injected = false;
 
 export async function loadAnalyticsIfAllowed(): Promise<void> {
-	if (injected || typeof window === 'undefined') return;
-	if (!consentState.analyticsAllowed) return;
+	if (injected || typeof window === 'undefined' || !analyticsAllowed()) return;
 	injected = true;
 	try {
-		const [{ inject }, { injectSpeedInsights }] = await Promise.all([
-			import('@vercel/analytics'),
-			import('@vercel/speed-insights/sveltekit')
-		]);
-		inject({ mode: dev ? 'development' : 'production' });
-		injectSpeedInsights();
+		const [{ inject }, { injectSpeedInsights }] = await Promise.all([import('@vercel/analytics'), import('@vercel/speed-insights')]);
+		inject({ mode: process.env.NODE_ENV === 'development' ? 'development' : 'production' });
+		injectSpeedInsights({ framework: 'next' });
 	} catch (err) {
 		console.error('analytics failed to load', err);
 	}

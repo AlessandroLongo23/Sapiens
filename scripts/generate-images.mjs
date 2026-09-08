@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Regenerates the favicon set, PWA icons and the Open Graph image from the
- * brand assets in static/sapiens. Run with `node scripts/generate-images.mjs`
+ * brand assets in public/sapiens. Run with `node scripts/generate-images.mjs`
  * after changing the logo.
  */
 import sharp from 'sharp';
@@ -11,17 +11,17 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const brand = '#ff3666';
-const out = (name) => join(root, 'static', name);
+const out = (name) => join(root, 'public', name);
 
 // favicon.svg: the traced brain icon, recolored and lightly minified
-const svg = readFileSync(join(root, 'static/sapiens/icon.svg'), 'utf8')
+const svg = readFileSync(join(root, 'public/sapiens/icon.svg'), 'utf8')
 	.replace(/fill="#000000"/g, `fill="${brand}"`)
 	.replace(/<\?xml[^>]*>\s*/, '')
 	.replace(/<!DOCTYPE[^>]*>\s*/, '')
 	.replace(/(\d+\.\d{2})\d+/g, '$1');
 writeFileSync(out('favicon.svg'), svg);
 
-const icon = join(root, 'static/sapiens/icon.png');
+const icon = join(root, 'public/sapiens/icon.png');
 await sharp(icon).resize(32, 32).png({ compressionLevel: 9 }).toFile(out('favicon-32.png'));
 await sharp(icon).resize(192, 192).png({ compressionLevel: 9 }).toFile(out('icon-192.png'));
 await sharp(icon).resize(512, 512).png({ compressionLevel: 9 }).toFile(out('icon-512.png'));
@@ -34,7 +34,7 @@ await sharp({ create: { width: 180, height: 180, channels: 4, background: '#ffff
 	.toFile(out('apple-touch-icon.png'));
 
 // og-image.jpg 1200x630: wordmark on white with the tagline
-const logo = await sharp(join(root, 'static/sapiens/logo.png')).resize({ width: 720 }).png().toBuffer();
+const logo = await sharp(join(root, 'public/sapiens/logo.png')).resize({ width: 720 }).png().toBuffer();
 const logoMeta = await sharp(logo).metadata();
 const tagline = Buffer.from(`<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
   <style>text{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;}</style>

@@ -1,5 +1,5 @@
-import { MegaphoneOff, BookOpen, Pencil, Zap, Sparkles, Users } from 'lucide-svelte';
-import { env } from '$env/dynamic/public';
+import { Backpack, BookOpen, MegaphoneOff, Pencil, Sparkles, Users, Zap } from 'lucide-react';
+import type { IconComponent } from '@/lib/utils/icons';
 
 /** Days of free trial on a first paid subscription (no card required). */
 export const TRIAL_DAYS = 7;
@@ -8,7 +8,16 @@ export const TRIAL_DAYS = 7;
 export const SEMESTER_MONTHS_CHARGED = 5;
 
 /** Stripe price ids come from the environment; a plan without one cannot be bought. */
-const priceId = (name: string): string | null => (env as Record<string, string | undefined>)[name] || null;
+/** Read through an explicit map: Next inlines only variables it can see at build time. */
+const PRICE_IDS: Record<string, string | undefined> = {
+	PUBLIC_STRIPE_PRICE_LITE: process.env.PUBLIC_STRIPE_PRICE_LITE,
+	PUBLIC_STRIPE_PRICE_BASE: process.env.PUBLIC_STRIPE_PRICE_BASE,
+	PUBLIC_STRIPE_PRICE_PRO: process.env.PUBLIC_STRIPE_PRICE_PRO,
+	PUBLIC_STRIPE_PRICE_LITE_SEMESTER: process.env.PUBLIC_STRIPE_PRICE_LITE_SEMESTER,
+	PUBLIC_STRIPE_PRICE_BASE_SEMESTER: process.env.PUBLIC_STRIPE_PRICE_BASE_SEMESTER,
+	PUBLIC_STRIPE_PRICE_PRO_SEMESTER: process.env.PUBLIC_STRIPE_PRICE_PRO_SEMESTER
+};
+const priceId = (name: string): string | null => PRICE_IDS[name] || null;
 
 export enum Currency {
 	EURO = 'EUR',
@@ -36,11 +45,12 @@ export enum Features {
 	REMOVE_ADS = 'remove_ads',
 	EXERCISES = 'exercises',
 	FLASHCARDS = 'flashcards',
+	NOTEBOOKS = 'notebooks',
 	AI_CHAT = 'ai_chat',
 	TUTORING = 'tutoring',
 }
 
-export const FeaturesDetails: Record<Features, { name: string; icon: typeof BookOpen }> = {
+export const FeaturesDetails: Record<Features, { name: string; icon: IconComponent }> = {
 	[Features.THEORY]: {
 		name: 'Accesso a teoria e formulari',
 		icon: BookOpen,
@@ -56,6 +66,10 @@ export const FeaturesDetails: Record<Features, { name: string; icon: typeof Book
 	[Features.FLASHCARDS]: {
 		name: 'Flashcards',
 		icon: Zap,
+	},
+	[Features.NOTEBOOKS]: {
+		name: 'Quaderni e note illimitati',
+		icon: Backpack,
 	},
 	[Features.AI_CHAT]: {
 		name: 'Chat con Sapiens AI',
@@ -88,6 +102,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.REMOVE_ADS]: false,
 			[Features.EXERCISES]: false,
 			[Features.FLASHCARDS]: false,
+			[Features.NOTEBOOKS]: false,
 			[Features.AI_CHAT]: false,
 			[Features.TUTORING]: false,
 		},
@@ -107,6 +122,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
 			[Features.FLASHCARDS]: true,
+			[Features.NOTEBOOKS]: true,
 			[Features.AI_CHAT]: false,
 			[Features.TUTORING]: false,
 		},
@@ -126,6 +142,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
 			[Features.FLASHCARDS]: true,
+			[Features.NOTEBOOKS]: true,
 			[Features.AI_CHAT]: true,
 			[Features.TUTORING]: false,
 		},
@@ -145,6 +162,7 @@ export const SUBSCRIPTION_PLANS = {
 			[Features.REMOVE_ADS]: true,
 			[Features.EXERCISES]: true,
 			[Features.FLASHCARDS]: true,
+			[Features.NOTEBOOKS]: true,
 			[Features.AI_CHAT]: true,
 			[Features.TUTORING]: true,
 		},

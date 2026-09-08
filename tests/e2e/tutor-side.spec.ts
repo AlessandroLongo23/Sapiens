@@ -25,7 +25,7 @@ async function signedIn(browser: Browser, user: TestUser, path: string) {
 	const page = await ctx.newPage();
 	await page.goto('/');
 	// The cookie banner has its own "Accetta" button: dismiss it before anything else.
-	await page.getByRole('dialog', { name: 'Cookie e privacy' }).getByRole('button', { name: 'Rifiuta' }).click();
+	await page.getByRole('region', { name: 'Cookie e privacy' }).getByRole('button', { name: 'Rifiuta' }).click();
 	await loginViaModal(page, user);
 	await page.goto(path);
 	return { ctx, page };

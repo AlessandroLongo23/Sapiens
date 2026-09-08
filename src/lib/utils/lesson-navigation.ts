@@ -1,5 +1,5 @@
-import type { ContentNode } from '$lib/utils/tree';
-import { nodePath } from '$lib/seo/slug';
+import type { ContentNode } from '@/lib/utils/tree';
+import { nodePath } from '@/lib/seo/slug';
 
 export interface NavigationLink {
 	label: string;

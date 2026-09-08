@@ -5,8 +5,10 @@ node_modules
 .vercel
 .netlify
 .wrangler
-/.svelte-kit
-/build
+/.next
+/out
+next-env.d.ts
+*.tsbuildinfo
 
 # OS
 .DS_Store
@@ -18,22 +20,22 @@ Thumbs.db
 !.env.example
 !.env.test
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
 
 sapiens-6e15ddddf52c.json
 
-package-lock.json
 
 android/
 build/
 
-static/content/.obsidian/
-static/zaino_reference/
+public/content/.obsidian/
+public/zaino_reference/
 
 # Playwright
 test-results/
 playwright-report/
 tests/e2e/.stripe-listen.pid
 screenshots/
+.env*
+
+# Supabase CLI
+supabase/.temp/

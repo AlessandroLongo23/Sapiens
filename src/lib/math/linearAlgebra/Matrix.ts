@@ -1,7 +1,7 @@
 export class Matrix {
     rows: number;
     columns: number;
-    data: Number[][];
+    data!: number[][];
     
     constructor(rows: number, columns: number) {
         this.rows = rows;

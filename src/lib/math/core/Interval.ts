@@ -1,4 +1,4 @@
-import { Number } from "$lib/math/algebra/Number";
+import { Number } from "@/lib/math/algebra/Number";
 
 export class Interval {
     left: Number;
@@ -41,17 +41,17 @@ export class Interval {
         return this.left.equals(other.left) && this.right.equals(other.right) && this.leftClosed === other.leftClosed && this.rightClosed === other.rightClosed;
     }
 
-    union(other: Interval): Interval[] {
+    union(_other: Interval): Interval[] {
         // TODO: Implement this method
         throw new Error('Not implemented');
     }
 
-    difference(other: Interval): Interval[] {
+    difference(_other: Interval): Interval[] {
         // TODO: Implement this method
         throw new Error('Not implemented');
     }
 
-    intersection(other: Interval): Interval {
+    intersection(_other: Interval): Interval {
         // TODO: Implement this method
         throw new Error('Not implemented');
     }

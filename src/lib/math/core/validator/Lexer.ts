@@ -1,6 +1,6 @@
-import { Operator } from "$lib/math/core/Operator";
-import { TokenType } from "$lib/math/core/validator/TokenType";
-import type { Token } from "$lib/math/core/validator/Token";
+import { Operator } from "@/lib/math/core/Operator";
+import { TokenType } from "@/lib/math/core/validator/TokenType";
+import type { Token } from "@/lib/math/core/validator/Token";
 
 
 export class Lexer {

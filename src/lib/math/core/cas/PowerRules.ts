@@ -1,16 +1,15 @@
-import type { ASTNode } from "$lib/math/core/validator/ASTNode";
-import { NumberNode, BinaryOpNode, UnaryOpNode } from "$lib/math/core/validator/ASTNode";
-import { Operator } from "$lib/math/core/Operator";
+import type { ASTNode } from "@/lib/math/core/validator/ASTNode";
+import { NumberNode, BinaryOpNode, UnaryOpNode } from "@/lib/math/core/validator/ASTNode";
+import { Operator } from "@/lib/math/core/Operator";
 import { 
     nodesEqual, 
-    isNumber, 
     isPower, 
     isNegative,
     isMultiplication, 
     isDivision,
     getNumber,
     isFraction
-} from "$lib/math/core/cas/Pattern";
+} from "@/lib/math/core/cas/Pattern";
 
 /**
  * Power simplification rules

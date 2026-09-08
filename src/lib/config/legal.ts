@@ -1,5 +1,4 @@
-import { env } from '$env/dynamic/public';
-import { SITE_NAME } from '$lib/config/site';
+import { SITE_NAME } from '@/lib/config/site';
 
 /**
  * Single source of truth for the legal identity behind Sapiens. Every legal
@@ -12,17 +11,15 @@ export const LEGAL = {
 	/** Trading name, as shown everywhere. */
 	name: SITE_NAME,
 	/** Who provides the service and is the data controller (titolare del trattamento). */
-	legalName: env.PUBLIC_LEGAL_NAME || 'Alessandro Longo',
+	legalName: process.env.PUBLIC_LEGAL_NAME || 'Alessandro Longo',
 	/** Full postal address, one line. */
-	address: env.PUBLIC_LEGAL_ADDRESS || '',
+	address: process.env.PUBLIC_LEGAL_ADDRESS || '',
 	/** Partita IVA, when the activity is registered. */
-	vatNumber: env.PUBLIC_LEGAL_VAT || '',
+	vatNumber: process.env.PUBLIC_LEGAL_VAT || '',
 	/** Address for privacy requests; falls back to the contact page when empty. */
-	privacyEmail: env.PUBLIC_PRIVACY_EMAIL || env.PUBLIC_CONTACT_EMAIL || '',
+	privacyEmail: process.env.PUBLIC_PRIVACY_EMAIL || process.env.PUBLIC_CONTACT_EMAIL || '',
 	/** Age from which a person can consent to online services on their own in Italy (art. 2-quinquies Codice privacy). */
 	digitalConsentAge: 14,
-	/** No DPO: the thresholds of art. 37 GDPR (large-scale monitoring or special categories) are not met. */
-	dpoDesignated: false,
 	/** Country of establishment (the Stripe account and the owner's residence are Danish). */
 	establishment: 'Danimarca',
 	/** Lead supervisory authority, from the country of establishment (one-stop-shop, art. 56 GDPR). */

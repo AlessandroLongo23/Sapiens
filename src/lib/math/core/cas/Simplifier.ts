@@ -1,8 +1,8 @@
-import type { ASTNode } from "$lib/math/core/validator/ASTNode";
-import { ASTNodeType, NumberNode, VariableNode, BinaryOpNode, UnaryOpNode, FunctionNode } from "$lib/math/core/validator/ASTNode";
-import { Operator } from "$lib/math/core/Operator";
-import { simplifyFractionToPower, simplifyPowers } from "$lib/math/core/cas/PowerRules";
-import { nodesEqual, isNegative } from "$lib/math/core/cas/Pattern";
+import type { ASTNode } from "@/lib/math/core/validator/ASTNode";
+import { ASTNodeType, NumberNode, BinaryOpNode, UnaryOpNode, FunctionNode } from "@/lib/math/core/validator/ASTNode";
+import { Operator } from "@/lib/math/core/Operator";
+import { simplifyFractionToPower, simplifyPowers } from "@/lib/math/core/cas/PowerRules";
+import { nodesEqual, isNegative } from "@/lib/math/core/cas/Pattern";
 
 /**
  * Main simplification engine

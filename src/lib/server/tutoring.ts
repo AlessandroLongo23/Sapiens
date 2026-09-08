@@ -1,5 +1,6 @@
-import supabase from '$lib/supabase';
-import type { TutorProfile } from '$lib/tutoring/config';
+import 'server-only';
+import { supabase } from './supabase';
+import type { TutorProfile } from '@/lib/tutoring/config';
 
 /**
  * Server-side reads of the tutor marketplace, through the `tutors_public`
@@ -43,7 +44,7 @@ async function fetchTutors(): Promise<TutorProfile[]> {
 		console.error('tutors_public query failed:', error.message);
 		return [];
 	}
-	return (data ?? []).map((row) => toProfile(row as Record<string, unknown>));
+	return (data ?? []).map((row: Record<string, unknown>) => toProfile(row));
 }
 
 /** Drop the in-memory copy after a profile or its status changes, so the next read is fresh. */

@@ -69,6 +69,7 @@ export async function loginViaModal(page: Page, user: TestUser) {
 	await dialog.getByPlaceholder('Password').fill(user.password);
 	await dialog.getByRole('button', { name: 'Accedi', exact: true }).click();
 	await page.getByRole('link', { name: /Account|Dashboard/ }).waitFor();
+	await page.waitForLoadState('networkidle');
 }
 
 export const EXERCISES_PATH =

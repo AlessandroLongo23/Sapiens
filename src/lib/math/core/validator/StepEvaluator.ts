@@ -6,8 +6,8 @@ import {
     BinaryOpNode, 
     UnaryOpNode, 
     FunctionNode 
-} from "$lib/math/core/validator/ASTNode";
-import { Number } from "$lib/math/algebra/Number";
+} from "@/lib/math/core/validator/ASTNode";
+import { Number } from "@/lib/math/algebra/Number";
 
 interface EvaluationResult {
     node: ASTNode;
