@@ -1,7 +1,7 @@
 ---
 stato: decisa
 release: beta
-aggiornato: 2026-09-23
+aggiornato: 2026-09-24
 tag: [piano, release]
 ---
 # Release Beta
@@ -14,7 +14,8 @@ Matematica delle superiori. Obiettivo i cinque anni (150-200 lezioni), minimo il
 ## Funzioni
 - [[Lezioni]] complete di formulario.
 - [[Esercizi]] per tutti gli argomenti, con risposta aperta e progressi salvati, prodotti dalla [[Pipeline esercizi]].
-- [[Zaino]].
+- [[Zaino]], con le note come fogli a larghezza fissa (vedi [[2026-09-24 Le note sono fogli a larghezza fissa]]).
+- [[Adesivi]] sulle note, in versione MVP (vedi [[2026-09-24 Adesivi nella beta, a partire dalle note]]).
 - [[Diario e calendario]].
 - [[Sapiens AI]], a pagamento.
 

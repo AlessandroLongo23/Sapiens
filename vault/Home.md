@@ -31,6 +31,8 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-24 Le note sono fogli a larghezza fissa]]
+- [[2026-09-24 Adesivi nella beta, a partire dalle note]]
 - [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]
 - [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]
 - [[2026-09-24 Errori frequenti accanto alla regola]]
