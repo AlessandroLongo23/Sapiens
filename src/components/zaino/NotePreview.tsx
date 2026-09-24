@@ -20,5 +20,5 @@ export function NotePreview({ markdown }: { markdown: string }) {
 	}, [needsMath, katex]);
 	const html = useMemo(() => renderNoteMarkdown(markdown, katex), [markdown, katex]);
 	if (!markdown.trim()) return <p className="py-6 text-sm text-fg-faint">Niente da mostrare: la nota è vuota.</p>;
-	return <div className="markdown-content note-body py-6" dangerouslySetInnerHTML={{ __html: html }} />;
+	return <div className="markdown-content note-body py-(--row)" dangerouslySetInnerHTML={{ __html: html }} />;
 }

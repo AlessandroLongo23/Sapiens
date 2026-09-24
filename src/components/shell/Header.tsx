@@ -30,7 +30,7 @@ const navLink = (active: boolean) => cn('rounded font-medium transition-colors f
  * The level menu opens on hover, or on the down arrow from the keyboard
  * (never on focus alone), and it is rendered after the bar so Tab reaches it.
  */
-export function Header({ hidden = false, immersive = false }: { hidden?: boolean; immersive?: boolean }) {
+export function Header({ hidden = false, immersive = false, bare = false }: { hidden?: boolean; immersive?: boolean; /** Not shown at any width (the note editor). */ bare?: boolean }) {
 	const pathname = usePathname();
 	const tree = useContentTree();
 	const isActive = useSearch((s) => s.isActive);
@@ -49,7 +49,7 @@ export function Header({ hidden = false, immersive = false }: { hidden?: boolean
 		<header
 			onMouseLeave={closeMega}
 			onKeyDown={(e) => e.key === 'Escape' && closeMega()}
-			className={cn('sticky top-0 z-30 border-b border-edge bg-page pt-safe-t transition-transform duration-300 ease-out', hidden && 'max-md:-translate-y-full', immersive && 'max-md:hidden')}
+			className={cn('sticky top-0 z-30 border-b border-edge bg-page pt-safe-t transition-transform duration-300 ease-out', hidden && 'max-md:-translate-y-full', immersive && 'max-md:hidden', bare && 'hidden')}
 		>
 			<div id="site-header-bar" className="relative z-20 flex w-full items-center gap-2 bg-page px-3 py-2 md:justify-between md:gap-4 md:p-3">
 				<div className="flex min-w-0 items-center gap-2 md:gap-10">

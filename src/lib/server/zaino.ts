@@ -17,6 +17,7 @@ import {
 	type Quota
 } from '@/lib/zaino/config';
 import { parseStickers, type PlacedSticker } from '@/lib/zaino/stickers';
+import { DEFAULT_PAPER, readPaper, type Paper } from '@/lib/zaino/paper';
 
 // Re-exported so a server caller has one import for the whole feature.
 export * from '@/lib/zaino/config';
@@ -535,6 +536,8 @@ export function plainExcerpt(markdown: string, max = 160): string {
 			continue;
 		}
 		if (fenced || !line) continue;
+		// A page break (see lib/zaino/pages) is markup, not text.
+		if (/^<!--\s*pagina\s*-->$/.test(line)) continue;
 		const isHeading = /^#{1,6}\s/.test(line);
 		const plain = line
 			.replace(/^#{1,6}\s+/, '')
@@ -588,4 +591,26 @@ export async function saveNoteStickers(supabase: SupabaseClient, userId: string,
 		.from('note_stickers')
 		.upsert({ note_id: noteId, user_id: userId, stickers, updated_at: new Date().toISOString() }, { onConflict: 'note_id' });
 	if (error) fail('note stickers save failed', error);
+}
+
+/* ------------------------------------------------------------------ paper */
+
+/**
+ * The paper a note is written on. Like the stickers it is decoration read on
+ * its own: a failed read opens the note on the default paper, with a log line.
+ */
+export async function getNotePaper(supabase: SupabaseClient, userId: string, noteId: string): Promise<Paper> {
+	const { data, error } = await supabase.from('notes').select('paper').eq('id', noteId).eq('user_id', userId).maybeSingle();
+	if (error) {
+		console.error('note paper lookup failed:', error.message);
+		return DEFAULT_PAPER;
+	}
+	return readPaper((data as Row | null)?.paper);
+}
+
+/** Sets the paper without touching `version` or `updated_at`: a change of paper is not an edit of the text. */
+export async function saveNotePaper(supabase: SupabaseClient, userId: string, noteId: string, paper: Paper): Promise<void> {
+	const { data, error } = await supabase.from('notes').update({ paper }).eq('id', noteId).eq('user_id', userId).select('id').maybeSingle();
+	if (error) fail('note paper save failed', error);
+	if (!data) throw new ZainoError(404, 'Nota non trovata.');
 }

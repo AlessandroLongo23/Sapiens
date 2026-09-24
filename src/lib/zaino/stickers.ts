@@ -10,6 +10,8 @@ export const SHEET_WIDTH = 792;
 /** An A4 page at that width; the sheet grows past it with the text and the stickers. */
 export const SHEET_MIN_HEIGHT = 1120;
 export const MAX_STICKERS = 60;
+/** Pages in one note (see ./pages); a sticker names the page it is on. */
+export const MAX_PAGES = 60;
 
 export interface StickerDef {
 	id: string;
@@ -24,13 +26,15 @@ export interface StickerDef {
 	svg: string;
 }
 
-/** One sticker on one note: its centre on the sheet and its rotation in degrees. */
+/** One sticker on one note: its centre on its page and its rotation in degrees. */
 export interface PlacedSticker {
 	id: string;
 	sticker: string;
 	x: number;
 	y: number;
 	r: number;
+	/** The page it is stuck on, from 0; missing on stickers saved before notes had pages. */
+	page?: number;
 }
 
 const INK = '#1b1e27';
@@ -117,12 +121,15 @@ export function parseStickers(value: unknown): PlacedSticker[] | string {
 	const out: PlacedSticker[] = [];
 	for (const item of value) {
 		if (!item || typeof item !== 'object') return 'Adesivi non validi.';
-		const { id, sticker, x, y, r } = item as Record<string, unknown>;
+		const { id, sticker, x, y, r, page } = item as Record<string, unknown>;
 		if (typeof id !== 'string' || !STICKER_ID.test(id)) return 'Adesivi non validi.';
 		if (typeof sticker !== 'string' || !STICKER_BY_ID.has(sticker)) return 'Adesivo sconosciuto.';
 		// Centres may hang a little off the sheet, as a sticker on paper can.
 		if (!finite(x, -100, SHEET_WIDTH + 100) || !finite(y, -100, 100_000) || !finite(r, -360, 360)) return 'Posizione dell’adesivo non valida.';
-		out.push({ id, sticker, x: Math.round((x as number) * 10) / 10, y: Math.round((y as number) * 10) / 10, r: Math.round((r as number) * 10) / 10 });
+		if (page !== undefined && !(Number.isInteger(page) && (page as number) >= 0 && (page as number) < MAX_PAGES)) return 'Pagina dell’adesivo non valida.';
+		const placed: PlacedSticker = { id, sticker, x: Math.round((x as number) * 10) / 10, y: Math.round((y as number) * 10) / 10, r: Math.round((r as number) * 10) / 10 };
+		if (page) placed.page = page as number;
+		out.push(placed);
 	}
 	return out;
 }

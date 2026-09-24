@@ -36,6 +36,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-09-24: editor delle note rifatto (una barra, barra degli strumenti agganciabile, pagine con miniature, carta per nota, indice, modalità Lettura, zoom, stampa). Committato, da pubblicare con un deploy. Vedi [[2026-09-24 Editor delle note]].
 - 2026-09-24: tentativi degli esercizi scritti e provati: tabella `exercise_attempts` applicata, correzione sul server, livello scelto dalla pagina, soluzione dopo l'errore. Da pubblicare con un deploy. Vedi [[Esercizi]].
 - 2026-09-24: tentativi degli esercizi (esercizio intero salvato, correzione sul server, livello scelto dalla pagina) e revisione dei contenuti affidata ad Andrea. Primo lotto e deploy di master fatti. Vedi [[2026-09-24 Tentativi degli esercizi]].
 - 2026-09-24: MVP degli adesivi sulle note e note come fogli a larghezza fissa, con la tabella `note_stickers` applicata. Vedi [[Adesivi]].

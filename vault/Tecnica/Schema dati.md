@@ -9,6 +9,7 @@ tag: [tecnica]
 Migrazioni in `supabase/migrations/`:
 - `tutors`, vista `tutors_public`, `tutor_requests` (marketplace, 6 settembre 2026).
 - `notebooks`, `notes` con ricerca `tsvector` e collegamento alla lezione (Zaino, 7-8 settembre 2026).
+- `notes.paper` jsonb (24 settembre 2026, migrazione `20260924210000_note_paper.sql`, applicata lo stesso giorno al progetto `godqhjgwmlzfnymzhqdq`): la carta della nota, `{ kind, color, spacing, text }`; un oggetto vuoto è la carta di prima. Si scrive con `PUT /api/zaino/note/[id]/carta`, senza toccare `version`. Gli adesivi in `note_stickers.stickers` hanno ora il campo facoltativo `page`.
 - `exercise_attempts`, i tentativi degli esercizi (24 settembre 2026): migrazione `20260924200000_exercise_attempts.sql`, applicata lo stesso giorno al progetto `godqhjgwmlzfnymzhqdq`. Colonne come nella proposta qui sotto, con un vincolo che tiene insieme `answer`, `correct` e `answered_at`. RLS attiva con la sola lettura delle proprie righe; scrive il server con la chiave di servizio.
 
 Fuori dalle migrazioni: `content_nodes`, l'albero dei contenuti, usato dal codice ma creato a mano. Il piano dell'utente sta in `app_metadata` di Supabase Auth.

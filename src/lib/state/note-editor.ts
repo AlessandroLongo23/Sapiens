@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
-export type EditorMode = 'simple' | 'advanced';
+/** Writing with formatting, writing the markdown, or reading without any editing chrome. */
+export type EditorMode = 'simple' | 'advanced' | 'reading';
 export type SaveStatusValue = 'clean' | 'dirty' | 'saving' | 'saved' | 'error' | 'conflict';
 
 /** The saved row the editor lost to, when a second tab wrote first. */
