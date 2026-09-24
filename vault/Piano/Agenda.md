@@ -22,6 +22,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 9. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
 
 ## Prima della v1.0 e della v2
+- Adesivi: stile e prima collezione con Dario, aggancio alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free. Note: [[Adesivi]], [[Pratica quotidiana]].
 - Prezzo del contatto per i tutor e regole di qualità. Nota: [[Pay-per-lead]].
 - Come trovare i primi tutor reali. Nota: [[Marketplace]].
 - Dettaglio degli strumenti DSA e consulenza di un esperto. Nota: [[Strumenti DSA]].
@@ -36,6 +37,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-09-24: adesivi come gamificazione, dopo la beta, con le regole su premi, scadenze e vendita. Vedi [[2026-09-24 Adesivi]].
 - 2026-09-24: programma di matematica e albero delle lezioni riorganizzato (183 lezioni). Vedi [[Programma ministeriale]].
 - 2026-09-24: figure delle lezioni come SVG statici; organizzazione del lavoro a lotti; contenuti senza Andrea; posizione degli errori frequenti. Vedi [[2026-09-24 Figure e organizzazione dei lotti]].
 - 2026-09-23: revisione delle 18 lezioni pubblicate. Vedi [[2026-09-23 Revisione delle lezioni]].

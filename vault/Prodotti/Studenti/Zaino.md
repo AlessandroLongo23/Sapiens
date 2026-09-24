@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-23
+aggiornato: 2026-09-24
 tag: [prodotto, studenti]
 ---
 # Zaino
@@ -19,5 +19,6 @@ Quaderni e note personali dello studente, con formule, collegati alle lezioni.
 Il quaderno digitale dello studente, integrato con [[Diario e calendario]] e con le [[Lezioni]]: dalla lezione si prende una nota, dalla nota si torna alla lezione.
 
 ## Domande aperte
+- Gli [[Adesivi]] guadagnati si attaccano sulle copertine dei quaderni (vedi [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]): dove si mettono e se coprono il colore.
 - Condivisione di quaderni tra compagni o con il tutor?
 - Foto degli appunti cartacei dentro una nota (vedi [[Foto e soluzione]])?
