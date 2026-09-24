@@ -21,6 +21,10 @@
 		"cap:sync": "npx cap sync",
 		"cap:add:android": "npx cap add android",
 		"cap:open:android": "npx cap open android",
+		"cap:add:ios": "npx cap add ios",
+		"cap:open:ios": "npx cap open ios",
+		"cap:dev:android": "adb reverse tcp:3000 tcp:3000; npx cap run android --live-reload --host localhost --port 3000 --forwardPorts 3000:3000",
+		"cap:dev:ios": "node scripts/cap-dev-ios.mjs",
 		"prepare": "husky",
 		"test:smoke": "E2E_SKIP_STRIPE_LISTEN=1 playwright test --project=chromium tests/e2e/smoke.spec.ts",
 		"check:bundle": "node scripts/check-bundle.mjs"
@@ -54,6 +58,7 @@
 		"@capacitor/app": "^8.1.1",
 		"@capacitor/cli": "^8.5.1",
 		"@capacitor/core": "^8.5.1",
+		"@capacitor/ios": "^8.5.2",
 		"@capacitor/splash-screen": "^8.0.2",
 		"@playwright/test": "^1.63.0",
 		"@tailwindcss/forms": "^0.5.11",
