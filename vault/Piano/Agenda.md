@@ -23,6 +23,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 10. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
 
 ## Prima della v1.0 e della v2
+- Schermata "Oggi" dell'app e onboarding su classe e indirizzo: su cosa si apre l'app installata al posto della pagina di Matematica. Da disegnare con Dario, legata alla pratica quotidiana. Note: [[App mobile]], [[Pratica quotidiana]].
 - Adesivi dopo l'MVP: stile e prima collezione con Dario, premi agganciati alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free. Note: [[Adesivi]], [[Pratica quotidiana]].
 - Prezzo del contatto per i tutor e regole di qualità. Nota: [[Pay-per-lead]].
 - Come trovare i primi tutor reali. Nota: [[Marketplace]].
