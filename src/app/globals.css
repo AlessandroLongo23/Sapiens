@@ -398,8 +398,10 @@
    each stroke starts undrawn and the pen writes it after its delay (--d) over
    its duration (--t). Every stroke carries pathLength="1". */
 @media (prefers-reduced-motion: no-preference) {
+	/* The dashes stay clear of both ends of an undrawn stroke: a dash touching an
+	   end, even at zero length, shows its round cap as a dot. */
 	.sk-draw {
-		stroke-dasharray: 1 1;
+		stroke-dasharray: 1 2;
 		animation: sk-draw var(--t, 0.5s) var(--ease-out-soft) var(--d, 0s) backwards;
 	}
 	.sk-draw.sk-linear { animation-timing-function: linear; }
@@ -412,7 +414,7 @@
 	[data-paused] .sk-sheet * { animation-play-state: paused; }
 }
 @keyframes sk-draw {
-	from { stroke-dashoffset: 1; }
+	from { stroke-dashoffset: 1.01; }
 }
 @keyframes sk-pop {
 	from { opacity: 0; transform: scale(0.2); }
