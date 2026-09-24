@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "it.sapiens.app"
-    compileSdk rootProject.ext.compileSdkVersion
+    namespace = "it.sapiens.app"
+    compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "it.sapiens.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -13,7 +13,7 @@ android {
         aaptOptions {
              
              
-            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
     buildTypes {
