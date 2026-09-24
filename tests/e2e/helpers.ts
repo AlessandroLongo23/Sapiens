@@ -73,5 +73,5 @@ export async function loginViaModal(page: Page, user: TestUser) {
 }
 
 export const EXERCISES_PATH =
-	'/materiale/scuola-superiore/matematica/insiemi-e-logica/operazioni-e-relazioni-tra-insiemi/esercizi';
+	'/materiale/scuola-superiore/matematica/insiemi-e-logica/proprieta-delle-operazioni-tra-insiemi/esercizi';
 export const THEORY_PATH = '/materiale/scuola-superiore/matematica/insiemi-e-logica/prime-definizioni';
