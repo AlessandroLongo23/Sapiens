@@ -14,7 +14,7 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
@@ -27,10 +27,11 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-24 Figure e organizzazione dei lotti]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-24 Adesivi]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]
 - [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]
 - [[2026-09-24 Errori frequenti accanto alla regola]]
 - [[2026-09-24 Si lavora a lotti completi]]
