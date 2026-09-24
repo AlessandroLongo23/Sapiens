@@ -141,7 +141,7 @@
 /* The album's thumbnails. */
 .sticker-thumb {
 	position: relative;
-	width: 76px;
+	width: 84px;
 	height: 64px;
 }
 .sticker-thumb > span {

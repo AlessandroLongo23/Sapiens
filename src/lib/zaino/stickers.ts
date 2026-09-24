@@ -96,8 +96,8 @@ export const STICKERS: StickerDef[] = [
 	),
 	def('completato', 'Completato', 150, 64, 12, '#b3302f', (w, h) =>
 		`<rect width="${w}" height="${h}" fill="#b3302f"/><path d="M14 29L21 36L35 19" fill="none" stroke="${LIGHT}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>` +
-		text(46, 22, 'CAPITOLO 4', `font-family="${MONO}" font-size="7.5" letter-spacing="1.2" fill="#fbe9e6" fill-opacity=".85"`) +
-		text(46, 42, 'completato', `font-family="${SERIF}" font-style="italic" font-size="19" fill="${LIGHT}"`)
+		text(45, 22, 'CAPITOLO 4', `font-family="${MONO}" font-size="7.5" letter-spacing="1.2" fill="#fbe9e6" fill-opacity=".85"`) +
+		text(45, 41, 'completato', `font-family="${SERIF}" font-style="italic" font-size="17" fill="${LIGHT}"`)
 	)
 ];
 
