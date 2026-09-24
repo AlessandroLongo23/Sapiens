@@ -11,9 +11,10 @@ import { useReducedMotion } from '@/lib/hooks/use-media';
  * point P; the crease is the perpendicular bisector of CP. The face is clipped
  * to the side of the crease away from C, and a second layer, the sticker's
  * backing, is the part on C's side reflected across the crease: the lifted flap
- * is the exact mirror of what has come off. A tap peels from the bottom-right
- * corner, where the dog-ear is; a drag peels from the corner behind it, so
- * pulling down lifts the sticker from the top, pulling right from the left.
+ * is the exact mirror of what has come off. A tap peels from the bottom-left
+ * corner, where the dog-ear is, toward the right; a drag peels from the corner
+ * behind it, so pulling right lifts the sticker from the left, pulling down
+ * from the top.
  *
  * Offsets are kept in the bottom-right corner's frame, where peeling inward is
  * negative on both axes, and mirrored to the corner in use when drawn; so every
@@ -90,7 +91,7 @@ type Phase = 'idle' | 'pressed' | 'dragging' | 'releasing' | 'leaving' | 'gone';
 const noSubscribe = () => () => {};
 /** A corner: 1 is the right or bottom edge, 0 the left or top. */
 type Corner = { x: 0 | 1; y: 0 | 1 };
-const HOME: Corner = { x: 1, y: 1 };
+const HOME: Corner = { x: 0, y: 1 }; // the dog-ear: bottom-left, so the sticker comes off left to right
 /** From the bottom-right frame to the corner's own (the same flip turns a screen move into the frame). */
 const mirror = (p: Point, c: Corner): Point => ({ x: c.x ? p.x : -p.x, y: c.y ? p.y : -p.y });
 

@@ -424,12 +424,16 @@ body {
 ::selection {
 	background: var(--select);
 }
-button,
-a,
-[role='button'] {
-	cursor: pointer;
-	-webkit-tap-highlight-color: transparent;
-	touch-action: manipulation;
+/* In the base layer, so a utility wins: the flashcard sticker is a button that
+   needs touch-none, or a finger drag scrolls the page instead of peeling it. */
+@layer base {
+	button,
+	a,
+	[role='button'] {
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+		touch-action: manipulation;
+	}
 }
 /* Reading text follows the base token; the typography plugin hard-codes 1rem. */
 .prose {
