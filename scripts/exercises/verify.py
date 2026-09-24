@@ -47,6 +47,9 @@ CASE_RANGES = {
 
 
 LINEAR_CASE_RANGES = {6: {"impossibile": (0.25, 0.55), "indeterminata": (0.25, 0.55), "determinata": (0.10, 0.35)}}
+# Level 7 (word problems): each of the nine stories about 1/9 of the samples.
+LINEAR_STORIES = ["consecutivi", "eta", "divisione", "rettangolo", "biglietti", "monete", "spesa", "risparmi", "tariffe"]
+LINEAR_CASE_RANGES[7] = {s: (0.06, 0.17) for s in LINEAR_STORIES}
 
 
 def rat(s):
@@ -243,6 +246,11 @@ def exact_or_R(v):
 
 def check_linear(sample):
     """equazioni-primo-grado, from specs/exercises/equazioni-primo-grado.md."""
+    if sample["level"] == 7:
+        # Word problems: the story is checked in its own module, levels 1-6 below are unchanged.
+        from checkers.equazioni_primo_grado_problemi import check_problem
+
+        return check_problem(sample)
     errs = []
     p = sample["params"]
     lhs, rhs = p["lhs"], p["rhs"]
