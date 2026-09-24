@@ -5,6 +5,7 @@ import { ArrowRight, Check, RotateCcw, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
 import { Button, LinkButton } from '@/components/ui/Button';
+import { PeelSticker } from './PeelSticker';
 
 export interface FlashcardView {
 	id: string;
@@ -20,7 +21,8 @@ interface Props {
 
 type Verdict = 'known' | 'again';
 
-const CARD_BODY = 'markdown-content math-content w-full break-words text-center [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_p]:my-2';
+// Size, ink and spacing come from the ruled card (see `.ruled-paper .markdown-content`).
+const CARD_BODY = 'markdown-content math-content w-full break-words text-center [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden';
 
 /**
  * A review round over the lesson's cards, in lesson order: the question, then
@@ -78,8 +80,9 @@ export function FlashcardDeck({ cards, exercisesHref, nextHref }: Props) {
 		const known = round.length - again.length;
 		return (
 			<div className="flex h-full min-h-[60dvh] w-full flex-col items-center justify-center p-4 sm:p-6">
-				<div className="w-full max-w-md animate-rise-in rounded-3xl border border-edge-soft bg-surface p-6 text-center shadow-xl sm:p-8">
-					<h2 ref={heading} tabIndex={-1} className="mb-2 text-2xl font-bold tracking-tight text-fg-strong outline-none">
+				<div className="w-full max-w-md animate-rise-in rounded-2xl border border-edge bg-surface p-6 text-center shadow-lift sm:p-8">
+					<p className="label-mono mb-3 text-tint-fg">Mazzo finito</p>
+					<h2 ref={heading} tabIndex={-1} className="mb-3 text-3xl font-semibold text-fg-strong outline-none">
 						{again.length === 0 ? 'Le sapevi tutte' : `Ne sapevi ${known} su ${round.length}`}
 					</h2>
 					<p className="mb-6 leading-relaxed text-fg-subtle">
@@ -127,36 +130,50 @@ export function FlashcardDeck({ cards, exercisesHref, nextHref }: Props) {
 						<div key={c.id} className={cn('h-2 flex-1 rounded-full transition-colors duration-300', i < index ? (verdicts[c.id] === 'known' ? 'bg-ok' : 'bg-danger') : i === index ? 'bg-fg-faint' : 'bg-surface-4')} />
 					))}
 				</div>
-				<span className="shrink-0 text-sm font-medium tabular-nums text-fg-subtle" aria-hidden="true">
+				<span className="shrink-0 font-mono text-xs font-medium tabular-nums text-fg-subtle" aria-hidden="true">
 					{index + 1}/{round.length}
 				</span>
 			</div>
 
 			<div key={`${card.id}-${round.length}`} className="flex w-full max-w-2xl flex-1 animate-fade-in flex-col">
-				<div className="flex min-h-[18rem] flex-col overflow-hidden rounded-3xl border border-edge-soft bg-surface shadow-lg">
-					<div ref={heading} tabIndex={-1} className="flex flex-1 flex-col items-center justify-center px-5 py-8 text-lg font-semibold text-fg-strong outline-none sm:px-10 sm:text-xl">
-						<span className="sr-only">Domanda {index + 1} di {round.length}. </span>
-						<Html html={card.frontHtml} className={CARD_BODY} />
+				{/* An index card: a heading above a red line, then pale blue rules. */}
+				{/* Not overflow-hidden: a sticker being peeled lifts over the card's edge. */}
+				<div className="flex flex-col rounded-2xl border border-edge bg-surface shadow-lift">
+					<div className="flex items-center justify-between border-b-2 border-accent px-5 py-3 sm:px-8" aria-hidden="true">
+						<span className="label-mono text-fg-subtle">Domanda</span>
+						<span className="font-mono text-xs tabular-nums text-fg-faint">{String(index + 1).padStart(2, '0')}</span>
 					</div>
-					{revealed ? (
-						<div ref={answer} tabIndex={-1} className="flex flex-1 animate-fade-in flex-col items-center justify-center border-t border-dashed border-edge bg-surface-2 px-5 py-8 text-base text-fg outline-none sm:px-10 sm:text-lg">
-							<span className="sr-only">Risposta. </span>
-							<Html html={card.backHtml} className={CARD_BODY} />
+					{/* Everything under the red line is written on the rows: sections start on a
+					    whole row (padding of one row), every line is one row tall, and the
+					    `ruled-*` nudges drop each face onto the rule (their baselines differ). */}
+					<div className="ruled-paper flex flex-col rounded-b-2xl">
+						<div ref={heading} tabIndex={-1} className="min-h-[calc(var(--rule)*4)] px-5 py-(--rule) font-display text-2xl font-medium tracking-tight text-fg-strong outline-none sm:px-10">
+							<span className="sr-only">Domanda {index + 1} di {round.length}. </span>
+							<Html html={card.frontHtml} className={cn(CARD_BODY, 'ruled-serif')} />
 						</div>
-					) : (
-						<button type="button" onClick={() => setRevealed(true)} className="flex min-h-[56px] items-center justify-center border-t border-edge-soft bg-surface-2 px-5 py-4 font-semibold text-fg transition-colors hover:bg-surface-3 focus-ring">
-							Mostra la risposta
-						</button>
-					)}
+						{/* The answer is on the card from the start, under a sticker: peeling it
+						    off is the reveal (see PeelSticker), and the card keeps its height.
+						    Until then it is out of reach of the keyboard and screen readers. */}
+						<div className="relative">
+							<div ref={answer} tabIndex={-1} inert={!revealed} aria-hidden={!revealed} className="min-h-[calc(var(--rule)*3)] px-5 pb-(--rule) text-lg text-fg outline-none sm:px-10">
+								{/* The fold between question and answer sits between two rows, not on a rule. */}
+								<span className="absolute inset-x-0 top-0 border-t border-dashed border-edge-strong" aria-hidden="true" />
+								<span className="label-mono ruled-mono block text-accent-fg" aria-hidden="true">Risposta</span>
+								<span className="sr-only">Risposta. </span>
+								<Html html={card.backHtml} className={cn(CARD_BODY, 'ruled-sans')} />
+							</div>
+							<PeelSticker revealed={revealed} onPeel={() => setRevealed(true)} />
+						</div>
+					</div>
 				</div>
 
 				{revealed && (
 					<div className="mt-4 grid grid-cols-2 gap-3" role="group" aria-label="Com'è andata">
-						<button type="button" onClick={() => judge('again')} className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl border-2 border-danger/40 bg-danger/10 px-4 py-3 font-semibold text-fg-strong transition-colors hover:bg-danger/20 focus-ring">
+						<button type="button" onClick={() => judge('again')} className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl border-2 border-danger/40 bg-danger/10 px-4 py-3 font-semibold text-fg-strong transition-[background-color,transform] hover:bg-danger/20 active:translate-y-px focus-ring">
 							<Undo2 className="size-5 text-danger" aria-hidden="true" />
 							Da ripassare
 						</button>
-						<button type="button" onClick={() => judge('known')} className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl border-2 border-ok/40 bg-ok/10 px-4 py-3 font-semibold text-fg-strong transition-colors hover:bg-ok/20 focus-ring">
+						<button type="button" onClick={() => judge('known')} className="flex min-h-[56px] items-center justify-center gap-2 rounded-xl border-2 border-ok/40 bg-ok/10 px-4 py-3 font-semibold text-fg-strong transition-[background-color,transform] hover:bg-ok/20 active:translate-y-px focus-ring">
 							<Check className="size-5 text-ok" aria-hidden="true" />
 							La sapevo
 						</button>
