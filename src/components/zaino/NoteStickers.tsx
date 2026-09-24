@@ -68,30 +68,32 @@ export function NoteStickers({
 export function StickerAlbum({ open, onClose, onPick }: { open: boolean; onClose: () => void; onPick: (stickerId: string) => void }) {
 	return (
 		<Sheet open={open} onClose={onClose} title="Adesivi">
-			<p className="text-sm text-fg-muted">Scegli un adesivo e attaccalo dove vuoi sul foglio.</p>
-			<ul className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4">
-				{STICKERS.map((d) => {
-					const scale = Math.min(76 / d.w, 64 / d.h, 0.72);
-					return (
-						<li key={d.id}>
-							<button
-								type="button"
-								onClick={() => onPick(d.id)}
-								className="flex w-full flex-col items-center gap-1.5 rounded-xl border border-edge bg-surface px-2 pb-2 pt-3 transition-colors hover:border-edge-strong focus-ring"
-							>
-								<span className="sticker-thumb" aria-hidden="true">
-									{/* Static artwork from lib/zaino/stickers, never user input. */}
-									<span
-										style={{ width: d.w, height: d.h, ['--r' as string]: `${d.r}px`, transform: `translate(-50%, -50%) scale(${scale.toFixed(3)}) rotate(-4deg)` }}
-										dangerouslySetInnerHTML={{ __html: stickerArt(d) }}
-									/>
-								</span>
-								<span className="label-mono text-fg">{d.name}</span>
-							</button>
-						</li>
-					);
-				})}
-			</ul>
+			<div className="px-4 pb-4">
+				<p className="text-sm text-fg-muted">Scegli un adesivo, poi attaccalo dove vuoi sul foglio.</p>
+				<ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+					{STICKERS.map((d) => {
+						const scale = Math.min(84 / d.w, 60 / d.h, 0.7);
+						return (
+							<li key={d.id}>
+								<button
+									type="button"
+									onClick={() => onPick(d.id)}
+									className="group flex w-full flex-col items-center gap-2 rounded-2xl bg-surface-2 px-2 pb-2.5 pt-3 transition duration-150 hover:bg-surface-3 active:scale-[0.97] focus-ring"
+								>
+									<span className="sticker-thumb transition-transform duration-150 group-hover:-translate-y-0.5" aria-hidden="true">
+										{/* Static artwork from lib/zaino/stickers, never user input. */}
+										<span
+											style={{ width: d.w, height: d.h, ['--r' as string]: `${d.r}px`, transform: `translate(-50%, -50%) scale(${scale.toFixed(3)}) rotate(-4deg)` }}
+											dangerouslySetInnerHTML={{ __html: stickerArt(d) }}
+										/>
+									</span>
+									<span className="text-xs font-medium text-fg-muted group-hover:text-fg">{d.name}</span>
+								</button>
+							</li>
+						);
+					})}
+				</ul>
+			</div>
 		</Sheet>
 	);
 }
