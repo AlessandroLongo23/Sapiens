@@ -1,9 +1,10 @@
 /**
  * Operazioni in ℕ. Spec: specs/exercises/numeri-naturali-operazioni.md
  *
- * Six levels in the order of the lesson: which property of the operations was used; zero in the
+ * Seven levels in the order of the lesson: which property of the operations was used; zero in the
  * division and division with remainder; expressions without brackets (priorities); with tonde; with
- * tonde and quadre; with tonde, quadre and graffe. Expressions are built backwards from their value
+ * tonde and quadre; with tonde, quadre and graffe; word problems solved with one expression of two or
+ * three operations. Expressions are built backwards from their value
  * (naturali.ts), so every intermediate result is a natural number and every division is exact.
  */
 import type { ChoiceAnswer, Generator, Rng, Sample } from '../types';
@@ -37,6 +38,7 @@ import {
 	trace,
 	withBrackets,
 } from '../naturali';
+import { textBlock } from '../insiemi';
 
 export const ID = 'numeri-naturali-operazioni';
 
@@ -396,6 +398,347 @@ function exprSample(rng: Rng, level: number, seed: number): Sample {
 }
 
 // ---------------------------------------------------------------------------
+// Level 7: word problems
+
+export type Story = 'resto' | 'mercato' | 'gruppi' | 'risparmi' | 'pullman' | 'sala' | 'gita' | 'piscina' | 'punti';
+export const STORIES: Story[] = ['resto', 'mercato', 'gruppi', 'risparmi', 'pullman', 'sala', 'gita', 'piscina', 'punti'];
+
+/** The numbers of each story, as keys of params. */
+export const DATA_KEYS: Record<Story, string[]> = {
+	resto: ['n', 'p', 'B'],
+	mercato: ['a', 'p', 'b', 'q'],
+	gruppi: ['a', 'b', 'c'],
+	risparmi: ['B', 'S', 'R'],
+	pullman: ['n', 'k', 'a', 'C'],
+	sala: ['f', 'p', 'r', 'g'],
+	gita: ['X', 'n', 'm'],
+	piscina: ['L', 'g', 'h'],
+	punti: ['G', 'v', 'p'],
+};
+
+const NAMES = ['Marta', 'Luca', 'Giulia', 'Matteo', 'Sara', 'Davide', 'Chiara', 'Francesco', 'Elena', 'Lorenzo', 'Sofia', 'Tommaso'];
+
+/** The answer of each story from its data: the formula the text asks for, written once here. */
+export function storyValue(story: Story, d: Record<string, number>): number {
+	switch (story) {
+		case 'resto':
+			return d.B - d.n * d.p;
+		case 'mercato':
+			return d.a * d.p + d.b * d.q;
+		case 'gruppi':
+			return (d.a + d.b) / d.c;
+		case 'risparmi':
+			return (d.B - d.S) / d.R;
+		case 'pullman':
+			return d.C - (d.n * d.k + d.a);
+		case 'sala':
+			return (d.f * d.p - d.r) / d.g;
+		case 'gita':
+			return d.X / d.n + d.m;
+		case 'piscina':
+			return d.L * (d.g + d.h);
+		case 'punti':
+			return 3 * d.v + d.p;
+	}
+}
+
+/** Plausibility of the data of each story (sizes a reader would find normal). */
+function storyViolations(story: Story, d: Record<string, number>, value: number): string[] {
+	const v: string[] = [];
+	const within = (name: string, lo: number, hi: number) => {
+		if (!(d[name] >= lo && d[name] <= hi)) v.push(`${name} = ${d[name]} fuori da ${lo}-${hi}`);
+	};
+	if (!Number.isInteger(value) || value < 1) v.push('risultato non naturale o nullo');
+	switch (story) {
+		case 'resto':
+			within('n', 2, 6);
+			within('p', 2, 15);
+			if (![10, 20, 50, 100].includes(d.B)) v.push('banconota inesistente');
+			if (d.n * d.p >= d.B) v.push('la banconota non basta');
+			// the smallest banknote that covers the cost
+			if ([10, 20, 50, 100].some((b) => b < d.B && b > d.n * d.p)) v.push('banconota più grande del necessario');
+			break;
+		case 'mercato':
+			within('a', 2, 5);
+			within('b', 2, 5);
+			within('p', 1, 4);
+			within('q', 1, 4);
+			if (d.p === d.q) v.push('stesso prezzo al kg');
+			break;
+		case 'gruppi':
+			within('a', 18, 28);
+			within('b', 18, 28);
+			within('c', 4, 8);
+			if ((d.a + d.b) % d.c) v.push('gruppi non esatti');
+			break;
+		case 'risparmi':
+			within('B', 40, 400);
+			within('S', 10, 200);
+			within('R', 5, 25);
+			if (d.B % 10 || d.R % 5) v.push('prezzo o risparmio non tondi');
+			if ((d.B - d.S) % d.R) v.push('settimane non esatte');
+			if (value < 3 || value > 20) v.push('settimane fuori misura');
+			break;
+		case 'pullman':
+			within('n', 2, 3);
+			within('k', 18, 25);
+			within('a', 2, 6);
+			if (![50, 52, 54, 80].includes(d.C)) v.push('pullman di misura strana');
+			if (value > 12) v.push('troppi posti liberi');
+			break;
+		case 'sala':
+			within('f', 8, 15);
+			within('p', 10, 20);
+			within('r', 4, 30);
+			within('g', 3, 6);
+			if ((d.f * d.p - d.r) % d.g) v.push('posti non divisibili');
+			if (value < 18 || value > 30) v.push('posti per classe fuori misura');
+			break;
+		case 'gita':
+			within('n', 18, 28);
+			within('m', 3, 10);
+			if (d.X % d.n || d.X % 10) v.push('costo del pullman non divisibile o non tondo');
+			if (d.X / d.n < 8 || d.X / d.n > 25) v.push('quota del pullman fuori misura');
+			break;
+		case 'piscina':
+			if (d.L !== 25 && d.L !== 50) v.push('vasca di misura strana');
+			within('g', 8, 30);
+			within('h', 8, 30);
+			if (d.g === d.h) v.push('stesso numero di vasche');
+			break;
+		case 'punti':
+			within('G', 15, 38);
+			within('v', 2, 30);
+			within('p', 1, 15);
+			if (d.v + d.p >= d.G) v.push('nessuna sconfitta o partite in più');
+			break;
+	}
+	return v;
+}
+
+interface StoryBuilt {
+	prose: string;
+	expr: Node;
+	data: Record<string, number>;
+	unit: string;
+	/** What each operation means, in words, before the expression. */
+	plan: string;
+	/** Answers from real mistakes: a datum used twice, the wrong operation, a different question. */
+	mistakes: (number | null)[];
+	extra?: Record<string, string>;
+}
+
+const nat = (v: number): number | null => (Number.isInteger(v) && v >= 0 ? v : null);
+
+function buildStory(rng: Rng, story: Story): StoryBuilt | null {
+	const name = rng.pick(NAMES);
+	switch (story) {
+		case 'resto': {
+			const [item, lo, hi] = rng.pick<[string, number, number]>([
+				['quaderni', 2, 4],
+				['astucci', 6, 12],
+				['biglietti del cinema', 7, 9],
+				['panini', 3, 5],
+				['libri', 9, 15],
+			]);
+			const n = rng.int(2, 6), p = rng.int(lo, hi);
+			const cost = n * p;
+			const B = [10, 20, 50, 100].find((b) => b > cost);
+			if (!B) return null;
+			return {
+				prose: `${name} compra ${n} ${item} da ${p} euro ciascuno e paga con una banconota da ${B} euro. Quanti euro riceve di resto?`,
+				expr: O('-', N(B), mul(n, p)),
+				data: { n, p, B },
+				unit: 'euro',
+				plan: `${t('La spesa è ')}${n} \\cdot ${p}${t(' (lo stesso prezzo ripetuto ')}${n}${t(' volte); il resto è quello che manca alla banconota: ')}${B} - ${n} \\cdot ${p}`,
+				mistakes: [cost, nat((B - n) * p), B - p, nat(B - n - p)],
+				extra: { name, item },
+			};
+		}
+		case 'mercato': {
+			const fruits: [string, number, number][] = [
+				['mele', 2, 3],
+				['pere', 2, 3],
+				['arance', 1, 3],
+				['patate', 1, 2],
+				['pomodori', 2, 4],
+			];
+			const [f1, f2] = [rng.pick(fruits), rng.pick(fruits)];
+			if (f1[0] === f2[0]) return null;
+			const a = rng.int(2, 5), b = rng.int(2, 5);
+			const p = rng.int(f1[1], f1[2]), q = rng.int(f2[1], f2[2]);
+			if (p === q) return null;
+			return {
+				prose: `Al mercato ${name} compra ${a} kg di ${f1[0]} a ${p} euro al kg e ${b} kg di ${f2[0]} a ${q} euro al kg. Quanti euro spende in tutto?`,
+				expr: O('+', mul(a, p), mul(b, q)),
+				data: { a, p, b, q },
+				unit: 'euro',
+				plan: `${t(`Le ${f1[0]} costano `)}${a} \\cdot ${p}${t(`, le ${f2[0]} `)}${b} \\cdot ${q}${t('; la spesa è la somma')}`,
+				mistakes: [(a + b) * p, (a + b) * q, a * p + b, a + p + b + q, (a * p + b) * q],
+				extra: { name, f1: f1[0], f2: f2[0] },
+			};
+		}
+		case 'gruppi': {
+			const a = rng.int(18, 28), b = rng.int(18, 28), c = rng.int(4, 8);
+			if ((a + b) % c) return null;
+			return {
+				prose: `Due classi, una di ${a} e una di ${b} studenti, vanno in gita al museo. La guida divide tutti gli studenti in gruppi da ${c}. Quanti gruppi si formano?`,
+				expr: O(':', G(add(a, b)), N(c)),
+				data: { a, b, c },
+				unit: 'gruppi',
+				plan: `${t('Prima si contano gli studenti, ')}${a} + ${b}${t(', poi si vede quante volte il ')}${c}${t(' ci sta: ')}(${a} + ${b}) : ${c}`,
+				mistakes: [a + b, b % c ? null : a + b / c, a % c ? null : a / c + b, (a + b) * c],
+				extra: {},
+			};
+		}
+		case 'risparmi': {
+			const [item, lo, hi] = rng.pick<[string, number, number]>([
+				['una bicicletta', 15, 30],
+				['un monopattino', 20, 35],
+				['delle cuffie', 6, 15],
+				['una chitarra', 10, 25],
+			]);
+			const B = rng.int(lo, hi) * 10;
+			const R = rng.pick([5, 10, 15, 20, 25]);
+			const W = rng.int(3, 16);
+			const S = B - R * W;
+			if (S < 10 || S > 200) return null;
+			return {
+				prose: `${name} vuole comprare ${item} da ${B} euro. Ha già messo da parte ${S} euro e ogni settimana ne risparmia altri ${R}. Quante settimane deve ancora risparmiare?`,
+				expr: O(':', G(O('-', N(B), N(S))), N(R)),
+				data: { B, S, R },
+				unit: 'settimane',
+				plan: `${t('Mancano ')}${B} - ${S}${t(' euro; le settimane sono quante volte ci stanno i ')}${R}${t(' euro: ')}(${B} - ${S}) : ${R}`,
+				mistakes: [B % R ? null : B / R, B - S, S % R ? null : nat(B - S / R), (B + S) % R ? null : (B + S) / R],
+				extra: { name, item },
+			};
+		}
+		case 'pullman': {
+			const n = rng.int(2, 3), k = rng.int(18, 25), a = rng.int(2, 6);
+			const people = n * k + a;
+			const C = n === 2 ? [50, 52, 54].find((c) => c > people && c - people <= 12) : 80;
+			if (!C || C - people < 1 || C - people > 12) return null;
+			return {
+				prose: `Per una gita, ${n} classi da ${k} studenti ciascuna e ${a} insegnanti salgono su un pullman da ${C} posti. Quanti posti restano liberi?`,
+				expr: O('-', N(C), G(O('+', mul(n, k), N(a)))),
+				data: { n, k, a, C },
+				unit: 'posti',
+				plan: `${t('Salgono ')}${n} \\cdot ${k} + ${a}${t(' persone; i posti liberi sono quelli che restano: ')}${C} - (${n} \\cdot ${k} + ${a})`,
+				mistakes: [C - n * k + a, C - n * k, people, nat(C - (k + a)), nat(C - n - k - a)],
+				extra: {},
+			};
+		}
+		case 'sala': {
+			const g = rng.int(3, 6), v = rng.int(18, 28);
+			const f = rng.int(8, 15), p = rng.int(10, 20);
+			const r = f * p - g * v;
+			if (r < 4 || r > 30) return null;
+			return {
+				prose: `L'aula magna della scuola ha ${f} file da ${p} posti. I docenti occupano ${r} posti e gli altri sono divisi in parti uguali tra ${g} classi. Quanti posti spettano a ogni classe?`,
+				expr: O(':', G(O('-', mul(f, p), N(r))), N(g)),
+				data: { f, p, r, g },
+				unit: 'posti',
+				plan: `${t('I posti sono ')}${f} \\cdot ${p}${t('; tolti quelli dei docenti, il resto si divide per ')}${g}${t(': ')}(${f} \\cdot ${p} - ${r}) : ${g}`,
+				mistakes: [r % g ? null : nat(f * p - r / g), f * p - r, (f * p) % g ? null : (f * p) / g, (f * p + r) % g ? null : (f * p + r) / g],
+				extra: {},
+			};
+		}
+		case 'gita': {
+			const n = rng.int(18, 28), u = rng.int(8, 25), m = rng.int(3, 10);
+			const X = n * u;
+			if (X % 10) return null;
+			return {
+				prose: `Per la gita di fine anno il pullman costa ${X} euro, da dividere in parti uguali tra i ${n} studenti della classe. Il biglietto del museo costa ${m} euro a testa. Quanti euro spende ogni studente?`,
+				expr: O('+', O(':', N(X), N(n)), N(m)),
+				data: { X, n, m },
+				unit: 'euro',
+				plan: `${t('La quota del pullman è ')}${fmt(X)} : ${n}${t('; a ogni studente si aggiunge il biglietto: ')}${fmt(X)} : ${n} + ${m}`,
+				mistakes: [X / n, (X + m) % n ? null : (X + m) / n, X % (n + m) ? null : X / (n + m), X / n + m * n],
+				extra: {},
+			};
+		}
+		case 'piscina': {
+			const L = rng.pick([25, 25, 50]), g = rng.int(8, 30), h = rng.int(8, 30);
+			if (g === h) return null;
+			const [d1, d2] = rng.pick([
+				['lunedì', 'mercoledì'],
+				['martedì', 'giovedì'],
+				['mercoledì', 'venerdì'],
+				['sabato', 'domenica'],
+			]);
+			return {
+				prose: `${name} si allena in una piscina con la vasca da ${L} metri: ${d1} nuota ${g} vasche e ${d2} ne nuota ${h}. Quanti metri nuota in tutto?`,
+				expr: O('*', N(L), G(add(g, h))),
+				data: { L, g, h },
+				unit: 'metri',
+				plan: `${t('In tutto nuota ')}${g} + ${h}${t(' vasche, ognuna da ')}${L}${t(' metri: ')}${L} \\cdot (${g} + ${h})`,
+				mistakes: [L * g + h, g + h, L * g, L * h],
+				extra: { name, d1, d2 },
+			};
+		}
+		case 'punti': {
+			const G_ = rng.int(15, 38), v = rng.int(2, 30), p = rng.int(1, 15);
+			if (v + p >= G_) return null;
+			return {
+				prose: `La squadra di calcio di ${name} ha giocato ${G_} partite di campionato: ne ha vinte ${v}, pareggiate ${p} e perse le altre. Una vittoria vale 3 punti, un pareggio 1 punto e una sconfitta 0. Quanti punti ha la squadra?`,
+				expr: O('+', mul(3, v), N(p)),
+				data: { G: G_, v, p },
+				unit: 'punti',
+				plan: `${t('Le vittorie danno ')}3 \\cdot ${v}${t(' punti, i pareggi ')}${p}${t(', le sconfitte nessuno: ')}3 \\cdot ${v} + ${p}`,
+				mistakes: [3 * v, v + p, 3 * (v + p), 3 * v + p + (G_ - v - p), 3 * G_],
+				extra: { name },
+			};
+		}
+	}
+}
+
+/** Violations of the rules of level 7 that do not depend on the story. */
+function problemViolations(x: Node, story: Story, d: Record<string, number>): string[] {
+	const v: string[] = [];
+	const value = evaluate(x);
+	if (value === null) return ['un passaggio esce da ℕ'];
+	const ops = trace(x).length;
+	if (ops < 2 || ops > 3) v.push(`${ops} operazioni, attese da 2 a 3`);
+	if (value !== storyValue(story, d)) v.push("l'espressione non risponde alla domanda");
+	for (const s of trace(x)) if (s.op === ':' && s.b < 2) v.push('divisione per 0 o per 1');
+	v.push(...storyViolations(story, d, value));
+	return v;
+}
+
+function problemSample(rng: Rng, seed: number): Sample {
+	// the story first, then its numbers: every story comes out about as often, however many tries it needs
+	const story = rng.pick(STORIES);
+	for (let attempt = 0; attempt < 5000; attempt++) {
+		const b = buildStory(rng, story);
+		if (!b) continue;
+		const x = withBrackets(b.expr);
+		if (problemViolations(x, story, b.data).length) continue;
+		const value = evaluate(x)!;
+		const mistakes = [...new Set(b.mistakes.filter((m): m is number => m !== null && m >= 0 && m !== value))];
+		return {
+			generatorId: ID,
+			level: 7,
+			seed,
+			prompt: 'Risolvi il problema.',
+			problem: textBlock(b.prose),
+			solution: `${fmt(value)}${t(` ${b.unit}`)}`,
+			steps: [b.plan, ...exprSteps(x), `${t('Risposta: ')}${fmt(value)}${t(` ${b.unit}`)}`],
+			answer: { kind: 'number', value: String(value) },
+			params: {
+				story,
+				case: story,
+				...Object.fromEntries(Object.entries(b.data).map(([k, n]) => [k, String(n)])),
+				...b.extra,
+				expr: ascii(x),
+				value: String(value),
+				mistakes: mistakes.map(String),
+			},
+		};
+	}
+	throw new Error(`${ID}: no word problem for seed ${seed}`);
+}
+
+// ---------------------------------------------------------------------------
 // Check and choice
 
 function check(sample: Sample): string[] {
@@ -432,12 +775,28 @@ function check(sample: Sample): string[] {
 		const value = evaluate(x);
 		if (sample.answer.kind !== 'number' || sample.answer.value !== String(value)) v.push('risposta diversa dal valore');
 		if (sample.choice) choiceOk(sample.choice, String(value));
+	} else if (lvl === 7) {
+		const story = String(p.story) as Story;
+		if (!STORIES.includes(story)) return [...v, `storia sconosciuta ${story}`];
+		const d = Object.fromEntries(DATA_KEYS[story].map((k) => [k, Number(p[k])]));
+		const x = parseAscii(String(p.expr));
+		v.push(...problemViolations(x, story, d));
+		const truth = storyValue(story, d);
+		if (sample.answer.kind !== 'number' || sample.answer.value !== String(truth)) v.push('risposta diversa dal valore');
+		const text = sample.problem.replace(/\\,/g, '');
+		for (const k of DATA_KEYS[story]) if (!new RegExp(`(^|[^0-9])${d[k]}([^0-9]|$)`).test(text)) v.push(`il numero ${d[k]} non è nel testo`);
+		if (sample.choice) choiceOk(sample.choice, String(truth));
 	} else v.push(`livello sconosciuto ${lvl}`);
 	return v;
 }
 
 function toChoice(sample: Sample, rng: Rng): ChoiceAnswer {
 	if (sample.answer.kind === 'choice') return sample.answer;
+	if (sample.level === 7) {
+		const value = Number(sample.params.value);
+		const mistakes = ((sample.params.mistakes ?? []) as string[]).map((m) => mistakeOpt(Number(m), 100_000));
+		return makeChoice(rng, numOpt(value), mistakes, nearNumbers(rng, value));
+	}
 	const x = parseAscii(String(sample.params.expr));
 	const value = evaluate(x)!;
 	const cands = [MISTAKE.leftToRight, MISTAKE.noBrackets, MISTAKE.mulFirst, MISTAKE.addFirst].map((m) => {
@@ -457,10 +816,20 @@ export const numeriNaturaliOperazioni: Generator = {
 		4: { label: 'Espressioni con le tonde', constraints: ['almeno una tonda che contiene una somma o una differenza', 'le parentesi cambiano il risultato'] },
 		5: { label: 'Espressioni con tonde e quadre', constraints: ['almeno una quadra che contiene una tonda'] },
 		6: { label: 'Espressioni con tonde, quadre e graffe', constraints: ['almeno una graffa che contiene una quadra'] },
+		7: { label: 'Problemi con le quattro operazioni', constraints: ['un testo da tradurre in un’espressione di 2 o 3 operazioni', 'risultato naturale, divisioni esatte, numeri realistici'] },
 	},
 	generate(rng: Rng, level: number): Sample {
 		for (let attempt = 0; attempt < 1000; attempt++) {
-			const s = level === 1 ? propertySample(rng, rng.seed) : level === 2 ? divisionSample(rng, rng.seed) : EXPR_LEVELS[level] ? exprSample(rng, level, rng.seed) : null;
+			const s =
+				level === 1
+					? propertySample(rng, rng.seed)
+					: level === 2
+						? divisionSample(rng, rng.seed)
+						: EXPR_LEVELS[level]
+							? exprSample(rng, level, rng.seed)
+							: level === 7
+								? problemSample(rng, rng.seed)
+								: null;
 			if (!s) throw new Error(`${ID}: unknown level ${level}`);
 			if (check(s).length === 0) return s;
 		}

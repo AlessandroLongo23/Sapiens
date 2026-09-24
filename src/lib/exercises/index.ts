@@ -24,5 +24,13 @@ export const generatorModules: Record<string, () => Promise<Generators>> = {
 	'monomi-espressioni': () => import('./monomi-espressioni-v2') as unknown as Promise<Generators>,
 	'equazioni-primo-grado': () => import('./equazioni-primo-grado-v2') as unknown as Promise<Generators>,
 	'equazioni-secondo-grado': () => import('./equazioni-secondo-grado-v2') as unknown as Promise<Generators>,
-	'funzioni-iniettive-suriettive-biettive': () => import('./funzioni-iniettive-suriettive-biettive-v2') as unknown as Promise<Generators>
+	'funzioni-iniettive-suriettive-biettive': () => import('./funzioni-iniettive-suriettive-biettive-v2') as unknown as Promise<Generators>,
+	'numeri-naturali-divisibilita': () => import('./numeri-naturali-divisibilita-v2') as unknown as Promise<Generators>,
+	'numeri-interi-valore-assoluto': () => import('./numeri-interi-valore-assoluto-v2') as unknown as Promise<Generators>,
+	'numeri-interi-operazioni': () => import('./numeri-interi-operazioni-v2') as unknown as Promise<Generators>,
+	'numeri-interi-potenze': () => import('./numeri-interi-potenze-v2') as unknown as Promise<Generators>,
+	'numeri-razionali-frazioni': () => import('./numeri-razionali-frazioni-v2') as unknown as Promise<Generators>,
+	'numeri-razionali-operazioni': () => import('./numeri-razionali-operazioni-v2') as unknown as Promise<Generators>,
+	'numeri-razionali-espressioni': () => import('./numeri-razionali-espressioni-v2') as unknown as Promise<Generators>,
+	'numeri-razionali-proporzioni': () => import('./numeri-razionali-proporzioni-v2') as unknown as Promise<Generators>
 };

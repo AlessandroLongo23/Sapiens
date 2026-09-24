@@ -4,6 +4,9 @@ Level 1: parses both sides of the equality, checks it is true and recognises the
 shape of the two sides (exactly one property must match). Level 2: recomputes 0 : n, n : 0, 0 : 0
 and the division with remainder. Levels 3-6: parses the problem LaTeX, checks it equals
 params.expr, evaluates it in N with exact integers and checks sizes, brackets and priorities.
+Level 7: recomputes the answer of each word problem from the numbers of its story (the formula is
+written here from the spec, not read from the generator), checks that those numbers are in the text,
+that params.expr uses exactly them and gives the same value, and that the sizes are realistic.
 """
 import re
 
@@ -31,6 +34,7 @@ CASE_RANGES = {
         "assorbente": (0.03, 0.15),
     },
     2: {"zero-diviso": (0.05, 0.16), "diviso-zero": (0.05, 0.16), "zero-zero": (0.05, 0.16), "resto": (0.60, 0.80)},
+    7: {s: (0.07, 0.16) for s in ("resto", "mercato", "gruppi", "risparmi", "pullman", "sala", "gita", "piscina", "punti")},
 }
 
 # level: (bracket kinds, max value, min numbers, max numbers)
@@ -229,6 +233,140 @@ def check_expression(sample, errs):
                 errs.append(f"option {o['values']} is not a natural number")
 
 
+# story: (numbers in params, answer from them, numbers the expression must use)
+STORIES = {
+    "resto": (("n", "p", "B"), lambda d: d["B"] - d["n"] * d["p"], lambda d: [d["B"], d["n"], d["p"]]),
+    "mercato": (("a", "p", "b", "q"), lambda d: d["a"] * d["p"] + d["b"] * d["q"], lambda d: [d["a"], d["p"], d["b"], d["q"]]),
+    "gruppi": (("a", "b", "c"), lambda d: exact_div(d["a"] + d["b"], d["c"]), lambda d: [d["a"], d["b"], d["c"]]),
+    "risparmi": (("B", "S", "R"), lambda d: exact_div(d["B"] - d["S"], d["R"]), lambda d: [d["B"], d["S"], d["R"]]),
+    "pullman": (("n", "k", "a", "C"), lambda d: d["C"] - d["n"] * d["k"] - d["a"], lambda d: [d["C"], d["n"], d["k"], d["a"]]),
+    "sala": (("f", "p", "r", "g"), lambda d: exact_div(d["f"] * d["p"] - d["r"], d["g"]), lambda d: [d["f"], d["p"], d["r"], d["g"]]),
+    "gita": (("X", "n", "m"), lambda d: exact_div(d["X"], d["n"]) + d["m"], lambda d: [d["X"], d["n"], d["m"]]),
+    "piscina": (("L", "g", "h"), lambda d: d["L"] * d["g"] + d["L"] * d["h"], lambda d: [d["L"], d["g"], d["h"]]),
+    "punti": (("G", "v", "p"), lambda d: 3 * d["v"] + d["p"], lambda d: [3, d["v"], d["p"]]),
+}
+
+# realistic sizes, from the spec
+RANGES7 = {
+    "resto": {"n": (2, 6), "p": (2, 15)},
+    "mercato": {"a": (2, 5), "b": (2, 5), "p": (1, 4), "q": (1, 4)},
+    "gruppi": {"a": (18, 28), "b": (18, 28), "c": (4, 8)},
+    "risparmi": {"B": (40, 400), "S": (10, 200), "R": (5, 25)},
+    "pullman": {"n": (2, 3), "k": (18, 25), "a": (2, 6)},
+    "sala": {"f": (8, 15), "p": (10, 20), "r": (4, 30), "g": (3, 6)},
+    "gita": {"n": (18, 28), "m": (3, 10)},
+    "piscina": {"g": (8, 30), "h": (8, 30)},
+    "punti": {"G": (15, 38), "v": (2, 30), "p": (1, 15)},
+}
+BANKNOTES = (10, 20, 50, 100)
+
+
+class NotExact(Exception):
+    pass
+
+
+def exact_div(a, b):
+    if b <= 0 or a % b:
+        raise NotExact(f"{a} : {b} is not exact")
+    return a // b
+
+
+def prose(tex):
+    return " ".join(re.findall(r"\\text\{([^{}]*)\}", tex))
+
+
+def check_problem(sample, errs):
+    p = sample["params"]
+    story = p.get("story")
+    if story not in STORIES:
+        errs.append(f"unknown story {story}")
+        return None
+    keys, formula, used = STORIES[story]
+    try:
+        d = {k: int(p[k]) for k in keys}
+    except (KeyError, ValueError) as e:
+        errs.append(f"missing or bad number in params: {e}")
+        return story
+    try:
+        truth = formula(d)
+    except NotExact as e:
+        errs.append(f"division not exact: {e}")
+        return story
+    if truth < 1:
+        errs.append(f"answer {truth} is not a positive natural")
+    ans = sample["answer"]
+    if ans.get("kind") != "number" or ans.get("value") != str(truth):
+        errs.append(f"answer {ans.get('value')} != {truth}")
+    # the numbers of the story are written in the text
+    text = prose(sample["problem"]).replace("\\,", "")
+    words = re.findall(r"\d+", text)
+    for k in keys:
+        if str(d[k]) not in words:
+            errs.append(f"number {d[k]} ({k}) not in the text")
+    if not sample["problem"].startswith("\\begin{array}") and not sample["problem"].startswith("\\text"):
+        errs.append("problem is not prose")
+    # the expression: the story's numbers, 2 or 3 operations, every step in N, same value
+    try:
+        x = parse(p["expr"])
+    except (KeyError, ValueError) as e:
+        errs.append(f"bad params.expr: {e}")
+        return story
+    ops = []
+    try:
+        value = evaluate(x, ops)
+    except NotNatural as e:
+        errs.append(f"a step leaves N: {e}")
+        return story
+    if value != truth:
+        errs.append(f"params.expr gives {value}, the story {truth}")
+    if not 2 <= len(ops) <= 3:
+        errs.append(f"{len(ops)} operations, expected 2-3")
+    if sorted(literals(x)) != sorted(used(d)):
+        errs.append(f"expression numbers {sorted(literals(x))} != story numbers {sorted(used(d))}")
+    for o, a, b, r in ops:
+        if o == ":" and b < 2:
+            errs.append(f"division by {b}")
+    # sizes
+    for k, (lo, hi) in RANGES7[story].items():
+        if not lo <= d[k] <= hi:
+            errs.append(f"{story}: {k} = {d[k]} out of {lo}-{hi}")
+    if story == "resto":
+        cost = d["n"] * d["p"]
+        smallest = next((b for b in BANKNOTES if b > cost), None)
+        if d["B"] != smallest:
+            errs.append(f"pays {cost} euro with {d['B']}, expected the banknote {smallest}")
+    elif story == "mercato" and d["p"] == d["q"]:
+        errs.append("same price per kg")
+    elif story == "risparmi":
+        if d["B"] % 10 or d["R"] % 5:
+            errs.append("price or weekly saving not round")
+        if not 3 <= truth <= 20:
+            errs.append(f"{truth} weeks")
+    elif story == "pullman":
+        if d["C"] not in ((50, 52, 54) if d["n"] == 2 else (80,)):
+            errs.append(f"bus of {d['C']} seats for {d['n']} classes")
+        if not 1 <= truth <= 12:
+            errs.append(f"{truth} free seats")
+    elif story == "sala" and not 18 <= truth <= 30:
+        errs.append(f"{truth} seats per class")
+    elif story == "gita":
+        if d["X"] % 10 or not 8 <= d["X"] // d["n"] <= 25:
+            errs.append(f"bus cost {d['X']} for {d['n']} students")
+    elif story == "piscina":
+        if d["L"] not in (25, 50) or d["g"] == d["h"]:
+            errs.append("pool length or laps")
+    elif story == "punti":
+        if d["v"] + d["p"] >= d["G"]:
+            errs.append("no defeats: the text says the others were lost")
+    ch = sample.get("choice")
+    check_choice_numbers(ch, str(truth), errs)
+    if ch:
+        for o in ch.get("options", []):
+            if len(o["values"]) != 1 or not re.fullmatch(r"\d+", o["values"][0]):
+                errs.append(f"option {o['values']} is not a natural number")
+    return story
+
+
 def check(sample):
     errs = []
     lvl = sample["level"]
@@ -241,6 +379,8 @@ def check(sample):
         kind = check_division(sample, errs)
     elif lvl in EXPR:
         check_expression(sample, errs)
+    elif lvl == 7:
+        kind = check_problem(sample, errs)
     else:
         errs.append(f"unknown level {lvl}")
     return errs, kind
