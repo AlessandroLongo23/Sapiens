@@ -2,7 +2,7 @@
 
 import { useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import { Backpack, MoreHorizontal, NotebookPen, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Backpack, MoreHorizontal, NotebookPen, Plus, Trash2 } from 'lucide-react';
 import { Features } from '@/lib/stripe/config';
 import { COLOR_LABEL, DEFAULT_NOTEBOOK_TITLE, NOTEBOOK_COLORS, type NotebookColor, type NotebookRow, type Quota } from '@/lib/zaino/config';
 import { ZAINO_ROOT } from '@/lib/config/site';
@@ -41,6 +41,20 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 	const { busy, error, blocked, clearBlocked, run } = useZainoAction();
 	const [editing, setEditing] = useState<NotebookRow | null>(null);
 	const [confirming, setConfirming] = useState<NotebookRow | null>(null);
+
+	/**
+	 * The shelf reflows between one, two and three columns, so "up" and "down"
+	 * are the only directions that mean the same thing at every width. A drag
+	 * belongs to the note list, which is always a single column.
+	 */
+	const shift = (notebook: NotebookRow, step: -1 | 1) => {
+		const ids = notebooks.map((n) => n.id);
+		const from = ids.indexOf(notebook.id);
+		const to = from + step;
+		if (from < 0 || to < 0 || to >= ids.length) return;
+		ids.splice(to, 0, ids.splice(from, 1)[0]);
+		return run(notebook.id, '/api/zaino/quaderni/reorder', 'POST', { ids });
+	};
 
 	if (blocked) {
 		return (
@@ -95,6 +109,9 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 			<EditSheet
 				notebook={editing}
 				busy={busy}
+				position={editing ? notebooks.findIndex((n) => n.id === editing.id) : -1}
+				total={notebooks.length}
+				onShift={(step) => editing && shift(editing, step)}
 				onClose={() => setEditing(null)}
 				onSave={async (input) => {
 					if (!editing) return;
@@ -174,7 +191,25 @@ function Shelf({ notebooks, counts, onEdit }: { notebooks: NotebookRow[]; counts
 	);
 }
 
-function EditSheet({ notebook, busy, onClose, onSave, onDelete }: { notebook: NotebookRow | null; busy: string | null; onClose: () => void; onSave: (input: { title: string; color: NotebookColor }) => void; onDelete: () => void }) {
+function EditSheet({
+	notebook,
+	busy,
+	position,
+	total,
+	onShift,
+	onClose,
+	onSave,
+	onDelete
+}: {
+	notebook: NotebookRow | null;
+	busy: string | null;
+	position: number;
+	total: number;
+	onShift: (step: -1 | 1) => void;
+	onClose: () => void;
+	onSave: (input: { title: string; color: NotebookColor }) => void;
+	onDelete: () => void;
+}) {
 	const [title, setTitle] = useState('');
 	const [color, setColor] = useState<NotebookColor>('zinc');
 	const [shown, setShown] = useState<string | null>(null);
@@ -214,6 +249,19 @@ function EditSheet({ notebook, busy, onClose, onSave, onDelete }: { notebook: No
 						))}
 					</div>
 				</fieldset>
+				{total > 1 && (
+					<div className="flex items-center gap-2">
+						<span className="text-sm font-medium text-fg-muted">
+							Posizione {position + 1} di {total}
+						</span>
+						<Button type="button" variant="secondary" size="sm" disabled={position <= 0} onClick={() => onShift(-1)} aria-label="Sposta il quaderno su">
+							<ArrowUp className="size-4" aria-hidden="true" />
+						</Button>
+						<Button type="button" variant="secondary" size="sm" disabled={position < 0 || position >= total - 1} onClick={() => onShift(1)} aria-label="Sposta il quaderno giù">
+							<ArrowDown className="size-4" aria-hidden="true" />
+						</Button>
+					</div>
+				)}
 				<div className="flex flex-wrap gap-2">
 					<Button type="submit" loading={busy === notebook?.id}>Salva</Button>
 					<Button type="button" variant="ghost" onClick={onClose}>Annulla</Button>

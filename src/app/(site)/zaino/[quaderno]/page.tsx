@@ -4,7 +4,7 @@ import { pageMetadata } from '@/lib/seo/page-metadata';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import { getSession } from '@/lib/server/auth';
 import { isUuid } from '@/lib/server/http';
-import { getNotebook, getQuota, listNotes } from '@/lib/server/zaino';
+import { getNotebook, getQuota, listNotebooks, listNotes } from '@/lib/server/zaino';
 import { Breadcrumb, HOME_CRUMB, ZAINO_CRUMB } from '@/components/content/Breadcrumb';
 import { Page } from '@/components/content/PageHeader';
 import { NotebookTitle } from '@/components/zaino/NotebookTitle';
@@ -22,13 +22,17 @@ export default async function NotebookPage({ params }: { params: Promise<{ quade
 	if (!user) redirect(ZAINO_ROOT);
 	const notebook = await getNotebook(supabase, user.id, quaderno);
 	if (!notebook) notFound();
-	const [notes, quota] = await Promise.all([listNotes(supabase, user.id, notebook.id), getQuota(supabase, user)]);
+	const [notes, notebooks, quota] = await Promise.all([
+		listNotes(supabase, user.id, notebook.id),
+		listNotebooks(supabase, user.id),
+		getQuota(supabase, user)
+	]);
 
 	return (
 		<Page width="narrow">
 			<Breadcrumb items={[HOME_CRUMB, ZAINO_CRUMB, { label: notebook.title }]} />
 			<NotebookTitle title={notebook.title} color={notebook.color} />
-			<NoteList notebookId={notebook.id} notes={notes} quota={quota} />
+			<NoteList notebookId={notebook.id} notes={notes} notebooks={notebooks} quota={quota} />
 		</Page>
 	);
 }

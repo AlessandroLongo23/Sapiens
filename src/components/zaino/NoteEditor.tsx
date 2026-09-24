@@ -7,11 +7,12 @@ import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Card } from '@/components/ui/Card';
-import { DEFAULT_NOTE_TITLE, MAX_CONTENT, type NoteRow } from '@/lib/zaino/config';
+import { DEFAULT_NOTE_TITLE, MAX_CONTENT, type NotebookRow, type NoteRow } from '@/lib/zaino/config';
 import { useNoteEditor, type EditorMode } from '@/lib/state/note-editor';
 import { ImmersiveFrame } from '@/components/content/lesson/LessonPresence';
 import { NoteHeader } from './NoteHeader';
 import { AdvancedEditor } from './AdvancedEditor';
+import { MoveNoteSheet } from './MoveNoteSheet';
 
 /**
  * The WYSIWYG is loaded only when Simple mode is actually shown: TipTap and
@@ -32,19 +33,22 @@ const KEEPALIVE_LIMIT = 60_000;
 
 const MODE_KEY = 'zaino:mode';
 
-export function NoteEditor({ note, notebookTitle }: { note: NoteRow; notebookTitle: string }) {
+export function NoteEditor({ note, notebookTitle, notebooks }: { note: NoteRow; notebookTitle: string; notebooks: NotebookRow[] }) {
 	const router = useRouter();
 	const store = useNoteEditor();
 	const { noteId, mode, status, markdown, title, conflict, error } = store;
 	const [leaving, setLeaving] = useState<string | null>(null);
 	// Bumped when a save lands with edits still outstanding, to re-arm the debounce.
 	const [pass, setPass] = useState(0);
+	const [moving, setMoving] = useState(false);
+	const [moveError, setMoveError] = useState<string | null>(null);
 
 	// The timers read the store directly: getState is always the live value, and
 	// mirroring it into a ref would be a write during render.
 	const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const oldestEdit = useRef<number | null>(null);
 	const saving = useRef(false);
+	const channel = useRef<BroadcastChannel | null>(null);
 
 	// A different note starts clean, or navigating A → B would show A's dirty text.
 	// Only a different note: the server payload is re-sent on any refresh, and
@@ -103,6 +107,9 @@ export function NoteEditor({ note, notebookTitle }: { note: NoteRow; notebookTit
 			const settled = live === content && (after.title.trim() || DEFAULT_NOTE_TITLE) === title;
 			oldestEdit.current = settled ? null : Date.now();
 			useNoteEditor.getState().saved(payload.note.version, settled);
+			// Tell the other tabs on this device, so they learn before their own
+			// save is refused instead of after.
+			channel.current?.postMessage({ version: payload.note.version });
 			// Setting the status to `dirty` when it is already `dirty` does not move
 			// the effect below, so the follow-up save is asked for explicitly.
 			if (!settled) setPass((n) => n + 1);
@@ -124,6 +131,39 @@ export function NoteEditor({ note, notebookTitle }: { note: NoteRow; notebookTit
 			if (timer.current) clearTimeout(timer.current);
 		};
 	}, [status, markdown, title, pass, save]);
+
+	/*
+	 * The same note in a second tab. The server already refuses a stale save with
+	 * a 409, but that only lands after more has been typed into a copy that
+	 * cannot win. A tab that saved says so, and the others react at once: a clean
+	 * tab quietly takes the new version, a dirty one goes to the conflict card
+	 * before its own attempt. Same device only, which is where this actually
+	 * happens; a second device still gets the 409 path.
+	 */
+	useEffect(() => {
+		if (!note.id || typeof BroadcastChannel === 'undefined') return;
+		const bus = new BroadcastChannel(`zaino-note-${note.id}`);
+		channel.current = bus;
+		bus.onmessage = async (event: MessageEvent<{ version?: number }>) => {
+			const s = useNoteEditor.getState();
+			const incoming = Number(event.data?.version ?? 0);
+			if (!incoming || incoming <= s.version || s.status === 'conflict') return;
+			const response = await fetch(`/api/zaino/note/${note.id}`).catch(() => null);
+			const payload = await response?.json().catch(() => null);
+			if (!payload?.note) return;
+			const dirty = s.status === 'dirty' || s.status === 'saving' || s.status === 'error';
+			if (dirty) {
+				useNoteEditor.getState().setConflict({ content: payload.note.content, title: payload.note.title, version: payload.note.version });
+			} else {
+				useNoteEditor.getState().reset(note.id, payload.note.content, payload.note.title, payload.note.version);
+				router.refresh();
+			}
+		};
+		return () => {
+			channel.current = null;
+			bus.close();
+		};
+	}, [note.id, router]);
 
 	// Leaving the tab is the last chance to write: a keepalive request outlives the page.
 	useEffect(() => {
@@ -198,7 +238,38 @@ export function NoteEditor({ note, notebookTitle }: { note: NoteRow; notebookTit
 	return (
 		<div className="flex h-dvh flex-col bg-page md:h-[calc(100dvh-var(--header-h,60px))]">
 			<ImmersiveFrame />
-			<NoteHeader notebookId={note.notebook_id} notebookTitle={notebookTitle} onModeChange={changeMode} />
+			<NoteHeader
+				notebookId={note.notebook_id}
+				notebookTitle={notebookTitle}
+				notebooks={notebooks}
+				lesson={note.lesson_path ? { path: note.lesson_path, title: note.lesson_title ?? 'Lezione' } : null}
+				onModeChange={changeMode}
+				onMove={() => setMoving(true)}
+			/>
+
+			<MoveNoteSheet
+				open={moving}
+				notebooks={notebooks}
+				currentId={note.notebook_id}
+				busy={false}
+				onClose={() => setMoving(false)}
+				onMove={async (destination) => {
+					setMoveError(null);
+					const response = await fetch(`/api/zaino/note/${note.id}`, {
+						method: 'PATCH',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ notebookId: destination, version: useNoteEditor.getState().version })
+					});
+					const payload = await response.json().catch(() => ({}));
+					if (!response.ok) {
+						setMoveError(payload.error ?? 'Spostamento non riuscito.');
+						return;
+					}
+					useNoteEditor.setState({ version: payload.note.version });
+					setMoving(false);
+					router.refresh();
+				}}
+			/>
 
 			{conflict && (
 				<div className="shrink-0 px-4 pt-3">
@@ -228,6 +299,12 @@ export function NoteEditor({ note, notebookTitle }: { note: NoteRow; notebookTit
 							</Button>
 						</div>
 					</Alert>
+				</div>
+			)}
+
+			{moveError && (
+				<div className="shrink-0 px-4 pt-3">
+					<Alert tone="error">{moveError}</Alert>
 				</div>
 			)}
 

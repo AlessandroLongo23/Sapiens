@@ -4,6 +4,7 @@ import { hasFeature } from '@/lib/auth/entitlements';
 import { Features } from '@/lib/stripe/config';
 import {
 	DEFAULT_NOTEBOOK_TITLE,
+	DEFAULT_NOTE_TITLE,
 	FREE_NOTEBOOKS,
 	FREE_NOTES,
 	MAX_CONTENT,
@@ -11,6 +12,7 @@ import {
 	type NotebookColor,
 	type NotebookRow,
 	type NoteRow,
+	type NoteHit,
 	type NoteSummary,
 	type Quota
 } from '@/lib/zaino/config';
@@ -36,7 +38,7 @@ export class ZainoError extends Error {
 
 const NOTEBOOK_COLUMNS = 'id,user_id,title,color,position,created_at,updated_at';
 /** No `content`: a quaderno of 40 note must not carry 40 documents across the wire. */
-const NOTE_LIST_COLUMNS = 'id,user_id,notebook_id,title,excerpt,position,version,created_at,updated_at';
+const NOTE_LIST_COLUMNS = 'id,user_id,notebook_id,title,excerpt,position,version,lesson_path,lesson_title,created_at,updated_at';
 const NOTE_COLUMNS = `${NOTE_LIST_COLUMNS},content`;
 
 type Row = Record<string, unknown>;
@@ -50,7 +52,9 @@ function toNoteSummary(row: Row): NoteSummary {
 		...(row as unknown as NoteSummary),
 		position: Number(row.position ?? 0),
 		version: Number(row.version ?? 1),
-		excerpt: typeof row.excerpt === 'string' ? row.excerpt : ''
+		excerpt: typeof row.excerpt === 'string' ? row.excerpt : '',
+		lesson_path: typeof row.lesson_path === 'string' ? row.lesson_path : null,
+		lesson_title: typeof row.lesson_title === 'string' ? row.lesson_title : null
 	};
 }
 
@@ -231,17 +235,36 @@ export async function getNote(supabase: SupabaseClient, userId: string, id: stri
 }
 
 /** A new note at the end of its quaderno. Ceiling checked first; see requireQuota. */
-export async function createNote(supabase: SupabaseClient, user: User, notebookId: string, title: string): Promise<NoteRow> {
+export async function createNote(
+	supabase: SupabaseClient,
+	user: User,
+	notebookId: string,
+	title: string,
+	lesson?: LessonLink | null
+): Promise<NoteRow> {
 	await requireNotebook(supabase, user.id, notebookId);
 	await requireQuota(supabase, user, 'note');
 	const position = await nextPosition(supabase, 'notes', 'notebook_id', notebookId);
 	const { data, error } = await supabase
 		.from('notes')
-		.insert({ user_id: user.id, notebook_id: notebookId, title, position })
+		.insert({
+			user_id: user.id,
+			notebook_id: notebookId,
+			title,
+			position,
+			lesson_path: lesson?.path ?? null,
+			lesson_title: lesson?.title ?? null
+		})
 		.select(NOTE_COLUMNS)
 		.single();
 	if (error) fail('note create failed', error);
 	return toNote(data as Row);
+}
+
+/** The lesson a note was taken on: its public path and the title to show. */
+export interface LessonLink {
+	path: string;
+	title: string;
 }
 
 export interface NotePatch {
@@ -304,6 +327,143 @@ export class NoteConflict extends ZainoError {
 export async function deleteNote(supabase: SupabaseClient, userId: string, id: string): Promise<void> {
 	const { error } = await supabase.from('notes').delete().eq('id', id).eq('user_id', userId);
 	if (error) fail('note delete failed', error);
+}
+
+/* -------------------------------------------------------------- ordering */
+
+/**
+ * Rewrites the order of a list. `ids` must be exactly the rows the owner has
+ * in that scope: a partial list would leave holes that outlive the drag, so a
+ * mismatch is refused rather than half-applied. Positions are written in one
+ * upsert carrying only the id and the new position, so a reorder never touches
+ * a document or an `updated_at`.
+ */
+async function reorder(supabase: SupabaseClient, userId: string, table: 'notebooks' | 'notes', scope: { column: 'user_id' | 'notebook_id'; value: string }, ids: string[]): Promise<void> {
+	const { data, error } = await supabase.from(table).select('id').eq('user_id', userId).eq(scope.column, scope.value);
+	if (error) fail(`${table} reorder read failed`, error);
+	const owned = new Set((data ?? []).map((row) => String((row as Row).id)));
+	if (owned.size !== ids.length || ids.some((id) => !owned.has(id))) {
+		throw new ZainoError(400, 'Ordine non valido.');
+	}
+	// One update per row, not an upsert: an upsert with just {id, position}
+	// enters through the INSERT policy, which checks `user_id = auth.uid()` on a
+	// payload that has no user_id, so row level security refuses the whole batch.
+	// Lists here are tens of rows at most, and they run together.
+	const writes = await Promise.all(
+		ids.map((id, position) => supabase.from(table).update({ position }).eq('id', id).eq('user_id', userId))
+	);
+	const writeError = writes.find((w) => w.error)?.error;
+	if (writeError) fail(`${table} reorder failed`, writeError);
+}
+
+export const reorderNotebooks = (supabase: SupabaseClient, userId: string, ids: string[]) =>
+	reorder(supabase, userId, 'notebooks', { column: 'user_id', value: userId }, ids);
+
+export const reorderNotes = (supabase: SupabaseClient, userId: string, notebookId: string, ids: string[]) =>
+	reorder(supabase, userId, 'notes', { column: 'notebook_id', value: notebookId }, ids);
+
+/* ---------------------------------------------------------------- search */
+
+/**
+ * Turns what the student typed into a prefix tsquery: "deriv parz" becomes
+ * `deriv:* & parz:*`, so the results narrow while the word is still being
+ * written. Anything that is not a letter or a digit is dropped, which is what
+ * keeps a stray `&` or `!` from being read as tsquery syntax and erroring.
+ */
+export function toPrefixQuery(input: string): string {
+	return input
+		.split(/\s+/)
+		.map((term) => term.replace(/[^\p{L}\p{N}]/gu, ''))
+		.filter(Boolean)
+		.slice(0, 8)
+		.map((term) => `${term}:*`)
+		.join(' & ');
+}
+
+/** The owner's notes matching a query, most recently touched first. */
+export async function searchNotes(supabase: SupabaseClient, userId: string, query: string, limit = 20): Promise<NoteHit[]> {
+	const tsquery = toPrefixQuery(query);
+	if (!tsquery) return [];
+	const { data, error } = await supabase
+		.from('notes')
+		.select(`${NOTE_LIST_COLUMNS},notebooks!inner(title,color)`)
+		.eq('user_id', userId)
+		.textSearch('search', tsquery, { config: 'simple' })
+		.order('updated_at', { ascending: false })
+		.limit(limit);
+	if (error) fail('note search failed', error);
+	return (data ?? []).map((row) => {
+		const book = (row as Row).notebooks as { title?: string; color?: NotebookColor } | null;
+		return {
+			...toNoteSummary(row as Row),
+			notebook_title: book?.title ?? '',
+			notebook_color: book?.color ?? 'zinc'
+		};
+	});
+}
+
+/** The last notes touched, for the strip at the top of the shelf. */
+export async function recentNotes(supabase: SupabaseClient, userId: string, limit = 4): Promise<NoteHit[]> {
+	const { data, error } = await supabase
+		.from('notes')
+		.select(`${NOTE_LIST_COLUMNS},notebooks!inner(title,color)`)
+		.eq('user_id', userId)
+		.order('updated_at', { ascending: false })
+		.limit(limit);
+	if (error) fail('recent notes failed', error);
+	return (data ?? []).map((row) => {
+		const book = (row as Row).notebooks as { title?: string; color?: NotebookColor } | null;
+		return { ...toNoteSummary(row as Row), notebook_title: book?.title ?? '', notebook_color: book?.color ?? 'zinc' };
+	});
+}
+
+/* ---------------------------------------------------------------- lesson */
+
+/** The owner's notes taken on one lesson, newest first. */
+export async function notesForLesson(supabase: SupabaseClient, userId: string, lessonPath: string): Promise<NoteSummary[]> {
+	const { data, error } = await supabase
+		.from('notes')
+		.select(NOTE_LIST_COLUMNS)
+		.eq('user_id', userId)
+		.eq('lesson_path', lessonPath)
+		.order('updated_at', { ascending: false });
+	if (error) fail('lesson notes failed', error);
+	return (data ?? []).map((row) => toNoteSummary(row as Row));
+}
+
+/**
+ * The note to open when a student presses "Prendi appunti" on a lesson: the
+ * one they already started on it, or a new one seeded with the lesson's title.
+ * A new note lands in the first quaderno, and the shelf gets one made for it
+ * when it is still empty, so the action never dead-ends on an empty backpack.
+ */
+export async function noteForLesson(supabase: SupabaseClient, user: User, lesson: LessonLink): Promise<NoteRow> {
+	const existing = await notesForLesson(supabase, user.id, lesson.path);
+	if (existing.length > 0) {
+		const note = await getNote(supabase, user.id, existing[0].id);
+		if (note) return note;
+	}
+	const books = await listNotebooks(supabase, user.id);
+	const notebook = books[0] ?? (await createNotebook(supabase, user, { title: DEFAULT_NOTEBOOK_TITLE, color: 'crimson' }));
+	return createNote(supabase, user, notebook.id, lesson.title.slice(0, 120) || DEFAULT_NOTE_TITLE, lesson);
+}
+
+/** The clean lesson link, or the message to show. */
+export function parseLessonLink(body: Row): LessonLink | string {
+	const path = text(body.path);
+	const title = text(body.title);
+	// Only an in-site content path: this ends up in an href.
+	if (!path.startsWith('/materiale/') || path.length > 500 || /\s/.test(path)) return 'Lezione non valida.';
+	if (!title || title.length > 200) return 'Lezione non valida.';
+	return { path, title };
+}
+
+/** A list of ids from a request body, or the message to show. Order is the payload. */
+export function parseIdList(body: Row): string[] | string {
+	const ids = Array.isArray(body.ids) ? body.ids : null;
+	if (!ids || ids.length === 0 || ids.length > 200) return 'Ordine non valido.';
+	if (!ids.every((id) => typeof id === 'string' && id.length > 0)) return 'Ordine non valido.';
+	return ids as string[];
 }
 
 /* ------------------------------------------------------------- validation */

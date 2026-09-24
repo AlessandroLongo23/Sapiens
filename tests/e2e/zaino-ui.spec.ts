@@ -196,3 +196,40 @@ test('the title survives a save that lands while it is being typed', async ({ pa
 
 	await expect(heading, 'the title must not revert mid-word').toHaveValue('Derivate parziali');
 });
+
+test('the formula editor takes Enter to confirm and Shift+Enter for a new line', async ({ page }) => {
+	const { note } = await withNote(page);
+	await gotoHydrated(page, `/zaino/nota/${note.id}`);
+
+	const body = page.getByRole('textbox', { name: 'Testo della nota' });
+	await body.click();
+	await page.getByRole('toolbar', { name: 'Formattazione' }).getByRole('button', { name: 'Formula' }).click();
+
+	const source = page.getByRole('textbox', { name: 'Formula in LaTeX' });
+	await expect(source).toBeVisible();
+	await expect(source).toBeFocused();
+
+	// Shift+Enter stays in the field and writes a line break.
+	await page.keyboard.type('a^2');
+	await page.keyboard.press('Shift+Enter');
+	await page.keyboard.type('+b^2');
+	await expect(source, 'Shift+Enter goes to a new line').toHaveValue('a^2\n+b^2');
+	await expect(source, 'and does not close the popover').toBeVisible();
+
+	// Enter confirms, like the Fine button.
+	await page.keyboard.press('Enter');
+	await expect(source, 'Enter confirms and closes').toBeHidden();
+	await expect(body.locator('.katex').first()).toBeVisible();
+});
+
+test('Escape leaves the formula editor without confirming', async ({ page }) => {
+	const { note } = await withNote(page);
+	await gotoHydrated(page, `/zaino/nota/${note.id}`);
+	await page.getByRole('textbox', { name: 'Testo della nota' }).click();
+	await page.getByRole('toolbar', { name: 'Formattazione' }).getByRole('button', { name: 'Formula' }).click();
+
+	const source = page.getByRole('textbox', { name: 'Formula in LaTeX' });
+	await page.keyboard.type('x^2');
+	await page.keyboard.press('Escape');
+	await expect(source).toBeHidden();
+});

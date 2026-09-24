@@ -37,7 +37,7 @@ export default async function FormularyPage(props: LessonParams) {
 	return (
 		<>
 			<JsonLd data={[breadcrumb, ...(doc ? [learningResourceJsonLd(node, ancestors, { description: description(lesson), resourceType: 'Formulario', free: true, dateModified: updatedAt, path: paths.formulary })] : [])]} />
-			<LessonFrame titleHtml={titleHtml} parentLink={parentLink} paths={paths} left={doc && <TableOfContents sections={doc.sections} />}>
+			<LessonFrame titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths} left={doc && <TableOfContents sections={doc.sections} />}>
 				{doc ? <LessonReader html={doc.html} sections={doc.sections} footer={<NavigationButtons navigation={navigation} />} /> : <ComingSoon kind="formulary" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />}
 			</LessonFrame>
 		</>

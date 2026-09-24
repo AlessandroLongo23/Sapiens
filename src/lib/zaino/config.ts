@@ -47,6 +47,9 @@ export interface NoteSummary {
 	excerpt: string;
 	position: number;
 	version: number;
+	/** Public path of the lesson this note was taken on, when it came from one. */
+	lesson_path: string | null;
+	lesson_title: string | null;
 	created_at: string;
 	updated_at: string;
 }
@@ -61,4 +64,10 @@ export interface Quota {
 	unlimited: boolean;
 	notebooks: { used: number; max: number | null };
 	notes: { used: number; max: number | null };
+}
+
+/** A search hit: the note, plus which quaderno it sits in. */
+export interface NoteHit extends NoteSummary {
+	notebook_title: string;
+	notebook_color: NotebookColor;
 }

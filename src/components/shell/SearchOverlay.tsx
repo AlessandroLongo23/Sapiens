@@ -12,6 +12,7 @@ import { useContentTree } from './ContentTreeContext';
 import { SearchField } from './SearchField';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
 import { NodeIcon } from '@/components/ui/NodeIcon';
+import { NoteResults } from '@/components/zaino/NoteResults';
 
 interface Hit {
 	topic: ContentNode;
@@ -84,6 +85,8 @@ export function SearchOverlay() {
 						Annulla
 					</button>
 				</div>
+
+				<NoteResults query={query} onNavigate={close} />
 
 				{results.length > 0 ? (
 					<div className="relative z-10 flex w-full max-w-4xl flex-col gap-3 sm:gap-4">

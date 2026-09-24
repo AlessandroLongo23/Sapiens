@@ -14,6 +14,7 @@ import { Html } from '@/components/ui/Html';
 import { tabClass } from '@/components/shell/MobileTabBar';
 import { AISidebar } from './AISidebar';
 import { ImmersiveFrame } from './LessonPresence';
+import { LessonNoteButton } from '@/components/zaino/LessonNoteButton';
 
 export interface LessonPaths {
 	theory: string;
@@ -25,6 +26,8 @@ export interface LessonPaths {
 interface Props {
 	/** The lesson title, typeset. */
 	titleHtml: string;
+	/** Plain title and path of this lesson, for the "prendi appunti" button. */
+	note?: { path: string; title: string };
 	parentLink: { url: string; label: string };
 	paths: LessonPaths;
 	/** Table of contents column, from `lg` up; its presence also enables the phone "Indice" button. */
@@ -42,7 +45,7 @@ interface Props {
  * opens in a sheet, driven by the same store the desktop column uses; the
  * column itself is only mounted from `lg` up, so exactly one chat is alive.
  */
-export function LessonFrame({ titleHtml, parentLink, paths, left, withAssistant = false, children }: Props) {
+export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssistant = false, children }: Props) {
 	const pathname = usePathname();
 	const lg = useLg();
 	// Selectors, so the frame re-renders on scroll but the rest of the store's readers do not.
@@ -95,11 +98,11 @@ export function LessonFrame({ titleHtml, parentLink, paths, left, withAssistant 
 	return (
 		<div className="relative flex h-dvh w-full justify-center overflow-hidden bg-surface text-fg md:h-[calc(100dvh-var(--header-h,60px))]">
 			<ImmersiveFrame />
-			<aside className="absolute inset-y-0 left-0 hidden w-1/4 overflow-y-auto overscroll-contain px-4 py-6 lg:flex lg:flex-col" aria-label="Indice della lezione">
+			<aside className="absolute inset-y-0 left-0 hidden w-1/4 overflow-y-auto overscroll-y-contain px-4 py-6 lg:flex lg:flex-col" aria-label="Indice della lezione">
 				{lg && left}
 			</aside>
 
-			<div ref={scroller} onScroll={onScroll} className="no-scrollbar relative flex h-full w-full flex-col justify-between overflow-y-scroll overscroll-contain pb-tabbar lg:mx-[25%] lg:pb-0">
+			<div ref={scroller} onScroll={onScroll} className="no-scrollbar relative flex h-full w-full flex-col justify-between overflow-y-scroll overscroll-y-contain pb-tabbar lg:mx-[25%] lg:pb-0">
 				<header className="sticky top-0 z-20 transition-all duration-300">
 					<div className={cn('flex min-h-[56px] items-center justify-between gap-1 bg-surface px-2 transition-all duration-300 lg:min-h-0 lg:gap-4 lg:px-10', compact ? 'lg:py-3' : 'lg:py-8')}>
 						<div className="flex min-w-0 flex-1 items-center gap-1 lg:gap-3">
@@ -111,6 +114,13 @@ export function LessonFrame({ titleHtml, parentLink, paths, left, withAssistant 
 								<Html as="span" html={titleHtml} className="math-inline" />
 							</h1>
 						</div>
+						{note && (
+							<>
+								<LessonNoteButton path={note.path} title={note.title} />
+								{/* An action, not a fifth section: kept off the section icons. */}
+								<span className="mx-1 hidden h-5 w-px shrink-0 bg-edge lg:block" aria-hidden="true" />
+							</>
+						)}
 						{hasToc && (
 							<button type="button" onClick={() => setTocOpen(true)} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl text-fg-muted transition-colors hover:bg-surface-3 active:bg-surface-3 focus-ring lg:hidden" aria-label="Indice della lezione" aria-haspopup="dialog" aria-expanded={tocOpen}>
 								<ListTree className="size-6" aria-hidden="true" />
@@ -142,7 +152,7 @@ export function LessonFrame({ titleHtml, parentLink, paths, left, withAssistant 
 				</div>
 			</div>
 
-			<aside className="absolute inset-y-0 right-0 hidden w-1/4 overflow-y-auto overscroll-contain px-4 py-6 lg:flex lg:flex-col" aria-label="Assistente">
+			<aside className="absolute inset-y-0 right-0 hidden w-1/4 overflow-y-auto overscroll-y-contain px-4 py-6 lg:flex lg:flex-col" aria-label="Assistente">
 				{lg && withAssistant && <AISidebar />}
 			</aside>
 

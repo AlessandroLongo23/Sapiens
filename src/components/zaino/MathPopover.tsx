@@ -60,6 +60,25 @@ export function MathPopover({
 
 	const preview = useMemo(() => typeset(katex, latex, target?.block ?? false), [katex, latex, target?.block]);
 
+	/*
+	 * A formula is one line far more often than it is several, so Enter does what
+	 * the Fine button does and Shift+Enter is the way to a new line — the reverse
+	 * of a normal textarea, and the right way round for this one. Escape backs out
+	 * of the popover, which the Sheet already does for itself on a touch screen.
+	 */
+	const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			onSave(latex);
+			return;
+		}
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			e.stopPropagation();
+			onClose();
+		}
+	};
+
 	const body = (
 		<div className="space-y-3 px-4 pb-4">
 			<label htmlFor="math-source" className="block text-sm font-medium text-fg-muted">
@@ -70,11 +89,16 @@ export function MathPopover({
 				ref={field}
 				value={latex}
 				onChange={(e) => setLatex(e.target.value)}
+				onKeyDown={onKeyDown}
 				rows={3}
 				spellCheck={false}
+				aria-describedby="math-help"
 				className="w-full resize-y rounded-xl border border-edge bg-surface px-3 py-2 font-mono text-base text-fg outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/30"
 				placeholder="\\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"
 			/>
+			<p id="math-help" className="text-xs text-fg-subtle">
+				Invio per confermare, Maiusc+Invio per andare a capo.
+			</p>
 			<div className="min-h-12 rounded-xl border border-edge-soft bg-surface-2 px-3 py-2 text-center" aria-live="polite">
 				{preview ? <span dangerouslySetInnerHTML={{ __html: preview }} /> : <span className="text-sm text-fg-faint">Anteprima</span>}
 			</div>

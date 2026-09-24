@@ -49,7 +49,7 @@ export default async function ExercisesPage(props: LessonParams) {
 	return (
 		<>
 			<JsonLd data={[breadcrumb, ...(available ? [learningResourceJsonLd(node, ancestors, { description: description(lesson), resourceType: 'Esercizi', free, gatedSelector: free ? undefined : '#esercizi', path: paths.exercises })] : [])]} />
-			<LessonFrame titleHtml={titleHtml} parentLink={parentLink} paths={paths}>
+			<LessonFrame titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths}>
 				{!available || broken ? (
 					<ComingSoon kind="exercises" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />
 				) : !unlocked ? (
