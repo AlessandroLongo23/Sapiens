@@ -11,7 +11,9 @@ import { useSystemTheme } from '@/lib/hooks/use-theme';
  * Runs once after hydration: marks the page interactive (the end-to-end
  * tests wait for it), reads the login from the cookie session (the auth
  * library loads only when a session cookie exists), reads the cookie
- * consent and starts analytics if it was given, follows the OS theme.
+ * consent and starts analytics if it was given, follows the OS theme,
+ * registers the service worker (public/sw.js). Not in `next dev`: a cached
+ * page would hide the change being worked on.
  */
 export function Boot() {
 	const router = useRouter();
@@ -23,6 +25,9 @@ export function Boot() {
 		else authStore.setState({ ready: true });
 		useConsent.getState().hydrate();
 		loadAnalyticsIfAllowed();
+		if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }).catch(() => {});
+		}
 	}, [router]);
 	return null;
 }

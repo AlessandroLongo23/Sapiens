@@ -8,6 +8,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { Boot } from '@/components/shell/Boot';
 import { AuthModal } from '@/components/shell/AuthModal';
 import { CookieBanner } from '@/components/shell/CookieBanner';
+import { InstallPrompt } from '@/components/shell/InstallPrompt';
 import './globals.css';
 
 // Self-hosted at build time by next/font: no request to Google, no layout shift.
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				<Boot />
 				<AuthModal />
 				<CookieBanner />
+				<InstallPrompt />
 				{children}
 			</body>
 		</html>

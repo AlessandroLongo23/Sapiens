@@ -1,14 +1,17 @@
 {
+	"id": "/",
 	"name": "Sapiens",
 	"short_name": "Sapiens",
-	"description": "Materiale didattico per medie, superiori e università",
+	"description": "Lezioni, esercizi e flashcard di matematica per le superiori",
 	"lang": "it",
 	"start_url": "/",
+	"scope": "/",
 	"display": "standalone",
-	"background_color": "#ffffff",
-	"theme_color": "#ff3666",
+	"orientation": "portrait",
+	"background_color": "#f8f5ef",
+	"theme_color": "#f8f5ef",
 	"icons": [
-		{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-		{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+		{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+		{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
 	]
 }

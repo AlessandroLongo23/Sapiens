@@ -80,7 +80,11 @@ const config: NextConfig = {
 	// The hero screenshot is served as AVIF/WebP with a srcset by next/image.
 	images: { formats: ['image/avif', 'image/webp'] },
 	async headers() {
-		return [{ source: '/(.*)', headers: SECURITY_HEADERS }];
+		return [
+			{ source: '/(.*)', headers: SECURITY_HEADERS },
+			// An old service worker kept by the browser cache would keep serving old pages; every visit checks for a new one.
+			{ source: '/sw.js', headers: [{ key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' }] }
+		];
 	},
 	// Chunked sitemaps keep their public name (`/sitemap-2.xml`); a segment name cannot mix text and a parameter.
 	async rewrites() {
