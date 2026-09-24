@@ -1,218 +1,45 @@
-export interface ExercisesConfig {
-	[key: string]: TopicConfig;
+/** The exercises of one lesson: its generator (an id under v2/generators) and the levels the page offers, easiest first. */
+export interface LessonExercises {
+	generator: string;
+	levels: number[];
 }
 
-export interface TopicConfig {
-	[exerciseName: string]: {
-		generator: string;
-		count: number;
-		args: number[];
-	}
-}
-
-export const configs: ExercisesConfig = {
-	'high_school/math/insiemi-e-logica/prime-definizioni': {
-		'livello-1': { generator: 'PrimeDefinizioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'PrimeDefinizioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'PrimeDefinizioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'PrimeDefinizioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'PrimeDefinizioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'PrimeDefinizioniV2', count: 1, args: [6] }
-	},
-	'high_school/math/insiemi-e-logica/insiemi-rappresentazione': {
-		'livello-1': { generator: 'InsiemiRappresentazioneV2', count: 1, args: [1] },
-		'livello-2': { generator: 'InsiemiRappresentazioneV2', count: 1, args: [2] },
-		'livello-3': { generator: 'InsiemiRappresentazioneV2', count: 1, args: [3] },
-		'livello-4': { generator: 'InsiemiRappresentazioneV2', count: 1, args: [4] },
-		'livello-5': { generator: 'InsiemiRappresentazioneV2', count: 1, args: [5] }
-	},
-	'high_school/math/insiemi-e-logica/sottoinsiemi-ugualianza': {
-		'livello-1': { generator: 'SottoinsiemiUgualianzaV2', count: 1, args: [1] },
-		'livello-2': { generator: 'SottoinsiemiUgualianzaV2', count: 1, args: [2] },
-		'livello-3': { generator: 'SottoinsiemiUgualianzaV2', count: 1, args: [3] },
-		'livello-4': { generator: 'SottoinsiemiUgualianzaV2', count: 1, args: [4] },
-		'livello-5': { generator: 'SottoinsiemiUgualianzaV2', count: 1, args: [5] }
-	},
-	'high_school/math/insiemi-e-logica/insiemi-unione': {
-		'livello-1': { generator: 'InsiemiUnioneV2', count: 1, args: [1] },
-		'livello-2': { generator: 'InsiemiUnioneV2', count: 1, args: [2] },
-		'livello-3': { generator: 'InsiemiUnioneV2', count: 1, args: [3] },
-		'livello-4': { generator: 'InsiemiUnioneV2', count: 1, args: [4] },
-		'livello-5': { generator: 'InsiemiUnioneV2', count: 1, args: [5] },
-		'livello-6': { generator: 'InsiemiUnioneV2', count: 1, args: [6] }
-	},
-	'high_school/math/insiemi-e-logica/insiemi-operazioni': {
-		'livello-1': { generator: 'InsiemiOperazioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'InsiemiOperazioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'InsiemiOperazioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'InsiemiOperazioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'InsiemiOperazioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'InsiemiOperazioniV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-naturali/numeri-naturali-operazioni': {
-		'livello-1': { generator: 'NumeriNaturaliOperazioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriNaturaliOperazioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriNaturaliOperazioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriNaturaliOperazioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriNaturaliOperazioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriNaturaliOperazioniV2', count: 1, args: [6] },
-		'livello-7': { generator: 'NumeriNaturaliOperazioniV2', count: 1, args: [7] }
-	},
-	'high_school/math/numeri-naturali/numeri-naturali-mcm-mcd': {
-		'livello-1': { generator: 'NumeriNaturaliMcmMcdV2', count: 1, args: [3] },
-		'livello-2': { generator: 'NumeriNaturaliMcmMcdV2', count: 1, args: [4] },
-		'livello-3': { generator: 'NumeriNaturaliMcmMcdV2', count: 1, args: [5] },
-		'livello-4': { generator: 'NumeriNaturaliMcmMcdV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-naturali/numeri-naturali-potenze': {
-		'livello-1': { generator: 'NumeriNaturaliPotenzeV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriNaturaliPotenzeV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriNaturaliPotenzeV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriNaturaliPotenzeV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriNaturaliPotenzeV2', count: 1, args: [5] }
-	},
-	'high_school/math/numeri-razionali/numeri-razionali-confronto-frazioni': {
-		'livello-1': { generator: 'NumeriRazionaliConfrontoFrazioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriRazionaliConfrontoFrazioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriRazionaliConfrontoFrazioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriRazionaliConfrontoFrazioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriRazionaliConfrontoFrazioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriRazionaliConfrontoFrazioniV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-razionali/numeri-razionali-potenze': {
-		'livello-1': { generator: 'NumeriRazionaliPotenzeV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriRazionaliPotenzeV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriRazionaliPotenzeV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriRazionaliPotenzeV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriRazionaliPotenzeV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriRazionaliPotenzeV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-razionali/numeri-razionali-conversione': {
-		'livello-1': { generator: 'NumeriRazionaliConversioneV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriRazionaliConversioneV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriRazionaliConversioneV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriRazionaliConversioneV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriRazionaliConversioneV2', count: 1, args: [5] }
-	},
-	'high_school/math/monomi-polinomi/monomi-grado': {
-		'livello-1': { generator: 'MonomiGradoV2', count: 1, args: [1] },
-		'livello-2': { generator: 'MonomiGradoV2', count: 1, args: [2] },
-		'livello-3': { generator: 'MonomiGradoV2', count: 1, args: [3] },
-		'livello-4': { generator: 'MonomiGradoV2', count: 1, args: [4] },
-		'livello-5': { generator: 'MonomiGradoV2', count: 1, args: [5] },
-		'livello-6': { generator: 'MonomiGradoV2', count: 1, args: [6] }
-	},
-	'high_school/math/monomi-polinomi/monomi-operazioni': {
-		'livello-1': { generator: 'MonomiOperazioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'MonomiOperazioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'MonomiOperazioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'MonomiOperazioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'MonomiOperazioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'MonomiOperazioniV2', count: 1, args: [6] }
-	},
-	'high_school/math/monomi-polinomi/monomi-mcm-mcd': {
-		'livello-1': { generator: 'MonomiMcmMcdV2', count: 1, args: [1] },
-		'livello-2': { generator: 'MonomiMcmMcdV2', count: 1, args: [2] },
-		'livello-3': { generator: 'MonomiMcmMcdV2', count: 1, args: [3] },
-		'livello-4': { generator: 'MonomiMcmMcdV2', count: 1, args: [4] },
-		'livello-5': { generator: 'MonomiMcmMcdV2', count: 1, args: [5] }
-	},
-	'high_school/math/monomi-polinomi/monomi-espressioni': {
-		'livello-1': { generator: 'MonomiEspressioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'MonomiEspressioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'MonomiEspressioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'MonomiEspressioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'MonomiEspressioniV2', count: 1, args: [5] }
-	},
-	'high_school/math/equazioni-sistemi/equazioni-primo-grado': {
-		'livello-1': { generator: 'EquazioniPrimoGradoV2', count: 1, args: [1] },
-		'livello-2': { generator: 'EquazioniPrimoGradoV2', count: 1, args: [2] },
-		'livello-3': { generator: 'EquazioniPrimoGradoV2', count: 1, args: [3] },
-		'livello-4': { generator: 'EquazioniPrimoGradoV2', count: 1, args: [4] },
-		'livello-5': { generator: 'EquazioniPrimoGradoV2', count: 1, args: [5] },
-		'livello-6': { generator: 'EquazioniPrimoGradoV2', count: 1, args: [6] },
-		'livello-7': { generator: 'EquazioniPrimoGradoV2', count: 1, args: [7] }
-	},
-	'high_school/math/equazioni-di-secondo-grado/equazioni-secondo-grado': {
-		'livello-1': { generator: 'EquazioniSecondoGradoV2', count: 1, args: [1] },
-		'livello-2': { generator: 'EquazioniSecondoGradoV2', count: 1, args: [2] },
-		'livello-3': { generator: 'EquazioniSecondoGradoV2', count: 1, args: [3] },
-		'livello-4': { generator: 'EquazioniSecondoGradoV2', count: 1, args: [4] },
-		'livello-5': { generator: 'EquazioniSecondoGradoV2', count: 1, args: [5] },
-		'livello-6': { generator: 'EquazioniSecondoGradoV2', count: 1, args: [6] }
-	},
-	'high_school/math/funzioni/funzioni-iniettive-suriettive-biettive': {
-		'livello-1': { generator: 'FunzioniIniettiveSuriettiveBiettiveV2', count: 1, args: [1] },
-		'livello-2': { generator: 'FunzioniIniettiveSuriettiveBiettiveV2', count: 1, args: [2] },
-		'livello-3': { generator: 'FunzioniIniettiveSuriettiveBiettiveV2', count: 1, args: [3] },
-		'livello-4': { generator: 'FunzioniIniettiveSuriettiveBiettiveV2', count: 1, args: [4] },
-		'livello-5': { generator: 'FunzioniIniettiveSuriettiveBiettiveV2', count: 1, args: [5] },
-		'livello-6': { generator: 'FunzioniIniettiveSuriettiveBiettiveV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-naturali/numeri-naturali-divisibilita': {
-		'livello-1': { generator: 'NumeriNaturaliDivisibilitaV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriNaturaliDivisibilitaV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriNaturaliDivisibilitaV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriNaturaliDivisibilitaV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriNaturaliDivisibilitaV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriNaturaliDivisibilitaV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-interi/numeri-interi-valore-assoluto': {
-		'livello-1': { generator: 'NumeriInteriValoreAssolutoV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriInteriValoreAssolutoV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriInteriValoreAssolutoV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriInteriValoreAssolutoV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriInteriValoreAssolutoV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriInteriValoreAssolutoV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-interi/numeri-interi-operazioni': {
-		'livello-1': { generator: 'NumeriInteriOperazioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriInteriOperazioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriInteriOperazioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriInteriOperazioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriInteriOperazioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriInteriOperazioniV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-interi/numeri-interi-potenze': {
-		'livello-1': { generator: 'NumeriInteriPotenzeV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriInteriPotenzeV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriInteriPotenzeV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriInteriPotenzeV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriInteriPotenzeV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriInteriPotenzeV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-razionali/numeri-razionali-frazioni': {
-		'livello-1': { generator: 'NumeriRazionaliFrazioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriRazionaliFrazioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriRazionaliFrazioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriRazionaliFrazioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriRazionaliFrazioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriRazionaliFrazioniV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-razionali/numeri-razionali-operazioni': {
-		'livello-1': { generator: 'NumeriRazionaliOperazioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriRazionaliOperazioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriRazionaliOperazioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriRazionaliOperazioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriRazionaliOperazioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriRazionaliOperazioniV2', count: 1, args: [6] },
-		'livello-7': { generator: 'NumeriRazionaliOperazioniV2', count: 1, args: [7] }
-	},
-	'high_school/math/numeri-razionali/numeri-razionali-espressioni': {
-		'livello-1': { generator: 'NumeriRazionaliEspressioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriRazionaliEspressioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriRazionaliEspressioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriRazionaliEspressioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriRazionaliEspressioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriRazionaliEspressioniV2', count: 1, args: [6] }
-	},
-	'high_school/math/numeri-razionali/numeri-razionali-proporzioni': {
-		'livello-1': { generator: 'NumeriRazionaliProporzioniV2', count: 1, args: [1] },
-		'livello-2': { generator: 'NumeriRazionaliProporzioniV2', count: 1, args: [2] },
-		'livello-3': { generator: 'NumeriRazionaliProporzioniV2', count: 1, args: [3] },
-		'livello-4': { generator: 'NumeriRazionaliProporzioniV2', count: 1, args: [4] },
-		'livello-5': { generator: 'NumeriRazionaliProporzioniV2', count: 1, args: [5] },
-		'livello-6': { generator: 'NumeriRazionaliProporzioniV2', count: 1, args: [6] },
-		'livello-7': { generator: 'NumeriRazionaliProporzioniV2', count: 1, args: [7] }
-	}
+/**
+ * Exercises by lesson, keyed by the lesson's database path. A lesson can offer a subset of its generator's
+ * levels: MCD e MCM leaves criteria and factorisation to Divisibilità. The page picks the level from the
+ * student's attempts (vault/Decisioni/2026-09-24 Il livello degli esercizi lo sceglie la pagina.md).
+ */
+export const configs: Record<string, LessonExercises> = {
+	'high_school/math/insiemi-e-logica/prime-definizioni': { generator: 'prime-definizioni', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/insiemi-e-logica/insiemi-rappresentazione': { generator: 'insiemi-rappresentazione', levels: [1, 2, 3, 4, 5] },
+	'high_school/math/insiemi-e-logica/sottoinsiemi-ugualianza': { generator: 'sottoinsiemi-ugualianza', levels: [1, 2, 3, 4, 5] },
+	'high_school/math/insiemi-e-logica/insiemi-unione': { generator: 'insiemi-unione', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/insiemi-e-logica/insiemi-operazioni': { generator: 'insiemi-operazioni', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-naturali/numeri-naturali-operazioni': { generator: 'numeri-naturali-operazioni', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/numeri-naturali/numeri-naturali-mcm-mcd': { generator: 'numeri-naturali-mcm-mcd', levels: [3, 4, 5, 6] },
+	'high_school/math/numeri-naturali/numeri-naturali-potenze': { generator: 'numeri-naturali-potenze', levels: [1, 2, 3, 4, 5] },
+	'high_school/math/numeri-razionali/numeri-razionali-confronto-frazioni': { generator: 'numeri-razionali-confronto-frazioni', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-razionali/numeri-razionali-potenze': { generator: 'numeri-razionali-potenze', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-razionali/numeri-razionali-conversione': { generator: 'numeri-razionali-conversione', levels: [1, 2, 3, 4, 5] },
+	'high_school/math/monomi-polinomi/monomi-grado': { generator: 'monomi-grado', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/monomi-polinomi/monomi-operazioni': { generator: 'monomi-operazioni', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/monomi-polinomi/monomi-mcm-mcd': { generator: 'monomi-mcm-mcd', levels: [1, 2, 3, 4, 5] },
+	'high_school/math/monomi-polinomi/monomi-espressioni': { generator: 'monomi-espressioni', levels: [1, 2, 3, 4, 5] },
+	'high_school/math/equazioni-sistemi/equazioni-primo-grado': { generator: 'equazioni-primo-grado', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/equazioni-di-secondo-grado/equazioni-secondo-grado': { generator: 'equazioni-secondo-grado', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/funzioni/funzioni-iniettive-suriettive-biettive': { generator: 'funzioni-iniettive-suriettive-biettive', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-naturali/numeri-naturali-divisibilita': { generator: 'numeri-naturali-divisibilita', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-interi/numeri-interi-valore-assoluto': { generator: 'numeri-interi-valore-assoluto', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-interi/numeri-interi-operazioni': { generator: 'numeri-interi-operazioni', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-interi/numeri-interi-potenze': { generator: 'numeri-interi-potenze', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-razionali/numeri-razionali-frazioni': { generator: 'numeri-razionali-frazioni', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-razionali/numeri-razionali-operazioni': { generator: 'numeri-razionali-operazioni', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/numeri-razionali/numeri-razionali-espressioni': { generator: 'numeri-razionali-espressioni', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/numeri-razionali/numeri-razionali-proporzioni': { generator: 'numeri-razionali-proporzioni', levels: [1, 2, 3, 4, 5, 6, 7] }
 };
+
+/** Questions in one exercise session; the start card and the paywall preview say the same. */
+export const SESSION_LENGTH = 10;
+
+/** About a minute and a half per question, never under five minutes. */
+export const estimatedTime = (questions: number) => `${Math.max(5, Math.ceil(questions * 1.5))} min`;

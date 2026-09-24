@@ -56,8 +56,6 @@ scrivere, tutti nuovi, senza toccare quelli di altri generatori:
    specifica e non copiato dal generatore. Definisce `check(sample) -> (errori, caso)` e, se il
    livello ha più casi con quote fissate, `CASE_RANGES`. Gli aiuti comuni si importano con
    `from verify import ...` (`x`, `rat`, `exact`, `canon`, `same_set`, `FORBIDDEN`, SymPy).
-4. `src/lib/exercises/<id>-v2.ts`: `export const <Nome>V2 = legacyExercise(generatore);` per la pagina
-   di oggi, a scelta multipla.
 
 Poi:
 
@@ -67,5 +65,7 @@ Poi:
 - `review.mts <id> <file>` deve uscire con codice 0 (tutto il LaTeX passa da KaTeX); la pagina si
   guarda.
 
-Il collegamento alla lezione (`src/lib/exercises/index.ts` e `config.ts`, un esercizio per livello)
-si fa per ultimo, in un solo punto.
+Il collegamento alla lezione si fa per ultimo, in due righe: il generatore in
+`src/lib/exercises/index.ts` e la lezione in `config.ts`, con il percorso nel database, l'id del
+generatore e i livelli che la pagina offre. La pagina legge i campioni direttamente, salva ogni
+tentativo in `exercise_attempts` e sceglie il livello dai tentativi.

@@ -120,3 +120,31 @@ export function presentProblem(problem: string): ProblemBlock[] {
 	}
 	return blocks;
 }
+
+/**
+ * A line of a worked solution as prose with inline formulas, ready for renderMath: the `\text{…}` groups
+ * become words that wrap and the maths between them `$…$`. A line with no text is one inline formula.
+ */
+export function presentStep(step: string): string {
+	const groups = textGroups(step);
+	if (!groups.length) return `$${step.trim()}$`;
+	let out = '';
+	let at = 0;
+	// Spacing commands at the edges of a formula (`25\ \text{cm}`) become plain spaces around it.
+	const space = String.raw`(?:\s|\\[ ,;:!]|\\q?quad\b)+`;
+	const leading = new RegExp(`^${space}`);
+	const trailing = new RegExp(`${space}$`);
+	const math = (tex: string) => {
+		const t = tex.replace(leading, '').replace(trailing, '');
+		// Punctuation between two text groups stays text.
+		if (!t || /^[,.;:!?]+$/.test(t)) out += tex;
+		else out += `${leading.test(tex) ? ' ' : ''}$${t}$${trailing.test(tex) ? ' ' : ''}`;
+	};
+	for (const g of groups) {
+		math(step.slice(at, g.from));
+		out += g.body;
+		at = g.to;
+	}
+	math(step.slice(at));
+	return out.replace(/\\ /g, ' ').replace(/\s+/g, ' ').trim();
+}
