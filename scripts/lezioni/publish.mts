@@ -9,7 +9,8 @@
  * docs/lezioni/riscritte/NN-slug.md, but only if the database still holds the
  * text we last saw there: docs/lezioni/pubblicate/NN-slug.md (the copy of the
  * last version this script wrote) or, before the first publish,
- * docs/lezioni/originali/NN-slug.md. A lesson edited in the meantime is
+ * docs/lezioni/originali/NN-slug.md (a new lesson, with no original, must
+ * still be empty in the database). A lesson edited in the meantime is
  * skipped, never overwritten. Uses the service-role key.
  *
  * Formularies (docs/lezioni/formulari/NN-slug.md) and flashcards
@@ -96,7 +97,7 @@ type Value = string | Flashcard[] | null;
 
 /** Where each column's source lives, where its last published copy goes, and how the file becomes the stored value. */
 const COLUMNS: { column: Column; source: string; published: string; baseline: (name: string) => Value; value: (text: string, name: string) => Value }[] = [
-	{ column: 'theory', source: 'riscritte', published: 'pubblicate', baseline: (name) => readFileSync(`${dir}/originali/${name}`, 'utf8'), value: (text) => text },
+	{ column: 'theory', source: 'riscritte', published: 'pubblicate', baseline: (name) => (existsSync(`${dir}/originali/${name}`) ? readFileSync(`${dir}/originali/${name}`, 'utf8') : null), value: (text) => text },
 	{ column: 'formulary', source: 'formulari', published: 'pubblicate/formulari', baseline: () => null, value: (text) => text },
 	{
 		column: 'flashcards',

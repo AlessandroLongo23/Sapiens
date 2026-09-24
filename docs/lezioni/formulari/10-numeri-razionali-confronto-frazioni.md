@@ -2,17 +2,7 @@
 
 I denominatori sono sempre positivi: il segno si porta al numeratore, $\dfrac{3}{-4} = -\dfrac{3}{4}$.
 
-## Frazioni equivalenti
-
-Proprietà invariantiva: si moltiplicano o dividono numeratore e denominatore per lo stesso numero diverso da zero, $\dfrac{2}{3} = \dfrac{2 \cdot 5}{3 \cdot 5} = \dfrac{10}{15}$.
-
-Controllo con il prodotto in croce:
-
-$$\dfrac{a}{b} \text{ e } \dfrac{c}{d} \text{ sono equivalenti quando } a \cdot d = b \cdot c$$
-
-## Riduzione ai minimi termini
-
-Si dividono numeratore e denominatore per il loro MCD: $\dfrac{84}{126} = \dfrac{84 : 42}{126 : 42} = \dfrac{2}{3}$. Prima di confrontare conviene sempre ridurre.
+Prima di confrontare conviene sempre ridurre ai minimi termini.
 
 ## Stesso denominatore
 

@@ -5,36 +5,6 @@ Come si riscrive $\dfrac{3}{-4}$ con il denominatore positivo?
 ---
 $-\dfrac{3}{4}$. Il segno si sposta al numeratore.
 
-## frazioni-equivalenti-definizione
-Che cosa vuol dire che due frazioni sono equivalenti?
----
-Quando rappresentano lo stesso numero, come $\dfrac{2}{3}$ e $\dfrac{10}{15}$.
-
-## proprieta-invariantiva
-Come si chiama la proprietà per cui, moltiplicando o dividendo numeratore e denominatore per lo stesso numero diverso da zero, si ottiene una frazione equivalente?
----
-Proprietà invariantiva.
-
-## equivalenza-in-croce
-Completa: $\dfrac{a}{b}$ e $\dfrac{c}{d}$ sono equivalenti quando $a \cdot d = \ ?$
----
-$b \cdot c$.
-
-## equivalenza-conto
-Vero o falso: $\dfrac{4}{6}$ e $\dfrac{6}{9}$ sono equivalenti.
----
-Vero. $4 \cdot 9 = 36$ e $6 \cdot 6 = 36$.
-
-## minimi-termini-definizione
-Quando una frazione è ridotta ai minimi termini?
----
-Quando numeratore e denominatore non hanno divisori comuni diversi da $1$.
-
-## minimi-termini-come
-Per che cosa si dividono numeratore e denominatore per ridurre una frazione ai minimi termini?
----
-Per il loro MCD.
-
 ## stesso-denominatore
 Tra due frazioni con lo stesso denominatore positivo, quale è maggiore?
 ---
