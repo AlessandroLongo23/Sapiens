@@ -386,6 +386,29 @@
 @keyframes pen-draw {
 	to { stroke-dashoffset: 0; }
 }
+/* The home page sketch. The markup is the finished drawing; with motion allowed
+   each stroke starts undrawn and the pen writes it after its delay (--d) over
+   its duration (--t). Every stroke carries pathLength="1". */
+@media (prefers-reduced-motion: no-preference) {
+	.sk-draw {
+		stroke-dasharray: 1 1;
+		animation: sk-draw var(--t, 0.5s) var(--ease-out-soft) var(--d, 0s) backwards;
+	}
+	.sk-draw.sk-linear { animation-timing-function: linear; }
+	.sk-fade { animation: fade-in 0.4s ease-out var(--d, 0s) backwards; }
+	.sk-pop {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: sk-pop 0.35s var(--ease-out-soft) var(--d, 0s) backwards;
+	}
+	[data-paused] .sk-sheet * { animation-play-state: paused; }
+}
+@keyframes sk-draw {
+	from { stroke-dashoffset: 1; }
+}
+@keyframes sk-pop {
+	from { opacity: 0; transform: scale(0.2); }
+}
 @utility no-scrollbar {
 	-ms-overflow-style: none;
 	scrollbar-width: none;

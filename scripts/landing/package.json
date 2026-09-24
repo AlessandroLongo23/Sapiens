@@ -1,0 +1,9 @@
+{
+  "name": "sapiens-landing",
+  "private": true,
+  "type": "module",
+  "description": "Turns the formulas of the home page sketch into single-stroke pen paths (Hershey Script). Run hero-ink.mjs by hand; kept apart from the app's dependencies.",
+  "dependencies": {
+    "hersheytext": "2.0.0"
+  }
+}
