@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
-import { Modal } from '@/components/ui/Modal';
-import { Card } from '@/components/ui/Card';
+import { Sheet, sheetActions } from '@/components/ui/Sheet';
+import { cn } from '@/lib/utils/cn';
 import { DEFAULT_NOTE_TITLE, MAX_CONTENT, type NotebookRow, type NoteRow } from '@/lib/zaino/config';
 import type { PlacedSticker } from '@/lib/zaino/stickers';
 import { useNoteEditor, type EditorMode } from '@/lib/state/note-editor';
@@ -399,36 +399,33 @@ export function NoteEditor({ note, notebookTitle, notebooks, stickers }: { note:
 				)}
 			</div>
 
-			<Modal open={!!leaving} onClose={() => setLeaving(null)} className="max-w-md sm:mx-auto">
-				<Card className="p-6" role="dialog" aria-modal="true" aria-labelledby="leave-title">
-					<h2 id="leave-title" className="text-lg font-semibold text-fg-strong">Hai modifiche non salvate</h2>
-					<p className="mt-2 text-sm text-fg-muted">Vuoi salvare la nota prima di uscire?</p>
-					<div className="mt-5 flex flex-wrap gap-2">
-						<Button
-							onClick={async () => {
-								await save();
-								const to = leaving;
-								setLeaving(null);
-								if (to) router.push(to);
-							}}
-						>
-							Salva ed esci
-						</Button>
-						<Button
-							variant="secondary"
-							onClick={() => {
-								const to = leaving;
-								setLeaving(null);
-								useNoteEditor.getState().setStatus('clean');
-								if (to) router.push(to);
-							}}
-						>
-							Esci senza salvare
-						</Button>
-						<Button variant="ghost" onClick={() => setLeaving(null)}>Annulla</Button>
-					</div>
-				</Card>
-			</Modal>
+			<Sheet open={!!leaving} onClose={() => setLeaving(null)} title="Hai modifiche non salvate" size="auto" width="sm" align="center">
+				<p className="text-sm text-fg-muted">Vuoi salvare la nota prima di uscire?</p>
+				<div className={cn(sheetActions, 'mt-5')}>
+					<Button variant="ghost" onClick={() => setLeaving(null)}>Annulla</Button>
+					<Button
+						variant="secondary"
+						onClick={() => {
+							const to = leaving;
+							setLeaving(null);
+							useNoteEditor.getState().setStatus('clean');
+							if (to) router.push(to);
+						}}
+					>
+						Esci senza salvare
+					</Button>
+					<Button
+						onClick={async () => {
+							await save();
+							const to = leaving;
+							setLeaving(null);
+							if (to) router.push(to);
+						}}
+					>
+						Salva ed esci
+					</Button>
+				</div>
+			</Sheet>
 		</div>
 	);
 }

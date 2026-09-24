@@ -27,11 +27,11 @@ export function MoveNoteSheet({
 	return (
 		<Sheet open={open} onClose={onClose} title="Sposta la nota" size="auto">
 			{notebooks.length <= 1 ? (
-				<p className="px-4 pb-4 text-sm text-fg-muted">
+				<p className="text-sm text-fg-muted">
 					Hai un solo quaderno. Creane un altro dallo Zaino per poter spostare le note.
 				</p>
 			) : (
-				<ul className="px-2 pb-2">
+				<ul className="-mx-3">
 					{notebooks.map((notebook) => {
 						const here = notebook.id === currentId;
 						return (

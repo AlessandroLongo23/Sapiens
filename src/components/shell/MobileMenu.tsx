@@ -53,7 +53,8 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 	};
 
 	return (
-		<Sheet open={open} onClose={onClose} title="Menu" bodyClass="px-3 pb-3">
+		<Sheet open={open} onClose={onClose} title="Menu">
+			<div className="-mx-3">
 			<nav aria-label="Menu" className="flex flex-col gap-0.5">
 				{links.map(({ href, label, icon: Icon, active }) => (
 					<div key={href}>
@@ -80,12 +81,12 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 					</div>
 				))}
 			</nav>
-			<hr className="my-3 border-edge" />
+			<hr className="mx-3 my-3 border-edge" />
 			<div className="flex min-h-[48px] items-center justify-between gap-3 px-3">
 				<span className="text-base font-medium text-fg">Tema chiaro o scuro</span>
 				<ThemeToggle />
 			</div>
-			<hr className="my-3 border-edge" />
+			<hr className="mx-3 my-3 border-edge" />
 			{user ? (
 				<div className="flex flex-col gap-2 px-1">
 					<Link href={accountUrl(user)} className={row(pathname.startsWith(accountUrl(user)))}>
@@ -124,6 +125,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 					<CookieManageLink className="rounded underline underline-offset-2 focus-ring" />
 				</p>
 			)}
+			</div>
 		</Sheet>
 	);
 }

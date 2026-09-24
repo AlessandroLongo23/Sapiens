@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { Sticker } from '@/components/ui/Sticker';
 import { Card } from '@/components/ui/Card';
 import { Input, Label } from '@/components/ui/Field';
-import { Sheet } from '@/components/ui/Sheet';
+import { Sheet, sheetActions } from '@/components/ui/Sheet';
 import { Paywall } from '@/components/subscription/Paywall';
 import { cn } from '@/lib/utils/cn';
 import { useZainoAction } from './ZainoActions';
@@ -104,14 +104,15 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 				}}
 			/>
 
-			<Sheet open={!!confirming} onClose={() => setConfirming(null)} title="Elimina il quaderno" size="auto">
-				<div className="space-y-4 px-4 pb-4">
+			<Sheet open={!!confirming} onClose={() => setConfirming(null)} title="Elimina il quaderno" size="auto" width="sm" align="center">
+				<div>
 					<p className="text-sm text-fg-muted">
 						{confirming && counts[confirming.id] > 0
 							? `«${confirming.title}» contiene ${counts[confirming.id]} ${counts[confirming.id] === 1 ? 'nota' : 'note'}. Eliminando il quaderno elimini anche quelle, e non si possono recuperare.`
 							: `Vuoi eliminare «${confirming?.title}»?`}
 					</p>
-					<div className="flex gap-2">
+					<div className={cn(sheetActions, 'mt-5')}>
+						<Button variant="ghost" onClick={() => setConfirming(null)}>Annulla</Button>
 						<Button
 							variant="inverse"
 							loading={busy === confirming?.id}
@@ -124,7 +125,6 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 							<Trash2 className="size-4" aria-hidden="true" />
 							Elimina
 						</Button>
-						<Button variant="ghost" onClick={() => setConfirming(null)}>Annulla</Button>
 					</div>
 				</div>
 			</Sheet>
@@ -202,9 +202,9 @@ function EditSheet({
 	}
 
 	return (
-		<Sheet open={!!notebook} onClose={onClose} title="Modifica il quaderno" size="auto">
+		<Sheet open={!!notebook} onClose={onClose} title="Modifica il quaderno" size="auto" width="sm" align="center">
 			<form
-				className="space-y-5 px-4 pb-4"
+				className="space-y-5"
 				onSubmit={(e) => {
 					e.preventDefault();
 					onSave({ title: title.trim(), color });
@@ -243,13 +243,13 @@ function EditSheet({
 						</Button>
 					</div>
 				)}
-				<div className="flex flex-wrap gap-2">
-					<Button type="submit" loading={busy === notebook?.id}>Salva</Button>
-					<Button type="button" variant="ghost" onClick={onClose}>Annulla</Button>
-					<Button type="button" variant="ghost" onClick={onDelete} className="ml-auto text-danger-fg">
+				<div className={cn(sheetActions, 'pt-1')}>
+					<Button type="button" variant="ghost" onClick={onDelete} className="text-danger-fg hover:text-danger-fg sm:mr-auto">
 						<Trash2 className="size-4" aria-hidden="true" />
 						Elimina
 					</Button>
+					<Button type="button" variant="ghost" onClick={onClose}>Annulla</Button>
+					<Button type="submit" loading={busy === notebook?.id}>Salva</Button>
 				</div>
 			</form>
 		</Sheet>
