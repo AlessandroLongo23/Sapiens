@@ -3,13 +3,16 @@ import anchor from 'markdown-it-anchor';
 import katex from 'katex';
 import { titleHtml } from './latex';
 import { escapeHtml } from '@/lib/utils/escape';
+import { FIGURE_SCALE, figureUrl, parseFigure, publishedSvg } from './figures';
 
 /**
  * Lesson markdown → HTML, on the server only. Math is typeset with KaTeX at
  * render time, so the response already contains the formula (no client-side
  * KaTeX, readable by crawlers). The MathML twin is kept for assistive
  * technology; its TeX annotation is dropped so raw LaTeX never ends up in
- * the page text. TikZ blocks become `<script type="text/tikz">` for TikZJax.
+ * the page text. A TikZ block becomes an `<img>` of its compiled SVG (see
+ * figures.ts), or `<script type="text/tikz">` for TikZJax when it has not been
+ * compiled for its current code.
  */
 
 const slugifyHeading = (s: string) => s.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
@@ -76,7 +79,21 @@ function restore(html: string, math: Placeholder[], tikz: string[]): string {
 			const { display, content } = math[Number(i)];
 			return formula(content, display);
 		})
-		.replace(/<div data-tikz="(\d+)"><\/div>/g, (_, i: string) => `<div class="tikz-container my-6 flex justify-center"><script type="text/tikz">\n${tikz[Number(i)]}\n</script></div>`);
+		.replace(/<div data-tikz="(\d+)"><\/div>/g, (_, i: string) => tikzFigure(tikz[Number(i)]));
+}
+
+function tikzFigure(block: string): string {
+	const figure = parseFigure(block);
+	const svg = publishedSvg(figure);
+	const supabase = process.env.PUBLIC_SUPABASE_URL;
+	if (svg && supabase) {
+		const alt = escapeHtml(figure.alt ?? '');
+		const width = Math.round(svg.width * FIGURE_SCALE);
+		const height = Math.round(svg.height * FIGURE_SCALE);
+		// Inline width: the lesson stylesheet sizes every img at 33%, which would override the attribute.
+		return `<figure class="tikz-container my-6 flex justify-center"><img src="${figureUrl(supabase, svg.file)}" alt="${alt}" width="${width}" height="${height}" style="width:${width}px" loading="lazy" decoding="async"></figure>`;
+	}
+	return `<div class="tikz-container my-6 flex justify-center"><script type="text/tikz">\n${figure.code}\n</script></div>`;
 }
 
 const ADMONITIONS: Record<string, { color: string; title: string; icon: string }> = {
@@ -99,7 +116,7 @@ function admonitionPlugin(md: MarkdownIt) {
 			const first = lines[0]?.trim() ?? '';
 			const title = first && !first.startsWith('#') && !first.startsWith('-') ? lines.shift()!.trim() : '';
 			const html = new state.Token('html_block', '', 0);
-			html.content = `<div class="admonition admonition-${kind.color}"><div class="admonition-header"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 mr-2" aria-hidden="true"><path d="${kind.icon}"/></svg><span class="font-medium capitalize">${escapeHtml(title || kind.title)}</span></div><div class="admonition-body">${md.render(lines.join('\n'))}</div></div>`;
+			html.content = `<div class="admonition admonition-${kind.color}"><div class="admonition-header"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 mr-2" aria-hidden="true"><path d="${kind.icon}"/></svg><span class="font-medium">${escapeHtml(title || kind.title)}</span></div><div class="admonition-body">${md.render(lines.join('\n'))}</div></div>`;
 			state.tokens[i] = html;
 		});
 		return true;

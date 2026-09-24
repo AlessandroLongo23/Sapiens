@@ -3,30 +3,38 @@
  * the browser with a WebAssembly TeX engine. It weighs several megabytes, so it
  * is loaded only on pages that contain a TikZ block and only once such a block
  * is about to scroll into view.
+ *
+ * TikZJax v1 has no API: it assigns `window.onload`, which compiles every TikZ
+ * block in the document. Loaded lazily, it arrives after the load event has
+ * fired, so that handler is captured and called by hand, once per page.
  */
 
 const SCRIPT_URL = 'https://tikzjax.com/v1/tikzjax.js';
 const FONTS_URL = 'https://tikzjax.com/v1/fonts.css';
 
-type TikzJaxWindow = Window & { tikzjax?: { process?: () => void } };
+type Handler = (this: Window, ev: Event) => unknown;
 
-let loading: Promise<void> | null = null;
+let loading: Promise<Handler | null> | null = null;
 
-export function loadTikzJax(): Promise<void> {
-	if (typeof window === 'undefined') return Promise.resolve();
-	if ((window as TikzJaxWindow).tikzjax) return Promise.resolve();
+export function loadTikzJax(): Promise<Handler | null> {
+	if (typeof window === 'undefined') return Promise.resolve(null);
 	if (loading) return loading;
 
-	loading = new Promise<void>((resolve, reject) => {
+	loading = new Promise<Handler | null>((resolve, reject) => {
 		const css = document.createElement('link');
 		css.rel = 'stylesheet';
 		css.href = FONTS_URL;
 		document.head.appendChild(css);
 
+		const previous = window.onload;
 		const script = document.createElement('script');
 		script.src = SCRIPT_URL;
 		script.async = true;
-		script.onload = () => resolve();
+		script.onload = () => {
+			const handler = window.onload !== previous && typeof window.onload === 'function' ? (window.onload as Handler) : null;
+			window.onload = previous;
+			resolve(handler);
+		};
 		script.onerror = () => {
 			loading = null;
 			reject(new Error('TikZJax could not be loaded'));
@@ -44,14 +52,15 @@ export function loadTikzJax(): Promise<void> {
 export function processTikzWhenVisible(container: HTMLElement): () => void {
 	if (typeof window === 'undefined') return () => {};
 
-	const blocks = Array.from(container.querySelectorAll<HTMLElement>('.tikz-container'));
+	// Compiled figures are plain <img>; only the uncompiled ones still carry TikZ source.
+	const blocks = Array.from(container.querySelectorAll<HTMLElement>('.tikz-container')).filter((b) => b.querySelector('script[type="text/tikz"]'));
 	if (blocks.length === 0) return () => {};
 
 	const run = () => {
 		loadTikzJax()
-			.then(() => {
-				const tikzjax = (window as TikzJaxWindow).tikzjax;
-				if (tikzjax && typeof tikzjax.process === 'function') tikzjax.process();
+			.then((compile) => {
+				// Compiles every `text/tikz` script still in the document; finished ones are already SVG.
+				if (compile) return compile.call(window, new Event('load'));
 			})
 			.catch((err) => console.error(err));
 	};

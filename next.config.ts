@@ -38,7 +38,8 @@ const supabaseHost = (() => {
  * a nonce: a nonce would need `headers()` in the root layout and end the
  * static caching of every page. Everything else is locked to what the site
  * actually talks to: Supabase (auth), Vercel's analytics, TikZJax's CDN for
- * the diagrams, and its WebAssembly.
+ * the diagrams, and its WebAssembly (tikzjax.js fetches the TeX engine and
+ * format files from its S3 bucket, hence that one path in `connect-src`).
  *
  * `next dev` alone adds 'unsafe-eval': React's development build replays
  * server-side console output with reconstructed call stacks through eval(),
@@ -54,7 +55,7 @@ const CSP = [
 	"style-src 'self' 'unsafe-inline' https://tikzjax.com",
 	"img-src 'self' data: blob: https:",
 	"font-src 'self' data: https://tikzjax.com",
-	`connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://tikzjax.com https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
+	`connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://tikzjax.com https://s3.us-east-2.amazonaws.com/tikzjax.com/ https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
 	"worker-src 'self' blob: https://tikzjax.com",
 	"frame-src https://js.stripe.com https://checkout.stripe.com",
 	"object-src 'none'",

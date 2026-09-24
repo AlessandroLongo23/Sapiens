@@ -514,8 +514,25 @@ a,
 .markdown-content .tikz-container {
 	@apply my-6 overflow-x-auto;
 }
-.markdown-content .tikz-container svg {
+.markdown-content .tikz-container svg,
+.markdown-content .tikz-container img {
 	@apply max-w-full h-auto;
+}
+/* A compiled figure is a drawing, not a photo: none of the frame, rounding and 33% width that
+   `.markdown-content img` gives pictures (the rounding would also clip the drawing's corners). */
+.markdown-content figure.tikz-container {
+	margin-inline: 0;
+}
+.markdown-content .tikz-container img {
+	margin: 0;
+	border: 0;
+	border-radius: 0;
+}
+/* TikZ draws black lines on a transparent ground and "erases" with white fills. In the dark
+   theme the colours are inverted and the hue turned back, so lines turn light and tints stay tints. */
+.dark .markdown-content .tikz-container svg,
+.dark .markdown-content .tikz-container img {
+	filter: invert(1) hue-rotate(180deg);
 }
 .admonition {
 	@apply my-6 rounded-md overflow-hidden border shadow-lg;
