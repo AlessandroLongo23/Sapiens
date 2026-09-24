@@ -20,8 +20,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 7. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
 8. **Strumentazione della beta:** eventi, disdette, commenti. Nota: [[Metriche]].
 9. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
-10. **Adesivi sulle note:** applicare la migrazione `note_stickers`, provare il salvataggio, commit dell'MVP e del foglio a larghezza fissa. Vedi [[Adesivi]] e [[2026-09-24 Adesivi nella beta, a partire dalle note]].
-11. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
+10. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
 
 ## Prima della v1.0 e della v2
 - Adesivi dopo l'MVP: stile e prima collezione con Dario, premi agganciati alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free. Note: [[Adesivi]], [[Pratica quotidiana]].
@@ -39,6 +38,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-09-24: MVP degli adesivi sulle note e note come fogli a larghezza fissa, con la tabella `note_stickers` applicata. Vedi [[Adesivi]].
 - 2026-09-24: adesivi come gamificazione, dopo la beta, con le regole su premi, scadenze e vendita. Vedi [[2026-09-24 Adesivi]].
 - 2026-09-24: programma di matematica e albero delle lezioni riorganizzato (183 lezioni). Vedi [[Programma ministeriale]].
 - 2026-09-24: figure delle lezioni come SVG statici; organizzazione del lavoro a lotti; contenuti senza Andrea; posizione degli errori frequenti. Vedi [[2026-09-24 Figure e organizzazione dei lotti]].
