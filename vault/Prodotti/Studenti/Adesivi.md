@@ -1,15 +1,22 @@
 ---
-stato: decisa
-release: dopo la beta
+stato: in sviluppo
+release: beta
 aggiornato: 2026-09-24
 tag: [prodotto, studenti, gamificazione]
 ---
 # Adesivi
 
-Adesivi che lo studente guadagna studiando, raccoglie in album e attacca sui quaderni dello [[Zaino]] e sull'avatar. Regole in [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]].
+Adesivi che lo studente guadagna studiando, raccoglie in album e attacca sui quaderni dello [[Zaino]] e sull'avatar. Regole in [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]; entrano nella beta con un MVP sulle note, vedi [[2026-09-24 Adesivi nella beta, a partire dalle note]].
 
 ## Stato attuale
-Niente come funzione. Esistono i pezzi grafici: `src/components/ui/Sticker.tsx` (icona su etichetta inclinata) e `src/components/content/flashcards/PeelSticker.tsx` (l'adesivo che si stacca dalla risposta delle [[Flashcard]]). Non esiste un avatar.
+MVP sulle note, del 24 settembre 2026, committato ma non ancora in produzione (il deploy aspetta il merge su master):
+- Nella modalità Semplice il bottone "Adesivi" della barra apre l'album con gli 8 adesivi del prototipo, tutti disponibili e riutilizzabili senza limiti (`src/components/zaino/NoteStickers.tsx`, catalogo in `src/lib/zaino/stickers.ts`).
+- Il gesto è quello del prototipo, portato in `src/lib/zaino/sticker-board.ts`: tenuto per il centro, rotella o due dita per girarlo, clic o trascinamento per attaccarlo, clic o trascinamento sull'angolo per staccarlo. Sul telefono un tocco sul foglio sposta l'adesivo in mano, un trascinamento fa scorrere la nota. "Rimetti via" o Esc lo tolgono dalla nota.
+- Salvataggio: tabella `note_stickers`, un record per nota con l'elenco in JSON (centro sul foglio da 792 px e rotazione), migrazione `supabase/migrations/20260924150000_note_stickers.sql`, applicata il 24 settembre 2026 al progetto Supabase `godqhjgwmlzfnymzhqdq` (RLS attiva, 4 regole). L'editor salva l'intero elenco 600 ms dopo l'ultima modifica con `PUT /api/zaino/note/[id]/adesivi`; se il salvataggio fallisce compare un avviso con "Riprova". Se la lettura degli adesivi fallisce, la nota si apre lo stesso, senza adesivi.
+- Provato nel browser su desktop e su un Pixel 7 simulato: attacco con un clic e con un tocco, stacco con un clic. Il salvataggio risponde 200, dopo il ricaricamento l'adesivo torna nello stesso punto, e un altro studente che prova a scrivere sulla nota riceve 404.
+- Restano fuori: suono, premi, album per materia, avatar, adesivi sulla modalità Avanzata.
+
+I pezzi grafici di partenza erano `src/components/ui/Sticker.tsx` e `src/components/content/flashcards/PeelSticker.tsx`. Non esiste un avatar.
 
 ## Obiettivo
 - Un album per materia, come quello delle figurine, con le caselle vuote per gli adesivi mancanti.
@@ -54,6 +61,8 @@ Note di progetto:
 Il 24 settembre 2026 è pronto un prototipo del gesto in una pagina sola, fuori dal codice di Sapiens: https://claude.ai/artifact/B3vCZVbFiLsmzo8ivRMuZk (privato, da condividere con Dario dal menu Condividi). Ha 8 adesivi in stile cultura matematica, la copertina e la pagina a quadretti, l'attacco a fasce curve con l'ombra, lo stacco preso da `PeelSticker.tsx` e il ribaltamento dell'adesivo quando si stacca. Nelle regolazioni si cambiano soglia e sollevamento, e si accendono o spengono particelle, suono e rallentatore.
 
 ## Domande aperte
+- Nell'MVP ogni adesivo si usa quante volte si vuole: va bene anche dopo, o un adesivo guadagnato è un pezzo solo, come una figurina?
+- Perché gli adesivi entrano nella beta (vedi [[2026-09-24 Adesivi nella beta, a partire dalle note]]).
 - Il suono degli adesivi è acceso o spento per default?
 - Stile e prima collezione, con Dario.
 - Gli utenti Free guadagnano adesivi come gli abbonati? La sessione gratuita giornaliera è proprio l'abitudine che gli adesivi dovrebbero sostenere.
@@ -63,6 +72,6 @@ Il 24 settembre 2026 è pronto un prototipo del gesto in una pagina sola, fuori 
 
 ## Collegamenti
 - Attori: [[Studente]]
-- Release: dopo la [[Release Beta]]
-- Decisioni: [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]], [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]
+- Release: [[Release Beta]]
+- Decisioni: [[2026-09-24 Adesivi nella beta, a partire dalle note]], [[2026-09-24 Le note sono fogli a larghezza fissa]], [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]], [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]
 - Idee: [[Mascotte per materia]]
