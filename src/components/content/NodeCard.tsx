@@ -6,6 +6,7 @@ import { toneFor } from '@/lib/utils/icons';
 import { cn } from '@/lib/utils/cn';
 import { NodeIcon } from '@/components/ui/NodeIcon';
 import { Latex } from '@/components/ui/Latex';
+import { PenStroke } from './PageHeader';
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
@@ -57,10 +58,14 @@ function Row({ node, href, index }: { node: ContentNode; href: string; index: nu
 	const meta = node.type === 'chapter' ? (ready ? plural(node.children.length, 'lezione', 'lezioni') : 'In arrivo') : ready ? 'Vai alla lezione' : 'In arrivo';
 	return (
 		<li className="border-b border-edge">
-			<Link href={href} className="group -mx-3 flex items-baseline gap-4 rounded-xl px-3 py-4 no-underline transition-colors hover:bg-surface focus-ring sm:gap-5 sm:py-5">
+			<Link href={href} className="group -mx-3 flex items-baseline gap-4 rounded-xl px-3 py-4 no-underline focus-ring sm:gap-5 sm:py-5">
 				<span className={cn('w-7 shrink-0 font-mono text-sm tabular-nums', ready ? 'text-tint-fg' : 'text-fg-faint')}>{String(index + 1).padStart(2, '0')}</span>
-				<span className={cn('min-w-0 flex-1 font-display text-xl font-medium leading-snug tracking-tight transition-colors sm:text-2xl', ready ? 'text-fg-strong' : 'text-fg-subtle')}>
-					<Latex content={node.title} />
+				<span className={cn('min-w-0 flex-1 font-display text-xl font-medium leading-snug tracking-tight sm:text-2xl', ready ? 'text-fg-strong' : 'text-fg-subtle')}>
+					{/* Hovered, the title gets the pen stroke the page title has: red ink for a lesson, pencil for one still to come. */}
+					<span className="relative inline-block max-w-full">
+						<Latex content={node.title} />
+						<PenStroke onHover className={cn('absolute inset-x-0 -bottom-1.5 h-2', !ready && 'text-fg-faint')} />
+					</span>
 				</span>
 				<span className={cn('label-mono shrink-0', ready ? 'text-fg-subtle' : 'italic text-fg-faint')}>{meta}</span>
 				<ArrowRight className="size-4 shrink-0 self-center text-fg-faint transition-[transform,color] duration-300 ease-out-soft group-hover:translate-x-1 group-hover:text-tint-fg" aria-hidden="true" />
