@@ -27,6 +27,8 @@ export function legacyExercise(gen: Generator): new (level: number) => Exercise 
 			this.question = new Question(sample.problem);
 			const prompt = sample.prompt && sample.prompt !== "Risolvi l'equazione." ? sample.prompt : '';
 			if (prompt) this.question.textContent = sample.problem.trim() ? `${prompt} $$${sample.problem}$$` : prompt;
+			this.question.prompt = prompt;
+			this.question.problem = sample.problem;
 			this.options = choice.options.map((o, i) => new Answer(o.latex, i === choice.correct));
 		}
 	};

@@ -239,7 +239,7 @@ test.describe('lesson reader', () => {
 			await loginViaModal(page, user);
 			await gotoHydrated(page, EXERCISES_PATH);
 			await noHorizontalOverflow(page, 'exercise start');
-			await page.getByRole('button', { name: /Inizia Esercizi/ }).click();
+			await page.getByRole('button', { name: 'Inizia gli esercizi' }).click();
 
 			const grid = page.getByRole('group', { name: 'Risposte' });
 			const answers = grid.locator('button');

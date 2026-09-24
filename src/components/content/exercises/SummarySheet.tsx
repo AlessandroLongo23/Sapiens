@@ -39,6 +39,7 @@ export function SummarySheet({ open, correct, total, theoryHref, nextHref, onRet
 			open={open}
 			onClose={onClose}
 			title={message}
+			hideTitle
 			align="center"
 			bodyClass="px-5 pb-3"
 			footer={
@@ -77,7 +78,10 @@ export function SummarySheet({ open, correct, total, theoryHref, nextHref, onRet
 						<span className="label-mono mt-1.5 text-fg-subtle">{percent}%</span>
 					</div>
 				</div>
-				<dl className="flex items-center justify-center gap-6 text-base font-semibold">
+				<p className="font-display text-2xl font-semibold text-fg-strong" aria-hidden="true">
+					{message}
+				</p>
+				<dl className="flex items-center justify-center gap-6 pb-2 text-base font-semibold">
 					<div className="flex items-center gap-2 text-ok-fg">
 						<CheckCircle2 className="size-5" aria-hidden="true" />
 						<dd>{correct}</dd>

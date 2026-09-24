@@ -33,7 +33,7 @@ export function StartScreen({ titleHtml, questionCount, estimatedTime, onStart }
 				<div className="p-6 sm:p-8">
 					<button type="button" onClick={onStart} className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-inverse px-6 py-4 font-semibold text-inverse-fg shadow-key transition-transform hover:opacity-90 active:translate-y-px focus-ring-offset">
 						<Play className="size-5 fill-current" aria-hidden="true" />
-						<span>Inizia Esercizi</span>
+						<span>Inizia gli esercizi</span>
 					</button>
 				</div>
 			</div>

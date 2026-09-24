@@ -34,6 +34,9 @@ export class Exercise {
 
 export class Question {
     textContent: string;
+    /** Set by v2 generators (through the legacy adapter): the instruction and the bare problem, so the page can lay them out. */
+    prompt?: string;
+    problem?: string;
 
     constructor(textContent: string = '') {
         this.textContent = '$$' + textContent + '$$';
