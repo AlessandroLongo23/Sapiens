@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, FileText, Layers, LibraryBig, PenLine, Sigma } from 'lucide-react';
+import { BookOpen, PenLine, Sigma } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { getContentTree } from '@/lib/server/content';
 import { nodePath, plainTitle, subviewPath, dbPath } from '@/lib/seo/slug';
@@ -39,11 +39,11 @@ export default async function AdminWikiPage() {
 			<header className="mb-8">
 				<h1 className="mb-2 text-3xl font-bold text-fg">Wiki</h1>
 				<p className="mb-4 text-fg-muted">Livelli, materie, capitoli e lezioni pubblicati nel database, con le sezioni già scritte in verde.</p>
-				<div className="flex flex-wrap gap-3">
-					<Stat icon={LibraryBig}>{counts.subject} materie</Stat>
-					<Stat icon={Layers} color="text-teal-500">{counts.chapter} capitoli</Stat>
-					<Stat icon={FileText} color="text-indigo-500">{counts.topic} lezioni</Stat>
-					<Stat icon={BookOpen} color="text-emerald-500">{withTheory} con teoria</Stat>
+				<div className="flex flex-wrap gap-x-6 gap-y-4">
+					<Stat value={counts.subject}>Materie</Stat>
+					<Stat value={counts.chapter}>Capitoli</Stat>
+					<Stat value={counts.topic}>Lezioni</Stat>
+					<Stat value={withTheory}>Con teoria</Stat>
 				</div>
 			</header>
 			{tree.map((level) => (

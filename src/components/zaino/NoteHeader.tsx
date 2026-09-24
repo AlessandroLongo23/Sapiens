@@ -50,7 +50,7 @@ export function NoteHeader({
 						maxLength={120}
 						aria-label="Titolo della nota"
 						placeholder="Titolo della nota"
-						className="w-full truncate rounded-lg border-0 bg-transparent px-2 py-1 text-lg font-semibold leading-tight text-fg-strong outline-none ring-0 transition-colors duration-150 placeholder:font-normal placeholder:text-fg-faint hover:bg-surface-3 focus:bg-surface-3 focus:ring-2 focus:ring-crimson-500/30 sm:text-xl"
+						className="w-full truncate rounded-lg border-0 bg-transparent px-2 py-1 font-display text-xl font-semibold leading-tight tracking-tight text-fg-strong outline-none ring-0 transition-colors duration-150 placeholder:font-normal placeholder:text-fg-faint hover:bg-surface-3 focus:bg-surface-3 focus:ring-2 focus:ring-accent/30 sm:text-2xl"
 					/>
 					<div className="flex min-w-0 items-center gap-2 px-2">
 						<SaveStatus />

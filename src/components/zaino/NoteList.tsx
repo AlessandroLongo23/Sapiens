@@ -9,6 +9,7 @@ import type { NotebookRow, NoteSummary, Quota } from '@/lib/zaino/config';
 import { useReorder } from '@/lib/hooks/use-reorder';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
+import { Sticker } from '@/components/ui/Sticker';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Field';
 import { Sheet } from '@/components/ui/Sheet';
@@ -63,9 +64,12 @@ export function NoteList({
 			{error && <Alert tone="error">{error}</Alert>}
 
 			{notes.length > 0 && (
-				<div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-edge-soft pb-4">
+				<div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-edge-strong pb-3">
 					<div className="min-w-0">
-						<h2 className="text-lg font-semibold text-fg-strong">{notes.length === 1 ? '1 nota' : `${notes.length} note`}</h2>
+						<h2 className="flex items-baseline gap-3 text-3xl font-semibold text-fg-strong">
+							Note
+							<span className="label-mono text-fg-subtle">{String(notes.length).padStart(2, '0')}</span>
+						</h2>
 						<QuotaBar quota={quota} />
 					</div>
 					<Button onClick={create} loading={busy === 'new'}>
@@ -91,9 +95,7 @@ export function NoteList({
 
 			{notes.length === 0 ? (
 				<Card tone="dashed" className="note-in flex flex-col items-center gap-3 px-6 py-16 text-center">
-					<span className="mb-1 flex size-16 items-center justify-center rounded-2xl bg-accent-soft text-accent-fg">
-						<FileText className="size-8" aria-hidden="true" />
-					</span>
+					<Sticker icon={FileText} tone="accent" className="mb-2" />
 					<p className="text-lg font-semibold text-fg-strong">Nessuna nota, per ora</p>
 					<p className="max-w-sm text-sm leading-relaxed text-fg-muted">
 						Scrivi la prima: puoi formattarla con la barra degli strumenti o scriverla in markdown, come preferisci.
@@ -119,8 +121,8 @@ export function NoteList({
 						>
 							<div
 								className={cn(
-									'flex items-stretch overflow-hidden rounded-2xl border border-edge bg-surface shadow-sm transition-shadow duration-200',
-									dragging === note.id && 'border-accent-edge shadow-lg'
+									'flex items-stretch overflow-hidden rounded-2xl border border-edge bg-surface shadow-paper transition-shadow duration-200',
+									dragging === note.id && 'border-edge-strong shadow-lift'
 								)}
 							>
 								{/* Reordering is off while a filter hides rows: dropping between two
@@ -139,9 +141,9 @@ export function NoteList({
 									href={`${ZAINO_ROOT}/nota/${note.id}`}
 									className="flex min-w-0 flex-1 flex-col gap-1 py-3.5 pl-1 pr-12 no-underline transition-colors hover:bg-surface-2 focus-ring"
 								>
-									<span className="truncate font-semibold text-fg-strong">{note.title}</span>
+									<span className="truncate font-display text-xl font-medium leading-snug tracking-tight text-fg-strong">{note.title}</span>
 									<span className="truncate text-sm text-fg-muted">{note.excerpt || 'Nota vuota'}</span>
-									<span className="truncate text-xs text-fg-faint">
+									<span className="truncate font-mono text-[0.6875rem] text-fg-faint">
 										Modificata il {when.format(new Date(note.updated_at))}
 										{note.lesson_title ? ` · da ${note.lesson_title}` : ''}
 									</span>

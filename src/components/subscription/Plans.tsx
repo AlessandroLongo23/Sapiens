@@ -55,9 +55,9 @@ function PlanButton({ plan, current, onSelect, small = false }: { plan: Subscrip
 			onClick={() => !isFree && !isCurrent && onSelect(plan)}
 			disabled={isFree || isCurrent}
 			className={cn(
-				'w-full rounded-xl font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50',
+				'w-full rounded-xl font-semibold transition-[background-color,transform,box-shadow] duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0',
 				small ? 'mx-auto max-w-[140px] px-4 py-2.5 text-sm' : 'px-4 py-3',
-				plan.popular ? 'bg-gradient-to-r from-pink-600 to-crimson-600 text-white shadow-lg hover:from-pink-700 hover:to-crimson-700 hover:shadow-xl' : 'bg-surface-3 text-fg hover:bg-surface-4'
+				plan.popular ? 'bg-accent text-white shadow-key hover:bg-accent-hover' : 'border border-edge-strong bg-surface text-fg shadow-paper hover:bg-surface-2'
 			)}
 		>
 			{isCurrent ? 'Il tuo piano' : isFree ? 'Piano Free' : 'Seleziona'}
@@ -66,12 +66,12 @@ function PlanButton({ plan, current, onSelect, small = false }: { plan: Subscrip
 }
 
 function Price({ plan, billing, size }: { plan: SubscriptionPlan; billing: BillingOption; size: 'lg' | 'sm' }) {
-	if (plan.price === 0) return <span className={cn('font-bold text-fg', size === 'lg' ? 'text-4xl' : 'text-2xl')}>Gratis</span>;
+	if (plan.price === 0) return <span className={cn('font-display font-semibold tracking-tight text-fg-strong', size === 'lg' ? 'text-5xl' : 'text-2xl')}>Gratis</span>;
 	const { price, period } = displayPrice(plan, billing);
 	return (
 		<div className={cn('flex flex-col', size === 'sm' && 'items-center gap-1')}>
 			<div className={cn('flex items-baseline', size === 'lg' ? 'gap-2' : 'gap-1')}>
-				<span className={cn('font-bold text-fg', size === 'lg' ? 'text-4xl' : 'text-2xl')}>{formatPrice(price, plan.currency)}</span>
+				<span className={cn('font-display font-semibold tracking-tight text-fg-strong tabular-nums', size === 'lg' ? 'text-5xl' : 'text-2xl')}>{formatPrice(price, plan.currency)}</span>
 				<span className={cn('text-fg-muted', size === 'sm' && 'text-sm')}>{period}</span>
 			</div>
 			{billing === 'semester' && (
@@ -89,16 +89,16 @@ export function PlanCards({ current, billing, onSelect }: { current: Subscriptio
 	return (
 		<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 			{PLANS.map((plan) => (
-				<div key={plan.id} className={cn('relative rounded-2xl border-2 bg-surface transition-all duration-200', plan.popular ? 'border-crimson-400 shadow-xl md:scale-105' : 'border-edge')}>
+				<div key={plan.id} className={cn('relative rounded-2xl border-2 bg-surface transition-all duration-200', plan.popular ? 'border-accent shadow-lift md:-translate-y-2' : 'border-edge shadow-paper')}>
 					{plan.popular && (
-						<div className="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-gradient-to-r from-pink-600 to-crimson-600 px-4 py-1 text-sm font-semibold text-white">
+						<div className="label-mono absolute -top-3.5 left-1/2 flex -translate-x-1/2 rotate-[-2deg] items-center gap-1.5 whitespace-nowrap rounded-md bg-accent px-3 py-1.5 text-white shadow-paper">
 							<Sparkles className="size-4" aria-hidden="true" />
 							Più popolare
 						</div>
 					)}
 					<div className="flex h-full flex-col justify-between p-6">
 						<div className="flex flex-col gap-2">
-							<h2 className="mb-2 text-2xl font-bold text-fg">{plan.name}</h2>
+							<h2 className="label-mono mb-2 text-fg-subtle">{plan.name}</h2>
 							<div className="mb-6">
 								<Price plan={plan} billing={billing} size="lg" />
 							</div>
@@ -128,7 +128,7 @@ export function PlanTable({ current, billing, onSelect }: { current: Subscriptio
 								<span className="relative text-lg font-bold text-fg">
 									{plan.name}
 									{plan.popular && (
-										<span className="absolute -right-8 -top-2 rounded-full bg-gradient-to-r from-pink-600 to-crimson-600 px-2 py-0.5 text-white">
+										<span className="absolute -right-8 -top-2 rounded-full bg-accent px-2 py-0.5 text-white">
 											<Sparkles className="size-3" aria-hidden="true" />
 										</span>
 									)}

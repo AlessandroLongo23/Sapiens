@@ -1,18 +1,9 @@
 'use client';
 
 import { Check, FolderInput } from 'lucide-react';
-import type { NotebookColor, NotebookRow } from '@/lib/zaino/config';
+import type { NotebookRow } from '@/lib/zaino/config';
 import { Sheet } from '@/components/ui/Sheet';
 import { cn } from '@/lib/utils/cn';
-
-const SPINE: Record<NotebookColor, string> = {
-	zinc: 'bg-zinc-400 dark:bg-zinc-500',
-	crimson: 'bg-crimson-500',
-	amber: 'bg-amber-500',
-	teal: 'bg-teal-500',
-	sky: 'bg-sky-500',
-	indigo: 'bg-indigo-500'
-};
 
 /**
  * Where a note goes. The note's URL does not contain its quaderno (see the flat
@@ -54,7 +45,7 @@ export function MoveNoteSheet({
 										here ? 'cursor-default text-fg-muted' : 'hover:bg-surface-3 active:bg-surface-3'
 									)}
 								>
-									<span className={cn('h-7 w-1.5 shrink-0 rounded-full', SPINE[notebook.color])} aria-hidden="true" />
+									<span data-notebook={notebook.color} className="h-7 w-1.5 shrink-0 rounded-full bg-tint" aria-hidden="true" />
 									<span className="min-w-0 flex-1 truncate font-medium text-fg">{notebook.title}</span>
 									{here ? (
 										<>

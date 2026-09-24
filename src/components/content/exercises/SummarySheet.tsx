@@ -32,7 +32,7 @@ export function SummarySheet({ open, correct, total, theoryHref, nextHref, onRet
 	const wrong = Math.max(0, total - correct);
 	const band = percent < 25 ? 0 : percent < 50 ? 1 : percent < 75 ? 2 : percent < 100 ? 3 : 4;
 	const message = MESSAGES[band][correct % MESSAGES[band].length];
-	const ring = percent >= 75 ? 'stroke-green-500' : percent >= 50 ? 'stroke-amber-500' : 'stroke-crimson-500';
+	const ring = percent >= 75 ? 'stroke-ok' : percent >= 50 ? 'stroke-warn' : 'stroke-accent';
 
 	return (
 		<Sheet
@@ -63,18 +63,18 @@ export function SummarySheet({ open, correct, total, theoryHref, nextHref, onRet
 			}
 		>
 			<div className="flex flex-col items-center gap-4 pt-1 text-center">
-				<p className="text-sm text-fg-muted">Ecco il riepilogo della tua sessione</p>
+				<p className="label-mono text-fg-subtle">Riepilogo della sessione</p>
 				<div className="relative size-32" role="img" aria-label={`${correct} risposte corrette su ${total}, ${percent} per cento`}>
 					<svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden="true">
 						<circle cx="50" cy="50" r={RADIUS} className="fill-none stroke-surface-4" strokeWidth="8" />
 						<circle cx="50" cy="50" r={RADIUS} className={`fill-none transition-[stroke-dashoffset] duration-700 ease-out ${ring}`} strokeWidth="8" strokeLinecap="round" strokeDasharray={CIRCUMFERENCE} strokeDashoffset={CIRCUMFERENCE * (1 - percent / 100)} />
 					</svg>
 					<div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
-						<span className="text-3xl font-bold leading-none text-fg-strong">
+						<span className="font-display text-4xl font-medium leading-none tracking-tight text-fg-strong tabular-nums">
 							{correct}
-							<span className="text-lg text-fg-subtle">/{total}</span>
+							<span className="text-xl text-fg-subtle">/{total}</span>
 						</span>
-						<span className="mt-1 text-xs font-medium text-fg-subtle">{percent}%</span>
+						<span className="label-mono mt-1.5 text-fg-subtle">{percent}%</span>
 					</div>
 				</div>
 				<dl className="flex items-center justify-center gap-6 text-base font-semibold">

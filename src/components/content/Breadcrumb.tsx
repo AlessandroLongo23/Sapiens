@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Backpack, ChevronRight, Home, LibraryBig, UsersRound } from 'lucide-react';
+import { Backpack, Home, LibraryBig, UsersRound } from 'lucide-react';
 import { breadcrumbJsonLd } from '@/lib/seo/jsonld';
 import { CONTENT_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 import { nodePath } from '@/lib/seo/slug';
@@ -32,28 +32,29 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
 	return (
 		<>
 			<JsonLd data={breadcrumbJsonLd(items.filter((i) => i.path).map((i) => ({ name: i.label, path: i.path! })))} />
-			<nav aria-label="Percorso" className="mb-6">
-				<ol className="flex flex-wrap items-center gap-2 text-sm">
+			<nav aria-label="Percorso" className="mb-8">
+				<ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
 					{items.map((item, index) => {
 						const last = index === items.length - 1;
+						// Only the first step keeps its icon: a trail of icons reads as noise.
 						const inner = (
 							<>
-								{item.icon && <item.icon className="size-4" aria-hidden="true" />}
+								{index === 0 && item.icon && <item.icon className="size-4" aria-hidden="true" />}
 								<Latex content={item.label} />
 							</>
 						);
 						return (
 							<li key={index} className="flex items-center gap-2">
 								{item.path && !last ? (
-									<Link href={item.path} className="flex items-center gap-2 rounded text-fg-muted transition-colors hover:text-accent-fg focus-ring">
+									<Link href={item.path} className="flex items-center gap-1.5 rounded text-fg-subtle underline-offset-4 transition-colors hover:text-fg hover:underline focus-ring">
 										{inner}
 									</Link>
 								) : (
-									<span className="flex items-center gap-2 font-medium text-fg" aria-current="page">
+									<span className="flex items-center gap-1.5 font-medium text-fg" aria-current="page">
 										{inner}
 									</span>
 								)}
-								{!last && <ChevronRight className="size-4 shrink-0 text-fg-faint" aria-hidden="true" />}
+								{!last && <span className="select-none text-fg-faint" aria-hidden="true">/</span>}
 							</li>
 						);
 					})}

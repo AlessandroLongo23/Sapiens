@@ -37,9 +37,9 @@ export function renderChatMarkdown(text: string, katex: Katex | null): string {
 		.replace(/\\\(([\s\S]*?)\\\)/g, (_, tex: string) => keep(math(katex, tex, false)))
 		.replace(/`([^`]+)`/g, (_, code: string) => keep(`<code class="rounded bg-surface-3 px-1.5 py-0.5 font-mono text-sm text-accent-fg">${escapeHtml(code)}</code>`));
 	html = escapeHtml(html)
-		.replace(/^### (.+)$/gm, '<h4 class="mt-4 mb-2 font-semibold text-fg">$1</h4>')
-		.replace(/^## (.+)$/gm, '<h3 class="mt-4 mb-2 text-lg font-bold text-fg">$1</h3>')
-		.replace(/^# (.+)$/gm, '<h2 class="mt-4 mb-3 text-xl font-bold text-fg">$1</h2>')
+		.replace(/^### (.+)$/gm, '<h4 class="mt-4 mb-2 font-display text-base font-semibold text-fg-strong">$1</h4>')
+		.replace(/^## (.+)$/gm, '<h3 class="mt-4 mb-2 font-display text-lg font-semibold text-fg-strong">$1</h3>')
+		.replace(/^# (.+)$/gm, '<h2 class="mt-4 mb-3 text-xl font-semibold text-fg-strong">$1</h2>')
 		.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-fg">$1</strong>')
 		.replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
 		.replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')

@@ -25,7 +25,7 @@ function ProgressBar({ states }: { states: Progress[] }) {
 }
 
 const ANSWER_CLASS: Record<Progress, string> = {
-	unanswered: 'bg-surface border-edge hover:bg-surface-3 active:bg-surface-3',
+	unanswered: 'bg-surface border-edge shadow-paper hover:border-edge-strong hover:bg-surface-2 active:bg-surface-3',
 	correct: 'z-10 scale-105 animate-pulse border-ok bg-ok text-white shadow-lg',
 	incorrect: 'z-10 scale-105 animate-shake border-danger bg-danger text-white shadow-lg'
 };
@@ -51,7 +51,7 @@ export function speakable(latex: string): string {
 }
 
 /** Fills its grid cell, so every answer of a question is the same size; a formula wider than the cell scrolls inside it. */
-function AnswerButton({ html, label, state, locked, onClick }: { html: string; label: string; state: Progress; locked: boolean; onClick: () => void }) {
+function AnswerButton({ html, label, letter, state, locked, onClick }: { html: string; label: string; letter: string; state: Progress; locked: boolean; onClick: () => void }) {
 	return (
 		<button
 			type="button"
@@ -61,6 +61,10 @@ function AnswerButton({ html, label, state, locked, onClick }: { html: string; l
 			aria-disabled={locked || undefined}
 			className={cn('relative flex h-full min-h-[56px] w-full min-w-0 items-center justify-center break-words rounded-xl border-2 px-3 py-3 text-base font-semibold transition-all duration-300 ease-in-out focus-ring sm:px-6 sm:py-4 sm:text-lg', ANSWER_CLASS[state])}
 		>
+			{/* The letter of a multiple-choice test: a), b), c). The label already says which answer this is. */}
+			<span className={cn('absolute left-3 top-2 font-mono text-[0.6875rem] font-medium', state === 'unanswered' ? 'text-fg-faint' : 'text-white/80')} aria-hidden="true">
+				{letter})
+			</span>
 			<Html as="span" data-answer-content html={html} className="math-content block max-w-full scroll-x px-1 py-1 [&_.katex-display]:overflow-visible [&_.katex]:text-inherit" aria-hidden="true" />
 		</button>
 	);
@@ -180,7 +184,10 @@ export function ExerciseRunner({ exercises, titleHtml, theoryHref, nextHref }: P
 				<ProgressBar states={progress} />
 				{exercise && (
 					<div key={exercise.id} className="contents">
-						<h2 ref={question} tabIndex={-1} className="w-full max-w-2xl animate-fade-in break-words text-lg font-bold text-fg outline-none sm:text-2xl">
+						<h2 ref={question} tabIndex={-1} className="w-full max-w-2xl animate-fade-in break-words text-xl font-medium text-fg-strong outline-none sm:text-3xl">
+							<span className="label-mono mb-2 block text-center text-tint-fg" aria-hidden="true">
+								Domanda {String(index + 1).padStart(2, '0')} di {String(exercises.length).padStart(2, '0')}
+							</span>
 							<span className="sr-only">
 								Domanda {index + 1} di {exercises.length}.{' '}
 							</span>
@@ -191,7 +198,7 @@ export function ExerciseRunner({ exercises, titleHtml, theoryHref, nextHref }: P
 							{exercise.options.map((option, i) => (
 								// An odd last answer takes the whole row instead of leaving a hole.
 								<div key={i} className="h-full min-w-0 [&:nth-child(odd):last-child]:col-span-full">
-									<AnswerButton html={option.html} label={`Risposta ${i + 1}: ${speakable(option.text)}`} state={selected === i ? (option.isCorrect ? 'correct' : 'incorrect') : 'unanswered'} locked={selected !== null} onClick={() => answer(i)} />
+									<AnswerButton html={option.html} letter={String.fromCharCode(97 + i)} label={`Risposta ${i + 1}: ${speakable(option.text)}`} state={selected === i ? (option.isCorrect ? 'correct' : 'incorrect') : 'unanswered'} locked={selected !== null} onClick={() => answer(i)} />
 								</div>
 							))}
 						</div>

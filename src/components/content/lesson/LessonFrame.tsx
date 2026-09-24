@@ -9,6 +9,7 @@ import { useAISidebar } from '@/lib/state/ai-sidebar';
 import { useLg } from '@/lib/hooks/use-media';
 import { plainTitle } from '@/lib/seo/slug';
 import { cn } from '@/lib/utils/cn';
+import type { SubjectTone } from '@/lib/utils/icons';
 import { Sheet } from '@/components/ui/Sheet';
 import { Html } from '@/components/ui/Html';
 import { tabClass } from '@/components/shell/MobileTabBar';
@@ -34,6 +35,8 @@ interface Props {
 	left?: ReactNode;
 	/** Mount the assistant (theory pages only). */
 	withAssistant?: boolean;
+	/** The subject's colour family, for the tinted details (see `[data-subject]`). */
+	tone?: SubjectTone;
 	children: ReactNode;
 }
 
@@ -45,7 +48,7 @@ interface Props {
  * opens in a sheet, driven by the same store the desktop column uses; the
  * column itself is only mounted from `lg` up, so exactly one chat is alive.
  */
-export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssistant = false, children }: Props) {
+export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssistant = false, tone, children }: Props) {
 	const pathname = usePathname();
 	const lg = useLg();
 	// Selectors, so the frame re-renders on scroll but the rest of the store's readers do not.
@@ -96,7 +99,7 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 	const backLabel = `Torna a ${plainTitle(parentLink.label)}`;
 
 	return (
-		<div className="relative flex h-dvh w-full justify-center overflow-hidden bg-surface text-fg md:h-[calc(100dvh-var(--header-h,60px))]">
+		<div data-subject={tone} className="relative flex h-dvh w-full justify-center overflow-hidden bg-surface text-fg md:h-[calc(100dvh-var(--header-h,60px))]">
 			<ImmersiveFrame />
 			<aside className="absolute inset-y-0 left-0 hidden w-1/4 overflow-y-auto overscroll-y-contain px-4 py-6 lg:flex lg:flex-col" aria-label="Indice della lezione">
 				{lg && left}
@@ -110,7 +113,7 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 								<ArrowLeft className="size-6 lg:size-5" aria-hidden="true" />
 							</Link>
 							{/* One line on phones; on wide screens a long title wraps to two lines instead of being cut. */}
-							<h1 className={cn('origin-left truncate text-lg font-bold leading-tight text-fg transition-all duration-300 lg:line-clamp-2 lg:whitespace-normal', compact ? 'lg:text-xl' : 'lg:text-3xl')}>
+							<h1 className={cn('origin-left truncate text-xl font-semibold leading-tight tracking-tight text-fg-strong transition-all duration-300 lg:line-clamp-2 lg:whitespace-normal', compact ? 'lg:text-xl' : 'lg:text-3xl')}>
 								<Html as="span" html={titleHtml} className="math-inline" />
 							</h1>
 						</div>

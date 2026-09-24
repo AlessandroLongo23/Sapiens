@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, FileText, Layers } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { loadNodePage } from '@/lib/server/node-page';
 import { getContentTree } from '@/lib/server/content';
 import { metadataOr404, pageMetadata } from '@/lib/seo/page-metadata';
@@ -8,7 +8,7 @@ import { nodePath, plainTitle } from '@/lib/seo/slug';
 import { courseJsonLd, learningResourceJsonLd, type JsonLd as JsonLdData } from '@/lib/seo/jsonld';
 import { subjectCopy } from '@/lib/content/subject-copy';
 import { countByType, type NodeType } from '@/lib/utils/tree';
-import { iconFor, type IconComponent } from '@/lib/utils/icons';
+import { iconFor, toneFor } from '@/lib/utils/icons';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { contentCrumbs } from '@/components/content/Breadcrumb';
 import { CardGridSection, Page, PageHeader } from '@/components/content/PageHeader';
@@ -25,25 +25,26 @@ export function generateStaticParams() {
 }
 
 /** Figures shown under the title, per node type. */
-const STATS: Record<NodeType, { key: NodeType; label: string; icon: IconComponent; color: string }[]> = {
+const STATS: Record<NodeType, { key: NodeType; label: string }[]> = {
 	level: [
-		{ key: 'subject', label: 'Materie', icon: BookOpen, color: 'text-rose-500' },
-		{ key: 'chapter', label: 'Capitoli', icon: Layers, color: 'text-teal-500' },
-		{ key: 'topic', label: 'Lezioni', icon: FileText, color: 'text-indigo-500' }
+		{ key: 'subject', label: 'Materie' },
+		{ key: 'chapter', label: 'Capitoli' },
+		{ key: 'topic', label: 'Lezioni' }
 	],
 	subject: [
-		{ key: 'chapter', label: 'Capitoli', icon: Layers, color: 'text-teal-500' },
-		{ key: 'topic', label: 'Lezioni', icon: FileText, color: 'text-indigo-500' }
+		{ key: 'chapter', label: 'Capitoli' },
+		{ key: 'topic', label: 'Lezioni' }
 	],
-	chapter: [{ key: 'topic', label: 'Lezioni', icon: FileText, color: 'text-indigo-500' }],
+	chapter: [{ key: 'topic', label: 'Lezioni' }],
 	topic: []
 };
 
-const HEADINGS: Record<NodeType, { title: string; icon: IconComponent; color: string }> = {
-	level: { title: 'Materie disponibili', icon: BookOpen, color: 'text-rose-500' },
-	subject: { title: 'Capitoli disponibili', icon: Layers, color: 'text-teal-500' },
-	chapter: { title: 'Lezioni disponibili', icon: FileText, color: 'text-indigo-500' },
-	topic: { title: '', icon: FileText, color: '' }
+/** The section heading over the children, the eyebrow over the title, and how the children are laid out. */
+const HEADINGS: Record<NodeType, { title: string; eyebrow: string; layout: 'grid' | 'list' }> = {
+	level: { title: 'Materie', eyebrow: 'Livello', layout: 'grid' },
+	subject: { title: 'Capitoli', eyebrow: 'Materia', layout: 'list' },
+	chapter: { title: 'Lezioni', eyebrow: 'Capitolo', layout: 'list' },
+	topic: { title: '', eyebrow: '', layout: 'list' }
 };
 
 export function generateMetadata({ params }: Params): Promise<Metadata> {
@@ -62,25 +63,34 @@ export default async function IndexPage({ params }: Params) {
 	const structured: JsonLdData | undefined =
 		node.type === 'subject' ? courseJsonLd(node, ancestors, seo.description) : node.type === 'chapter' ? learningResourceJsonLd(node, ancestors, { description: seo.description, resourceType: 'Capitolo', free: true }) : undefined;
 	const heading = HEADINGS[node.type];
+	// A chapter is numbered as in its subject's contents; everything else names the level it belongs to.
+	const subject = ancestors[1];
+	const eyebrow =
+		node.type === 'chapter' && subject
+			? `${heading.eyebrow} ${String(subject.children.findIndex((c) => c.id === node.id) + 1).padStart(2, '0')} · ${plainTitle(subject.title)}`
+			: level && node !== level
+				? `${heading.eyebrow} · ${plainTitle(level.title)}`
+				: heading.eyebrow;
 
 	return (
-		<Page>
+		<Page tone={toneFor(node, ...ancestors)}>
 			<JsonLd data={structured} />
 			<PageHeader
 				crumbs={contentCrumbs(ancestors)}
-				icon={iconFor(node)}
+				icon={iconFor(node.type === 'chapter' ? ancestors[1] : node)}
+				eyebrow={eyebrow}
 				title={<Latex content={node.title} />}
 				lead={node.description}
-				stats={STATS[node.type].filter(({ key }) => counts[key] > 0).map(({ key, label, icon, color }) => (
-					<Stat key={key} icon={icon} color={color}>
-						{counts[key]} {label}
+				stats={STATS[node.type].filter(({ key }) => counts[key] > 0).map(({ key, label }) => (
+					<Stat key={key} value={counts[key]}>
+						{label}
 					</Stat>
 				))}
 			/>
 			{node.children.length > 0 ? (
-				<CardGridSection id="children-heading" icon={heading.icon} color={heading.color} title={heading.title}>
-					{node.children.map((child) => (
-						<NodeCard key={child.id} node={child} href={nodePath([...ancestors, child])} />
+				<CardGridSection id="children-heading" title={heading.title} count={node.children.length} layout={heading.layout}>
+					{node.children.map((child, index) => (
+						<NodeCard key={child.id} node={child} index={index} href={nodePath([...ancestors, child])} />
 					))}
 				</CardGridSection>
 			) : (

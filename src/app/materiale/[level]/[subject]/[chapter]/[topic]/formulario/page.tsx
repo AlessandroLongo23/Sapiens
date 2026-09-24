@@ -4,6 +4,7 @@ import { learningResourceJsonLd } from '@/lib/seo/jsonld';
 import { subviewTitle } from '@/lib/seo/meta';
 import { plainTitle } from '@/lib/seo/slug';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { toneFor } from '@/lib/utils/icons';
 import { LessonFrame } from '@/components/content/lesson/LessonFrame';
 import { LessonReader } from '@/components/content/lesson/LessonReader';
 import { TableOfContents } from '@/components/content/lesson/TableOfContents';
@@ -37,7 +38,7 @@ export default async function FormularyPage(props: LessonParams) {
 	return (
 		<>
 			<JsonLd data={[breadcrumb, ...(doc ? [learningResourceJsonLd(node, ancestors, { description: description(lesson), resourceType: 'Formulario', free: true, dateModified: updatedAt, path: paths.formulary })] : [])]} />
-			<LessonFrame titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths} left={doc && <TableOfContents sections={doc.sections} />}>
+			<LessonFrame tone={toneFor(...ancestors)} titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths} left={doc && <TableOfContents sections={doc.sections} />}>
 				{doc ? <LessonReader html={doc.html} sections={doc.sections} footer={<NavigationButtons navigation={navigation} />} /> : <ComingSoon kind="formulary" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />}
 			</LessonFrame>
 		</>

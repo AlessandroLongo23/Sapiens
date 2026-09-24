@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils/cn';
 export type CardTone = 'default' | 'ok' | 'warn' | 'danger' | 'info' | 'accent' | 'dashed';
 
 const TONES: Record<CardTone, string> = {
-	default: 'border-edge bg-surface',
+	default: 'border-edge bg-surface shadow-paper',
 	ok: 'border-ok-edge bg-ok-soft',
 	warn: 'border-warn-edge bg-warn-soft',
 	danger: 'border-danger-edge bg-danger-soft',
@@ -29,18 +29,17 @@ export function Card({ tone = 'default', as: Tag = 'div', className, children, .
 	);
 }
 
-/** A card that is a link: lifts on hover and grows an accent line along its top edge. */
+/** A card that is a link: a sheet of paper that lifts off the page on hover. */
 export function CardLink({ href, className, children, ...rest }: { href: string; className?: string; children: ReactNode } & Omit<HTMLAttributes<HTMLAnchorElement>, 'href'>) {
 	return (
 		<Link
 			href={href}
 			className={cn(
-				'group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-edge bg-surface text-left no-underline transition-all duration-300 hover:-translate-y-1 hover:border-accent-edge hover:shadow-xl hover:shadow-crimson-500/5 focus-ring-offset',
+				'group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-edge bg-surface text-left no-underline shadow-paper transition-[transform,box-shadow,border-color] duration-300 ease-out-soft hover:-translate-y-1 hover:border-edge-strong hover:shadow-lift focus-ring-offset',
 				className
 			)}
 			{...rest}
 		>
-			<span className="absolute left-0 top-0 h-1 w-full origin-left scale-x-0 bg-gradient-to-r from-crimson-500 to-crimson-400 transition-transform duration-300 group-hover:scale-x-100" aria-hidden="true" />
 			{children}
 		</Link>
 	);

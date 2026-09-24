@@ -135,8 +135,8 @@ export function SimpleEditor({
 			{/* Above the text on a desktop, on the keyboard on a phone (see EditorToolbar). */}
 			<EditorToolbar actions={actions} />
 
-			<div className="min-h-0 flex-1 overflow-y-auto">
-				<div className="mx-auto max-w-3xl px-4 pb-24 pt-2 lg:pb-10">
+			<div className="note-paper min-h-0 flex-1 overflow-y-auto">
+				<div className="mx-auto max-w-3xl px-4 pb-24 pt-6 lg:pb-10">
 					{frozen.length > 0 && (
 						<Card tone="warn" className="note-in mb-5 flex items-start gap-3 p-3.5 text-sm">
 							<Lock className="mt-0.5 size-4 shrink-0 text-warn-fg" aria-hidden="true" />

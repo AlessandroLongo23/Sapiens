@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { BookOpen, FileText, Layers, LibraryBig } from 'lucide-react';
+import { LibraryBig } from 'lucide-react';
 import { CONTENT_ROOT, SITE_NAME } from '@/lib/config/site';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { nodePath } from '@/lib/seo/slug';
@@ -26,18 +26,19 @@ export default async function LibraryPage() {
 			<PageHeader
 				crumbs={[HOME_CRUMB, LIBRARY_CRUMB]}
 				icon={LibraryBig}
+				eyebrow="Biblioteca"
 				title="Materiale didattico"
 				lead="Teoria, formulari ed esercizi organizzati per livello scolastico, materia e capitolo. Scegli il tuo livello per iniziare."
 				stats={
 					<>
-						<Stat icon={BookOpen} color="text-rose-500">{counts.subject} Materie</Stat>
-						<Stat icon={Layers} color="text-teal-500">{counts.chapter} Capitoli</Stat>
-						<Stat icon={FileText} color="text-indigo-500">{counts.topic} Lezioni</Stat>
+						<Stat value={counts.subject}>Materie</Stat>
+						<Stat value={counts.chapter}>Capitoli</Stat>
+						<Stat value={counts.topic}>Lezioni</Stat>
 					</>
 				}
 			/>
 			{tree.length > 0 && (
-				<CardGridSection id="livelli-heading" icon={BookOpen} title="Livelli didattici disponibili">
+				<CardGridSection id="livelli-heading" title="Livelli didattici" count={tree.length}>
 					{tree.map((node) => (
 						<NodeCard key={node.id} node={node} href={nodePath([node])} />
 					))}

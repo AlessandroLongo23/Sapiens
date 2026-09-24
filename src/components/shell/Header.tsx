@@ -46,14 +46,14 @@ export function Header({ hidden = false, immersive = false }: { hidden?: boolean
 		<header
 			onMouseLeave={closeMega}
 			onKeyDown={(e) => e.key === 'Escape' && closeMega()}
-			className={cn('sticky top-0 z-30 border-b border-edge bg-surface transition-transform duration-300 ease-out', hidden && 'max-md:-translate-y-full', immersive && 'max-md:hidden')}
+			className={cn('sticky top-0 z-30 border-b border-edge bg-page transition-transform duration-300 ease-out', hidden && 'max-md:-translate-y-full', immersive && 'max-md:hidden')}
 		>
-			<div id="site-header-bar" className="relative z-20 flex w-full items-center gap-2 bg-surface px-3 py-2 md:justify-between md:gap-4 md:p-3">
+			<div id="site-header-bar" className="relative z-20 flex w-full items-center gap-2 bg-page px-3 py-2 md:justify-between md:gap-4 md:p-3">
 				<div className="flex min-w-0 items-center gap-2 md:gap-10">
 					<Link href="/" className="flex shrink-0 items-center gap-3 rounded-md focus-ring" aria-label="Sapiens, pagina iniziale">
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img src="/favicon.svg" alt="" width={40} height={40} className="size-10 rounded-md" />
-						<span className="hidden text-2xl font-semibold text-fg md:inline">Sapiens</span>
+						<span className="hidden font-display text-[1.7rem] font-semibold tracking-tight text-fg-strong md:inline">Sapiens</span>
 					</Link>
 
 					{megaMenu && (

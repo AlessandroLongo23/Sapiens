@@ -3,6 +3,7 @@
 import { Backpack, Calculator, PenLine, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Sticker } from '@/components/ui/Sticker';
 import { useAuth } from '@/lib/state/auth';
 
 const POINTS = [
@@ -16,9 +17,10 @@ export function ZainoLanding() {
 	const { openModal } = useAuth();
 	return (
 		<div className="space-y-10">
-			<Card tone="accent" className="flex flex-col items-start gap-4 px-6 py-10 sm:px-10">
-				<Backpack className="size-10 text-accent-fg" aria-hidden="true" />
-				<h2 className="text-2xl font-bold text-fg-strong sm:text-3xl">I tuoi appunti, accanto alle lezioni</h2>
+			{/* A blank page of the quaderno the student is about to start. */}
+			<Card className="note-paper flex flex-col items-start gap-4 px-6 py-10 sm:px-10">
+				<Sticker icon={Backpack} tone="accent" className="mb-2" />
+				<h2 className="text-3xl font-semibold text-fg-strong sm:text-4xl">I tuoi appunti, accanto alle lezioni</h2>
 				<p className="max-w-xl leading-relaxed text-fg-muted">
 					Lo Zaino è il posto dove tieni i tuoi quaderni e le tue note. Accedi per iniziare: con il piano gratuito hai un quaderno,
 					con un piano a pagamento quanti ne vuoi.
@@ -30,10 +32,13 @@ export function ZainoLanding() {
 			</Card>
 
 			<ul className="grid grid-cols-1 gap-4 md:grid-cols-3">
-				{POINTS.map(({ icon: Icon, title, body }) => (
+				{POINTS.map(({ icon: Icon, title, body }, i) => (
 					<Card as="li" key={title} className="flex flex-col gap-2 p-6">
-						<Icon className="size-6 text-accent-fg" aria-hidden="true" />
-						<h3 className="font-semibold text-fg-strong">{title}</h3>
+						<span className="flex items-center justify-between">
+							<span className="font-mono text-sm text-accent-fg">{String(i + 1).padStart(2, '0')}</span>
+							<Icon className="size-5 text-fg-faint" aria-hidden="true" />
+						</span>
+						<h3 className="font-display text-xl font-semibold tracking-tight text-fg-strong">{title}</h3>
 						<p className="text-sm leading-relaxed text-fg-muted">{body}</p>
 					</Card>
 				))}

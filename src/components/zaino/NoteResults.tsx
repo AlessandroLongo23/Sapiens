@@ -4,18 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { NotebookPen } from 'lucide-react';
 import { ZAINO_ROOT } from '@/lib/config/site';
-import type { NoteHit, NotebookColor } from '@/lib/zaino/config';
+import type { NoteHit } from '@/lib/zaino/config';
 import { useAuth } from '@/lib/state/auth';
-import { cn } from '@/lib/utils/cn';
-
-const SPINE: Record<NotebookColor, string> = {
-	zinc: 'bg-zinc-400 dark:bg-zinc-500',
-	crimson: 'bg-crimson-500',
-	amber: 'bg-amber-500',
-	teal: 'bg-teal-500',
-	sky: 'bg-sky-500',
-	indigo: 'bg-indigo-500'
-};
 
 /**
  * The student's own notes inside the site search, above the catalogue results:
@@ -64,7 +54,7 @@ export function NoteResults({ query, onNavigate }: { query: string; onNavigate: 
 							onClick={onNavigate}
 							className="flex items-center gap-3 rounded-xl border border-transparent p-3 no-underline transition-all hover:border-edge-strong hover:bg-surface-2 focus-ring"
 						>
-							<span className={cn('h-8 w-1 shrink-0 rounded-full', SPINE[note.notebook_color])} aria-hidden="true" />
+							<span data-notebook={note.notebook_color} className="h-8 w-1 shrink-0 rounded-full bg-tint" aria-hidden="true" />
 							<span className="flex min-w-0 flex-1 flex-col">
 								<span className="truncate font-medium text-fg">{note.title}</span>
 								<span className="truncate text-sm text-fg-subtle">{note.excerpt || 'Nota vuota'}</span>

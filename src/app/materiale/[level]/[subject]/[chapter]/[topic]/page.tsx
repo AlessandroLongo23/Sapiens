@@ -4,6 +4,7 @@ import { learningResourceJsonLd } from '@/lib/seo/jsonld';
 import { tutoringSearchHref } from '@/lib/tutoring/content-link';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { plainTitle } from '@/lib/seo/slug';
+import { toneFor } from '@/lib/utils/icons';
 import { LessonFrame } from '@/components/content/lesson/LessonFrame';
 import { LessonReader } from '@/components/content/lesson/LessonReader';
 import { TableOfContents } from '@/components/content/lesson/TableOfContents';
@@ -40,7 +41,7 @@ export default async function TheoryPage(props: LessonParams) {
 	return (
 		<>
 			<JsonLd data={[breadcrumb, learningResourceJsonLd(node, ancestors, { description: seo.description, resourceType: 'Lezione', free: true, dateModified: updatedAt })]} />
-			<LessonFrame titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths} withAssistant left={doc && <TableOfContents sections={doc.sections} />}>
+			<LessonFrame tone={toneFor(...ancestors)} titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths} withAssistant left={doc && <TableOfContents sections={doc.sections} />}>
 				{doc ? <LessonReader html={doc.html} sections={doc.sections} footer={footer} /> : <ComingSoon kind="theory" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />}
 			</LessonFrame>
 		</>

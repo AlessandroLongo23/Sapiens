@@ -94,7 +94,7 @@ export function AdvancedEditor({ value, onChange }: { value: string; onChange: (
 			</div>
 
 			<div className="flex min-h-0 flex-1 lg:divide-x lg:divide-edge">
-				<div className={`min-h-0 flex-1 overflow-y-auto ${pane === 'preview' ? 'hidden lg:block' : ''}`}>
+				<div className={`note-paper min-h-0 flex-1 overflow-y-auto ${pane === 'preview' ? 'hidden lg:block' : ''}`}>
 					<label htmlFor="note-source" className="sr-only">
 						Testo della nota in markdown. Scrivi ### per un titolo, - per un elenco, $ attorno a una formula. Tab rientra dentro un elenco.
 					</label>
@@ -109,7 +109,7 @@ export function AdvancedEditor({ value, onChange }: { value: string; onChange: (
 						placeholder="# Titolo della nota&#10;&#10;Scrivi qui. Usa ## per i sottotitoli, - per un elenco e $x^2$ per una formula."
 					/>
 				</div>
-				<div className={`min-h-0 flex-1 overflow-y-auto ${pane === 'write' ? 'hidden lg:block' : ''}`}>
+				<div className={`note-paper min-h-0 flex-1 overflow-y-auto ${pane === 'write' ? 'hidden lg:block' : ''}`}>
 					<div className="mx-auto max-w-3xl px-4 pb-24 lg:pb-10">
 						<NotePreview markdown={value} />
 					</div>

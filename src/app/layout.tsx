@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
 import { GSC_VERIFICATION, SITE_LANG, SITE_URL } from '@/lib/config/site';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { organizationJsonLd, webSiteJsonLd } from '@/lib/seo/jsonld';
@@ -12,7 +12,9 @@ import './globals.css';
 
 // Self-hosted at build time by next/font: no request to Google, no layout shift.
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
-// Only lesson code blocks use the mono face, so it is not preloaded on every page.
+// Display serif for titles; the optical-size axis keeps it crisp from a card title to a page title.
+const fraunces = Fraunces({ subsets: ['latin'], display: 'swap', variable: '--font-fraunces', axes: ['opsz', 'SOFT'] });
+// Mono sets counts, numbering and code; it is not preloaded on every page.
 const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], display: 'swap', variable: '--font-jetbrains', preload: false });
 
 export const metadata: Metadata = {
@@ -34,7 +36,10 @@ export const viewport: Viewport = {
 	initialScale: 1,
 	viewportFit: 'cover',
 	interactiveWidget: 'resizes-content',
-	themeColor: '#ff3666'
+	themeColor: [
+		{ media: '(prefers-color-scheme: light)', color: '#f8f5ef' },
+		{ media: '(prefers-color-scheme: dark)', color: '#16181f' }
+	]
 };
 
 /** Applies the stored or system theme before the first paint, so there is no flash. */
@@ -42,7 +47,7 @@ const THEME_SCRIPT = `(function(){try{var s=localStorage.getItem('theme'),d=wind
 
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
-		<html lang={SITE_LANG} className={`${inter.variable} ${mono.variable}`} suppressHydrationWarning>
+		<html lang={SITE_LANG} className={`${inter.variable} ${fraunces.variable} ${mono.variable}`} suppressHydrationWarning>
 			<head>
 				<script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 			</head>

@@ -30,6 +30,7 @@ export default async function ZainoPage() {
 			<PageHeader
 				crumbs={[HOME_CRUMB, { label: 'Zaino' }]}
 				icon={Backpack}
+				eyebrow="Quaderni e note"
 				title="Zaino"
 				lead="I tuoi quaderni e le tue note, scritti da te e visibili solo a te."
 			/>

@@ -20,7 +20,27 @@
 	--color-crimson-900: oklch(0.41 0.159 21);
 	--color-crimson-950: oklch(0.271 0.105 21);
 
+	/* Paper and ink. The ground is a warm notebook page, the text a blue-black
+	   pen; hue 265 is the ink, hue 85 the paper. */
+	--color-paper-50: oklch(0.992 0.004 85);
+	--color-paper-100: oklch(0.978 0.008 85);
+	--color-paper-200: oklch(0.962 0.011 85);
+	--color-paper-300: oklch(0.935 0.014 85);
+	--color-paper-400: oklch(0.895 0.016 85);
+	--color-ink-50: oklch(0.93 0.008 85);
+	--color-ink-100: oklch(0.86 0.01 265);
+	--color-ink-300: oklch(0.7 0.014 265);
+	--color-ink-400: oklch(0.6 0.016 265);
+	--color-ink-500: oklch(0.51 0.018 265);
+	--color-ink-600: oklch(0.43 0.02 265);
+	--color-ink-700: oklch(0.34 0.022 265);
+	--color-ink-800: oklch(0.26 0.022 265);
+	--color-ink-850: oklch(0.235 0.018 265);
+	--color-ink-900: oklch(0.205 0.016 265);
+	--color-ink-950: oklch(0.175 0.014 265);
+
 	--font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+	--font-display: var(--font-fraunces), 'Fraunces', Georgia, serif;
 	--font-mono: var(--font-jetbrains), 'JetBrains Mono', Menlo, monospace;
 
 	/* Compact scale: Tailwind's defaults read oversized for a study tool, so
@@ -44,9 +64,19 @@
 	--text-4xl--line-height: calc(2.375 / 2.125);
 	--text-5xl: 2.75rem;
 	--text-5xl--line-height: 1;
+	--text-6xl: 3.5rem;
+	--text-6xl--line-height: 1;
+	--text-7xl: 4.5rem;
+	--text-7xl--line-height: 1;
 	--radius-xl: 0.625rem;
 	--radius-2xl: 0.875rem;
 	--radius-3xl: 1.25rem;
+
+	/* Paper lies flat and lifts: a hairline under every card, a soft drop when it is picked up. */
+	--shadow-paper: 0 1px 0 var(--edge-soft), 0 1px 2px color-mix(in oklab, var(--color-ink-900) 5%, transparent);
+	--shadow-lift: 0 1px 0 var(--edge), 0 14px 28px -14px color-mix(in oklab, var(--color-ink-900) 30%, transparent);
+	/* A pressed key: the button sits on its own darker edge. */
+	--shadow-key: inset 0 -2px 0 color-mix(in oklab, black 18%, transparent), 0 1px 2px color-mix(in oklab, var(--color-ink-900) 12%, transparent);
 
 	/* Height of the bottom navigation bars (global tabs and lesson tabs). */
 	--spacing-tabbar: 3.5rem;
@@ -92,20 +122,23 @@
    on every class.
    --------------------------------------------------------------------------- */
 :root {
-	--page: var(--color-white);
-	--page-alt: var(--color-zinc-50);
-	--surface: var(--color-white);
-	--surface-2: var(--color-zinc-50);
-	--surface-3: var(--color-zinc-100);
-	--surface-4: var(--color-zinc-200);
-	--fg: var(--color-zinc-900);
-	--fg-strong: var(--color-zinc-950);
-	--fg-muted: var(--color-zinc-600);
-	--fg-subtle: var(--color-zinc-500);
-	--fg-faint: var(--color-zinc-400);
-	--edge: color-mix(in oklab, var(--color-zinc-500) 25%, transparent);
-	--edge-strong: color-mix(in oklab, var(--color-zinc-500) 50%, transparent);
-	--edge-soft: color-mix(in oklab, var(--color-zinc-500) 15%, transparent);
+	--page: var(--color-paper-100);
+	--page-alt: var(--color-paper-100);
+	--surface: var(--color-paper-50);
+	--surface-2: var(--color-paper-200);
+	--surface-3: var(--color-paper-300);
+	--surface-4: var(--color-paper-400);
+	--fg: var(--color-ink-800);
+	--fg-strong: var(--color-ink-950);
+	--fg-muted: var(--color-ink-600);
+	--fg-subtle: var(--color-ink-500);
+	--fg-faint: var(--color-ink-400);
+	--edge: color-mix(in oklab, var(--color-ink-700) 16%, transparent);
+	--edge-strong: color-mix(in oklab, var(--color-ink-700) 34%, transparent);
+	--edge-soft: color-mix(in oklab, var(--color-ink-700) 9%, transparent);
+	/* The squared paper of an Italian maths notebook: pale blue lines. */
+	--grid: color-mix(in oklab, oklch(0.62 0.09 245) 16%, transparent);
+	--grid-faint: color-mix(in oklab, oklch(0.62 0.09 245) 10%, transparent);
 	--accent: var(--color-crimson-600);
 	--accent-hover: var(--color-crimson-700);
 	/* Text on light surfaces: crimson-600 is 4.3:1 on zinc-50, one step darker clears AA. */
@@ -113,8 +146,8 @@
 	--accent-soft: var(--color-crimson-50);
 	--accent-soft-fg: var(--color-crimson-700);
 	--accent-edge: var(--color-crimson-200);
-	--inverse: var(--color-zinc-900);
-	--inverse-fg: var(--color-white);
+	--inverse: var(--color-ink-900);
+	--inverse-fg: var(--color-paper-50);
 	--ok: var(--color-emerald-600);
 	--warn: var(--color-amber-500);
 	--danger: var(--color-red-600);
@@ -141,25 +174,30 @@
 }
 
 .dark {
-	--page: #0f1218;
-	--page-alt: var(--color-zinc-950);
-	--surface: var(--color-zinc-900);
-	--surface-2: var(--color-zinc-800);
-	--surface-3: color-mix(in oklab, var(--color-zinc-800) 50%, var(--color-zinc-700));
-	--surface-4: var(--color-zinc-600);
-	--fg: var(--color-zinc-100);
-	--fg-strong: var(--color-white);
-	--fg-muted: var(--color-zinc-300);
-	--fg-subtle: var(--color-zinc-400);
-	--fg-faint: var(--color-zinc-500);
+	--page: var(--color-ink-950);
+	--page-alt: var(--color-ink-950);
+	--surface: var(--color-ink-900);
+	--surface-2: var(--color-ink-850);
+	--surface-3: var(--color-ink-800);
+	--surface-4: var(--color-ink-700);
+	--fg: var(--color-ink-50);
+	--fg-strong: var(--color-paper-50);
+	--fg-muted: var(--color-ink-100);
+	--fg-subtle: var(--color-ink-300);
+	--fg-faint: var(--color-ink-400);
+	--edge: color-mix(in oklab, var(--color-ink-100) 14%, transparent);
+	--edge-strong: color-mix(in oklab, var(--color-ink-100) 28%, transparent);
+	--edge-soft: color-mix(in oklab, var(--color-ink-100) 8%, transparent);
+	--grid: color-mix(in oklab, oklch(0.8 0.06 245) 7%, transparent);
+	--grid-faint: color-mix(in oklab, oklch(0.8 0.06 245) 4.5%, transparent);
 	--accent: var(--color-crimson-600);
 	--accent-hover: var(--color-crimson-700);
 	--accent-fg: var(--color-crimson-400);
 	--accent-soft: color-mix(in oklab, var(--color-crimson-900) 30%, transparent);
 	--accent-soft-fg: var(--color-crimson-200);
 	--accent-edge: var(--color-crimson-800);
-	--inverse: var(--color-zinc-100);
-	--inverse-fg: var(--color-zinc-900);
+	--inverse: var(--color-paper-100);
+	--inverse-fg: var(--color-ink-900);
 	--ok: var(--color-emerald-600);
 	--warn: var(--color-amber-500);
 	--danger: var(--color-red-600);
@@ -218,7 +256,57 @@
 	--color-info-soft: var(--info-soft);
 	--color-info-fg: var(--info-fg);
 	--color-info-edge: var(--info-edge);
+	--color-grid: var(--grid);
+	--color-tint: var(--tint);
+	--color-tint-fg: var(--tint-fg);
+	--color-tint-soft: var(--tint-soft);
+	--color-tint-edge: var(--tint-edge);
+	--color-tint-cover: var(--tint-cover);
+	--color-tint-cover-fg: var(--tint-cover-fg);
 }
+
+/* Subjects wear their colour like textbook spines. `--hue` and `--chroma` are
+   set per subject; every tint derives from them, so an element picks up its
+   subject's colour by carrying `data-subject`. The default is the ink.
+   Custom properties resolve where they are declared, so the formulas are
+   repeated on every `[data-subject]` element, not only on the root. */
+:root,
+[data-subject],
+[data-notebook] {
+	--hue: 265;
+	--chroma: 0.03;
+	--tint: oklch(0.5 var(--chroma) var(--hue));
+	--tint-fg: oklch(0.47 var(--chroma) var(--hue));
+	--tint-soft: oklch(0.95 calc(var(--chroma) * 0.22) var(--hue));
+	--tint-edge: oklch(0.86 calc(var(--chroma) * 0.45) var(--hue));
+	--tint-cover: oklch(0.47 var(--chroma) var(--hue));
+	--tint-cover-fg: var(--color-paper-50);
+}
+.dark,
+.dark [data-subject],
+.dark [data-notebook] {
+	--tint: oklch(0.7 var(--chroma) var(--hue));
+	--tint-fg: oklch(0.78 calc(var(--chroma) * 0.8) var(--hue));
+	--tint-soft: oklch(0.26 calc(var(--chroma) * 0.3) var(--hue));
+	--tint-edge: oklch(0.38 calc(var(--chroma) * 0.5) var(--hue));
+	--tint-cover: oklch(0.4 calc(var(--chroma) * 0.85) var(--hue));
+}
+[data-subject='math'] { --hue: 18; --chroma: 0.19; }
+[data-subject='physics'] { --hue: 252; --chroma: 0.15; }
+[data-subject='chemistry'] { --hue: 158; --chroma: 0.12; }
+[data-subject='cs'] { --hue: 70; --chroma: 0.12; }
+[data-subject='ink'] { --hue: 265; --chroma: 0.05; }
+/* The ink has no colour to lighten, so its cover is the pen itself: deep navy in both themes. */
+[data-subject='ink'],
+.dark [data-subject='ink'] { --tint-cover: var(--color-ink-800); }
+
+/* A quaderno's cover colour, chosen by the student, on the same scale. */
+[data-notebook='zinc'] { --hue: 265; --chroma: 0.035; }
+[data-notebook='crimson'] { --hue: 18; --chroma: 0.19; }
+[data-notebook='amber'] { --hue: 70; --chroma: 0.13; }
+[data-notebook='teal'] { --hue: 190; --chroma: 0.1; }
+[data-notebook='sky'] { --hue: 235; --chroma: 0.13; }
+[data-notebook='indigo'] { --hue: 280; --chroma: 0.15; }
 
 /* Shared focus ring: every interactive element gets the same one. */
 @utility focus-ring {
@@ -246,6 +334,42 @@
 	overscroll-behavior-x: contain;
 	max-width: 100%;
 }
+/* Squared notebook paper. */
+@utility grid-paper {
+	background-image:
+		linear-gradient(var(--grid) 1px, transparent 1px),
+		linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+	background-size: 22px 22px;
+	background-position: -1px -1px;
+}
+/* The page a note is written on: squared paper, fainter than the page headers
+   so it never competes with the text, and scrolling with the text (`local`). */
+@utility note-paper {
+	background-image:
+		linear-gradient(var(--grid-faint) 1px, transparent 1px),
+		linear-gradient(90deg, var(--grid-faint) 1px, transparent 1px);
+	background-size: 22px 22px;
+	background-position: -1px -1px;
+	background-attachment: local;
+}
+/* Labels, counts and numbering: small monospaced caps. */
+@utility label-mono {
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	line-height: 1rem;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+/* The pen stroke under a page title draws itself once, left to right. */
+.pen-stroke {
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+	animation: pen-draw 0.7s 0.15s var(--ease-out-soft) forwards;
+}
+@keyframes pen-draw {
+	to { stroke-dashoffset: 0; }
+}
 @utility no-scrollbar {
 	-ms-overflow-style: none;
 	scrollbar-width: none;
@@ -267,6 +391,22 @@ body {
 	color: var(--fg);
 	font-family: var(--font-sans);
 	overflow-x: hidden;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+/* Page and section titles are set in the display serif. In the base layer, so
+   a utility on a heading (label-mono, font-sans) still wins. */
+@layer base {
+	h1,
+	h2 {
+		font-family: var(--font-display);
+		font-optical-sizing: auto;
+		font-variation-settings: 'SOFT' 30;
+		letter-spacing: -0.015em;
+	}
+}
+::selection {
+	background: var(--select);
 }
 button,
 a,
@@ -332,10 +472,24 @@ a,
 	color: var(--fg-muted);
 }
 .markdown-content h2 {
-	@apply text-3xl font-bold text-fg-strong mb-8 mt-16 pb-3 border-b border-crimson-400/80 scroll-mt-4;
+	@apply text-3xl font-semibold text-fg-strong mb-8 mt-16 pb-3 border-b border-edge scroll-mt-4;
+	position: relative;
+}
+/* A stroke of red pen under the start of every section title. */
+.markdown-content h2::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: -1px;
+	width: 3.5rem;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--accent);
 }
 .markdown-content h3 {
 	@apply text-2xl font-semibold text-fg-strong mb-4 mt-12 scroll-mt-20;
+	font-family: var(--font-display);
+	letter-spacing: -0.01em;
 }
 .markdown-content h4 {
 	@apply text-xl font-medium text-fg-strong mb-3 mt-7 scroll-mt-16;
@@ -353,7 +507,9 @@ a,
 	@apply mb-2;
 }
 .markdown-content blockquote {
-	@apply border-l-4 border-crimson-500/30 pl-4 italic text-fg-subtle my-4;
+	@apply border-l-2 border-accent pl-4 italic text-fg-muted my-6;
+	font-family: var(--font-display);
+	font-size: 1.08em;
 }
 .markdown-content hr {
 	@apply my-8 border-edge;
@@ -395,7 +551,7 @@ a,
 	@apply mb-0;
 }
 .markdown-content th {
-	@apply bg-surface-3 text-left p-2 text-fg border border-edge;
+	@apply bg-surface-2 text-left p-2 text-fg border border-edge font-semibold;
 }
 .markdown-content td {
 	@apply p-2 border border-edge text-center align-middle;
@@ -535,32 +691,36 @@ a,
 	filter: invert(1) hue-rotate(180deg);
 }
 .admonition {
-	@apply my-6 rounded-md overflow-hidden border shadow-lg;
+	@apply my-7 rounded-xl border border-edge bg-surface;
+	--adm: var(--fg-subtle);
+	border-left: 3px solid var(--adm);
+	box-shadow: var(--shadow-paper);
 }
 .admonition-header {
-	@apply flex items-center px-4 py-2 text-fg-strong;
+	@apply flex items-center gap-2 px-4 pt-3 pb-1;
+	color: var(--adm);
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
 }
 .admonition-body {
-	@apply p-4;
+	@apply px-4 pb-4 pt-1;
 }
 .admonition-body > :last-child {
 	margin-bottom: 0;
 }
-.admonition-blue { @apply border-blue-900/80; }
-.admonition-blue .admonition-header { @apply bg-blue-400/20; }
-.admonition-blue .admonition-body { @apply bg-blue-300/5; }
-.admonition-teal { @apply border-teal-900/80; }
-.admonition-teal .admonition-header { @apply bg-teal-400/20; }
-.admonition-teal .admonition-body { @apply bg-teal-300/5; }
-.admonition-amber { @apply border-amber-900/80; }
-.admonition-amber .admonition-header { @apply bg-amber-400/20; }
-.admonition-amber .admonition-body { @apply bg-amber-300/5; }
-.admonition-red { @apply border-red-900/80; }
-.admonition-red .admonition-header { @apply bg-red-400/20; }
-.admonition-red .admonition-body { @apply bg-red-300/5; }
-.admonition-purple { @apply border-purple-900/80; }
-.admonition-purple .admonition-header { @apply bg-purple-400/40; }
-.admonition-purple .admonition-body { @apply bg-purple-300/5; }
+.admonition-blue { --adm: oklch(0.52 0.14 252); background: color-mix(in oklab, oklch(0.6 0.14 252) 5%, var(--surface)); }
+.admonition-teal { --adm: oklch(0.52 0.1 180); background: color-mix(in oklab, oklch(0.6 0.1 180) 5%, var(--surface)); }
+.admonition-amber { --adm: oklch(0.55 0.13 65); background: color-mix(in oklab, oklch(0.7 0.13 75) 7%, var(--surface)); }
+.admonition-red { --adm: var(--accent); background: color-mix(in oklab, var(--accent) 4%, var(--surface)); }
+.admonition-purple { --adm: oklch(0.5 0.16 300); background: color-mix(in oklab, oklch(0.6 0.16 300) 5%, var(--surface)); }
+.dark .admonition-blue { --adm: oklch(0.75 0.11 252); }
+.dark .admonition-teal { --adm: oklch(0.75 0.09 180); }
+.dark .admonition-amber { --adm: oklch(0.8 0.11 75); }
+.dark .admonition-red { --adm: var(--color-crimson-400); }
+.dark .admonition-purple { --adm: oklch(0.75 0.12 300); }
 
 /* Phones and tablets: reading sizes, one-column figures, anchors that land under the compact sticky header. */
 @media (max-width: 1023px) {

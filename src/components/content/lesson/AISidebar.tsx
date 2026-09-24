@@ -10,6 +10,7 @@ import { hasFeature } from '@/lib/auth/entitlements';
 import { Features } from '@/lib/stripe/config';
 import { cn } from '@/lib/utils/cn';
 import { Paywall } from '@/components/subscription/Paywall';
+import { Sticker } from '@/components/ui/Sticker';
 import { ChatMessage } from './ChatMessage';
 
 const SUGGESTIONS = [
@@ -127,15 +128,15 @@ export function AISidebar({ onClose }: { onClose?: () => void }) {
 	};
 
 	return (
-		<div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden bg-surface-2', inSheet ? 'h-full' : 'rounded-2xl border border-edge')}>
+		<div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden bg-surface-2', inSheet ? 'h-full' : 'rounded-2xl border border-edge shadow-paper')}>
 			<div className="flex items-center justify-between gap-2 border-b border-edge bg-surface px-4 py-3">
 				<div className="flex min-w-0 items-center gap-2">
-					<div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-crimson-500 to-crimson-600">
+					<div className="flex size-8 shrink-0 rotate-[-4deg] items-center justify-center rounded-lg bg-accent shadow-key">
 						<Sparkles className="size-4 text-white" aria-hidden="true" />
 					</div>
 					<div className="min-w-0">
-						<h3 className="text-sm font-semibold text-fg">Sapiens AI</h3>
-						<p className="truncate text-xs text-fg-subtle">Il tuo assistente di studio</p>
+						<h3 className="font-display text-lg font-semibold leading-tight tracking-tight text-fg-strong">Sapiens AI</h3>
+						<p className="label-mono truncate text-fg-subtle">Il tuo assistente di studio</p>
 					</div>
 				</div>
 				<div className="flex shrink-0 items-center gap-1">
@@ -155,24 +156,22 @@ export function AISidebar({ onClose }: { onClose?: () => void }) {
 			{!ready ? (
 				<div className="flex-1" aria-busy="true" />
 			) : locked ? (
-				<div className="flex-1 overflow-y-auto overscroll-contain">
+				<div className="flex-1 overflow-y-auto overscroll-y-contain">
 					<Paywall feature={Features.AI_CHAT} returnTo={pathname} benefit="Seleziona un passaggio della lezione e chiedi una spiegazione diversa, un esempio o un approfondimento, subito." compact />
 				</div>
 			) : (
 				<>
-					<div ref={chat} role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversazione" className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-3 py-4">
+					<div ref={chat} role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversazione" className="note-paper min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-y-contain px-3 py-4">
 						{messages.length === 0 ? (
 							<div className="flex h-full flex-col items-center justify-center px-4 text-center">
-								<div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-crimson-500 to-crimson-600 shadow-lg shadow-crimson-500/20">
-									<MessageSquare className="size-7 text-white" aria-hidden="true" />
-								</div>
-								<h4 className="mb-2 text-base font-semibold text-fg">Come posso aiutarti?</h4>
+								<Sticker icon={MessageSquare} tone="accent" className="mb-5" />
+								<h4 className="mb-2 font-display text-2xl font-semibold tracking-tight text-fg-strong">Come posso aiutarti?</h4>
 								<p className="max-w-xs text-sm leading-relaxed text-fg-subtle">
 									{coarse ? 'Tieni premuto su una frase della lezione per chiedere una spiegazione, oppure scrivi qui la tua domanda.' : 'Seleziona del testo nella lezione per chiedere spiegazioni, oppure scrivi qui la tua domanda.'}
 								</p>
 								<div className="mt-6 flex flex-wrap justify-center gap-2">
 									{SUGGESTIONS.map((s) => (
-										<button key={s.label} type="button" onClick={() => { setInput(s.text); setTimeout(() => { resize(); input.current?.focus(); }); }} className="min-h-[40px] rounded-full bg-accent-soft px-4 py-1.5 text-sm font-medium text-accent-fg transition-colors hover:bg-crimson-100 dark:hover:bg-crimson-500/20">
+										<button key={s.label} type="button" onClick={() => { setInput(s.text); setTimeout(() => { resize(); input.current?.focus(); }); }} className="min-h-[40px] rounded-full border border-accent-edge bg-surface px-4 py-1.5 text-sm font-medium text-accent-fg shadow-paper transition-colors hover:bg-accent-soft focus-ring">
 											{s.label}
 										</button>
 									))}
@@ -182,11 +181,11 @@ export function AISidebar({ onClose }: { onClose?: () => void }) {
 							messages.map((m) => (
 								<div key={m.id} className={cn('flex gap-2.5', m.role === 'user' && 'flex-row-reverse')}>
 									{m.role === 'assistant' && (
-										<div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-crimson-500 to-crimson-600 shadow-sm">
+										<div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent shadow-key">
 											<Bot className="size-4 text-white" aria-hidden="true" />
 										</div>
 									)}
-									<div className={cn('min-w-0 max-w-[85%] rounded-2xl px-3.5 py-2.5', m.role === 'user' ? 'rounded-br-md bg-accent text-white' : 'rounded-bl-md border border-edge bg-surface text-fg shadow-sm')}>
+									<div className={cn('min-w-0 max-w-[85%] rounded-2xl px-3.5 py-2.5', m.role === 'user' ? 'rounded-br-md bg-accent text-white' : 'rounded-bl-md border border-edge bg-surface text-fg shadow-paper')}>
 										{m.role === 'user' ? (
 											<p className="whitespace-pre-wrap break-words text-sm leading-relaxed sm:text-base">{m.content}</p>
 										) : m.content ? (
@@ -217,9 +216,9 @@ export function AISidebar({ onClose }: { onClose?: () => void }) {
 								placeholder="Scrivi una domanda..."
 								disabled={isLoading}
 								rows={1}
-								className="max-h-[140px] min-h-[44px] flex-1 resize-none rounded-xl border-0 bg-surface-3 px-3.5 py-2.5 text-sm text-fg placeholder:text-fg-faint focus:outline-none focus:ring-2 focus:ring-crimson-500/50 disabled:cursor-not-allowed disabled:opacity-50"
+								className="max-h-[140px] min-h-[44px] flex-1 resize-none rounded-xl border border-edge bg-surface-2 px-3.5 py-2.5 text-sm text-fg placeholder:text-fg-faint focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
 							/>
-							<button type="button" onClick={() => send()} disabled={!inputValue.trim() || isLoading} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl bg-accent text-white transition-colors hover:bg-crimson-600 disabled:cursor-not-allowed disabled:bg-surface-4 disabled:text-fg-faint focus-ring-offset" aria-label="Invia">
+							<button type="button" onClick={() => send()} disabled={!inputValue.trim() || isLoading} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl bg-accent text-white shadow-key transition-colors hover:bg-accent-hover active:translate-y-px disabled:cursor-not-allowed disabled:bg-surface-4 disabled:text-fg-faint disabled:shadow-none focus-ring-offset" aria-label="Invia">
 								{isLoading ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Send className="size-5" aria-hidden="true" />}
 							</button>
 						</div>

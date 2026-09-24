@@ -9,6 +9,7 @@ import { hasFeature } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
 import { generateExercises, hasExercises } from '@/lib/server/exercises';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { toneFor } from '@/lib/utils/icons';
 import { LessonFrame } from '@/components/content/lesson/LessonFrame';
 import { ComingSoon } from '@/components/content/ComingSoon';
 import { Paywall } from '@/components/subscription/Paywall';
@@ -49,7 +50,7 @@ export default async function ExercisesPage(props: LessonParams) {
 	return (
 		<>
 			<JsonLd data={[breadcrumb, ...(available ? [learningResourceJsonLd(node, ancestors, { description: description(lesson), resourceType: 'Esercizi', free, gatedSelector: free ? undefined : '#esercizi', path: paths.exercises })] : [])]} />
-			<LessonFrame titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths}>
+			<LessonFrame tone={toneFor(...ancestors)} titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths}>
 				{!available || broken ? (
 					<ComingSoon kind="exercises" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />
 				) : !unlocked ? (

@@ -27,18 +27,21 @@ export function TableOfContents({ sections, touch = false }: { sections: TocSect
 		cn(
 			'flex flex-1 items-center text-left transition-colors focus-ring',
 			touch ? (depth === 0 ? 'min-h-[44px] rounded-xl px-2 text-base' : depth === 1 ? 'min-h-[40px] rounded-xl px-2 text-sm' : 'min-h-[36px] rounded-lg px-2 text-sm') : depth === 0 ? 'rounded py-1 text-sm' : 'rounded py-0.5 text-xs',
-			active ? (touch ? 'bg-accent-soft text-accent-soft-fg' : 'text-fg') : 'text-fg-subtle hover:text-fg',
+			active ? (touch ? 'bg-accent-soft text-accent-soft-fg' : 'text-fg-strong') : 'text-fg-subtle hover:text-fg',
 			touch && !active && 'active:bg-surface-3'
 		);
 
 	const render = (items: TocSection[], depth: number) =>
-		items.map((section) => {
+		items.map((section, index) => {
 			const open = !collapsed[section.id];
 			const active = activeSection === section.id;
 			return (
-				<div key={section.id} className={depth === 0 ? (touch ? 'mb-1' : 'mb-3') : touch ? 'my-0.5' : 'my-1.5'}>
+				<div key={section.id} className={cn('relative', depth === 0 ? (touch ? 'mb-1' : 'mb-3') : touch ? 'my-0.5' : 'my-1.5')}>
+					{/* On the desktop column, a stroke of red pen marks the section being read. */}
+					{!touch && active && <span className="absolute -left-3 top-1 h-[1.1em] w-[3px] rounded-full bg-accent" aria-hidden="true" />}
 					<div className="flex items-center">
 						<button type="button" data-section={section.id} aria-current={active ? 'location' : undefined} onClick={() => jumpTo(section.id)} className={cn(row(active, depth), depth === 0 ? 'font-semibold' : 'font-medium')}>
+							{depth === 0 && <span className={cn('mr-2.5 shrink-0 self-start font-mono text-[0.6875rem] font-medium leading-5 tabular-nums', active ? 'text-tint-fg' : 'text-fg-faint')}>{String(index + 1).padStart(2, '0')}</span>}
 							<Html as="span" html={section.titleHtml} className="math-inline" />
 						</button>
 						{section.subsections.length > 0 && (
@@ -55,6 +58,7 @@ export function TableOfContents({ sections, touch = false }: { sections: TocSect
 	return (
 		<div className="flex h-full w-full flex-col">
 			<div ref={list} className={cn('no-scrollbar flex-1 overflow-y-auto', touch ? 'px-3 py-2' : 'p-6')}>
+				{!touch && <p className="label-mono mb-4 text-fg-faint">Indice</p>}
 				{render(sections, 0)}
 			</div>
 		</div>

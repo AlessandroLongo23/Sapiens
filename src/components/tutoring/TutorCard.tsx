@@ -21,8 +21,7 @@ export function TutorCard({ tutor, highlightSubject = '', onRequest }: { tutor: 
 	const Where = onlineOnly ? Monitor : MapPin;
 
 	return (
-		<article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-edge bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-accent-edge hover:shadow-xl hover:shadow-crimson-500/5" aria-labelledby={`tutor-${tutor.id}`}>
-			<div className="absolute left-0 top-0 h-1 w-full origin-left scale-x-0 bg-gradient-to-r from-crimson-500 to-crimson-400 transition-transform duration-300 group-hover:scale-x-100" aria-hidden="true" />
+		<article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-edge bg-surface shadow-paper transition-[transform,box-shadow,border-color] duration-300 ease-out-soft hover:-translate-y-1 hover:border-edge-strong hover:shadow-lift" aria-labelledby={`tutor-${tutor.id}`}>
 			<div className="flex flex-1 flex-col gap-4 p-5 sm:p-6">
 				<div className="flex items-start gap-4">
 					<TutorAvatar tutor={tutor} size="md" />

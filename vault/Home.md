@@ -31,6 +31,7 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]
 - [[2026-09-24 Errori frequenti accanto alla regola]]
 - [[2026-09-24 Si lavora a lotti completi]]
 - [[2026-09-24 Lezioni ed esercizi scritti da Claude e rivisti da Alessandro]]

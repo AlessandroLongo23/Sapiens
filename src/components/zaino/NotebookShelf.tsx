@@ -8,6 +8,7 @@ import { COLOR_LABEL, DEFAULT_NOTEBOOK_TITLE, NOTEBOOK_COLORS, type NotebookColo
 import { ZAINO_ROOT } from '@/lib/config/site';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
+import { Sticker } from '@/components/ui/Sticker';
 import { Card } from '@/components/ui/Card';
 import { Input, Label } from '@/components/ui/Field';
 import { Sheet } from '@/components/ui/Sheet';
@@ -15,26 +16,6 @@ import { Paywall } from '@/components/subscription/Paywall';
 import { cn } from '@/lib/utils/cn';
 import { useZainoAction } from './ZainoActions';
 import { QuotaBar } from './QuotaBar';
-
-/** The spine of a quaderno: a solid edge plus a wash that bleeds into the cover. */
-const SPINE: Record<NotebookColor, string> = {
-	zinc: 'bg-zinc-400 dark:bg-zinc-500',
-	crimson: 'bg-crimson-500',
-	amber: 'bg-amber-500',
-	teal: 'bg-teal-500',
-	sky: 'bg-sky-500',
-	indigo: 'bg-indigo-500'
-};
-
-/** The faint tint the cover carries, so two quaderni are told apart at a glance. */
-const WASH: Record<NotebookColor, string> = {
-	zinc: 'from-zinc-500/[0.07]',
-	crimson: 'from-crimson-500/[0.07]',
-	amber: 'from-amber-500/[0.07]',
-	teal: 'from-teal-500/[0.07]',
-	sky: 'from-sky-500/[0.07]',
-	indigo: 'from-indigo-500/[0.07]'
-};
 
 /** The shelf: every quaderno, with create, rename and delete. */
 export function NotebookShelf({ notebooks, counts, quota }: { notebooks: NotebookRow[]; counts: Record<string, number>; quota: Quota }) {
@@ -73,10 +54,11 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 		<div className="space-y-5">
 			{error && <Alert tone="error">{error}</Alert>}
 			{notebooks.length > 0 && (
-				<div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-edge-soft pb-4">
+				<div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-edge-strong pb-3">
 					<div className="min-w-0">
-						<h2 className="text-lg font-semibold text-fg-strong">
-							{notebooks.length === 1 ? '1 quaderno' : `${notebooks.length} quaderni`}
+						<h2 className="flex items-baseline gap-3 text-3xl font-semibold text-fg-strong">
+							Quaderni
+							<span className="label-mono text-fg-subtle">{String(notebooks.length).padStart(2, '0')}</span>
 						</h2>
 						<QuotaBar quota={quota} />
 					</div>
@@ -89,9 +71,7 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 
 			{notebooks.length === 0 ? (
 				<Card tone="dashed" className="note-in flex flex-col items-center gap-3 px-6 py-16 text-center">
-					<span className="mb-1 flex size-16 items-center justify-center rounded-2xl bg-accent-soft text-accent-fg">
-						<Backpack className="size-8" aria-hidden="true" />
-					</span>
+					<Sticker icon={Backpack} tone="accent" className="mb-2" />
 					<p className="text-lg font-semibold text-fg-strong">Lo zaino è vuoto</p>
 					<p className="max-w-sm text-sm leading-relaxed text-fg-muted">
 						Crea il primo quaderno: dentro ci metti le note di una materia, di un capitolo o di quello che vuoi.
@@ -161,18 +141,18 @@ function Shelf({ notebooks, counts, onEdit }: { notebooks: NotebookRow[]; counts
 				const count = counts[notebook.id] ?? 0;
 				return (
 					<li key={notebook.id} className="note-in group/card relative" style={{ '--i': i } as CSSProperties}>
+						{/* The cover of the quaderno, like the subject covers in the library but smaller. */}
 						<Link
 							href={`${ZAINO_ROOT}/${notebook.id}`}
-							className="flex h-full items-stretch overflow-hidden rounded-2xl border border-edge bg-surface no-underline shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:border-accent-edge hover:shadow-lg active:translate-y-0 active:scale-[0.99] focus-ring-offset"
+							data-notebook={notebook.color}
+							className="relative isolate flex h-full min-h-28 flex-col justify-end gap-1.5 overflow-hidden rounded-2xl bg-tint-cover py-5 pl-7 pr-14 text-tint-cover-fg no-underline shadow-paper transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:scale-[0.99] focus-ring-offset"
 						>
-							{/* The spine, and a wash of the same colour across the cover. */}
-							<span className={cn('w-2.5 shrink-0', SPINE[notebook.color])} aria-hidden="true" />
-							<span className={cn('flex min-w-0 flex-1 flex-col gap-2 bg-gradient-to-r to-transparent py-6 pl-5 pr-14', WASH[notebook.color])}>
-								<span className="truncate text-lg font-semibold leading-tight text-fg-strong">{notebook.title}</span>
-								<span className="inline-flex items-center gap-1.5 text-sm text-fg-subtle">
-									<NotebookPen className="size-4 shrink-0" aria-hidden="true" />
-									{count === 0 ? 'Nessuna nota' : count === 1 ? '1 nota' : `${count} note`}
-								</span>
+							<span className="grid-paper absolute inset-0 -z-10 opacity-60 [--grid:color-mix(in_oklab,white_14%,transparent)]" aria-hidden="true" />
+							<span className="absolute inset-y-0 left-0 -z-10 w-3 bg-black/15" aria-hidden="true" />
+							<span className="truncate font-display text-2xl font-semibold leading-tight tracking-tight">{notebook.title}</span>
+							<span className="label-mono inline-flex items-center gap-1.5 text-white/75">
+								<NotebookPen className="size-3.5 shrink-0" aria-hidden="true" />
+								{count === 0 ? 'Nessuna nota' : count === 1 ? '1 nota' : `${count} note`}
 							</span>
 						</Link>
 						{/* Always reachable on touch; on a mouse it fades in with the card. */}
@@ -180,7 +160,7 @@ function Shelf({ notebooks, counts, onEdit }: { notebooks: NotebookRow[]; counts
 							type="button"
 							onClick={() => onEdit(notebook)}
 							aria-label={`Opzioni di ${notebook.title}`}
-							className="absolute right-2 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full text-fg-subtle opacity-100 transition duration-150 hover:bg-surface-3 hover:text-fg active:scale-95 focus-ring md:opacity-0 md:group-hover/card:opacity-100 md:focus-visible:opacity-100"
+							className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full text-white/80 opacity-100 transition duration-150 hover:bg-white/15 hover:text-white active:scale-95 focus-ring md:opacity-0 md:group-hover/card:opacity-100 md:focus-visible:opacity-100"
 						>
 							<MoreHorizontal className="size-5" aria-hidden="true" />
 						</button>
@@ -244,7 +224,8 @@ function EditSheet({
 								aria-pressed={color === c}
 								aria-label={COLOR_LABEL[c]}
 								onClick={() => setColor(c)}
-								className={cn('size-11 rounded-full border-2 transition-transform focus-ring', SPINE[c], color === c ? 'scale-110 border-fg' : 'border-transparent')}
+								data-notebook={c}
+								className={cn('size-11 rounded-full border-2 bg-tint-cover transition-transform focus-ring', color === c ? 'scale-110 border-fg' : 'border-transparent')}
 							/>
 						))}
 					</div>

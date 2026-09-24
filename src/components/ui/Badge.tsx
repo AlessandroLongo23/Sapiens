@@ -23,12 +23,12 @@ export function Badge({ tone = 'neutral', icon: Icon, className, children }: { t
 	);
 }
 
-/** A figure with its label, as shown under page titles ("12 Materie"). */
-export function Stat({ icon: Icon, color = 'text-accent-fg', children }: { icon: IconComponent; color?: string; children: ReactNode }) {
+/** A figure with its label, as shown under page titles: a big serif number over a small mono caption. */
+export function Stat({ value, children }: { value: ReactNode; children: ReactNode }) {
 	return (
-		<span className="inline-flex items-center gap-2 rounded-full border border-edge bg-surface/80 px-3 py-1.5 text-sm text-fg-muted backdrop-blur-sm">
-			<Icon className={cn('size-4', color)} aria-hidden="true" />
-			<span className="font-medium">{children}</span>
+		<span className="flex flex-col gap-1 border-l border-edge-strong pl-4 first:border-l-0 first:pl-0">
+			<span className="font-display text-4xl font-medium leading-none tracking-tight text-fg-strong tabular-nums">{value}</span>
+			<span className="label-mono text-fg-subtle">{children}</span>
 		</span>
 	);
 }

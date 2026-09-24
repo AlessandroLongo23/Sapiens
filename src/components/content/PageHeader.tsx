@@ -1,52 +1,79 @@
 import type { ReactNode } from 'react';
-import type { IconComponent } from '@/lib/utils/icons';
+import type { IconComponent, SubjectTone } from '@/lib/utils/icons';
+import { cn } from '@/lib/utils/cn';
+import { Sticker } from '@/components/ui/Sticker';
 import { Breadcrumb, type BreadcrumbItem } from './Breadcrumb';
 
-/** The top of an index page: trail, a big icon, the title, a lead paragraph and a row of figures. */
-export function PageHeader({ crumbs, icon: Icon, title, lead, stats, extra }: { crumbs: BreadcrumbItem[]; icon: IconComponent; title: ReactNode; lead?: ReactNode; stats?: ReactNode; extra?: ReactNode }) {
+/** A stroke of red pen, drawn under a title the way a student marks a heading. */
+export function PenStroke({ className }: { className?: string }) {
 	return (
-		<header className="mb-8 animate-fade-in sm:mb-12">
+		<svg viewBox="0 0 200 12" preserveAspectRatio="none" className={cn('pointer-events-none h-2.5 w-full text-accent', className)} aria-hidden="true">
+			<path d="M2 8.5c30-4.2 62-6.1 98-5.9 32 .2 62 1.9 98 4.6" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" className="pen-stroke" pathLength={1} />
+		</svg>
+	);
+}
+
+/**
+ * The top of an index page: trail, an eyebrow, the title in the display serif
+ * with a pen stroke under it, a lead paragraph and a row of figures. The icon
+ * sits on the right as a tinted tab, like the sticker on a notebook's cover.
+ */
+export function PageHeader({ crumbs, icon: Icon, eyebrow, title, lead, stats, extra }: { crumbs: BreadcrumbItem[]; icon: IconComponent; eyebrow?: ReactNode; title: ReactNode; lead?: ReactNode; stats?: ReactNode; extra?: ReactNode }) {
+	return (
+		<header className="mb-10 animate-fade-in sm:mb-16">
 			<Breadcrumb items={crumbs} />
-			<div className="flex items-start gap-6">
-				<div className="hidden size-28 shrink-0 items-center justify-center rounded-2xl border border-edge bg-surface text-accent-fg shadow-sm sm:flex lg:size-32">
-					<Icon className="size-14 lg:size-16" aria-hidden="true" />
-				</div>
-				<div className="flex-1 space-y-4">
-					<div className="space-y-2">
-						<div className="flex items-center gap-3">
-							<Icon className="size-8 text-accent-fg sm:hidden" aria-hidden="true" />
-							<h1 className="text-4xl font-bold tracking-tight text-fg-strong sm:text-5xl">{title}</h1>
-						</div>
+			<div className="flex items-start justify-between gap-8">
+				<div className="min-w-0 flex-1 space-y-6">
+					<div className="space-y-4">
+						{eyebrow && <p className="label-mono text-tint-fg">{eyebrow}</p>}
+						<h1 className="w-fit max-w-full text-5xl font-semibold leading-[1.02] text-fg-strong sm:text-6xl lg:text-7xl">
+							{title}
+							<PenStroke className="mt-2" />
+						</h1>
 						{lead && <p className="max-w-2xl text-lg leading-relaxed text-fg-muted">{lead}</p>}
 					</div>
-					{stats && <div className="flex flex-wrap gap-3">{stats}</div>}
+					{stats && <div className="flex flex-wrap gap-x-6 gap-y-4 pt-2">{stats}</div>}
 					{extra}
 				</div>
+				<Sticker icon={Icon} size="lg" className="hidden sm:flex" />
 			</div>
 		</header>
 	);
 }
 
-/** A section of an index page with its heading and an icon, holding a grid of cards. */
-export function CardGridSection({ id, icon: Icon, color = 'text-accent-fg', title, children }: { id: string; icon: IconComponent; color?: string; title: string; children: ReactNode }) {
+/**
+ * A section of an index page: a mono count, the heading in the serif, and its
+ * items. `layout="grid"` lays out cards; `layout="list"` is a numbered table of
+ * contents, in two columns on wide screens.
+ */
+export function CardGridSection({ id, title, count, layout = 'grid', children }: { id: string; title: string; count?: number; layout?: 'grid' | 'list'; children: ReactNode }) {
 	return (
 		<section className="animate-fade-in space-y-6" aria-labelledby={id}>
-			<div className="flex items-center justify-between border-b border-edge pb-4">
-				<h2 id={id} className="flex items-center gap-2 text-2xl font-semibold text-fg">
-					<Icon className={`size-5 ${color}`} aria-hidden="true" />
+			<div className="flex items-end justify-between gap-4 border-b border-edge-strong pb-3">
+				<h2 id={id} className="text-3xl font-semibold text-fg-strong">
 					{title}
 				</h2>
+				{count !== undefined && <span className="label-mono pb-1 text-fg-subtle">{String(count).padStart(2, '0')}</span>}
 			</div>
-			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{children}</div>
+			{layout === 'grid' ? (
+				<div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">{children}</div>
+			) : (
+				<ol className="grid grid-cols-1 gap-x-12 lg:grid-cols-2">{children}</ol>
+			)}
 		</section>
 	);
 }
 
-/** Index pages share one page background and container. */
-export function Page({ children, width = 'wide' }: { children: ReactNode; width?: 'wide' | 'medium' | 'narrow' }) {
+/**
+ * Index pages share one page background and container: the page, with a band
+ * of squared paper behind the header that fades out as the content begins.
+ * `tone` colours everything tinted on the page after a subject.
+ */
+export function Page({ children, width = 'wide', tone }: { children: ReactNode; width?: 'wide' | 'medium' | 'narrow'; tone?: SubjectTone }) {
 	const max = { wide: 'max-w-7xl', medium: 'max-w-5xl', narrow: 'max-w-3xl' }[width];
 	return (
-		<div className="relative min-h-screen overflow-hidden bg-page-alt">
+		<div className="relative min-h-screen overflow-hidden bg-page-alt" data-subject={tone}>
+			<div className="grid-paper pointer-events-none absolute inset-x-0 top-0 h-[30rem] [mask-image:linear-gradient(to_bottom,black_30%,transparent)]" aria-hidden="true" />
 			<div className={`relative z-10 mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8 ${max}`}>{children}</div>
 		</div>
 	);

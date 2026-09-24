@@ -7,10 +7,10 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'inverse' | 'lin
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 const VARIANTS: Record<ButtonVariant, string> = {
-	primary: 'bg-accent text-white hover:bg-accent-hover active:bg-accent-hover shadow-sm focus-ring-offset',
-	secondary: 'bg-surface-3 border border-edge text-fg hover:bg-surface-4 active:bg-surface-4 focus-ring-offset',
+	primary: 'bg-accent text-white shadow-key hover:bg-accent-hover active:translate-y-px active:shadow-none focus-ring-offset',
+	secondary: 'bg-surface border border-edge-strong text-fg shadow-paper hover:bg-surface-2 hover:border-fg-faint active:translate-y-px active:bg-surface-3 focus-ring-offset',
 	ghost: 'text-fg-muted hover:bg-surface-3 hover:text-fg active:bg-surface-3 focus-ring',
-	inverse: 'bg-inverse text-inverse-fg hover:opacity-90 shadow-lg focus-ring-offset',
+	inverse: 'bg-inverse text-inverse-fg shadow-key hover:opacity-90 active:translate-y-px focus-ring-offset',
 	link: 'text-accent-fg hover:underline underline-offset-2 focus-ring rounded'
 };
 
@@ -24,7 +24,7 @@ const SIZES: Record<ButtonSize, string> = {
 /** The classes of a button, for elements that must look like one (labels, plain anchors). */
 export function buttonClass(variant: ButtonVariant = 'primary', size: ButtonSize = 'md', className = ''): string {
 	return cn(
-		'inline-flex items-center justify-center rounded-xl font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed',
+		'inline-flex items-center justify-center rounded-xl font-semibold transition-[background-color,border-color,transform,box-shadow] duration-150 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0',
 		VARIANTS[variant],
 		variant !== 'link' && SIZES[size],
 		className

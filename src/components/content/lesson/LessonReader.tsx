@@ -49,15 +49,15 @@ export function LessonReader({ html, sections, footer }: Props) {
 			)}
 			<div className="px-4 pb-8 pt-0 sm:px-6 md:px-10">
 				<div className={cn('mt-2 h-auto overflow-hidden opacity-100 transition-all duration-300', compact && 'lg:mt-0 lg:h-0 lg:opacity-0')}>
-					<div className="flex items-center justify-end gap-3 text-sm text-fg-subtle">
-						<span className="flex items-center gap-2">
-							<FileText className="size-4" aria-hidden="true" />
-							<span className="font-medium text-fg">{pages} {pages === 1 ? 'pagina' : 'pagine'}</span>
+					<div className="label-mono flex items-center justify-end gap-3 text-fg-subtle">
+						<span className="flex items-center gap-1.5">
+							<FileText className="size-3.5" aria-hidden="true" />
+							{pages} {pages === 1 ? 'pagina' : 'pagine'}
 						</span>
 						<span className="size-1 rounded-full bg-surface-4" aria-hidden="true" />
-						<span className="flex items-center gap-2">
-							<Clock className="size-4" aria-hidden="true" />
-							<span className="font-medium text-fg">{minutes} min lettura</span>
+						<span className="flex items-center gap-1.5">
+							<Clock className="size-3.5" aria-hidden="true" />
+							{minutes} min lettura
 						</span>
 					</div>
 				</div>

@@ -41,3 +41,24 @@ export function iconFor(node: Pick<ContentNode, 'slug' | 'type'> | null | undefi
 	if (!node) return LibraryBig;
 	return BY_SLUG[node.slug] ?? BY_TYPE[node.type] ?? LibraryBig;
 }
+
+/** The colour family of a subject, read by `[data-subject]` in globals.css. */
+export type SubjectTone = 'math' | 'physics' | 'chemistry' | 'cs' | 'ink';
+
+const TONE_BY_SLUG: Record<string, SubjectTone> = {
+	math: 'math',
+	'analisi-1': 'math',
+	'analisi-2': 'math',
+	physics: 'physics',
+	'fisica-1': 'physics',
+	'fisica-2': 'physics',
+	chemistry: 'chemistry',
+	'computer-science': 'cs',
+	'fondamenti-informatica': 'cs'
+};
+
+/** The tone of the first subject in a trail of nodes (a node and its ancestors), or the ink. */
+export function toneFor(...nodes: (Pick<ContentNode, 'slug' | 'type'> | null | undefined)[]): SubjectTone {
+	for (const node of nodes) if (node && TONE_BY_SLUG[node.slug]) return TONE_BY_SLUG[node.slug];
+	return 'ink';
+}

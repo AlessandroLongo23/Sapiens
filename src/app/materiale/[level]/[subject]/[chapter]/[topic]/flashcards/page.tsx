@@ -9,6 +9,7 @@ import { hasFeature } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
 import { hasExercises } from '@/lib/server/exercises';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { toneFor } from '@/lib/utils/icons';
 import { LessonFrame } from '@/components/content/lesson/LessonFrame';
 import { ComingSoon } from '@/components/content/ComingSoon';
 import { Paywall } from '@/components/subscription/Paywall';
@@ -47,7 +48,7 @@ export default async function FlashcardsPage(props: LessonParams) {
 	return (
 		<>
 			<JsonLd data={[breadcrumb, ...(flashcards ? [learningResourceJsonLd(node, ancestors, { description: description(lesson), resourceType: 'Flashcard', free, gatedSelector: free ? undefined : '#flashcard', dateModified: updatedAt, path: paths.flashcards })] : [])]} />
-			<LessonFrame titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths}>
+			<LessonFrame tone={toneFor(...ancestors)} titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths}>
 				{!flashcards ? (
 					<ComingSoon kind="flashcards" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />
 				) : !unlocked ? (

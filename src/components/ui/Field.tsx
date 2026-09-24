@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils/cn';
 
 /** Form controls with one look: a rounded field, accent focus ring, 44px tall on touch screens. */
 export const fieldClass =
-	'w-full rounded-xl border border-edge bg-surface px-3.5 py-2.5 text-fg placeholder:text-fg-faint outline-none transition focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/30 disabled:opacity-60';
+	'w-full rounded-xl border border-edge bg-surface px-3.5 py-2.5 text-fg placeholder:text-fg-faint outline-none transition shadow-paper focus:border-accent focus:ring-3 focus:ring-accent/20 disabled:opacity-60';
 
 export const labelClass = 'block text-sm font-medium text-fg-muted mb-1';
 
