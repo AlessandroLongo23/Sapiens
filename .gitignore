@@ -42,3 +42,5 @@ supabase/.temp/
 
 # Obsidian: stato locale delle finestre
 vault/.obsidian/workspace.json
+# Obsidian aperto sulla radice della repo invece che su vault/
+/.obsidian/
