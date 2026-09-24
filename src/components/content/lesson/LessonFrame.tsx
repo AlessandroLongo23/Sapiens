@@ -198,7 +198,7 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 			</nav>
 
 			{!lg && (
-				<Sheet open={aiSheet} onClose={closeAi} title="Sapiens AI" hideTitle size="full" bodyClass="flex flex-col">
+				<Sheet open={aiSheet} onClose={closeAi} title="Sapiens AI" hideTitle size="full" flush bodyClass="flex flex-col">
 					<AISidebar onClose={closeAi} />
 				</Sheet>
 			)}

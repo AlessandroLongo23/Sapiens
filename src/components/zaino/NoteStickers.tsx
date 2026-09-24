@@ -67,10 +67,9 @@ export function NoteStickers({
 /** The album: every sticker, free to use as many times as wanted (the MVP has no rewards yet). */
 export function StickerAlbum({ open, onClose, onPick }: { open: boolean; onClose: () => void; onPick: (stickerId: string) => void }) {
 	return (
-		<Sheet open={open} onClose={onClose} title="Adesivi">
-			<div className="px-4 pb-4">
-				<p className="text-sm text-fg-muted">Scegli un adesivo, poi attaccalo dove vuoi sul foglio.</p>
-				<ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+		<Sheet open={open} onClose={onClose} title="Adesivi" description="Scegli un adesivo, poi attaccalo dove vuoi sul foglio.">
+			<div>
+				<ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
 					{STICKERS.map((d) => {
 						const scale = Math.min(84 / d.w, 60 / d.h, 0.7);
 						return (

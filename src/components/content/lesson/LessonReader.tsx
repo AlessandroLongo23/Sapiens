@@ -43,7 +43,7 @@ export function LessonReader({ html, sections, footer }: Props) {
 	return (
 		<>
 			{!lg && (
-				<Sheet open={tocOpen} onClose={() => setTocOpen(false)} title="Indice della lezione">
+				<Sheet open={tocOpen} onClose={() => setTocOpen(false)} title="Indice della lezione" flush>
 					<TableOfContents sections={sections} touch />
 				</Sheet>
 			)}

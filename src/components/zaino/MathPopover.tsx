@@ -80,7 +80,7 @@ export function MathPopover({
 	};
 
 	const body = (
-		<div className="space-y-3 px-4 pb-4">
+		<div className="space-y-3">
 			<label htmlFor="math-source" className="block text-sm font-medium text-fg-muted">
 				Formula in LaTeX
 			</label>
@@ -120,8 +120,10 @@ export function MathPopover({
 	}
 	return (
 		<div role="dialog" aria-label="Formula" className="fixed bottom-6 left-1/2 z-50 w-[min(28rem,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-edge bg-surface pt-4 shadow-2xl">
-			<p className="px-4 pb-2 text-sm font-semibold text-fg-strong">Formula</p>
-			{body}
+			<div className="px-4 pb-4">
+				<p className="pb-2 text-sm font-semibold text-fg-strong">Formula</p>
+				{body}
+			</div>
 		</div>
 	);
 }

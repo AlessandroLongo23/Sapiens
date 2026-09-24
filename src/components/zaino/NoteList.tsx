@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Sticker } from '@/components/ui/Sticker';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Field';
-import { Sheet } from '@/components/ui/Sheet';
+import { Sheet, sheetActions } from '@/components/ui/Sheet';
 import { Paywall } from '@/components/subscription/Paywall';
 import { cn } from '@/lib/utils/cn';
 import { useZainoAction } from './ZainoActions';
@@ -163,7 +163,7 @@ export function NoteList({
 			)}
 
 			<Sheet open={!!menu} onClose={() => setMenu(null)} title={menu?.title ?? 'Nota'} size="auto">
-				<div className="flex flex-col px-2 pb-3">
+				<div className="-mx-3 flex flex-col">
 					<button
 						type="button"
 						onClick={() => {
@@ -205,26 +205,24 @@ export function NoteList({
 				}}
 			/>
 
-			<Sheet open={!!confirming} onClose={() => setConfirming(null)} title="Elimina la nota" size="auto">
-				<div className="space-y-4 px-4 pb-4">
-					<p className="text-sm text-fg-muted">Vuoi eliminare «{confirming?.title}»? Non si può recuperare.</p>
-					<div className="flex gap-2">
-						<Button
-							variant="inverse"
-							loading={busy === confirming?.id}
-							onClick={async () => {
-								if (!confirming) return;
-								const done = await run(confirming.id, `/api/zaino/note/${confirming.id}`, 'DELETE');
-								if (done) setConfirming(null);
-							}}
-						>
-							<Trash2 className="size-4" aria-hidden="true" />
-							Elimina
-						</Button>
-						<Button variant="ghost" onClick={() => setConfirming(null)}>
-							Annulla
-						</Button>
-					</div>
+			<Sheet open={!!confirming} onClose={() => setConfirming(null)} title="Elimina la nota" size="auto" width="sm" align="center">
+				<p className="text-sm text-fg-muted">Vuoi eliminare «{confirming?.title}»? Non si può recuperare.</p>
+				<div className={cn(sheetActions, 'mt-5')}>
+					<Button variant="ghost" onClick={() => setConfirming(null)}>
+						Annulla
+					</Button>
+					<Button
+						variant="inverse"
+						loading={busy === confirming?.id}
+						onClick={async () => {
+							if (!confirming) return;
+							const done = await run(confirming.id, `/api/zaino/note/${confirming.id}`, 'DELETE');
+							if (done) setConfirming(null);
+						}}
+					>
+						<Trash2 className="size-4" aria-hidden="true" />
+						Elimina
+					</Button>
 				</div>
 			</Sheet>
 		</div>

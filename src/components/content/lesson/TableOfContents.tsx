@@ -33,8 +33,8 @@ export function TableOfContents({ sections, touch = false }: { sections: TocSect
 
 	const row = (active: boolean, depth: number) =>
 		cn(
-			'flex flex-1 items-center text-left transition-colors focus-ring',
-			touch ? (depth === 0 ? 'min-h-[44px] rounded-xl px-2 text-base' : depth === 1 ? 'min-h-[40px] rounded-xl px-2 text-sm' : 'min-h-[36px] rounded-lg px-2 text-sm') : depth === 0 ? 'rounded py-1 text-sm' : 'rounded py-0.5 text-xs',
+			'flex flex-1 text-left transition-colors focus-ring',
+			touch ? (depth === 0 ? 'min-h-[44px] items-start rounded-xl px-2 py-3 text-base' : depth === 1 ? 'min-h-[40px] items-center rounded-xl px-2 py-2 text-sm' : 'min-h-[36px] items-center rounded-lg px-2 py-1.5 text-sm') : depth === 0 ? 'items-center rounded py-1 text-sm' : 'items-center rounded py-0.5 text-xs',
 			active ? (touch ? 'bg-accent-soft text-accent-soft-fg' : 'text-fg-strong') : 'text-fg-subtle hover:text-fg',
 			touch && !active && 'active:bg-surface-3'
 		);
@@ -49,7 +49,7 @@ export function TableOfContents({ sections, touch = false }: { sections: TocSect
 					{!touch && active && <span className="absolute -left-3 top-1 h-[1.1em] w-[3px] rounded-full bg-accent" aria-hidden="true" />}
 					<div className="flex items-center">
 						<button type="button" data-section={section.id} aria-current={active ? 'location' : undefined} onClick={() => jumpTo(section.id)} className={cn(row(active, depth), depth === 0 ? 'font-semibold' : 'font-medium')}>
-							{depth === 0 && <span className={cn('mr-2.5 shrink-0 self-start font-mono text-[0.6875rem] font-medium leading-5 tabular-nums', active ? 'text-tint-fg' : 'text-fg-faint')}>{String(index + 1).padStart(2, '0')}</span>}
+							{depth === 0 && <span className={cn('mr-2.5 shrink-0 self-start font-mono text-[0.6875rem] font-medium tabular-nums', touch ? 'leading-[1.375rem]' : 'leading-5', active ? 'text-tint-fg' : 'text-fg-faint')}>{String(index + 1).padStart(2, '0')}</span>}
 							<Html as="span" html={section.titleHtml} className="math-inline" />
 						</button>
 						{section.subsections.length > 0 && (
@@ -72,7 +72,7 @@ export function TableOfContents({ sections, touch = false }: { sections: TocSect
 					Indice
 				</p>
 			)}
-			<div ref={list} className={cn('no-scrollbar flex-1 overflow-y-auto', touch ? 'px-3 py-2' : 'px-8 py-5')}>
+			<div ref={list} className={cn('no-scrollbar flex-1 overflow-y-auto', touch ? 'px-3 pb-3' : 'px-8 py-5')}>
 				{render(sections, 0)}
 			</div>
 		</div>

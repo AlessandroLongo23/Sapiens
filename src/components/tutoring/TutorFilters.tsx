@@ -159,7 +159,6 @@ export function TutorFilters({ filters, onChange, cities, resultCount }: Props) 
 				open={sheetOpen}
 				onClose={() => setSheetOpen(false)}
 				title="Filtra i tutor"
-				bodyClass="px-4 py-2"
 				footer={
 					<div className="flex items-center gap-3">
 						<Button variant="ghost" size="lg" onClick={reset} disabled={active === 0}>Azzera</Button>

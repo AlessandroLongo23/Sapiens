@@ -41,7 +41,7 @@ export function SummarySheet({ open, correct, total, theoryHref, nextHref, onRet
 			title={message}
 			hideTitle
 			align="center"
-			bodyClass="px-5 pb-3"
+			width="sm"
 			footer={
 				<div className="flex flex-col gap-2">
 					<Button size="lg" className="w-full" onClick={onRetry}>

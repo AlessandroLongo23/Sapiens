@@ -94,7 +94,7 @@ export function TutorList({ tutors }: { tutors: TutorProfile[] }) {
 					</ul>
 				</>
 			)}
-			<Sheet open={requestTutor !== null} onClose={() => setRequestTutor(null)} title={requestTutor ? `Chiedi aiuto a ${tutorDisplayName(requestTutor)}` : ''} align="center" bodyClass="px-4 pb-4 sm:px-5">
+			<Sheet open={requestTutor !== null} onClose={() => setRequestTutor(null)} title={requestTutor ? `Chiedi aiuto a ${tutorDisplayName(requestTutor)}` : ''} align="center">
 				{requestTutor && (
 					<>
 						<div className="mb-4 flex items-center gap-3">

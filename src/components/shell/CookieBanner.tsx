@@ -53,7 +53,7 @@ export function CookieBanner() {
 	};
 
 	return (
-		<div className="pointer-events-none fixed inset-x-3 z-[60] above-tabbar md:inset-x-auto md:bottom-6 md:left-1/2 md:w-[min(40rem,calc(100vw-3rem))] md:-translate-x-1/2" style={{ '--tabbar-h': '4.25rem' } as React.CSSProperties}>
+		<div className="pointer-events-none fixed inset-x-3 z-40 above-tabbar md:inset-x-auto md:bottom-6 md:left-1/2 md:w-[min(40rem,calc(100vw-3rem))] md:-translate-x-1/2" style={{ '--tabbar-h': '4.25rem' } as React.CSSProperties}>
 			<div
 				ref={card}
 				role="region"
