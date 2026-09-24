@@ -6,7 +6,7 @@ import { fail, guarded, isUuid, json, readJson } from '@/lib/server/http';
 /**
  * The tutor answers a pending request. On acceptance both sides receive the
  * other's contacts (this is the moment the introduction fee will apply, see
- * MARKETPLACE.md); on refusal the student is told without a reason.
+ * vault/Prodotti/Tutor/Pay-per-lead.md); on refusal the student is told without a reason.
  */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
 	const user = await currentUser();

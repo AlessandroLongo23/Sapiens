@@ -39,3 +39,6 @@ screenshots/
 
 # Supabase CLI
 supabase/.temp/
+
+# Obsidian: stato locale delle finestre
+vault/.obsidian/workspace.json
