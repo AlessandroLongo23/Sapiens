@@ -22,7 +22,8 @@ export function SearchField({ id, placeholder = 'Cerca', size = 'md', autoFocus 
 
 	useEffect(() => {
 		const onKey = (e: KeyboardEvent) => {
-			if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+			// A page that uses the key itself (the note editor's links) has already taken it.
+			if ((e.ctrlKey || e.metaKey) && e.key === 'k' && !e.defaultPrevented) {
 				e.preventDefault();
 				if (isActive) {
 					deactivate();

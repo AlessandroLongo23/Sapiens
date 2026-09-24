@@ -127,9 +127,12 @@
    2. Semantic tokens: what a surface or a piece of text means, per theme.
    Components use these (bg-surface, text-fg-muted, border-edge), never the
    raw scale, so the dark theme is one block below and not a dark: variant
-   on every class.
+   on every class. A note's sheet can take either set whatever the theme
+   (`.paper-light`, `.paper-dark`, see lib/zaino/paper.ts): coloured paper keeps
+   dark ink in the dark theme, and dark paper light ink in the light one.
    --------------------------------------------------------------------------- */
-:root {
+:root,
+.paper-light {
 	--page: var(--color-paper-100);
 	--page-alt: var(--color-paper-100);
 	--surface: var(--color-paper-50);
@@ -147,6 +150,8 @@
 	/* The squared paper of an Italian maths notebook: pale blue lines. */
 	--grid: color-mix(in oklab, oklch(0.62 0.09 245) 16%, transparent);
 	--grid-faint: color-mix(in oklab, oklch(0.62 0.09 245) 10%, transparent);
+	--grid-dot: color-mix(in oklab, oklch(0.55 0.09 245) 42%, transparent);
+	--grid-margin: color-mix(in oklab, var(--color-crimson-500) 38%, transparent);
 	--accent: var(--color-crimson-600);
 	--accent-hover: var(--color-crimson-700);
 	/* Text on light surfaces: crimson-600 is 4.3:1 on zinc-50, one step darker clears AA. */
@@ -181,7 +186,8 @@
 	--safe-t: var(--spacing-safe-t);
 }
 
-.dark {
+.dark,
+.paper-dark {
 	--page: var(--color-ink-950);
 	--page-alt: var(--color-ink-950);
 	--surface: var(--color-ink-900);
@@ -198,6 +204,8 @@
 	--edge-soft: color-mix(in oklab, var(--color-ink-100) 8%, transparent);
 	--grid: color-mix(in oklab, oklch(0.8 0.06 245) 7%, transparent);
 	--grid-faint: color-mix(in oklab, oklch(0.8 0.06 245) 4.5%, transparent);
+	--grid-dot: color-mix(in oklab, oklch(0.8 0.06 245) 26%, transparent);
+	--grid-margin: color-mix(in oklab, var(--color-crimson-400) 34%, transparent);
 	--accent: var(--color-crimson-600);
 	--accent-hover: var(--color-crimson-700);
 	--accent-fg: var(--color-crimson-400);
@@ -351,12 +359,14 @@
 	background-position: -1px -1px;
 }
 /* The page a note is written on: squared paper, fainter than the page headers
-   so it never competes with the text, and scrolling with the text (`local`). */
+   so it never competes with the text, and scrolling with the text (`local`).
+   A square is one line of body text (`--row`), so a note can keep to it. */
 @utility note-paper {
+	--row: 24px;
 	background-image:
 		linear-gradient(var(--grid-faint) 1px, transparent 1px),
 		linear-gradient(90deg, var(--grid-faint) 1px, transparent 1px);
-	background-size: 22px 22px;
+	background-size: var(--row) var(--row);
 	background-position: -1px -1px;
 	background-attachment: local;
 }
@@ -922,6 +932,156 @@ body {
 }
 .note-body .tiptap-mathematics-render--editable:hover {
 	@apply bg-accent-soft;
+}
+
+/* The Simple editor's sheet is squared paper, and the writing keeps to it:
+   every line of text is one row (`--row`), every gap a whole number of rows,
+   and the lines are drawn `--baseline` down each row, where body text has its
+   baseline, so the words sit on them. The text must start on a whole row
+   (the sheet's padding is two rows). Headings are in another face, which puts
+   its baseline elsewhere in the row: `top` drops it onto the line, measured in
+   the browser per size. A display formula, a table or an image is as tall as
+   it is, and the text after it is off the lines until the next heading. */
+/* `--row`, `--fs` and `--baseline` come from the note's paper (paperStyle in
+   lib/zaino/paper.ts); the values here are the default paper's. Heading sizes
+   and offsets are in em, so a larger text size keeps them on the lines. */
+.note-lined {
+	--fs: 16px;
+	--baseline: 18px;
+	background-position: -1px var(--baseline);
+}
+.note-lined .note-body {
+	font-size: var(--fs);
+	line-height: var(--row);
+}
+.note-lined .note-body :is(h1, h2, h3, h4) {
+	position: relative;
+	line-height: var(--row);
+	padding-bottom: 0;
+}
+.note-lined .note-body h1 { font-size: 1.5em; margin-block: calc(2 * var(--row)) var(--row); top: -0.0833em; }
+.note-lined .note-body h2 { font-size: 1.25em; }
+.note-lined .note-body h3 { font-size: 1.125em; margin-block: var(--row) 0; }
+/* After text, a small title gets a second blank row above it, so it reads as a title and not a bold line. */
+.note-lined .note-body :is(p, ul, ol, blockquote, pre, table) + h3 { margin-top: calc(2 * var(--row)); }
+.note-lined .note-body h4 { font-size: 1em; margin-block: var(--row) 0; }
+/* A section title is underlined on the next line down, then the text goes on
+   the line after: padding brings the rule onto that line, margin fills out
+   the row. */
+.note-lined .note-body h2 {
+	margin-block: calc(2 * var(--row)) calc(var(--row) - var(--baseline) - 2px);
+	padding-bottom: calc(var(--baseline) + 1px);
+	top: -0.05em;
+}
+.note-lined .note-body :is(p, ul, ol, blockquote, pre, table) {
+	margin-block: 0 var(--row);
+}
+.note-lined .note-body :is(ul, ol) { margin-left: var(--row); }
+.note-lined .note-body :is(li, li > p) { margin-block: 0; }
+.note-lined .note-body :is(li, blockquote) :is(p, ul, ol):last-child { margin-bottom: 0; }
+.note-lined .note-body blockquote { font-size: 1.08em; }
+.note-lined .note-body pre { padding-block: calc(var(--row) / 2 - 1px); }
+.note-lined .note-body hr { margin-block: var(--baseline) calc(var(--row) - var(--baseline) - 1px); }
+.note-lined .note-body > :first-child { margin-top: 0; }
+/* An inline formula keeps to its row, as on ruled paper (see above). */
+.note-lined .note-body .katex { line-height: 1; }
+.note-lined .note-body .katex :is(.katex-base, .base) { margin-block: -1em; }
+/* A display formula sits on one row with a blank row above and below, which
+   is padding: the block scrolls sideways on a phone, so what spills out of the
+   row must stay inside it or be cut off. That blank row above replaces the
+   one the paragraph before it would leave. */
+.note-lined .note-body :is(div.katex-display, [data-type='block-math']) {
+	margin-block: 0;
+	padding-block: var(--row);
+	line-height: var(--row);
+}
+.note-lined .note-body :is(p, ul, ol, blockquote, pre, table):has(+ :is(div.katex-display, [data-type='block-math'])) {
+	margin-bottom: 0;
+}
+.note-lined .note-body span.katex-display {
+	margin: 0;
+	padding: 0;
+	overflow: visible;
+}
+.note-lined .note-body .katex-display > .katex { line-height: var(--row); }
+/* The markdown source in the Advanced editor, one line of it per row.
+   JetBrains Mono has its baseline a pixel higher in the row than Inter. */
+.note-lined.note-source {
+	/* Source is read as typed: no `<!--` turning into an arrow. */
+	font-variant-ligatures: none;
+	--baseline: var(--baseline-mono, 17px);
+	--margin-x: calc(var(--row) / 2);
+	font-size: var(--fs);
+	line-height: var(--row);
+}
+
+/* The paper's ruling and colour (lib/zaino/paper.ts). Squares are the
+   utility's own; lined paper has a red margin, as school paper does, and
+   dotted paper puts a dot where two lines of the squares would cross. */
+.note-paper[data-paper='righe'] {
+	background-image:
+		linear-gradient(90deg, transparent calc(var(--margin-x) - 1px), var(--grid-margin) calc(var(--margin-x) - 1px), var(--grid-margin) var(--margin-x), transparent var(--margin-x)),
+		linear-gradient(var(--grid) 1px, transparent 1px);
+	background-size: 100% 100%, 100% var(--row);
+	background-repeat: no-repeat, repeat;
+}
+.note-lined[data-paper='righe'] { background-position: 0 0, 0 var(--baseline); }
+.note-paper[data-paper='puntini'] {
+	background-image: radial-gradient(circle, var(--grid-dot) 1.15px, transparent 1.7px);
+	background-size: var(--row) var(--row);
+}
+.note-lined[data-paper='puntini'] { background-position: calc(var(--row) / -2 - 0.5px) calc(var(--baseline) - var(--row) / 2 + 0.5px); }
+.note-paper[data-paper='bianca'] { background-image: none; }
+.note-paper { --margin-x: calc(1.5 * var(--row)); }
+
+[data-paper-color='bianca'] { --paper-bg: #fff; }
+[data-paper-color='avorio'] { --paper-bg: oklch(0.965 0.03 85); }
+[data-paper-color='gialla'] { --paper-bg: oklch(0.975 0.04 95); }
+[data-paper-color='azzurra'] { --paper-bg: oklch(0.968 0.02 240); }
+[data-paper-color='verde'] { --paper-bg: oklch(0.968 0.024 155); }
+[data-paper-color='rosa'] { --paper-bg: oklch(0.968 0.02 10); }
+[data-paper-color='scura'] { --paper-bg: var(--color-ink-900); }
+.note-paper[data-paper-color]:not([data-paper-color='tema']) { background-color: var(--paper-bg); }
+
+/* The floating toolbar's labels: on hover after a beat, at once on keyboard
+   focus, on the side of the button that faces the sheet. */
+.tb-tip { position: relative; }
+.tb-tip::after {
+	content: attr(data-tip);
+	position: absolute;
+	z-index: 50;
+	pointer-events: none;
+	white-space: nowrap;
+	padding: 0.3rem 0.55rem;
+	border-radius: 0.5rem;
+	background: var(--inverse);
+	color: var(--inverse-fg);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1rem;
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+.tb-tip:hover::after { opacity: 1; transition-delay: 350ms; }
+.tb-tip:focus-visible::after { opacity: 1; }
+[data-dock='bottom'] .tb-tip::after { bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); }
+[data-dock='left'] .tb-tip::after { left: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
+[data-dock='right'] .tb-tip::after { right: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
+.tb-tip-below .tb-tip::after { top: calc(100% + 8px); bottom: auto; left: 50%; transform: translateX(-50%); }
+
+/* Printing a note: only its pages, one sheet per A4, with the paper. The copy
+   is rendered for the occasion (NotePrint) and hidden on screen. */
+#note-print { display: none; }
+@media print {
+	@page { size: A4; margin: 0; }
+	body > :not(#note-print) { display: none !important; }
+	#note-print { display: block; }
+	#note-print .note-sheet {
+		box-shadow: none;
+		break-after: page;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
+	}
 }
 
 /* The Zaino's own entrance: shelves and lists stagger in once per page load.

@@ -13,6 +13,7 @@ import { RawBlock } from './raw-block';
 export function noteExtensions(options: {
 	onMathClick: (latex: string, pos: number, block: boolean) => void;
 	onEditSource: () => void;
+	placeholder?: string;
 }): Extensions {
 	const math = mathOptions(options.onMathClick);
 	return [
@@ -26,7 +27,7 @@ export function noteExtensions(options: {
 		}),
 		Markdown,
 		// An empty note shows what to do instead of a blank page (styled in globals.css).
-		Placeholder.configure({ placeholder: 'Scrivi qui. Usa la barra sopra, oppure $x^2$ per una formula.' }),
+		Placeholder.configure({ placeholder: options.placeholder ?? 'Scrivi qui. Usa la barra degli strumenti, oppure $x^2$ per una formula.' }),
 		math.block,
 		math.inline,
 		RawBlock.configure({ onEditSource: options.onEditSource })

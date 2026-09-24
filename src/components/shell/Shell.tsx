@@ -16,6 +16,8 @@ import { Footer } from './Footer';
 
 // Pages that take the whole phone screen and bring their own chrome.
 const IMMERSIVE_PATHS = [/^\/materiale\/[^/]+\/[^/]+\/[^/]+\/[^/]+/, /^\/zaino\/nota\/[^/]+/];
+// Pages that take the whole screen at every width: the note editor, whose own bar replaces the site header.
+const BARE_PATHS = [/^\/zaino\/nota\/[^/]+/];
 
 /**
  * The page frame: header, the scrolling area with the page and the footer,
@@ -42,6 +44,7 @@ export function Shell({ tree = [], children }: { tree?: ContentNode[]; children:
 	const [hidden, setHidden] = useState(false);
 	const [shownPath, setShownPath] = useState(pathname);
 	const immersive = IMMERSIVE_PATHS.some((re) => re.test(pathname)) && frameMounted !== false;
+	const bare = immersive && BARE_PATHS.some((re) => re.test(pathname));
 	if (pathname !== shownPath) {
 		setShownPath(pathname);
 		setHidden(false);
@@ -88,8 +91,8 @@ export function Shell({ tree = [], children }: { tree?: ContentNode[]; children:
 			<div className="relative z-10 flex h-dvh flex-col">
 				<SearchOverlay />
 				{/* While the search overlay is up the page is faded out and inert, so neither Tab nor a screen reader lands on it. */}
-				<div ref={scroller} onScroll={onScroll} inert={searching || undefined} className={cn('no-scrollbar flex-1 overflow-y-auto transition-opacity duration-300 ease-out', !immersive && 'pb-tabbar md:pb-0', immersive && 'overflow-hidden', searching ? 'pointer-events-none opacity-0' : 'opacity-100')}>
-					<Header hidden={hidden} immersive={immersive} />
+				<div ref={scroller} onScroll={onScroll} inert={searching || undefined} className={cn('no-scrollbar flex-1 overflow-y-auto transition-opacity duration-300 ease-out', !immersive && 'pb-tabbar md:pb-0', immersive && (bare ? 'overflow-clip' : 'overflow-hidden'), searching ? 'pointer-events-none opacity-0' : 'opacity-100')}>
+					<Header hidden={hidden} immersive={immersive} bare={bare} />
 					<main id="contenuto" tabIndex={-1} className="min-h-[calc(100dvh-var(--header-h,64px))] outline-none">
 						<ViewTransition update="page" default="none">
 							<div>{children}</div>
