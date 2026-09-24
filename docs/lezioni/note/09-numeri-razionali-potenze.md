@@ -28,3 +28,14 @@ I conti degli esempi originali erano corretti (li ho rifatti tutti, compreso $7^
 - La carta `zero-alla-zero` e il formulario dicono che $0^0$ "non ha significato", come la lezione: se si uniforma la formula con Potenze in ℕ ("indefinito"), vanno cambiati anche questi due file.
 - Nel formulario ho scritto $a^1 = a$ come formula; la lezione lo dice solo a parole con l'esempio $\left(\frac{3}{4}\right)^1 = \frac{3}{4}$.
 - La tabella delle proprietà è copiata intera dalla lezione: è la parte più lunga del formulario, ma toglierla lascerebbe le proprietà senza esempi su frazioni ed esponenti negativi.
+
+## Alleggerita il 24 settembre 2026
+
+La regola del segno e la differenza tra $(-a)^n$ e $-a^n$ ora stanno in Potenze in ℤ (22). Tagli leggeri, perché la lezione resti comprensibile da sola:
+
+- "Il segno della potenza": tolti l'elenco puntato e la spiegazione "ogni coppia di fattori negativi dà un prodotto positivo"; la regola resta in una frase con il link alla 22, e l'esempio con $-\frac{2}{3}$ è invariato.
+- "Le parentesi decidono qual è la base": tolto il paragrafo sull'esponente dispari ("le due scritture danno lo stesso numero... ma per ragioni diverse"); aggiunta una frase con il link alla 22. Formula e riquadro "Dimenticare le parentesi" restano, perché sono gli esempi con le frazioni.
+- Formulario invariato: la sezione "Segno con base negativa" usa già solo frazioni.
+- Flashcard: tolta `segno-esponente-pari`, che non ha frazioni ed è uguale alla carta con lo stesso id della 22. Restano `segno-esponente-dispari-conto` e `parentesi-base`, che usano $-\frac{2}{3}$. Ne restano 18.
+
+Lezione da 9329 a 9194 caratteri.

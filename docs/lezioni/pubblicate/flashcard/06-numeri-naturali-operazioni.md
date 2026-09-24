@@ -99,3 +99,13 @@ $8$. Prima la moltiplicazione: $20 - 12 = 8$, non $17 \cdot 4$.
 Quanto fa $24 : 4 \cdot 2$?
 ---
 $12$. Divisione e moltiplicazione hanno la stessa priorità e si va da sinistra a destra: $6 \cdot 2 = 12$.
+
+## problema-resto
+Paghi $3$ quaderni da $4$ euro con una banconota da $20$ euro. Quale espressione dà il resto?
+---
+$20 - 3 \cdot 4$, che fa $8$: prima la spesa $3 \cdot 4$, poi quanto manca a $20$.
+
+## problema-parentesi
+$150$ posti, $6$ ai docenti, gli altri divisi tra $6$ classi: perché si scrive $(150 - 6) : 6$ e non $150 - 6 : 6$?
+---
+Perché va diviso tra le classi quello che resta dopo aver tolto i posti dei docenti: senza parentesi si dividerebbero solo i $6$ posti dei docenti.

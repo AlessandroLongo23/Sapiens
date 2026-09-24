@@ -18,7 +18,7 @@ Un'operazione è **interna** a un insieme quando, applicata a due elementi quals
 
 In $\mathbb{N}$ l'addizione e la moltiplicazione sono interne: la somma e il prodotto di due numeri naturali sono sempre numeri naturali.
 
-La sottrazione invece non è interna. La differenza $a - b$ esiste in $\mathbb{N}$ solo se $a \geq b$: $9 - 4 = 5$ si può fare, $4 - 9$ no, perché nessun naturale sommato a $9$ dà $4$. Per poter sottrarre sempre si passa ai [numeri interi](/materiale/scuola-superiore/matematica/numeri-interi/operazioni-in-z).
+La sottrazione invece non è interna. La differenza $a - b$ esiste in $\mathbb{N}$ solo se $a \geq b$: $9 - 4 = 5$ si può fare, $4 - 9$ no, perché nessun naturale sommato a $9$ dà $4$. Per poter sottrarre sempre si passa ai [numeri interi](/materiale/scuola-superiore/matematica/numeri-interi/numeri-interi-e-valore-assoluto).
 
 Neppure la divisione è interna. Il quoziente esatto $a : b$ esiste in $\mathbb{N}$ solo se il divisore non è $0$ e il dividendo è un multiplo del divisore: $12 : 3 = 4$ si può fare, $7 : 2$ no, perché nessun naturale moltiplicato per $2$ dà $7$. Per poter dividere sempre (tranne che per zero) si passa ai [numeri razionali](/materiale/scuola-superiore/matematica/numeri-razionali/operazioni-in-q). Quando il quoziente esatto non esiste, in $\mathbb{N}$ si fa la divisione con resto, che trovi più avanti.
 
@@ -107,7 +107,7 @@ Quando il dividendo non è multiplo del divisore, in $\mathbb{N}$ si fa la **div
 
 $$a = b \cdot q + r \qquad \text{con } 0 \leq r < b$$
 
-La condizione $r < b$ è quella che rende unico il risultato: il resto deve essere più piccolo del divisore, altrimenti nel dividendo ci starebbe ancora una volta il divisore. Quando $r = 0$ la divisione è esatta e si dice che $b$ è un divisore di $a$ (ne parla la lezione su [MCD e MCM](/materiale/scuola-superiore/matematica/numeri-naturali/mcd-e-mcm-in-n)).
+La condizione $r < b$ è quella che rende unico il risultato: il resto deve essere più piccolo del divisore, altrimenti nel dividendo ci starebbe ancora una volta il divisore. Quando $r = 0$ la divisione è esatta e si dice che $b$ è un divisore di $a$ (ne parla la lezione [Divisibilità e numeri primi](/materiale/scuola-superiore/matematica/numeri-naturali/divisibilita-e-numeri-primi)).
 
 ```ad-example
 Esempio 1: 47 diviso 5
@@ -163,4 +163,33 @@ $25 \cdot 7 \cdot 4 = 25 \cdot 4 \cdot 7 = 100 \cdot 7 = 700$, con la commutativ
 $99 \cdot 13 = (100 - 1) \cdot 13 = 1300 - 13 = 1287$, con la distributiva.
 
 $1000 - 297 = 1003 - 300 = 703$, con l'invariantiva della sottrazione.
+```
+
+## Problemi con le quattro operazioni
+
+Un problema racconta una situazione e chiede di trovare un numero. Prima di fare qualunque conto leggi tutto il testo, poi individua i dati, cioè i numeri con quello che contano (euro, studenti, posti), e la domanda, cioè la quantità che devi trovare. Per ogni passaggio scegli l'operazione dal significato: l'addizione mette insieme due quantità, la sottrazione toglie o dice quanto manca, la moltiplicazione ripete più volte la stessa quantità, la divisione ripartisce in parti uguali o dice quante volte una quantità ne contiene un'altra.
+
+Poi scrivi tutti i passaggi in un'unica espressione, con le parentesi attorno a ogni conto che va fatto prima degli altri, e calcolala con le regole della sezione precedente. Alla fine rileggi la domanda e controlla che il numero trovato risponda proprio a quella, con la sua unità di misura.
+
+```ad-example
+Esempio 6: una spesa con il resto
+Marta compra $3$ quaderni da $4$ euro ciascuno e paga con una banconota da $20$ euro. Quanti euro riceve di resto?
+
+Dati: $3$ quaderni, $4$ euro l'uno, $20$ euro pagati. Domanda: il resto. La spesa ripete $3$ volte lo stesso prezzo, quindi è $3 \cdot 4$; il resto è quello che manca alla banconota, e si trova con una sottrazione:
+$$20 - 3 \cdot 4 = 20 - 12 = 8$$
+Non servono parentesi, perché la moltiplicazione si fa già prima della sottrazione. Marta riceve $8$ euro di resto.
+```
+
+```ad-example
+Esempio 7: posti divisi tra le classi
+L'aula magna della scuola ha $10$ file da $15$ posti. I docenti occupano $6$ posti e gli altri sono divisi in parti uguali tra $6$ classi. Quanti posti spettano a ogni classe?
+
+I posti in tutto sono $10 \cdot 15$; tolti quelli dei docenti restano $10 \cdot 15 - 6$, e questo numero va diviso per $6$. La sottrazione deve venire prima della divisione, quindi va tra parentesi:
+$$(10 \cdot 15 - 6) : 6 = (150 - 6) : 6 = 144 : 6 = 24$$
+A ogni classe spettano $24$ posti.
+```
+
+```ad-warning
+Dimenticare le parentesi
+Nell'esempio 7, senza parentesi $10 \cdot 15 - 6 : 6$ fa $150 - 1 = 149$: si dividerebbero tra le classi solo i posti dei docenti. Se un risultato va calcolato prima di un'altra operazione, scrivilo tra parentesi.
 ```

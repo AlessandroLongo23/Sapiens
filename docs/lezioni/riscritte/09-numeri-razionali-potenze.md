@@ -19,10 +19,7 @@ L'esponente riguarda tutta la frazione solo se la frazione è chiusa tra parente
 
 ## Il segno della potenza
 
-Quando la base è negativa, il segno del risultato dipende dall'esponente, con la stessa regola dei [numeri interi](/materiale/scuola-superiore/matematica/numeri-interi/potenze-in-z): ogni coppia di fattori negativi dà un prodotto positivo, quindi
-
-- con esponente pari il risultato è positivo;
-- con esponente dispari il risultato è negativo.
+Quando la base è negativa, il segno del risultato dipende dall'esponente, con la stessa regola dei [numeri interi](/materiale/scuola-superiore/matematica/numeri-interi/potenze-in-z): con esponente pari il risultato è positivo, con esponente dispari è negativo.
 
 ```ad-example
 Esempio: base negativa, esponente pari e dispari
@@ -33,11 +30,9 @@ $\left(-\dfrac{2}{3}\right)^3 = \left(-\dfrac{2}{3}\right) \cdot \left(-\dfrac{2
 
 ### Le parentesi decidono qual è la base
 
-In $\left(-\dfrac{2}{3}\right)^2$ la base è $-\dfrac{2}{3}$, segno compreso. In $-\left(\dfrac{2}{3}\right)^2$ la base è $\dfrac{2}{3}$: prima si calcola la potenza, poi si mette il segno meno davanti al risultato.
+In $\left(-\dfrac{2}{3}\right)^2$ la base è $-\dfrac{2}{3}$, segno compreso. In $-\left(\dfrac{2}{3}\right)^2$ la base è $\dfrac{2}{3}$: prima si calcola la potenza, poi si mette il segno meno davanti al risultato. È la differenza tra $(-a)^n$ e $-a^n$ spiegata in [Potenze in ℤ](/materiale/scuola-superiore/matematica/numeri-interi/potenze-in-z).
 
 $$\left(-\dfrac{2}{3}\right)^2 = +\dfrac{4}{9} \qquad\qquad -\left(\dfrac{2}{3}\right)^2 = -\dfrac{4}{9}$$
-
-Con esponente dispari le due scritture danno lo stesso numero, $-\dfrac{8}{27}$, ma per ragioni diverse. Nel dubbio conviene sempre chiedersi quale numero è moltiplicato per sé stesso.
 
 ```ad-warning
 Dimenticare le parentesi

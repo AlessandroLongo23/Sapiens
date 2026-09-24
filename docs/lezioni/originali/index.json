@@ -232,5 +232,69 @@
     "chapterPos": 10,
     "chars": 10637,
     "hasFormulary": false
+  },
+  {
+    "id": "f940b172-a6c0-4083-ac82-4bf26a6cf447",
+    "title": "Divisibilità e numeri primi",
+    "slug": "numeri-naturali-divisibilita",
+    "path": "high_school/math/numeri-naturali/numeri-naturali-divisibilita",
+    "chapter": "Numeri naturali \\mathbb{N}",
+    "new": true
+  },
+  {
+    "id": "42ea70f7-5953-49ea-b477-bb8d780b5a4d",
+    "title": "Numeri interi e valore assoluto",
+    "slug": "numeri-interi-valore-assoluto",
+    "path": "high_school/math/numeri-interi/numeri-interi-valore-assoluto",
+    "chapter": "Numeri interi \\mathbb{Z}",
+    "new": true
+  },
+  {
+    "id": "61d3198e-415f-4af6-b764-935cb3eaead1",
+    "title": "Operazioni in \\mathbb{Z}",
+    "slug": "numeri-interi-operazioni",
+    "path": "high_school/math/numeri-interi/numeri-interi-operazioni",
+    "chapter": "Numeri interi \\mathbb{Z}",
+    "new": true
+  },
+  {
+    "id": "accc1653-b368-4986-a6ee-9530a32e53c8",
+    "title": "Potenze in \\mathbb{Z}",
+    "slug": "numeri-interi-potenze",
+    "path": "high_school/math/numeri-interi/numeri-interi-potenze",
+    "chapter": "Numeri interi \\mathbb{Z}",
+    "new": true
+  },
+  {
+    "id": "e257c1c9-c25a-4d9d-a0b0-a887d1802fcc",
+    "title": "Frazioni e numeri razionali",
+    "slug": "numeri-razionali-frazioni",
+    "path": "high_school/math/numeri-razionali/numeri-razionali-frazioni",
+    "chapter": "Numeri razionali \\mathbb{Q}",
+    "new": true
+  },
+  {
+    "id": "2836fec2-9a5b-49ef-9f62-5c6732132fc5",
+    "title": "Operazioni in \\mathbb{Q}",
+    "slug": "numeri-razionali-operazioni",
+    "path": "high_school/math/numeri-razionali/numeri-razionali-operazioni",
+    "chapter": "Numeri razionali \\mathbb{Q}",
+    "new": true
+  },
+  {
+    "id": "fcf106c9-1977-4874-849d-511895fbdfb5",
+    "title": "Espressioni con frazioni",
+    "slug": "numeri-razionali-espressioni",
+    "path": "high_school/math/numeri-razionali/numeri-razionali-espressioni",
+    "chapter": "Numeri razionali \\mathbb{Q}",
+    "new": true
+  },
+  {
+    "id": "91bf08e6-c17c-42fa-8ebd-699409cbf111",
+    "title": "Rapporti, proporzioni e percentuali",
+    "slug": "numeri-razionali-proporzioni",
+    "path": "high_school/math/numeri-razionali/numeri-razionali-proporzioni",
+    "chapter": "Numeri razionali \\mathbb{Q}",
+    "new": true
   }
 ]

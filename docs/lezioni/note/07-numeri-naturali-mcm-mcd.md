@@ -30,3 +30,11 @@ I conti dell'originale erano giusti (MCD(18, 24) = 6, MCM = 72).
 - Il controllo automatico segnala "fondamentale" (è il nome del teorema fondamentale dell'aritmetica) e la maiuscola di "Algoritmo di Euclide" (nome proprio): falsi positivi, lasciati.
 - Nel formulario l'algoritmo di Euclide è senza esempio: quello della lezione (quattro righe allineate) lo avrebbe allungato troppo. Se si vuole, si può aggiungere.
 - Le carte con i conti usano numeri diversi da quelli degli esempi della lezione ($5316$, $4527$, $2574$, $72$, $\text{MCD}(24, 36)$, $\text{MCM}(4, 6)$), così lo studente non ricorda il risultato a memoria.
+
+## Alleggerita il 24 settembre 2026
+
+Divisori, primi, criteri e scomposizione ora stanno in Divisibilità e numeri primi (19). Tolti:
+
+- dalla lezione, le sezioni "Divisori e multipli", "Numeri primi" (con l'elenco dei primi minori di $50$), "Criteri di divisibilità" (tabella ed esempi 1 e 2, $7128$ e $9152$) e "Scomposizione in fattori primi" (procedimento ed esempio 3, $360$). L'apertura ora rimanda alla 19 per divisori, multipli e scomposizione, e nel procedimento del MCD "scomposizione in fattori primi" è un link alla 19. Il riquadro "Scomporre con fattori non primi" è rimasto, spostato dopo il procedimento del MCD, perché riguarda il confronto dei fattori. Gli esempi sono rinumerati da 1 a 7 (prima 4-10), e "i numeri dell'esempio 8" nel legame tra MCD e MCM è diventato "esempio 5". Da 11 690 a 8111 caratteri.
+- dal formulario, le sezioni "Divisori, multipli e numeri primi", "Criteri di divisibilità" e "Scomposizione in fattori primi". Resta il warning sui fattori non primi. Da 3215 a 1702 caratteri.
+- dalle flashcard, 10 carte: `divisore-definizione`, `multipli-infiniti`, `primo-definizione`, `uno-non-primo`, `criterio-3`, `criterio-4-conto`, `criterio-9-conto`, `criterio-11-conto`, `teorema-fondamentale`, `scomposizione-72`. Ne restano 10, sotto il minimo di 12 dello stile: se serve, si aggiungono carte su MCD e MCM con id nuovi. I progressi degli studenti su quegli id vanno persi alla pubblicazione.

@@ -213,3 +213,16 @@ $$3x + 1{,}50 = 9 \quad\Rightarrow\quad 3x = 7{,}50 \quad\Rightarrow\quad x = 2{
 
 Controllo: $3 \cdot 2{,}50 + 1{,}50 = 7{,}50 + 1{,}50 = 9$. Un quaderno costa $2{,}50$ euro.
 ```
+
+```ad-example
+Esempio 9: un problema sulle età
+Oggi Marco ha $38$ anni e sua figlia Sara ne ha $8$. Tra quanti anni Marco avrà il triplo degli anni di Sara?
+
+Chiama $x$ il numero di anni che devono passare. Tra $x$ anni Marco avrà $38 + x$ anni e Sara $8 + x$: invecchiano tutti e due, quindi la $x$ si aggiunge a entrambe le età. Il testo dice che allora l'età di Marco sarà il triplo di quella di Sara:
+
+$$38 + x = 3(8 + x) \quad\Rightarrow\quad 38 + x = 24 + 3x$$
+
+$$x - 3x = 24 - 38 \quad\Rightarrow\quad -2x = -14 \quad\Rightarrow\quad x = 7$$
+
+Controllo: tra $7$ anni Marco avrà $45$ anni e Sara $15$, e $3 \cdot 15 = 45$. La soluzione è un numero intero positivo, quindi ha senso nel problema: Marco avrà il triplo degli anni di Sara tra $7$ anni.
+```

@@ -10,11 +10,6 @@ Quanto vale $\dfrac{2^2}{3}$? E $\left(\dfrac{2}{3}\right)^2$?
 ---
 $\dfrac{4}{3}$ e $\dfrac{4}{9}$. Senza parentesi l'esponente riguarda solo il numeratore.
 
-## segno-esponente-pari
-Se la base è negativa e l'esponente è pari, che segno ha la potenza?
----
-Positivo. Ogni coppia di fattori negativi dà un prodotto positivo.
-
 ## segno-esponente-dispari-conto
 Quanto vale $\left(-\dfrac{2}{3}\right)^3$?
 ---

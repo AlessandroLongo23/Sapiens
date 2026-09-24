@@ -1,40 +1,5 @@
 # Formulario: MCD e MCM in ℕ
 
-## Divisori, multipli e numeri primi
-
-Con $b \neq 0$, $b$ è un divisore di $a$ (e $a$ è multiplo di $b$) quando esiste un naturale $q$ tale che
-
-$$a = b \cdot q$$
-
-I divisori di un numero sono finiti, i multipli infiniti. Ogni numero è divisibile per $1$ e per sé stesso; $0$ è multiplo di qualunque numero.
-
-Primo: numero maggiore di $1$ con esattamente due divisori, $1$ e sé stesso. Composto: maggiore di $1$ e non primo. $0$ e $1$ non sono primi; $2$ è l'unico primo pari.
-
-$$2,\ 3,\ 5,\ 7,\ 11,\ 13,\ 17,\ 19,\ 23,\ 29,\ 31,\ 37,\ 41,\ 43,\ 47$$
-
-## Criteri di divisibilità
-
-| per | se |
-|---|---|
-| $2$ | l'ultima cifra è pari ($0, 2, 4, 6, 8$) |
-| $3$ | la somma delle cifre è divisibile per $3$ |
-| $4$ | le ultime due cifre sono $00$ o formano un numero divisibile per $4$ |
-| $5$ | l'ultima cifra è $0$ o $5$ |
-| $9$ | la somma delle cifre è divisibile per $9$ |
-| $10$ | l'ultima cifra è $0$ |
-| $11$ | la differenza tra la somma delle cifre di posto dispari e quella delle cifre di posto pari (contando da destra) è $0$ o un multiplo di $11$ |
-| $25$ | le ultime due cifre sono $00$, $25$, $50$ o $75$ |
-
-## Scomposizione in fattori primi
-
-Ogni numero maggiore di $1$ è prodotto di primi in un solo modo, a meno dell'ordine (teorema fondamentale dell'aritmetica).
-
-1. Dividi per il più piccolo primo che divide il numero.
-2. Ripeti sul quoziente fino ad arrivare a $1$.
-3. Scrivi il prodotto dei divisori trovati, con i fattori uguali raccolti in potenze.
-
-Per esempio $360 = 2^3 \cdot 3^2 \cdot 5$.
-
 ## MCD e MCM con la scomposizione
 
 Il MCD è il più grande numero che divide tutti i numeri dati; il MCM è il più piccolo numero diverso da zero che è multiplo di tutti.

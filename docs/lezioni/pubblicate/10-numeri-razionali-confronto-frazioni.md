@@ -2,26 +2,7 @@
 
 Confrontare due frazioni vuol dire stabilire se sono uguali oppure quale delle due è maggiore. Serve per ordinare dei numeri, per controllare il risultato di un problema e, più avanti, per risolvere le disequazioni. Da qui in avanti i denominatori sono sempre positivi: una frazione con il denominatore negativo si riscrive spostando il segno al numeratore, per esempio $\dfrac{3}{-4} = -\dfrac{3}{4}$.
 
-## Frazioni equivalenti
-
-Due frazioni sono **equivalenti** quando rappresentano lo stesso numero, come $\dfrac{2}{3}$ e $\dfrac{10}{15}$. Si ottiene una frazione equivalente moltiplicando o dividendo numeratore e denominatore per lo stesso numero diverso da zero (proprietà invariantiva):
-
-$$\dfrac{2}{3} = \dfrac{2 \cdot 5}{3 \cdot 5} = \dfrac{10}{15}$$
-
-Per controllare se due frazioni $\dfrac{a}{b}$ e $\dfrac{c}{d}$ sono equivalenti si moltiplica in croce: sono equivalenti quando $a \cdot d = b \cdot c$. Per $\dfrac{2}{3}$ e $\dfrac{10}{15}$ si ha $2 \cdot 15 = 30$ e $3 \cdot 10 = 30$.
-
-## Riduzione ai minimi termini
-
-Una frazione è **ridotta ai minimi termini** quando numeratore e denominatore non hanno divisori comuni diversi da $1$. Per ridurla si dividono numeratore e denominatore per il loro MCD (se non ricordi come si calcola, c'è la lezione [MCD e MCM in ℕ](/materiale/scuola-superiore/matematica/numeri-naturali/mcd-e-mcm-in-n)).
-
-```ad-example
-Esempio: ridurre 84/126
-Scomponiamo in fattori primi: $84 = 2^2 \cdot 3 \cdot 7$ e $126 = 2 \cdot 3^2 \cdot 7$. Il MCD prende i fattori comuni con l'esponente minore: $\text{MCD}(84, 126) = 2 \cdot 3 \cdot 7 = 42$.
-
-$$\dfrac{84}{126} = \dfrac{84 : 42}{126 : 42} = \dfrac{2}{3}$$
-```
-
-Prima di confrontare conviene sempre ridurre: i numeri diventano più piccoli, e a volte si scopre che le due frazioni sono la stessa.
+Prima di confrontare conviene sempre ridurre le frazioni ai minimi termini: i numeri diventano più piccoli, e a volte si scopre che le due frazioni sono la stessa. Frazioni equivalenti, proprietà invariantiva e riduzione ai minimi termini sono spiegate nella lezione [Frazioni e numeri razionali](/materiale/scuola-superiore/matematica/numeri-razionali/frazioni-e-numeri-razionali).
 
 ## Frazioni con lo stesso denominatore
 
@@ -148,7 +129,7 @@ $$-\dfrac{1}{2} < -\dfrac{3}{8} < \dfrac{2}{3} < \dfrac{3}{4} < \dfrac{5}{6}$$
 
 ## Le frazioni sulla retta
 
-Ogni frazione corrisponde a un punto della retta dei numeri: $\dfrac{3}{4}$ si trova dividendo il segmento da $0$ a $1$ in quattro parti uguali e contando tre parti a destra dello zero, $-\dfrac{3}{4}$ contando tre parti a sinistra. Confrontare due frazioni vuol dire vedere quale delle due sta più a destra: quella è la maggiore.
+Ogni frazione corrisponde a un punto della retta dei numeri (come si trova è spiegato nella lezione [Frazioni e numeri razionali](/materiale/scuola-superiore/matematica/numeri-razionali/frazioni-e-numeri-razionali)). Confrontare due frazioni vuol dire vedere quale delle due sta più a destra: quella è la maggiore.
 
 ```tikz
 % nome: frazioni-sulla-retta-dei-numeri

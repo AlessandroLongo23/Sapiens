@@ -30,3 +30,10 @@ I conti degli esempi originali erano giusti; li ho rifatti tutti, come quelli nu
 
 - Il formulario riporta la tabella di confronto della lezione così com'è, compresa la voce "solo a destra" per la distributiva della divisione; sopra la tabella la stessa regola è scritta come "solo con la somma al dividendo". Se si toglie "a destra" dalla lezione, va tolto anche qui.
 - La carta `dissociativa` dipende dal nome scelto per la proprietà (vedi il dubbio sopra): se si decide di chiamarla associativa, la carta va riscritta, ma l'id resta.
+
+## Alleggerita il 24 settembre 2026
+
+Niente di tolto: cambiati solo due link della lezione, formulario e flashcard invariati.
+
+- "Per poter sottrarre sempre si passa ai numeri interi": il link va a Numeri interi e valore assoluto (20) invece che a Operazioni in ℤ, come suggerito nelle note della 20.
+- Divisione con resto, "$b$ è un divisore di $a$": il rimando tra parentesi ora è "ne parla la lezione Divisibilità e numeri primi" (19), non più MCD e MCM.
