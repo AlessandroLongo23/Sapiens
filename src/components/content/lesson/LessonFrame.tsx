@@ -67,6 +67,8 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 	const progress = Math.round(scrollProgress * 100);
 	const aiSheet = withAssistant && !lg && aiOpen;
 	const hasToc = !!left;
+	// The side columns' top padding follows the header's, so their labels stay on its row.
+	const side = compact ? 'lg:pt-3' : 'lg:pt-8';
 
 	const onScroll = (e: UIEvent<HTMLDivElement>) => {
 		const el = e.currentTarget;
@@ -101,8 +103,21 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 	return (
 		<div data-subject={tone} className="relative flex h-dvh w-full justify-center overflow-hidden bg-surface text-fg md:h-[calc(100dvh-var(--header-h,60px))]">
 			<ImmersiveFrame />
-			<aside className="absolute inset-y-0 left-0 hidden w-1/4 overflow-y-auto overscroll-y-contain px-4 py-6 lg:flex lg:flex-col" aria-label="Indice della lezione">
+			{/* The side columns sit on the open page, with no frame, so the lesson keeps the weight. Their labels ride on the header's row as it shrinks; their feet (reading progress, chat input) share a line. */}
+			<aside className={cn('absolute inset-y-0 left-0 hidden w-1/4 overflow-hidden transition-[padding] duration-300 lg:flex lg:flex-col', side)} aria-label="Indice della lezione">
 				{lg && left}
+				{lg && hasToc && (
+					<div className="shrink-0 px-8 pb-6 pt-1">
+						{/* One line, centred on the chat input across the lesson. */}
+						<div className="label-mono flex h-11 items-center gap-3 text-fg-faint" role="progressbar" aria-label="Avanzamento della lettura" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+							<span>Letto</span>
+							<span className="h-0.5 flex-1 rounded-full bg-surface-3">
+								<span className="block h-full rounded-full bg-fg-faint transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
+							</span>
+							<span className="w-9 text-right tabular-nums">{progress}%</span>
+						</div>
+					</div>
+				)}
 			</aside>
 
 			<div ref={scroller} onScroll={onScroll} className="no-scrollbar relative flex h-full w-full flex-col justify-between overflow-y-scroll overscroll-y-contain pb-tabbar lg:mx-[25%] lg:pb-0">
@@ -129,7 +144,7 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 								<ListTree className="size-6" aria-hidden="true" />
 							</button>
 						)}
-						<nav className={cn('hidden shrink-0 items-center gap-2 transition-all duration-300 lg:flex', compact && 'scale-90')} aria-label="Sezioni della lezione">
+						<nav className={cn('hidden shrink-0 origin-right items-center gap-2 transition-all duration-300 lg:flex', compact && 'scale-90')} aria-label="Sezioni della lezione">
 							{sections.map(({ href, label, icon: Icon }) => (
 								<Link
 									key={href}
@@ -155,8 +170,8 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 				</div>
 			</div>
 
-			<aside className="absolute inset-y-0 right-0 hidden w-1/4 overflow-y-auto overscroll-y-contain px-4 py-6 lg:flex lg:flex-col" aria-label="Assistente">
-				{lg && withAssistant && <AISidebar />}
+			<aside className={cn('absolute inset-y-0 right-0 hidden w-1/4 overflow-hidden transition-[padding] duration-300 lg:flex lg:flex-col', side)} aria-label="Assistente">
+				{lg && withAssistant && <AISidebar lesson={note?.title} />}
 			</aside>
 
 			{/* Phones and tablets: the lesson's sections and the assistant, in the thumb zone. */}
