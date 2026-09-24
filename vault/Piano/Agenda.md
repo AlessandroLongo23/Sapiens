@@ -12,17 +12,19 @@ La priorità dipende da tre cose: cosa blocca la prossima release, cosa costa ca
 Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi]].
 
 1. **Primo lotto, le 18 lezioni pubblicate:** generatori, formulari, flashcard ed errori frequenti accanto alle regole fatti il 24 settembre. Misurare quanto costa un lotto completo. Poi commit divisi per scope di tutto il lavoro non committato, e deploy. Note: [[Pipeline esercizi]], [[Pipeline lezioni]], [[Flashcard]].
-2. **Lotti nuovi**, uno alla volta, ciascuno completo di teoria, esercizi, formulario e flashcard.
-3. **Richiesta a OpenAI** per la conservazione zero dei dati e creazione del progetto UE; preparare le 50-100 domande della valutazione. Nota: [[Provider AI]].
-4. **Schema della tabella dei tentativi** e correzione lato server, insieme alla scelta del livello sulla pagina degli esercizi. Note: [[Esercizi]], [[Schema dati]].
-5. **Prezzo esatto di Studio** e testi della pagina prezzi; cambiare `src/lib/stripe/config.ts`. Nota: [[Piani e prezzi]].
-6. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
-7. **Strumentazione della beta:** eventi, disdette, commenti. Nota: [[Metriche]].
-8. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
-9. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
+2. **Deploy:** Alessandro imposta chiave segreta e webhook del sandbox di Stripe nella produzione di Vercel, poi merge di `beta-lotto-1` su master. Vedi [[2026-09-24 Deploy e secondo lotto]].
+3. **Lotti nuovi**, uno alla volta, ciascuno completo di teoria, esercizi, formulario e flashcard. Il secondo (i capitoli dei numeri, 8 lezioni) è fatto e committato il 24 settembre, e aspetta la rilettura.
+4. **Richiesta a OpenAI** per la conservazione zero dei dati e creazione del progetto UE; preparare le 50-100 domande della valutazione. Nota: [[Provider AI]].
+5. **Schema della tabella dei tentativi** e correzione lato server, insieme alla scelta del livello sulla pagina degli esercizi. Note: [[Esercizi]], [[Schema dati]].
+6. **Prezzo esatto di Studio** e testi della pagina prezzi; cambiare `src/lib/stripe/config.ts`. Nota: [[Piani e prezzi]].
+7. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
+8. **Strumentazione della beta:** eventi, disdette, commenti. Nota: [[Metriche]].
+9. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
+10. **Adesivi sulle note:** applicare la migrazione `note_stickers`, provare il salvataggio, commit dell'MVP e del foglio a larghezza fissa. Vedi [[Adesivi]] e [[2026-09-24 Adesivi nella beta, a partire dalle note]].
+11. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
 
 ## Prima della v1.0 e della v2
-- Adesivi: stile e prima collezione con Dario, aggancio alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free. Note: [[Adesivi]], [[Pratica quotidiana]].
+- Adesivi dopo l'MVP: stile e prima collezione con Dario, premi agganciati alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free. Note: [[Adesivi]], [[Pratica quotidiana]].
 - Prezzo del contatto per i tutor e regole di qualità. Nota: [[Pay-per-lead]].
 - Come trovare i primi tutor reali. Nota: [[Marketplace]].
 - Dettaglio degli strumenti DSA e consulenza di un esperto. Nota: [[Strumenti DSA]].
