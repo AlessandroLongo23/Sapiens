@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Card } from '@/components/ui/Card';
 import { DEFAULT_NOTE_TITLE, MAX_CONTENT, type NotebookRow, type NoteRow } from '@/lib/zaino/config';
+import type { PlacedSticker } from '@/lib/zaino/stickers';
 import { useNoteEditor, type EditorMode } from '@/lib/state/note-editor';
 import { ImmersiveFrame } from '@/components/content/lesson/LessonPresence';
 import { NoteHeader } from './NoteHeader';
@@ -32,8 +33,10 @@ const MAX_UNSAVED_MS = 8000;
 const KEEPALIVE_LIMIT = 60_000;
 
 const MODE_KEY = 'zaino:mode';
+/** Stickers are saved a moment after the last one goes down or comes off. */
+const STICKER_DEBOUNCE_MS = 600;
 
-export function NoteEditor({ note, notebookTitle, notebooks }: { note: NoteRow; notebookTitle: string; notebooks: NotebookRow[] }) {
+export function NoteEditor({ note, notebookTitle, notebooks, stickers }: { note: NoteRow; notebookTitle: string; notebooks: NotebookRow[]; stickers: PlacedSticker[] }) {
 	const router = useRouter();
 	const store = useNoteEditor();
 	const { noteId, mode, status, markdown, title, conflict, error } = store;
@@ -49,6 +52,54 @@ export function NoteEditor({ note, notebookTitle, notebooks }: { note: NoteRow; 
 	const oldestEdit = useRef<number | null>(null);
 	const saving = useRef(false);
 	const channel = useRef<BroadcastChannel | null>(null);
+
+	/*
+	 * Stickers are saved on their own, the whole set at a time, and never touch
+	 * the note's version (see the note_stickers migration). The set lives here
+	 * so it survives a switch to Avanzata and back, which remounts the sheet.
+	 * Saves run one after another, so the last set sent is the one that stays.
+	 */
+	const stickerSet = useRef(stickers);
+	const stickerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const stickerQueue = useRef<Promise<void>>(Promise.resolve());
+	const [stickerError, setStickerError] = useState(false);
+	const saveStickers = useCallback(
+		(keepalive = false) => {
+			if (stickerTimer.current) clearTimeout(stickerTimer.current);
+			stickerTimer.current = null;
+			const body = JSON.stringify({ stickers: stickerSet.current });
+			stickerQueue.current = stickerQueue.current.then(async () => {
+				try {
+					const response = await fetch(`/api/zaino/note/${note.id}/adesivi`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body, keepalive });
+					setStickerError(!response.ok);
+				} catch {
+					setStickerError(true);
+				}
+			});
+		},
+		[note.id]
+	);
+	const onStickersChange = useCallback(
+		(next: PlacedSticker[]) => {
+			stickerSet.current = next;
+			if (stickerTimer.current) clearTimeout(stickerTimer.current);
+			stickerTimer.current = setTimeout(() => saveStickers(), STICKER_DEBOUNCE_MS);
+		},
+		[saveStickers]
+	);
+	const readStickers = useCallback(() => stickerSet.current, []);
+	// A pending save goes out when the page is left or hidden.
+	useEffect(() => {
+		const flush = () => stickerTimer.current && saveStickers(true);
+		const onHidden = () => document.visibilityState === 'hidden' && flush();
+		document.addEventListener('visibilitychange', onHidden);
+		window.addEventListener('pagehide', flush);
+		return () => {
+			document.removeEventListener('visibilitychange', onHidden);
+			window.removeEventListener('pagehide', flush);
+			flush();
+		};
+	}, [saveStickers]);
 
 	// A different note starts clean, or navigating A → B would show A's dirty text.
 	// Only a different note: the server payload is re-sent on any refresh, and
@@ -308,6 +359,17 @@ export function NoteEditor({ note, notebookTitle, notebooks }: { note: NoteRow; 
 				</div>
 			)}
 
+			{stickerError && (
+				<div className="shrink-0 px-4 pt-3">
+					<Alert tone="error">
+						Gli adesivi non sono stati salvati.{' '}
+						<button type="button" onClick={() => saveStickers()} className="rounded font-semibold underline underline-offset-2 focus-ring">
+							Riprova
+						</button>
+					</Alert>
+				</div>
+			)}
+
 			{status === 'error' && !conflict && (
 				<div className="shrink-0 px-4 pt-3">
 					<Alert tone="error">
@@ -324,7 +386,14 @@ export function NoteEditor({ note, notebookTitle, notebooks }: { note: NoteRow; 
 			    way it would not be on a keystroke. */}
 			<div key={mode} className="flex min-h-0 flex-1 animate-fade-in flex-col overflow-hidden pb-[calc(var(--spacing-tabbar)+var(--safe-b))] lg:pb-0">
 				{mode === 'simple' ? (
-					<SimpleEditor initialMarkdown={markdown} onChange={onChange} register={register} onSwitchToAdvanced={() => changeMode('advanced')} />
+					<SimpleEditor
+						initialMarkdown={markdown}
+						onChange={onChange}
+						register={register}
+						onSwitchToAdvanced={() => changeMode('advanced')}
+						stickers={readStickers}
+						onStickersChange={onStickersChange}
+					/>
 				) : (
 					<AdvancedEditor value={markdown} onChange={onChange} />
 				)}
