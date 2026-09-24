@@ -22,20 +22,24 @@ export async function generateExercises(dbPath: string, slug: string): Promise<E
 	if (!topicConfig || !load) return [];
 	try {
 		const generators = await load();
-		const exercises: ExerciseView[] = [];
+		// The session climbs from the easiest level to the hardest; the order is shuffled only inside each level.
+		const byLevel = new Map<number, ExerciseView[]>();
 		for (const { generator, count, args } of Object.values(topicConfig)) {
 			const Generator = generators[generator];
 			if (!Generator) throw new Error(`Generator '${generator}' not found in ${slug}`);
+			const level = args[0] ?? 0;
+			const group = byLevel.get(level) ?? [];
+			byLevel.set(level, group);
 			for (let i = 0; i < count; i++) {
 				const instance = new Generator(...args);
-				exercises.push({
+				group.push({
 					id: `${generator}-${i}-${Math.random().toString(36).slice(2, 8)}`,
 					questionHtml: renderMath(instance.question.textContent),
 					options: optionsOf(instance).map((a) => ({ html: renderMath(a.textContent), text: a.textContent, isCorrect: a.isCorrect }))
 				});
 			}
 		}
-		return exercises.shuffle();
+		return [...byLevel.entries()].sort(([a], [b]) => a - b).flatMap(([, group]) => group.shuffle());
 	} catch (err) {
 		console.error(`exercise generation failed for ${slug}:`, err);
 		return [];
