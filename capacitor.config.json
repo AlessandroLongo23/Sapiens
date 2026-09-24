@@ -2,6 +2,8 @@
   "appId": "it.sapiens.app",
   "appName": "Sapiens",
   "webDir": "public",
+  "appendUserAgent": "SapiensApp",
+  "backgroundColor": "#f8f5ef",
   "server": {
     "url": "https://sapiens-edu.vercel.app",
     "androidScheme": "https"
@@ -10,7 +12,7 @@
     "SplashScreen": {
       "launchShowDuration": 2000,
       "launchAutoHide": true,
-      "backgroundColor": "#ffffff",
+      "backgroundColor": "#f8f5ef",
       "androidSplashResourceName": "splash"
     }
   }

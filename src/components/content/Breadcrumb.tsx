@@ -27,12 +27,12 @@ export const contentCrumbs = (ancestors: ContentNode[]): BreadcrumbItem[] => [
 	...ancestors.map((n, i) => ({ label: n.title, path: nodePath(ancestors.slice(0, i + 1)), icon: iconFor(n) }))
 ];
 
-/** Linked trail with the matching BreadcrumbList structured data. */
+/** Linked trail with the matching BreadcrumbList structured data. The installed app hides the trail on phones (its header has a back arrow) and keeps the data. */
 export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
 	return (
 		<>
 			<JsonLd data={breadcrumbJsonLd(items.filter((i) => i.path).map((i) => ({ name: i.label, path: i.path! })))} />
-			<nav aria-label="Percorso" className="mb-8">
+			<nav aria-label="Percorso" className="mb-8 app:max-md:hidden">
 				<ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
 					{items.map((item, index) => {
 						const last = index === items.length - 1;

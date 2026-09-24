@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type UIEvent } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect, useLayoutEffect, useRef, useState, ViewTransition, type ReactNode, type UIEvent } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { APP_START } from '@/lib/config/site';
+import { useAppMode } from '@/lib/hooks/use-app-mode';
 import { useSearch } from '@/lib/state/search';
 import { useLessonLayout } from '@/lib/state/lesson-layout';
 import type { ContentNode } from '@/lib/utils/tree';
@@ -23,9 +25,15 @@ const IMMERSIVE_PATHS = [/^\/materiale\/[^/]+\/[^/]+\/[^/]+\/[^/]+/, /^\/zaino\/
  * whole phone screen, and so does the note editor: no site header, footer or
  * tab bar, the page brings its own. The URL shape decides that on the server; once a lesson frame (or
  * a 404 in its place) has mounted, its word counts.
+ *
+ * In the installed app the footer goes (its links are in the Profilo sheet),
+ * page changes fade the content (see `.page` in globals.css), and the landing
+ * page, reached through a link, gives way to the app's start.
  */
 export function Shell({ tree = [], children }: { tree?: ContentNode[]; children: ReactNode }) {
 	const pathname = usePathname();
+	const router = useRouter();
+	const app = useAppMode();
 	const searching = useSearch((s) => s.isActive);
 	const frameMounted = useLessonLayout((s) => s.frameMounted);
 	const scroller = useRef<HTMLDivElement>(null);
@@ -60,6 +68,10 @@ export function Shell({ tree = [], children }: { tree?: ContentNode[]; children:
 		lastTop.current = scroller.current?.scrollTop ?? 0;
 	}, [pathname]);
 
+	useEffect(() => {
+		if (app && pathname === '/') router.replace(APP_START);
+	}, [app, pathname, router]);
+
 	// The header's height, for the search overlay and the mega menu.
 	useEffect(() => {
 		const bar = document.getElementById('site-header-bar');
@@ -78,8 +90,16 @@ export function Shell({ tree = [], children }: { tree?: ContentNode[]; children:
 				{/* While the search overlay is up the page is faded out and inert, so neither Tab nor a screen reader lands on it. */}
 				<div ref={scroller} onScroll={onScroll} inert={searching || undefined} className={cn('no-scrollbar flex-1 overflow-y-auto transition-opacity duration-300 ease-out', !immersive && 'pb-tabbar md:pb-0', immersive && 'overflow-hidden', searching ? 'pointer-events-none opacity-0' : 'opacity-100')}>
 					<Header hidden={hidden} immersive={immersive} />
-					<main id="contenuto" tabIndex={-1} className="min-h-[calc(100dvh-var(--header-h,64px))] outline-none">{children}</main>
-					{!immersive && <Footer />}
+					<main id="contenuto" tabIndex={-1} className="min-h-[calc(100dvh-var(--header-h,64px))] outline-none">
+						<ViewTransition update="page" default="none">
+							<div>{children}</div>
+						</ViewTransition>
+					</main>
+					{!immersive && (
+						<div className="app:max-md:hidden">
+							<Footer />
+						</div>
+					)}
 				</div>
 				{!immersive && !searching && <MobileTabBar />}
 			</div>

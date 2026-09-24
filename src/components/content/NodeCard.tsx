@@ -26,7 +26,7 @@ function Cover({ node, href }: { node: ContentNode; href: string }) {
 		<Link
 			href={href}
 			data-subject={toneFor(node)}
-			className="group relative isolate flex min-h-44 flex-col overflow-hidden rounded-2xl bg-tint-cover p-6 text-tint-cover-fg no-underline shadow-paper transition-[transform,box-shadow] duration-300 ease-out-soft hover:-translate-y-1 hover:shadow-lift focus-ring-offset sm:min-h-64"
+			className="group relative isolate flex min-h-44 flex-col overflow-hidden rounded-2xl bg-tint-cover p-6 text-tint-cover-fg no-underline shadow-paper transition-[transform,box-shadow] duration-300 ease-out-soft hover:-translate-y-1 hover:shadow-lift focus-ring-offset active:scale-[0.98] sm:min-h-64 app:max-md:min-h-36"
 		>
 			<span className="grid-paper absolute inset-0 -z-10 opacity-60 [--grid:color-mix(in_oklab,white_14%,transparent)]" aria-hidden="true" />
 			{/* The spine: a darker band down the left edge, as on a bound book. */}
@@ -34,7 +34,7 @@ function Cover({ node, href }: { node: ContentNode; href: string }) {
 			<NodeIcon node={node} strokeWidth={1.1} className="absolute -bottom-8 -right-6 -z-10 size-48 text-white/15 transition-transform duration-500 ease-out-soft group-hover:-rotate-6 group-hover:scale-105" aria-hidden="true" />
 			<div className="flex items-start justify-between gap-4 pl-2">
 				<span className="label-mono text-white/75">{node.type === 'level' ? 'Livello' : 'Materia'}</span>
-				<ArrowUpRight className="size-5 text-white/70 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" aria-hidden="true" />
+				<ArrowUpRight className="size-5 text-white/70 app:max-md:hidden transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" aria-hidden="true" />
 			</div>
 			<h3 className="mt-auto pl-2 font-display text-4xl font-semibold leading-none tracking-tight">
 				<Latex content={node.title} />
@@ -67,7 +67,8 @@ function Row({ node, href, index }: { node: ContentNode; href: string; index: nu
 						<PenStroke onHover className={cn('absolute inset-x-0 -bottom-1.5 h-2', !ready && 'text-fg-faint')} />
 					</span>
 				</span>
-				<span className={cn('label-mono shrink-0', ready ? 'text-fg-subtle' : 'italic text-fg-faint')}>{meta}</span>
+				{/* "Vai alla lezione" says what a tap does anyway; in the app on a phone the row and its arrow say it. */}
+				<span className={cn('label-mono shrink-0', ready ? 'text-fg-subtle' : 'italic text-fg-faint', ready && node.type !== 'chapter' && 'app:max-md:hidden')}>{meta}</span>
 				<ArrowRight className="size-4 shrink-0 self-center text-fg-faint transition-[transform,color] duration-300 ease-out-soft group-hover:translate-x-1 group-hover:text-tint-fg" aria-hidden="true" />
 			</Link>
 		</li>
