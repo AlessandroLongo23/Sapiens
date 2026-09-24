@@ -16,6 +16,7 @@ import {
 	type NoteSummary,
 	type Quota
 } from '@/lib/zaino/config';
+import { parseStickers, type PlacedSticker } from '@/lib/zaino/stickers';
 
 // Re-exported so a server caller has one import for the whole feature.
 export * from '@/lib/zaino/config';
@@ -561,3 +562,30 @@ export function plainExcerpt(markdown: string, max = 160): string {
 }
 
 const clamp = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text);
+
+/* --------------------------------------------------------------- stickers */
+
+/**
+ * The stickers on one note. A read that fails gives an empty sheet and a log
+ * line: a sticker is decoration, and the note must still open without it.
+ */
+export async function getNoteStickers(supabase: SupabaseClient, userId: string, noteId: string): Promise<PlacedSticker[]> {
+	const { data, error } = await supabase.from('note_stickers').select('stickers').eq('note_id', noteId).eq('user_id', userId).maybeSingle();
+	if (error) {
+		console.error('note stickers lookup failed:', error.message);
+		return [];
+	}
+	const parsed = parseStickers((data as Row | null)?.stickers ?? []);
+	return typeof parsed === 'string' ? [] : parsed;
+}
+
+/** Replaces the whole set. The note is checked first so a missing one is a 404, not a policy error. */
+export async function saveNoteStickers(supabase: SupabaseClient, userId: string, noteId: string, stickers: PlacedSticker[]): Promise<void> {
+	const { data: note, error: lookup } = await supabase.from('notes').select('id').eq('id', noteId).eq('user_id', userId).maybeSingle();
+	if (lookup) fail('note lookup failed', lookup);
+	if (!note) throw new ZainoError(404, 'Nota non trovata.');
+	const { error } = await supabase
+		.from('note_stickers')
+		.upsert({ note_id: noteId, user_id: userId, stickers, updated_at: new Date().toISOString() }, { onConflict: 'note_id' });
+	if (error) fail('note stickers save failed', error);
+}
