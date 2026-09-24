@@ -17,6 +17,7 @@ import { join, relative } from 'node:path';
 const ALLOWED = new Set([
 	'src/components/zaino/SimpleEditor.tsx',
 	'src/components/zaino/MathPopover.tsx',
+	'src/components/zaino/LinkDialog.tsx',
 	'src/lib/zaino/extensions.ts',
 	'src/lib/zaino/math.ts',
 	'src/lib/zaino/raw-block.ts'
