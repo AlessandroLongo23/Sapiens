@@ -4,11 +4,23 @@ import { cn } from '@/lib/utils/cn';
 import { Sticker } from '@/components/ui/Sticker';
 import { Breadcrumb, type BreadcrumbItem } from './Breadcrumb';
 
-/** A stroke of red pen, drawn under a title the way a student marks a heading. */
-export function PenStroke({ className }: { className?: string }) {
+/**
+ * A stroke of red pen, drawn under a title the way a student marks a heading.
+ * By default it draws itself once on load; `onHover` leaves it undrawn until
+ * the enclosing `group` is hovered or focused, and takes it back on leave.
+ */
+export function PenStroke({ className, onHover = false }: { className?: string; onHover?: boolean }) {
 	return (
 		<svg viewBox="0 0 200 12" preserveAspectRatio="none" className={cn('pointer-events-none h-2.5 w-full text-accent', className)} aria-hidden="true">
-			<path d="M2 8.5c30-4.2 62-6.1 98-5.9 32 .2 62 1.9 98 4.6" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" className="pen-stroke" pathLength={1} />
+			<path
+				d="M2 8.5c30-4.2 62-6.1 98-5.9 32 .2 62 1.9 98 4.6"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="3.2"
+				strokeLinecap="round"
+				className={onHover ? '[stroke-dasharray:1] [stroke-dashoffset:1] transition-[stroke-dashoffset] duration-500 ease-out-soft group-hover:[stroke-dashoffset:0] group-focus-visible:[stroke-dashoffset:0] group-active:[stroke-dashoffset:0] motion-reduce:transition-none' : 'pen-stroke'}
+				pathLength={1}
+			/>
 		</svg>
 	);
 }
