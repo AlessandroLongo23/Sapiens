@@ -3,6 +3,7 @@ import { nodePath, subviewPath } from '@/lib/seo/slug';
 import { nodeTitle, nodeDescription, markdownExcerpt } from '@/lib/seo/meta';
 import { lessonNavigation, type LessonNavigation } from '@/lib/utils/lesson-navigation';
 import { CONTENT_ROOT } from '@/lib/config/site';
+import type { Flashcard } from '@/lib/content/flashcards';
 
 export interface NodePageServerData {
 	nodeId: string;
@@ -10,6 +11,7 @@ export interface NodePageServerData {
 	dbPath: string;
 	theory: string | null;
 	formulary: string | null;
+	flashcards: Flashcard[] | null;
 	updatedAt: string | null;
 }
 

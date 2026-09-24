@@ -12,9 +12,10 @@ export interface ContentNode {
     position: number;
     description?: string | null;
     updated_at?: string | null;
-    /** Set by the server: the lesson has theory text / a formulary. */
+    /** Set by the server: the lesson has theory text / a formulary / flashcards. */
     has_theory?: boolean;
     has_formulary?: boolean;
+    has_flashcards?: boolean;
     /** Only present on the node being rendered, never on the tree. */
     theory?: string | null;
     formulary?: string | null;

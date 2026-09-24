@@ -32,6 +32,7 @@ export const loadNodePage = cache(async (path: string, expect: 'index' | 'topic'
 		dbPath: dbPath(ancestors),
 		theory: content?.theory ?? null,
 		formulary: content?.formulary ?? null,
+		flashcards: content?.flashcards ?? null,
 		updatedAt: content?.updated_at ?? null
 	});
 	if (!page) notFound();

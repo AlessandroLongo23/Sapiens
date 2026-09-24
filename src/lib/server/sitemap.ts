@@ -56,6 +56,7 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 			if (node.has_theory) urls.push({ loc: nodePath(ancestors), lastmod });
 			if (configs[dbPath(ancestors)]) urls.push({ loc: subviewPath(ancestors, 'exercises'), lastmod });
 			if (node.has_formulary) urls.push({ loc: subviewPath(ancestors, 'formulary'), lastmod });
+			if (node.has_flashcards) urls.push({ loc: subviewPath(ancestors, 'flashcards'), lastmod });
 		} else {
 			urls.push({ loc: nodePath(ancestors), lastmod: day(latestUpdate(descendants(node))) });
 		}
