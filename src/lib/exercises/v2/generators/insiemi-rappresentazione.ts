@@ -13,7 +13,6 @@ import {
 	type Prop,
 	assembleChoice,
 	diff,
-	has,
 	endMistakes,
 	norm,
 	propElements,

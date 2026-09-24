@@ -14,7 +14,6 @@ import {
 	type Opt,
 	G,
 	MISTAKE,
-	N,
 	P,
 	ascii,
 	assertWellFormed,

@@ -139,7 +139,6 @@ function buildL1(rng: Rng): Built | null {
 	const r = fraction(rng, boundFor(e));
 	if (!r) return null;
 	const a = r.num, b = r.den;
-	const v = power(r, e);
 	return {
 		expr: { t: 'pow', b: r.toString(), e },
 		case: `esponente ${e}`,
