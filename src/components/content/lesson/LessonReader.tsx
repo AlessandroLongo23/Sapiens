@@ -92,7 +92,7 @@ export function LessonReader({ html, sections, footer }: Props) {
 					</details>
 				)}
 
-				<div className="prose prose-zinc max-w-none">
+				<div className="prose prose-zinc max-w-none prose-strong:text-fg-strong">
 					<LessonBody html={html} />
 				</div>
 			</div>
