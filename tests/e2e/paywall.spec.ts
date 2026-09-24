@@ -21,7 +21,7 @@ test('anonymous visitor sees the upgrade card, not the exercises', async ({ page
 	await page.goto(EXERCISES_PATH);
 	await expect(page.locator('#paywall-title')).toContainText('piano Lite');
 	await expect(page.getByRole('button', { name: /Prova Lite gratis/ })).toBeVisible();
-	await expect(page.getByRole('button', { name: 'Inizia Esercizi' })).toHaveCount(0);
+	await expect(page.getByRole('button', { name: 'Inizia gli esercizi' })).toHaveCount(0);
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
 });
 
@@ -47,7 +47,7 @@ test('free account: still locked, then Checkout with the trial unlocks it', asyn
 	await page.getByRole('link', { name: 'Continua' }).click();
 	await page.waitForURL(new RegExp(EXERCISES_PATH.replace(/\//g, '\\/')));
 	await expect(page.locator('#paywall-title')).toHaveCount(0);
-	await page.getByRole('button', { name: 'Inizia Esercizi' }).click();
+	await page.getByRole('button', { name: 'Inizia gli esercizi' }).click();
 
 	// Answer every question with its first option; the summary sheet appears at the end.
 	const summary = page.getByRole('dialog');

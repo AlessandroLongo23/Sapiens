@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import type { ExerciseView } from '@/lib/server/exercises';
+import type { ExerciseView, QuestionBlock } from '@/lib/server/exercises';
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
 import { StartScreen } from './StartScreen';
@@ -10,24 +11,59 @@ import { SummarySheet } from './SummarySheet';
 
 type Progress = 'unanswered' | 'correct' | 'incorrect';
 
-const PROGRESS_CLASS: Record<Progress, string> = { unanswered: 'bg-surface-4', correct: 'bg-ok', incorrect: 'bg-danger' };
+const PROGRESS_CLASS: Record<Progress, string> = { unanswered: 'bg-surface-4', correct: 'bg-ok', incorrect: 'bg-accent' };
 
-/** One segment per question, coloured as it is answered; the whole row is one progress bar for assistive tech. */
-function ProgressBar({ states }: { states: Progress[] }) {
+/** One segment per question, coloured as it is answered, the current one in ink, and the count beside it; the segments are one progress bar for assistive tech. */
+function ProgressBar({ states, current }: { states: Progress[]; current: number }) {
 	const answered = states.filter((s) => s !== 'unanswered').length;
+	const pad = (n: number) => String(n).padStart(2, '0');
 	return (
-		<div className="flex w-full gap-2 p-1" role="progressbar" aria-label="Avanzamento degli esercizi" aria-valuemin={0} aria-valuemax={states.length} aria-valuenow={answered} aria-valuetext={`${answered} di ${states.length} domande`}>
-			{states.map((state, i) => (
-				<div key={i} className={cn('h-2.5 flex-1 rounded-full transition-colors duration-500', PROGRESS_CLASS[state])} />
-			))}
+		<div className="flex w-full max-w-2xl items-center gap-4">
+			<div className="flex flex-1 gap-1.5" role="progressbar" aria-label="Avanzamento degli esercizi" aria-valuemin={0} aria-valuemax={states.length} aria-valuenow={answered} aria-valuetext={`${answered} di ${states.length} domande`}>
+				{states.map((state, i) => (
+					<div key={i} className={cn('h-1.5 flex-1 rounded-full transition-colors duration-500', state === 'unanswered' && i === current ? 'bg-fg-subtle' : PROGRESS_CLASS[state])} />
+				))}
+			</div>
+			<span className="label-mono shrink-0 tabular-nums text-fg-subtle" aria-hidden="true">
+				{pad(Math.min(current + 1, states.length))}
+				<span className="text-fg-faint"> / {pad(states.length)}</span>
+			</span>
 		</div>
 	);
 }
 
-const ANSWER_CLASS: Record<Progress, string> = {
-	unanswered: 'bg-surface border-edge shadow-paper hover:border-edge-strong hover:bg-surface-2 active:bg-surface-3',
-	correct: 'z-10 scale-105 animate-pulse border-ok bg-ok text-white shadow-lg',
-	incorrect: 'z-10 scale-105 animate-shake border-danger bg-danger text-white shadow-lg'
+/** The problem under the instruction: a paragraph of text, the givens in one row, a formula on its own. */
+function Block({ block }: { block: QuestionBlock }) {
+	if (block.kind === 'text') return <Html html={block.html} className="math-content mx-auto max-w-xl text-balance text-base leading-relaxed text-fg sm:text-lg" />;
+	if (block.kind === 'ask') return <Html html={block.html} className="math-content text-balance font-display text-xl font-medium text-fg-strong sm:text-2xl" />;
+	if (block.kind === 'givens')
+		return (
+			<div className="flex flex-wrap items-baseline justify-center gap-x-5 gap-y-2 text-lg sm:text-xl">
+				{block.items.map((html, i) => (
+					<span key={i} className="whitespace-nowrap">
+						<Html as="span" html={html} className="math-content" />
+						{i < block.items.length - 1 && <span className="text-fg-subtle">,</span>}
+					</span>
+				))}
+			</div>
+		);
+	return <Html html={block.html} className="math-content scroll-x px-2 py-1 text-lg sm:text-xl [&_.katex-display]:overflow-visible" />;
+}
+
+/** How an answer looks: waiting, the right one (chosen or revealed after a mistake), the wrong one chosen, or set aside. */
+type AnswerState = 'idle' | 'correct' | 'incorrect' | 'muted';
+
+const ANSWER_CLASS: Record<AnswerState, string> = {
+	idle: 'border-edge bg-surface shadow-paper hover:-translate-y-px hover:border-edge-strong hover:shadow-lift active:translate-y-0 active:bg-surface-2',
+	correct: 'border-ok bg-ok-soft text-ok-fg shadow-paper',
+	incorrect: 'animate-nudge border-danger bg-danger-soft text-danger-fg shadow-paper',
+	muted: 'border-edge-soft bg-surface opacity-45'
+};
+const BADGE_CLASS: Record<AnswerState, string> = {
+	idle: 'border-edge-strong text-fg-subtle',
+	correct: 'border-ok bg-ok text-white',
+	incorrect: 'border-danger bg-danger text-white',
+	muted: 'border-edge text-fg-faint'
 };
 
 /** A LaTeX answer read aloud: the few commands the generators use become words or symbols, the rest is stripped. */
@@ -51,19 +87,20 @@ export function speakable(latex: string): string {
 }
 
 /** Fills its grid cell, so every answer of a question is the same size; a formula wider than the cell scrolls inside it. */
-function AnswerButton({ html, label, letter, state, locked, onClick }: { html: string; label: string; letter: string; state: Progress; locked: boolean; onClick: () => void }) {
+function AnswerButton({ html, label, number, state, chosen, locked, onClick }: { html: string; label: string; number: number; state: AnswerState; chosen: boolean; locked: boolean; onClick: () => void }) {
 	return (
 		<button
 			type="button"
 			onClick={onClick}
 			aria-label={label}
-			aria-pressed={state !== 'unanswered'}
+			aria-pressed={chosen}
 			aria-disabled={locked || undefined}
-			className={cn('relative flex h-full min-h-[56px] w-full min-w-0 items-center justify-center break-words rounded-xl border-2 px-3 py-3 text-base font-semibold transition-all duration-300 ease-in-out focus-ring sm:px-6 sm:py-4 sm:text-lg', ANSWER_CLASS[state])}
+			aria-keyshortcuts={String(number)}
+			className={cn('relative flex h-full min-h-[64px] w-full min-w-0 items-center justify-center break-words rounded-xl border px-12 py-3 text-base font-medium text-fg-strong transition-[transform,box-shadow,background-color,border-color,opacity] duration-200 ease-out focus-ring sm:text-lg', ANSWER_CLASS[state], locked && 'cursor-default hover:translate-y-0')}
 		>
-			{/* The letter of a multiple-choice test: a), b), c). The label already says which answer this is. */}
-			<span className={cn('absolute left-3 top-2 font-mono text-[0.6875rem] font-medium', state === 'unanswered' ? 'text-fg-faint' : 'text-white/80')} aria-hidden="true">
-				{letter})
+			{/* The key that picks this answer, in a box to tick: it becomes the tick or the cross. The label already says which answer this is. */}
+			<span className={cn('absolute left-3 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-md border font-mono text-xs font-medium transition-colors duration-200', BADGE_CLASS[state])} aria-hidden="true">
+				{state === 'correct' ? <Check className="size-4" strokeWidth={3} /> : state === 'incorrect' ? <X className="size-4" strokeWidth={3} /> : number}
 			</span>
 			<Html as="span" data-answer-content html={html} className="math-content block max-w-full scroll-x px-1 py-1 [&_.katex-display]:overflow-visible [&_.katex]:text-inherit" aria-hidden="true" />
 		</button>
@@ -104,7 +141,7 @@ export function ExerciseRunner({ exercises, titleHtml, theoryHref, nextHref }: P
 	const [narrow, setNarrow] = useState(false);
 	const [current, setCurrent] = useState(exercises);
 	const grid = useRef<HTMLDivElement>(null);
-	const question = useRef<HTMLHeadingElement>(null);
+	const question = useRef<HTMLDivElement>(null);
 	const exercise = exercises[index] ?? null;
 	const correct = progress.filter((p) => p === 'correct').length;
 	const estimated = exercises.length ? `${Math.max(5, Math.ceil(exercises.length * 1.5))} min` : '10 min';
@@ -136,12 +173,33 @@ export function ExerciseRunner({ exercises, titleHtml, theoryHref, nextHref }: P
 		if (selected !== null || !exercise) return;
 		setSelected(i);
 		setProgress((p) => p.map((s, k) => (k === index ? (exercise.options[i].isCorrect ? 'correct' : 'incorrect') : s)));
+		// A mistake stays on screen longer: the right answer is shown next to it.
 		setTimeout(() => {
 			setSelected(null);
 			if (index < exercises.length - 1) setIndex(index + 1);
 			else setSummary(true);
-		}, 1500);
+		}, exercise.options[i].isCorrect ? 1100 : 2200);
 	};
+
+	// From the keyboard: 1-4 pick an answer (the number on its box), and a-d too, the letters of a written test.
+	// Not while typing somewhere else on the page, not with a modifier held, not after the answer is given.
+	useEffect(() => {
+		if (!started || summary || !exercise) return;
+		const onKey = (e: KeyboardEvent) => {
+			if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+			const target = e.target as HTMLElement | null;
+			if (target?.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"], [role="dialog"]')) return;
+			const key = e.key.toLowerCase();
+			const i = /^[1-9]$/.test(key) ? Number(key) - 1 : /^[a-z]$/.test(key) ? key.charCodeAt(0) - 97 : -1;
+			if (i < 0 || i >= exercise.options.length) return;
+			e.preventDefault();
+			answer(i);
+		};
+		window.addEventListener('keydown', onKey);
+		return () => window.removeEventListener('keydown', onKey);
+		// `answer` reads the state listed here; re-subscribing on each question keeps it current.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [started, summary, exercise, selected, index]);
 
 	// Every question, the first one included, starts with the focus on its text.
 	useEffect(() => {
@@ -180,27 +238,39 @@ export function ExerciseRunner({ exercises, titleHtml, theoryHref, nextHref }: P
 
 	return (
 		<>
-			<div id="esercizi" className="flex h-full w-full flex-col items-center justify-between gap-6 p-4 sm:p-8 md:px-10">
-				<ProgressBar states={progress} />
+			<div id="esercizi" className="flex h-full w-full flex-col items-center gap-6 px-4 pb-6 pt-3 sm:gap-10 sm:px-8 sm:pb-10 sm:pt-6 md:px-10">
+				<ProgressBar states={progress} current={index} />
 				{exercise && (
-					<div key={exercise.id} className="contents">
-						<h2 ref={question} tabIndex={-1} className="w-full max-w-2xl animate-fade-in break-words text-xl font-medium text-fg-strong outline-none sm:text-3xl">
-							<span className="label-mono mb-2 block text-center text-tint-fg" aria-hidden="true">
-								Domanda {String(index + 1).padStart(2, '0')} di {String(exercises.length).padStart(2, '0')}
-							</span>
+					// The question at the top, the answers at the bottom of the page, the free space between them: a long problem
+					// has all the room it needs and the answers never move (on phones they sit under the thumb).
+					<div key={exercise.id} className="flex w-full max-w-2xl flex-1 flex-col justify-between gap-8 sm:gap-10 sm:pt-4">
+						<div ref={question} tabIndex={-1} className="flex w-full animate-fade-in flex-col gap-5 break-words text-center outline-none">
 							<span className="sr-only">
 								Domanda {index + 1} di {exercises.length}.{' '}
 							</span>
-							{/* Long formulas scroll sideways inside this box; the padding leaves room for tall exponents and fractions. */}
-							<Html html={exercise.questionHtml} className="math-content scroll-x px-2 py-3 text-center [&_.katex-display]:overflow-visible" />
-						</h2>
-						<div ref={grid} className={cn('mx-auto grid w-full max-w-2xl auto-rows-fr gap-3 sm:gap-4', columns === 2 ? 'grid-cols-2' : 'grid-cols-1')} role="group" aria-label="Risposte">
-							{exercise.options.map((option, i) => (
-								// An odd last answer takes the whole row instead of leaving a hole.
-								<div key={i} className="h-full min-w-0 [&:nth-child(odd):last-child]:col-span-full">
-									<AnswerButton html={option.html} letter={String.fromCharCode(97 + i)} label={`Risposta ${i + 1}: ${speakable(option.text)}`} state={selected === i ? (option.isCorrect ? 'correct' : 'incorrect') : 'unanswered'} locked={selected !== null} onClick={() => answer(i)} />
+							{exercise.promptHtml && (
+								<h2 className="text-balance text-xl font-medium text-fg-strong sm:text-2xl">
+									<Html as="span" html={exercise.promptHtml} />
+								</h2>
+							)}
+							{exercise.blocks.length > 0 && (
+								<div className="flex flex-col gap-4">
+									{exercise.blocks.map((block, i) => (
+										<Block key={i} block={block} />
+									))}
 								</div>
-							))}
+							)}
+						</div>
+						<div ref={grid} className={cn('grid w-full animate-fade-in auto-rows-fr gap-3', columns === 2 ? 'grid-cols-2' : 'grid-cols-1')} role="group" aria-label="Risposte">
+							{exercise.options.map((option, i) => {
+								const state: AnswerState = selected === null ? 'idle' : option.isCorrect ? 'correct' : selected === i ? 'incorrect' : 'muted';
+								return (
+									// An odd last answer takes the whole row instead of leaving a hole.
+									<div key={i} className="h-full min-w-0 [&:nth-child(odd):last-child]:col-span-full">
+										<AnswerButton html={option.html} number={i + 1} label={`Risposta ${i + 1}: ${speakable(option.text)}`} state={state} chosen={selected === i} locked={selected !== null} onClick={() => answer(i)} />
+									</div>
+								);
+							})}
 						</div>
 					</div>
 				)}
