@@ -40,6 +40,12 @@ export const TUTORING_ROOT = '/ripetizioni';
 export const ZAINO_ROOT = '/zaino';
 
 /**
+ * Where the installed app (PWA or Capacitor) opens, in place of the landing
+ * page: the beta's only subject, until an onboarding asks the student's class.
+ */
+export const APP_START = `${CONTENT_ROOT}/scuola-superiore/matematica`;
+
+/**
  * Path prefixes that must never be indexed: authenticated areas, checkout
  * results, API. Used by the robots meta, the X-Robots-Tag header, robots.txt
  * and the sitemap so the four cannot drift apart.

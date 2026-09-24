@@ -3,6 +3,8 @@
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:where(.dark, .dark *));
+/* The installed app (PWA or Capacitor): the inline script in the root layout sets `html.app` before paint. Pair it with max-md: a PWA installed on a computer keeps the desktop layout. */
+@custom-variant app (&:where(.app, .app *));
 
 /* ----------------------------------------------------------------------------
    1. Tokens: the raw scale (brand colour, type, spacing, radii).
@@ -926,4 +928,59 @@ body {
 @utility note-in {
 	animation: var(--animate-note-in);
 	animation-delay: calc(min(var(--i, 0) * 40ms, 320ms));
+}
+
+/* ----------------------------------------------------------------------------
+   The installed app on a phone (html.app). The page stops behaving like a
+   document: no rubber-band scroll of the whole window, no text selection or
+   long-press menu on buttons, bars and links. Page changes fade the content:
+   the old page leaves fast, the new one rises in. The website keeps instant
+   page changes, and so does anyone who asks for reduced motion.
+   --------------------------------------------------------------------------- */
+@media (max-width: 47.99rem) {
+	.app,
+	.app body {
+		overscroll-behavior: none;
+	}
+	.app :is(header, nav, button, [role='tab'], label, a) {
+		-webkit-user-select: none;
+		user-select: none;
+		-webkit-touch-callout: none;
+	}
+	.app::view-transition-old(.page) {
+		animation: 90ms ease-out both vt-fade-out;
+	}
+	.app::view-transition-new(.page) {
+		animation: 220ms cubic-bezier(0.2, 0, 0, 1) 60ms both vt-rise-in;
+	}
+}
+html:not(.app)::view-transition-group(.page),
+html:not(.app)::view-transition-old(.page),
+html:not(.app)::view-transition-new(.page) {
+	animation: none;
+}
+@media (min-width: 48rem) {
+	::view-transition-group(.page),
+	::view-transition-old(.page),
+	::view-transition-new(.page) {
+		animation: none;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(.page),
+	::view-transition-old(.page),
+	::view-transition-new(.page) {
+		animation: none;
+	}
+}
+@keyframes vt-fade-out {
+	to {
+		opacity: 0;
+	}
+}
+@keyframes vt-rise-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
 }

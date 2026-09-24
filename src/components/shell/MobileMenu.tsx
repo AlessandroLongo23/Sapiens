@@ -7,6 +7,7 @@ import { Backpack, ChevronRight, CircleHelp, CreditCard, House, LibraryBig, LogI
 import { CONTENT_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 import { nodePath } from '@/lib/seo/slug';
 import { useAuth } from '@/lib/state/auth';
+import { useAppMode } from '@/lib/hooks/use-app-mode';
 import { isStaff } from '@/lib/auth/entitlements';
 import { cn } from '@/lib/utils/cn';
 import { Sheet } from '@/components/ui/Sheet';
@@ -14,14 +15,20 @@ import { Button } from '@/components/ui/Button';
 import { useContentTree } from './ContentTreeContext';
 import { ThemeToggle } from './ThemeToggle';
 import { LogoutButton, accountUrl } from './AuthButtons';
+import { CookieManageLink } from './CookieBanner';
 
 const row = (active: boolean) => cn('flex min-h-[48px] items-center gap-3 rounded-xl px-3 text-base font-medium transition-colors focus-ring', active ? 'bg-accent-soft text-accent-soft-fg' : 'text-fg hover:bg-surface-3 active:bg-surface-3');
 
-/** The phone menu: every section of the site, the theme and the account, in one sheet. */
+/**
+ * The phone menu: every section of the site, the theme and the account, in one sheet.
+ * The installed app opens it from the Profilo tab; it has no landing page and
+ * no footer, so Home goes and the legal links come here.
+ */
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
 	const pathname = usePathname();
 	const tree = useContentTree();
 	const { user, openModal } = useAuth();
+	const app = useAppMode();
 
 	// A navigation closes the sheet; nothing else does from here.
 	const shownPath = useRef(pathname);
@@ -32,7 +39,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 	}, [pathname, onClose]);
 
 	const links = [
-		{ href: '/', label: 'Home', icon: House, active: pathname === '/' },
+		...(app ? [] : [{ href: '/', label: 'Home', icon: House, active: pathname === '/' }]),
 		{ href: CONTENT_ROOT, label: 'Materiale didattico', icon: LibraryBig, active: pathname.startsWith(CONTENT_ROOT) },
 		{ href: ZAINO_ROOT, label: 'Il tuo zaino', icon: Backpack, active: pathname.startsWith(ZAINO_ROOT) },
 		{ href: TUTORING_ROOT, label: 'Ripetizioni', icon: UsersRound, active: pathname.startsWith(TUTORING_ROOT) },
@@ -108,6 +115,14 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 						Registrati
 					</Button>
 				</div>
+			)}
+			{app && (
+				<p className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 px-3 text-xs text-fg-subtle">
+					<Link href="/privacy" className="rounded underline underline-offset-2 focus-ring">Privacy</Link>
+					<Link href="/cookie" className="rounded underline underline-offset-2 focus-ring">Cookie</Link>
+					<Link href="/terms" className="rounded underline underline-offset-2 focus-ring">Termini</Link>
+					<CookieManageLink className="rounded underline underline-offset-2 focus-ring" />
+				</p>
 			)}
 		</Sheet>
 	);

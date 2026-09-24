@@ -16,6 +16,7 @@ import { SubjectMegaMenu } from './SubjectMegaMenu';
 import { ThemeToggle } from './ThemeToggle';
 import { LoginButton, LogoutButton } from './AuthButtons';
 import { MobileMenu } from './MobileMenu';
+import { AppBackButton } from './AppBackButton';
 
 const navLink = (active: boolean) => cn('rounded font-medium transition-colors focus-ring', active ? 'text-fg' : 'text-fg-muted hover:text-fg');
 
@@ -24,6 +25,8 @@ const navLink = (active: boolean) => cn('rounded font-medium transition-colors f
  * opens the overlay, and a menu button for everything else; the parent
  * can slide it away while the page scrolls down (`hidden`). From `md` up
  * it is the full desktop bar with the level menu and account buttons.
+ * In the installed app the phone bar is a back arrow and the search field:
+ * the tab bar holds everything else.
  * The level menu opens on hover, or on the down arrow from the keyboard
  * (never on focus alone), and it is rendered after the bar so Tab reaches it.
  */
@@ -50,7 +53,8 @@ export function Header({ hidden = false, immersive = false }: { hidden?: boolean
 		>
 			<div id="site-header-bar" className="relative z-20 flex w-full items-center gap-2 bg-page px-3 py-2 md:justify-between md:gap-4 md:p-3">
 				<div className="flex min-w-0 items-center gap-2 md:gap-10">
-					<Link href="/" className="flex shrink-0 items-center gap-3 rounded-md focus-ring" aria-label="Sapiens, pagina iniziale">
+					<AppBackButton />
+					<Link href="/" className="flex shrink-0 items-center gap-3 rounded-md focus-ring app:max-md:hidden" aria-label="Sapiens, pagina iniziale">
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img src="/favicon.svg" alt="" width={40} height={40} className="size-10 rounded-md" />
 						<span className="hidden font-display text-[1.7rem] font-semibold tracking-tight text-fg-strong md:inline">Sapiens</span>
@@ -113,7 +117,7 @@ export function Header({ hidden = false, immersive = false }: { hidden?: boolean
 							</div>
 						)}
 					</div>
-					<Link href={TUTORING_ROOT} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl border border-edge bg-surface-2 text-fg active:bg-surface-4 focus-ring md:hidden" aria-label="Ripetizioni" aria-current={inTutoring ? 'page' : undefined}>
+					<Link href={TUTORING_ROOT} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl border border-edge bg-surface-2 text-fg active:bg-surface-4 focus-ring md:hidden app:hidden" aria-label="Ripetizioni" aria-current={inTutoring ? 'page' : undefined}>
 						<UsersRound className="size-5" aria-hidden="true" />
 					</Link>
 					<div className="hidden items-center gap-3 md:flex">
@@ -121,7 +125,7 @@ export function Header({ hidden = false, immersive = false }: { hidden?: boolean
 						<LoginButton />
 						{user && <LogoutButton />}
 					</div>
-					<button type="button" onClick={() => setMenuOpen(true)} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl border border-edge bg-surface-2 text-fg active:bg-surface-4 focus-ring md:hidden" aria-label="Apri il menu" aria-haspopup="dialog" aria-expanded={menuOpen}>
+					<button type="button" onClick={() => setMenuOpen(true)} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl border border-edge bg-surface-2 text-fg active:bg-surface-4 focus-ring md:hidden app:hidden" aria-label="Apri il menu" aria-haspopup="dialog" aria-expanded={menuOpen}>
 						<Menu className="size-6" aria-hidden="true" />
 					</button>
 				</div>

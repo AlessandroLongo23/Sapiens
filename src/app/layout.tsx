@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
-import { GSC_VERIFICATION, SITE_LANG, SITE_URL } from '@/lib/config/site';
+import { APP_START, GSC_VERIFICATION, SITE_LANG, SITE_URL } from '@/lib/config/site';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { organizationJsonLd, webSiteJsonLd } from '@/lib/seo/jsonld';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -46,11 +46,20 @@ export const viewport: Viewport = {
 /** Applies the stored or system theme before the first paint, so there is no flash. */
 const THEME_SCRIPT = `(function(){try{var s=localStorage.getItem('theme'),d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches,t=s||(d?'dark':'light'),r=document.documentElement;r.classList.add('disable-transitions');r.classList.toggle('dark',t==='dark');setTimeout(function(){r.classList.remove('disable-transitions')},120)}catch(e){}})();`;
 
+/**
+ * Marks the installed app (`html.app`) before the first paint: a PWA opened
+ * from the home screen, or the Capacitor app, whose user agent ends in
+ * "SapiensApp" (see capacitor.config.json). The app never shows the landing
+ * page: it opens on APP_START.
+ */
+const APP_SCRIPT = `(function(){try{var n=navigator;if(!(window.matchMedia('(display-mode: standalone)').matches||n.standalone===true||/SapiensApp/.test(n.userAgent)))return;document.documentElement.classList.add('app');if(location.pathname==='/')location.replace('${APP_START}')}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang={SITE_LANG} className={`${inter.variable} ${fraunces.variable} ${mono.variable}`} suppressHydrationWarning>
 			<head>
 				<script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+				<script dangerouslySetInnerHTML={{ __html: APP_SCRIPT }} />
 			</head>
 			<body>
 				<JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />

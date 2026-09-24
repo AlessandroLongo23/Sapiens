@@ -3,6 +3,7 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { Cookie } from 'lucide-react';
 import { useConsent } from '@/lib/consent/consent';
+import { useAppMode } from '@/lib/hooks/use-app-mode';
 import { loadAnalyticsIfAllowed } from '@/lib/consent/analytics';
 import { Button } from '@/components/ui/Button';
 import { CheckboxRow } from '@/components/ui/Field';
@@ -29,6 +30,7 @@ function Heading({ title, text }: { title: string; text: string }) {
 export function CookieBanner() {
 	const { hydrated, bannerOpen, customizeOpen, consent, save, openCustomize, closeCustomize, close } = useConsent();
 	const card = useRef<HTMLDivElement>(null);
+	const app = useAppMode();
 	const [analytics, setAnalytics] = useState(false);
 	const open = hydrated && bannerOpen;
 
@@ -82,7 +84,10 @@ export function CookieBanner() {
 				) : (
 					<div className="flex flex-col gap-4">
 						<div>
-							<Heading title="Cookie e privacy" text='Usiamo cookie tecnici per farti accedere a Sapiens e, solo se accetti, statistiche anonime per capire quali lezioni sono più utili. Puoi cambiare idea quando vuoi dal link "Gestisci cookie" nel footer.' />
+							<Heading
+								title="Cookie e privacy"
+								text={`Usiamo cookie tecnici per farti accedere a Sapiens e, solo se accetti, statistiche anonime per capire quali lezioni sono più utili. Puoi cambiare idea quando vuoi dal link "Gestisci cookie" ${app ? 'in Profilo' : 'nel footer'}.`}
+							/>
 							<div className="ml-8 mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-fg-muted">
 								<a href="/privacy" className="rounded underline underline-offset-2 hover:text-fg focus-ring">Privacy</a>
 								<a href="/cookie" className="rounded underline underline-offset-2 hover:text-fg focus-ring">Cookie policy</a>
