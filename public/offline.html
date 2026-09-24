@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+	<meta name="robots" content="noindex" />
+	<title>Sei offline · Sapiens</title>
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<style>
+		/* Served by the service worker when there is no network: no Next, no fonts, only the paper and ink of the app. */
+		:root {
+			--page: oklch(0.978 0.008 85);
+			--surface: oklch(0.992 0.004 85);
+			--fg: oklch(0.26 0.022 265);
+			--fg-muted: oklch(0.43 0.02 265);
+			--edge: color-mix(in oklab, oklch(0.26 0.022 265) 16%, transparent);
+			--grid: color-mix(in oklab, oklch(0.62 0.09 245) 16%, transparent);
+			--accent: oklch(0.514 0.222 21);
+			color-scheme: light dark;
+		}
+		@media (prefers-color-scheme: dark) {
+			:root {
+				--page: oklch(0.175 0.014 265);
+				--surface: oklch(0.205 0.016 265);
+				--fg: oklch(0.93 0.008 85);
+				--fg-muted: oklch(0.86 0.01 265);
+				--edge: color-mix(in oklab, oklch(0.86 0.01 265) 14%, transparent);
+				--grid: color-mix(in oklab, oklch(0.8 0.06 245) 7%, transparent);
+				--accent: oklch(0.712 0.194 21);
+			}
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			min-height: 100dvh;
+			padding: max(3rem, env(safe-area-inset-top)) 1rem max(2rem, env(safe-area-inset-bottom));
+			background-color: var(--page);
+			background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+			background-size: 1.25rem 1.25rem;
+			color: var(--fg);
+			font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+		}
+		main {
+			max-width: 32rem;
+			margin: 0 auto;
+			padding: 1.5rem;
+			border: 1px solid var(--edge);
+			border-radius: 1rem;
+			background: var(--surface);
+		}
+		h1 { margin: 0 0 0.5rem; font: 600 1.5rem/1.2 Georgia, 'Times New Roman', serif; }
+		p { margin: 0 0 1rem; color: var(--fg-muted); }
+		h2 { margin: 1.5rem 0 0.5rem; font-size: 0.875rem; font-weight: 600; }
+		ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--edge); }
+		li { border-bottom: 1px solid var(--edge); }
+		a { display: block; padding: 0.75rem 0; color: var(--fg); text-decoration: none; }
+		a:hover, a:focus-visible { color: var(--accent); }
+		button {
+			min-height: 44px;
+			padding: 0 1.25rem;
+			border: 0;
+			border-radius: 0.75rem;
+			background: var(--accent);
+			color: #fff;
+			font: inherit;
+			font-weight: 600;
+			cursor: pointer;
+		}
+		[hidden] { display: none; }
+	</style>
+</head>
+<body>
+	<main>
+		<h1>Sei offline</h1>
+		<p>Questa pagina ha bisogno della rete. Quando torna la connessione, riprova.</p>
+		<button type="button" onclick="location.reload()">Riprova</button>
+		<section id="saved" hidden>
+			<h2>Lezioni salvate su questo dispositivo</h2>
+			<ul id="saved-list"></ul>
+		</section>
+	</main>
+	<script>
+		// Lists the lessons the service worker saved, newest first, with the title of each saved page.
+		(async function () {
+			try {
+				const names = (await caches.keys()).filter((n) => n.startsWith('lezioni-'));
+				if (!names.length) return;
+				const cache = await caches.open(names[0]);
+				const requests = (await cache.keys()).reverse();
+				const list = document.getElementById('saved-list');
+				for (const request of requests) {
+					const response = await cache.match(request);
+					const html = response ? await response.text() : '';
+					const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || new URL(request.url).pathname;
+					const link = document.createElement('a');
+					link.href = new URL(request.url).pathname;
+					link.textContent = new DOMParser().parseFromString(title, 'text/html').documentElement.textContent.replace(/ [|·-] Sapiens$/, '');
+					const item = document.createElement('li');
+					item.append(link);
+					list.append(item);
+				}
+				document.getElementById('saved').hidden = false;
+			} catch (e) {}
+		})();
+	</script>
+</body>
+</html>
