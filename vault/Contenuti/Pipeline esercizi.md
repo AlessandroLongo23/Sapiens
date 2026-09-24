@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-23
+aggiornato: 2026-09-24
 tag: [contenuti, ai]
 ---
 # Pipeline esercizi
@@ -12,10 +12,10 @@ Come si producono esercizi per tutti gli argomenti senza scriverli a mano e senz
 L'AI non scrive l'esercizio: scrive il generatore. L'inferenza si paga una volta per ogni tipo di esercizio, e il generatore produce esercizi infiniti e diversi in un millisecondo. È la stessa idea dei 15 generatori di oggi (`src/lib/exercises/`), senza il costo di scriverli a mano.
 
 ## Il flusso
-1. **Specifica, scritta da Claude e riletta da Alessandro.** Livelli di difficoltà, vincoli, due o tre esempi a mano. Esempio: equazione di secondo grado, livello 1, soluzioni intere tra -9 e 9, coefficiente di x² uguale a 1, delta positivo.
+1. **Specifica, scritta da Claude.** Livelli di difficoltà, vincoli, due o tre esempi a mano. Esempio: equazione di secondo grado, livello 1, soluzioni intere tra -9 e 9, coefficiente di x² uguale a 1, delta positivo.
 2. **Generatore, scritto da Claude.** Costruito al contrario: sceglie prima la soluzione, poi costruisce l'esercizio. Per l'equazione sceglie due radici intere piccole ed espande (x−r₁)(x−r₂). Così i "numeri belli" sono garantiti per costruzione, non cercati per tentativi.
 3. **Verifica automatica.** Un harness genera 500-1000 campioni, controlla ogni soluzione con un sistema di calcolo simbolico (SymPy, solo nella pipeline, non in produzione) e ogni vincolo della specifica. Se qualcosa fallisce, Claude corregge il generatore e si ripete.
-4. **Revisione umana a campione.** Alessandro vede 10 campioni impaginati e approva o rimanda indietro con un commento (vedi [[2026-09-24 Lezioni ed esercizi scritti da Claude e rivisti da Alessandro]]).
+4. **Revisione umana.** Andrea rilegge specifiche e campioni con i suoi tempi e manda ad Alessandro conferme o correzioni; la pubblicazione non lo aspetta (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]).
 5. **Pubblicazione** del generatore, collegato alle lezioni.
 
 ## Banca statica
@@ -50,8 +50,8 @@ Questioni aperte segnalate dagli agenti (dettagli nella sezione "Domande per la 
 - Monomi: manca un livello sul quoziente che non è un monomio (serve una risposta "non è un monomio").
 - Una domanda su 0⁰ ha il testo tutto nella consegna e il problema vuoto.
 
-Da quel giorno i generatori non aspettano la conferma di Alessandro uno per uno: Claude li scrive, li verifica e li collega, e riferisce cosa ha fatto con le pagine di revisione; Alessandro rilegge quando vuole.
+Da quel giorno i generatori non aspettano la conferma di Alessandro uno per uno: Claude li scrive, li verifica e li collega, e riferisce cosa ha fatto con le pagine di revisione. Dal 24 settembre 2026 la rilettura la fa Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]).
 
 ## Domande aperte
 - La pipeline diventa una skill di Claude Code nella repo?
-- Quanti tipi di esercizio servono per la matematica dei cinque anni? Stima da fare sul [[Programma ministeriale]]. Moltiplicata per il tempo di rilettura di Alessandro, dice se la pipeline regge entro gennaio 2027.
+- Quanti tipi di esercizio servono per la matematica dei cinque anni? Stima da fare sul [[Programma ministeriale]]. Moltiplicata per il tempo di rilettura di Andrea, dice se la pipeline regge entro gennaio 2027.

@@ -58,9 +58,9 @@ Scegli dal primo argomento. Senza argomento, usa `prossimo`.
 - **Chiudi con una raccomandazione.** Alla fine di ogni argomento: cosa faresti tu e perché, in poche
   righe. Poi è Alessandro a decidere.
 - **Ricorda il contesto.** Una sola persona sviluppa, con gli LLM, e i contenuti li produce Claude
-  con la rilettura di Alessandro. Dario fa il design, Lorena il marketing più avanti. Andrea non è
-  coinvolto finché Alessandro non dice il contrario: non proporre lavoro per lui e non chiedere di
-  consultarlo. Ogni proposta si misura su queste
+  e li rilegge Andrea, con i suoi tempi, mandando il parere ad Alessandro. Dario fa il design,
+  Lorena il marketing più avanti. La revisione dei contenuti non è un argomento da proporre: non
+  chiedere niente su di lei se non è Alessandro a parlarne. Ogni proposta si misura su queste
   risorse.
 - **Scrivi come vogliono le regole globali di Alessandro:** risposta prima, niente preamboli, niente
   trattini lunghi, niente "piuttosto che" usato come contrasto, grassetto raro.

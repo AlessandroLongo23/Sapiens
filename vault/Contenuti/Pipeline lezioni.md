@@ -16,12 +16,12 @@ Come si produce una lezione pronta da pubblicare.
 - 24 settembre 2026: formulari e flashcard delle 18 lezioni, cinque agenti in parallelo sulle regole aggiunte a `docs/lezioni/stile.md`, circa 4 minuti di esecuzione. File in `docs/lezioni/formulari/` e `docs/lezioni/flashcard/`, stesso controllo automatico; `scripts/lezioni/publish.mts` pubblica teoria, formulario e flashcard, e non sovrascrive mai un contenuto cambiato nel database dopo l'ultima pubblicazione.
 
 ## Obiettivo
-Claude produce le lezioni e Alessandro le rilegge (vedi [[2026-09-24 Lezioni ed esercizi scritti da Claude e rivisti da Alessandro]]), a lotti completi di teoria, esercizi, formulario e flashcard (vedi [[2026-09-24 Si lavora a lotti completi]]); servono abbastanza per la matematica dei cinque anni entro gennaio 2027 (150-200 lezioni). Il minimo per il lancio è il biennio.
+Claude produce le lezioni alla velocità che può e Andrea le rilegge con i suoi tempi, entro la scadenza della beta (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]), a lotti completi di teoria, esercizi, formulario e flashcard (vedi [[2026-09-24 Si lavora a lotti completi]]); servono abbastanza per la matematica dei cinque anni entro gennaio 2027 (150-200 lezioni). Il minimo per il lancio è il biennio.
 
 Flusso proposto:
 1. Scaletta dell'argomento dal [[Programma ministeriale]]: prerequisiti, obiettivi, cosa includere.
 2. Bozza generata dall'AI.
-3. Controllo automatico (`scripts/lezioni/check.mts`) e rilettura di Alessandro secondo lo [[Standard di qualità]]: correttezza, ordine, esempi, notazione.
+3. Controllo automatico (`scripts/lezioni/check.mts`) e rilettura di Andrea secondo lo [[Standard di qualità]]: correttezza, ordine, esempi, notazione.
 4. Formulario, flashcard e collegamenti agli esercizi generati insieme alla lezione.
 5. Pubblicazione: la pagina diventa indicizzabile.
 

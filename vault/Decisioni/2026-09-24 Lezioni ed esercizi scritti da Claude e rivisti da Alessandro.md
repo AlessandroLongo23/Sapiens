@@ -1,5 +1,5 @@
 ---
-stato: decisa
+stato: superata
 aggiornato: 2026-09-24
 tag: [decisione, contenuti, team]
 ---
@@ -18,3 +18,5 @@ La riscrittura delle 18 lezioni del 23 settembre 2026 ha mostrato che Claude pu√
 
 ## Collegamenti
 - [[2026-09-24 Si lavora a lotti completi]]
+
+Superata il 24 settembre 2026 da [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]].
