@@ -68,7 +68,7 @@ export default async function FlashcardsPage(props: LessonParams) {
 						/>
 					</div>
 				) : (
-					<FlashcardDeck cards={cards} exercisesHref={hasExercises(dbPath, node.slug) ? paths.exercises : null} nextHref={navigation?.next?.url ?? null} />
+					<FlashcardDeck cards={cards} exercisesHref={hasExercises(dbPath) ? paths.exercises : null} nextHref={navigation?.next?.url ?? null} />
 				)}
 			</LessonFrame>
 		</>

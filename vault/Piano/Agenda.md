@@ -11,15 +11,13 @@ La priorità dipende da tre cose: cosa blocca la prossima release, cosa costa ca
 ## Adesso (prima della Release Beta, entro ottobre 2026)
 Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi]].
 
-1. **Primo lotto, le 18 lezioni pubblicate:** generatori, formulari, flashcard ed errori frequenti accanto alle regole fatti il 24 settembre. Misurare quanto costa un lotto completo. Poi commit divisi per scope di tutto il lavoro non committato, e deploy. Note: [[Pipeline esercizi]], [[Pipeline lezioni]], [[Flashcard]].
-2. **Lotti nuovi**, uno alla volta, ciascuno completo di teoria, esercizi, formulario e flashcard. Il secondo (i capitoli dei numeri, 8 lezioni) è fatto e committato il 24 settembre, e aspetta la rilettura.
-3. **Richiesta a OpenAI** per la conservazione zero dei dati e creazione del progetto UE; preparare le 50-100 domande della valutazione. Nota: [[Provider AI]].
-4. **Schema della tabella dei tentativi** e correzione lato server, insieme alla scelta del livello sulla pagina degli esercizi. Note: [[Esercizi]], [[Schema dati]].
-5. **Prezzo esatto di Studio** e testi della pagina prezzi; cambiare `src/lib/stripe/config.ts`. Nota: [[Piani e prezzi]].
-6. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
-7. **Strumentazione della beta:** eventi, disdette, commenti. Nota: [[Metriche]].
-8. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
-9. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
+1. **Lotti nuovi**, uno alla volta, ciascuno completo di teoria, esercizi, formulario e flashcard. Il secondo (i capitoli dei numeri, 8 lezioni) è fatto e committato il 24 settembre. La rilettura la fa Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]).
+2. **Richiesta a OpenAI** per la conservazione zero dei dati e creazione del progetto UE; preparare le 50-100 domande della valutazione. Nota: [[Provider AI]].
+3. **Prezzo esatto di Studio** e testi della pagina prezzi; cambiare `src/lib/stripe/config.ts`. Nota: [[Piani e prezzi]].
+4. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
+5. **Strumentazione della beta:** eventi, disdette, commenti. Nota: [[Metriche]].
+6. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
+7. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
 
 ## Prima della v1.0 e della v2
 - Schermata "Oggi" dell'app e onboarding su classe e indirizzo: su cosa si apre l'app installata al posto della pagina di Matematica. Da disegnare con Dario, legata alla pratica quotidiana. Note: [[App mobile]], [[Pratica quotidiana]].
@@ -38,6 +36,8 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-09-24: tentativi degli esercizi scritti e provati: tabella `exercise_attempts` applicata, correzione sul server, livello scelto dalla pagina, soluzione dopo l'errore. Da pubblicare con un deploy. Vedi [[Esercizi]].
+- 2026-09-24: tentativi degli esercizi (esercizio intero salvato, correzione sul server, livello scelto dalla pagina) e revisione dei contenuti affidata ad Andrea. Primo lotto e deploy di master fatti. Vedi [[2026-09-24 Tentativi degli esercizi]].
 - 2026-09-24: MVP degli adesivi sulle note e note come fogli a larghezza fissa, con la tabella `note_stickers` applicata. Vedi [[Adesivi]].
 - 2026-09-24: adesivi come gamificazione, dopo la beta, con le regole su premi, scadenze e vendita. Vedi [[2026-09-24 Adesivi]].
 - 2026-09-24: programma di matematica e albero delle lezioni riorganizzato (183 lezioni). Vedi [[Programma ministeriale]].

@@ -1,36 +1,34 @@
-import type { Exercise } from './abstract';
-
-type Generators = Record<string, new (...args: number[]) => Exercise>;
+import type { Generator } from './v2/types';
 
 /**
- * Exercise generators by lesson slug. Each module is loaded only when its
- * lesson is opened, so the maths library never ships with the rest.
+ * Exercise generators by id. Each module is loaded only when its lesson's
+ * exercises are asked for, so the generators never ship with the rest.
  */
-export const generatorModules: Record<string, () => Promise<Generators>> = {
-	'prime-definizioni': () => import('./prime-definizioni-v2') as unknown as Promise<Generators>,
-	'insiemi-rappresentazione': () => import('./insiemi-rappresentazione-v2') as unknown as Promise<Generators>,
-	'sottoinsiemi-ugualianza': () => import('./sottoinsiemi-ugualianza-v2') as unknown as Promise<Generators>,
-	'insiemi-unione': () => import('./insiemi-unione-v2') as unknown as Promise<Generators>,
-	'insiemi-operazioni': () => import('./insiemi-operazioni-v2') as unknown as Promise<Generators>,
-	'numeri-naturali-operazioni': () => import('./numeri-naturali-operazioni-v2') as unknown as Promise<Generators>,
-	'numeri-naturali-mcm-mcd': () => import('./numeri-naturali-mcm-mcd-v2') as unknown as Promise<Generators>,
-	'numeri-naturali-potenze': () => import('./numeri-naturali-potenze-v2') as unknown as Promise<Generators>,
-	'numeri-razionali-confronto-frazioni': () => import('./numeri-razionali-confronto-frazioni-v2') as unknown as Promise<Generators>,
-	'numeri-razionali-potenze': () => import('./numeri-razionali-potenze-v2') as unknown as Promise<Generators>,
-	'numeri-razionali-conversione': () => import('./numeri-razionali-conversione-v2') as unknown as Promise<Generators>,
-	'monomi-grado': () => import('./monomi-grado-v2') as unknown as Promise<Generators>,
-	'monomi-operazioni': () => import('./monomi-operazioni-v2') as unknown as Promise<Generators>,
-	'monomi-mcm-mcd': () => import('./monomi-mcm-mcd-v2') as unknown as Promise<Generators>,
-	'monomi-espressioni': () => import('./monomi-espressioni-v2') as unknown as Promise<Generators>,
-	'equazioni-primo-grado': () => import('./equazioni-primo-grado-v2') as unknown as Promise<Generators>,
-	'equazioni-secondo-grado': () => import('./equazioni-secondo-grado-v2') as unknown as Promise<Generators>,
-	'funzioni-iniettive-suriettive-biettive': () => import('./funzioni-iniettive-suriettive-biettive-v2') as unknown as Promise<Generators>,
-	'numeri-naturali-divisibilita': () => import('./numeri-naturali-divisibilita-v2') as unknown as Promise<Generators>,
-	'numeri-interi-valore-assoluto': () => import('./numeri-interi-valore-assoluto-v2') as unknown as Promise<Generators>,
-	'numeri-interi-operazioni': () => import('./numeri-interi-operazioni-v2') as unknown as Promise<Generators>,
-	'numeri-interi-potenze': () => import('./numeri-interi-potenze-v2') as unknown as Promise<Generators>,
-	'numeri-razionali-frazioni': () => import('./numeri-razionali-frazioni-v2') as unknown as Promise<Generators>,
-	'numeri-razionali-operazioni': () => import('./numeri-razionali-operazioni-v2') as unknown as Promise<Generators>,
-	'numeri-razionali-espressioni': () => import('./numeri-razionali-espressioni-v2') as unknown as Promise<Generators>,
-	'numeri-razionali-proporzioni': () => import('./numeri-razionali-proporzioni-v2') as unknown as Promise<Generators>
+export const generators: Record<string, () => Promise<Generator>> = {
+	'prime-definizioni': () => import('./v2/generators/prime-definizioni').then((m) => m.default),
+	'insiemi-rappresentazione': () => import('./v2/generators/insiemi-rappresentazione').then((m) => m.default),
+	'sottoinsiemi-ugualianza': () => import('./v2/generators/sottoinsiemi-ugualianza').then((m) => m.default),
+	'insiemi-unione': () => import('./v2/generators/insiemi-unione').then((m) => m.default),
+	'insiemi-operazioni': () => import('./v2/generators/insiemi-operazioni').then((m) => m.default),
+	'numeri-naturali-operazioni': () => import('./v2/generators/numeri-naturali-operazioni').then((m) => m.default),
+	'numeri-naturali-mcm-mcd': () => import('./v2/generators/numeri-naturali-mcm-mcd').then((m) => m.default),
+	'numeri-naturali-potenze': () => import('./v2/generators/numeri-naturali-potenze').then((m) => m.default),
+	'numeri-razionali-confronto-frazioni': () => import('./v2/generators/numeri-razionali-confronto-frazioni').then((m) => m.default),
+	'numeri-razionali-potenze': () => import('./v2/generators/numeri-razionali-potenze').then((m) => m.default),
+	'numeri-razionali-conversione': () => import('./v2/generators/numeri-razionali-conversione').then((m) => m.default),
+	'monomi-grado': () => import('./v2/generators/monomi-grado').then((m) => m.default),
+	'monomi-operazioni': () => import('./v2/generators/monomi-operazioni').then((m) => m.default),
+	'monomi-mcm-mcd': () => import('./v2/generators/monomi-mcm-mcd').then((m) => m.default),
+	'monomi-espressioni': () => import('./v2/generators/monomi-espressioni').then((m) => m.default),
+	'equazioni-primo-grado': () => import('./v2/generators/equazioni-primo-grado').then((m) => m.default),
+	'equazioni-secondo-grado': () => import('./v2/generators/equazioni-secondo-grado').then((m) => m.default),
+	'funzioni-iniettive-suriettive-biettive': () => import('./v2/generators/funzioni-iniettive-suriettive-biettive').then((m) => m.default),
+	'numeri-naturali-divisibilita': () => import('./v2/generators/numeri-naturali-divisibilita').then((m) => m.default),
+	'numeri-interi-valore-assoluto': () => import('./v2/generators/numeri-interi-valore-assoluto').then((m) => m.default),
+	'numeri-interi-operazioni': () => import('./v2/generators/numeri-interi-operazioni').then((m) => m.default),
+	'numeri-interi-potenze': () => import('./v2/generators/numeri-interi-potenze').then((m) => m.default),
+	'numeri-razionali-frazioni': () => import('./v2/generators/numeri-razionali-frazioni').then((m) => m.default),
+	'numeri-razionali-operazioni': () => import('./v2/generators/numeri-razionali-operazioni').then((m) => m.default),
+	'numeri-razionali-espressioni': () => import('./v2/generators/numeri-razionali-espressioni').then((m) => m.default),
+	'numeri-razionali-proporzioni': () => import('./v2/generators/numeri-razionali-proporzioni').then((m) => m.default)
 };

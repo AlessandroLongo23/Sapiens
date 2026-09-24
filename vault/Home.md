@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-23
+aggiornato: 2026-09-24
 tag: [indice]
 ---
 # Sapiens
@@ -9,7 +9,7 @@ Questo vault è la memoria del progetto: cosa è Sapiens, per chi, cosa si costr
 ## Dove siamo (24 settembre 2026)
 Sapiens è online come biblioteca di lezioni con Zaino, esercizi generati, Sapiens AI e un marketplace di tutor, ma ha poco contenuto (26 lezioni complete su 183) e nessun utente reale. Il prossimo traguardo è la [[Release Beta]] a pagamento di gennaio 2027, con la sola matematica delle superiori.
 
-Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio, prova al contrario), il provider AI (OpenAI con dati nell'UE) e i progressi per tentativo. È emerso che 6 generatori di esercizi su 15 erano rotti in produzione. Il primo generatore della nuova [[Pipeline esercizi]], le equazioni di secondo grado, è verificato su 6.000 esercizi e collegato al sito; aspetta la revisione di Andrea. Ne restano rotti 5. Le 18 lezioni di teoria sono state riscritte e sono online al posto degli originali, che avevano errori e in tre casi erano troncati. Le figure delle lezioni sono diventate file SVG indicizzabili. Dal 24 settembre si lavora a lotti completi (teoria, esercizi, formulario, flashcard), partendo dal programma e dalle 18 lezioni esistenti; i contenuti li produce Claude e li rilegge Alessandro. Il 24 settembre le 18 lezioni hanno anche esercizi dai generatori nuovi, un formulario e un mazzo di [[Flashcard]] (346 carte), e gli errori frequenti stanno accanto alle regole; il 24 settembre è fatto anche il secondo lotto (8 lezioni sui numeri), 26 lezioni complete in tutto. Dettagli in [[2026-09-24 Deploy e secondo lotto]]. Dettagli in [[2026-09-24 Figure e organizzazione dei lotti]]. La sera del 24 settembre master è in produzione (il sito Next.js ha sostituito quello SvelteKit) e il pagamento funziona, in modalità test, sul sandbox "Sapiens sandbox" di Stripe (vedi [[2026-09-24 Pagamento in produzione]]).
+Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio, prova al contrario), il provider AI (OpenAI con dati nell'UE) e i progressi per tentativo. È emerso che 6 generatori di esercizi su 15 erano rotti in produzione. Il primo generatore della nuova [[Pipeline esercizi]], le equazioni di secondo grado, è verificato su 6.000 esercizi e collegato al sito; aspetta la revisione di Andrea. Ne restano rotti 5. Le 18 lezioni di teoria sono state riscritte e sono online al posto degli originali, che avevano errori e in tre casi erano troncati. Le figure delle lezioni sono diventate file SVG indicizzabili. Dal 24 settembre si lavora a lotti completi (teoria, esercizi, formulario, flashcard), partendo dal programma e dalle 18 lezioni esistenti; i contenuti li produce Claude e li rilegge Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]). Il 24 settembre le 18 lezioni hanno anche esercizi dai generatori nuovi, un formulario e un mazzo di [[Flashcard]] (346 carte), e gli errori frequenti stanno accanto alle regole; il 24 settembre è fatto anche il secondo lotto (8 lezioni sui numeri), 26 lezioni complete in tutto. Dettagli in [[2026-09-24 Deploy e secondo lotto]]. Dettagli in [[2026-09-24 Figure e organizzazione dei lotti]]. La sera del 24 settembre master è in produzione (il sito Next.js ha sostituito quello SvelteKit) e il pagamento funziona, in modalità test, sul sandbox "Sapiens sandbox" di Stripe (vedi [[2026-09-24 Pagamento in produzione]]). Andrea ha accettato di rileggere i contenuti, e sono decisi i tentativi degli esercizi: ogni tentativo salva l'esercizio intero, corretto sul server, e il livello lo sceglie la pagina. Dettagli in [[2026-09-24 Tentativi degli esercizi]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
@@ -27,10 +27,13 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-24 Adesivi]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-24 Tentativi degli esercizi]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-24 Il livello degli esercizi lo sceglie la pagina]]
+- [[2026-09-24 Ogni tentativo salva l'esercizio intero]]
+- [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]
 - [[2026-09-24 Le note sono fogli a larghezza fissa]]
 - [[2026-09-24 Adesivi nella beta, a partire dalle note]]
 - [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]
