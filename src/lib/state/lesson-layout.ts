@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { TocSection } from '@/lib/content/markdown';
 
 interface LessonLayoutState {
 	scrollY: number;
@@ -10,6 +11,8 @@ interface LessonLayoutState {
 	targetSection: string;
 	/** Section currently under the sticky header. */
 	activeSection: string;
+	/** The lesson's outline, published by the desktop table of contents for the assistant's section questions. */
+	sections: TocSection[];
 	/** A lesson frame is on screen (true), a non-lesson page took its place (false), or nothing has said yet (null). */
 	frameMounted: boolean | null;
 	setScroll: (scrollY: number, scrollProgress: number) => void;
@@ -17,6 +20,7 @@ interface LessonLayoutState {
 	jumpTo: (targetSection: string) => void;
 	setActiveSection: (activeSection: string) => void;
 	setFrameMounted: (frameMounted: boolean | null) => void;
+	setSections: (sections: TocSection[]) => void;
 	/** A new lesson starts with no section highlighted or targeted. */
 	resetSections: () => void;
 }
@@ -34,10 +38,12 @@ export const useLessonLayout = create<LessonLayoutState>((set) => ({
 	targetSection: '',
 	activeSection: '',
 	frameMounted: null,
+	sections: [],
 	setScroll: (scrollY, scrollProgress) => set({ scrollY, scrollProgress }),
 	setTocOpen: (tocOpen) => set({ tocOpen }),
 	jumpTo: (targetSection) => set({ targetSection, tocOpen: false }),
 	setActiveSection: (activeSection) => set({ activeSection }),
 	setFrameMounted: (frameMounted) => set({ frameMounted }),
+	setSections: (sections) => set({ sections }),
 	resetSections: () => set({ targetSection: '', activeSection: '' })
 }));

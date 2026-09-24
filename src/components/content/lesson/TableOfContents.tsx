@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ListTree } from 'lucide-react';
 import type { TocSection } from '@/lib/content/markdown';
 import { useLessonLayout } from '@/lib/state/lesson-layout';
 import { cn } from '@/lib/utils/cn';
@@ -15,8 +15,16 @@ import { Html } from '@/components/ui/Html';
 export function TableOfContents({ sections, touch = false }: { sections: TocSection[]; touch?: boolean }) {
 	const activeSection = useLessonLayout((s) => s.activeSection);
 	const jumpTo = useLessonLayout((s) => s.jumpTo);
+	const setSections = useLessonLayout((s) => s.setSections);
 	const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 	const list = useRef<HTMLDivElement>(null);
+
+	// The desktop column shares the outline with the assistant beside the lesson.
+	useEffect(() => {
+		if (touch) return;
+		setSections(sections);
+		return () => setSections([]);
+	}, [touch, sections, setSections]);
 
 	// In the sheet, open on the section being read.
 	useEffect(() => {
@@ -56,9 +64,15 @@ export function TableOfContents({ sections, touch = false }: { sections: TocSect
 		});
 
 	return (
-		<div className="flex h-full w-full flex-col">
-			<div ref={list} className={cn('no-scrollbar flex-1 overflow-y-auto', touch ? 'px-3 py-2' : 'p-6')}>
-				{!touch && <p className="label-mono mb-4 text-fg-faint">Indice</p>}
+		<div className={cn('flex w-full flex-col', touch ? 'h-full' : 'min-h-0 flex-1')}>
+			{/* The column's label, on the lesson header's row; the assistant's mirrors it. */}
+			{!touch && (
+				<p className="label-mono mx-8 flex h-11 shrink-0 items-center gap-2 border-b border-edge-soft text-fg-faint">
+					<ListTree className="size-3.5" aria-hidden="true" />
+					Indice
+				</p>
+			)}
+			<div ref={list} className={cn('no-scrollbar flex-1 overflow-y-auto', touch ? 'px-3 py-2' : 'px-8 py-5')}>
 				{render(sections, 0)}
 			</div>
 		</div>
