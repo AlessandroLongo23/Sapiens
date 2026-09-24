@@ -38,6 +38,12 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
  * key from reaching an overlay underneath).
  */
 export function useFocusTrap(open: boolean, panel: React.RefObject<HTMLElement | null>, onClose: () => void) {
+	// Callers often pass a new onClose on every render; reading it from a ref keeps
+	// the effect from re-running (and moving focus out of the panel) on each keystroke.
+	const close = useRef(onClose);
+	useEffect(() => {
+		close.current = onClose;
+	});
 	useEffect(() => {
 		if (!open) return;
 		const node = panel.current;
@@ -50,7 +56,7 @@ export function useFocusTrap(open: boolean, panel: React.RefObject<HTMLElement |
 		madeInert.forEach((c) => c.setAttribute('inert', ''));
 
 		const onKey = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') return onClose();
+			if (e.key === 'Escape') return close.current();
 			if (e.key !== 'Tab' || !node) return;
 			const items = Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.getClientRects().length > 0);
 			const active = document.activeElement;
@@ -72,7 +78,7 @@ export function useFocusTrap(open: boolean, panel: React.RefObject<HTMLElement |
 			madeInert.forEach((c) => c.removeAttribute('inert'));
 			previous?.focus?.({ preventScroll: true });
 		};
-	}, [open, panel, onClose]);
+	}, [open, panel]);
 }
 
 export function Sheet({ open, onClose, title, hideTitle = false, size = 'auto', align = 'bottom', bodyClass, actions, footer, children }: SheetProps) {
