@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116 76" data-name="Insiemi" data-cut="7" data-accent="#c0352f" data-cover="high_school/math/insiemi-e-logica">
+  <defs><clipPath id="a"><circle cx="40" cy="38" r="31"/></clipPath></defs>
+  <circle cx="40" cy="38" r="31" fill="#e8b53e"/>
+  <circle cx="76" cy="38" r="31" fill="#2b64a8"/>
+  <circle cx="76" cy="38" r="31" fill="#c0352f" clip-path="url(#a)"/>
+  <circle cx="40" cy="38" r="31" fill="none" stroke="#1b1e27" stroke-width="2.6"/>
+  <circle cx="76" cy="38" r="31" fill="none" stroke="#1b1e27" stroke-width="2.6"/>
+  <text x="25" y="45" text-anchor="middle" font-family="serif" font-style="italic" font-weight="600" font-size="20" fill="#1b1e27">A</text>
+  <text x="91" y="45" text-anchor="middle" font-family="serif" font-style="italic" font-weight="600" font-size="20" fill="#fbfaf6">B</text>
+  <text x="58" y="43" text-anchor="middle" font-family="serif" font-size="14" fill="#fbfaf6">∩</text>
+</svg>

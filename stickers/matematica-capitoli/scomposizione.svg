@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 142 64" data-name="Scomposizione" data-radius="14" data-accent="#2f7a57" data-cover="high_school/math/scomposizione">
+  <rect width="142" height="64" fill="#2f7a57"/>
+  <text x="10" y="15" font-family="mono" font-size="7" letter-spacing="1" fill="#fbfaf6" fill-opacity=".6">SCOMPONI</text>
+  <text x="71" y="40" text-anchor="middle" font-family="math" font-size="14" fill="#fbfaf6">a<tspan dy="-5" font-size="10">2</tspan><tspan dy="5"> − b</tspan><tspan dy="-5" font-size="10">2</tspan><tspan dy="5"> = (a+b)(a−b)</tspan></text>
+  <path d="M78 48Q102 51 130 47" fill="none" stroke="#e8b53e" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

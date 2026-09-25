@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 64" data-name="Eulero" data-radius="14" data-accent="#4f7fc0">
+  <rect width="148" height="64" fill="#1f2a44"/>
+  <text x="10" y="15" font-family="mono" font-size="7" letter-spacing="1" fill="#fbfaf6" fill-opacity=".55">EULERO</text>
+  <text x="74" y="43" text-anchor="middle" font-family="serif" font-style="italic" font-size="24" fill="#fbfaf6">e<tspan dy="-10" font-size="14">iπ</tspan><tspan dy="10"> + 1 = 0</tspan></text>
+</svg>

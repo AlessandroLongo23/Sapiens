@@ -27,7 +27,8 @@
 		"cap:dev:ios": "node scripts/cap-dev-ios.mjs",
 		"prepare": "husky",
 		"test:smoke": "E2E_SKIP_STRIPE_LISTEN=1 playwright test --project=chromium tests/e2e/smoke.spec.ts",
-		"check:bundle": "node scripts/check-bundle.mjs"
+		"check:bundle": "node scripts/check-bundle.mjs",
+		"stickers": "node scripts/stickers/build.mjs"
 	},
 	"dependencies": {
 		"@supabase/ssr": "^0.12.6",
@@ -60,6 +61,8 @@
 		"@capacitor/core": "^8.5.1",
 		"@capacitor/ios": "^8.5.2",
 		"@capacitor/splash-screen": "^8.0.2",
+		"@fontsource/fraunces": "^5.3.0",
+		"@fontsource/jetbrains-mono": "^5.3.0",
 		"@playwright/test": "^1.63.0",
 		"@tailwindcss/forms": "^0.5.11",
 		"@tailwindcss/postcss": "^4.3.3",
@@ -68,16 +71,19 @@
 		"@types/node": "^24.0.0",
 		"@types/react": "^19.2.18",
 		"@types/react-dom": "^19.2.7",
+		"@xmldom/xmldom": "^0.9.12",
 		"dotenv": "^17.4.2",
 		"eslint": "^9.39.5",
 		"eslint-config-next": "^16.3.4",
 		"husky": "^9.1.7",
 		"lint-staged": "^17.5.0",
+		"opentype.js": "^2.0.0",
 		"sharp": "^0.35.4",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^5.9.3"
 	},
 	"lint-staged": {
-		"*.{ts,tsx,js,mjs,cjs}": "eslint --max-warnings=0 --no-warn-ignored"
+		"*.{ts,tsx,js,mjs,cjs}": "eslint --max-warnings=0 --no-warn-ignored",
+		"{stickers/**/*.{svg,json},public/stickers/*.svg,src/lib/zaino/sticker-catalog.json}": "node scripts/stickers/build.mjs --check"
 	}
 }

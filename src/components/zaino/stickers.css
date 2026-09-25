@@ -1,4 +1,4 @@
-/* Stickers on a note's sheet. The geometry is set inline by StickerBoard
+/* Stickers on a note's sheet and on the cover of a subject's page. The geometry is set inline by StickerBoard
    (src/lib/zaino/sticker-board.ts); this file is the layers it draws into. */
 
 .sticker-layer {
@@ -19,14 +19,14 @@
 
 /* Holding a sticker: the layer takes the clicks, so they place it instead of
    moving the caret. A drag on bare paper still scrolls the note on a phone. */
-.note-sheet.is-holding .sticker-layer {
+:is(.note-sheet, .sticker-cover).is-holding .sticker-layer {
 	pointer-events: auto;
 	touch-action: pan-y;
 }
-.note-sheet[data-sticker-cursor='none'] .sticker-layer {
+:is(.note-sheet, .sticker-cover)[data-sticker-cursor='none'] .sticker-layer {
 	cursor: none;
 }
-.note-sheet[data-sticker-cursor='grabbing'] .sticker-layer {
+:is(.note-sheet, .sticker-cover)[data-sticker-cursor='grabbing'] .sticker-layer {
 	cursor: grabbing;
 }
 
@@ -43,8 +43,8 @@
 	touch-action: none;
 	cursor: grab;
 }
-.note-sheet.is-holding .sticker[data-mode='hand'],
-.note-sheet.is-holding .sticker[data-mode='placing'] {
+:is(.note-sheet, .sticker-cover).is-holding .sticker[data-mode='hand'],
+:is(.note-sheet, .sticker-cover).is-holding .sticker[data-mode='placing'] {
 	pointer-events: auto;
 	touch-action: none;
 }
@@ -78,7 +78,8 @@
 	box-sizing: border-box;
 	border-radius: var(--r);
 }
-.sticker-art svg {
+.sticker-art svg,
+.sticker-art img {
 	display: block;
 	width: 100%;
 	height: 100%;
@@ -86,6 +87,15 @@
 }
 .sticker-sil {
 	background: #22160c;
+}
+/* Die-cut: the file is the whole sticker, so no white box, and every layer takes its shape. */
+.sticker-art.is-cut {
+	background: none;
+	padding: 0;
+}
+.sticker.is-cut :is(.sticker-face, .sticker-band, .sticker-flap, .sticker-sil) {
+	border-radius: 0;
+	mask: var(--cut) 0 0 / 100% 100% no-repeat;
 }
 .sticker-shadows {
 	opacity: 0.3;

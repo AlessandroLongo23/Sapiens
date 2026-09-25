@@ -16,7 +16,7 @@ import {
 	type NoteSummary,
 	type Quota
 } from '@/lib/zaino/config';
-import { parseStickers, type PlacedSticker } from '@/lib/zaino/stickers';
+import { COVER_BOUNDS, parseStickers, type PlacedSticker } from '@/lib/zaino/stickers';
 import { DEFAULT_PAPER, readPaper, type Paper } from '@/lib/zaino/paper';
 
 // Re-exported so a server caller has one import for the whole feature.
@@ -591,6 +591,27 @@ export async function saveNoteStickers(supabase: SupabaseClient, userId: string,
 		.from('note_stickers')
 		.upsert({ note_id: noteId, user_id: userId, stickers, updated_at: new Date().toISOString() }, { onConflict: 'note_id' });
 	if (error) fail('note stickers save failed', error);
+}
+
+/**
+ * The stickers on the cover of a subject's page (see the cover_stickers migration), or null when the
+ * student has never changed that cover: the page then shows the stickers it comes with. A failed read
+ * throws, so the page does not offer a cover whose save would overwrite the real one.
+ */
+export async function getCoverStickers(supabase: SupabaseClient, userId: string, page: string): Promise<PlacedSticker[] | null> {
+	const { data, error } = await supabase.from('cover_stickers').select('stickers').eq('user_id', userId).eq('page', page).maybeSingle();
+	if (error) fail('cover stickers lookup failed', error);
+	if (!data) return null;
+	const parsed = parseStickers((data as Row).stickers, COVER_BOUNDS);
+	return typeof parsed === 'string' ? [] : parsed;
+}
+
+/** Replaces the whole set on one cover. */
+export async function saveCoverStickers(supabase: SupabaseClient, userId: string, page: string, stickers: PlacedSticker[]): Promise<void> {
+	const { error } = await supabase
+		.from('cover_stickers')
+		.upsert({ user_id: userId, page, stickers, updated_at: new Date().toISOString() }, { onConflict: 'user_id,page' });
+	if (error) fail('cover stickers save failed', error);
 }
 
 /* ------------------------------------------------------------------ paper */

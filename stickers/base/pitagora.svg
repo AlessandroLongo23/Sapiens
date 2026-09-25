@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 104 104" data-name="Pitagora" data-radius="16" data-accent="#2f7a57">
+  <rect width="104" height="104" fill="#2f7a57"/>
+  <path d="M24 80H82L24 36Z" fill="none" stroke="#fbfaf6" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M24 72H32V80" fill="none" stroke="#fbfaf6" stroke-width="1.4"/>
+  <text x="53" y="96" text-anchor="middle" font-family="serif" font-size="14" fill="#fbfaf6">4</text>
+  <text x="13" y="63" text-anchor="middle" font-family="serif" font-size="14" fill="#fbfaf6">3</text>
+  <text x="60" y="51" text-anchor="middle" font-family="serif" font-size="14" fill="#fbfaf6">5</text>
+  <text x="96" y="17" text-anchor="end" font-family="mono" font-size="7.5" fill="#fbfaf6" fill-opacity=".75">a²+b²=c²</text>
+</svg>

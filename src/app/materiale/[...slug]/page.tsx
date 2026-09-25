@@ -9,13 +9,14 @@ import { configs } from '@/lib/exercises/config';
 import { courseJsonLd, learningResourceJsonLd, type JsonLd as JsonLdData } from '@/lib/seo/jsonld';
 import { subjectCopy } from '@/lib/content/subject-copy';
 import { countByType, type ContentNode, type NodeType } from '@/lib/utils/tree';
-import { iconFor, toneFor } from '@/lib/utils/icons';
+import { toneFor } from '@/lib/utils/icons';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { contentCrumbs } from '@/components/content/Breadcrumb';
 import { CardGridSection, Page, PageHeader } from '@/components/content/PageHeader';
 import { NodeCard } from '@/components/content/NodeCard';
 import type { RowProgress } from '@/components/content/ProgressMeta';
 import { SubjectGuide } from '@/components/content/SubjectGuide';
+import { CoverStickers, CoverStickersButton } from '@/components/content/CoverStickers';
 import { Latex } from '@/components/ui/Latex';
 import { Stat } from '@/components/ui/Badge';
 
@@ -77,21 +78,16 @@ export default async function IndexPage({ params }: Params) {
 	const structured: JsonLdData | undefined =
 		node.type === 'subject' ? courseJsonLd(node, ancestors, seo.description) : node.type === 'chapter' ? learningResourceJsonLd(node, ancestors, { description: seo.description, resourceType: 'Capitolo', free: true }) : undefined;
 	const heading = HEADINGS[node.type];
-	// A chapter is numbered as in its subject's contents; everything else names the level it belongs to.
+	// The trail above the title already names the level and the subject: only a chapter adds its number.
 	const subject = ancestors[1];
-	const eyebrow =
-		node.type === 'chapter' && subject
-			? `${heading.eyebrow} ${String(subject.children.findIndex((c) => c.id === node.id) + 1).padStart(2, '0')} · ${plainTitle(subject.title)}`
-			: level && node !== level
-				? `${heading.eyebrow} · ${plainTitle(level.title)}`
-				: heading.eyebrow;
+	const eyebrow = node.type === 'chapter' && subject ? `${heading.eyebrow} ${String(subject.children.findIndex((c) => c.id === node.id) + 1).padStart(2, '0')}` : undefined;
 
 	return (
-		<Page tone={toneFor(node, ...ancestors)}>
+		// Every index page has its own cover of stickers, keyed by its path: a level, a subject and each of its chapters.
+		<Page tone={toneFor(node, ...ancestors)} cover={<CoverStickers page={dbPath(ancestors)} />}>
 			<JsonLd data={structured} />
 			<PageHeader
 				crumbs={contentCrumbs(ancestors)}
-				icon={iconFor(node.type === 'chapter' ? ancestors[1] : node)}
 				eyebrow={eyebrow}
 				title={<Latex content={node.title} />}
 				lead={node.description}
@@ -100,6 +96,7 @@ export default async function IndexPage({ params }: Params) {
 						{label}
 					</Stat>
 				))}
+				aside={<CoverStickersButton />}
 			/>
 			{node.children.length > 0 ? (
 				<CardGridSection id="children-heading" title={heading.title} count={node.children.length} layout={heading.layout}>

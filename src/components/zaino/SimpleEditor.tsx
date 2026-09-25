@@ -31,13 +31,12 @@ import { describeFrozen, frozenBlocks } from '@/lib/zaino/analyse';
 import { joinPages, MAX_PAGES, planPageOp, splitPages, type PageOp } from '@/lib/zaino/pages';
 import { paperData, paperStyle, paperTone, type Paper } from '@/lib/zaino/paper';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { useCoarsePointer, useMd } from '@/lib/hooks/use-media';
 import { effectiveZoom, useNoteView } from '@/lib/state/note-view';
 import { MAX_STICKERS, SHEET_MIN_HEIGHT, SHEET_WIDTH, type PlacedSticker } from '@/lib/zaino/stickers';
 import type { BoardState } from '@/lib/zaino/sticker-board';
 import { cn } from '@/lib/utils/cn';
-import { NoteStickers, StickerAlbum, type StickerControls } from './NoteStickers';
+import { HoldingHint, NoteStickers, StickerAlbum, type StickerControls } from './NoteStickers';
 import { EditorToolbar, type ToolbarAction } from './EditorToolbar';
 import { MathPopover, type MathTarget } from './MathPopover';
 import { LinkDialog } from './LinkDialog';
@@ -75,7 +74,7 @@ export interface DeletedPage {
 }
 
 const newId = () => crypto.randomUUID();
-const withoutPage = (s: PlacedSticker): PlacedSticker => ({ id: s.id, sticker: s.sticker, x: s.x, y: s.y, r: s.r });
+const withoutPage = ({ page: _page, ...s }: PlacedSticker): PlacedSticker => s;
 
 /**
  * The Word-like mode. Formatting is applied to the text itself, so `###` is
@@ -463,14 +462,12 @@ export function SimpleEditor({
 			{/* What the hands can do while a sticker is held, and the way out. */}
 			{holding && (
 				<div className="pointer-events-none absolute inset-x-0 top-3 z-40 flex justify-center px-3">
-					<div className="pointer-events-auto flex max-w-full items-center gap-3 rounded-full border border-edge bg-surface/95 py-1.5 pl-4 pr-1.5 text-sm shadow-lift backdrop-blur-sm">
-						<span className="min-w-0 text-fg-muted">
-							{holding.placing ? 'Trascina verso la freccia per stenderlo.' : coarse ? 'Tocca l’adesivo per attaccarlo, due dita per girarlo.' : 'Clic per attaccarlo, rotella per girarlo.'}
-						</span>
-						<Button size="sm" variant="secondary" onClick={() => handles.current.get(holdingId ?? '')?.stickers.current?.putAway()}>
-							Rimetti via
-						</Button>
-					</div>
+					<HoldingHint
+						state={holding}
+						coarse={coarse}
+						onPutAway={() => handles.current.get(holdingId ?? '')?.stickers.current?.putAway()}
+						onResize={(f) => handles.current.get(holdingId ?? '')?.stickers.current?.resize(f)}
+					/>
 				</div>
 			)}
 

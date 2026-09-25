@@ -68,7 +68,7 @@ export const StaticPage = memo(function StaticPage({
 							width: d.w,
 							height: d.h,
 							['--r' as string]: `${d.r}px`,
-							transform: `translate(-50%, -50%) rotate(${s.r}deg)`,
+							transform: `translate(-50%, -50%) rotate(${s.r}deg) scale(${s.s ?? 1})`,
 							filter: 'drop-shadow(0 1px 1.5px rgb(30 18 8 / 0.25))'
 						}}
 						// Static artwork from lib/zaino/stickers, never user input.

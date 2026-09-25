@@ -26,20 +26,38 @@ export function PenStroke({ className, onHover = false }: { className?: string; 
 }
 
 /**
- * The top of an index page: trail, an eyebrow, the title in the display serif
- * with a pen stroke under it, a lead paragraph and a row of figures. The icon
- * sits on the right as a tinted tab, like the sticker on a notebook's cover.
+ * The top of an index page: the trail ending in an eyebrow, the title in the
+ * display serif with a pen stroke under it, a lead paragraph and a row of
+ * figures. The icon, if any, sits on the right as a tinted tab, like the
+ * sticker on a notebook's cover; `aside` goes at the right end of the trail.
  * In the installed app on a phone it is a title bar's large title: no trail
  * (the header has a back arrow), no figures, a smaller title.
  */
-export function PageHeader({ crumbs, icon: Icon, eyebrow, title, lead, stats, extra }: { crumbs: BreadcrumbItem[]; icon: IconComponent; eyebrow?: ReactNode; title: ReactNode; lead?: ReactNode; stats?: ReactNode; extra?: ReactNode }) {
+export function PageHeader({
+	crumbs,
+	icon: Icon,
+	eyebrow,
+	title,
+	lead,
+	stats,
+	extra,
+	aside
+}: {
+	crumbs: BreadcrumbItem[];
+	icon?: IconComponent;
+	eyebrow?: ReactNode;
+	title: ReactNode;
+	lead?: ReactNode;
+	stats?: ReactNode;
+	extra?: ReactNode;
+	aside?: ReactNode;
+}) {
 	return (
 		<header className="mb-10 animate-fade-in sm:mb-16 app:max-md:mb-6">
-			<Breadcrumb items={crumbs} />
+			<Breadcrumb items={crumbs} tail={eyebrow} aside={aside} hideCurrent />
 			<div className="flex items-start justify-between gap-8">
 				<div className="min-w-0 flex-1 space-y-6 app:max-md:space-y-4">
 					<div className="space-y-4 app:max-md:space-y-3">
-						{eyebrow && <p className="label-mono text-tint-fg">{eyebrow}</p>}
 						<h1 className="w-fit max-w-full text-5xl font-semibold leading-[1.02] text-fg-strong sm:text-6xl lg:text-7xl app:max-md:text-4xl">
 							{title}
 							<PenStroke className="mt-2" />
@@ -49,7 +67,7 @@ export function PageHeader({ crumbs, icon: Icon, eyebrow, title, lead, stats, ex
 					{stats && <div className="flex flex-wrap gap-x-6 gap-y-4 pt-2 app:max-md:hidden">{stats}</div>}
 					{extra}
 				</div>
-				<Sticker icon={Icon} size="lg" className="hidden sm:flex" />
+				{Icon && <Sticker icon={Icon} size="lg" className="hidden sm:flex" />}
 			</div>
 		</header>
 	);
@@ -81,14 +99,16 @@ export function CardGridSection({ id, title, count, layout = 'grid', children }:
 /**
  * Index pages share one page background and container: the page, with a band
  * of squared paper behind the header that fades out as the content begins.
- * `tone` colours everything tinted on the page after a subject.
+ * `tone` colours everything tinted on the page after a subject. `cover` goes
+ * over the band and the header, for the student's stickers (CoverStickers).
  */
-export function Page({ children, width = 'wide', tone }: { children: ReactNode; width?: 'wide' | 'medium' | 'narrow'; tone?: SubjectTone }) {
+export function Page({ children, width = 'wide', tone, cover }: { children: ReactNode; width?: 'wide' | 'medium' | 'narrow'; tone?: SubjectTone; cover?: ReactNode }) {
 	const max = { wide: 'max-w-7xl', medium: 'max-w-5xl', narrow: 'max-w-3xl' }[width];
 	return (
 		<div className="relative min-h-screen overflow-hidden bg-page-alt" data-subject={tone}>
 			<div className="grid-paper pointer-events-none absolute inset-x-0 top-0 h-[30rem] [mask-image:linear-gradient(to_bottom,black_30%,transparent)]" aria-hidden="true" />
 			<div className={`relative z-10 mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8 app:max-md:pt-5 ${max}`}>{children}</div>
+			{cover}
 		</div>
 	);
 }

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 76" data-name="Monomi" data-radius="14" data-accent="#e8b53e" data-cover="high_school/math/monomi-polinomi">
+  <rect width="112" height="76" fill="#e8b53e"/>
+  <circle cx="13" cy="38" r="4.5" fill="#fbfaf6" stroke="#1b1e27" stroke-opacity=".35"/>
+  <text x="62" y="44" text-anchor="middle" font-family="serif" font-style="italic" font-weight="600" font-size="26" fill="#1b1e27">3x<tspan dy="-10" font-size="15">2</tspan><tspan dy="10">y</tspan></text>
+  <text x="62" y="62" text-anchor="middle" font-family="mono" font-size="8" letter-spacing="1.2" fill="#1b1e27" fill-opacity=".72">GRADO 3</text>
+</svg>

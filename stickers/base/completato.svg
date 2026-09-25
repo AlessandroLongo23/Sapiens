@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 142 56" data-name="Completato" data-radius="12" data-accent="#b3302f">
+  <rect width="142" height="56" fill="#b3302f"/>
+  <path d="M14 29L21 36L35 19" fill="none" stroke="#fbfaf6" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="45" y="22" font-family="mono" font-size="7.5" letter-spacing="1.2" fill="#fbe9e6" fill-opacity=".85">CAPITOLO 4</text>
+  <text x="45" y="41" font-family="serif" font-style="italic" font-size="17" fill="#fbfaf6">completato</text>
+</svg>

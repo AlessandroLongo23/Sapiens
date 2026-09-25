@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 64" data-name="Disequazioni" data-radius="14" data-accent="#c0352f" data-cover="high_school/math/disequazioni-lineari">
+  <rect width="132" height="64" fill="#fbfaf6"/>
+  <path d="M11 0V64M22 0V64M33 0V64M44 0V64M55 0V64M66 0V64M77 0V64M88 0V64M99 0V64M110 0V64M121 0V64M0 11H132M0 22H132M0 33H132M0 44H132M0 55H132" stroke="#4f7fc0" stroke-opacity=".22"/>
+  <path d="M8 42H122M116 38L123 42L116 46" fill="none" stroke="#1b1e27" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M58 42H114" stroke="#c0352f" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M110 36.5L118 42L110 47.5" fill="none" stroke="#c0352f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="54" cy="42" r="3.8" fill="#fbfaf6" stroke="#c0352f" stroke-width="2"/>
+  <text x="54" y="58" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">2</text>
+  <text x="12" y="25" font-family="serif" font-style="italic" font-size="16" fill="#1b1e27">x &gt; 2</text>
+</svg>

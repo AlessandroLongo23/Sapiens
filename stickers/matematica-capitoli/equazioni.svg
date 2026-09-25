@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Equazioni" data-radius="16" data-accent="#2b64a8" data-cover="high_school/math/equazioni-sistemi">
+  <rect width="128" height="88" fill="#2b64a8"/>
+  <path d="M64 30V74M50 76H78M24 32H104" fill="none" stroke="#fbfaf6" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M59 32L64 25L69 32Z" fill="#fbfaf6"/>
+  <path d="M24 32L6 60M24 32L42 60M104 32L86 60M104 32L122 60" stroke="#fbfaf6" stroke-width="1.1" stroke-opacity=".6"/>
+  <path d="M4 60Q24 72 44 60ZM84 60Q104 72 124 60Z" fill="#fbfaf6"/>
+  <text x="24" y="56" text-anchor="middle" font-family="serif" font-style="italic" font-size="11" fill="#fbfaf6">2x+3</text>
+  <text x="104" y="56" text-anchor="middle" font-family="serif" font-size="12" fill="#fbfaf6">7</text>
+  <text x="10" y="15" font-family="mono" font-size="7" letter-spacing="1" fill="#fbfaf6" fill-opacity=".6">BILANCIA</text>
+  <text x="118" y="83" text-anchor="end" font-family="serif" font-style="italic" font-size="12" fill="#e8b53e">x = 2</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 96" data-name="π a forma di π" data-cut="8" data-accent="#c0352f">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 32Q16 17 34 19L98 15" stroke="#c0352f" stroke-width="17"/>
+    <path d="M42 22Q45 58 28 84" stroke="#c0352f" stroke-width="16"/>
+    <path d="M77 20Q73 58 81 76Q87 88 99 81" stroke="#c0352f" stroke-width="16"/>
+    <path d="M22 25Q27 20 36 21M50 26Q50 46 44 62M83 26Q81 48 84 62" stroke="#fbfaf6" stroke-opacity=".45" stroke-width="3.2"/>
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-import { SHEET_MIN_HEIGHT, SHEET_WIDTH, STICKER_BY_ID, stickerArt, type PlacedSticker, type StickerDef } from './stickers';
+import { MAX_SIZE, MIN_SIZE, SHEET_MIN_HEIGHT, SHEET_WIDTH, STICKER_BY_ID, stickerArt, stickerUrl, type PlacedSticker, type StickerDef } from './stickers';
 
 /**
  * Stickers on a note's sheet: picking one up, laying it down, peeling it off.
@@ -7,7 +7,9 @@ import { SHEET_MIN_HEIGHT, SHEET_WIDTH, STICKER_BY_ID, stickerArt, type PlacedSt
  * saving. Ported from the prototype linked in vault/Prodotti/Studenti/Adesivi.md.
  *
  * Coordinates are sheet px: the 792px page before the sheet is zoomed to fit
- * the screen, so a sticker lands on the same spot on every device.
+ * the screen, so a sticker lands on the same spot on every device. A `fluid`
+ * board (the cover of a subject's page) is as wide as its element and never
+ * zoomed: its coordinates are CSS px, and the owner maps them to what it saves.
  *
  * Each sticker has a local frame, its w × h box. The anchor is the corner that
  * is lowest-left on screen at the current angle, the peel corner the one
@@ -87,6 +89,8 @@ interface Sticker {
 	cue: SVGSVGElement;
 	cueG: SVGGElement;
 	mode: Mode;
+	/** The student's scale of the sticker, MIN_SIZE to MAX_SIZE; it multiplies every other scale. */
+	size: number;
 	/** World position of the grip g (a local point): the transform is P · R(rot) · scale · flip · (x − g). */
 	P: Pt;
 	target: Pt;
@@ -139,12 +143,16 @@ export interface BoardState {
 	holding: StickerDef | null;
 	placing: boolean;
 	hovering: boolean;
+	/** The held sticker's size, 1 when none is held. */
+	size: number;
 }
 
 export interface BoardOptions {
 	initial: PlacedSticker[];
 	onChange: (stickers: PlacedSticker[]) => void;
 	onState: (state: BoardState) => void;
+	/** As wide as the element, at scale 1, and never grown to fit the stickers. */
+	fluid?: boolean;
 }
 
 const vibrate = (pattern: number | number[]) => {
@@ -162,7 +170,7 @@ export class StickerBoard {
 	private active: { kind: 'place' | 'peel' | 'move'; st: Sticker; id: number } | null = null;
 	private hoverSt: Sticker | null = null;
 	private justStuck: Sticker | null = null;
-	private gesture: { ids: number[]; a0: number; m0: Pt; rot0: number; P0: Pt } | null = null;
+	private gesture: { ids: number[]; a0: number; d0: number; m0: Pt; rot0: number; size0: number; P0: Pt } | null = null;
 	private ptrs = new Map<number, Pt & { type: string }>();
 	private lastType: string;
 	private lastClient: Pt | null = null;
@@ -176,6 +184,7 @@ export class StickerBoard {
 	private reduced: boolean;
 	private resize: ResizeObserver;
 	private gRot0 = 0;
+	private gSize0 = 1;
 
 	constructor(
 		private sheet: HTMLElement,
@@ -192,10 +201,11 @@ export class StickerBoard {
 			if (!d) continue;
 			const st = this.make(d, placed.id);
 			st.rot = placed.r;
+			st.size = clamp(placed.s ?? 1, MIN_SIZE, MAX_SIZE);
 			this.setCorners(st);
 			st.mode = 'stuck';
 			st.g = st.A;
-			st.P = add(V(placed.x, placed.y), rotV(sub(st.A, st.c), st.rot));
+			st.P = add(V(placed.x, placed.y), rotV(mul(sub(st.A, st.c), st.size), st.rot));
 			st.z = ++this.zTop;
 			this.render(st);
 		}
@@ -231,14 +241,17 @@ export class StickerBoard {
 		for (const st of this.all) st.el.remove();
 	}
 
-	/** Takes a sticker from the album into the hand, over the visible middle of the sheet (or under the mouse). */
+	/** Takes a sticker from the album into the hand, over the visible middle of the sheet (or under the mouse, when it is over the sheet). */
 	pick(stickerId: string) {
 		const d = STICKER_BY_ID.get(stickerId);
 		if (!d) return;
 		if (this.held) this.putAway();
 		const st = this.make(d, crypto.randomUUID());
 		const r = this.sheet.getBoundingClientRect();
-		const at = this.lastType === 'mouse' && this.lastClient ? this.lastClient : V((Math.max(r.left, 0) + Math.min(r.right, innerWidth)) / 2, (Math.max(r.top, 0) + Math.min(r.bottom, innerHeight)) / 2);
+		const m = this.lastClient;
+		// Under the mouse only if the mouse is over the sheet: after a pick in the album it may be far below it.
+		const over = this.lastType === 'mouse' && m && m.x >= r.left && m.x <= r.right && m.y >= r.top && m.y <= r.bottom;
+		const at = over ? m : V((Math.max(r.left, 0) + Math.min(r.right, innerWidth)) / 2, (Math.max(r.top, 0) + Math.min(r.bottom, innerHeight)) / 2);
 		st.mode = 'hand';
 		st.P = this.clampPt(this.toBoard(at));
 		st.target = st.P;
@@ -257,6 +270,14 @@ export class StickerBoard {
 		vibrate(4);
 		this.emitState();
 		this.kick();
+	}
+
+	/** Makes the sticker in hand bigger (f > 1) or smaller, within MIN_SIZE and MAX_SIZE. */
+	scaleBy(f: number) {
+		const held = this.held;
+		if (!held || held.mode !== 'hand') return;
+		held.size = clamp(held.size * f, MIN_SIZE, MAX_SIZE);
+		this.emitState();
 	}
 
 	/** The sticker in hand goes back to the album. One that came off the page is thereby removed. */
@@ -278,7 +299,9 @@ export class StickerBoard {
 
 	private make(d: StickerDef, id: string): Sticker {
 		const el = document.createElement('div');
-		el.className = 'sticker';
+		el.className = d.cut ? 'sticker is-cut' : 'sticker';
+		// A die-cut sticker's own file is the mask of every layer (stickers.css).
+		if (d.cut) el.style.setProperty('--cut', `url("${stickerUrl(d)}")`);
 		el.style.width = `${d.w}px`;
 		el.style.height = `${d.h}px`;
 		el.style.setProperty('--r', `${d.r}px`);
@@ -298,7 +321,7 @@ export class StickerBoard {
 			shadows: q('.sticker-shadows'), sils: qa('.sticker-sil'), face: q('.sticker-face'), shade: q('.sticker-shade'), gloss: q('.sticker-gloss'),
 			bands: qa<HTMLDivElement>('.sticker-band').map((b) => ({ el: b, tint: b.querySelector('.sticker-tint') as HTMLDivElement })),
 			flap: q('.sticker-flap'), cue: q('.sticker-cue'), cueG: q('.sticker-cue g'),
-			mode: 'hand', P: V(0, 0), target: V(0, 0), rot: 0, sway: 0, swayV: 0, g: V(d.w / 2, d.h / 2), f: 1, fn: V(1, 0), fo: V(0, 0),
+			mode: 'hand', size: 1, P: V(0, 0), target: V(0, 0), rot: 0, sway: 0, swayV: 0, g: V(d.w / 2, d.h / 2), f: 1, fn: V(1, 0), fo: V(0, 0),
 			k: 1, s: L, p: this.restP(), pop: 1, pulse: 0, wobT0: 0, cueO: 0, tw: {}, z: 0, dirty: true, leaving: false, finishing: false, ph: 'idle',
 			C: V(d.w, 0), A: V(0, d.h), n: V(1, 0), a0: 0, cx: 1, cy: 0,
 			press: V(0, 0), v: 0, lastT: 0, lastProj: 0, far: 0, start: V(0, 0), last: { x: 0, y: 0, t: 0 }, pv: 0, gave: false, base: PRESS, popT: 0, popFrom: V(0, 0), lastPt: null
@@ -337,7 +360,7 @@ export class StickerBoard {
 
 	/* --------------------------------------------------------- transforms */
 
-	private scOf(st: Sticker) { return (1 + 0.035 * (1 - st.k)) * st.pop * (1 + st.pulse); }
+	private scOf(st: Sticker) { return st.size * (1 + 0.035 * (1 - st.k)) * st.pop * (1 + st.pulse); }
 	private flipApply(st: Sticker, v: Pt, inv = false) {
 		if (st.f === 1) return v;
 		const f = inv ? 1 / (Math.abs(st.f) < 0.05 ? 0.05 : st.f) : st.f;
@@ -364,14 +387,15 @@ export class StickerBoard {
 	private topStuckAt(pt: Pt) {
 		return this.all.filter((s) => s.mode === 'stuck').sort((a, b) => b.z - a.z).find((s) => this.hit(s, pt));
 	}
-	private scale() { return this.sheet.getBoundingClientRect().width / SHEET_WIDTH || 1; }
+	private width() { return this.opts.fluid ? this.sheet.getBoundingClientRect().width : SHEET_WIDTH; }
+	private scale() { return this.opts.fluid ? 1 : this.sheet.getBoundingClientRect().width / SHEET_WIDTH || 1; }
 	private toBoard(client: Pt) {
-		const r = this.sheet.getBoundingClientRect(), k = r.width / SHEET_WIDTH || 1;
+		const r = this.sheet.getBoundingClientRect(), k = this.scale();
 		return V((client.x - r.left) / k, (client.y - r.top) / k);
 	}
 	private clampPt(p: Pt) {
 		const h = this.sheet.getBoundingClientRect().height / this.scale();
-		return V(clamp(p.x, 6, SHEET_WIDTH - 6), clamp(p.y, 6, h - 6));
+		return V(clamp(p.x, 6, this.width() - 6), clamp(p.y, 6, h - 6));
 	}
 
 	/* ----------------------------------------------------------- rendering */
@@ -744,6 +768,8 @@ export class StickerBoard {
 		if (e.key === 'Escape') { e.preventDefault(); this.putAway(); }
 		else if (held.mode === 'hand' && (e.key === 'q' || e.key === 'Q')) { e.preventDefault(); held.rot -= 7.5; this.kick(); }
 		else if (held.mode === 'hand' && (e.key === 'e' || e.key === 'E')) { e.preventDefault(); held.rot += 7.5; this.kick(); }
+		else if (e.key === '+' || e.key === '=') { e.preventDefault(); this.scaleBy(1.1); }
+		else if (e.key === '-' || e.key === '_') { e.preventDefault(); this.scaleBy(1 / 1.1); }
 	};
 
 	/** The page scrolls under a held sticker: it stays under the mouse. */
@@ -756,21 +782,25 @@ export class StickerBoard {
 		if (!held || held.mode !== 'hand') return;
 		e.preventDefault();
 		let dy = e.deltaY * (e.deltaMode === 1 ? 16 : 1);
+		// A pinch on a trackpad arrives as a wheel with Ctrl; so does Ctrl or ⌘ with a mouse wheel.
+		if (e.ctrlKey || e.metaKey) { this.scaleBy(Math.exp(clamp(-dy * 0.01, -0.2, 0.2))); return; }
 		if (!dy && e.shiftKey) dy = e.deltaX;
 		held.rot += clamp(dy * 0.12, -12, 12);
 		this.kick();
 	};
 
-	// Safari on the Mac: the trackpad's two-finger rotation. Ignored while fingers are on a touch screen.
-	private onGestureStart = (e: Event & { rotation?: number }) => {
+	// Safari on the Mac: the trackpad's two-finger rotation and pinch. Ignored while fingers are on a touch screen.
+	private onGestureStart = (e: Event & { rotation?: number; scale?: number }) => {
 		if (!this.held || this.ptrs.size) return;
 		e.preventDefault();
 		this.gRot0 = this.held.rot;
+		this.gSize0 = this.held.size;
 	};
-	private onGestureChange = (e: Event & { rotation?: number }) => {
+	private onGestureChange = (e: Event & { rotation?: number; scale?: number }) => {
 		if (!this.held || this.ptrs.size || this.held.mode !== 'hand') return;
 		e.preventDefault();
 		this.held.rot = this.gRot0 + (e.rotation ?? 0);
+		this.held.size = clamp(this.gSize0 * (e.scale ?? 1), MIN_SIZE, MAX_SIZE);
 		this.kick();
 	};
 
@@ -780,7 +810,7 @@ export class StickerBoard {
 		if (touches.length < 2 || !held || held.finishing) return false;
 		if (held.mode === 'placing') this.backToHand(held);
 		const [[ia, a], [ib, b]] = touches;
-		this.gesture = { ids: [ia, ib], a0: Math.atan2(b.y - a.y, b.x - a.x) / DEG, m0: mul(add(a, b), 0.5), rot0: held.rot, P0: held.target };
+		this.gesture = { ids: [ia, ib], a0: Math.atan2(b.y - a.y, b.x - a.x) / DEG, d0: Math.hypot(b.x - a.x, b.y - a.y) || 1, m0: mul(add(a, b), 0.5), rot0: held.rot, size0: held.size, P0: held.target };
 		this.active = null;
 		return true;
 	}
@@ -792,6 +822,8 @@ export class StickerBoard {
 		let da = Math.atan2(b.y - a.y, b.x - a.x) / DEG - g.a0;
 		da = ((da + 540) % 360) - 180;
 		held.rot = g.rot0 + da;
+		// Two fingers apart or together: bigger or smaller, as a photo.
+		held.size = clamp((g.size0 * Math.hypot(b.x - a.x, b.y - a.y)) / g.d0, MIN_SIZE, MAX_SIZE);
 		held.target = this.clampPt(add(g.P0, sub(mul(add(a, b), 0.5), g.m0)));
 		this.kick();
 	}
@@ -819,11 +851,11 @@ export class StickerBoard {
 	private emitState() {
 		this.sheet.classList.toggle('is-holding', !!this.held);
 		this.sheet.dataset.stickerCursor = this.held ? (this.held.mode === 'placing' || this.lastType !== 'mouse' ? 'grabbing' : 'none') : this.active ? 'grabbing' : '';
-		this.opts.onState({ holding: this.held?.d ?? null, placing: this.held?.mode === 'placing', hovering: !!this.hoverSt });
+		this.opts.onState({ holding: this.held?.d ?? null, placing: this.held?.mode === 'placing', hovering: !!this.hoverSt, size: this.held?.size ?? 1 });
 		this.kick();
 	}
 
-	/** The stuck stickers as saved: centre on the sheet and rotation. */
+	/** The stuck stickers as saved: centre on the sheet, rotation and size. */
 	private changed() {
 		const out: PlacedSticker[] = this.all
 			.filter((s) => s.mode === 'stuck')
@@ -831,7 +863,9 @@ export class StickerBoard {
 			.map((s) => {
 				const c = this.toWorld(s, s.c);
 				const r = ((((s.rot + 180) % 360) + 360) % 360) - 180;
-				return { id: s.id, sticker: s.d.id, x: Math.round(c.x * 10) / 10, y: Math.round(c.y * 10) / 10, r: Math.round(r * 10) / 10 };
+				const placed: PlacedSticker = { id: s.id, sticker: s.d.id, x: Math.round(c.x * 10) / 10, y: Math.round(c.y * 10) / 10, r: Math.round(r * 10) / 10 };
+				if (Math.abs(s.size - 1) > 0.005) placed.s = Math.round(s.size * 100) / 100;
+				return placed;
 			});
 		this.grow();
 		this.opts.onChange(out);
@@ -839,15 +873,16 @@ export class StickerBoard {
 
 	/** The sheet is at least an A4 page, and long enough for its lowest sticker. */
 	private grow() {
+		if (this.opts.fluid) return;
 		let bottom = 0;
-		for (const s of this.all) if (s.mode === 'stuck') bottom = Math.max(bottom, this.toWorld(s, s.c).y + s.L / 2);
+		for (const s of this.all) if (s.mode === 'stuck') bottom = Math.max(bottom, this.toWorld(s, s.c).y + (s.L * s.size) / 2);
 		this.sheet.style.minHeight = `${Math.max(SHEET_MIN_HEIGHT, Math.ceil(bottom + 44))}px`;
 	}
 
 	private sizeCanvas() {
 		this.dpr = Math.min(1.5, window.devicePixelRatio || 1);
 		const h = this.sheet.getBoundingClientRect().height / this.scale();
-		this.canvas.width = Math.round(SHEET_WIDTH * this.dpr);
+		this.canvas.width = Math.round(this.width() * this.dpr);
 		this.canvas.height = Math.round(h * this.dpr);
 		this.ctx?.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 	}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 64" data-name="Numeri interi" data-radius="14" data-accent="#2b64a8" data-cover="high_school/math/numeri-interi">
+  <rect width="132" height="64" fill="#fbfaf6"/>
+  <path d="M11 0V64M22 0V64M33 0V64M44 0V64M55 0V64M66 0V64M77 0V64M88 0V64M99 0V64M110 0V64M121 0V64M0 11H132M0 22H132M0 33H132M0 44H132M0 55H132" stroke="#4f7fc0" stroke-opacity=".22"/>
+  <path d="M8 38H122M116 34L123 38L116 42" fill="none" stroke="#1b1e27" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18 35V41M34 35V41M50 35V41M66 33V43M82 35V41M98 35V41M114 35V41" stroke="#1b1e27" stroke-width="1.4" stroke-linecap="round"/>
+  <circle cx="34" cy="38" r="3.4" fill="#c0352f"/>
+  <circle cx="98" cy="38" r="3.4" fill="#c0352f"/>
+  <path d="M34 30Q66 8 98 30" fill="none" stroke="#c0352f" stroke-width="1.6" stroke-dasharray="3 2.5" stroke-linecap="round"/>
+  <text x="18" y="54" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">−3</text>
+  <text x="34" y="54" text-anchor="middle" font-family="mono" font-size="8" fill="#c0352f">−2</text>
+  <text x="50" y="54" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">−1</text>
+  <text x="66" y="54" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">0</text>
+  <text x="82" y="54" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">1</text>
+  <text x="98" y="54" text-anchor="middle" font-family="mono" font-size="8" fill="#c0352f">2</text>
+  <text x="114" y="54" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">3</text>
+  <text x="10" y="20" font-family="serif" font-size="17" fill="#2b64a8">ℤ</text>
+</svg>

@@ -1,0 +1,9 @@
+[
+	{ "id": "base", "name": "Primi adesivi" },
+	{
+		"id": "matematica-capitoli",
+		"name": "Capitoli di matematica",
+		"subject": "high_school/math",
+		"order": ["insiemi", "naturali", "interi", "razionali", "funzioni", "monomi", "scomposizione", "frazioni-algebriche", "equazioni", "disequazioni"]
+	}
+]

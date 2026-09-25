@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 84" data-name="Sezione aurea" data-radius="12" data-accent="#c0352f">
+  <rect width="136" height="84" fill="#fbfaf6"/>
+  <g transform="translate(1 1)" fill="none">
+  <path d="M0 0H134V82H0Z M82 0V82 M82 52H134 M104 52V82 M82 60H104 M90 52V60" stroke="#1b1e27" stroke-opacity=".4"/>
+  <path d="M0 82A82 82 0 0 1 82 0A52 52 0 0 1 134 52A30 30 0 0 1 104 82A22 22 0 0 1 82 60A8 8 0 0 1 90 52" stroke="#c0352f" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <text x="50" y="66" font-family="serif" font-style="italic" font-size="18" fill="#1b1e27">φ</text>
+</svg>

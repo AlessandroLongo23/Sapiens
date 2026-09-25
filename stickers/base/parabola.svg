@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 92" data-name="Parabola" data-radius="14" data-accent="#c0352f">
+  <rect width="124" height="92" fill="#fbfaf6"/>
+  <path d="M11 0V92M22 0V92M33 0V92M44 0V92M55 0V92M66 0V92M77 0V92M88 0V92M99 0V92M110 0V92M121 0V92M0 11H124M0 22H124M0 33H124M0 44H124M0 55H124M0 66H124M0 77H124M0 88H124" stroke="#4f7fc0" stroke-opacity=".3"/>
+  <path d="M8 74H116M62 8V86" stroke="#1b1e27" stroke-opacity=".55" stroke-width="1.2"/>
+  <path d="M22 14Q62 134 102 14" fill="none" stroke="#c0352f" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="62" cy="74" r="3" fill="#c0352f"/>
+  <text x="116" y="88" text-anchor="end" font-family="serif" font-style="italic" font-size="12" fill="#1b1e27">y = x²</text>
+</svg>

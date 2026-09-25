@@ -44,3 +44,7 @@ supabase/.temp/
 vault/.obsidian/workspace.json
 # Obsidian aperto sulla radice della repo invece che su vault/
 /.obsidian/
+
+# Sticker proof sheet (npm run stickers)
+stickers/foglio.html
+stickers/foglio.png

@@ -1,0 +1,228 @@
+{
+	"packs": [
+		{
+			"id": "base",
+			"name": "Primi adesivi"
+		},
+		{
+			"id": "matematica-capitoli",
+			"name": "Capitoli di matematica",
+			"subject": "high_school/math"
+		}
+	],
+	"stickers": [
+		{
+			"id": "aurea",
+			"name": "Sezione aurea",
+			"pack": "base",
+			"w": 144,
+			"h": 92,
+			"r": 12,
+			"accent": "#c0352f",
+			"v": "8e2cfc47"
+		},
+		{
+			"id": "completato",
+			"name": "Completato",
+			"pack": "base",
+			"w": 150,
+			"h": 64,
+			"r": 12,
+			"accent": "#b3302f",
+			"v": "1475c42c"
+		},
+		{
+			"id": "eulero",
+			"name": "Eulero",
+			"pack": "base",
+			"w": 156,
+			"h": 72,
+			"r": 14,
+			"accent": "#4f7fc0",
+			"v": "b8c41786"
+		},
+		{
+			"id": "infinito",
+			"name": "Infinito",
+			"pack": "base",
+			"w": 104,
+			"h": 70,
+			"r": 30,
+			"accent": "#2b64a8",
+			"v": "7e744c2b"
+		},
+		{
+			"id": "parabola",
+			"name": "Parabola",
+			"pack": "base",
+			"w": 132,
+			"h": 100,
+			"r": 14,
+			"accent": "#c0352f",
+			"v": "a8ad8974"
+		},
+		{
+			"id": "pi-sagoma",
+			"name": "π a forma di π",
+			"pack": "base",
+			"w": 128,
+			"h": 112,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"v": "d2f33134"
+		},
+		{
+			"id": "pi",
+			"name": "π",
+			"pack": "base",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"v": "4980e85a"
+		},
+		{
+			"id": "pitagora-scritta",
+			"name": "a² + b² = c²",
+			"pack": "base",
+			"w": 168,
+			"h": 64,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"v": "057f0d8a"
+		},
+		{
+			"id": "pitagora",
+			"name": "Pitagora",
+			"pack": "base",
+			"w": 112,
+			"h": 112,
+			"r": 16,
+			"accent": "#2f7a57",
+			"v": "192d7b85"
+		},
+		{
+			"id": "radice",
+			"name": "Radice di 2",
+			"pack": "base",
+			"w": 118,
+			"h": 80,
+			"r": 12,
+			"accent": "#c0352f",
+			"v": "1151fa53"
+		},
+		{
+			"id": "insiemi",
+			"name": "Insiemi",
+			"pack": "matematica-capitoli",
+			"w": 130,
+			"h": 90,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"cover": "high_school/math/insiemi-e-logica",
+			"v": "59a60be6"
+		},
+		{
+			"id": "naturali",
+			"name": "Numeri naturali",
+			"pack": "matematica-capitoli",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/numeri-naturali",
+			"v": "cd01d291"
+		},
+		{
+			"id": "interi",
+			"name": "Numeri interi",
+			"pack": "matematica-capitoli",
+			"w": 140,
+			"h": 72,
+			"r": 14,
+			"accent": "#2b64a8",
+			"cover": "high_school/math/numeri-interi",
+			"v": "daeb7637"
+		},
+		{
+			"id": "razionali",
+			"name": "Numeri razionali",
+			"pack": "matematica-capitoli",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/numeri-razionali",
+			"v": "9a6221e5"
+		},
+		{
+			"id": "funzioni",
+			"name": "Funzioni",
+			"pack": "matematica-capitoli",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"cover": "high_school/math/funzioni",
+			"v": "2835d10f"
+		},
+		{
+			"id": "monomi",
+			"name": "Monomi",
+			"pack": "matematica-capitoli",
+			"w": 120,
+			"h": 84,
+			"r": 14,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/monomi-polinomi",
+			"v": "3c391187"
+		},
+		{
+			"id": "scomposizione",
+			"name": "Scomposizione",
+			"pack": "matematica-capitoli",
+			"w": 150,
+			"h": 72,
+			"r": 14,
+			"accent": "#2f7a57",
+			"cover": "high_school/math/scomposizione",
+			"v": "3ebdc7ef"
+		},
+		{
+			"id": "frazioni-algebriche",
+			"name": "Frazioni algebriche",
+			"pack": "matematica-capitoli",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#c0352f",
+			"cover": "high_school/math/frazioni-algebriche",
+			"v": "05c5d734"
+		},
+		{
+			"id": "equazioni",
+			"name": "Equazioni",
+			"pack": "matematica-capitoli",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#2b64a8",
+			"cover": "high_school/math/equazioni-sistemi",
+			"v": "3af68987"
+		},
+		{
+			"id": "disequazioni",
+			"name": "Disequazioni",
+			"pack": "matematica-capitoli",
+			"w": 140,
+			"h": 72,
+			"r": 14,
+			"accent": "#c0352f",
+			"cover": "high_school/math/disequazioni-lineari",
+			"v": "bbde7578"
+		}
+	]
+}

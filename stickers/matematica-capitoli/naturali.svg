@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Numeri naturali" data-radius="22" data-accent="#e8b53e" data-cover="high_school/math/numeri-naturali">
+  <rect width="96" height="96" fill="#1f2a44"/>
+  <text x="48" y="60" text-anchor="middle" font-family="serif" font-size="56" fill="#e8b53e">ℕ</text>
+  <text x="48" y="82" text-anchor="middle" font-family="mono" font-size="9" letter-spacing="1" fill="#fbfaf6" fill-opacity=".72">0 1 2 3 4 …</text>
+</svg>
