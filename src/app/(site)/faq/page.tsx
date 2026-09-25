@@ -1,27 +1,26 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_NAME } from '@/lib/config/site';
-import { SUBSCRIPTION_PLANS, formatPrice } from '@/lib/stripe/config';
+import { SCHOOL_YEAR_PASS, SUBSCRIPTION_PLANS, TRIAL_DAYS, formatPrice } from '@/lib/stripe/config';
 import { faqJsonLd, type FaqEntry } from '@/lib/seo/jsonld';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { MarketingHeader, RelatedLinks } from '@/components/content/Prose';
 
 // Every answer restates something the site already publishes (plan config, pricing page, content tree). Update both when the offer changes.
-const lite = formatPrice(SUBSCRIPTION_PLANS.LITE.price);
-const base = formatPrice(SUBSCRIPTION_PLANS.BASE.price);
-const pro = formatPrice(SUBSCRIPTION_PLANS.PRO.price);
+const studio = formatPrice(SUBSCRIPTION_PLANS.STUDIO.price);
+const pass = formatPrice(SCHOOL_YEAR_PASS.price);
 
 const FAQS: FaqEntry[] = [
-	{ question: "Che cos'è Sapiens?", answer: 'Sapiens è una piattaforma di materiale didattico online: teoria, formulari ed esercizi per la scuola media, la scuola superiore e i primi anni di università. Chi vuole un aiuto in più può attivare un piano Premium con esercizi interattivi, flashcard, assistente AI e lezioni individuali.' },
-	{ question: 'Il materiale è gratuito?', answer: 'Sì. La teoria e i formulari di tutte le lezioni si leggono gratis e senza registrazione. Gli esercizi interattivi, le flashcard, la chat con Sapiens AI e le ripetizioni fanno parte dei piani a pagamento.' },
+	{ question: "Che cos'è Sapiens?", answer: 'Sapiens è una piattaforma di materiale didattico online: teoria, formulari ed esercizi per la scuola media, la scuola superiore e i primi anni di università. Chi vuole allenarsi di più può attivare il piano Studio, con esercizi senza limiti, flashcard, lo Zaino per gli appunti e l’assistente Sapiens AI.' },
+	{ question: 'Il materiale è gratuito?', answer: 'Sì. La teoria e i formulari di tutte le lezioni si leggono gratis e senza registrazione. Con un account gratuito hai anche una sessione di esercizi al giorno. Esercizi senza limiti, flashcard, Zaino senza limiti e Sapiens AI fanno parte del piano Studio.' },
 	{ question: 'Quali livelli e materie sono coperti?', answer: 'Scuola media: matematica. Scuola superiore: matematica, fisica, informatica e chimica. Università: Analisi matematica I e II, Fisica I e II, Fondamenti di informatica. Il catalogo si trova nella sezione Materiale didattico ed è in crescita: le lezioni non ancora scritte sono segnalate come in arrivo.' },
 	{ question: 'Come sono organizzate le lezioni?', answer: "Il materiale è ordinato per livello, materia, capitolo e lezione. Ogni lezione ha quattro sezioni: teoria, esercizi, formulario e flashcard. Le lezioni di un capitolo seguono l'ordine in cui gli argomenti si incontrano a scuola, e ognuna usa solo quello che viene prima." },
-	{ question: 'Quali sono i piani Premium e quanto costano?', answer: `Piano Lite a ${lite} al mese: esercizi interattivi, flashcard e nessuna pubblicità. Piano Base a ${base} al mese: tutto Lite più la chat con Sapiens AI. Piano Pro a ${pro} al mese: tutto Base più ripetizioni individuali settimanali. Con l'abbonamento semestrale paghi cinque mesi su sei.` },
-	{ question: "C'è una prova gratuita?", answer: 'Sì: tutti i piani Premium hanno una prova gratuita di 7 giorni e non serve inserire la carta di credito per iniziarla.' },
-	{ question: "Posso disdire l'abbonamento?", answer: 'Sì, in qualsiasi momento dalla pagina del tuo abbonamento. Il piano resta attivo fino alla fine del periodo già pagato e non viene rinnovato.' },
-	{ question: 'Serve un account per studiare?', answer: "No: teoria e formulari sono aperti a tutti. L'account serve solo per attivare un piano Premium e usare esercizi, flashcard, assistente AI e lezioni." },
-	{ question: 'Come posso chiedere una lezione individuale o contattarvi?', answer: 'Dalla pagina Contatti puoi indicare livello, materie e frequenza desiderata: ti rispondiamo con una proposta. Le lezioni individuali sono comprese nel piano Pro.' },
+	{ question: 'Quali sono i piani e quanto costano?', answer: `Due piani. Free: teoria, formulari e una sessione di esercizi al giorno. Studio: ${studio} al mese, con esercizi senza limiti e progressi salvati, flashcard, Zaino senza limiti e Sapiens AI. A gennaio e febbraio puoi anche prendere Studio fino al 30 giugno con un solo pagamento di ${pass}, che non si rinnova.` },
+	{ question: "C'è una prova gratuita?", answer: `Sì: chi crea un account ha Studio gratis per ${TRIAL_DAYS} giorni, senza carta di credito. Alla fine della prova l’account passa da solo al piano Free, senza addebiti.` },
+	{ question: "Posso disdire l'abbonamento?", answer: 'Sì, in qualsiasi momento dalla pagina del tuo abbonamento. Studio resta attivo fino alla fine del mese già pagato e non viene rinnovato. Studio fino a giugno non va disdetto: finisce da solo.' },
+	{ question: 'Serve un account per studiare?', answer: 'No: teoria e formulari sono aperti a tutti. L’account serve per gli esercizi, gratuiti una sessione al giorno, e per il piano Studio.' },
+	{ question: 'Come posso chiedere una lezione individuale o contattarvi?', answer: 'Dalla pagina Contatti. Per trovare un insegnante per lezioni individuali c’è la sezione Ripetizioni, con i tutor e i loro contatti.' },
 	{ question: 'Ho trovato un errore in una lezione, cosa faccio?', answer: 'Segnalalo dalla pagina Contatti indicando la lezione e il passaggio. Le correzioni vengono pubblicate direttamente nella lezione, senza bisogno di aggiornare nulla.' }
 ];
 

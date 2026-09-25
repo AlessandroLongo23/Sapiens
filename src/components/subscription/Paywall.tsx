@@ -3,8 +3,9 @@
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Check, Loader2, Lock } from 'lucide-react';
-import { Features, FeaturesDetails, TRIAL_DAYS, formatPrice } from '@/lib/stripe/config';
-import { featuresUnlockedBy, requiredPlanFor, trialAvailable } from '@/lib/auth/entitlements';
+import { Features, FeaturesDetails, SCHOOL_YEAR_PASS, TRIAL_DAYS, formatDay, formatPrice, passEnd, passOnSale } from '@/lib/stripe/config';
+import { featuresUnlockedBy, requiredPlanFor } from '@/lib/auth/entitlements';
+import type { BillingOption } from '@/lib/subscription/checkout';
 import { useAuth } from '@/lib/state/auth';
 import { requestCheckout } from '@/lib/subscription/checkout';
 import { cn } from '@/lib/utils/cn';
@@ -14,8 +15,6 @@ const COPY: Record<Features, (plan: string) => string> = {
 	[Features.FLASHCARDS]: (p) => `Le flashcard sono incluse nel piano ${p}`,
 	[Features.NOTEBOOKS]: (p) => `Quaderni e note senza limiti sono inclusi nel piano ${p}`,
 	[Features.AI_CHAT]: (p) => `Sapiens AI è incluso nel piano ${p}`,
-	[Features.TUTORING]: (p) => `Le ripetizioni 1 a 1 sono incluse nel piano ${p}`,
-	[Features.REMOVE_ADS]: (p) => `Inclusa nel piano ${p}`,
 	[Features.THEORY]: (p) => `Inclusa nel piano ${p}`
 };
 
@@ -27,6 +26,8 @@ interface Props {
 	backUrl?: string;
 	/** A one-line, true description of what the feature does. */
 	benefit: string;
+	/** Replaces the "included in Studio" heading (the free exercise session already used today, say). */
+	title?: string;
 	/** Rendered, blurred and inert, behind the card. */
 	preview?: ReactNode;
 	/** Narrow version for sidebars. */
@@ -34,25 +35,28 @@ interface Props {
 }
 
 /**
- * Shown in place of a Premium feature the visitor cannot use. States the
- * plan that includes it, what else that plan unlocks, the price and the
- * trial, and starts the checkout in one click (login first, if needed).
- * No timers, no fake scarcity: the content behind is what sells it.
+ * Shown in place of a Studio feature the visitor cannot use. States the plan
+ * that includes it, what else it unlocks and the price. A visitor without an
+ * account is offered the free week of Studio that comes with signing up; a
+ * signed-in one on Free starts the checkout in one click, monthly or, in
+ * January and February, until June. No timers, no fake scarcity: the content
+ * behind is what sells it.
  */
-export function Paywall({ feature, returnTo, backUrl, benefit, preview, compact = false }: Props) {
+export function Paywall({ feature, returnTo, backUrl, benefit, title, preview, compact = false }: Props) {
 	const { user, ready, openModal } = useAuth();
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const plan = requiredPlanFor(feature);
 	const name = plan.name.replace(/^Piano\s+/i, '');
 	const unlocked = featuresUnlockedBy(plan);
-	const withTrial = !user || trialAvailable(user);
+	const pass = passOnSale() && !!plan.stripePassPriceId;
 
-	const upgrade = async () => {
+	const upgrade = async (billing: BillingOption) => {
+		if (!user) return openModal({ register: true, next: () => window.location.reload() });
 		setBusy(true);
 		setError(null);
 		try {
-			await requestCheckout({ planId: plan.id, returnTo });
+			await requestCheckout({ planId: plan.id, billing, returnTo });
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Qualcosa è andato storto. Riprova.');
 		} finally {
@@ -73,7 +77,7 @@ export function Paywall({ feature, returnTo, backUrl, benefit, preview, compact 
 						<Lock className={compact ? 'size-5' : 'size-7'} aria-hidden="true" />
 					</div>
 					<h2 id="paywall-title" className={cn('font-bold leading-snug tracking-tight text-fg-strong', compact ? 'text-base' : 'text-2xl')}>
-						{COPY[feature](name)}
+						{title ?? COPY[feature](name)}
 					</h2>
 					<p className={cn('mt-2 leading-relaxed text-fg-muted', compact && 'text-sm')}>{benefit}</p>
 					{unlocked.length > 1 && !compact && (
@@ -87,21 +91,31 @@ export function Paywall({ feature, returnTo, backUrl, benefit, preview, compact 
 						</ul>
 					)}
 					<p className="mt-5 text-sm text-fg-muted">
-						<span className="font-semibold text-fg">{formatPrice(plan.price, plan.currency)} al mese</span>
-						{withTrial && <> · primi {TRIAL_DAYS} giorni gratis, senza carta</>} · disdici quando vuoi
+						{user ? (
+							<>
+								<span className="font-semibold text-fg">{formatPrice(plan.price, plan.currency)} al mese</span> · disdici quando vuoi
+							</>
+						) : (
+							<>Crea un account: hai {name} gratis per {TRIAL_DAYS} giorni, senza carta. Poi il piano Free resta gratis.</>
+						)}
 					</p>
-					<button type="button" onClick={upgrade} disabled={busy} className={cn('mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-wait disabled:opacity-60 focus-ring-offset', compact ? 'py-2.5 text-sm' : 'py-3.5')}>
+					<button type="button" onClick={() => upgrade('monthly')} disabled={busy} className={cn('mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-wait disabled:opacity-60 focus-ring-offset', compact ? 'py-2.5 text-sm' : 'py-3.5')}>
 						{busy ? (
 							<>
 								<Loader2 className="size-4 animate-spin" aria-hidden="true" />
 								<span>Un attimo…</span>
 							</>
-						) : withTrial ? (
-							`Prova ${name} gratis per ${TRIAL_DAYS} giorni`
+						) : user ? (
+							`Attiva ${name}`
 						) : (
-							`Attiva il piano ${name}`
+							`Prova ${name} gratis per ${TRIAL_DAYS} giorni`
 						)}
 					</button>
+					{user && pass && (
+						<button type="button" onClick={() => upgrade('pass')} disabled={busy} className="mt-2 rounded text-sm text-fg-muted underline underline-offset-2 hover:text-accent-fg focus-ring">
+							oppure {formatPrice(SCHOOL_YEAR_PASS.price)} fino al {formatDay(passEnd())}, un solo pagamento
+						</button>
+					)}
 					{error && (
 						<p className="mt-3 text-sm text-danger-fg" role="alert">
 							{error}

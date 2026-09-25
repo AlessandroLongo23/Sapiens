@@ -40,8 +40,8 @@ export const LEGAL = {
  * agreed to, and the cookie banner asks again when its version changes.
  */
 export const LEGAL_VERSIONS = {
-	terms: '2026-09-03',
-	privacy: '2026-09-03',
+	terms: '2026-09-25',
+	privacy: '2026-09-25',
 	cookies: '2026-09-03'
 } as const;
 

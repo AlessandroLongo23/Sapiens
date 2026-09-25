@@ -4,9 +4,12 @@ import { authStore } from '@/lib/state/auth';
  * Starts a Stripe Checkout from anywhere in the UI. An anonymous visitor is
  * asked to log in first; the checkout then continues on its own.
  */
+/** The monthly subscription, or the one-off payment for Studio until June. */
+export type BillingOption = 'monthly' | 'pass';
+
 export interface CheckoutOptions {
 	planId: string;
-	billing?: 'monthly' | 'semester';
+	billing?: BillingOption;
 	/** Page to return to after payment (the locked exercises, for example). */
 	returnTo?: string;
 }

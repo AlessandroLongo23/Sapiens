@@ -23,8 +23,8 @@ export function SuccessStatus({ next, planName }: { next: string; planName: stri
 			attempts++;
 			try {
 				const body = await (await fetch('/api/me', { cache: 'no-store' })).json();
-				const status = body?.subscription?.status;
-				if (body?.plan && body.plan !== 'free' && (status === 'active' || status === 'trialing')) {
+				// The free week already counts as Studio: only a paid plan says the webhook has arrived.
+				if (body?.source === 'subscription' || body?.source === 'pass') {
 					await authStore.getState().refresh();
 					setPhase('active');
 					return;

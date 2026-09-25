@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { Calendar, CreditCard, Crown } from 'lucide-react';
-import { getPlanById, formatPrice, type SubscriptionPlan } from '@/lib/stripe/config';
+import { SUBSCRIPTION_PLANS, formatDay, formatPrice } from '@/lib/stripe/config';
 import type { SubscriptionClaim } from '@/lib/auth/entitlements';
 import { Badge, type BadgeTone } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { CheckoutOverlay, PlanCards, usePlanCheckout } from './Plans';
+import { CheckoutOverlay, PlanCards, usePlanCheckout, type PlanState } from './Plans';
 
 const STATUS: Record<string, { text: string; tone: BadgeTone }> = {
 	active: { text: 'Attivo', tone: 'ok' },
@@ -15,12 +15,24 @@ const STATUS: Record<string, { text: string; tone: BadgeTone }> = {
 	trialing: { text: 'Periodo di prova', tone: 'info' }
 };
 
-/** The account page: the current plan with the portal button, then the plans to switch to. */
-export function SubscriptionPanel({ subscription, current }: { subscription: SubscriptionClaim | null; current: SubscriptionPlan }) {
-	const { loading, error, select } = usePlanCheckout('/subscription', 'monthly');
+/** What the account has now, in one line under the plan name. */
+function summary(state: PlanState): { badge: { text: string; tone: BadgeTone }; lines: string[]; price: string | null } {
+	const studio = SUBSCRIPTION_PLANS.STUDIO;
+	if (state.source === 'pass' && state.passUntil)
+		return { badge: STATUS.active, lines: [`Attivo fino al ${formatDay(state.passUntil)}`, 'Pagamento unico: non si rinnova'], price: null };
+	if (state.source === 'trial' && state.trialUntil)
+		return { badge: { text: 'Prova gratuita', tone: 'info' }, lines: [`Prova di Studio fino al ${formatDay(state.trialUntil)}`, 'Senza carta: alla fine passi al piano Free, senza addebiti'], price: null };
+	if (state.source === 'subscription') return { badge: STATUS.active, lines: ['Pagamento automatico mensile'], price: formatPrice(studio.price, studio.currency) };
+	return { badge: STATUS.active, lines: ['Teoria, formulari e una sessione di esercizi al giorno'], price: null };
+}
+
+/** The account page: the plan in force, the Stripe portal when there is a subscription, then the plans. */
+export function SubscriptionPanel({ subscription, state }: { subscription: SubscriptionClaim | null; state: PlanState }) {
+	const { loading, error, select } = usePlanCheckout('/subscription');
 	const [portal, setPortal] = useState<{ busy?: boolean; error?: string }>({});
-	const plan = subscription ? getPlanById(subscription.plan) : null;
-	const status = STATUS[subscription?.status ?? ''] ?? STATUS.active;
+	const name = state.source === 'free' ? SUBSCRIPTION_PLANS.FREE.name : SUBSCRIPTION_PLANS.STUDIO.name;
+	const { badge, lines, price } = summary(state);
+	const status = state.source === 'subscription' && subscription ? (STATUS[subscription.status] ?? badge) : badge;
 
 	const manage = async () => {
 		setPortal({ busy: true });
@@ -39,47 +51,41 @@ export function SubscriptionPanel({ subscription, current }: { subscription: Sub
 			<CheckoutOverlay error={error ?? portal.error ?? null} loading={loading || !!portal.busy} />
 			<header className="mb-8">
 				<h1 className="mb-2 text-3xl font-bold text-fg">Il tuo abbonamento</h1>
-				<p className="text-fg-muted">Gestisci il tuo piano, il metodo di pagamento e le fatture.</p>
+				<p className="text-fg-muted">Il tuo piano, il metodo di pagamento e le ricevute.</p>
 			</header>
-			{subscription && plan && (
-				<div className="mb-12 rounded-xl border border-edge bg-surface p-6">
-					<div className="mb-4 flex items-start justify-between">
-						<div className="flex items-center gap-3">
-							<div className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
-								<Crown className="size-6 text-white" aria-hidden="true" />
-							</div>
-							<div>
-								<h2 className="text-lg font-bold text-fg">{plan.name}</h2>
-								<Badge tone={status.tone}>{status.text}</Badge>
-							</div>
+			<div className="mb-12 rounded-xl border border-edge bg-surface p-6">
+				<div className="mb-4 flex items-start justify-between gap-4">
+					<div className="flex items-center gap-3">
+						<div className="flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent-fg">
+							<Crown className="size-6" aria-hidden="true" />
 						</div>
-						{plan.id !== 'free' && (
-							<div className="text-right">
-								<p className="text-2xl font-bold text-fg">{formatPrice(plan.price, plan.currency)}</p>
-								<p className="text-sm text-fg-muted">al mese</p>
-							</div>
-						)}
+						<div>
+							<h2 className="text-lg font-bold text-fg">{name}</h2>
+							<Badge tone={status.tone}>{status.text}</Badge>
+						</div>
 					</div>
-					<div className="mb-6 space-y-3 text-sm">
-						<p className="flex items-center gap-2 text-fg-muted">
-							<CreditCard className="size-4 text-fg-subtle" aria-hidden="true" />
-							{plan.id === 'free' ? 'Nessun metodo di pagamento richiesto' : 'Pagamento automatico mensile'}
-						</p>
-						{subscription.status === 'trialing' && (
-							<p className="flex items-center gap-2 text-info-fg">
-								<Calendar className="size-4" aria-hidden="true" />
-								Prova gratuita attiva
-							</p>
-						)}
-					</div>
-					{plan.id !== 'free' && subscription.customerId && (
-						<Button variant="secondary" onClick={manage} loading={portal.busy} className="w-full sm:w-auto">
-							Gestisci abbonamento
-						</Button>
+					{price && (
+						<div className="text-right">
+							<p className="text-2xl font-bold text-fg">{price}</p>
+							<p className="text-sm text-fg-muted">al mese</p>
+						</div>
 					)}
 				</div>
-			)}
-			<PlanCards current={current} billing="monthly" onSelect={select} />
+				<div className="mb-6 space-y-3 text-sm">
+					{lines.map((line, i) => (
+						<p key={line} className="flex items-center gap-2 text-fg-muted">
+							{i === 0 ? <Calendar className="size-4 text-fg-subtle" aria-hidden="true" /> : <CreditCard className="size-4 text-fg-subtle" aria-hidden="true" />}
+							{line}
+						</p>
+					))}
+				</div>
+				{(subscription?.customerId || state.source === 'pass') && (
+					<Button variant="secondary" onClick={manage} loading={portal.busy} className="w-full sm:w-auto">
+						{state.source === 'subscription' ? 'Gestisci abbonamento' : 'Pagamenti e ricevute'}
+					</Button>
+				)}
+			</div>
+			<PlanCards state={state} onSelect={select} />
 		</div>
 	);
 }

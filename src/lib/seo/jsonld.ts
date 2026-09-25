@@ -157,8 +157,8 @@ export interface OfferEntry {
 	description: string;
 	price: number;
 	currency: string;
-	/** ISO 8601 duration of the billing period, e.g. P1M. */
-	billingDuration: string;
+	/** ISO 8601 duration of the billing period, e.g. P1M; absent for a one-off payment. */
+	billingDuration?: string;
 }
 
 /** Pricing page → Product with one Offer per published plan. */
@@ -183,8 +183,7 @@ export function productOffersJsonLd(offers: OfferEntry[], pagePath: string): Jso
 				'@type': 'UnitPriceSpecification',
 				price: o.price.toFixed(2),
 				priceCurrency: o.currency,
-				billingDuration: o.billingDuration,
-				unitCode: 'MON'
+				...(o.billingDuration ? { billingDuration: o.billingDuration, unitCode: 'MON' } : {})
 			}
 		}))
 	};

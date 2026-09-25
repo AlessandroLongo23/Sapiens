@@ -7,7 +7,7 @@ import { titleHtml as toHtml } from '@/lib/content/latex';
 import { Features, SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
 import { hasFeature } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
-import { hasExercises } from '@/lib/server/exercises';
+import { freeQuestionsLeft, hasExercises } from '@/lib/server/exercises';
 import { configs, estimatedTime, SESSION_LENGTH } from '@/lib/exercises/config';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { toneFor } from '@/lib/utils/icons';
@@ -19,7 +19,7 @@ import { StartScreen } from '@/components/content/exercises/StartScreen';
 import { NavigationButtons } from '@/components/content/NavigationButtons';
 import { loadLesson, type LessonParams } from '../lesson';
 
-/** Exercises are part of the paid plans: rendered per request, since the page depends on the visitor's plan. */
+/** Rendered per request: the page depends on the visitor's plan and, on Free, on today's session. */
 export const dynamic = 'force-dynamic';
 
 const load = (props: LessonParams) => loadLesson(props, '/esercizi');
@@ -40,7 +40,11 @@ export default async function ExercisesPage(props: LessonParams) {
 	const lesson = await load(props);
 	const { node, ancestors, paths, parentLink, navigation, dbPath, breadcrumb, titleHtml } = lesson;
 	const available = hasExercises(dbPath);
-	const unlocked = available && hasFeature(await currentUser(), Features.EXERCISES);
+	const user = await currentUser();
+	// Studio exercises without limits; a Free account has one session a day, across all lessons.
+	const full = available && hasFeature(user, Features.EXERCISES);
+	const left = available && user && !full ? await freeQuestionsLeft(user.id) : 0;
+	const unlocked = full || left > 0;
 	// Exercises are part of the paid plans (see the plan config); the markup declares the gated part.
 	const free = SUBSCRIPTION_PLANS.FREE.access[Features.EXERCISES];
 	const title = toHtml(`Esercizi: ${node.title}`);
@@ -57,12 +61,17 @@ export default async function ExercisesPage(props: LessonParams) {
 							feature={Features.EXERCISES}
 							returnTo={paths.exercises}
 							backUrl={paths.theory}
-							benefit="Esercizi generati ogni volta diversi, con correzione immediata: il modo più rapido per scoprire se la teoria è chiara davvero."
+							title={user ? "Hai fatto la sessione di oggi" : 'Crea un account per fare gli esercizi'}
+							benefit={
+								user
+									? "Domani hai un'altra sessione gratuita. Con Studio ti eserciti senza limiti, su tutte le lezioni, con i progressi salvati."
+									: 'Con un account gratuito hai una sessione di esercizi al giorno, generati ogni volta diversi, con correzione immediata e progressi salvati.'
+							}
 							preview={<StartScreen titleHtml={title} questionCount={SESSION_LENGTH} estimatedTime={estimatedTime(SESSION_LENGTH)} />}
 						/>
 					</div>
 				) : (
-					<ExerciseRunner lesson={dbPath} levels={configs[dbPath].levels} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} />
+					<ExerciseRunner lesson={dbPath} levels={configs[dbPath].levels} sessionLength={full ? SESSION_LENGTH : left} free={!full} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} />
 				)}
 			</LessonFrame>
 		</>

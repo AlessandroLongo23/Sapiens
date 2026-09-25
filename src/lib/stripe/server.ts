@@ -13,17 +13,15 @@ export interface CheckoutParams {
 	successUrl: string;
 	cancelUrl: string;
 	metadata: Record<string, string>;
-	trialDays: number;
 }
 
 /**
- * A subscription Checkout. With `trialDays` > 0 the card is not collected
- * (`payment_method_collection: 'if_required'`): the trial simply ends if no
- * card is added, matching the "senza carta di credito" promise on the pricing
- * page. The metadata travels on the subscription object, so every later
- * webhook event carries the user id and plan without a lookup.
+ * A monthly subscription Checkout. There is no Stripe trial: the free week is
+ * the reverse trial every new account gets (see entitlements). The metadata
+ * travels on the subscription object, so every later webhook event carries the
+ * user id and plan without a lookup.
  */
-export function createCheckoutSession({ priceId, customerId, successUrl, cancelUrl, metadata, trialDays }: CheckoutParams) {
+export function createCheckoutSession({ priceId, customerId, successUrl, cancelUrl, metadata }: CheckoutParams) {
 	return stripe.checkout.sessions.create({
 		mode: 'subscription',
 		customer: customerId,
@@ -31,15 +29,32 @@ export function createCheckoutSession({ priceId, customerId, successUrl, cancelU
 		success_url: successUrl,
 		cancel_url: cancelUrl,
 		metadata,
-		subscription_data: {
-			metadata,
-			...(trialDays > 0 ? { trial_period_days: trialDays, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {})
-		},
-		...(trialDays > 0 ? { payment_method_collection: 'if_required' } : {}),
+		subscription_data: { metadata },
 		allow_promotion_codes: true,
 		locale: 'it',
 		// Not in the SDK's types yet: labels the session in the Dashboard.
 		...({ integration_identifier: integrationIdentifier('sapiens-premium') } as object)
+	});
+}
+
+/**
+ * A one-off payment for Studio until 30 June. Nothing renews: the webhook
+ * writes the pass, with its last day, once Stripe says the payment is in. The
+ * metadata is copied to the PaymentIntent too, so a refund can be traced back
+ * to the account.
+ */
+export function createPassCheckoutSession({ priceId, customerId, successUrl, cancelUrl, metadata }: CheckoutParams) {
+	return stripe.checkout.sessions.create({
+		mode: 'payment',
+		customer: customerId,
+		line_items: [{ price: priceId, quantity: 1 }],
+		success_url: successUrl,
+		cancel_url: cancelUrl,
+		metadata,
+		payment_intent_data: { metadata },
+		allow_promotion_codes: true,
+		locale: 'it',
+		...({ integration_identifier: integrationIdentifier('sapiens-pass') } as object)
 	});
 }
 

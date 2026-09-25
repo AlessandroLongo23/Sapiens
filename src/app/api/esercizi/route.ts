@@ -11,11 +11,12 @@ import { fail, guarded, json, readJson } from '@/lib/server/http';
 export async function POST(request: Request) {
 	const { user } = await getSession();
 	if (!user) return fail('Accedi per continuare.', 401);
-	if (!hasFeature(user, Features.EXERCISES)) return fail('Gli esercizi sono inclusi nei piani a pagamento.', 403);
 	const body = await readJson(request);
 	if (typeof body.lesson !== 'string' || !body.lesson) return fail('Lezione mancante.', 400);
 	if (body.level !== undefined && !Number.isInteger(body.level)) return fail('Livello non valido.', 400);
 	const lesson = body.lesson;
 	const level = body.level as number | undefined;
-	return guarded('exercise issue', async () => json({ exercise: await issueExercise(user.id, lesson, level) }, 201));
+	// Free accounts have one session a day; the service refuses the exercise past it.
+	const limited = !hasFeature(user, Features.EXERCISES);
+	return guarded('exercise issue', async () => json({ exercise: await issueExercise(user.id, lesson, level, undefined, limited) }, 201));
 }

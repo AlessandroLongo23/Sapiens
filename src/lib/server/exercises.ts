@@ -1,5 +1,6 @@
 import 'server-only';
-import { configs } from '@/lib/exercises/config';
+import { configs, SESSION_LENGTH } from '@/lib/exercises/config';
+import { romeDate } from '@/lib/stripe/config';
 import { generators } from '@/lib/exercises';
 import { nextLevel, startLevel, type Outcome } from '@/lib/exercises/levels';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
@@ -84,6 +85,31 @@ const verdict = (s: Stored, correct: boolean): Verdict => ({
 	stepsHtml: s.steps.map((step) => renderMath(presentStep(step)))
 });
 
+/**
+ * Midnight in Rome today, as an instant. Uses the offset in force now, so on the two nights the clocks change
+ * the day starts an hour early or late: a free session one hour longer or shorter, twice a year.
+ */
+function romeMidnight(now: Date = new Date()): string {
+	const zone = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Rome', timeZoneName: 'shortOffset' }).formatToParts(now).find((p) => p.type === 'timeZoneName')?.value ?? 'GMT+1';
+	const hours = Number(/GMT([+-]\d+)/.exec(zone)?.[1] ?? 0);
+	return new Date(Date.parse(`${romeDate(now)}T00:00:00Z`) - hours * 3_600_000).toISOString();
+}
+
+/**
+ * Questions left in today's free session: a Free account answers up to SESSION_LENGTH exercises a day, on any
+ * lesson (vault/Decisioni/2026-09-23 Prova al contrario e sessione gratuita giornaliera.md). Shown but unanswered
+ * exercises do not count, so the limit never falls in the middle of one.
+ */
+export async function freeQuestionsLeft(userId: string): Promise<number> {
+	const { count, error } = await db()
+		.from('exercise_attempts')
+		.select('id', { count: 'exact', head: true })
+		.eq('user_id', userId)
+		.gte('answered_at', romeMidnight());
+	if (error) throw error;
+	return Math.max(0, SESSION_LENGTH - (count ?? 0));
+}
+
 /** The student's answered attempts on a generator, newest first: enough to tell which levels are mastered. */
 async function history(userId: string, generatorId: string): Promise<Outcome[]> {
 	const { data, error } = await db()
@@ -100,12 +126,14 @@ async function history(userId: string, generatorId: string): Promise<Outcome[]> 
 
 /**
  * A new exercise for a lesson, saved before it is sent. Without a level, the first one the student has not
- * mastered; with one (the level picker), that level.
+ * mastered; with one (the level picker), that level. `limited` is a Free account: only while today's free
+ * session has questions left.
  */
-export async function issueExercise(userId: string, dbPath: string, level?: number, known?: Outcome[]): Promise<ExerciseView> {
+export async function issueExercise(userId: string, dbPath: string, level?: number, known?: Outcome[], limited = false): Promise<ExerciseView> {
 	const config = configs[dbPath];
 	const load = config && generators[config.generator];
 	if (!config || !load) throw new ExerciseError(404, 'Esercizi non trovati.');
+	if (limited && (await freeQuestionsLeft(userId)) === 0) throw new ExerciseError(403, 'Hai fatto la sessione gratuita di oggi. Domani ne hai un\'altra, oppure passa a Studio.');
 	if (level !== undefined && !config.levels.includes(level)) throw new ExerciseError(400, 'Livello non valido.');
 	const at = level ?? startLevel(config.levels, known ?? (await history(userId, config.generator)));
 
@@ -129,9 +157,9 @@ export async function issueExercise(userId: string, dbPath: string, level?: numb
 /**
  * Checks a multiple-choice answer against the saved exercise and records it. Answering twice (a retried
  * request) returns the first verdict. With `next`, also issues the following exercise, at the level the
- * answer leads to.
+ * answer leads to; for a Free account (`limited`) only while today's free session has questions left.
  */
-export async function answerExercise(userId: string, id: string, choice: number, activeMs: number | null, next: boolean): Promise<{ verdict: Verdict; next: ExerciseView | null }> {
+export async function answerExercise(userId: string, id: string, choice: number, activeMs: number | null, next: boolean, limited = false): Promise<{ verdict: Verdict; next: ExerciseView | null }> {
 	const { data: row, error } = await db().from('exercise_attempts').select('lesson_path, generator_id, level, exercise, correct').eq('id', id).eq('user_id', userId).maybeSingle();
 	if (error) throw error;
 	if (!row) throw new ExerciseError(404, 'Esercizio non trovato.');
@@ -158,11 +186,11 @@ export async function answerExercise(userId: string, id: string, choice: number,
 
 	let following: ExerciseView | null = null;
 	const config = configs[attempt.lesson_path];
-	if (next && config?.generator === attempt.generator_id) {
+	if (next && config?.generator === attempt.generator_id && (!limited || (await freeQuestionsLeft(userId)) > 0)) {
 		const past = await history(userId, attempt.generator_id);
 		const level = nextLevel(config.levels, past, attempt.level);
 		// A level the lesson no longer offers falls back to the first one not mastered.
-		following = await issueExercise(userId, attempt.lesson_path, config.levels.includes(level) ? level : undefined, past);
+		following = await issueExercise(userId, attempt.lesson_path, config.levels.includes(level) ? level : undefined, past, limited);
 	}
 	return { verdict: verdict(attempt.exercise, correct), next: following };
 }

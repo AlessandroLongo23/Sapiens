@@ -2,24 +2,49 @@
 
 import { useState } from 'react';
 import { CheckCircle, Loader2, Sparkles, XCircle } from 'lucide-react';
-import { Features, FeaturesDetails, PLAN_DESCRIPTIONS, SUBSCRIPTION_PLANS, canAccessFeature, formatPrice, type SubscriptionPlan } from '@/lib/stripe/config';
-import { displayPrice, type BillingOption } from '@/lib/subscription/billing';
-import { requestCheckout } from '@/lib/subscription/checkout';
+import { Features, FeaturesDetails, PLAN_DESCRIPTIONS, SCHOOL_YEAR_PASS, SUBSCRIPTION_PLANS, TRIAL_DAYS, formatDay, formatPrice, type SubscriptionPlan } from '@/lib/stripe/config';
+import type { PlanSource } from '@/lib/auth/entitlements';
+import { FREE_NOTEBOOKS, FREE_NOTES } from '@/lib/zaino/config';
+import { useAuth } from '@/lib/state/auth';
+import { requestCheckout, type BillingOption } from '@/lib/subscription/checkout';
 import { cn } from '@/lib/utils/cn';
 import { Alert } from '@/components/ui/Alert';
 
-const PLANS = Object.values(SUBSCRIPTION_PLANS);
+const PLANS = [SUBSCRIPTION_PLANS.FREE, SUBSCRIPTION_PLANS.STUDIO];
 const FEATURES = Object.values(Features) as Features[];
 
-/** Starts a checkout for a plan; the page shows the redirect overlay and any error. */
-export function usePlanCheckout(returnTo: string, billing: BillingOption) {
+/** The visitor's plan as the pricing and account pages see it: computed on the server, passed down. */
+export interface PlanState {
+	signedIn: boolean;
+	planId: string;
+	source: PlanSource;
+	/** Last day of a paid pass, YYYY-MM-DD. */
+	passUntil: string | null;
+	/** Last day of the reverse trial, YYYY-MM-DD, while it runs. */
+	trialUntil: string | null;
+	/** Whether the "until June" pass can be bought today (decided on the server, in Rome time). */
+	passOnSale: boolean;
+	/** Its last day if bought today. */
+	passEnd: string;
+}
+
+/** What Free gets where it gets less than Studio; `true` is a tick, `false` a cross. */
+function allowance(plan: SubscriptionPlan, feature: Features): string | boolean {
+	if (plan.access[feature]) return feature === Features.EXERCISES || feature === Features.NOTEBOOKS ? 'Senza limiti' : true;
+	if (feature === Features.EXERCISES) return 'Una sessione al giorno';
+	if (feature === Features.NOTEBOOKS) return `${FREE_NOTEBOOKS} quaderno, ${FREE_NOTES} note`;
+	return false;
+}
+
+/** Starts a checkout; the page shows the redirect overlay and any error. */
+export function usePlanCheckout(returnTo: string) {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const select = async (plan: SubscriptionPlan) => {
+	const select = async (billing: BillingOption) => {
 		setLoading(true);
 		setError(null);
 		try {
-			await requestCheckout({ planId: plan.id, billing, returnTo });
+			await requestCheckout({ planId: SUBSCRIPTION_PLANS.STUDIO.id, billing, returnTo });
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Errore durante la creazione della sessione');
 		} finally {
@@ -46,65 +71,90 @@ export function CheckoutOverlay({ error, loading }: { error: string | null; load
 	);
 }
 
-function PlanButton({ plan, current, onSelect, small = false }: { plan: SubscriptionPlan; current: SubscriptionPlan; onSelect: (plan: SubscriptionPlan) => void; small?: boolean }) {
-	const isFree = plan.id === SUBSCRIPTION_PLANS.FREE.id;
-	const isCurrent = current.id === plan.id;
+const BUTTON = 'w-full rounded-xl font-semibold transition-[background-color,transform,box-shadow] duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0';
+
+/**
+ * The action under a plan. A visitor without an account signs up, which starts the free week of Studio;
+ * a signed-in visitor on Free or in the trial buys Studio; a plan already in force says so.
+ */
+function PlanButton({ plan, state, onSelect, small = false }: { plan: SubscriptionPlan; state: PlanState; onSelect: (billing: BillingOption) => void; small?: boolean }) {
+	const { openModal } = useAuth();
+	const studio = plan.id === SUBSCRIPTION_PLANS.STUDIO.id;
+	const paid = state.source === 'subscription' || state.source === 'pass';
+	const size = small ? 'mx-auto max-w-[180px] px-4 py-2.5 text-sm' : 'px-4 py-3';
+	const tone = studio ? 'bg-accent text-white shadow-key hover:bg-accent-hover' : 'border border-edge-strong bg-surface text-fg shadow-paper hover:bg-surface-2';
+	const signUp = () => openModal({ register: true, next: () => window.location.reload() });
+
+	let label: string;
+	let action: (() => void) | null = null;
+	if (!studio) {
+		label = !state.signedIn ? 'Crea un account' : state.source === 'free' ? 'Il tuo piano' : 'Incluso in Studio';
+		if (!state.signedIn) action = signUp;
+	} else if (!state.signedIn) {
+		label = `Prova gratis per ${TRIAL_DAYS} giorni`;
+		action = signUp;
+	} else if (state.source === 'pass' && state.passUntil) {
+		label = `Attivo fino al ${formatDay(state.passUntil)}`;
+	} else if (paid) {
+		label = 'Il tuo piano';
+	} else {
+		label = 'Attiva Studio';
+		action = () => onSelect('monthly');
+	}
 	return (
-		<button
-			type="button"
-			onClick={() => !isFree && !isCurrent && onSelect(plan)}
-			disabled={isFree || isCurrent}
-			className={cn(
-				'w-full rounded-xl font-semibold transition-[background-color,transform,box-shadow] duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0',
-				small ? 'mx-auto max-w-[140px] px-4 py-2.5 text-sm' : 'px-4 py-3',
-				plan.popular ? 'bg-accent text-white shadow-key hover:bg-accent-hover' : 'border border-edge-strong bg-surface text-fg shadow-paper hover:bg-surface-2'
-			)}
-		>
-			{isCurrent ? 'Il tuo piano' : isFree ? 'Piano Free' : 'Seleziona'}
+		<button type="button" onClick={() => action?.()} disabled={!action} className={cn(BUTTON, size, tone)}>
+			{label}
 		</button>
 	);
 }
 
-function Price({ plan, billing, size }: { plan: SubscriptionPlan; billing: BillingOption; size: 'lg' | 'sm' }) {
-	if (plan.price === 0) return <span className={cn('font-display font-semibold tracking-tight text-fg-strong', size === 'lg' ? 'text-5xl' : 'text-2xl')}>Gratis</span>;
-	const { price, period } = displayPrice(plan, billing);
+/** Studio until June, under the monthly button: only while it is on sale and the visitor has not paid for Studio yet. */
+function PassOffer({ state, onSelect }: { state: PlanState; onSelect: (billing: BillingOption) => void }) {
+	if (!state.passOnSale || !SUBSCRIPTION_PLANS.STUDIO.stripePassPriceId || state.source === 'subscription' || state.source === 'pass') return null;
 	return (
-		<div className={cn('flex flex-col', size === 'sm' && 'items-center gap-1')}>
-			<div className={cn('flex items-baseline', size === 'lg' ? 'gap-2' : 'gap-1')}>
-				<span className={cn('font-display font-semibold tracking-tight text-fg-strong tabular-nums', size === 'lg' ? 'text-5xl' : 'text-2xl')}>{formatPrice(price, plan.currency)}</span>
-				<span className={cn('text-fg-muted', size === 'sm' && 'text-sm')}>{period}</span>
-			</div>
-			{billing === 'semester' && (
-				<div className="mt-1 text-sm">
-					<span className="text-fg-subtle line-through">{formatPrice(plan.price * 6, plan.currency)}</span>
-					{size === 'lg' && <span className="ml-2 font-medium text-accent-fg">Risparmi {formatPrice(plan.price * 6 - price, plan.currency)}</span>}
-				</div>
-			)}
+		<button type="button" onClick={() => onSelect('pass')} className="mt-3 w-full rounded-lg px-2 py-1.5 text-sm text-fg-muted underline underline-offset-2 hover:text-accent-fg focus-ring">
+			oppure {formatPrice(SCHOOL_YEAR_PASS.price)} fino al {formatDay(state.passEnd)}, un solo pagamento
+		</button>
+	);
+}
+
+function Price({ plan, size }: { plan: SubscriptionPlan; size: 'lg' | 'sm' }) {
+	if (plan.price === 0) return <span className={cn('font-display font-semibold tracking-tight text-fg-strong', size === 'lg' ? 'text-5xl' : 'text-2xl')}>Gratis</span>;
+	return (
+		<div className={cn('flex items-baseline', size === 'lg' ? 'gap-2' : 'justify-center gap-1')}>
+			<span className={cn('font-display font-semibold tracking-tight text-fg-strong tabular-nums', size === 'lg' ? 'text-5xl' : 'text-2xl')}>{formatPrice(plan.price, plan.currency)}</span>
+			<span className={cn('text-fg-muted', size === 'sm' && 'text-sm')}>/mese</span>
 		</div>
 	);
 }
 
-/** The four plans as cards. */
-export function PlanCards({ current, billing, onSelect }: { current: SubscriptionPlan; billing: BillingOption; onSelect: (plan: SubscriptionPlan) => void }) {
+/** Free and Studio as cards. */
+export function PlanCards({ state, onSelect }: { state: PlanState; onSelect: (billing: BillingOption) => void }) {
 	return (
-		<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+		<div className="mx-auto grid w-full max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
 			{PLANS.map((plan) => (
 				<div key={plan.id} className={cn('relative rounded-2xl border-2 bg-surface transition-all duration-200', plan.popular ? 'border-accent shadow-lift md:-translate-y-2' : 'border-edge shadow-paper')}>
 					{plan.popular && (
 						<div className="label-mono absolute -top-3.5 left-1/2 flex -translate-x-1/2 rotate-[-2deg] items-center gap-1.5 whitespace-nowrap rounded-md bg-accent px-3 py-1.5 text-white shadow-paper">
 							<Sparkles className="size-4" aria-hidden="true" />
-							Più popolare
+							{TRIAL_DAYS} giorni gratis
 						</div>
 					)}
 					<div className="flex h-full flex-col justify-between p-6">
 						<div className="flex flex-col gap-2">
 							<h2 className="label-mono mb-2 text-fg-subtle">{plan.name}</h2>
 							<div className="mb-6">
-								<Price plan={plan} billing={billing} size="lg" />
+								<Price plan={plan} size="lg" />
 							</div>
-							<p className="mb-8 text-sm leading-relaxed text-fg-muted">{PLAN_DESCRIPTIONS[plan.id]}</p>
+							<p className="mb-6 text-sm leading-relaxed text-fg-muted">{PLAN_DESCRIPTIONS[plan.id]}</p>
+							{plan.id === SUBSCRIPTION_PLANS.STUDIO.id && state.source === 'trial' && state.trialUntil && (
+								<p className="mb-6 text-sm font-medium text-accent-fg">Stai provando Studio fino al {formatDay(state.trialUntil)}.</p>
+							)}
 						</div>
-						<PlanButton plan={plan} current={current} onSelect={onSelect} />
+						<div>
+							<PlanButton plan={plan} state={state} onSelect={onSelect} />
+							{plan.id === SUBSCRIPTION_PLANS.STUDIO.id && <PassOffer state={state} onSelect={onSelect} />}
+						</div>
 					</div>
 				</div>
 			))}
@@ -112,37 +162,28 @@ export function PlanCards({ current, billing, onSelect }: { current: Subscriptio
 	);
 }
 
-/** Feature by feature comparison of the plans. */
-export function PlanTable({ current, billing, onSelect }: { current: SubscriptionPlan; billing: BillingOption; onSelect: (plan: SubscriptionPlan) => void }) {
-	const cell = (plan: SubscriptionPlan, extra = '') => cn('px-6 py-4 text-center', plan.popular && 'bg-accent-soft', extra);
-	const TutoringIcon = FeaturesDetails[Features.TUTORING].icon;
+/** Feature by feature comparison of Free and Studio. */
+export function PlanTable({ state, onSelect }: { state: PlanState; onSelect: (billing: BillingOption) => void }) {
+	const cell = (plan: SubscriptionPlan, extra = '') => cn('px-4 py-4 text-center sm:px-6', plan.popular && 'bg-accent-soft', extra);
 	return (
 		<div className="w-full overflow-x-auto">
-			<p className="mb-2 text-xs text-fg-subtle lg:hidden">Scorri lateralmente per confrontare tutti i piani.</p>
-			<table className="w-full min-w-[800px] border-collapse">
+			<table className="w-full min-w-[520px] border-collapse">
 				<thead>
 					<tr className="border-b-2 border-edge">
-						<th scope="col" className="px-6 py-4 text-left font-semibold text-fg">Funzionalità</th>
+						<th scope="col" className="px-4 py-4 text-left font-semibold text-fg sm:px-6">Funzionalità</th>
 						{PLANS.map((plan) => (
-							<th key={plan.id} scope="col" className={cell(plan, 'w-56 rounded-t-lg')}>
-								<span className="relative text-lg font-bold text-fg">
-									{plan.name}
-									{plan.popular && (
-										<span className="absolute -right-8 -top-2 rounded-full bg-accent px-2 py-0.5 text-white">
-											<Sparkles className="size-3" aria-hidden="true" />
-										</span>
-									)}
-								</span>
+							<th key={plan.id} scope="col" className={cell(plan, 'w-44 rounded-t-lg')}>
+								<span className="text-lg font-bold text-fg">{plan.name}</span>
 							</th>
 						))}
 					</tr>
 				</thead>
 				<tbody>
 					<tr className="border-b border-edge bg-surface-2">
-						<td className="px-6 py-4 font-semibold text-fg">Prezzo</td>
+						<td className="px-4 py-4 font-semibold text-fg sm:px-6">Prezzo</td>
 						{PLANS.map((plan) => (
 							<td key={plan.id} className={cell(plan)}>
-								<Price plan={plan} billing={billing} size="sm" />
+								<Price plan={plan} size="sm" />
 							</td>
 						))}
 					</tr>
@@ -150,58 +191,39 @@ export function PlanTable({ current, billing, onSelect }: { current: Subscriptio
 						const { icon: Icon, name } = FeaturesDetails[feature];
 						return (
 							<tr key={feature} className={cn('border-b border-edge transition-colors hover:bg-surface-2', index % 2 ? 'bg-surface-2' : 'bg-surface')}>
-								<td className="px-6 py-4">
+								<td className="px-4 py-4 sm:px-6">
 									<span className="flex items-center gap-3 text-sm font-medium text-fg-muted">
 										<Icon className="size-4 shrink-0" aria-hidden="true" />
-										{name}
+										{name.replace(/ senza limiti$/, '')}
 									</span>
 								</td>
-								{PLANS.map((plan) => (
-									<td key={plan.id} className={cell(plan)}>
-										{canAccessFeature(plan.id, feature) ? <CheckCircle className="mx-auto size-5 text-ok" role="img" aria-label="Inclusa" /> : <XCircle className="mx-auto size-5 text-fg-faint" role="img" aria-label="Non inclusa" />}
-									</td>
-								))}
+								{PLANS.map((plan) => {
+									const value = allowance(plan, feature);
+									return (
+										<td key={plan.id} className={cell(plan, 'text-sm')}>
+											{value === true ? (
+												<CheckCircle className="mx-auto size-5 text-ok" role="img" aria-label="Incluso" />
+											) : value === false ? (
+												<XCircle className="mx-auto size-5 text-fg-faint" role="img" aria-label="Non incluso" />
+											) : (
+												<span className="font-medium text-fg">{value}</span>
+											)}
+										</td>
+									);
+								})}
 							</tr>
 						);
 					})}
-					<tr className="border-b border-edge bg-surface-2">
-						<td className="px-6 py-4">
-							<span className="flex items-center gap-3 text-sm font-medium text-fg-muted">
-								<TutoringIcon className="size-4 shrink-0" aria-hidden="true" />
-								Ore di ripetizioni a settimana
-							</span>
-						</td>
-						{PLANS.map((plan) => (
-							<td key={plan.id} className={cell(plan, 'text-sm')}>
-								{plan.tutoring_hours > 0 ? <span className="font-medium text-fg">{plan.tutoring_hours}h</span> : <span className="text-fg-faint">—</span>}
-							</td>
-						))}
-					</tr>
 					<tr>
-						<td className="px-6 py-6" />
+						<td className="px-4 py-6 sm:px-6" />
 						{PLANS.map((plan) => (
 							<td key={plan.id} className={cell(plan, 'rounded-b-lg py-6')}>
-								<PlanButton plan={plan} current={current} onSelect={onSelect} small />
+								<PlanButton plan={plan} state={state} onSelect={onSelect} small />
 							</td>
 						))}
 					</tr>
 				</tbody>
 			</table>
-		</div>
-	);
-}
-
-/** Monthly or six-month billing. */
-export function BillingToggle({ value, onChange }: { value: BillingOption; onChange: (value: BillingOption) => void }) {
-	const semester = value === 'semester';
-	const label = (on: boolean) => cn('text-sm font-medium transition-colors', on ? 'text-fg' : 'text-fg-subtle');
-	return (
-		<div className="flex items-center justify-center gap-4">
-			<span className={label(!semester)}>Mensile</span>
-			<button type="button" role="switch" aria-checked={semester} aria-label="Seleziona periodo di fatturazione" onClick={() => onChange(semester ? 'monthly' : 'semester')} className={cn('relative inline-flex h-8 w-14 items-center rounded-full transition-colors', semester ? 'bg-accent' : 'bg-surface-4')}>
-				<span className={cn('inline-block size-6 rounded-full bg-white transition-transform', semester ? 'translate-x-7' : 'translate-x-1')} />
-			</button>
-			<span className={label(semester)}>Semestrale</span>
 		</div>
 	);
 }

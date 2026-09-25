@@ -121,6 +121,10 @@ interface Props {
 	lesson: string;
 	/** The levels the lesson offers, easiest first. */
 	levels: number[];
+	/** Questions in this session: SESSION_LENGTH, or what is left of today's free session. */
+	sessionLength?: number;
+	/** A Free account on its daily session. */
+	free?: boolean;
 	titleHtml: string;
 	theoryHref: string;
 	nextHref: string | null;
@@ -216,7 +220,7 @@ function Solution({ verdict }: { verdict: Verdict }) {
 }
 
 /**
- * An exercise session of SESSION_LENGTH questions, one at a time (vault/Decisioni/2026-09-24 Il livello degli
+ * An exercise session of `sessionLength` questions, one at a time (vault/Decisioni/2026-09-24 Il livello degli
  * esercizi lo sceglie la pagina.md). The server picks the first exercise from the student's attempts, checks
  * each answer and sends the next exercise with the verdict, at the level the answer leads to; the right
  * answer never reaches the page before the student answers. A right answer moves on by itself; after a
@@ -224,12 +228,12 @@ function Solution({ verdict }: { verdict: Verdict }) {
  * level in place of the current one. Each question takes focus as it appears and the verdict is announced,
  * so the session works by keyboard and screen reader too.
  */
-export function ExerciseRunner({ lesson, levels, titleHtml, theoryHref, nextHref }: Props) {
+export function ExerciseRunner({ lesson, levels, sessionLength = SESSION_LENGTH, free = false, titleHtml, theoryHref, nextHref }: Props) {
 	const [started, setStarted] = useState(false);
 	const [exercise, setExercise] = useState<ExerciseView | null>(null);
 	const [queued, setQueued] = useState<ExerciseView | null>(null);
 	const [index, setIndex] = useState(0);
-	const [progress, setProgress] = useState<Progress[]>(() => Array(SESSION_LENGTH).fill('unanswered'));
+	const [progress, setProgress] = useState<Progress[]>(() => Array(sessionLength).fill('unanswered'));
 	const [selected, setSelected] = useState<number | null>(null);
 	const [verdict, setVerdict] = useState<Verdict | null>(null);
 	const [busy, setBusy] = useState(false);
@@ -242,7 +246,7 @@ export function ExerciseRunner({ lesson, levels, titleHtml, theoryHref, nextHref
 	const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const clock = useActiveClock();
 	const correct = progress.filter((p) => p === 'correct').length;
-	const last = index === SESSION_LENGTH - 1;
+	const last = index === sessionLength - 1;
 
 	useEffect(() => () => {
 		if (advanceTimer.current) clearTimeout(advanceTimer.current);
@@ -275,7 +279,7 @@ export function ExerciseRunner({ lesson, levels, titleHtml, theoryHref, nextHref
 	const start = async () => {
 		if (busy) return;
 		setIndex(0);
-		setProgress(Array(SESSION_LENGTH).fill('unanswered'));
+		setProgress(Array(sessionLength).fill('unanswered'));
 		setQueued(null);
 		setSummary(false);
 		if (await fetchExercise()) setStarted(true);
@@ -390,7 +394,8 @@ export function ExerciseRunner({ lesson, levels, titleHtml, theoryHref, nextHref
 	if (!started)
 		return (
 			<>
-				<StartScreen titleHtml={titleHtml} questionCount={SESSION_LENGTH} estimatedTime={estimatedTime(SESSION_LENGTH)} onStart={start} />
+				<StartScreen titleHtml={titleHtml} questionCount={sessionLength} estimatedTime={estimatedTime(sessionLength)} onStart={start} />
+				{free && !error && <p className="px-4 pb-6 text-center text-sm text-fg-muted">La sessione gratuita di oggi. Con Studio ti eserciti senza limiti.</p>}
 				{alert}
 			</>
 		);
@@ -411,7 +416,7 @@ export function ExerciseRunner({ lesson, levels, titleHtml, theoryHref, nextHref
 					<div key={exercise.id} className="flex w-full max-w-2xl flex-1 flex-col justify-between gap-8 sm:gap-10 sm:pt-4">
 						<div ref={question} tabIndex={-1} className="flex w-full animate-fade-in flex-col gap-5 break-words text-center outline-none">
 							<span className="sr-only">
-								Domanda {index + 1} di {SESSION_LENGTH}, livello {exercise.level}.{' '}
+								Domanda {index + 1} di {sessionLength}, livello {exercise.level}.{' '}
 							</span>
 							{exercise.promptHtml && (
 								<h2 className="text-balance text-xl font-medium text-fg-strong sm:text-2xl">
@@ -455,7 +460,7 @@ export function ExerciseRunner({ lesson, levels, titleHtml, theoryHref, nextHref
 			<SummarySheet
 				open={summary}
 				correct={correct}
-				total={SESSION_LENGTH}
+				total={sessionLength}
 				theoryHref={theoryHref}
 				nextHref={nextHref}
 				onRetry={start}

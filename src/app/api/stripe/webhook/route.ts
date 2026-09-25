@@ -5,10 +5,11 @@ import { adminClient } from '@/lib/server/supabase';
 import { fail, json } from '@/lib/server/http';
 
 /**
- * Keeps the subscription claim in `auth.users.app_metadata.subscription` in
- * step with Stripe. `app_metadata` can only be written with the service role,
- * so a user cannot grant themselves a plan; every page and API route reads
- * the claim through the entitlements module.
+ * Keeps the plan claims in `auth.users.app_metadata` in step with Stripe:
+ * `subscription` for the monthly plan, `pass` for Studio until June (a one-off
+ * payment, removed again if it is refunded in full). `app_metadata` can only be
+ * written with the service role, so a user cannot grant themselves a plan;
+ * every page and API route reads the claims through the entitlements module.
  */
 
 const isoDate = (unixSeconds: number | null | undefined) => (typeof unixSeconds === 'number' ? new Date(unixSeconds * 1000).toISOString() : undefined);
@@ -40,14 +41,46 @@ function planIdFor(subscription: Stripe.Subscription): string {
 	return getPlanByPriceId(subscription.items?.data?.[0]?.price?.id)?.id ?? subscription.metadata?.planId ?? SUBSCRIPTION_PLANS.FREE.id;
 }
 
-/** Merge the claim into app_metadata (the admin API replaces the object, so read first). */
-async function writeClaim(userId: string, patch: Record<string, unknown>) {
+/** Sets one key of app_metadata; `null` clears it (the admin API merges keys, so a key left out would stay). */
+async function writeMeta(userId: string, key: string, value: Record<string, unknown> | null) {
 	const admin = adminClient();
 	const { data, error } = await admin.auth.admin.getUserById(userId);
 	if (error || !data.user) return console.error(`webhook: user ${userId} not found`, error?.message);
-	const subscription = { ...(data.user.app_metadata?.subscription ?? {}), ...patch, updatedAt: new Date().toISOString() };
-	const { error: updateError } = await admin.auth.admin.updateUserById(userId, { app_metadata: { ...data.user.app_metadata, subscription } });
+	const { error: updateError } = await admin.auth.admin.updateUserById(userId, { app_metadata: { [key]: value } });
 	if (updateError) console.error(`webhook: could not update user ${userId}`, updateError.message);
+}
+
+/** Merge the subscription claim into app_metadata. */
+async function writeClaim(userId: string, patch: Record<string, unknown>) {
+	const { data } = await adminClient().auth.admin.getUserById(userId);
+	await writeMeta(userId, 'subscription', { ...(data.user?.app_metadata?.subscription ?? {}), ...patch, updatedAt: new Date().toISOString() });
+}
+
+const idOf = (ref: string | { id: string } | null | undefined) => (typeof ref === 'string' ? ref : (ref?.id ?? null));
+
+/** A paid "until June" Checkout: the pass, with its last day as sold. Other one-off payments are not ours to read. */
+async function applyPass(session: Stripe.Checkout.Session) {
+	if (session.metadata?.billing !== 'pass' || session.payment_status !== 'paid') return;
+	const { userId, planId, until } = session.metadata;
+	if (!userId || !until) return console.error(`webhook: pass session ${session.id} without user or end`);
+	await writeMeta(userId, 'pass', {
+		plan: planId || SUBSCRIPTION_PLANS.STUDIO.id,
+		until,
+		customerId: idOf(session.customer),
+		paymentIntentId: idOf(session.payment_intent),
+		purchasedAt: new Date().toISOString()
+	});
+}
+
+/** A pass refunded in full is withdrawn; a partial refund leaves it. */
+async function revokeRefundedPass(charge: Stripe.Charge) {
+	const paymentIntentId = idOf(charge.payment_intent);
+	if (!charge.refunded || !paymentIntentId) return;
+	const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+	const userId = intent.metadata?.userId;
+	if (intent.metadata?.billing !== 'pass' || !userId) return;
+	const { data } = await adminClient().auth.admin.getUserById(userId);
+	if (data.user?.app_metadata?.pass?.paymentIntentId === paymentIntentId) await writeMeta(userId, 'pass', null);
 }
 
 async function applySubscription(subscription: Stripe.Subscription) {
@@ -82,8 +115,16 @@ export async function POST(request: Request) {
 				if (session.mode === 'subscription' && session.subscription) {
 					await applySubscription(await stripe.subscriptions.retrieve(typeof session.subscription === 'string' ? session.subscription : session.subscription.id));
 				}
+				if (session.mode === 'payment') await applyPass(session);
 				break;
 			}
+			// A payment method that settles later (a bank transfer): the pass starts when the money is in.
+			case 'checkout.session.async_payment_succeeded':
+				await applyPass(event.data.object);
+				break;
+			case 'charge.refunded':
+				await revokeRefundedPass(event.data.object);
+				break;
 			case 'customer.subscription.created':
 			case 'customer.subscription.updated':
 			case 'customer.subscription.deleted':

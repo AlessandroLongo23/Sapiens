@@ -1,15 +1,17 @@
-import { createCheckoutSession, getOrCreateCustomer } from '@/lib/stripe/server';
-import { SUBSCRIPTION_PLANS, TRIAL_DAYS, getPlanById } from '@/lib/stripe/config';
-import { subscriptionOf, trialAvailable } from '@/lib/auth/entitlements';
+import { createCheckoutSession, createPassCheckoutSession, getOrCreateCustomer } from '@/lib/stripe/server';
+import { SUBSCRIPTION_PLANS, formatDay, getPlanById, passEnd, passOnSale } from '@/lib/stripe/config';
+import { planOf } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
 import { fail, json, readJson } from '@/lib/server/http';
 import { safePath } from '@/lib/utils/safe-path';
 
 /**
- * Starts a Stripe Checkout for a paid plan.
- * Body: `{ planId, billing?: 'monthly' | 'semester', returnTo?: string }`.
- * `returnTo` is the page the student was on (the locked exercises, say): the
- * success page sends them back there once the plan is active.
+ * Starts a Stripe Checkout for Studio.
+ * Body: `{ planId, billing?: 'monthly' | 'pass', returnTo?: string }`.
+ * `monthly` is the subscription; `pass` is the one-off payment for Studio
+ * until 30 June, sold only in January and February. `returnTo` is the page the
+ * student was on (the locked exercises, say): the success page sends them back
+ * there once the plan is active.
  */
 export async function POST(request: Request) {
 	const user = await currentUser();
@@ -19,12 +21,15 @@ export async function POST(request: Request) {
 	const plan = getPlanById(String(body.planId ?? ''));
 	if (plan.id === SUBSCRIPTION_PLANS.FREE.id) return fail('Piano non valido', 400);
 
-	const billing = body.billing === 'semester' ? 'semester' : 'monthly';
-	const priceId = billing === 'semester' ? plan.stripePriceIdSemester : plan.stripePriceId;
-	if (!priceId) return fail(billing === 'semester' ? 'Il pagamento semestrale non è ancora disponibile per questo piano.' : 'Questo piano non è ancora acquistabile.', 400);
+	const billing = body.billing === 'pass' ? 'pass' : 'monthly';
+	if (billing === 'pass' && !passOnSale()) return fail('Studio fino a giugno si può acquistare solo a gennaio e febbraio.', 400);
+	const priceId = billing === 'pass' ? plan.stripePassPriceId : plan.stripePriceId;
+	if (!priceId) return fail('Questo piano non è ancora acquistabile.', 400);
 
-	const current = subscriptionOf(user);
-	if (current.plan === plan.id && (current.status === 'active' || current.status === 'trialing')) return fail('Hai già questo piano.', 400);
+	// The reverse trial does not count: whoever is trying Studio can buy it.
+	const { source } = planOf(user);
+	if (source === 'subscription') return fail('Hai già un abbonamento a Studio.', 400);
+	if (source === 'pass') return fail('Hai già Studio fino a giugno.', 400);
 
 	const returnTo = safePath(body.returnTo, '/subscription');
 	const origin = new URL(request.url).origin;
@@ -38,15 +43,18 @@ export async function POST(request: Request) {
 		successUrl.searchParams.set('plan', plan.id);
 		const cancelUrl = new URL('/pricing/cancel', origin);
 		cancelUrl.searchParams.set('next', returnTo);
-		const session = await createCheckoutSession({
+		const params = {
 			priceId,
 			customerId: customer.id,
 			// Stripe fills the placeholder; keep it verbatim.
 			successUrl: `${successUrl}&session_id={CHECKOUT_SESSION_ID}`,
-			cancelUrl: cancelUrl.toString(),
-			metadata: { userId: user.id, planId: plan.id, billing },
-			trialDays: trialAvailable(user) ? TRIAL_DAYS : 0
-		});
+			cancelUrl: cancelUrl.toString()
+		};
+		const until = passEnd();
+		const session =
+			billing === 'pass'
+				? await createPassCheckoutSession({ ...params, metadata: { userId: user.id, planId: plan.id, billing, until, label: `Studio fino al ${formatDay(until)}` } })
+				: await createCheckoutSession({ ...params, metadata: { userId: user.id, planId: plan.id, billing } });
 		return json({ sessionId: session.id, url: session.url });
 	} catch (error) {
 		console.error('Stripe checkout error:', error);

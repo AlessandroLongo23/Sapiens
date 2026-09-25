@@ -14,12 +14,13 @@ const MAX_ACTIVE_MS = 3_600_000;
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
 	const { user } = await getSession();
 	if (!user) return fail('Accedi per continuare.', 401);
-	if (!hasFeature(user, Features.EXERCISES)) return fail('Gli esercizi sono inclusi nei piani a pagamento.', 403);
 	const { id } = await params;
 	if (!isUuid(id)) return fail('Esercizio non trovato.', 404);
 	const body = await readJson(request);
 	const choice = body.choice;
 	if (!Number.isInteger(choice) || (choice as number) < 0) return fail('Risposta non valida.', 400);
 	const activeMs = Number.isFinite(body.activeMs) ? Math.min(MAX_ACTIVE_MS, Math.max(0, Math.round(body.activeMs as number))) : null;
-	return guarded('exercise answer', async () => json(await answerExercise(user.id, id, choice as number, activeMs, body.next === true)));
+	// An exercise already sent can always be answered; a Free account gets the next one while today's session lasts.
+	const limited = !hasFeature(user, Features.EXERCISES);
+	return guarded('exercise answer', async () => json(await answerExercise(user.id, id, choice as number, activeMs, body.next === true, limited)));
 }
