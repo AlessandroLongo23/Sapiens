@@ -122,9 +122,11 @@ Stima: 3-4 settimane di lavoro con gli LLM, cioè entro fine ottobre 2026 se si 
 - **[[Area genitori]], resoconto settimanale:** serve un collegamento genitore-figlio con il consenso, poi legge `exercise_days` e le prove.
 - **Ripasso a intervalli (FSRS):** una tabella della memoria per studente, generatore e livello, aggiornata dal trigger; alimenta il piano della pratica. Vedi [[Ripasso pianificato prima di una verifica]].
 - **Ripasso prima di una verifica:** le verifiche del [[Diario e calendario]], con lezioni e data, alimentano il piano del ripasso.
+- **Mappa dei prerequisiti:** una torre di blocchi per capitolo o per anno, colorata dai progressi di ogni lezione. Vedi [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]] e [[Mappa dei prerequisiti]].
 - **[[Flashcard]]:** i progressi delle carte oggi non si salvano; quando si salveranno, entrano nella serie e in "Oggi".
 
 ## Domande aperte
 - Regole proposte e non ancora discusse: quando un errore è chiuso (due risposte giuste in prove successive, entro 30 giorni), composizione della pratica, soglia della serie (5 risposte al giorno).
 - Onboarding su classe e indirizzo, legato a "Oggi" (vedi [[Agenda]]).
 - Un percorso che attraversa le lezioni di un capitolo.
+- Dopo una prova andata male, come si sceglie il prerequisito più debole da suggerire (deciso che si fa per la beta, non come).

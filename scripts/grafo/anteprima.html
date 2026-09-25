@@ -1,0 +1,394 @@
+<title>Albero del primo anno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+	--page: oklch(0.978 0.008 85);
+	--surface: oklch(0.992 0.004 85);
+	--fg: oklch(0.26 0.022 265);
+	--fg-strong: oklch(0.175 0.014 265);
+	--fg-muted: oklch(0.43 0.02 265);
+	--fg-faint: oklch(0.6 0.016 265);
+	--edge: color-mix(in oklab, oklch(0.3 0.02 265) 18%, transparent);
+	--grid: color-mix(in oklab, oklch(0.62 0.09 245) 16%, transparent);
+	--margin-line: color-mix(in oklab, oklch(0.586 0.252 21) 38%, transparent);
+	--accent: oklch(0.514 0.222 21);
+	--tint-l: 0.93;
+	--tint-c: 0.05;
+	--line-l: 0.52;
+	--line-c: 0.14;
+	--dim: 0.28;
+	--shadow: 0 1px 0 color-mix(in oklab, oklch(0.3 0.02 265) 12%, transparent);
+	--font-display: 'Fraunces', Georgia, serif;
+	--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+	--q: 22px;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		color-scheme: dark;
+		--page: oklch(0.175 0.014 265);
+		--surface: oklch(0.205 0.016 265);
+		--fg: oklch(0.93 0.008 85);
+		--fg-strong: oklch(0.992 0.004 85);
+		--fg-muted: oklch(0.86 0.01 265);
+		--fg-faint: oklch(0.7 0.014 265);
+		--edge: color-mix(in oklab, oklch(0.86 0.01 265) 16%, transparent);
+		--grid: color-mix(in oklab, oklch(0.8 0.06 245) 7%, transparent);
+		--margin-line: color-mix(in oklab, oklch(0.712 0.194 21) 34%, transparent);
+		--accent: oklch(0.712 0.194 21);
+		--tint-l: 0.3;
+		--tint-c: 0.06;
+		--line-l: 0.74;
+		--line-c: 0.12;
+		--dim: 0.3;
+		--shadow: none;
+	}
+}
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--page: oklch(0.175 0.014 265);
+	--surface: oklch(0.205 0.016 265);
+	--fg: oklch(0.93 0.008 85);
+	--fg-strong: oklch(0.992 0.004 85);
+	--fg-muted: oklch(0.86 0.01 265);
+	--fg-faint: oklch(0.7 0.014 265);
+	--edge: color-mix(in oklab, oklch(0.86 0.01 265) 16%, transparent);
+	--grid: color-mix(in oklab, oklch(0.8 0.06 245) 7%, transparent);
+	--margin-line: color-mix(in oklab, oklch(0.712 0.194 21) 34%, transparent);
+	--accent: oklch(0.712 0.194 21);
+	--tint-l: 0.3;
+	--tint-c: 0.06;
+	--line-l: 0.74;
+	--line-c: 0.12;
+	--dim: 0.3;
+	--shadow: none;
+}
+
+* { box-sizing: border-box; }
+body {
+	background-color: var(--page);
+	color: var(--fg);
+	font: 15px/1.5 var(--font-sans);
+	padding-inline: 16px;
+	padding-block: 28px 40px;
+}
+.wrap { max-width: 1320px; margin: 0 auto; }
+header { display: grid; gap: 10px; max-width: 72ch; margin-bottom: 20px; }
+.eyebrow { font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 650 clamp(30px, 5vw, 44px)/1.05 var(--font-display); color: var(--fg-strong); margin: 0; text-wrap: balance; }
+header p { margin: 0; color: var(--fg-muted); }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 400 12px/1.4 var(--font-mono); color: var(--fg-muted); font-variant-numeric: tabular-nums; }
+.stats b { color: var(--fg-strong); font-weight: 500; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+	--h: 0;
+	display: inline-flex; align-items: center; gap: 6px;
+	font: 500 12px/1 var(--font-sans); color: var(--fg);
+	padding: 6px 9px; border-radius: 3px;
+	border: 1px solid oklch(var(--line-l) var(--line-c) var(--h));
+	background: oklch(var(--tint-l) var(--tint-c) var(--h));
+	cursor: pointer;
+}
+.chip[aria-pressed="true"] { box-shadow: 0 0 0 2px oklch(var(--line-l) var(--line-c) var(--h)); }
+.key { display: flex; gap: 14px; font-size: 12px; color: var(--fg-muted); align-items: center; }
+.key i { display: inline-block; width: 18px; height: 12px; border-radius: 2px; vertical-align: -1px; margin-right: 5px; }
+.key .w { background: oklch(var(--tint-l) var(--tint-c) 21); border: 1px solid oklch(var(--line-l) var(--line-c) 21); }
+.key .u { background: var(--surface); border: 1px dashed oklch(var(--line-l) var(--line-c) 21); }
+.zoom { display: inline-flex; border: 1px solid var(--edge); border-radius: 3px; overflow: hidden; margin-left: auto; }
+.zoom button { font: 500 12px/1 var(--font-mono); color: var(--fg); background: var(--surface); border: 0; padding: 7px 10px; cursor: pointer; }
+.zoom button + button { border-left: 1px solid var(--edge); }
+.chip:focus-visible, .node:focus-visible, .zoom button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+.stage {
+	position: relative; overflow: auto; height: min(78vh, 900px);
+	border: 1px solid var(--edge); border-left: 2px solid var(--margin-line);
+	background-color: var(--surface);
+	background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+	background-size: calc(var(--q) * var(--z, 1)) calc(var(--q) * var(--z, 1));
+	cursor: grab; touch-action: pan-x pan-y;
+}
+.stage.dragging { cursor: grabbing; }
+.sizer { position: relative; }
+.canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+svg.edges { position: absolute; left: 0; top: 0; overflow: visible; }
+svg.edges path { fill: none; stroke: var(--fg-faint); stroke-width: 1.4; stroke-linejoin: round; transition: opacity 160ms ease; }
+svg.edges path.up { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5 3; }
+svg.edges path.down { stroke: var(--fg-strong); stroke-width: 2; }
+.focus svg.edges path:not(.up):not(.down) { opacity: 0.18; }
+
+.node {
+	--h: 0;
+	position: absolute; width: 132px; height: 44px; padding: 1px 7px 0;
+	display: flex; align-items: center;
+	text-align: left; font: 500 11px/1.12 var(--font-sans); color: var(--fg-strong);
+	background: oklch(var(--tint-l) var(--tint-c) var(--h));
+	border: 1px solid oklch(var(--line-l) var(--line-c) var(--h));
+	border-bottom-width: 3px; border-radius: 2px; overflow: hidden;
+	box-shadow: var(--shadow);
+	cursor: pointer;
+	transition: opacity 160ms ease;
+}
+.node.unwritten { background: var(--surface); border-style: dashed; border-bottom-style: solid; color: var(--fg-muted); font-weight: 400; }
+.node.outside { background: var(--surface); border-style: dotted; color: var(--fg-faint); }
+.focus .node { opacity: var(--dim); }
+.focus .node.lit { opacity: 1; }
+.node.sel { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+aside.panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); background: var(--surface); border: 1px solid var(--edge); padding: 16px; display: grid; gap: 14px; }
+.panel .ch { font: 500 11px/1.2 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-muted); }
+.panel h2 { font: 650 22px/1.15 var(--font-display); color: var(--fg-strong); margin: 4px 0 0; text-wrap: balance; }
+.panel .meta { font: 400 12px/1.4 var(--font-mono); color: var(--fg-muted); margin-top: 6px; }
+.panel h3 { font: 600 12px/1 var(--font-sans); margin: 0 0 6px; color: var(--fg); }
+.panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.panel li button { all: unset; cursor: pointer; font-size: 13.5px; color: var(--fg); border-bottom: 1px solid var(--edge); }
+.panel li button:hover, .panel li button:focus-visible { color: var(--accent); border-color: var(--accent); }
+.panel .none { font-size: 13px; color: var(--fg-faint); margin: 0; }
+.panel .count { font: 400 12px/1.4 var(--font-mono); color: var(--fg-muted); margin: 6px 0 0; }
+.panel .close { display: none; }
+
+section.notes { max-width: 72ch; margin-top: 32px; display: grid; gap: 10px; }
+section.notes h2 { font: 650 22px/1.2 var(--font-display); color: var(--fg-strong); margin: 0; }
+section.notes p { margin: 0; color: var(--fg-muted); }
+
+@media (max-width: 860px) {
+	.layout { grid-template-columns: minmax(0, 1fr); }
+	.stage { height: 70vh; }
+	aside.panel {
+		position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 10;
+		max-height: 42vh; overflow-y: auto;
+		padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+		border-inline: 0; border-bottom: 0;
+		box-shadow: 0 -8px 24px color-mix(in oklab, oklch(0.2 0.02 265) 18%, transparent);
+	}
+	.panel .close { display: inline-block; justify-self: end; font: 500 12px/1 var(--font-sans); background: none; border: 1px solid var(--edge); color: var(--fg); padding: 6px 10px; border-radius: 3px; cursor: pointer; }
+}
+@media (prefers-reduced-motion: reduce) { .node, svg.edges path { transition: none; } }
+</style>
+
+<div class="wrap">
+	<header>
+		<span class="eyebrow">Sapiens · matematica · bozza del 26 settembre 2026</span>
+		<h1>L'albero del primo anno</h1>
+		<p>Le stesse lezioni e gli stessi archi della torre, disposti come l'albero delle abilità di un videogioco. Ogni lezione sta vicino a quelle che la usano, e l'ordine dei rami è quello che fa incrociare meno archi. Si legge dal basso: le basi sono in fondo. Tocca una lezione per vedere cosa le serve e dove si usa.</p>
+		<div class="stats" id="stats"></div>
+	</header>
+
+	<div class="controls">
+		<div class="legend" id="legend" role="group" aria-label="Evidenzia un filone"></div>
+		<div class="key"><span><i class="w"></i>scritta</span><span><i class="u"></i>da scrivere</span></div>
+		<div class="zoom" role="group" aria-label="Zoom">
+			<button type="button" id="zoom-out" aria-label="Rimpicciolisci">−</button>
+			<button type="button" id="zoom-fit">Tutto</button>
+			<button type="button" id="zoom-in" aria-label="Ingrandisci">+</button>
+		</div>
+	</div>
+
+	<div class="layout">
+		<div class="stage" id="stage">
+			<div class="sizer" id="sizer">
+				<div class="canvas" id="canvas">
+					<svg class="edges" id="edges" aria-hidden="true"></svg>
+				</div>
+			</div>
+		</div>
+		<aside class="panel" id="panel" aria-live="polite"></aside>
+	</div>
+
+	<section class="notes">
+		<h2>Come è disposto</h2>
+		<p>La disposizione è calcolata con ELK (algoritmo a strati con riduzione degli incroci), provando più ordini e tenendo quello con meno incroci. Gli strati non sono più il piano più alto possibile: una lezione può stare più in alto delle sue basi se così gli archi restano corti. Con i piani fissi della torre lo stesso algoritmo lascia circa tre volte gli incroci.</p>
+	</section>
+</div>
+
+<script>
+const G = __DATA__;
+
+const FILONI = [
+	{ id: 'insiemi', name: 'Insiemi e logica', h: 250, chapters: ['Insiemi e logica'] },
+	{ id: 'funzioni', name: 'Funzioni', h: 305, chapters: ['Relazioni e funzioni'] },
+	{ id: 'numeri', name: 'Numeri', h: 62, chapters: ['Numeri naturali \\mathbb{N}', 'Numeri interi \\mathbb{Z}', 'Numeri razionali \\mathbb{Q}', 'Numeri reali e radicali'] },
+	{ id: 'algebra', name: 'Algebra', h: 21, chapters: ['Monomi e polinomi', 'Scomposizione in fattori', 'Frazioni algebriche', 'Equazioni di primo grado', 'Disequazioni di primo grado', 'Equazioni di secondo grado'] },
+	{ id: 'statistica', name: 'Statistica', h: 150, chapters: ['Statistica'] },
+	{ id: 'geometria', name: 'Geometria', h: 195, chapters: ['Geometria del piano: triangoli e quadrilateri'] },
+];
+const filoneOf = (ch) => FILONI.find((f) => f.chapters.includes(ch)) ?? FILONI[3];
+const tex = (s) => s.replace(/\\mathbb\{N\}/g, 'ℕ').replace(/\\mathbb\{Z\}/g, 'ℤ').replace(/\\mathbb\{Q\}/g, 'ℚ').replace(/\\mathbb\{R\}/g, 'ℝ');
+
+const bySlug = new Map(G.nodes.map((n) => [n.slug, n]));
+const succ = new Map(G.nodes.map((n) => [n.slug, []]));
+for (const n of G.nodes) for (const p of n.prereqs) succ.get(p)?.push(n.slug);
+function closure(start, next) {
+	const seen = new Set(); const stack = [...next(start)];
+	while (stack.length) { const s = stack.pop(); if (seen.has(s)) continue; seen.add(s); stack.push(...next(s)); }
+	return seen;
+}
+const ancestors = (s) => closure(s, (x) => bySlug.get(x)?.prereqs ?? []);
+const descendants = (s) => closure(s, (x) => succ.get(x) ?? []);
+
+const declared = G.nodes.filter((n) => n.declared);
+document.getElementById('stats').innerHTML =
+	`<span><b>${declared.length}</b> lezioni</span><span><b>${G.edges.length}</b> archi</span><span><b>${G.crossings}</b> incroci</span><span><b>${declared.filter((n) => n.written).length}</b> scritte</span>`;
+
+// Canvas
+const stage = document.getElementById('stage');
+const sizer = document.getElementById('sizer');
+const canvas = document.getElementById('canvas');
+const svg = document.getElementById('edges');
+canvas.style.width = G.width + 'px'; canvas.style.height = G.height + 'px';
+svg.setAttribute('width', G.width); svg.setAttribute('height', G.height);
+
+function rounded(pts, r = 6) {
+	let d = `M${pts[0][0]},${pts[0][1]}`;
+	for (let i = 1; i < pts.length - 1; i++) {
+		const [px, py] = pts[i - 1], [x, y] = pts[i], [nx, ny] = pts[i + 1];
+		const l1 = Math.hypot(x - px, y - py), l2 = Math.hypot(nx - x, ny - y);
+		const k = Math.min(r, l1 / 2, l2 / 2);
+		d += ` L${x - ((x - px) / l1) * k},${y - ((y - py) / l1) * k} Q${x},${y} ${x + ((nx - x) / l2) * k},${y + ((ny - y) / l2) * k}`;
+	}
+	const [lx, ly] = pts[pts.length - 1];
+	return d + ` L${lx},${ly}`;
+}
+const paths = G.edges.map((e) => {
+	const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	p.setAttribute('d', rounded(e.pts));
+	svg.append(p);
+	return { ...e, el: p };
+});
+
+const els = new Map();
+for (const n of G.nodes) {
+	const fil = filoneOf(n.chapter);
+	const b = document.createElement('button');
+	b.type = 'button';
+	b.className = 'node' + (n.written ? '' : ' unwritten') + (n.declared ? '' : ' outside');
+	b.style.left = n.x + 'px'; b.style.top = n.y + 'px';
+	b.style.setProperty('--h', fil.h);
+	b.dataset.filone = fil.id;
+	b.textContent = tex(n.title) + (n.declared ? '' : ' (2º anno)');
+	b.setAttribute('aria-label', `${tex(n.title)}, ${n.written ? 'scritta' : 'da scrivere'}`);
+	b.addEventListener('click', () => { if (!moved) select(n.slug); });
+	canvas.append(b); els.set(n.slug, b);
+}
+
+// Zoom
+let z = 1;
+function setZoom(nz, cx, cy) {
+	const old = z; z = Math.max(0.2, Math.min(1.6, nz));
+	const r = stage.getBoundingClientRect();
+	cx ??= r.width / 2; cy ??= r.height / 2;
+	const wx = (stage.scrollLeft + cx) / old, wy = (stage.scrollTop + cy) / old;
+	canvas.style.transform = `scale(${z})`;
+	sizer.style.width = G.width * z + 'px'; sizer.style.height = G.height * z + 'px';
+	stage.style.setProperty('--z', z);
+	stage.scrollLeft = wx * z - cx; stage.scrollTop = wy * z - cy;
+}
+document.getElementById('zoom-in').addEventListener('click', () => setZoom(z * 1.25));
+document.getElementById('zoom-out').addEventListener('click', () => setZoom(z / 1.25));
+document.getElementById('zoom-fit').addEventListener('click', () => {
+	const r = stage.getBoundingClientRect();
+	setZoom(Math.min(r.width / G.width, r.height / G.height));
+	stage.scrollLeft = 0; stage.scrollTop = 0;
+});
+stage.addEventListener('wheel', (e) => {
+	if (!e.ctrlKey && !e.metaKey) return;
+	e.preventDefault();
+	const r = stage.getBoundingClientRect();
+	setZoom(z * (e.deltaY < 0 ? 1.1 : 1 / 1.1), e.clientX - r.left, e.clientY - r.top);
+}, { passive: false });
+
+// Drag to pan with a mouse; touch uses native scrolling.
+let drag = null, moved = false;
+stage.addEventListener('pointerdown', (e) => {
+	if (e.pointerType !== 'mouse' || e.button !== 0) return;
+	drag = { x: e.clientX, y: e.clientY, l: stage.scrollLeft, t: stage.scrollTop }; moved = false;
+});
+addEventListener('pointermove', (e) => {
+	if (!drag) return;
+	const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+	if (Math.abs(dx) + Math.abs(dy) > 4) { moved = true; stage.classList.add('dragging'); }
+	stage.scrollLeft = drag.l - dx; stage.scrollTop = drag.t - dy;
+});
+addEventListener('pointerup', () => { drag = null; stage.classList.remove('dragging'); setTimeout(() => (moved = false), 0); });
+
+function centerOn(slug, smooth) {
+	const n = bySlug.get(slug); const r = stage.getBoundingClientRect();
+	stage.scrollTo({ left: (n.x + 66) * z - r.width / 2, top: (n.y + 22) * z - r.height / 2, behavior: smooth && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto' });
+}
+
+// Filone highlight
+let filone = null;
+const legend = document.getElementById('legend');
+for (const f of FILONI) {
+	const b = document.createElement('button');
+	b.type = 'button'; b.className = 'chip'; b.style.setProperty('--h', f.h);
+	b.setAttribute('aria-pressed', 'false'); b.textContent = f.name;
+	b.addEventListener('click', () => {
+		filone = filone === f.id ? null : f.id;
+		legend.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c === b && filone === f.id)));
+		if (filone) highlightFilone(); else clear();
+	});
+	legend.append(b);
+}
+function highlightFilone() {
+	selected = null;
+	canvas.classList.add('focus');
+	for (const [s, el] of els) { el.classList.toggle('lit', el.dataset.filone === filone); el.classList.remove('sel'); }
+	for (const p of paths) {
+		const inside = els.get(p.from).dataset.filone === filone && els.get(p.to).dataset.filone === filone;
+		p.el.classList.toggle('down', inside); p.el.classList.remove('up');
+	}
+	panel.innerHTML = `<p class="none">Filone evidenziato. Tocca una lezione per i dettagli.</p>`;
+}
+
+// Selection
+const panel = document.getElementById('panel');
+let selected = null;
+function list(slugs) {
+	if (!slugs.length) return '<p class="none">Nessuna.</p>';
+	return '<ul>' + slugs.map((s) => `<li><button type="button" data-go="${s}">${tex(bySlug.get(s).title)}</button></li>`).join('') + '</ul>';
+}
+function select(slug) {
+	selected = slug; filone = null;
+	legend.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', 'false'));
+	const n = bySlug.get(slug);
+	const anc = ancestors(slug), desc = descendants(slug);
+	canvas.classList.add('focus');
+	for (const [s, el] of els) {
+		el.classList.toggle('sel', s === slug);
+		el.classList.toggle('lit', s === slug || anc.has(s) || desc.has(s));
+	}
+	for (const p of paths) {
+		p.el.classList.toggle('down', (p.to === slug || anc.has(p.to)) && (anc.has(p.from)));
+		p.el.classList.toggle('up', (p.from === slug || desc.has(p.from)) && desc.has(p.to));
+	}
+	panel.hidden = false;
+	panel.innerHTML = `
+		<button class="close" type="button" id="close">Chiudi</button>
+		<div><div class="ch">${tex(n.chapter)}</div><h2>${tex(n.title)}</h2>
+		<div class="meta">${n.written ? 'scritta' : 'da scrivere'}${n.declared ? '' : ' · secondo anno, prerequisiti non ancora scritti'}</div></div>
+		<div><h3>Cosa le serve</h3>${list(n.prereqs)}<p class="count">${anc.size} lezioni sotto in tutto, in nero</p></div>
+		<div><h3>Dove si usa</h3>${list(succ.get(slug))}<p class="count">${desc.size} lezioni sopra in tutto, in rosso</p></div>`;
+	panel.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { select(b.dataset.go); centerOn(b.dataset.go, true); }));
+	panel.querySelector('#close').addEventListener('click', clear);
+}
+function clear() {
+	selected = null; filone = null;
+	canvas.classList.remove('focus');
+	legend.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', 'false'));
+	for (const el of els.values()) el.classList.remove('sel', 'lit');
+	for (const p of paths) p.el.classList.remove('up', 'down');
+	if (matchMedia('(max-width: 860px)').matches) panel.hidden = true;
+	panel.innerHTML = '<p class="none">Tocca una lezione.</p>';
+}
+addEventListener('keydown', (e) => { if (e.key === 'Escape') clear(); });
+
+// Open on a written lesson in the middle, so the first look shows both directions.
+setZoom(matchMedia('(max-width: 860px)').matches ? 0.7 : 0.9);
+select('equazioni-primo-grado');
+requestAnimationFrame(() => centerOn('equazioni-primo-grado', false));
+</script>

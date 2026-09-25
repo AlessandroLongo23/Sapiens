@@ -11,7 +11,7 @@ Sapiens è online come biblioteca di lezioni con Zaino, esercizi generati, Sapie
 
 Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio, prova al contrario), il provider AI (OpenAI con dati nell'UE) e i progressi per tentativo. È emerso che 6 generatori di esercizi su 15 erano rotti in produzione. Il primo generatore della nuova [[Pipeline esercizi]], le equazioni di secondo grado, è verificato su 6.000 esercizi e collegato al sito; aspetta la revisione di Andrea. Ne restano rotti 5. Le 18 lezioni di teoria sono state riscritte e sono online al posto degli originali, che avevano errori e in tre casi erano troncati. Le figure delle lezioni sono diventate file SVG indicizzabili. Dal 24 settembre si lavora a lotti completi (teoria, esercizi, formulario, flashcard), partendo dal programma e dalle 18 lezioni esistenti; i contenuti li produce Claude e li rilegge Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]). Il 24 settembre le 18 lezioni hanno anche esercizi dai generatori nuovi, un formulario e un mazzo di [[Flashcard]] (346 carte), e gli errori frequenti stanno accanto alle regole; il 24 settembre è fatto anche il secondo lotto (8 lezioni sui numeri), 26 lezioni complete in tutto. Dettagli in [[2026-09-24 Deploy e secondo lotto]]. Dettagli in [[2026-09-24 Figure e organizzazione dei lotti]]. La sera del 24 settembre master è in produzione (il sito Next.js ha sostituito quello SvelteKit) e il pagamento funziona, in modalità test, sul sandbox "Sapiens sandbox" di Stripe (vedi [[2026-09-24 Pagamento in produzione]]). Andrea ha accettato di rileggere i contenuti, e sono decisi i tentativi degli esercizi: ogni tentativo salva l'esercizio intero, corretto sul server, e il livello lo sceglie la pagina. Dettagli in [[2026-09-24 Tentativi degli esercizi]].
 
-Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: lo studente sceglie il livello prima della prova, supera un livello con 8 risposte giuste su 10 e può saltare avanti con una prova di salto. Nel codice, non ancora pubblicato. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]].
+Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: lo studente sceglie il livello prima della prova, supera un livello con 8 risposte giuste su 10 e può saltare avanti con una prova di salto. Nel codice, non ancora pubblicato. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]]. Lo stesso giorno si è deciso che ogni lezione dichiara i suoi prerequisiti: il grafo che ne esce serve a suggerire un ripasso dopo una prova andata male, e dopo la beta diventerà una torre di blocchi (vedi [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]).
 
 Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]].
 
@@ -38,6 +38,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]
 - [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]
 - [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]]
+- [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]
 - [[2026-09-25 Una prova supera un livello solo con almeno 5 domande]]
 - [[2026-09-25 Oggi è lo schermo iniziale dell'app]]
 - [[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]
@@ -82,7 +83,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]]
 
 ## Idee
-Idee non ancora valutate, in `Idee/`: [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]].
+Idee non ancora valutate, in `Idee/`: [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]].
 
 ## Decisioni aperte più importanti
 Ognuna ha il dettaglio nella nota collegata.

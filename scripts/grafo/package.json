@@ -1,0 +1,9 @@
+{
+  "name": "sapiens-grafo",
+  "private": true,
+  "type": "module",
+  "description": "Lays out the lesson prerequisite graph (docs/lezioni/prerequisiti.md) with ELK. Kept apart from the app's dependencies.",
+  "dependencies": {
+    "elkjs": "0.9.3"
+  }
+}
