@@ -7,6 +7,8 @@ import { JUMP_LENGTH, jumpPlan, pathState, skippedBy, type LevelStatus, type Run
 import { levelName } from '@/lib/exercises/level-names';
 import { REVIEW_LENGTH, REVIEW_WINDOW_DAYS, isOpen, openMistakes, reviewPlan, type AnswerRecord, type ReviewItem } from '@/lib/exercises/review';
 import { lessonIndex } from '@/lib/server/lessons';
+import { PRACTICE_LENGTH, practicePlan, practiceSeed, type StartedLesson } from '@/lib/exercises/practice';
+import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/exercises/streak';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
 import type { ChoiceAnswer, Sample } from '@/lib/exercises/v2/types';
 import { renderMath, renderTex } from '@/lib/content/markdown';
@@ -547,4 +549,121 @@ export async function lessonProgress(userId: string): Promise<Record<string, Les
 		progress[path] = { passed: states.filter((st) => st.status === 'passed').length, total: config.levels.length };
 	}
 	return progress;
+}
+
+/** Every run at a level or jump test of a student, newest first, with its generator: the paths of all lessons. */
+async function allPathRuns(userId: string): Promise<(RunRow & { generator_id: string; lesson_path: string })[]> {
+	const { data, error } = await db()
+		.from('exercise_sessions')
+		.select('id, generator_id, lesson_path, kind, level, plan, answered, correct, started_at')
+		.eq('user_id', userId)
+		.in('kind', ['level', 'jump'])
+		.order('started_at', { ascending: false })
+		.limit(5000);
+	if (error) throw error;
+	return (data ?? []) as (RunRow & { generator_id: string; lesson_path: string })[];
+}
+
+/** The lessons a student has started, with their path worked out: what the daily practice draws from. */
+function startedLessons(rows: (RunRow & { generator_id: string })[]): StartedLesson[] {
+	const byGenerator = new Map<string, (RunRow & { generator_id: string })[]>();
+	for (const r of rows) byGenerator.set(r.generator_id, [...(byGenerator.get(r.generator_id) ?? []), r]);
+	const lessons: StartedLesson[] = [];
+	for (const [path, config] of Object.entries(configs)) {
+		const past = byGenerator.get(config.generator);
+		if (!past) continue;
+		const { states, current } = pathState(config.levels, past.map(toRun));
+		lessons.push({ lesson: path, generator: config.generator, passed: states.filter((st) => st.status === 'passed').map((st) => st.level), current, lastAt: past[0].started_at });
+	}
+	return lessons;
+}
+
+/** Today's daily practice, when started: the run and where it stands. */
+type PracticeRow = PlanRow & { id: string; answered: number; correct: number; finished_at: string | null };
+
+async function todaysPractice(userId: string): Promise<PracticeRow | null> {
+	const { data, error } = await db()
+		.from('exercise_sessions')
+		.select('id, lesson_path, generator_id, plan, plan_lessons, plan_generators, answered, correct, finished_at')
+		.eq('user_id', userId)
+		.eq('kind', 'practice')
+		.eq('day', romeDate())
+		.maybeSingle();
+	if (error) throw error;
+	return data as PracticeRow | null;
+}
+
+/** A run across lessons as the page takes it up: the run, how each question went, where to go on. */
+async function resumeMixed(userId: string, kind: 'practice' | 'review', row: PracticeRow): Promise<{ session: SessionView; exercise: ExerciseView; startAt: number; progress: UnfinishedRun['progress']; mistakes: AnsweredView[] }> {
+	const { data, error } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise').eq('session_id', row.id).not('answered_at', 'is', null);
+	if (error) throw error;
+	const rows = (data ?? []) as AnsweredRow[];
+	const progress = row.plan.map((): UnfinishedRun['progress'][number] => 'unanswered');
+	for (const a of rows) if (a.position < progress.length) progress[a.position] = a.correct ? 'correct' : 'incorrect';
+	const startAt = Math.max(0, progress.indexOf('unanswered'));
+	const items = row.plan.map((_, i) => itemAt(row, i));
+	const [exercise, views] = await Promise.all([issueAt(userId, items[startAt].lesson, items[startAt].generator, row.id, startAt, items[startAt].level), itemViews(items)]);
+	return { session: { id: row.id, kind, level: row.plan[0], length: row.plan.length, items: views }, exercise, startAt, progress, mistakes: rows.filter((a) => !a.correct).map(answered) };
+}
+
+/**
+ * Starts today's practice, or takes it up where it was left: one a day (the database allows no second one). Drawn
+ * from the lessons started and the mistakes still open (see practicePlan). For a Free account (`limited`) as many
+ * questions as today's free session has left.
+ */
+export async function startPractice(userId: string, limited = false): Promise<{ session: SessionView; exercise: ExerciseView; startAt: number; progress?: UnfinishedRun['progress']; mistakes?: AnsweredView[] }> {
+	const [existing, left, rows, recent] = await Promise.all([todaysPractice(userId), limited ? freeQuestionsLeft(userId) : Promise.resolve(PRACTICE_LENGTH), allPathRuns(userId), recentAnswers(userId)]);
+	if (existing) {
+		if (existing.finished_at) throw new ExerciseError(400, 'Hai già fatto la pratica di oggi. Domani ne trovi una nuova.');
+		if (left === 0) throw new ExerciseError(403, FREE_SESSION_USED);
+		return resumeMixed(userId, 'practice', existing);
+	}
+	if (left === 0) throw new ExerciseError(403, FREE_SESSION_USED);
+	const lessons = startedLessons(rows);
+	const items = practicePlan(lessons, openMistakes(recent).filter((m) => configs[m.lesson]), createRng(practiceSeed(userId, romeDate())), Math.min(PRACTICE_LENGTH, left));
+	if (items.length === 0) throw new ExerciseError(400, 'La pratica di ogni giorno parte dalle lezioni che hai cominciato: fai prima una prova in una lezione.');
+	try {
+		return { ...(await startMixed(userId, 'practice', items)), startAt: 0 };
+	} catch (err) {
+		// Another tab started today's practice a moment ago: take up that one.
+		if ((err as { code?: string }).code !== '23505') throw err;
+		const other = await todaysPractice(userId);
+		if (!other) throw err;
+		return resumeMixed(userId, 'practice', other);
+	}
+}
+
+/** Where today's practice stands. */
+export type PracticeState = { state: 'none' } | { state: 'todo' } | { state: 'doing'; answered: number; length: number } | { state: 'done'; correct: number; length: number };
+
+/** The days a student has answered on, for the streak: the last 400, enough for any streak worth showing. */
+async function answerDays(userId: string): Promise<{ day: string; answered: number }[]> {
+	const { data, error } = await db().from('exercise_days').select('day, answered').eq('user_id', userId).order('day', { ascending: false }).limit(400);
+	if (error) throw error;
+	return (data ?? []) as { day: string; answered: number }[];
+}
+
+/** A day of the week shown by the streak: whether it counted. */
+export interface WeekDay {
+	day: string;
+	counted: boolean;
+	today: boolean;
+}
+
+/** The streak of days, the last seven days, and today's practice, for the page that offers it. */
+export async function practiceStatus(userId: string): Promise<{ streak: Streak; week: WeekDay[]; practice: PracticeState }> {
+	const [days, practice, rows] = await Promise.all([answerDays(userId), todaysPractice(userId), allPathRuns(userId)]);
+	const today = romeDate();
+	const streak = streakOf(days, today);
+	const counted = new Set(days.filter((d) => d.answered >= STREAK_MIN_ANSWERS).map((d) => d.day));
+	const week: WeekDay[] = [];
+	for (let day = today, i = 0; i < 7; i++, day = previousDay(day)) week.unshift({ day, counted: counted.has(day), today: day === today });
+	const state: PracticeState = practice
+		? practice.finished_at
+			? { state: 'done', correct: practice.correct, length: practice.plan.length }
+			: { state: 'doing', answered: practice.answered, length: practice.plan.length }
+		: rows.length > 0
+			? { state: 'todo' }
+			: { state: 'none' };
+	return { streak, week, practice: state };
 }
