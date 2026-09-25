@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Check, ChevronsUp, Clock, Lock, PenLine, Play } from 'lucide-react';
 import type { PathLevel, PathView } from '@/lib/server/exercises';
 import { estimatedTime } from '@/lib/exercises/config';
-import { JUMP_LENGTH, passMark, type RunKind } from '@/lib/exercises/levels';
+import { JUMP_LENGTH, MIN_PASS_LENGTH, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
 import { Sticker } from '@/components/ui/Sticker';
@@ -78,7 +78,9 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 						<Html as="span" html={titleHtml} className="math-inline" />
 					</h2>
 					<p className="text-sm leading-relaxed text-fg-subtle sm:text-base">
-						Scegli un livello e fai una prova: con {passMark(questionCount)} risposte giuste su {questionCount} lo superi e si apre quello dopo.
+						{canPass(questionCount)
+							? `Scegli un livello e fai una prova: con ${passMark(questionCount)} risposte giuste su ${questionCount} lo superi e si apre quello dopo.`
+							: `Oggi ti ${questionCount === 1 ? 'resta una domanda gratuita' : `restano ${questionCount} domande gratuite`}: puoi allenarti, ma per superare un livello servono almeno ${MIN_PASS_LENGTH} domande.`}
 					</p>
 					<div className="flex items-center gap-3">
 						<div className="flex flex-1 gap-1" aria-hidden="true">
@@ -151,7 +153,7 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 													<h3 className="label-mono mb-2 text-fg-subtle">Le ultime prove</h3>
 													<ul className="mb-4 flex flex-col gap-1.5">
 														{level.runs.map((run, k) => {
-															const ok = run.correct >= passMark(run.total);
+															const ok = runPassed({ ...run, answered: run.total });
 															return (
 																<li key={k} className="flex items-center gap-3 text-sm">
 																	<span className="w-14 shrink-0 text-fg-subtle">{when(run.at)}</span>

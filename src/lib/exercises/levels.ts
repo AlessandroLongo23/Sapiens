@@ -39,12 +39,22 @@ export interface LevelState {
 	best: Run | null;
 }
 
+/**
+ * The shortest run that can pass a level: a Free run cut short by the day's session trains, counts for the streak
+ * and for mistakes, but under this many questions it does not pass
+ * (vault/Decisioni/2026-09-25 Una prova supera un livello solo con almeno 5 domande.md).
+ */
+export const MIN_PASS_LENGTH = JUMP_LENGTH;
+
 /** Right answers needed out of `total`. */
 export const passMark = (total: number) => Math.ceil(total * PASS_RATIO);
 
+/** Whether a run of `total` questions can pass its level at all. */
+export const canPass = (total: number) => total >= MIN_PASS_LENGTH;
+
 export const finished = (run: Pick<Run, 'total' | 'answered'>) => run.answered >= run.total;
 
-export const runPassed = (run: Pick<Run, 'total' | 'answered' | 'correct'>) => finished(run) && run.correct >= passMark(run.total);
+export const runPassed = (run: Pick<Run, 'total' | 'answered' | 'correct'>) => finished(run) && canPass(run.total) && run.correct >= passMark(run.total);
 
 /**
  * Where the student stands on each level offered, easiest first, from their runs (any order). `current` is the

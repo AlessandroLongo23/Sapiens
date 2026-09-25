@@ -133,30 +133,16 @@ const verdict = (s: Sealed, correct: boolean): Verdict => ({
 });
 
 /**
- * Midnight in Rome today, as an instant. Uses the offset in force now, so on the two nights the clocks change
- * the day starts an hour early or late: a free session one hour longer or shorter, twice a year.
- */
-function romeMidnight(now: Date = new Date()): string {
-	const zone = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Rome', timeZoneName: 'shortOffset' }).formatToParts(now).find((p) => p.type === 'timeZoneName')?.value ?? 'GMT+1';
-	const hours = Number(/GMT([+-]\d+)/.exec(zone)?.[1] ?? 0);
-	return new Date(Date.parse(`${romeDate(now)}T00:00:00Z`) - hours * 3_600_000).toISOString();
-}
-
-/**
  * Questions left in today's free session: a Free account answers up to SESSION_LENGTH exercises a day, on any
- * lesson (vault/Decisioni/2026-09-23 Prova al contrario e sessione gratuita giornaliera.md). Shown but unanswered
+ * lesson (vault/Decisioni/2026-09-23 Prova al contrario e sessione gratuita giornaliera.md). Read from the day's
+ * row in exercise_days, which the database counts in Rome time as answers come in. Shown but unanswered
  * exercises do not count, so the limit never falls in the middle of one.
  */
 export async function freeQuestionsLeft(userId: string): Promise<number> {
-	const { count, error } = await db()
-		.from('exercise_attempts')
-		.select('id', { count: 'exact', head: true })
-		.eq('user_id', userId)
-		.gte('answered_at', romeMidnight());
+	const { data, error } = await db().from('exercise_days').select('answered').eq('user_id', userId).eq('day', romeDate()).maybeSingle();
 	if (error) throw error;
-	return Math.max(0, SESSION_LENGTH - (count ?? 0));
+	return Math.max(0, SESSION_LENGTH - ((data as { answered: number } | null)?.answered ?? 0));
 }
-
 
 /** A run as the page knows it: enough to ask its questions and to tell the result at the end. */
 export interface SessionView {
@@ -186,26 +172,26 @@ export interface PathView {
 /** Runs shown under a level. */
 const RUNS_SHOWN = 5;
 
-type RunRow = { kind: RunKind; level: number; plan: number[]; started_at: string; exercise_attempts: { correct: boolean | null }[] };
+type RunRow = { kind: RunKind; level: number; plan: number[]; answered: number; correct: number; started_at: string };
 
-/** The student's runs on a generator, with their result from the attempts. */
+/** A run's row as the path reads it. */
+const toRun = (r: RunRow): Run => ({ kind: r.kind, level: r.level, total: r.plan.length, answered: r.answered, correct: r.correct, at: r.started_at });
+
+/**
+ * The student's runs on a generator's path, with the counts the database keeps as answers come in. Only runs at a
+ * level and jump tests: practice and reviews train, but never pass or open a level.
+ */
 async function runs(userId: string, generatorId: string): Promise<Run[]> {
 	const { data, error } = await db()
 		.from('exercise_sessions')
-		.select('kind, level, plan, started_at, exercise_attempts(correct)')
+		.select('kind, level, plan, answered, correct, started_at')
 		.eq('user_id', userId)
 		.eq('generator_id', generatorId)
+		.in('kind', ['level', 'jump'])
 		.order('started_at', { ascending: false })
 		.limit(200);
 	if (error) throw error;
-	return ((data ?? []) as RunRow[]).map((r) => ({
-		kind: r.kind,
-		level: r.level,
-		total: r.plan.length,
-		answered: r.exercise_attempts.filter((a) => a.correct !== null).length,
-		correct: r.exercise_attempts.filter((a) => a.correct === true).length,
-		at: r.started_at
-	}));
+	return ((data ?? []) as RunRow[]).map(toRun);
 }
 
 /** The path of a lesson for a student; without one (a visitor), the path of somebody who has not started. */
