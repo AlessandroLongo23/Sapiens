@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, BookOpen, RotateCcw, Route } from 'lucide-react';
+import { ArrowRight, BookOpen, Repeat, RotateCcw, Route } from 'lucide-react';
 import type { ExerciseView, PathView, SessionView } from '@/lib/server/exercises';
 import { SESSION_LENGTH } from '@/lib/exercises/config';
 import { JUMP_LENGTH, MIN_PASS_LENGTH, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils/cn';
 import { Button, LinkButton } from '@/components/ui/Button';
 import { ExercisePath } from './ExercisePath';
 import { RunMistakes } from './RunMistakes';
+import { ReviewRun } from './ReviewRun';
 import { RunPlayer, post, type Progress, type RunResult } from './RunPlayer';
 import { SummarySheet } from './SummarySheet';
 
@@ -47,6 +48,9 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 	const [run, setRun] = useState<Current | null>(null);
 	const [starting, setStarting] = useState<number | null>(null);
 	const [resuming, setResuming] = useState(false);
+	// A review of the mistakes of the run just finished, on this same page.
+	const [review, setReview] = useState<{ session: SessionView; first: ExerciseView } | null>(null);
+	const [reviewing, setReviewing] = useState(false);
 	const [left, setLeft] = useState(questionsLeft);
 	const [error, setError] = useState<string | null>(null);
 	const questionCount = free ? Math.min(SESSION_LENGTH, left) : SESSION_LENGTH;
@@ -85,8 +89,25 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 	/** Back to the path, which the server draws again with the runs just made. */
 	const leave = () => {
 		setRun(null);
+		setReview(null);
 		setError(null);
 		router.refresh();
+	};
+
+	/** New exercises at the levels the run just finished got wrong. */
+	const redo = async (sessionId: string) => {
+		if (reviewing) return;
+		setReviewing(true);
+		setError(null);
+		try {
+			const res = await post<{ session: SessionView; exercise: ExerciseView }>('/api/esercizi', { kind: 'review', session: sessionId });
+			setLeft((n) => Math.max(0, n - res.session.length));
+			setReview({ session: res.session, first: res.exercise });
+		} catch (err) {
+			setError((err as Error).message);
+		} finally {
+			setReviewing(false);
+		}
 	};
 
 	const alert = error && (
@@ -105,8 +126,13 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 			</>
 		);
 
+	if (review) return <ReviewRun session={review.session} first={review.first} backLabel="Torna al percorso" onBack={leave} />;
+
 	const { session } = run;
+	// Runs started on a lesson's path are at a level or jump tests; practice and reviews run elsewhere.
+	const kind = session.kind as RunKind;
 	const length = session.length;
+	const wrong = run.done ? run.done.progress.filter((p) => p === 'incorrect').length : 0;
 	const correct = run.done ? run.done.progress.filter((p) => p === 'correct').length : 0;
 	const levelIndex = path.levels.findIndex((l) => l.level === session.level);
 	const levelName = path.levels[levelIndex]?.name;
@@ -126,13 +152,13 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 				: !canPass(length)
 					? { title: 'Allenamento fatto', detail: `Una prova di ${length} ${length === 1 ? 'domanda' : 'domande'} allena, ma per superare il livello ne servono almeno ${MIN_PASS_LENGTH}.` }
 					: { title: correct >= mark - 2 ? 'Ci sei quasi' : 'Continua ad allenarti', detail: `Per superare il livello servono ${mark} risposte giuste su ${length}.` };
-	const retry = passed && session.kind === 'level' && following !== null ? { kind: 'level' as const, level: following, label: `Vai al livello ${following}` } : passed && session.kind === 'jump' ? { kind: 'level' as const, level: session.level, label: `Inizia il livello ${session.level}` } : passed ? null : { kind: session.kind, level: session.level, label: session.kind === 'jump' ? 'Riprova il salto' : 'Riprova il livello' };
+	const retry = passed && kind === 'level' && following !== null ? { kind: 'level' as const, level: following, label: `Vai al livello ${following}` } : passed && kind === 'jump' ? { kind: 'level' as const, level: session.level, label: `Inizia il livello ${session.level}` } : passed ? null : { kind, level: session.level, label: kind === 'jump' ? 'Riprova il salto' : 'Riprova il livello' };
 	const actions = (
 		<>
 			{alert}
 			{retry && canGo(retry.kind) ? (
 				<Button size="lg" className="w-full" onClick={() => start(retry.kind, retry.level)} loading={starting !== null}>
-					{retry.kind === session.kind && retry.level === session.level ? <RotateCcw className="size-5" aria-hidden="true" /> : <ArrowRight className="size-5" aria-hidden="true" />}
+					{retry.kind === kind && retry.level === session.level ? <RotateCcw className="size-5" aria-hidden="true" /> : <ArrowRight className="size-5" aria-hidden="true" />}
 					{retry.label}
 				</Button>
 			) : retry && free ? (
@@ -146,6 +172,12 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 						<ArrowRight className="size-5" aria-hidden="true" />
 					</LinkButton>
 				)
+			)}
+			{wrong > 0 && canGo('level') && (
+				<Button variant="secondary" size="lg" className="w-full" onClick={() => redo(session.id)} loading={reviewing}>
+					<Repeat className="size-4 shrink-0" aria-hidden="true" />
+					{wrong === 1 ? "Rifai l'errore" : 'Rifai gli errori'}
+				</Button>
 			)}
 			<div className={cn('grid gap-2', passed ? 'grid-cols-1' : 'grid-cols-2')}>
 				<Button variant="secondary" size="lg" onClick={leave}>

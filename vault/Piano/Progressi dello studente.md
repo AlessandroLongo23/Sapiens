@@ -24,7 +24,7 @@ Il 25 settembre 2026 i tentativi si vedono solo nel percorso della lezione (lavo
 |---|---|---|---|
 | 1 | Errori alla fine della prova | Riepilogo della prova (`SummarySheet`) | S |
 | 2 | Prova da riprendere | Percorso della lezione, e "Oggi" | S |
-| 3 | Rifai gli errori, ed elenco degli errori | Riepilogo, "Oggi", pagina `/oggi/errori` | M |
+| 3 | Rifai gli errori, ed elenco degli errori | Riepilogo, "Oggi", pagina `/errori` | M |
 | 4 | Progressi nel materiale | Righe delle lezioni e dei capitoli | M |
 | 5 | Pratica quotidiana e serie di giorni | "Oggi" | M |
 | 6 | Schermo "Oggi" | `/oggi`, schermo iniziale dell'app | M |
@@ -37,11 +37,11 @@ Nel riepilogo, sotto il punteggio, "Rivedi gli errori": per ogni risposta sbagli
 Oggi una prova lasciata a metà sparisce. Il percorso mostra "Riprendi (4/10)" sull'ultima prova non finita della lezione, se ha meno di 3 giorni e non ce n'è una più nuova. Si riparte dalla prima domanda senza risposta, con lo stesso esercizio già emesso: il server lo restituisce invece di crearne uno nuovo. Stessa query del percorso, nessuna in più.
 
 ### 3. Rifai gli errori
-Un errore resta aperto (proposta) finché lo studente non risponde giusto due volte a quel livello di quel generatore, in una prova qualunque, entro 30 giorni. Due ingressi:
+Un errore resta aperto finché lo studente non risponde giusto due volte a quel livello di quel generatore in prove successive a quella dell'errore, entro 30 giorni. Le risposte giuste più avanti nella stessa prova non contano: una prova di livello chiede dieci volte lo stesso livello, e un errore si recupera tornandoci (corretto il 25 settembre 2026 durante la costruzione, dopo averlo visto nelle prove). Due ingressi:
 - dal riepilogo: 5 esercizi nuovi ai livelli sbagliati in quella prova;
 - da "Oggi": 5 esercizi nuovi sugli errori aperti di tutte le lezioni, dai più recenti.
 
-La prova di ripasso è un nuovo tipo di prova (`review`): non supera né apre livelli. La pagina `/oggi/errori` elenca gli errori passati, con la risposta data, quella giusta e i passaggi, dall'esercizio salvato. Leggerla non consuma domande gratuite.
+La prova di ripasso è un nuovo tipo di prova (`review`): non supera né apre livelli. La pagina `/errori` elenca gli errori passati, con la risposta data, quella giusta e i passaggi, dall'esercizio salvato. Leggerla non consuma domande gratuite.
 
 ### 4. Progressi nel materiale
 Sulle righe delle lezioni, "Livello 3/6", o un segno di spunta quando tutti i livelli sono superati; sulle righe dei capitoli, "2 di 5 lezioni". Le pagine restano in cache: la riga porta il suo percorso nel database, e un componente nel browser chiede i progressi dopo il caricamento, come fa il segno delle note (`LessonNoteButton`). Una sola richiesta per pagina, `GET /api/esercizi/progressi`, con i progressi di tutte le lezioni (oggi 26), calcolati con la stessa `pathState` del percorso. Il segno occupa il posto dell'etichetta "N lezioni", così la pagina non si sposta quando arriva.
@@ -122,6 +122,6 @@ Stima: 3-4 settimane di lavoro con gli LLM, cioè entro fine ottobre 2026 se si 
 - **[[Flashcard]]:** i progressi delle carte oggi non si salvano; quando si salveranno, entrano nella serie e in "Oggi".
 
 ## Domande aperte
-- Regole proposte e non ancora discusse: quando un errore è chiuso (due risposte giuste entro 30 giorni), composizione della pratica, soglia della serie (5 risposte al giorno).
+- Regole proposte e non ancora discusse: quando un errore è chiuso (due risposte giuste in prove successive, entro 30 giorni), composizione della pratica, soglia della serie (5 risposte al giorno).
 - Onboarding su classe e indirizzo, legato a "Oggi" (vedi [[Agenda]]).
 - Un percorso che attraversa le lezioni di un capitolo.

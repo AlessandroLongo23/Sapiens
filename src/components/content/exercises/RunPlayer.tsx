@@ -1,5 +1,7 @@
 'use client';
 
+// Runs and mistakes are shown outside the lesson pages too (the list of mistakes, Oggi), where the layout does not load KaTeX's styles.
+import 'katex/dist/katex.min.css';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowRight, Check, X } from 'lucide-react';
 import type { ExerciseView, QuestionBlock, SessionView, Verdict } from '@/lib/server/exercises';
@@ -217,8 +219,8 @@ interface PlayerProps {
 	initial?: Progress[];
 	/** The ones among them answered wrong, so the summary lists every mistake of the run. */
 	earlier?: RunResult[];
-	/** What the run is, under the progress bar: "Livello 3" and its name, "Ripasso degli errori". */
-	label: ReactNode;
+	/** What the run is, under the progress bar: "Livello 3" and its name; for a run across lessons, per question. */
+	label: ReactNode | ((index: number) => ReactNode);
 	/** The run is over and its summary is on screen: the keys stop answering. */
 	finished?: boolean;
 	onLeave: () => void;
@@ -419,7 +421,7 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 					</button>
 					<ProgressBar states={progress} current={index} />
 				</div>
-				<p className="flex max-w-full items-baseline gap-2 truncate text-sm">{label}</p>
+				<p className="flex max-w-full items-baseline gap-2 truncate text-sm">{typeof label === 'function' ? label(index) : label}</p>
 				{error && (
 					<p role="alert" className="px-4 text-center text-sm text-danger-fg">
 						{error}

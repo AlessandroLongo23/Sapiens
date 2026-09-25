@@ -5,6 +5,8 @@ import { romeDate } from '@/lib/stripe/config';
 import { generators } from '@/lib/exercises';
 import { JUMP_LENGTH, jumpPlan, pathState, skippedBy, type LevelStatus, type Run, type RunKind } from '@/lib/exercises/levels';
 import { levelName } from '@/lib/exercises/level-names';
+import { REVIEW_LENGTH, REVIEW_WINDOW_DAYS, isOpen, openMistakes, reviewPlan, type AnswerRecord, type ReviewItem } from '@/lib/exercises/review';
+import { lessonIndex } from '@/lib/server/lessons';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
 import type { ChoiceAnswer, Sample } from '@/lib/exercises/v2/types';
 import { renderMath, renderTex } from '@/lib/content/markdown';
@@ -158,12 +160,24 @@ export async function freeQuestionsLeft(userId: string): Promise<number> {
 	return Math.max(0, SESSION_LENGTH - ((data as { answered: number } | null)?.answered ?? 0));
 }
 
+/** Every kind of run: at a level or a jump test on a lesson's path, the daily practice, a review of mistakes. */
+export type SessionKind = RunKind | 'practice' | 'review';
+
+/** A question of a run that crosses lessons, as the page names it above the question. */
+export interface ItemView {
+	lessonTitleHtml: string;
+	level: number;
+	levelName: string | null;
+}
+
 /** A run as the page knows it: enough to ask its questions and to tell the result at the end. */
 export interface SessionView {
 	id: string;
-	kind: RunKind;
+	kind: SessionKind;
 	level: number;
 	length: number;
+	/** For practice and reviews: the lesson and level of each question. */
+	items?: ItemView[];
 }
 
 /** One level of the path as the page draws it. */
@@ -312,7 +326,7 @@ export async function startSession(userId: string, dbPath: string, kind: RunKind
 	if (!config || !generators[config.generator]) throw new ExerciseError(404, 'Esercizi non trovati.');
 	if (!config.levels.includes(level)) throw new ExerciseError(400, 'Livello non valido.');
 	const [past, left] = await Promise.all([runs(userId, config.generator), limited ? freeQuestionsLeft(userId) : Promise.resolve(SESSION_LENGTH)]);
-	if (left === 0) throw new ExerciseError(403, "Hai fatto la sessione gratuita di oggi. Domani ne hai un'altra, oppure passa a Studio.");
+	if (left === 0) throw new ExerciseError(403, FREE_SESSION_USED);
 
 	const { states } = pathState(config.levels, past);
 	let plan: number[];
@@ -339,15 +353,141 @@ export async function startSession(userId: string, dbPath: string, kind: RunKind
  */
 export async function sessionExercise(userId: string, sessionId: string, position: number, limited = false): Promise<ExerciseView> {
 	const [{ data, error }, left] = await Promise.all([
-		db().from('exercise_sessions').select('lesson_path, generator_id, plan').eq('id', sessionId).eq('user_id', userId).maybeSingle(),
+		db().from('exercise_sessions').select('lesson_path, generator_id, plan, plan_lessons, plan_generators').eq('id', sessionId).eq('user_id', userId).maybeSingle(),
 		limited ? freeQuestionsLeft(userId) : Promise.resolve(SESSION_LENGTH)
 	]);
 	if (error) throw error;
 	if (!data) throw new ExerciseError(404, 'Prova non trovata.');
-	const run = data as { lesson_path: string; generator_id: string; plan: number[] };
+	const run = data as PlanRow;
 	if (position >= run.plan.length) throw new ExerciseError(400, 'La prova è finita.');
-	if (left === 0) throw new ExerciseError(403, "Hai fatto la sessione gratuita di oggi. Domani ne hai un'altra, oppure passa a Studio.");
-	return issueAt(userId, run.lesson_path, run.generator_id, sessionId, position, run.plan[position]);
+	if (left === 0) throw new ExerciseError(403, FREE_SESSION_USED);
+	const item = itemAt(run, position);
+	return issueAt(userId, item.lesson, item.generator, sessionId, position, item.level);
+}
+
+/** The plan of a run as stored: one lesson and generator for a run on a path, one per question for the others. */
+type PlanRow = { lesson_path: string | null; generator_id: string | null; plan: number[]; plan_lessons: string[] | null; plan_generators: string[] | null };
+
+/** The lesson, generator and level of the question at `position`. */
+function itemAt(run: PlanRow, position: number): ReviewItem {
+	const lesson = run.plan_lessons?.[position] ?? run.lesson_path;
+	const generator = run.plan_generators?.[position] ?? run.generator_id;
+	if (!lesson || !generator) throw new Error(`run without lesson at position ${position}`);
+	return { lesson, generator, level: run.plan[position] };
+}
+
+const FREE_SESSION_USED = "Hai fatto la sessione gratuita di oggi. Domani ne hai un'altra, oppure passa a Studio.";
+
+/** The student's answers of the last REVIEW_WINDOW_DAYS, newest first: enough to know the mistakes still open. */
+async function recentAnswers(userId: string): Promise<AnswerRecord[]> {
+	const { data, error } = await db()
+		.from('exercise_attempts')
+		.select('lesson_path, generator_id, level, correct, answered_at, session_id')
+		.eq('user_id', userId)
+		.gte('answered_at', new Date(Date.now() - REVIEW_WINDOW_DAYS * 86_400_000).toISOString())
+		.order('answered_at', { ascending: false })
+		.limit(2000);
+	if (error) throw error;
+	return ((data ?? []) as { lesson_path: string; generator_id: string; level: number; correct: boolean; answered_at: string; session_id: string | null }[]).map((r) => ({ lesson: r.lesson_path, generator: r.generator_id, level: r.level, correct: r.correct, at: r.answered_at, run: r.session_id }));
+}
+
+/** How the page names the questions of a run across lessons. */
+async function itemViews(items: ReviewItem[]): Promise<ItemView[]> {
+	const index = await lessonIndex();
+	return items.map((i) => ({ lessonTitleHtml: index.get(i.lesson)?.titleHtml ?? '', level: i.level, levelName: levelName(i.generator, i.level) }));
+}
+
+/** Writes a run that crosses lessons and sends its first exercise. */
+async function startMixed(userId: string, kind: 'practice' | 'review', items: ReviewItem[]): Promise<{ session: SessionView; exercise: ExerciseView }> {
+	const { data, error } = await db()
+		.from('exercise_sessions')
+		.insert({ user_id: userId, kind, level: items[0].level, plan: items.map((i) => i.level), plan_lessons: items.map((i) => i.lesson), plan_generators: items.map((i) => i.generator) })
+		.select('id')
+		.single();
+	if (error) throw error;
+	const id = (data as { id: string }).id;
+	const [exercise, views] = await Promise.all([issueAt(userId, items[0].lesson, items[0].generator, id, 0, items[0].level), itemViews(items)]);
+	return { session: { id, kind, level: items[0].level, length: items.length, items: views }, exercise };
+}
+
+/**
+ * Starts a review: new exercises at the levels where the student erred, never the ones answered wrong. From a run
+ * (`from`), the levels it got wrong; otherwise the mistakes still open across all lessons. For a Free account
+ * (`limited`) as many questions as today's free session has left.
+ */
+export async function startReview(userId: string, from: string | null, limited = false): Promise<{ session: SessionView; exercise: ExerciseView }> {
+	const left = limited ? await freeQuestionsLeft(userId) : REVIEW_LENGTH;
+	if (left === 0) throw new ExerciseError(403, FREE_SESSION_USED);
+	const length = Math.min(REVIEW_LENGTH, left);
+	let slots: { lesson: string; generator: string; level: number }[];
+	if (from) {
+		const { data, error } = await db().from('exercise_attempts').select('lesson_path, generator_id, level, answered_at').eq('session_id', from).eq('user_id', userId).eq('correct', false).order('answered_at', { ascending: false });
+		if (error) throw error;
+		// Each level once, the newest mistake first.
+		const bySlot = new Map<string, { lesson: string; generator: string; level: number }>();
+		for (const r of (data ?? []) as { lesson_path: string; generator_id: string; level: number }[]) {
+			const key = `${r.generator_id}#${r.level}`;
+			if (configs[r.lesson_path] && !bySlot.has(key)) bySlot.set(key, { lesson: r.lesson_path, generator: r.generator_id, level: r.level });
+		}
+		slots = [...bySlot.values()];
+	} else {
+		slots = openMistakes(await recentAnswers(userId)).filter((s) => configs[s.lesson]);
+	}
+	const items = reviewPlan(slots, length);
+	if (items.length === 0) throw new ExerciseError(400, 'Non hai errori da rifare.');
+	return startMixed(userId, 'review', items);
+}
+
+/** A mistake as the list of mistakes shows it: the answer as it was given, where, when, and whether it is still to redo. */
+export interface MistakeView extends AnsweredView {
+	lesson: { titleHtml: string; url: string } | null;
+	levelName: string | null;
+	at: string;
+	/** Still to redo, or redone; null past REVIEW_WINDOW_DAYS, when it is neither. */
+	open: boolean | null;
+}
+
+/** Mistakes shown per page of the list. */
+export const MISTAKES_PAGE = 20;
+
+/**
+ * The student's mistakes, newest first, a page at a time, with how many are still open to redo. Reading them costs
+ * nothing: they are the exercises as they were asked, from the attempts.
+ */
+export async function mistakes(userId: string, page = 0): Promise<{ items: MistakeView[]; more: boolean; open: number }> {
+	const [{ data, error }, recent, index] = await Promise.all([
+		db()
+			.from('exercise_attempts')
+			.select('id, user_id, position, lesson_path, generator_id, level, correct, answer, exercise, answered_at')
+			.eq('user_id', userId)
+			.eq('correct', false)
+			.order('answered_at', { ascending: false })
+			.range(page * MISTAKES_PAGE, page * MISTAKES_PAGE + MISTAKES_PAGE),
+		recentAnswers(userId),
+		lessonIndex()
+	]);
+	if (error) throw error;
+	const slots = openMistakes(recent).filter((s) => configs[s.lesson]);
+	const rows = (data ?? []) as (AnsweredRow & { lesson_path: string; generator_id: string; answered_at: string })[];
+	return {
+		more: rows.length > MISTAKES_PAGE,
+		open: slots.length,
+		items: rows.slice(0, MISTAKES_PAGE).map((r) => {
+			const lesson = index.get(r.lesson_path);
+			return {
+				...answered(r),
+				lesson: lesson ? { titleHtml: lesson.titleHtml, url: lesson.exercisesUrl } : null,
+				levelName: levelName(r.generator_id, r.level),
+				at: r.answered_at,
+				open: Date.parse(r.answered_at) < Date.now() - REVIEW_WINDOW_DAYS * 86_400_000 ? null : isOpen(slots, r.generator_id, r.level)
+			};
+		})
+	};
+}
+
+/** Mistakes still open to redo, for the pages that offer a review. */
+export async function openMistakeCount(userId: string): Promise<number> {
+	return openMistakes(await recentAnswers(userId)).filter((s) => configs[s.lesson]).length;
 }
 
 /**

@@ -55,6 +55,7 @@ export const PRIVATE_PATH_PREFIXES = [
 	'/zaino',
 	'/api',
 	'/subscription',
+	'/errori',
 	'/richieste',
 	'/dashboard',
 	'/leads',
