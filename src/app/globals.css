@@ -96,6 +96,12 @@
 	/* Arriving: fast out of the gate, long settle. Used by everything in the Zaino. */
 	--ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 	--animate-note-in: note-in 0.34s var(--ease-out-soft) both;
+	/* Exercises. The answer chosen and right swells once; the tick or cross in its box lands a beat after. */
+	--animate-answer-pop: answer-pop 0.32s var(--ease-out-soft);
+	--animate-badge-pop: badge-pop 0.24s var(--ease-out-soft) both;
+	/* The solution after a mistake comes up from the answers, then its steps are written one by one. */
+	--animate-panel-in: panel-in 0.38s var(--ease-out-soft) both;
+	--animate-step-in: step-in 0.3s var(--ease-out-soft) both;
 
 	@keyframes fade-in {
 		from { opacity: 0; }
@@ -111,6 +117,18 @@
 	}
 	@keyframes note-in {
 		from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
+	}
+	@keyframes answer-pop {
+		40% { transform: scale(1.025); }
+	}
+	@keyframes badge-pop {
+		from { opacity: 0; transform: scale(0.5) rotate(-12deg); }
+	}
+	@keyframes panel-in {
+		from { opacity: 0; transform: translateY(12px) scale(0.985); filter: blur(4px); }
+	}
+	@keyframes step-in {
+		from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
 	}
 	@keyframes nudge {
 		20%, 60% { transform: translateX(-4px); }

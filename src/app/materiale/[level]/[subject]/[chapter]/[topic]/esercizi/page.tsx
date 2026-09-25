@@ -7,15 +7,15 @@ import { titleHtml as toHtml } from '@/lib/content/latex';
 import { Features, SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
 import { hasFeature } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
-import { freeQuestionsLeft, hasExercises } from '@/lib/server/exercises';
-import { configs, estimatedTime, SESSION_LENGTH } from '@/lib/exercises/config';
+import { freeQuestionsLeft, hasExercises, lessonPath } from '@/lib/server/exercises';
+import { SESSION_LENGTH } from '@/lib/exercises/config';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { toneFor } from '@/lib/utils/icons';
 import { LessonFrame } from '@/components/content/lesson/LessonFrame';
 import { ComingSoon } from '@/components/content/ComingSoon';
 import { Paywall } from '@/components/subscription/Paywall';
 import { ExerciseRunner } from '@/components/content/exercises/ExerciseRunner';
-import { StartScreen } from '@/components/content/exercises/StartScreen';
+import { ExercisePath } from '@/components/content/exercises/ExercisePath';
 import { NavigationButtons } from '@/components/content/NavigationButtons';
 import { loadLesson, type LessonParams } from '../lesson';
 
@@ -43,7 +43,7 @@ export default async function ExercisesPage(props: LessonParams) {
 	const user = await currentUser();
 	// Studio exercises without limits; a Free account has one session a day, across all lessons.
 	const full = available && hasFeature(user, Features.EXERCISES);
-	const left = available && user && !full ? await freeQuestionsLeft(user.id) : 0;
+	const [left, path] = await Promise.all([available && user && !full ? freeQuestionsLeft(user.id) : 0, available ? lessonPath(user?.id ?? null, dbPath) : null]);
 	const unlocked = full || left > 0;
 	// Exercises are part of the paid plans (see the plan config); the markup declares the gated part.
 	const free = SUBSCRIPTION_PLANS.FREE.access[Features.EXERCISES];
@@ -67,11 +67,11 @@ export default async function ExercisesPage(props: LessonParams) {
 									? "Domani hai un'altra sessione gratuita. Con Studio ti eserciti senza limiti, su tutte le lezioni, con i progressi salvati."
 									: 'Con un account gratuito hai una sessione di esercizi al giorno, generati ogni volta diversi, con correzione immediata e progressi salvati.'
 							}
-							preview={<StartScreen titleHtml={title} questionCount={SESSION_LENGTH} estimatedTime={estimatedTime(SESSION_LENGTH)} />}
+							preview={path && <ExercisePath titleHtml={title} path={path} questionCount={SESSION_LENGTH} />}
 						/>
 					</div>
 				) : (
-					<ExerciseRunner lesson={dbPath} levels={configs[dbPath].levels} sessionLength={full ? SESSION_LENGTH : left} free={!full} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} />
+					path && <ExerciseRunner lesson={dbPath} path={path} free={!full} questionsLeft={full ? SESSION_LENGTH : left} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} />
 				)}
 			</LessonFrame>
 		</>

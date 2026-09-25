@@ -17,6 +17,8 @@ import { aliasTarget } from '@/lib/seo/slug';
  * the cookies. Private routes carry `X-Robots-Tag: noindex` in addition to
  * the robots meta tag, so responses without HTML are covered too.
  */
+const EXERCISE_ANSWER = /^\/api\/esercizi\/[0-9a-f-]{36}$/i;
+
 export default async function proxy(request: NextRequest) {
 	const { pathname, search } = request.nextUrl;
 
@@ -29,6 +31,10 @@ export default async function proxy(request: NextRequest) {
 
 	const alias = aliasTarget(pathname);
 	if (alias) return NextResponse.redirect(new URL(alias + search, request.url), 308);
+
+	// An exercise answer carries its own sealed proof and waits on nothing; checking the session here would put a
+	// round trip to Supabase Auth on every click (src/app/api/esercizi/[id]/route.ts).
+	if (request.method === 'POST' && EXERCISE_ANSWER.test(pathname)) return NextResponse.next();
 
 	let response = NextResponse.next({ request });
 

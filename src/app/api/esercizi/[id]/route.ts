@@ -1,6 +1,4 @@
-import { getSession } from '@/lib/server/auth';
-import { hasFeature } from '@/lib/auth/entitlements';
-import { Features } from '@/lib/stripe/config';
+import { after } from 'next/server';
 import { answerExercise } from '@/lib/server/exercises';
 import { fail, guarded, isUuid, json, readJson } from '@/lib/server/http';
 
@@ -8,19 +6,23 @@ import { fail, guarded, isUuid, json, readJson } from '@/lib/server/http';
 const MAX_ACTIVE_MS = 3_600_000;
 
 /**
- * The answer to an exercise: `{ choice, activeMs, next }`. Returns the verdict and, when `next` is true,
- * the following exercise, so the page never waits between two questions.
+ * The answer to an exercise: `{ key, choice, activeMs }`, returning `{ verdict }`. On the path of every click, so
+ * it waits on nothing: the verdict comes from the sealed key the exercise was sent with, which only this server
+ * can open and which names the user it was issued to; the answer is written to the attempt after the response.
+ * The proxy leaves this route alone for the same reason (see `src/proxy.ts`).
  */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-	const { user } = await getSession();
-	if (!user) return fail('Accedi per continuare.', 401);
 	const { id } = await params;
 	if (!isUuid(id)) return fail('Esercizio non trovato.', 404);
 	const body = await readJson(request);
 	const choice = body.choice;
+	if (typeof body.key !== 'string' || !body.key) return fail('Esercizio non trovato.', 404);
 	if (!Number.isInteger(choice) || (choice as number) < 0) return fail('Risposta non valida.', 400);
 	const activeMs = Number.isFinite(body.activeMs) ? Math.min(MAX_ACTIVE_MS, Math.max(0, Math.round(body.activeMs as number))) : null;
-	// An exercise already sent can always be answered; a Free account gets the next one while today's session lasts.
-	const limited = !hasFeature(user, Features.EXERCISES);
-	return guarded('exercise answer', async () => json(await answerExercise(user.id, id, choice as number, activeMs, body.next === true, limited)));
+	const key = body.key;
+	return guarded('exercise answer', async () => {
+		const { verdict, save } = answerExercise(id, key, choice as number, activeMs);
+		after(() => save().catch((err) => console.error('exercise answer save:', err)));
+		return json({ verdict });
+	});
 }
