@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Check, ChevronsUp, Clock, Lock, PenLine, Play } from 'lucide-react';
-import type { PathLevel, PathView } from '@/lib/server/exercises';
+import type { PathLevel, PathView, UnfinishedRun } from '@/lib/server/exercises';
 import { estimatedTime } from '@/lib/exercises/config';
 import { JUMP_LENGTH, MIN_PASS_LENGTH, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
 import { cn } from '@/lib/utils/cn';
@@ -57,6 +57,10 @@ interface Props {
 	onStart?: (kind: RunKind, level: number) => void;
 	/** The level whose run is starting, while its first exercise is on its way. */
 	starting?: number | null;
+	/** Takes up the run left halfway; absent on the preview behind the paywall. */
+	onResume?: () => void;
+	/** The run left halfway is being taken up. */
+	resuming?: boolean;
 }
 
 /**
@@ -64,7 +68,7 @@ interface Props {
  * the levels as a path, easiest first, each with its name, its last runs and a way in. The suggested level is
  * open on arrival; a locked one offers the jump test. One level is open at a time.
  */
-export function ExercisePath({ titleHtml, path, questionCount, onStart, starting = null }: Props) {
+export function ExercisePath({ titleHtml, path, questionCount, onStart, starting = null, onResume, resuming = false }: Props) {
 	const [open, setOpen] = useState<number>(path.current);
 	const passed = path.levels.filter((l) => l.status === 'passed').length;
 	const firstNotPassed = path.levels.find((l) => l.status !== 'passed')?.level ?? null;
@@ -94,6 +98,8 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 					</div>
 				</div>
 			</header>
+
+			{path.unfinished && onResume && <ResumeCard run={path.unfinished} levelName={path.levels.find((l) => l.level === path.unfinished?.session.level)?.name ?? null} onResume={onResume} resuming={resuming} />}
 
 			<ol className="flex flex-col" aria-label="Livelli">
 				{path.levels.map((level, i) => {
@@ -191,5 +197,36 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 				})}
 			</ol>
 		</div>
+	);
+}
+
+/** The run left halfway, above the path: where it stopped, and the way back in. */
+function ResumeCard({ run, levelName, onResume, resuming }: { run: UnfinishedRun; levelName: string | null; onResume: () => void; resuming: boolean }) {
+	const done = run.progress.filter((p) => p !== 'unanswered').length;
+	const title = run.session.kind === 'jump' ? `Prova di salto al livello ${run.session.level}` : `Livello ${run.session.level}`;
+	return (
+		<section aria-labelledby="resume-title" className="flex animate-rise-in flex-col gap-4 rounded-2xl border border-inverse bg-surface p-5 shadow-lift sm:flex-row sm:items-center sm:p-6">
+			<div className="flex min-w-0 flex-1 flex-col gap-2">
+				<p className="label-mono text-accent-fg">Prova a metà</p>
+				<h3 id="resume-title" className="truncate text-lg font-semibold text-fg-strong">
+					{title}
+					{run.session.kind === 'level' && levelName && <span className="font-normal text-fg-muted"> · {levelName}</span>}
+				</h3>
+				<div className="flex items-center gap-3">
+					<div className="flex flex-1 gap-1" role="img" aria-label={`${done} domande fatte su ${run.session.length}`}>
+						{run.progress.map((p, i) => (
+							<span key={i} className={cn('h-1.5 flex-1 rounded-full', p === 'correct' ? 'bg-ok' : p === 'incorrect' ? 'bg-accent' : 'bg-surface-4')} />
+						))}
+					</div>
+					<span className="label-mono shrink-0 tabular-nums text-fg-subtle" aria-hidden="true">
+						{done} / {run.session.length}
+					</span>
+				</div>
+			</div>
+			<button type="button" onClick={onResume} disabled={resuming} className="flex min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-xl bg-inverse px-6 py-3 font-semibold text-inverse-fg shadow-key transition-transform duration-150 hover:opacity-90 active:translate-y-px disabled:opacity-60 focus-ring-offset">
+				<Play className="size-4 fill-current" aria-hidden="true" />
+				{resuming ? 'Riprendo…' : 'Riprendi'}
+			</button>
+		</section>
 	);
 }

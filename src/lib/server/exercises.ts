@@ -125,6 +125,20 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 	};
 }
 
+/** An answered attempt as read back from the database. */
+type AnsweredRow = { id: string; user_id: string; position: number; level: number; correct: boolean; answer: { choice: number }; exercise: Stored };
+
+/** An answered attempt as the page shows it again: the exercise as it was asked, the answer, the verdict. */
+function answered(row: AnsweredRow): AnsweredView {
+	const s = row.exercise;
+	return {
+		position: row.position,
+		exercise: view(row.id, row.user_id, row.level, s),
+		choice: row.answer.choice,
+		verdict: { correct: row.correct, correctIndex: s.choice.correct, solutionHtml: renderMath(presentStep(s.solution)), stepsHtml: s.steps.map((step) => renderMath(presentStep(step))) }
+	};
+}
+
 const verdict = (s: Sealed, correct: boolean): Verdict => ({
 	correct,
 	correctIndex: s.correct,
@@ -163,16 +177,62 @@ export interface PathLevel {
 	best: { correct: number; total: number } | null;
 }
 
+/** A run left halfway, to take up again: the run, and how each of its questions went. */
+export interface UnfinishedRun {
+	session: SessionView;
+	progress: ('unanswered' | 'correct' | 'incorrect')[];
+	/** The first question without an answer: where the run starts again. */
+	next: number;
+	/** The questions already answered wrong, for the summary at the end. */
+	mistakes: AnsweredView[];
+}
+
+/** A question already answered: what was asked, the answer picked, and the verdict with the solution. */
+export interface AnsweredView {
+	position: number;
+	exercise: ExerciseView;
+	choice: number;
+	verdict: Verdict;
+}
+
 export interface PathView {
 	levels: PathLevel[];
 	/** The level the path suggests: the first not passed. */
 	current: number;
+	/** The newest run on this lesson, when it was left halfway less than RESUME_DAYS ago. */
+	unfinished: UnfinishedRun | null;
+}
+
+/** How long a run left halfway can be taken up again. Older ones stay in the history, not on the path. */
+const RESUME_DAYS = 3;
+
+/**
+ * The run to take up again: the newest on the lesson, if it is not finished and not older than RESUME_DAYS. Only
+ * the newest, so a run given up for a newer one is not offered back. Reads its attempts to know which questions
+ * are done: one query, only when there is such a run.
+ */
+async function unfinishedRun(latest: RunRow | undefined): Promise<UnfinishedRun | null> {
+	if (!latest || latest.answered >= latest.plan.length) return null;
+	if (Date.now() - Date.parse(latest.started_at) > RESUME_DAYS * 86_400_000) return null;
+	const { data, error } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise').eq('session_id', latest.id).not('answered_at', 'is', null);
+	if (error) throw error;
+	const rows = (data ?? []) as AnsweredRow[];
+	const progress = latest.plan.map((): UnfinishedRun['progress'][number] => 'unanswered');
+	for (const a of rows) if (a.position < progress.length) progress[a.position] = a.correct ? 'correct' : 'incorrect';
+	const next = progress.indexOf('unanswered');
+	if (next < 0) return null;
+	return {
+		session: { id: latest.id, kind: latest.kind, level: latest.level, length: latest.plan.length },
+		progress,
+		next,
+		mistakes: rows.filter((a) => !a.correct).map(answered)
+	};
 }
 
 /** Runs shown under a level. */
 const RUNS_SHOWN = 5;
 
-type RunRow = { kind: RunKind; level: number; plan: number[]; answered: number; correct: number; started_at: string };
+type RunRow = { id: string; kind: RunKind; level: number; plan: number[]; answered: number; correct: number; started_at: string };
 
 /** A run's row as the path reads it. */
 const toRun = (r: RunRow): Run => ({ kind: r.kind, level: r.level, total: r.plan.length, answered: r.answered, correct: r.correct, at: r.started_at });
@@ -181,26 +241,30 @@ const toRun = (r: RunRow): Run => ({ kind: r.kind, level: r.level, total: r.plan
  * The student's runs on a generator's path, with the counts the database keeps as answers come in. Only runs at a
  * level and jump tests: practice and reviews train, but never pass or open a level.
  */
-async function runs(userId: string, generatorId: string): Promise<Run[]> {
+async function runRows(userId: string, generatorId: string): Promise<RunRow[]> {
 	const { data, error } = await db()
 		.from('exercise_sessions')
-		.select('kind, level, plan, answered, correct, started_at')
+		.select('id, kind, level, plan, answered, correct, started_at')
 		.eq('user_id', userId)
 		.eq('generator_id', generatorId)
 		.in('kind', ['level', 'jump'])
 		.order('started_at', { ascending: false })
 		.limit(200);
 	if (error) throw error;
-	return ((data ?? []) as RunRow[]).map(toRun);
+	return (data ?? []) as RunRow[];
 }
+
+const runs = async (userId: string, generatorId: string): Promise<Run[]> => (await runRows(userId, generatorId)).map(toRun);
 
 /** The path of a lesson for a student; without one (a visitor), the path of somebody who has not started. */
 export async function lessonPath(userId: string | null, dbPath: string): Promise<PathView> {
 	const config = configs[dbPath];
 	if (!config) throw new ExerciseError(404, 'Esercizi non trovati.');
-	const { states, current } = pathState(config.levels, userId ? await runs(userId, config.generator) : []);
+	const rows = userId ? await runRows(userId, config.generator) : [];
+	const { states, current } = pathState(config.levels, rows.map(toRun));
 	return {
 		current,
+		unfinished: await unfinishedRun(rows[0]),
 		levels: states.map((s) => ({
 			level: s.level,
 			name: levelName(config.generator, s.level),

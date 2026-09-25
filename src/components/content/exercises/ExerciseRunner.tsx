@@ -33,6 +33,7 @@ interface Current {
 	first: ExerciseView;
 	startAt: number;
 	initial?: Progress[];
+	earlier?: RunResult[];
 	/** Set when the last question is answered: the summary opens. */
 	done?: { results: RunResult[]; progress: Progress[] };
 }
@@ -45,6 +46,7 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 	const router = useRouter();
 	const [run, setRun] = useState<Current | null>(null);
 	const [starting, setStarting] = useState<number | null>(null);
+	const [resuming, setResuming] = useState(false);
 	const [left, setLeft] = useState(questionsLeft);
 	const [error, setError] = useState<string | null>(null);
 	const questionCount = free ? Math.min(SESSION_LENGTH, left) : SESSION_LENGTH;
@@ -61,6 +63,22 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 			setError((err as Error).message);
 		} finally {
 			setStarting(null);
+		}
+	};
+
+	/** Takes up the run left halfway, at its first question without an answer, with its mistakes so far. */
+	const resume = async () => {
+		const unfinished = path.unfinished;
+		if (!unfinished || resuming) return;
+		setResuming(true);
+		setError(null);
+		try {
+			const { exercise } = await post<{ exercise: ExerciseView }>(`/api/esercizi/prove/${unfinished.session.id}`, { position: unfinished.next });
+			setRun({ session: unfinished.session, first: exercise, startAt: unfinished.next, initial: unfinished.progress, earlier: unfinished.mistakes });
+		} catch (err) {
+			setError((err as Error).message);
+		} finally {
+			setResuming(false);
 		}
 	};
 
@@ -81,7 +99,7 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 		return (
 			<>
 				{/* Keyed by the suggested level: back from a run that passed, the path opens on the level it unlocked. */}
-				<ExercisePath key={path.current} titleHtml={titleHtml} path={path} questionCount={questionCount} onStart={start} starting={starting} />
+				<ExercisePath key={path.current} titleHtml={titleHtml} path={path} questionCount={questionCount} onStart={start} starting={starting} onResume={resume} resuming={resuming} />
 				{alert}
 				{free && !error && <p className="px-4 pb-6 text-center text-sm text-fg-muted">La sessione gratuita di oggi: {left} {left === 1 ? 'domanda' : 'domande'}. Con Studio ti eserciti senza limiti.</p>}
 			</>
@@ -152,6 +170,7 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 				first={run.first}
 				startAt={run.startAt}
 				initial={run.initial}
+				earlier={run.earlier}
 				finished={!!run.done}
 				onLeave={leave}
 				onFinish={(results, progress) => setRun((r) => r && { ...r, done: { results, progress } })}

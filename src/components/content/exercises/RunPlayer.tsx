@@ -215,6 +215,8 @@ interface PlayerProps {
 	startAt?: number;
 	/** The questions already answered before this visit, when a run is taken up again. */
 	initial?: Progress[];
+	/** The ones among them answered wrong, so the summary lists every mistake of the run. */
+	earlier?: RunResult[];
 	/** What the run is, under the progress bar: "Livello 3" and its name, "Ripasso degli errori". */
 	label: ReactNode;
 	/** The run is over and its summary is on screen: the keys stop answering. */
@@ -231,7 +233,7 @@ interface PlayerProps {
  * by itself; after a mistake the solution stays on screen until "Continua". Each question takes focus as it
  * appears and the verdict is announced, so a run works by keyboard and screen reader too.
  */
-export function RunPlayer({ session, first, startAt = 0, initial, label, finished = false, onLeave, onFinish }: PlayerProps) {
+export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], label, finished = false, onLeave, onFinish }: PlayerProps) {
 	const [exercise, setExercise] = useState<ExerciseView>(first);
 	const [index, setIndex] = useState(startAt);
 	const [progress, setProgress] = useState<Progress[]>(() => initial ?? Array(session.length).fill('unanswered'));
@@ -245,7 +247,7 @@ export function RunPlayer({ session, first, startAt = 0, initial, label, finishe
 	const question = useRef<HTMLDivElement>(null);
 	const after = useRef<HTMLDivElement>(null);
 	const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const results = useRef<RunResult[]>([]);
+	const results = useRef<RunResult[]>(earlier);
 	// The run's exercises asked for ahead, by position: the requests, and the ones already here.
 	const requests = useRef(new Map<number, Promise<ExerciseView>>());
 	const arrived = useRef(new Map<number, ExerciseView>());
