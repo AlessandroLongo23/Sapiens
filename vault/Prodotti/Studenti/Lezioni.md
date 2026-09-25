@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-24
+aggiornato: 2026-09-25
 tag: [prodotto, studenti, contenuti]
 ---
 # Lezioni
@@ -17,6 +17,7 @@ La teoria di Sapiens: una lezione per argomento, ordinata come il programma mini
 - Disegni TikZ: fino al 23 settembre 2026 non comparivano da nessuna parte, né in locale né in produzione. TikZJax v1 si avvia solo da `window.onload`, e il sito lo carica dopo quell'evento; in più la CSP bloccava il suo bucket S3. Corretti `src/lib/utils/tikzjax.ts` e `next.config.ts`, più un filtro per il tema scuro in `src/app/globals.css`. In produzione la correzione arriva con il prossimo deploy.
 - Figure come file SVG (23-24 settembre 2026): lo script di pubblicazione compila ogni blocco TikZ in SVG con node-tikzjax (`scripts/figure/`), trasforma le lettere in tracciati, carica il file nel bucket `figure` di Supabase Storage con un nome descrittivo e il testo alternativo preso da `% alt`. Il sito mostra un `<img>`, indicizzabile da Google Immagini, senza caricare il motore TeX; TikZJax resta solo come ripiego per le figure modificate e non ancora ripubblicate. Compressa, una figura pesa circa 3 KB, meno della metà di un WebP equivalente. Dettagli in `src/lib/content/figures.ts`. 19 figure in 7 lezioni.
 - Impaginazione da desktop riequilibrata il 24 settembre 2026 (`LessonFrame.tsx`, `TableOfContents.tsx`, `AISidebar.tsx`): indice e Sapiens AI sono colonne gemelle al 25% della larghezza, senza linee di separazione dalla lezione, con lo stesso margine interno, la stessa etichetta in monospazio e la stessa linea di partenza del titolo. In fondo all'indice c'è l'avanzamento della lettura, allineato al campo della chat. Revisioni valutate da un critico su screenshot di quattro lezioni: 5, 7, 7, 8 su 10; tolte poi le linee verticali, che chiudevano lo spazio centrale (7 su 10, per il vuoto al centro del pannello AI).
+- Menu dei livelli nell'intestazione (da `lg` in su) rifatto il 25 settembre 2026 (`src/components/shell/SubjectMegaMenu.tsx`, `Header.tsx`). A sinistra le materie del livello, con il colore della materia e il numero di capitoli; a destra i capitoli della materia scelta, un anno alla volta come nella pagina della materia (linguette 1ª-5ª con i capitoli pronti, per esempio 7/12), con le prime tre lezioni di ogni capitolo: un punto pieno per quelle scritte, un cerchio vuoto per quelle in arrivo. Parte dalla materia e dall'anno della pagina aperta. Prima c'erano tutti i 39 capitoli in cinque colonne, con i titoli troncati e la parte bassa tagliata. Si apre dopo una breve pausa del puntatore, oppure con la freccia in giù o con il bottone a freccia accanto a ogni livello; si chiude uscendo dall'intestazione, con Esc, con un clic fuori o quando il focus esce. Rivisto in due giri da un revisore critico su screenshot e prove da tastiera. Non ancora pubblicato.
 - Pagina formulario per lezione: esiste, ma c'è un solo formulario ed è incompleto.
 - Area staff: `admin/wiki` modifica l'albero, `admin/desk` genera bozze con l'AI (vedi [[Pipeline lezioni]]).
 

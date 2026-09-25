@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Search, UsersRound } from 'lucide-react';
+import { ChevronDown, Menu, Search, UsersRound } from 'lucide-react';
 import { CONTENT_ROOT, OGGI_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 import { nodePath } from '@/lib/seo/slug';
 import { useSearch } from '@/lib/state/search';
@@ -27,8 +27,13 @@ const navLink = (active: boolean) => cn('rounded font-medium transition-colors f
  * it is the full desktop bar with the level menu and account buttons.
  * In the installed app the phone bar is a back arrow and the search field:
  * the tab bar holds everything else.
- * The level menu opens on hover, or on the down arrow from the keyboard
- * (never on focus alone), and it is rendered after the bar so Tab reaches it.
+ * The level menu opens when the pointer rests on a level, or on the down
+ * arrow from the keyboard (never on focus alone), and it is rendered after
+ * the bar so Tab reaches it. Once open, moving to another level switches at
+ * once; leaving the header closes it after a short grace, so overshooting the
+ * edge does not. Escape closes it and puts focus back on its level; focus
+ * or a click leaving the header closes it too. Next to each level a chevron
+ * button opens the menu for keyboard and screen reader users.
  */
 export function Header({ hidden = false, immersive = false, bare = false }: { hidden?: boolean; immersive?: boolean; /** Not shown at any width (the note editor). */ bare?: boolean }) {
 	const pathname = usePathname();
@@ -36,10 +41,31 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 	const isActive = useSearch((s) => s.isActive);
 	const activate = useSearch((s) => s.activate);
 	const user = useAuth((s) => s.user);
-	const [mega, setMega] = useState<{ level: ContentNode; keyboard: boolean } | null>(null);
+	const [mega, setMega] = useState<{ level: ContentNode; /** Set (to a fresh value each time) when opened from the keyboard, so focus moves into the menu. */ keyboard: number } | null>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const megaMenu = tree.length > 0;
-	const closeMega = () => setMega(null);
+	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+	const triggers = useRef(new Map<string, HTMLAnchorElement>());
+	const later = (fn: () => void, ms: number) => {
+		clearTimeout(timer.current);
+		timer.current = setTimeout(fn, ms);
+	};
+	const closeMega = () => {
+		clearTimeout(timer.current);
+		setMega(null);
+	};
+	useEffect(() => () => clearTimeout(timer.current), []);
+	const headerRef = useRef<HTMLElement>(null);
+	// A click anywhere outside the header closes the menu (a keyboard-opened one has no mouse leave to do it).
+	const megaOpen = mega !== null;
+	useEffect(() => {
+		if (!megaOpen) return;
+		const onDown = (e: PointerEvent) => {
+			if (!headerRef.current?.contains(e.target as Node)) setMega(null);
+		};
+		document.addEventListener('pointerdown', onDown);
+		return () => document.removeEventListener('pointerdown', onDown);
+	}, [megaOpen]);
 	const closeMenu = useCallback(() => setMenuOpen(false), []);
 	const inMateriale = pathname.startsWith(CONTENT_ROOT);
 	const inTutoring = pathname.startsWith(TUTORING_ROOT);
@@ -48,8 +74,17 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 
 	return (
 		<header
-			onMouseLeave={closeMega}
-			onKeyDown={(e) => e.key === 'Escape' && closeMega()}
+			ref={headerRef}
+			onBlur={(e) => {
+				if (mega && !e.currentTarget.contains(e.relatedTarget as Node | null)) closeMega();
+			}}
+			onMouseLeave={() => mega && later(closeMega, 200)}
+			onMouseEnter={() => mega && clearTimeout(timer.current)}
+			onKeyDown={(e) => {
+				if (e.key !== 'Escape' || !mega) return;
+				triggers.current.get(mega.level.id)?.focus();
+				closeMega();
+			}}
 			className={cn('sticky top-0 z-30 border-b border-edge bg-page pt-safe-t transition-transform duration-300 ease-out', hidden && 'max-md:-translate-y-full', immersive && 'max-md:hidden', bare && 'hidden')}
 		>
 			<div id="site-header-bar" className="relative z-20 flex w-full items-center gap-2 bg-page px-3 py-2 md:justify-between md:gap-4 md:p-3">
@@ -67,25 +102,42 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 								{tree.map((level) => {
 									const open = mega?.level.id === level.id;
 									return (
-										<li key={level.id} className="relative">
+										<li
+											key={level.id}
+											className="relative flex items-center"
+											onMouseEnter={() => later(() => setMega({ level, keyboard: 0 }), mega ? 0 : 120)}
+											onMouseLeave={() => !mega && clearTimeout(timer.current)}
+										>
 											<Link
+												ref={(el) => {
+													if (el) triggers.current.set(level.id, el);
+													else triggers.current.delete(level.id);
+												}}
 												href={nodePath([level])}
 												onClick={closeMega}
-												onMouseEnter={() => setMega({ level, keyboard: false })}
 												onKeyDown={(e) => {
 													if (e.key === 'ArrowDown') {
 														e.preventDefault();
-														setMega({ level, keyboard: true });
+														setMega({ level, keyboard: Date.now() });
 													}
 												}}
-												aria-haspopup="true"
-												aria-expanded={open}
 												aria-current={pathname === nodePath([level]) ? 'page' : undefined}
 												className={cn('relative flex items-center gap-2', navLink(open))}
 											>
 												<span className="font-medium">{level.title}</span>
 												<span className={cn('absolute -bottom-2 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-accent transition-all', open ? 'w-full opacity-100' : 'w-0 opacity-0')} aria-hidden="true" />
 											</Link>
+											<button
+												type="button"
+												// A mouse click on a menu the hover already opened leaves it open.
+												onClick={(e) => (open ? e.detail === 0 && closeMega() : setMega({ level, keyboard: e.detail === 0 ? Date.now() : 0 }))}
+												aria-expanded={open}
+												aria-controls={open ? 'level-menu' : undefined}
+												aria-label={`Materie di ${level.title}`}
+												className={cn('ml-0.5 grid size-6 place-items-center rounded transition-colors focus-ring', open ? 'text-fg' : 'text-fg-subtle hover:text-fg')}
+											>
+												<ChevronDown className={cn('size-3.5 transition-transform', open && 'rotate-180')} aria-hidden="true" />
+											</button>
 										</li>
 									);
 								})}
@@ -134,9 +186,13 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 				</div>
 			</div>
 			{mega && (
-				<div className="absolute inset-x-0 z-10" style={{ top: 'var(--header-h, 64px)' }}>
-					<SubjectMegaMenu level={mega.level} onClose={closeMega} autoFocus={mega.keyboard} />
-				</div>
+				<>
+					{/* A veil over the page, so the menu reads as on top; the pointer passes through it. */}
+					<div className="pointer-events-none fixed inset-x-0 bottom-0 z-0 animate-fade-in bg-ink-950/15 dark:bg-black/55" style={{ top: 'var(--header-h, 64px)' }} aria-hidden="true" />
+					<div className="absolute inset-x-0 z-10" style={{ top: 'var(--header-h, 64px)' }}>
+						<SubjectMegaMenu id="level-menu" level={mega.level} pathname={pathname} onClose={closeMega} autoFocus={mega.keyboard} />
+					</div>
+				</>
 			)}
 			<MobileMenu open={menuOpen} onClose={closeMenu} />
 		</header>

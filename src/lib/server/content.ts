@@ -22,7 +22,7 @@ type FlatNode = Omit<ContentNode, 'children'>;
 let cached: { at: number; nodes: FlatNode[] } | null = null;
 let inflight: Promise<FlatNode[]> | null = null;
 
-const LIGHT_COLUMNS = 'id,parent_id,type,title,slug,description,position,updated_at';
+const LIGHT_COLUMNS = 'id,parent_id,type,title,slug,description,position,updated_at,school_year';
 
 async function fetchFlatNodes(): Promise<FlatNode[]> {
 	const [nodesRes, theoryRes, formularyRes, flashcardsRes] = await Promise.all([
@@ -51,6 +51,7 @@ async function fetchFlatNodes(): Promise<FlatNode[]> {
 		description: typeof row.description === 'string' && row.description.trim() ? row.description.trim() : null,
 		position: row.position ?? 0,
 		updated_at: row.updated_at ?? null,
+		school_year: row.school_year ?? null,
 		has_theory: withTheory.has(row.id),
 		has_formulary: withFormulary.has(row.id),
 		has_flashcards: withFlashcards.has(row.id)
@@ -92,6 +93,7 @@ export function slimTree(tree: ContentNode[]): ContentNode[] {
 			children: slimTree(node.children)
 		};
 		if (node.description) slim.description = node.description;
+		if (node.school_year) slim.school_year = node.school_year;
 		if (node.has_theory) slim.has_theory = true;
 		if (node.has_formulary) slim.has_formulary = true;
 		if (node.has_flashcards) slim.has_flashcards = true;

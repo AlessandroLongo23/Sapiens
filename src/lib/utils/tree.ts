@@ -12,6 +12,8 @@ export interface ContentNode {
     position: number;
     description?: string | null;
     updated_at?: string | null;
+    /** Chapters only: the school year (1-5) it is usually taught in, where one applies. */
+    school_year?: number | null;
     /** Set by the server: the lesson has theory text / a formulary / flashcards. */
     has_theory?: boolean;
     has_formulary?: boolean;
