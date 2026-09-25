@@ -90,7 +90,7 @@ export function TodayScreen({ today }: Props) {
 					initial={run.initial}
 					earlier={run.earlier}
 					title="Pratica di oggi"
-					outcome={(correct, total) => ({ title: 'Pratica fatta', detail: correct === total ? 'Tutte giuste. Domani ne trovi una nuova.' : `${correct} giuste su ${total}. Gli errori li ritrovi da rifare.` })}
+					outcome={(correct, total) => ({ title: 'Pratica fatta', detail: correct === total ? 'Tutte giuste. Domani ne trovi una nuova.' : `${correct} giuste su ${total}. Gli errori li ritrovi da ripassare.` })}
 					backLabel="Torna a Oggi"
 					onBack={back}
 				/>

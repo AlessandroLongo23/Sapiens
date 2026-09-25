@@ -10,14 +10,16 @@ import { lessonIndex } from '@/lib/server/lessons';
 import { PRACTICE_LENGTH, practicePlan, practiceSeed, type StartedLesson } from '@/lib/exercises/practice';
 import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/exercises/streak';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
-import type { ChoiceAnswer, Sample } from '@/lib/exercises/v2/types';
+import type { ChoiceAnswer, FigureRef, Sample } from '@/lib/exercises/v2/types';
+import { figureUrl } from '@/lib/content/figures';
+import { escapeHtml } from '@/lib/utils/escape';
 import { renderMath, renderTex } from '@/lib/content/markdown';
 import { presentProblem, presentStep } from '@/lib/exercises/present';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { adminClient } from '@/lib/server/supabase';
 
 /** A piece of a question, typeset: a paragraph, the question itself as a sentence, a row of givens, a formula on its own. */
-export type QuestionBlock = { kind: 'text' | 'ask'; html: string } | { kind: 'givens'; items: string[] } | { kind: 'math'; html: string };
+export type QuestionBlock = { kind: 'text' | 'ask'; html: string } | { kind: 'givens'; items: string[] } | { kind: 'math'; html: string } | { kind: 'figure'; html: string };
 
 /** One exercise as sent to the browser: typeset, so the client ships no KaTeX, and without the right answer. */
 export interface ExerciseView {
@@ -27,8 +29,8 @@ export interface ExerciseView {
 	/** The instruction ("Scrivi l'unione per elencazione."), plain HTML; empty when the problem speaks for itself. */
 	promptHtml: string;
 	blocks: QuestionBlock[];
-	/** `text` is the LaTeX, for the column-count guess and the screen reader. */
-	options: { html: string; text: string }[];
+	/** `text` is the LaTeX (or the plain label), for the column-count guess and the screen reader; `figure` marks a drawing. */
+	options: { html: string; text: string; figure?: true }[];
 	/** The verdict, sealed: the page sends it back with the answer and cannot read it. */
 	key: string;
 }
@@ -39,6 +41,8 @@ export interface Verdict {
 	correctIndex: number;
 	solutionHtml: string;
 	stepsHtml: string[];
+	/** A drawing that goes with the solution, as an `<img>`. */
+	figureHtml?: string;
 }
 
 /** A request the service refuses on purpose, with the status to answer with. */
@@ -83,6 +87,9 @@ interface Sealed {
 	options: number;
 	solution: string;
 	steps: string[];
+	/** The sample's `format` and solution drawing: a reference, never the drawing itself. */
+	format?: 'text';
+	figure?: FigureRef;
 }
 
 let sealKey: Buffer | null = null;
@@ -111,22 +118,58 @@ function unseal(token: string): Sealed | null {
 	}
 }
 
+/**
+ * A compiled drawing as an `<img>` from the `figure` bucket. The drawings are made for a light page: in the dark
+ * theme they are inverted and the hue turned back, as the lesson figures are (globals.css, .tikz-container).
+ */
+function figureHtml(ref: FigureRef): string {
+	const supabase = process.env.PUBLIC_SUPABASE_URL ?? '';
+	const width = Math.round(ref.width * FIGURE_SCALE);
+	const height = Math.round(ref.height * FIGURE_SCALE);
+	return `<img src="${figureUrl(supabase, ref.file)}" alt="${escapeHtml(ref.alt)}" width="${width}" height="${height}" class="mx-auto h-auto max-w-full dark:invert dark:hue-rotate-180" loading="lazy" decoding="async">`;
+}
+/** Molecules are drawn at screen size, a little small next to the answers' text. */
+const FIGURE_SCALE = 1.3;
+
+/** Prose with inline `$…$`, for a sample written as text: the prose is escaped, the formulas typeset. */
+const textHtml = (text: string) =>
+	text
+		.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g)
+		.map((part, i) => (i % 2 ? renderMath(part) : escapeHtml(part)))
+		.join('');
+
 function view(id: string, userId: string, level: number, s: Stored): ExerciseView {
-	const blocks = s.problem.trim()
-		? presentProblem(s.problem).map((b): QuestionBlock =>
-				b.kind === 'text' ? { kind: isAsk(b.tex) ? 'ask' : 'text', html: renderMath(b.tex) } : b.kind === 'givens' ? { kind: 'givens', items: b.items.map((t) => renderTex(t, false)) } : { kind: 'math', html: renderTex(b.tex, true) }
-			)
-		: [];
+	const text = s.format === 'text';
+	const blocks: QuestionBlock[] = !s.problem.trim()
+		? []
+		: text
+			? [{ kind: isAsk(s.problem) ? 'ask' : 'text', html: textHtml(s.problem) }]
+			: presentProblem(s.problem).map((b): QuestionBlock =>
+					b.kind === 'text' ? { kind: isAsk(b.tex) ? 'ask' : 'text', html: renderMath(b.tex) } : b.kind === 'givens' ? { kind: 'givens', items: b.items.map((t) => renderTex(t, false)) } : { kind: 'math', html: renderTex(b.tex, true) }
+				);
+	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
 	const asks = blocks.some((b) => b.kind === 'ask');
 	const prompt = IMPLIED_PROMPTS.has(s.prompt) || (asks && GENERIC_PROMPTS.has(s.prompt)) ? '' : s.prompt;
 	return {
 		id,
 		level,
-		promptHtml: prompt ? renderMath(prompt) : '',
+		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
-		options: s.choice.options.map((o) => ({ html: renderMath(`$$${o.latex}$$`), text: o.latex })),
-		key: seal({ id, user: userId, correct: s.choice.correct, options: s.choice.options.length, solution: s.solution, steps: s.steps })
+		options: s.choice.options.map((o) =>
+			o.figure
+				? { html: figureHtml(o.figure), text: o.text ?? o.figure.alt, figure: true as const }
+				: text
+					? { html: textHtml(o.latex), text: o.text ?? o.latex }
+					: { html: renderMath(`$$${o.latex}$$`), text: o.latex }
+		),
+		key: seal({ id, user: userId, correct: s.choice.correct, options: s.choice.options.length, solution: s.solution, steps: s.steps, format: s.format, figure: s.solutionFigure })
 	};
+}
+
+/** Solution and steps typeset, from the sample or from the sealed key. */
+function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef }) {
+	const html = w.format === 'text' ? textHtml : (t: string) => renderMath(presentStep(t));
+	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(w.figure ? { figureHtml: figureHtml(w.figure) } : {}) };
 }
 
 /** An answered attempt as read back from the database. */
@@ -139,16 +182,11 @@ function answered(row: AnsweredRow): AnsweredView {
 		position: row.position,
 		exercise: view(row.id, row.user_id, row.level, s),
 		choice: row.answer.choice,
-		verdict: { correct: row.correct, correctIndex: s.choice.correct, solutionHtml: renderMath(presentStep(s.solution)), stepsHtml: s.steps.map((step) => renderMath(presentStep(step))) }
+		verdict: { correct: row.correct, correctIndex: s.choice.correct, ...worked({ ...s, figure: s.solutionFigure }) }
 	};
 }
 
-const verdict = (s: Sealed, correct: boolean): Verdict => ({
-	correct,
-	correctIndex: s.correct,
-	solutionHtml: renderMath(presentStep(s.solution)),
-	stepsHtml: s.steps.map((step) => renderMath(presentStep(step)))
-});
+const verdict = (s: Sealed, correct: boolean): Verdict => ({ correct, correctIndex: s.correct, ...worked(s) });
 
 /**
  * Questions left in today's free session: a Free account answers up to SESSION_LENGTH exercises a day, on any
@@ -290,6 +328,28 @@ export async function lessonPath(userId: string | null, dbPath: string): Promise
 			best: s.best && { correct: s.best.correct, total: s.best.total }
 		}))
 	};
+}
+
+/** A finished run on a lesson, as its review page shows it: the run and every answer, right and wrong. */
+export interface FinishedRun {
+	session: SessionView;
+	results: AnsweredView[];
+}
+
+/**
+ * A run of this student on this lesson, if it is finished: what the review page (`?prova=<id>` on the exercises
+ * page) needs to be opened again, after a reload or from a link. Null for a run that is not theirs, not on this
+ * lesson, not at a level or a jump test, or not finished.
+ */
+export async function finishedRun(userId: string, dbPath: string, sessionId: string): Promise<FinishedRun | null> {
+	if (!/^[0-9a-f-]{36}$/i.test(sessionId)) return null;
+	const { data: run, error } = await db().from('exercise_sessions').select('id, user_id, lesson_path, kind, level, plan, answered').eq('id', sessionId).maybeSingle();
+	if (error) throw error;
+	const row = run as (RunRow & { user_id: string; lesson_path: string }) | null;
+	if (!row || row.user_id !== userId || row.lesson_path !== dbPath || !['level', 'jump'].includes(row.kind) || row.answered < row.plan.length) return null;
+	const { data, error: attemptsError } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise').eq('session_id', sessionId).not('answered_at', 'is', null).order('position');
+	if (attemptsError) throw attemptsError;
+	return { session: { id: row.id, kind: row.kind, level: row.level, length: row.plan.length }, results: ((data ?? []) as AnsweredRow[]).map(answered) };
 }
 
 /** Writes the exercise at `position` of a run; the same place asked twice returns the row written first. */
@@ -436,7 +496,7 @@ export async function startReview(userId: string, from: string | null, limited =
 		slots = openMistakes(await recentAnswers(userId)).filter((s) => configs[s.lesson]);
 	}
 	const items = reviewPlan(slots, length);
-	if (items.length === 0) throw new ExerciseError(400, 'Non hai errori da rifare.');
+	if (items.length === 0) throw new ExerciseError(400, 'Non hai errori da ripassare.');
 	return startMixed(userId, 'review', items);
 }
 

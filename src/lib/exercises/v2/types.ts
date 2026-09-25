@@ -25,6 +25,21 @@ export interface Rng {
 export interface ChoiceOption {
 	latex: string;
 	values: string[];
+	/** A drawing instead of the formula (a molecule): `latex` is then unused, `text` says what it is for a screen reader. */
+	figure?: FigureRef;
+	/** Plain-text label of the option, when `latex` is not LaTeX (a sample with `format: 'text'`, or a drawing). */
+	text?: string;
+}
+
+/**
+ * A drawing compiled ahead of time and stored in the `figure` bucket (the chemistry exercises draw molecules with
+ * RDKit, in Python: scripts/chimica/). Only the reference travels with the exercise.
+ */
+export interface FigureRef {
+	file: string;
+	width: number;
+	height: number;
+	alt: string;
 }
 
 export type ChoiceAnswer = {
@@ -80,6 +95,15 @@ export interface Sample {
 	choice?: ChoiceAnswer;
 	/** Everything the independent verifier needs, as JSON-safe exact strings. */
 	params: Record<string, unknown>;
+	/**
+	 * How prompt, problem, solution, steps and option labels are written. Absent: LaTeX, as above. `text`: plain
+	 * text with inline `$…$` formulas, as the chemistry exercises write them.
+	 */
+	format?: 'text';
+	/** A drawing under the problem. */
+	figure?: FigureRef;
+	/** A drawing with the solution (the main chain numbered, the group coloured). */
+	solutionFigure?: FigureRef;
 }
 
 export interface LevelSpec {

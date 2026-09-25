@@ -36,6 +36,7 @@ function ProgressBar({ states, current }: { states: Progress[]; current: number 
 export function Block({ block }: { block: QuestionBlock }) {
 	if (block.kind === 'text') return <Html html={block.html} className="math-content mx-auto max-w-xl text-balance text-base leading-relaxed text-fg sm:text-lg" />;
 	if (block.kind === 'ask') return <Html html={block.html} className="math-content text-balance font-display text-xl font-medium text-fg-strong sm:text-2xl" />;
+	if (block.kind === 'figure') return <Html html={block.html} className="flex justify-center px-2" />;
 	if (block.kind === 'givens')
 		return (
 			<div className="flex flex-wrap items-baseline justify-center gap-x-5 gap-y-2 text-lg sm:text-xl">
@@ -191,6 +192,7 @@ export function Solution({ verdict }: { verdict: Verdict }) {
 						))}
 					</ol>
 				)}
+				{verdict.figureHtml && <Html html={verdict.figureHtml} className="mb-3 flex animate-step-in justify-center" style={stepDelay(verdict.stepsHtml.length)} />}
 				<p className="flex animate-step-in flex-wrap items-baseline gap-x-2 border-t border-edge pt-3 text-base font-medium text-fg-strong" style={stepDelay(verdict.stepsHtml.length)}>
 					<span className="label-mono text-ok-fg">Soluzione</span>
 					<Html as="span" html={verdict.solutionHtml} className="math-content min-w-0 break-words" />
@@ -391,7 +393,8 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 
 	// Answers sit in two columns when every one is short enough to share a row, otherwise in one. After rendering,
 	// any answer wider than its cell sends the whole set back to one column, measured once the math fonts are in.
-	const short = exercise.options.every((o) => plainLength(o.text) <= SHORT_ANSWER);
+	// A drawing always shares its row: two molecules side by side are easier to compare.
+	const short = exercise.options.every((o) => o.figure || plainLength(o.text) <= SHORT_ANSWER);
 	const columns: 1 | 2 = short && !narrow ? 2 : 1;
 	useEffect(() => {
 		if (!short) return;

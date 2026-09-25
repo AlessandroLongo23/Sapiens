@@ -120,7 +120,8 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 				)}
 			</aside>
 
-			<div ref={scroller} onScroll={onScroll} className="no-scrollbar relative flex h-full w-full flex-col justify-between overflow-y-scroll overscroll-y-contain pb-tabbar lg:mx-[25%] lg:pb-0">
+			{/* A page that needs the width (a run's mistakes, data-wide-page) takes the empty side columns. */}
+			<div ref={scroller} onScroll={onScroll} className="no-scrollbar relative flex h-full w-full flex-col justify-between overflow-y-scroll overscroll-y-contain pb-tabbar lg:mx-[25%] lg:pb-0 lg:has-[[data-wide-page]]:mx-[8%]">
 				{/* The page is full-screen on phones: the header pads itself below the status bar (zero in a browser tab). */}
 				<header className="sticky top-0 z-20 bg-surface pt-safe-t transition-all duration-300">
 					<div className={cn('flex min-h-[56px] items-center justify-between gap-1 bg-surface px-2 transition-all duration-300 lg:min-h-0 lg:gap-4 lg:px-10', compact ? 'lg:py-3' : 'lg:py-8')}>

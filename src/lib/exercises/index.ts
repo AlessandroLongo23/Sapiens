@@ -30,5 +30,12 @@ export const generators: Record<string, () => Promise<Generator>> = {
 	'numeri-razionali-frazioni': () => import('./v2/generators/numeri-razionali-frazioni').then((m) => m.default),
 	'numeri-razionali-operazioni': () => import('./v2/generators/numeri-razionali-operazioni').then((m) => m.default),
 	'numeri-razionali-espressioni': () => import('./v2/generators/numeri-razionali-espressioni').then((m) => m.default),
-	'numeri-razionali-proporzioni': () => import('./v2/generators/numeri-razionali-proporzioni').then((m) => m.default)
+	'numeri-razionali-proporzioni': () => import('./v2/generators/numeri-razionali-proporzioni').then((m) => m.default),
+	// Chemistry: pools pregenerated in Python (chimica/pool.ts).
+	'mole-massa-molare': () => import('./chimica/mole-massa-molare').then((m) => m.default),
+	'geometria-molecolare-vsepr': () => import('./chimica/geometria-molecolare-vsepr').then((m) => m.default),
+	'alcani-nomenclatura': () => import('./chimica/alcani-nomenclatura').then((m) => m.default),
+	'isomeria': () => import('./chimica/isomeria').then((m) => m.default),
+	'gruppi-funzionali': () => import('./chimica/gruppi-funzionali').then((m) => m.default),
+	'amminoacidi-legame-peptidico': () => import('./chimica/amminoacidi-legame-peptidico').then((m) => m.default)
 };

@@ -7,7 +7,7 @@ import { titleHtml as toHtml } from '@/lib/content/latex';
 import { Features, SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
 import { hasFeature } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
-import { freeQuestionsLeft, hasExercises, lessonPath } from '@/lib/server/exercises';
+import { finishedRun, freeQuestionsLeft, hasExercises, lessonPath } from '@/lib/server/exercises';
 import { SESSION_LENGTH } from '@/lib/exercises/config';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { toneFor } from '@/lib/utils/icons';
@@ -36,7 +36,7 @@ export function generateMetadata(props: LessonParams): Promise<Metadata> {
 	});
 }
 
-export default async function ExercisesPage(props: LessonParams) {
+export default async function ExercisesPage(props: LessonParams & { searchParams: Promise<{ prova?: string | string[] }> }) {
 	const lesson = await load(props);
 	const { node, ancestors, paths, parentLink, navigation, dbPath, breadcrumb, titleHtml } = lesson;
 	const available = hasExercises(dbPath);
@@ -44,7 +44,11 @@ export default async function ExercisesPage(props: LessonParams) {
 	// Studio exercises without limits; a Free account has one session a day, across all lessons.
 	const full = available && hasFeature(user, Features.EXERCISES);
 	const [left, path] = await Promise.all([available && user && !full ? freeQuestionsLeft(user.id) : 0, available ? lessonPath(user?.id ?? null, dbPath) : null]);
-	const unlocked = full || left > 0;
+	// `?prova=<id>`: the mistakes of a finished run, opened again after a reload or from a link. Looking back at a
+	// run costs no questions, so it opens on Free after today's session too.
+	const { prova } = await props.searchParams;
+	const finished = available && user && typeof prova === 'string' ? await finishedRun(user.id, dbPath, prova) : null;
+	const unlocked = full || left > 0 || !!finished;
 	// Exercises are part of the paid plans (see the plan config); the markup declares the gated part.
 	const free = SUBSCRIPTION_PLANS.FREE.access[Features.EXERCISES];
 	const title = toHtml(`Esercizi: ${node.title}`);
@@ -71,7 +75,7 @@ export default async function ExercisesPage(props: LessonParams) {
 						/>
 					</div>
 				) : (
-					path && <ExerciseRunner lesson={dbPath} path={path} free={!full} questionsLeft={full ? SESSION_LENGTH : left} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} />
+					path && <ExerciseRunner lesson={dbPath} path={path} free={!full} questionsLeft={full ? SESSION_LENGTH : left} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} finished={finished} />
 				)}
 			</LessonFrame>
 		</>

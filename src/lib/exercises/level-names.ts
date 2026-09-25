@@ -209,6 +209,49 @@ export const levelNames: Record<string, Record<number, string>> = {
 		5: 'Funzioni su ℤ, ℚ, ℕ e ℝ ∖ {0}',
 		6: 'La funzione inversa',
 	},
+	// Chemistry: the names of the Python generators' levels (scripts/chimica/esercizi/).
+	'mole-massa-molare': {
+		1: 'La formula dal disegno',
+		2: 'La massa molare',
+		3: 'Dalla massa alle moli',
+		4: 'Molecole e atomi',
+		5: 'Composizione percentuale',
+	},
+	'geometria-molecolare-vsepr': {
+		1: 'Senza coppie solitarie',
+		2: 'Con coppie solitarie',
+		3: 'Legami doppi e tripli',
+		4: "L'angolo di legame",
+		5: 'Polare o apolare',
+	},
+	'alcani-nomenclatura': {
+		1: 'Un solo metile',
+		2: 'Più metili',
+		3: 'Sostituenti diversi',
+		4: 'La catena nascosta',
+		5: 'Tutto insieme',
+	},
+	'isomeria': {
+		1: 'Isomeri o no',
+		2: "Che relazione c'è",
+		3: 'Carboni chirali',
+		4: 'E o Z',
+		5: 'R o S',
+	},
+	'gruppi-funzionali': {
+		1: 'Un gruppo solo',
+		2: 'Trova il gruppo',
+		3: 'I gruppi che si confondono',
+		4: 'Molecole vere',
+		5: 'Tutti i gruppi',
+	},
+	'amminoacidi-legame-peptidico': {
+		1: 'Le parti di un amminoacido',
+		2: 'Le catene laterali',
+		3: 'Il dipeptide giusto',
+		4: 'Contare i legami peptidici',
+		5: 'La forma a pH 7',
+	},
 };
 
 /** The name of a level, or null when it has none. */

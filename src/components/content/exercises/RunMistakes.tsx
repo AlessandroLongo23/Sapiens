@@ -60,6 +60,11 @@ export function MistakeCard({ mistake: { exercise, choice, verdict }, heading }:
 								<Html html={html} className="math-content min-w-0 flex-1 break-words" />
 							</li>
 						))}
+						{verdict.figureHtml && (
+							<li>
+								<Html html={verdict.figureHtml} className="flex justify-center" />
+							</li>
+						)}
 						<li className="flex flex-wrap items-baseline gap-x-2 border-t border-edge pt-2 text-sm font-medium text-fg-strong">
 							<span className="label-mono text-ok-fg">Soluzione</span>
 							<Html as="span" html={verdict.solutionHtml} className="math-content min-w-0 break-words" />
@@ -68,25 +73,5 @@ export function MistakeCard({ mistake: { exercise, choice, verdict }, heading }:
 				</details>
 			)}
 		</article>
-	);
-}
-
-/** The questions of a run answered wrong, in the order they came, under the run's score. */
-export function RunMistakes({ results }: { results: AnsweredView[] }) {
-	const wrong = results.filter((r) => !r.verdict.correct).sort((a, b) => a.position - b.position);
-	if (wrong.length === 0) return null;
-	return (
-		<section aria-labelledby="run-mistakes" className="mt-2 w-full border-t border-edge-soft pt-5 text-left">
-			<h3 id="run-mistakes" className="label-mono mb-3 text-fg-subtle">
-				{wrong.length === 1 ? "Rivedi l'errore" : `Rivedi gli errori (${wrong.length})`}
-			</h3>
-			<ol className="flex flex-col gap-3">
-				{wrong.map((mistake) => (
-					<li key={mistake.position}>
-						<MistakeCard mistake={mistake} heading={<p className="label-mono text-fg-faint">Domanda {mistake.position + 1}</p>} />
-					</li>
-				))}
-			</ol>
-		</section>
 	);
 }

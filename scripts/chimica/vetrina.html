@@ -1,0 +1,400 @@
+<title>Chimica in figure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+	--paper: oklch(0.978 0.008 85);
+	--paper-2: oklch(0.955 0.012 85);
+	--sheet: oklch(0.992 0.004 85);
+	--ink: oklch(0.235 0.018 265);
+	--ink-soft: oklch(0.43 0.02 265);
+	--ink-faint: oklch(0.6 0.016 265);
+	--edge: oklch(0.88 0.012 85);
+	--grid: color-mix(in oklab, oklch(0.62 0.09 245) 14%, transparent);
+	--chem: oklch(0.52 0.12 158);
+	--chem-tint: oklch(0.93 0.05 158);
+	--pen: oklch(0.55 0.19 25);
+	--pen-tint: oklch(0.94 0.04 25);
+	--ok: oklch(0.52 0.13 150);
+	--ok-tint: oklch(0.93 0.06 150);
+	--ad-example: oklch(0.52 0.1 245);
+	--ad-warning: oklch(0.6 0.15 55);
+	--ad-tip: oklch(0.52 0.12 158);
+	--ad-note: oklch(0.5 0.03 265);
+	/* colori delle molecole (li leggono gli SVG di RDKit) */
+	--mol-ink: #1f2328; --mol-o: #d1242f; --mol-n: #1f5fd1; --mol-s: #9a6700; --mol-p: #bc4c00;
+	--mol-cl: #1a7f37; --mol-f: #1b7c83; --mol-br: #8a3b12; --mol-b: #a0522d; --mol-note: #57606a;
+	--mol-giallo: #fde68a; --mol-verde: #bbf7d0; --mol-blu: #bfdbfe; --mol-rosso: #fecaca;
+	--mol-viola: #e9d5ff; --mol-arancione: #fed7aa; --mol-grigio: #e5e7eb;
+	--font-display: 'Fraunces', Georgia, serif;
+	--font-sans: 'Inter', system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		color-scheme: dark;
+		--paper: oklch(0.19 0.012 265); --paper-2: oklch(0.225 0.014 265); --sheet: oklch(0.215 0.013 265);
+		--ink: oklch(0.93 0.008 85); --ink-soft: oklch(0.78 0.01 265); --ink-faint: oklch(0.62 0.014 265);
+		--edge: oklch(0.32 0.016 265); --grid: color-mix(in oklab, oklch(0.8 0.06 245) 7%, transparent);
+		--chem: oklch(0.76 0.12 158); --chem-tint: oklch(0.3 0.05 158);
+		--pen: oklch(0.72 0.15 25); --pen-tint: oklch(0.3 0.06 25);
+		--ok: oklch(0.76 0.13 150); --ok-tint: oklch(0.3 0.06 150);
+		--ad-example: oklch(0.74 0.09 245); --ad-warning: oklch(0.78 0.13 65); --ad-tip: oklch(0.76 0.12 158); --ad-note: oklch(0.72 0.02 265);
+		--mol-ink: #e6e6e6; --mol-o: #ff7b72; --mol-n: #79a8ff; --mol-s: #e3b341; --mol-p: #ffa657;
+		--mol-cl: #56d364; --mol-f: #56d4dd; --mol-br: #f0883e; --mol-b: #e8a87c; --mol-note: #9da7b3;
+		--mol-giallo: #6b5211; --mol-verde: #1f5130; --mol-blu: #1e3a66; --mol-rosso: #6b2323;
+		--mol-viola: #4b2a6b; --mol-arancione: #6b3a12; --mol-grigio: #3a3f45;
+	}
+}
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--paper: oklch(0.19 0.012 265); --paper-2: oklch(0.225 0.014 265); --sheet: oklch(0.215 0.013 265);
+	--ink: oklch(0.93 0.008 85); --ink-soft: oklch(0.78 0.01 265); --ink-faint: oklch(0.62 0.014 265);
+	--edge: oklch(0.32 0.016 265); --grid: color-mix(in oklab, oklch(0.8 0.06 245) 7%, transparent);
+	--chem: oklch(0.76 0.12 158); --chem-tint: oklch(0.3 0.05 158);
+	--pen: oklch(0.72 0.15 25); --pen-tint: oklch(0.3 0.06 25);
+	--ok: oklch(0.76 0.13 150); --ok-tint: oklch(0.3 0.06 150);
+	--ad-example: oklch(0.74 0.09 245); --ad-warning: oklch(0.78 0.13 65); --ad-tip: oklch(0.76 0.12 158); --ad-note: oklch(0.72 0.02 265);
+	--mol-ink: #e6e6e6; --mol-o: #ff7b72; --mol-n: #79a8ff; --mol-s: #e3b341; --mol-p: #ffa657;
+	--mol-cl: #56d364; --mol-f: #56d4dd; --mol-br: #f0883e; --mol-b: #e8a87c; --mol-note: #9da7b3;
+	--mol-giallo: #6b5211; --mol-verde: #1f5130; --mol-blu: #1e3a66; --mol-rosso: #6b2323;
+	--mol-viola: #4b2a6b; --mol-arancione: #6b3a12; --mol-grigio: #3a3f45;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.65 var(--font-sans); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; }
+.label { font: 500 11px/1.2 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+
+/* intestazione a quadretti */
+header.top {
+	background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+	background-size: 20px 20px; border-bottom: 1px solid var(--edge);
+}
+header.top .wrap { padding-block: 36px 28px; display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+header.top h1 { font: 600 clamp(32px, 5vw, 48px)/1.05 var(--font-display); margin: 6px 0 10px; text-wrap: balance; }
+header.top p { margin: 0; max-width: 62ch; color: var(--ink-soft); }
+.hero-mol { width: 230px; max-width: 100%; }
+.hero-mol svg { width: 100%; height: auto; }
+@media (max-width: 720px) { header.top .wrap { grid-template-columns: 1fr; } .hero-mol { display: none; } }
+
+/* indice */
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 40px; margin-top: 32px; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; gap: 20px; } }
+nav.index { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); align-self: start; display: grid; gap: 4px; }
+@media (max-width: 900px) { nav.index { position: static; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); } }
+nav.index button {
+	all: unset; cursor: pointer; display: grid; grid-template-columns: 30px 1fr; gap: 2px 8px; padding: 10px 12px; border-radius: 8px;
+	border: 1px solid transparent;
+}
+nav.index button:hover { background: var(--paper-2); }
+nav.index button:focus-visible { outline: 2px solid var(--chem); outline-offset: 2px; }
+nav.index button[aria-current="true"] { background: var(--sheet); border-color: var(--edge); box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent); }
+nav.index .n { font: 500 13px/1.5 var(--font-mono); color: var(--chem); grid-row: span 2; }
+nav.index .t { font-weight: 600; line-height: 1.3; }
+nav.index .f { font-size: 12.5px; color: var(--ink-faint); line-height: 1.35; }
+
+/* foglio della lezione */
+.sheet { background: var(--sheet); border: 1px solid var(--edge); border-radius: 4px; box-shadow: 0 14px 28px -18px color-mix(in oklab, var(--ink) 35%, transparent); min-width: 0; }
+.sheet-head { padding: 26px clamp(18px, 4vw, 48px) 0; border-bottom: 1px solid var(--edge); }
+.sheet-head h2 { font: 600 clamp(26px, 3.4vw, 34px)/1.15 var(--font-display); margin: 6px 0 4px; text-wrap: balance; }
+.sheet-head .meta { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 18px; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tabs button { all: unset; cursor: pointer; padding: 9px 14px; font-weight: 500; color: var(--ink-soft); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--chem); }
+.tabs button:focus-visible { outline: 2px solid var(--chem); }
+.tabs .count { font: 400 12px var(--font-mono); color: var(--ink-faint); margin-left: 6px; }
+.sheet-body { padding: 28px clamp(18px, 4vw, 48px) 44px; }
+
+/* testo della lezione */
+.prose { max-width: 70ch; }
+.prose h2 { font: 600 24px/1.25 var(--font-display); margin: 36px 0 10px; text-wrap: balance; }
+.prose h3 { font: 600 19px/1.3 var(--font-display); margin: 28px 0 8px; }
+.prose p, .prose li { margin: 10px 0; }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose table { border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.prose .table { overflow-x: auto; margin: 16px 0; }
+.prose th, .prose td { border-bottom: 1px solid var(--edge); padding: 7px 12px 7px 0; text-align: left; vertical-align: top; }
+.prose th { font: 500 11.5px/1.4 var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); }
+.prose strong { font-weight: 600; }
+.prose code { font: 13.5px var(--font-mono); background: var(--paper-2); padding: 1px 4px; border-radius: 3px; }
+.prose math[display="block"] { margin: 14px 0; overflow-x: auto; overflow-y: hidden; }
+math { font-size: 1.08em; }
+.ad { margin: 20px 0; padding: 14px 18px; border-left: 3px solid var(--c); background: color-mix(in oklab, var(--c) 7%, var(--sheet)); border-radius: 0 6px 6px 0; }
+.ad > .ad-title { font-weight: 600; color: var(--c); margin: 0 0 4px; font-size: 15px; }
+.ad > :last-child { margin-bottom: 0; }
+.ad-example { --c: var(--ad-example); } .ad-warning { --c: var(--ad-warning); } .ad-tip { --c: var(--ad-tip); } .ad-note { --c: var(--ad-note); }
+
+/* figure */
+figure.mol { margin: 20px 0; display: grid; justify-items: center; gap: 8px; }
+figure.mol .draw { max-width: 100%; overflow-x: auto; }
+figure.mol svg { display: block; max-width: 100%; height: auto; }
+figure.mol figcaption { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.chip { font: 500 11.5px/1 var(--font-mono); padding: 5px 8px; border-radius: 99px; background: var(--paper-2); color: var(--ink-soft); border: 1px solid var(--edge); }
+.chip.rd { background: var(--chem-tint); color: var(--chem); border-color: transparent; }
+button.chip { cursor: pointer; }
+button.chip:focus-visible { outline: 2px solid var(--chem); }
+.viewer3d { position: relative; width: min(420px, 100%); aspect-ratio: 4 / 3; border: 1px solid var(--edge); border-radius: 6px; background: var(--paper); }
+
+/* esercizi */
+.levels { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.levels button { all: unset; cursor: pointer; padding: 8px 12px; border: 1px solid var(--edge); border-radius: 8px; font-size: 14px; display: flex; gap: 8px; align-items: baseline; }
+.levels button .k { font: 500 12px var(--font-mono); color: var(--ink-faint); }
+.levels button[aria-pressed="true"] { border-color: var(--chem); background: var(--chem-tint); }
+.levels button:focus-visible { outline: 2px solid var(--chem); }
+.quiz { display: grid; gap: 18px; max-width: 760px; }
+.quiz .q { font: 600 21px/1.35 var(--font-display); margin: 0; text-wrap: balance; }
+.quiz .problem { font-size: 18px; }
+.quiz .qfig { display: flex; justify-content: center; padding: 10px; }
+.quiz .qfig svg { max-width: 100%; height: auto; }
+.opts { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+.opts.text { grid-template-columns: 1fr; }
+@media (max-width: 520px) { .opts { grid-template-columns: 1fr; } }
+.opt {
+	all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 26px 1fr; align-items: center; gap: 10px;
+	padding: 12px 14px; border: 1px solid var(--edge); border-radius: 10px; background: var(--sheet); min-width: 0;
+	box-shadow: inset 0 -2px 0 color-mix(in oklab, var(--ink) 8%, transparent);
+}
+.opt:hover { border-color: var(--ink-faint); }
+.opt:focus-visible { outline: 2px solid var(--chem); outline-offset: 2px; }
+.opt .num { width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid var(--edge); border-radius: 5px; font: 500 12px var(--font-mono); color: var(--ink-soft); }
+.opt .body { display: flex; justify-content: center; min-width: 0; overflow-x: auto; }
+.opts.text .opt .body { justify-content: flex-start; }
+.opt svg { max-width: 100%; height: auto; }
+.opt.correct { border-color: var(--ok); background: var(--ok-tint); }
+.opt.correct .num { background: var(--ok); color: var(--sheet); border-color: var(--ok); }
+.opt.wrong { border-color: var(--pen); background: var(--pen-tint); }
+.opt.wrong .num { background: var(--pen); color: var(--sheet); border-color: var(--pen); }
+.opt[disabled] { cursor: default; }
+.opt.muted { opacity: 0.55; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.ko { color: var(--pen); }
+.solution { border-top: 1px dashed var(--edge); padding-top: 14px; display: grid; gap: 10px; }
+.solution ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+.solution .sfig { display: flex; justify-content: center; }
+.solution .sfig svg { max-width: 100%; height: auto; }
+.bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.btn { all: unset; cursor: pointer; padding: 10px 18px; border-radius: 10px; background: var(--ink); color: var(--paper); font-weight: 600; box-shadow: inset 0 -2px 0 color-mix(in oklab, black 25%, transparent); }
+.btn:focus-visible { outline: 2px solid var(--chem); outline-offset: 2px; }
+.score { font: 500 13px var(--font-mono); color: var(--ink-faint); }
+.hint { color: var(--ink-faint); font-size: 13.5px; margin: 0; }
+@media (prefers-reduced-motion: no-preference) { .opt { transition: border-color .15s, background .15s; } }
+</style>
+
+<header class="top">
+	<div class="wrap">
+		<div>
+			<div class="label">Sapiens · prova di RDKit · chimica</div>
+			<h1>Chimica in figure</h1>
+			<p>Sei lezioni di chimica, dal secondo al quinto anno, con figure ed esercizi disegnati da RDKit a partire dalle formule SMILES. Formule, masse molari, angoli di legame, R/S ed E/Z nelle figure sono calcolati dalla libreria; i nomi IUPAC degli esercizi sono controllati con OPSIN.</p>
+		</div>
+		<div class="hero-mol" id="hero" aria-hidden="true"></div>
+	</div>
+</header>
+
+<div class="wrap">
+	<div class="layout">
+		<nav class="index" id="index" aria-label="Lezioni"></nav>
+		<main class="sheet" id="sheet"></main>
+	</div>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const FIG = DATA.figure;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+
+function tex(src, display) {
+	try { return katex.renderToString(src, { displayMode: display, output: 'mathml', throwOnError: false }); }
+	catch { return esc(src); }
+}
+
+/** Markdown della lezione → HTML: formule con KaTeX (MathML), riquadri ad-*, figure già sostituite dallo script. */
+function md(text) {
+	const math = [];
+	const keep = (html) => `@@M${math.push(html) - 1}@@`;
+	text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => keep(tex(t.trim(), true)));
+	text = text.replace(/(?<![\\$])\$([^$\n]+?)\$/g, (_, t) => keep(tex(t, false)));
+	const ads = [];
+	text = text.replace(/^```(ad-\w+)[ \t]*\n([\s\S]*?)^```[ \t]*$/gm, (_, kind, body) => {
+		const lines = body.replace(/\s+$/, '').split('\n');
+		let title = '';
+		if (lines.length > 1 && lines[0].trim() && !/^[@<#\-*|]/.test(lines[0].trim()) && lines[0].length < 90) title = lines.shift();
+		ads.push(`<div class="ad ${kind}">${title ? `<p class="ad-title">${marked.parseInline(title)}</p>` : ''}${marked.parse(lines.join('\n'))}</div>`);
+		return `\n<div data-ad="${ads.length - 1}"></div>\n`;
+	});
+	let html = marked.parse(text);
+	html = html.replace(/<div data-ad="(\d+)"><\/div>/g, (_, i) => ads[i]);
+	html = html.replace(/<table>/g, '<div class="table"><table>').replace(/<\/table>/g, '</table></div>');
+	html = html.replace(/@@M(\d+)@@/g, (_, i) => math[i]);
+	return html;
+}
+
+function figureHtml(name) {
+	const f = FIG[name];
+	if (!f) return `<p class="hint">Figura mancante: ${esc(name)}</p>`;
+	const chips = [];
+	const d = f.dati;
+	if (f.tipo === 'molecola' && d) chips.push(`<span class="chip rd" title="calcolata da RDKit">${esc(d.formula)} · M = ${String(d.massa).replace('.', ',')} g/mol</span>`);
+	if (f.tipo === 'molecola3d') {
+		for (const a of d.angoli || []) chips.push(`<span class="chip rd" title="angolo misurato sulla geometria ottimizzata (${esc(d.campo)})">angolo ${esc(a.atomi)}: ${String(a.gradi).replace('.', ',')}°</span>`);
+		chips.push(`<button type="button" class="chip" data-3d="${esc(name)}">Ruota in 3D</button>`);
+	}
+	return `<figure class="mol" data-name="${esc(name)}"><div class="draw" role="img" aria-label="${esc(f.alt)}">${f.svg}</div>${chips.length ? `<figcaption>${chips.join('')}</figcaption>` : ''}</figure>`;
+}
+
+function withFigures(html) {
+	return html.replace(/<p>\s*@@F:([\w-]+)@@\s*<\/p>|@@F:([\w-]+)@@/g, (_, a, b) => figureHtml(a || b));
+}
+
+let viewerLib = null;
+function load3d() {
+	if (!viewerLib) viewerLib = new Promise((ok, ko) => {
+		const s = document.createElement('script');
+		s.src = 'https://cdn.jsdelivr.net/npm/3dmol@2.4.2/build/3Dmol-min.js';
+		s.onload = () => ok(window.$3Dmol); s.onerror = ko;
+		document.head.appendChild(s);
+	});
+	return viewerLib;
+}
+document.addEventListener('click', async (e) => {
+	const b = e.target.closest('[data-3d]');
+	if (!b) return;
+	const fig = b.closest('figure');
+	const name = b.dataset['3d'];
+	b.textContent = 'Carico il modello…';
+	try {
+		const lib = await load3d();
+		const box = document.createElement('div');
+		box.className = 'viewer3d';
+		box.setAttribute('aria-label', 'Modello 3D ruotabile: ' + FIG[name].alt);
+		fig.querySelector('.draw').replaceWith(box);
+		const v = lib.createViewer(box, { backgroundAlpha: 0 });
+		v.addModel(FIG[name].dati.molblock, 'sdf');
+		v.setStyle({}, { stick: { radius: 0.14 }, sphere: { scale: 0.26 } });
+		v.zoomTo(); v.zoom(0.9); v.render(); v.spin('y', 0.6);
+		box.addEventListener('pointerdown', () => v.spin(false), { once: true });
+		b.textContent = 'Trascina per ruotare';
+		b.disabled = true;
+	} catch {
+		b.textContent = 'Il visualizzatore 3D non si è caricato';
+	}
+});
+
+// ---------------------------------------------------------------------------
+
+const state = { lesson: 0, tab: 'lezione' };
+try { const s = JSON.parse(store.get('chimica-vetrina') || '{}'); if (s.lesson < DATA.lezioni.length) Object.assign(state, s); } catch {}
+
+function renderIndex() {
+	$('#index').innerHTML = DATA.lezioni.map((l, i) => `
+		<button type="button" data-i="${i}" aria-current="${i === state.lesson}">
+			<span class="n">${esc(l.n)}</span><span class="t">${esc(l.titolo)}</span>
+			<span class="f">${esc(l.anno)} · ${esc(l.rdkit)}</span>
+		</button>`).join('');
+}
+$('#index').addEventListener('click', (e) => {
+	const b = e.target.closest('button[data-i]');
+	if (!b) return;
+	state.lesson = +b.dataset.i; state.tab = 'lezione';
+	render(); $('#sheet').scrollIntoView({ block: 'start', behavior: 'smooth' });
+});
+
+function render() {
+	store.set('chimica-vetrina', JSON.stringify(state));
+	renderIndex();
+	const l = DATA.lezioni[state.lesson];
+	const tabs = [['lezione', 'Lezione', ''], ['formulario', 'Formulario', ''], ['esercizi', 'Esercizi', l.esercizi ? `${Object.keys(l.esercizi.livelli).length} livelli` : '']];
+	$('#sheet').innerHTML = `
+		<div class="sheet-head">
+			<div class="label">Lezione ${esc(l.n)} · ${esc(l.anno)}</div>
+			<h2>${esc(l.titolo)}</h2>
+			<p class="meta">RDKit qui: ${esc(l.rdkit)}</p>
+			<div class="tabs" role="tablist">${tabs.map(([k, t, c]) => `<button type="button" role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${t}${c ? `<span class="count">${c}</span>` : ''}</button>`).join('')}</div>
+		</div>
+		<div class="sheet-body" id="body"></div>`;
+	const body = $('#body');
+	if (state.tab === 'esercizi') renderQuiz(body, l);
+	else {
+		const src = state.tab === 'lezione' ? l.lezione : l.formulario;
+		body.innerHTML = src ? `<article class="prose">${withFigures(md(src))}</article>` : '<p class="hint">Non ancora scritto.</p>';
+	}
+}
+$('#sheet').addEventListener('click', (e) => {
+	const t = e.target.closest('[data-tab]');
+	if (t) { state.tab = t.dataset.tab; render(); }
+});
+
+// ---------------------------------------------------------------------------
+// Esercizi
+
+const quiz = { level: null, i: 0, answered: false, right: 0, done: 0 };
+
+function inline(s) {
+	// testo con $...$; se non ha dollari ma ha comandi LaTeX, è tutto una formula
+	if (!s) return '';
+	if (!s.includes('$') && /\\[a-zA-Z]/.test(s)) return tex(s, false);
+	return s.split(/(\$[^$]+\$)/g).map((p) => (p.startsWith('$') && p.endsWith('$') && p.length > 1 ? tex(p.slice(1, -1), false) : esc(p))).join('');
+}
+
+function renderQuiz(body, l) {
+	const ex = l.esercizi;
+	if (!ex) { body.innerHTML = '<p class="hint">Esercizi non ancora generati.</p>'; return; }
+	const levels = Object.keys(ex.livelli);
+	if (!levels.includes(String(quiz.level)) || quiz.lesson !== state.lesson) Object.assign(quiz, { level: +levels[0], i: 0, right: 0, done: 0, lesson: state.lesson });
+	const pool = ex.esercizi.filter((e) => e.level === quiz.level);
+	const s = pool[quiz.i % pool.length];
+	quiz.answered = false;
+	const svgOpts = s.options.some((o) => o.svg);
+	body.innerHTML = `
+		<div class="levels" role="group" aria-label="Livello">${levels.map((k) => `<button type="button" data-level="${k}" aria-pressed="${+k === quiz.level}"><span class="k">L${k}</span>${esc(ex.livelli[k])}</button>`).join('')}</div>
+		<div class="quiz">
+			<div class="bar"><span class="label">Domanda ${quiz.i % pool.length + 1} di ${pool.length} · livello ${quiz.level}</span><span class="score">${quiz.done ? `${quiz.right}/${quiz.done} giuste` : ''}</span></div>
+			<p class="q">${inline(s.prompt)}</p>
+			${s.problem ? `<div class="problem">${inline(s.problem)}</div>` : ''}
+			${s.figura ? `<div class="qfig" role="img" aria-label="Molecola della domanda">${s.figura}</div>` : ''}
+			<div class="opts ${svgOpts ? '' : 'text'}" role="group" aria-label="Risposte">
+				${s.options.map((o, i) => `<button type="button" class="opt" data-opt="${i}" aria-label="Risposta ${i + 1}: ${esc(o.text || o.latex || '')}"><span class="num">${i + 1}</span><span class="body">${o.svg ? o.svg : inline(o.latex)}</span></button>`).join('')}
+			</div>
+			<p class="hint">Si risponde anche con i tasti 1-4.</p>
+			<div id="after"></div>
+		</div>`;
+	body.querySelectorAll('[data-level]').forEach((b) => b.addEventListener('click', () => { quiz.level = +b.dataset.level; quiz.i = 0; render(); }));
+	body.querySelectorAll('[data-opt]').forEach((b) => b.addEventListener('click', () => answer(+b.dataset.opt, s, body)));
+}
+
+function answer(i, s, body) {
+	if (quiz.answered) return;
+	quiz.answered = true;
+	const ok = i === s.correct;
+	quiz.done++; if (ok) quiz.right++;
+	body.querySelectorAll('.opt').forEach((b, j) => {
+		b.disabled = true;
+		b.classList.add(j === s.correct ? 'correct' : j === i ? 'wrong' : 'muted');
+	});
+	$('#after', body).innerHTML = `
+		<div class="solution">
+			<p class="verdict ${ok ? 'ok' : 'ko'}">${ok ? 'Giusto.' : 'Non è questa.'} Risposta: ${s.options[s.correct].svg ? `la numero ${s.correct + 1}` : inline(s.options[s.correct].latex)}</p>
+			<ol>${s.steps.map((t) => `<li>${inline(t)}</li>`).join('')}</ol>
+			${s.figuraSoluzione ? `<div class="sfig" role="img" aria-label="Figura della soluzione">${s.figuraSoluzione}</div>` : ''}
+			<div class="bar"><button type="button" class="btn" id="next">Prossimo esercizio</button></div>
+		</div>`;
+	$('.score', body).textContent = `${quiz.right}/${quiz.done} giuste`;
+	$('#next', body).addEventListener('click', () => { quiz.i++; render(); });
+	$('#next', body).focus({ preventScroll: true });
+}
+document.addEventListener('keydown', (e) => {
+	if (state.tab !== 'esercizi' || e.metaKey || e.ctrlKey || e.altKey) return;
+	const n = '1234'.indexOf(e.key);
+	const b = n >= 0 && document.querySelector(`[data-opt="${n}"]`);
+	if (b && !b.disabled) b.click();
+});
+
+$('#hero').innerHTML = DATA.hero || '';
+render();
+</script>

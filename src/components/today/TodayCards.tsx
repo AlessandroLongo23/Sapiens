@@ -44,15 +44,15 @@ export function MistakesCard({ open, onRedo, starting, blocked }: { open: number
 		<section aria-labelledby="mistakes-today" className={CARD}>
 			<div className="flex flex-col gap-1">
 				<h2 id="mistakes-today" className="label-mono text-fg-subtle">
-					Errori da rifare
+					Errori da ripassare
 				</h2>
-				<p className="text-lg font-semibold text-fg-strong">{open === 1 ? 'Un livello da rifare' : `${open} livelli da rifare`}</p>
-				<p className="text-sm text-fg-muted">{blocked ? 'Domani puoi rifarli con la sessione gratuita, oppure passa a Studio.' : `${REVIEW_LENGTH} esercizi nuovi sui livelli dove hai sbagliato.`}</p>
+				<p className="text-lg font-semibold text-fg-strong">{open === 1 ? 'Un livello da ripassare' : `${open} livelli da ripassare`}</p>
+				<p className="text-sm text-fg-muted">{blocked ? 'Domani puoi ripassarli con la sessione gratuita, oppure passa a Studio.' : `${REVIEW_LENGTH} esercizi nuovi sui livelli dove hai sbagliato.`}</p>
 			</div>
 			<div className="flex flex-col gap-2 sm:flex-row">
 				<Button size="lg" variant="secondary" className="flex-1" onClick={onRedo} loading={starting} disabled={blocked}>
 					<Repeat className="size-4" aria-hidden="true" />
-					Rifai gli errori
+					Ripassa i tuoi errori
 				</Button>
 				<Link href="/errori" className={cn(LINK_BUTTON, 'flex-1 border-transparent shadow-none')}>
 					<ListChecks className="size-4" aria-hidden="true" />

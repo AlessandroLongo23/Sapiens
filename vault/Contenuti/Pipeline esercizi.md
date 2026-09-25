@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-24
+aggiornato: 2026-09-26
 tag: [contenuti, ai]
 ---
 # Pipeline esercizi
@@ -51,6 +51,9 @@ Questioni aperte segnalate dagli agenti (dettagli nella sezione "Domande per la 
 - Una domanda su 0⁰ ha il testo tutto nella consegna e il problema vuoto.
 
 Da quel giorno i generatori non aspettano la conferma di Alessandro uno per uno: Claude li scrive, li verifica e li collega, e riferisce cosa ha fatto con le pagine di revisione. Dal 24 settembre 2026 la rilettura la fa Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]).
+
+## Chimica
+Gli esercizi di chimica sono generatori Python con RDKit (`scripts/chimica/esercizi/`), stesso contratto dei generatori TypeScript, verificati da un controllo indipendente (OPSIN per i nomi). Sul sito arrivano pregenerati, con immagini nella domanda, nelle risposte e nella soluzione: vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]] e [[2026-09-25 Chimica con RDKit]].
 
 ## Domande aperte
 - La pipeline diventa una skill di Claude Code nella repo?

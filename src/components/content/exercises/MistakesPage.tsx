@@ -73,13 +73,13 @@ export function MistakesPage({ items, open, page, more, free, left }: Props) {
 			<section aria-labelledby="redo-title" className="flex flex-col gap-4 rounded-2xl border border-edge bg-surface p-5 shadow-paper sm:flex-row sm:items-center sm:p-6">
 				<div className="flex min-w-0 flex-1 flex-col gap-1">
 					<h2 id="redo-title" className="text-lg font-semibold text-fg-strong">
-						{open === 0 ? 'Nessun errore da rifare' : open === 1 ? 'Un livello da rifare' : `${open} livelli da rifare`}
+						{open === 0 ? 'Nessun errore da ripassare' : open === 1 ? 'Un livello da ripassare' : `${open} livelli da ripassare`}
 					</h2>
 					<p className="text-sm text-fg-muted">
 						{open === 0
 							? `Hai chiuso tutti gli errori degli ultimi 30 giorni. Un errore si chiude rispondendo giusto ${CLOSE_AFTER} volte allo stesso livello.`
 							: blocked
-								? "Hai usato la sessione gratuita di oggi: domani puoi rifarli, oppure passa a Studio."
+								? "Hai usato la sessione gratuita di oggi: domani puoi ripassarli, oppure passa a Studio."
 								: free
 									? `Fino a ${REVIEW_LENGTH} esercizi nuovi sui livelli dove hai sbagliato, con le domande gratuite di oggi.`
 									: `${REVIEW_LENGTH} esercizi nuovi sui livelli dove hai sbagliato.`}
@@ -93,7 +93,7 @@ export function MistakesPage({ items, open, page, more, free, left }: Props) {
 				{open > 0 && (
 					<Button size="lg" onClick={start} loading={starting} disabled={blocked} className="shrink-0">
 						<Repeat className="size-4" aria-hidden="true" />
-						Rifai gli errori
+						Ripassa i tuoi errori
 					</Button>
 				)}
 			</section>
@@ -118,7 +118,7 @@ export function MistakesPage({ items, open, page, more, free, left }: Props) {
 											{m.levelName && <> · {m.levelName}</>} · {DAY.format(new Date(m.at))}
 										</span>
 									</div>
-									{m.open !== null && <span className={cn('label-mono shrink-0 rounded-md px-2 py-1', m.open ? 'bg-danger-soft text-danger-fg' : 'bg-ok-soft text-ok-fg')}>{m.open ? 'Da rifare' : 'Rifatto'}</span>}
+									{m.open !== null && <span className={cn('label-mono shrink-0 rounded-md px-2 py-1', m.open ? 'bg-danger-soft text-danger-fg' : 'bg-ok-soft text-ok-fg')}>{m.open ? 'Da ripassare' : 'Ripassato'}</span>}
 								</div>
 							}
 						/>

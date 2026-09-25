@@ -41,7 +41,7 @@ export function PracticeCard({ practice, onStart, starting, blocked, error }: Pr
 								? 'Domani ne trovi una nuova.'
 								: blocked
 									? "Hai usato la sessione gratuita di oggi: domani la trovi qui, oppure passa a Studio."
-									: 'Un po’ di quello che hai già fatto, gli errori da rifare, un passo avanti. Circa tre minuti.'}
+									: 'Un po’ di quello che hai già fatto, gli errori da ripassare, un passo avanti. Circa tre minuti.'}
 					</p>
 				</div>
 				{done && (

@@ -1,13 +1,18 @@
 /**
- * Applies docs/lezioni/albero.md to the high-school maths subtree of content_nodes.
+ * Applies a tree file to one high-school subject of content_nodes: docs/lezioni/albero.md to maths (the
+ * default), docs/lezioni/chimica/albero.md to chemistry.
  *
  *   node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/tree.mts           # plan only
  *   node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/tree.mts --apply
+ *   node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/tree.mts --subject chemistry --file docs/lezioni/chimica/albero.md
  *
  * Nodes are matched by slug and reused (title, parent and position updated), so ids stay stable;
  * missing ones are created. A lesson listed with `+ old-slug` absorbs that node, which is deleted
- * only if it has no theory and no formulary. A maths node that the file does not mention stops the
- * run. The plan lists the redirects needed for published lessons and chapters whose public path
+ * only if it has no theory and no formulary; `+ old-slug` right under a chapter, before its lessons,
+ * absorbs a chapter the same way (deleted once its lessons have moved). Chapters and lessons are
+ * matched separately, so a chapter and a lesson may share a slug. `# Primo anno` … `# Quinto anno`
+ * lines give the chapters that follow their school_year. A node of the subject that the file does
+ * not mention stops the run. The plan lists the redirects needed for published lessons and chapters whose public path
  * changes (to add to PATH_ALIASES in src/lib/seo/slug.ts) and the exercise config keys that move.
  */
 import { readFileSync } from 'node:fs';
@@ -16,17 +21,30 @@ import { slugify } from '../../src/lib/seo/slug';
 
 type Row = { id: string; parent_id: string | null; type: string; title: string; slug: string; position: number; theory: string | null; formulary: string | null };
 type Lesson = { slug: string; title: string; absorbs: string[] };
-type Chapter = { slug: string; title: string; lessons: Lesson[] };
+type Chapter = { slug: string; title: string; year: number | null; absorbs: string[]; lessons: Lesson[] };
 
 const apply = process.argv.includes('--apply');
+const arg = (name: string, fallback: string) => {
+	const i = process.argv.indexOf(`--${name}`);
+	return i > 0 ? process.argv[i + 1] : fallback;
+};
+const subjectSlug = arg('subject', 'math');
+const file = arg('file', 'docs/lezioni/albero.md');
+const YEARS: Record<string, number> = { primo: 1, secondo: 2, terzo: 3, quarto: 4, quinto: 5 };
 
 function parse(md: string): Chapter[] {
 	const chapters: Chapter[] = [];
+	let year: number | null = null;
 	for (const raw of md.split('\n')) {
 		const line = raw.trimEnd();
+		const y = line.match(/^# (\w+) anno$/i);
+		if (y && YEARS[y[1].toLowerCase()]) {
+			year = YEARS[y[1].toLowerCase()];
+			continue;
+		}
 		let m = line.match(/^## ([a-z0-9-]+) \| (.+)$/);
 		if (m) {
-			chapters.push({ slug: m[1], title: m[2].trim(), lessons: [] });
+			chapters.push({ slug: m[1], title: m[2].trim(), year, absorbs: [], lessons: [] });
 			continue;
 		}
 		m = line.match(/^- ([a-z0-9-]+) \| (.+)$/);
@@ -35,39 +53,55 @@ function parse(md: string): Chapter[] {
 			continue;
 		}
 		m = line.match(/^\s+\+ ([a-z0-9-]+)$/);
-		if (m) chapters.at(-1)!.lessons.at(-1)!.absorbs.push(m[1]);
+		if (m) {
+			const chapter = chapters.at(-1)!;
+			(chapter.lessons.at(-1) ?? chapter).absorbs.push(m[1]);
+		}
 	}
 	return chapters;
 }
 
-const spec = parse(readFileSync('docs/lezioni/albero.md', 'utf8'));
+const spec = parse(readFileSync(file, 'utf8'));
 const db = createClient(process.env.PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
 const { data, error } = await db.from('content_nodes').select('id,parent_id,type,title,slug,position,theory,formulary');
 if (error) throw error;
 const all = data as Row[];
 const level = all.find((n) => n.slug === 'high_school')!;
-const math = all.find((n) => n.slug === 'math' && n.parent_id === level.id)!;
+const math = all.find((n) => n.slug === subjectSlug && n.parent_id === level.id);
+if (!math) throw new Error(`materia ${subjectSlug} non trovata sotto high_school`);
 const oldChapters = all.filter((n) => n.parent_id === math.id);
 const oldLessons = all.filter((n) => oldChapters.some((c) => c.id === n.parent_id));
 const byId = new Map(all.map((n) => [n.id, n]));
 const base = `/materiale/${slugify(level.title)}/${slugify(math.title)}`;
 const has = (s: string | null) => !!s && s.trim() !== '';
 
-// Checks: every maths node is accounted for, no slug twice, new slugs free across the whole table.
+// Checks: every node of the subject is accounted for, no slug twice among chapters or among lessons, new slugs
+// free across the whole table.
 const errors: string[] = [];
-const specSlugs = spec.flatMap((c) => [c.slug, ...c.lessons.flatMap((l) => [l.slug, ...l.absorbs])]);
-const dupes = specSlugs.filter((s, i) => specSlugs.indexOf(s) !== i);
-if (dupes.length) errors.push(`slug ripetuti nel file: ${[...new Set(dupes)].join(', ')}`);
-for (const n of [...oldChapters, ...oldLessons]) if (!specSlugs.includes(n.slug)) errors.push(`nodo non citato nel file: ${n.type} ${n.slug}`);
+const chapterSlugs = spec.flatMap((c) => [c.slug, ...c.absorbs]);
+const lessonSlugs = spec.flatMap((c) => c.lessons.flatMap((l) => [l.slug, ...l.absorbs]));
+const specSlugs = [...chapterSlugs, ...lessonSlugs];
+for (const [kind, slugs] of [['capitoli', chapterSlugs], ['lezioni', lessonSlugs]] as const) {
+	const dupes = slugs.filter((s, i) => slugs.indexOf(s) !== i);
+	if (dupes.length) errors.push(`slug ripetuti tra i ${kind} del file: ${[...new Set(dupes)].join(', ')}`);
+}
+for (const n of oldChapters) if (!chapterSlugs.includes(n.slug)) errors.push(`capitolo non citato nel file: ${n.slug}`);
+for (const n of oldLessons) if (!lessonSlugs.includes(n.slug)) errors.push(`lezione non citata nel file: ${n.slug}`);
 const mathIds = new Set([math.id, ...oldChapters.map((c) => c.id), ...oldLessons.map((l) => l.id)]);
 for (const s of specSlugs) {
 	const elsewhere = all.filter((n) => n.slug === s && !mathIds.has(n.id));
-	if (elsewhere.length && ![...oldChapters, ...oldLessons].some((n) => n.slug === s)) errors.push(`slug già usato fuori dalla matematica: ${s}`);
+	if (elsewhere.length && ![...oldChapters, ...oldLessons].some((n) => n.slug === s)) errors.push(`slug già usato fuori dalla materia: ${s}`);
 }
 for (const c of spec) for (const l of c.lessons) for (const a of l.absorbs) {
 	// Already absorbed by an earlier run: nothing left to do.
 	const n = oldLessons.find((x) => x.slug === a);
 	if (n && (has(n.theory) || has(n.formulary))) errors.push(`lezione da assorbire non vuota: ${a}`);
+}
+for (const c of spec) for (const a of c.absorbs) {
+	const n = oldChapters.find((x) => x.slug === a);
+	if (!n) continue;
+	for (const child of oldLessons.filter((l) => l.parent_id === n.id))
+		if (!spec.some((s) => s.lessons.some((l) => l.slug === child.slug))) errors.push(`il capitolo assorbito ${a} ha una lezione che non va da nessuna parte: ${child.slug}`);
 }
 
 // Plan.
@@ -87,8 +121,16 @@ for (const [ci, c] of spec.entries()) {
 			aliases.push([`${base}/${slugify(oc.title)}`, `${base}/${slugify(c.title)}`]);
 		} else if (oc.position !== ci) updates++;
 	}
+	for (const a of c.absorbs.filter((a) => oldChapters.some((x) => x.slug === a))) {
+		deletes++;
+		plan.push(`- capitolo ${a} (assorbito da ${c.slug})`);
+	}
 	for (const [li, l] of c.lessons.entries()) {
 		const ol = oldLessons.find((x) => x.slug === l.slug);
+		for (const a of l.absorbs.filter((a) => oldLessons.some((x) => x.slug === a))) {
+			deletes++;
+			plan.push(`- lezione ${a} (assorbita da ${l.slug})`);
+		}
 		if (!ol) {
 			creates++;
 			plan.push(`+ lezione ${c.slug}/${l.slug} "${l.title}"`);
@@ -101,11 +143,7 @@ for (const [ci, c] of spec.entries()) {
 		const from = `${base}/${slugify(oldParent.title)}/${slugify(ol.title)}`;
 		const to = `${base}/${slugify(c.title)}/${slugify(l.title)}`;
 		if (has(ol.theory) && from !== to) aliases.push([from, to]);
-		if (moved) configMoves.push([`high_school/math/${oldParent.slug}/${l.slug}`, `high_school/math/${c.slug}/${l.slug}`]);
-		for (const a of l.absorbs.filter((a) => oldLessons.some((x) => x.slug === a))) {
-			deletes++;
-			plan.push(`- lezione ${a} (assorbita da ${l.slug})`);
-		}
+		if (moved) configMoves.push([`high_school/${subjectSlug}/${oldParent.slug}/${l.slug}`, `high_school/${subjectSlug}/${c.slug}/${l.slug}`]);
 	}
 }
 
@@ -130,12 +168,14 @@ if (!apply) {
 const chapterId = new Map<string, string>();
 for (const [ci, c] of spec.entries()) {
 	const oc = oldChapters.find((x) => x.slug === c.slug);
+	// The year only when the file gives one, so a file without year headings leaves school_year as it is.
+	const year = c.year === null ? {} : { school_year: c.year };
 	if (oc) {
-		const { error } = await db.from('content_nodes').update({ title: c.title, position: ci }).eq('id', oc.id);
+		const { error } = await db.from('content_nodes').update({ title: c.title, position: ci, ...year }).eq('id', oc.id);
 		if (error) throw new Error(`capitolo ${c.slug}: ${error.message}`);
 		chapterId.set(c.slug, oc.id);
 	} else {
-		const { data: row, error } = await db.from('content_nodes').insert({ parent_id: math.id, type: 'chapter', title: c.title, slug: c.slug, position: ci }).select('id').single();
+		const { data: row, error } = await db.from('content_nodes').insert({ parent_id: math.id, type: 'chapter', title: c.title, slug: c.slug, position: ci, ...year }).select('id').single();
 		if (error) throw new Error(`capitolo ${c.slug}: ${error.message}`);
 		chapterId.set(c.slug, row.id);
 	}
@@ -155,5 +195,13 @@ for (const c of spec) for (const l of c.lessons) for (const a of l.absorbs) {
 	if (!n) continue;
 	const { error } = await db.from('content_nodes').delete().eq('id', n.id);
 	if (error) throw new Error(`cancellazione ${a}: ${error.message}`);
+}
+for (const c of spec) for (const a of c.absorbs) {
+	const n = oldChapters.find((x) => x.slug === a);
+	if (!n) continue;
+	const { count } = await db.from('content_nodes').select('id', { count: 'exact', head: true }).eq('parent_id', n.id);
+	if (count) throw new Error(`il capitolo assorbito ${a} ha ancora ${count} lezioni`);
+	const { error } = await db.from('content_nodes').delete().eq('id', n.id);
+	if (error) throw new Error(`cancellazione del capitolo ${a}: ${error.message}`);
 }
 console.log('\nAlbero applicato.');

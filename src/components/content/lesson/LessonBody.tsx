@@ -7,6 +7,7 @@ import { useReducedMotion } from '@/lib/hooks/use-media';
 import { textSelection, type SelectionReport } from '@/lib/utils/text-selection';
 import { copyAsTex, formulaTaps, paintFormulas, rangeToText, snapToFormulas } from '@/lib/utils/formulas';
 import { processTikzWhenVisible } from '@/lib/utils/tikzjax';
+import { activate3dModels } from '@/lib/utils/molecule3d';
 import type { Prompt } from '@/lib/data/prompts';
 import { FloatingMenu, type MenuPosition } from './FloatingMenu';
 
@@ -76,9 +77,11 @@ export function LessonBody({ html }: { html: string }) {
 		prepareTables(el);
 		const stopGifs = lazyGifs(el);
 		const stopTikz = processTikzWhenVisible(el);
+		const stop3d = activate3dModels(el);
 		return () => {
 			stopGifs();
 			stopTikz();
+			stop3d();
 		};
 	}, [html]);
 

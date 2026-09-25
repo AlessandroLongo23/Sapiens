@@ -1,6 +1,6 @@
 ---
 stato: decisa
-aggiornato: 2026-09-23
+aggiornato: 2026-09-26
 tag: [decisione, piano]
 ---
 # Beta a pagamento a gennaio 2027 con la sola matematica
@@ -13,3 +13,5 @@ La v1.0 completa (tutte le materie STEM e tutte le funzioni) richiede troppo tem
 
 ## Conseguenze
 Obiettivo cinque anni, minimo il biennio (vedi [[Release Triennio]]). Dettagli in [[Release Beta]]. Richiede la [[Pipeline esercizi]] pronta entro fine ottobre 2026 e Andrea a 10-20 ore a settimana.
+
+Precisata il 26 settembre 2026 da [[2026-09-26 La chimica si pubblica gratis accanto alla beta]]: la chimica esce come contenuto gratuito, il prodotto a pagamento resta di sola matematica.

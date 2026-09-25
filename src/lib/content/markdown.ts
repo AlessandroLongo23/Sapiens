@@ -3,7 +3,7 @@ import anchor from 'markdown-it-anchor';
 import katex from 'katex';
 import { titleHtml } from './latex';
 import { escapeHtml } from '@/lib/utils/escape';
-import { FIGURE_SCALE, figureUrl, parseFigure, publishedSvg } from './figures';
+import { CHEM_BLOCKS, FIGURE_SCALE, figureUrl, parseFigure, publishedChemSvg, publishedSvg, type ChemBlock } from './figures';
 
 /**
  * Lesson markdown → HTML, on the server only. Math is typeset with KaTeX at
@@ -12,7 +12,9 @@ import { FIGURE_SCALE, figureUrl, parseFigure, publishedSvg } from './figures';
  * technology; its TeX annotation is dropped so raw LaTeX never ends up in
  * the page text. A TikZ block becomes an `<img>` of its compiled SVG (see
  * figures.ts), or `<script type="text/tikz">` for TikZJax when it has not been
- * compiled for its current code.
+ * compiled for its current code. A chemistry block (```molecola and the others,
+ * drawn with RDKit) becomes an `<img>` the same way; one not compiled for its
+ * current code is left out, since nothing in the browser can draw it.
  */
 
 const slugifyHeading = (s: string) => s.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
@@ -42,21 +44,28 @@ type Placeholder = { display: boolean; content: string };
 function protect(markdown: string) {
 	const math: Placeholder[] = [];
 	const tikz: string[] = [];
+	const chem: { kind: ChemBlock; code: string }[] = [];
 	let text = markdown.replace(/```tikz\n([\s\S]+?)```/g, (_, code: string) => {
 		tikz.push(code);
 		return `\n\n<div data-tikz="${tikz.length - 1}"></div>\n\n`;
+	});
+	text = text.replace(CHEM_FENCE, (_, kind: ChemBlock, code: string) => {
+		chem.push({ kind, code });
+		return `\n\n<div data-chem="${chem.length - 1}"></div>\n\n`;
 	});
 	text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, content: string) => {
 		math.push({ display: true, content: content.trim() });
 		return `MATHPLACEHOLDER${math.length - 1}END`;
 	});
 	text = text.replace(/\$([^$]+?)\$/g, (m, content: string) => {
-		if (m.includes('MATHPLACEHOLDER') || m.includes('data-tikz')) return m;
+		if (m.includes('MATHPLACEHOLDER') || m.includes('data-tikz') || m.includes('data-chem')) return m;
 		math.push({ display: false, content: content.trim() });
 		return `MATHPLACEHOLDER${math.length - 1}END`;
 	});
-	return { text, math, tikz };
+	return { text, math, tikz, chem };
 }
+
+const CHEM_FENCE = new RegExp(`\`\`\`(${CHEM_BLOCKS.join('|')})\\n([\\s\\S]+?)\`\`\``, 'g');
 
 /**
  * Every formula is wrapped, and the wrapper carries its source. The reader
@@ -73,13 +82,35 @@ function formula(tex: string, display: boolean): string {
 		: `<span class="formula" data-tex="${source}">${renderTex(tex, false)}</span>`;
 }
 
-function restore(html: string, math: Placeholder[], tikz: string[]): string {
+function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock; code: string }[] = []): string {
 	return html
 		.replace(/MATHPLACEHOLDER(\d+)END/g, (_, i: string) => {
 			const { display, content } = math[Number(i)];
 			return formula(content, display);
 		})
-		.replace(/<div data-tikz="(\d+)"><\/div>/g, (_, i: string) => tikzFigure(tikz[Number(i)]));
+		.replace(/<div data-tikz="(\d+)"><\/div>/g, (_, i: string) => tikzFigure(tikz[Number(i)]))
+		.replace(/<div data-chem="(\d+)"><\/div>/g, (_, i: string) => chemFigure(chem[Number(i)].kind, chem[Number(i)].code));
+}
+
+/** RDKit draws at screen size; a little larger reads better next to the lesson text. */
+const CHEM_SCALE = 1.3;
+
+/**
+ * A chemistry drawing. It sits in a .tikz-container so the dark theme inverts it like the TikZ figures. A 3D
+ * molecule carries its coordinates and a button: LessonBody swaps the drawing for a model that turns (3Dmol).
+ */
+function chemFigure(kind: ChemBlock, block: string): string {
+	const figure = parseFigure(block);
+	const svg = publishedChemSvg(kind, figure);
+	const supabase = process.env.PUBLIC_SUPABASE_URL;
+	if (!svg || !supabase) return '';
+	const alt = escapeHtml(figure.alt ?? '');
+	const width = Math.round(svg.width * CHEM_SCALE);
+	const height = Math.round(svg.height * CHEM_SCALE);
+	const img = `<img src="${figureUrl(supabase, svg.file)}" alt="${alt}" width="${width}" height="${height}" style="width:${width}px" loading="lazy" decoding="async">`;
+	if (kind === 'molecola3d' && figure.xyz)
+		return `<figure class="tikz-container chem-figure chem-3d my-6 flex flex-col items-center gap-2" data-xyz="${escapeHtml(figure.xyz)}" data-alt="${alt}">${img}<button type="button" class="chem-3d-button rounded-full border border-edge px-3 py-1 font-mono text-xs text-fg-muted transition-colors hover:text-fg focus-ring">Ruota in 3D</button></figure>`;
+	return `<figure class="tikz-container chem-figure my-6 flex justify-center">${img}</figure>`;
 }
 
 function tikzFigure(block: string): string {
@@ -172,8 +203,8 @@ for (const rule of ['fence', 'code_block'] as const) {
 const normalize = (markdown: string) => markdown.replace(/\r\n?/g, '\n');
 
 export function renderMarkdown(markdown: string): string {
-	const { text, math, tikz } = protect(normalize(markdown).split('\n').slice(2).join('\n'));
-	return restore(md.render(text), math, tikz);
+	const { text, math, tikz, chem } = protect(normalize(markdown).split('\n').slice(2).join('\n'));
+	return restore(md.render(text), math, tikz, chem);
 }
 
 export interface ContentSection {

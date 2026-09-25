@@ -35,15 +35,17 @@ export interface Figure {
 	name: string | null;
 	alt: string | null;
 	svg: { file: string; width: number; height: number } | null;
+	/** Chemistry only: a molecule's 3D coordinates, `C 0.000 0.000 0.000; H …`, written by the publish script. */
+	xyz: string | null;
 	/** The TikZ code without the metadata lines. */
 	code: string;
 }
 
-const META = /^%\s*(nome|alt|svg):\s*(.*)$/;
+const META = /^%\s*(nome|alt|svg|xyz):\s*(.*)$/;
 
 export function parseFigure(block: string): Figure {
 	const lines = block.replace(/\r\n?/g, '\n').split('\n');
-	const figure: Figure = { name: null, alt: null, svg: null, code: '' };
+	const figure: Figure = { name: null, alt: null, svg: null, xyz: null, code: '' };
 	let i = 0;
 	for (; i < lines.length; i++) {
 		const m = lines[i].trim().match(META);
@@ -51,6 +53,7 @@ export function parseFigure(block: string): Figure {
 		const value = m[2].trim();
 		if (m[1] === 'nome') figure.name = value || null;
 		else if (m[1] === 'alt') figure.alt = value || null;
+		else if (m[1] === 'xyz') figure.xyz = value || null;
 		else {
 			const s = value.match(/^(\S+\.svg)\s+(\d+)x(\d+)$/);
 			if (s) figure.svg = { file: s[1], width: Number(s[2]), height: Number(s[3]) };
@@ -61,8 +64,8 @@ export function parseFigure(block: string): Figure {
 }
 
 /** FNV-1a, 32 bit, as 8 hex digits: enough to tell two versions of one figure apart. */
-export function figureHash(code: string): string {
-	const input = `${FIGURE_COMPILER}\n${code}`;
+export function figureHash(code: string, compiler: string | number = FIGURE_COMPILER): string {
+	const input = `${compiler}\n${code}`;
 	let h = 0x811c9dc5;
 	for (let i = 0; i < input.length; i++) {
 		h ^= input.charCodeAt(i);
@@ -72,14 +75,30 @@ export function figureHash(code: string): string {
 }
 
 /** `diagramma-venn-unione-3f9a1c2e.svg`: descriptive for Google Images, unique per version. */
-export function figureFile(figure: Figure): string {
+export function figureFile(figure: Figure, compiler: string | number = FIGURE_COMPILER): string {
 	const base = (figure.name ?? 'figura')
 		.normalize('NFD')
 		.replace(/[̀-ͯ]/g, '')
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, '-')
 		.replace(/^-+|-+$/g, '');
-	return `${base || 'figura'}-${figureHash(figure.code)}.svg`;
+	return `${base || 'figura'}-${figureHash(figure.code, compiler)}.svg`;
+}
+
+/**
+ * Chemistry figures: ```molecola, ```molecole, ```reazione and ```molecola3d blocks, drawn with RDKit by
+ * scripts/chimica/pubblica_figure.py (the same `% nome`, `% alt` and `% svg` lines as TikZ, options in place of
+ * the TikZ code). Their hash has its own compiler tag, which the Python script computes the same way: raising
+ * CHEM_COMPILER here and there redraws them all.
+ */
+export const CHEM_BLOCKS = ['molecola', 'molecole', 'reazione', 'molecola3d'] as const;
+export type ChemBlock = (typeof CHEM_BLOCKS)[number];
+export const CHEM_COMPILER = 1;
+export const chemCompiler = (kind: ChemBlock) => `chem${CHEM_COMPILER}:${kind}`;
+
+/** The compiled chemistry drawing, if it exists and still matches the block. */
+export function publishedChemSvg(kind: ChemBlock, figure: Figure): Figure['svg'] {
+	return figure.svg && figure.svg.file === figureFile(figure, chemCompiler(kind)) ? figure.svg : null;
 }
 
 /** The compiled file, if it exists and still matches the code. */
@@ -93,6 +112,7 @@ export function serializeFigure(figure: Figure): string {
 		figure.name ? `% nome: ${figure.name}` : null,
 		figure.alt ? `% alt: ${figure.alt}` : null,
 		figure.svg ? `% svg: ${figure.svg.file} ${figure.svg.width}x${figure.svg.height}` : null,
+		figure.xyz ? `% xyz: ${figure.xyz}` : null,
 	].filter(Boolean);
 	return [...meta, figure.code].join('\n') + '\n';
 }

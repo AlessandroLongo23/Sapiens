@@ -35,7 +35,14 @@ export const configs: Record<string, LessonExercises> = {
 	'high_school/math/numeri-razionali/numeri-razionali-frazioni': { generator: 'numeri-razionali-frazioni', levels: [1, 2, 3, 4, 5, 6] },
 	'high_school/math/numeri-razionali/numeri-razionali-operazioni': { generator: 'numeri-razionali-operazioni', levels: [1, 2, 3, 4, 5, 6, 7] },
 	'high_school/math/numeri-razionali/numeri-razionali-espressioni': { generator: 'numeri-razionali-espressioni', levels: [1, 2, 3, 4, 5, 6] },
-	'high_school/math/numeri-razionali/numeri-razionali-proporzioni': { generator: 'numeri-razionali-proporzioni', levels: [1, 2, 3, 4, 5, 6, 7] }
+	'high_school/math/numeri-razionali/numeri-razionali-proporzioni': { generator: 'numeri-razionali-proporzioni', levels: [1, 2, 3, 4, 5, 6, 7] },
+	// Chemistry: pools drawn and verified in Python (src/lib/exercises/chimica/pool.ts).
+	'high_school/chemistry/chim-quantita-sostanza/mole-massa-molare': { generator: 'mole-massa-molare', levels: [1, 2, 3, 4, 5] },
+	'high_school/chemistry/chim-forma-molecole/geometria-molecolare-vsepr': { generator: 'geometria-molecolare-vsepr', levels: [1, 2, 3, 4, 5] },
+	'high_school/chemistry/chim-idrocarburi/alcani-nomenclatura': { generator: 'alcani-nomenclatura', levels: [1, 2, 3, 4, 5] },
+	'high_school/chemistry/chimica-organica/isomeria': { generator: 'isomeria', levels: [1, 2, 3, 4, 5] },
+	'high_school/chemistry/chimica-organica/gruppi-funzionali': { generator: 'gruppi-funzionali', levels: [1, 2, 3, 4, 5] },
+	'high_school/chemistry/biochimica/amminoacidi-legame-peptidico': { generator: 'amminoacidi-legame-peptidico', levels: [1, 2, 3, 4, 5] }
 };
 
 /** Questions in one exercise session; the start card and the paywall preview say the same. */

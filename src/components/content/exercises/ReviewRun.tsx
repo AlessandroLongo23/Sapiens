@@ -7,9 +7,9 @@ import type { AnsweredView, ExerciseView, SessionView } from '@/lib/server/exerc
 import { CLOSE_AFTER } from '@/lib/exercises/review';
 import { Html } from '@/components/ui/Html';
 import { Button } from '@/components/ui/Button';
-import { RunMistakes } from './RunMistakes';
 import { RunPlayer, type Progress, type RunResult } from './RunPlayer';
 import { SummarySheet } from './SummarySheet';
+import { RunReview } from './RunReview';
 
 /** The line above a question of a run across lessons: which lesson and level it comes from. */
 export function itemLabel(session: SessionView, title: string) {
@@ -46,11 +46,41 @@ interface MixedProps {
 	extra?: ReactNode;
 }
 
-/** A run across lessons (practice, review): the questions, then a summary with its mistakes. It never passes a level. */
+/**
+ * A run across lessons (practice, review): the questions, then a summary. It never passes a level. The mistakes
+ * have the whole page (RunReview), opened from the summary; back from there returns to it.
+ */
 export function MixedRun({ session, first, startAt, initial, earlier, title, outcome, backLabel, onBack, extra }: MixedProps) {
 	const [done, setDone] = useState<{ results: RunResult[]; progress: Progress[] } | null>(null);
+	const [showMistakes, setShowMistakes] = useState(false);
 	const correct = done ? done.progress.filter((p) => p === 'correct').length : 0;
+	const wrong = done ? done.progress.filter((p) => p === 'incorrect').length : 0;
 	const { title: heading, detail } = outcome(correct, session.length);
+	const back = (
+		<Button variant={wrong > 0 ? 'secondary' : 'primary'} size="lg" className="w-full" onClick={onBack}>
+			{backLabel}
+		</Button>
+	);
+
+	if (done && showMistakes)
+		return (
+			<RunReview
+				heading={<span className="label-mono text-fg-subtle">{title}</span>}
+				correct={correct}
+				total={session.length}
+				outcome={heading}
+				results={done.results}
+				backLabel="Torna al riepilogo"
+				onBack={() => setShowMistakes(false)}
+				actions={
+					<>
+						{back}
+						{extra}
+					</>
+				}
+			/>
+		);
+
 	return (
 		<>
 			<RunPlayer key={session.id} session={session} first={first} startAt={startAt} initial={initial} earlier={earlier} finished={!!done} onLeave={onBack} onFinish={(results, progress) => setDone({ results, progress })} label={itemLabel(session, title)} />
@@ -64,15 +94,20 @@ export function MixedRun({ session, first, startAt, initial, earlier, title, out
 				onClose={onBack}
 				actions={
 					<>
-						<Button size="lg" className="w-full" onClick={onBack}>
-							{backLabel}
-						</Button>
+						{wrong > 0 && (
+							<Button size="lg" className="w-full" onClick={() => {
+								setShowMistakes(true);
+								window.scrollTo({ top: 0 });
+							}}>
+								<ListChecks className="size-5 shrink-0" aria-hidden="true" />
+								{wrong === 1 ? "Rivedi l'errore" : `Rivedi gli errori (${wrong})`}
+							</Button>
+						)}
+						{back}
 						{extra}
 					</>
 				}
-			>
-				{done && <RunMistakes results={done.results} />}
-			</SummarySheet>
+			/>
 		</>
 	);
 }

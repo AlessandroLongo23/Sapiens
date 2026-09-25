@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-24
+aggiornato: 2026-09-26
 tag: [contenuti]
 ---
 # Programma ministeriale
@@ -19,6 +19,7 @@ La matematica delle superiori è abbastanza uniforme; le differenze stanno sopra
 - L'albero di matematica in `content_nodes` (86 lezioni) non segue né le Indicazioni né un libro: mancano capitoli interi del biennio (logica, scomposizione, frazioni algebriche, statistica, geometria euclidea), la retta è divisa in 15 lezioni, "Trigonometria" contiene Pitagora, Euclide e Talete.
 - Albero nuovo approvato e applicato al database il 24 settembre 2026: 39 capitoli, 183 lezioni (104 nel biennio, 79 nel triennio). Fonte: `docs/lezioni/albero.md`; motivazioni: `docs/lezioni/programma.md`. Goniometria al quarto anno come nei libri; vettori, matrici e informatica fuori per ora.
 - Confronto con YouMath, Theoremz e Matematicamente.it (24 settembre 2026): Theoremz letto per intero dalla sitemap, YouMath solo in parte (il robots.txt blocca gli agenti AI). Aggiunti alla proposta gli argomenti standard che mancavano (punti notevoli del triangolo, equazioni parametriche, circonferenza e π, seno e coseno nel triangolo rettangolo, e altri); gli argomenti facoltativi sono elencati nel documento.
+- 26 settembre 2026: si rifà anche l'albero di chimica delle superiori, in `docs/lezioni/chimica/programma.md` e `docs/lezioni/chimica/albero.md` (vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]]).
 
 ## Domande aperte
 - La beta copre il biennio o i cinque anni?

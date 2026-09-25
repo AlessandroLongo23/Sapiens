@@ -19,12 +19,13 @@ interface Props {
 	/** The buttons: what to do next, easiest to reach first. */
 	actions: ReactNode;
 	onClose: () => void;
-	/** Under the score: the mistakes of the run, to look back at. */
-	children?: ReactNode;
 }
 
-/** End of a run: the score ring, what it means for the path, and what to do next. A sheet on phones, a centred card on wider screens. */
-export function SummarySheet({ open, correct, total, passed, title, detail, actions, onClose, children }: Props) {
+/**
+ * End of a run: the score ring, what it means for the path, and what to do next. A sheet on phones, a centred card
+ * on wider screens. The mistakes are not here: a button in `actions` opens them on the whole page (RunReview).
+ */
+export function SummarySheet({ open, correct, total, passed, title, detail, actions, onClose }: Props) {
 	const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
 	const wrong = Math.max(0, total - correct);
 	const ring = passed ? 'stroke-ok' : percent >= 50 ? 'stroke-warn' : 'stroke-accent';
@@ -64,7 +65,6 @@ export function SummarySheet({ open, correct, total, passed, title, detail, acti
 						<dt className="font-medium">{wrong === 1 ? 'sbagliata' : 'sbagliate'}</dt>
 					</div>
 				</dl>
-				{children}
 			</div>
 		</Sheet>
 	);

@@ -12,7 +12,7 @@ export function TodayInvite() {
 	return (
 		<section className="flex flex-col gap-4 rounded-2xl border border-edge bg-surface p-6 text-center shadow-paper sm:p-8">
 			<h2 className="font-display text-2xl font-semibold text-fg-strong">Qui trovi la tua giornata di studio</h2>
-			<p className="text-fg-muted">La pratica di ogni giorno, la serie di giorni, gli errori da rifare e la prova lasciata a metà. Crea un account: hai Studio gratis per {TRIAL_DAYS} giorni, senza carta.</p>
+			<p className="text-fg-muted">La pratica di ogni giorno, la serie di giorni, gli errori da ripassare e la prova lasciata a metà. Crea un account: hai Studio gratis per {TRIAL_DAYS} giorni, senza carta.</p>
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
 				<Button size="lg" onClick={() => openModal({ register: true, next: () => window.location.reload() })}>
 					Crea un account

@@ -31,7 +31,7 @@ export default async function ErroriPage({ searchParams }: { searchParams: Promi
 				icon={ListChecks}
 				eyebrow="Esercizi"
 				title="I tuoi errori"
-				lead="Gli esercizi che hai sbagliato, con la risposta giusta e come si risolvono. Rifarli vuol dire esercizi nuovi sugli stessi livelli."
+				lead="Gli esercizi che hai sbagliato, con la risposta giusta e come si risolvono. Ripassarli vuol dire esercizi nuovi sugli stessi livelli."
 			/>
 			{!list || (list.items.length === 0 && page === 0) ? (
 				<div className="rounded-2xl border border-edge bg-surface p-8 text-center">
