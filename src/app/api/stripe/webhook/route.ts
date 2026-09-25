@@ -41,19 +41,25 @@ function planIdFor(subscription: Stripe.Subscription): string {
 	return getPlanByPriceId(subscription.items?.data?.[0]?.price?.id)?.id ?? subscription.metadata?.planId ?? SUBSCRIPTION_PLANS.FREE.id;
 }
 
-/** Sets one key of app_metadata; `null` clears it (the admin API merges keys, so a key left out would stay). */
-async function writeMeta(userId: string, key: string, value: Record<string, unknown> | null) {
+/**
+ * Sets keys of app_metadata, built from what is there now; a key set to `null` is cleared (the admin API merges
+ * keys, so a key left out would stay). With `paid`, the first payment is marked once, in `firstPaidAt`: the plan
+ * claims change with every renewal and cancellation, and the beta's metrics need to know who ever paid.
+ */
+async function writeMeta(userId: string, build: (meta: Record<string, unknown>) => Record<string, unknown>, paid = false) {
 	const admin = adminClient();
 	const { data, error } = await admin.auth.admin.getUserById(userId);
 	if (error || !data.user) return console.error(`webhook: user ${userId} not found`, error?.message);
-	const { error: updateError } = await admin.auth.admin.updateUserById(userId, { app_metadata: { [key]: value } });
+	const meta = (data.user.app_metadata ?? {}) as Record<string, unknown>;
+	const patch = { ...build(meta), ...(paid && !meta.firstPaidAt ? { firstPaidAt: new Date().toISOString() } : {}) };
+	const { error: updateError } = await admin.auth.admin.updateUserById(userId, { app_metadata: patch });
 	if (updateError) console.error(`webhook: could not update user ${userId}`, updateError.message);
 }
 
-/** Merge the subscription claim into app_metadata. */
+/** Merge the subscription claim into app_metadata; an active paid plan is a payment. */
 async function writeClaim(userId: string, patch: Record<string, unknown>) {
-	const { data } = await adminClient().auth.admin.getUserById(userId);
-	await writeMeta(userId, 'subscription', { ...(data.user?.app_metadata?.subscription ?? {}), ...patch, updatedAt: new Date().toISOString() });
+	const paid = patch.status === 'active' && patch.plan !== SUBSCRIPTION_PLANS.FREE.id;
+	await writeMeta(userId, (meta) => ({ subscription: { ...((meta.subscription as object) ?? {}), ...patch, updatedAt: new Date().toISOString() } }), paid);
 }
 
 const idOf = (ref: string | { id: string } | null | undefined) => (typeof ref === 'string' ? ref : (ref?.id ?? null));
@@ -63,13 +69,19 @@ async function applyPass(session: Stripe.Checkout.Session) {
 	if (session.metadata?.billing !== 'pass' || session.payment_status !== 'paid') return;
 	const { userId, planId, until } = session.metadata;
 	if (!userId || !until) return console.error(`webhook: pass session ${session.id} without user or end`);
-	await writeMeta(userId, 'pass', {
-		plan: planId || SUBSCRIPTION_PLANS.STUDIO.id,
-		until,
-		customerId: idOf(session.customer),
-		paymentIntentId: idOf(session.payment_intent),
-		purchasedAt: new Date().toISOString()
-	});
+	await writeMeta(
+		userId,
+		() => ({
+			pass: {
+				plan: planId || SUBSCRIPTION_PLANS.STUDIO.id,
+				until,
+				customerId: idOf(session.customer),
+				paymentIntentId: idOf(session.payment_intent),
+				purchasedAt: new Date().toISOString()
+			}
+		}),
+		true
+	);
 }
 
 /** A pass refunded in full is withdrawn; a partial refund leaves it. */
@@ -80,7 +92,7 @@ async function revokeRefundedPass(charge: Stripe.Charge) {
 	const userId = intent.metadata?.userId;
 	if (intent.metadata?.billing !== 'pass' || !userId) return;
 	const { data } = await adminClient().auth.admin.getUserById(userId);
-	if (data.user?.app_metadata?.pass?.paymentIntentId === paymentIntentId) await writeMeta(userId, 'pass', null);
+	if (data.user?.app_metadata?.pass?.paymentIntentId === paymentIntentId) await writeMeta(userId, () => ({ pass: null }));
 }
 
 async function applySubscription(subscription: Stripe.Subscription) {
