@@ -18,10 +18,11 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 5. **Strumentazione della beta:** eventi, disdette, commenti; le metriche sugli esercizi sono nel piano [[Progressi dello studente]]. Nota: [[Metriche]].
 6. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
 7. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
+8. **Catalogo degli adesivi:** guida di stile, pipeline e primo lotto (10 capitoli del primo anno) fatti e committati il 26 settembre, con i primi adesivi fustellati e la dimensione regolabile. Restano i lotti: 29 capitoli, materie, studio, stagionali. Viene dopo i contenuti, che restano il collo di bottiglia. Note: [[Adesivi]], [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]].
 
 ## Prima della v1.0 e della v2
 - Onboarding su classe e indirizzo. Lo schermo "Oggi" è deciso ed entra nella beta (vedi [[2026-09-25 Oggi è lo schermo iniziale dell'app]]); la grafica con Dario. Note: [[App mobile]], [[Progressi dello studente]].
-- Adesivi dopo l'MVP: stile e prima collezione con Dario, premi agganciati alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free. Note: [[Adesivi]], [[Pratica quotidiana]].
+- Adesivi dopo l'MVP: premi agganciati alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free, "crea il tuo" da modelli. Note: [[Adesivi]], [[Pratica quotidiana]].
 - Prezzo del contatto per i tutor e regole di qualità. Nota: [[Pay-per-lead]].
 - Come trovare i primi tutor reali. Nota: [[Marketplace]].
 - Dettaglio degli strumenti DSA e consulenza di un esperto. Nota: [[Strumenti DSA]].
@@ -36,6 +37,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-09-26: sistema degli adesivi: li crea Sapiens (gli studenti poi solo da modelli), SVG scritti da Claude senza aspettare Dario, pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Copertine con adesivi su ogni pagina indice del materiale. Vedi [[2026-09-26 Sistema degli adesivi]].
 - 2026-09-26: progressi dello studente, le sette funzioni: errori nel riepilogo, prova da riprendere, rifai gli errori e `/errori`, progressi nel materiale, pratica quotidiana e serie, schermo "Oggi" come apertura dell'app, metriche della beta. Da pubblicare con un deploy. Vedi [[Progressi dello studente]] e [[2026-09-26 Progressi dello studente]].
 - 2026-09-25: esercizi come percorso di livelli, con prova di salto; risposta senza attesa dell'esercizio dopo; soluzione animata. Nel codice, da pubblicare con un deploy; i nomi dei livelli vanno riletti da Andrea. Vedi [[2026-09-25 Percorso degli esercizi]].
 - 2026-09-24: editor delle note rifatto (una barra, barra degli strumenti agganciabile, pagine con miniature, carta per nota, indice, modalità Lettura, zoom, stampa). Committato, da pubblicare con un deploy. Vedi [[2026-09-24 Editor delle note]].

@@ -5,7 +5,7 @@ tag: [decisione, studenti, gamificazione]
 ---
 # Adesivi dopo la beta, premiano impegno e padronanza
 
-I tempi sono superati da [[2026-09-24 Adesivi nella beta, a partire dalle note]]: gli adesivi entrano nella beta. Le regole su premi, vendita e scadenze restano valide.
+I tempi sono superati da [[2026-09-24 Adesivi nella beta, a partire dalle note]]: gli adesivi entrano nella beta. Le regole su premi, vendita e scadenze restano valide. Lo stile non si decide più con Dario: vedi [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]].
 
 ## Decisione
 Sapiens avrà gli [[Adesivi]]: si guadagnano studiando, si raccolgono in album e si attaccano sulle copertine dei quaderni dello [[Zaino]] (e più avanti sull'avatar). Si costruiscono subito dopo la [[Release Beta]], a partire dalla [[Pratica quotidiana]]. Le regole:

@@ -13,6 +13,8 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 
 Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: lo studente sceglie il livello prima della prova, supera un livello con 8 risposte giuste su 10 e può saltare avanti con una prova di salto. Nel codice, non ancora pubblicato. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]].
 
+Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]].
+
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
@@ -29,10 +31,13 @@ Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: 
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-25 Percorso degli esercizi]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-26 Sistema degli adesivi]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]
+- [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]
+- [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]]
 - [[2026-09-25 Una prova supera un livello solo con almeno 5 domande]]
 - [[2026-09-25 Oggi è lo schermo iniziale dell'app]]
 - [[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]
