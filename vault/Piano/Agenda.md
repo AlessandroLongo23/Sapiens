@@ -14,13 +14,14 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 1. **Lotti nuovi**, uno alla volta, ciascuno completo di teoria, esercizi, formulario e flashcard. Il secondo (i capitoli dei numeri, 8 lezioni) è fatto e committato il 24 settembre. La rilettura la fa Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]).
 2. **Richiesta a OpenAI** per la conservazione zero dei dati e creazione del progetto UE; preparare le 50-100 domande della valutazione. Nota: [[Provider AI]].
 3. **Deploy dei piani:** scritti e provati il 25 settembre (vedi [[Piani e prezzi]]). Restano il deploy, una prova a mano del pagamento sulla pagina di Stripe, e dopo il deploy l'archiviazione dei vecchi prodotti Lite, Base e Pro nel sandbox e delle variabili `PUBLIC_STRIPE_PRICE_LITE/BASE/PRO*` su Vercel. Rileggere termini e informativa aggiornati.
-4. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
-5. **Strumentazione della beta:** eventi, disdette, commenti. Nota: [[Metriche]].
-6. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
-7. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
+4. **Progressi dello studente:** errori alla fine della prova, prova da riprendere, rifai gli errori, progressi nel materiale, pratica quotidiana con la serie, schermo "Oggi", metriche. Pianificato il 25 settembre, circa 3-4 settimane; parte dopo il commit del percorso dei livelli. Nota: [[Progressi dello studente]].
+5. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
+6. **Strumentazione della beta:** eventi, disdette, commenti; le metriche sugli esercizi sono nel piano [[Progressi dello studente]]. Nota: [[Metriche]].
+7. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].
+8. **Lista d'attesa e comunicazione prima del lancio**, e quando coinvolgere Lorena. Note: [[Social]], [[Stagionalità]].
 
 ## Prima della v1.0 e della v2
-- Schermata "Oggi" dell'app e onboarding su classe e indirizzo: su cosa si apre l'app installata al posto della pagina di Matematica. Da disegnare con Dario, legata alla pratica quotidiana. Note: [[App mobile]], [[Pratica quotidiana]].
+- Onboarding su classe e indirizzo. Lo schermo "Oggi" è deciso ed entra nella beta (vedi [[2026-09-25 Oggi è lo schermo iniziale dell'app]]); la grafica con Dario. Note: [[App mobile]], [[Progressi dello studente]].
 - Adesivi dopo l'MVP: stile e prima collezione con Dario, premi agganciati alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free. Note: [[Adesivi]], [[Pratica quotidiana]].
 - Prezzo del contatto per i tutor e regole di qualità. Nota: [[Pay-per-lead]].
 - Come trovare i primi tutor reali. Nota: [[Marketplace]].
@@ -36,6 +37,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-09-25: esercizi come percorso di livelli, con prova di salto; risposta senza attesa dell'esercizio dopo; soluzione animata. Nel codice, da pubblicare con un deploy; i nomi dei livelli vanno riletti da Andrea. Vedi [[2026-09-25 Percorso degli esercizi]].
 - 2026-09-24: editor delle note rifatto (una barra, barra degli strumenti agganciabile, pagine con miniature, carta per nota, indice, modalità Lettura, zoom, stampa). Committato, da pubblicare con un deploy. Vedi [[2026-09-24 Editor delle note]].
 - 2026-09-24: tentativi degli esercizi scritti e provati: tabella `exercise_attempts` applicata, correzione sul server, livello scelto dalla pagina, soluzione dopo l'errore. Da pubblicare con un deploy. Vedi [[Esercizi]].
 - 2026-09-24: tentativi degli esercizi (esercizio intero salvato, correzione sul server, livello scelto dalla pagina) e revisione dei contenuti affidata ad Andrea. Primo lotto e deploy di master fatti. Vedi [[2026-09-24 Tentativi degli esercizi]].

@@ -1,9 +1,11 @@
 ---
-stato: decisa
-aggiornato: 2026-09-24
+stato: superata
+aggiornato: 2026-09-25
 tag: [decisione, studenti, prodotto]
 ---
 # Il livello degli esercizi lo sceglie la pagina
+
+Superata il 25 settembre 2026 da [[2026-09-25 Gli esercizi sono un percorso di livelli]]: il livello lo sceglie lo studente prima della prova, su un percorso.
 
 ## Decisione
 La pagina degli esercizi parte dal primo livello che lo studente non padroneggia ancora, calcolato dai tentativi salvati, e sale dopo due risposte giuste di fila. Lo studente può comunque saltare a un livello a mano. Dopo una risposta sbagliata la pagina mostra la soluzione con i passaggi, poi un esercizio nuovo dello stesso livello.

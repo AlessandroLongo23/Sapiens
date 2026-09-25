@@ -1,6 +1,6 @@
 ---
 stato: in sviluppo
-aggiornato: 2026-09-24
+aggiornato: 2026-09-25
 tag: [tecnica]
 ---
 # Schema dati
@@ -11,6 +11,8 @@ Migrazioni in `supabase/migrations/`:
 - `notebooks`, `notes` con ricerca `tsvector` e collegamento alla lezione (Zaino, 7-8 settembre 2026).
 - `notes.paper` jsonb (24 settembre 2026, migrazione `20260924210000_note_paper.sql`, applicata lo stesso giorno al progetto `godqhjgwmlzfnymzhqdq`): la carta della nota, `{ kind, color, spacing, text }`; un oggetto vuoto è la carta di prima. Si scrive con `PUT /api/zaino/note/[id]/carta`, senza toccare `version`. Gli adesivi in `note_stickers.stickers` hanno ora il campo facoltativo `page`.
 - `exercise_attempts`, i tentativi degli esercizi (24 settembre 2026): migrazione `20260924200000_exercise_attempts.sql`, applicata lo stesso giorno al progetto `godqhjgwmlzfnymzhqdq`. Colonne come nella proposta qui sotto, con un vincolo che tiene insieme `answer`, `correct` e `answered_at`. RLS attiva con la sola lettura delle proprie righe; scrive il server con la chiave di servizio.
+
+- `exercise_sessions`, le prove degli esercizi (25 settembre 2026): migrazione `20260925150000_exercise_sessions.sql`, applicata lo stesso giorno al progetto `godqhjgwmlzfnymzhqdq` con l'API di gestione di Supabase. Una riga per prova: `kind` (`level` o `jump`), `level` (il livello della prova, o quello che la prova di salto apre), `plan` (il livello di ogni domanda, in ordine). Il risultato si legge dai tentativi. In `exercise_attempts` due colonne nuove, `session_id` e `position`, unici in coppia: la stessa domanda chiesta due volte è la stessa riga. RLS come per i tentativi. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]].
 
 Fuori dalle migrazioni: `content_nodes`, l'albero dei contenuti, usato dal codice ma creato a mano. Il piano dell'utente sta in `app_metadata` di Supabase Auth.
 
