@@ -37,6 +37,10 @@ Poi rispondi come chi conosce già il progetto: Alessandro non deve rispiegare i
 - Il vault segue le regole di scrittura globali: niente trattini lunghi, niente "piuttosto che" usato come contrasto, grassetto raro, fonti con nome e data, "da verificare" sui dati non controllati.
 - Le regole per il codice sono in `.cursorrules` e `README.md`.
 
+## Database
+
+Al database di produzione (progetto Supabase `godqhjgwmlzfnymzhqdq`) si accede in autonomia con `node scripts/db.mjs`: `"<sql>"` per una query, `--migrate <file>` per applicare una sola migrazione di `supabase/migrations/`. Usa il `SUPABASE_ACCESS_TOKEN` di `.env.local` ed è consentito nei permessi del progetto. Non usare `supabase db push`: applicherebbe anche le migrazioni di altre sessioni ancora in corso. Il progetto non tiene la storia delle migrazioni, quindi prima di applicarne una controlla con una query se le tabelle esistono già.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
