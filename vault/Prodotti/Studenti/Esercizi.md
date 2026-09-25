@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-24
+aggiornato: 2026-09-25
 tag: [prodotto, studenti, contenuti]
 ---
 # Esercizi
@@ -14,7 +14,7 @@ Esercizi con correzione immediata, collegati alle lezioni, con i progressi salva
 - Sessione di 10 domande (`SESSION_LENGTH` in `src/lib/exercises/config.ts`), solo a scelta multipla. La pagina parte dal primo livello non padroneggiato e sale dopo due risposte giuste di fila a quel livello (`src/lib/exercises/levels.ts`); una fila di tasti "Livello" permette di saltare. Una risposta giusta passa alla domanda dopo da sola; dopo un errore restano sullo schermo la risposta giusta, i passaggi e la soluzione, fino a "Continua". Vedi [[2026-09-24 Il livello degli esercizi lo sceglie la pagina]].
 - Tempo attivo misurato nel browser, senza il tempo con la scheda nascosta. Colonna `build` dal commit del deploy (`VERCEL_GIT_COMMIT_SHA`; che Vercel la esponga in esecuzione è da verificare).
 - Provato il 24 settembre 2026 con un utente di prova, poi cancellato: riga scritta alla consegna, verdetto, salita di livello, salto di livello, nessuna risposta giusta nella pagina o nelle risposte dell'API, lo studente non può scrivere le righe. Tutti i 138.035 passaggi dei 26 generatori passano da KaTeX.
-- Riservati ai piani a pagamento (Lite e superiori), controllo sul server anche nelle due API.
+- Dal 25 settembre 2026 (nel codice, non ancora pubblicato) un account Free fa una sessione al giorno: 10 risposte in ora di Roma su tutte le lezioni, contate da `exercise_attempts` (`freeQuestionsLeft` in `src/lib/server/exercises.ts`). Il limite non taglia mai un esercizio: dopo la decima risposta il server non manda il successivo, e una sessione nuova riceve un 403. Studio e la prova di 7 giorni non hanno limiti. Chi non ha un account vede l'invito a crearne uno.
 - Punti deboli, ripasso e report non esistono ancora: i dati ci sono, le schermate no.
 - Analisi del 23 settembre 2026, con ogni generatore eseguito 200 volte: 6 moduli su 15 falliscono sempre, comprese le equazioni di primo e secondo grado. Un solo generatore rotto fa mostrare "in arrivo" a tutta la lezione. Il generatore delle equazioni di secondo grado ha anche la risposta sbagliata segnata come giusta.
 - Dal 24 settembre 2026 la sessione va dal livello più facile al più difficile: le domande si mescolano solo dentro lo stesso livello (`generateExercises` in `src/lib/server/exercises.ts`). Il livello non è mostrato allo studente. Quante domande per livello lo decide `count` in `config.ts`, oggi 1.

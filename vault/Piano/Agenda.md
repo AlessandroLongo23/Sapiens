@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-24
+aggiornato: 2026-09-25
 tag: [piano, agenda]
 ---
 # Agenda
@@ -13,7 +13,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 
 1. **Lotti nuovi**, uno alla volta, ciascuno completo di teoria, esercizi, formulario e flashcard. Il secondo (i capitoli dei numeri, 8 lezioni) è fatto e committato il 24 settembre. La rilettura la fa Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]).
 2. **Richiesta a OpenAI** per la conservazione zero dei dati e creazione del progetto UE; preparare le 50-100 domande della valutazione. Nota: [[Provider AI]].
-3. **Prezzo esatto di Studio** e testi della pagina prezzi; cambiare `src/lib/stripe/config.ts`. Nota: [[Piani e prezzi]].
+3. **Deploy dei piani:** scritti e provati il 25 settembre (vedi [[Piani e prezzi]]). Restano il deploy, una prova a mano del pagamento sulla pagina di Stripe, e dopo il deploy l'archiviazione dei vecchi prodotti Lite, Base e Pro nel sandbox e delle variabili `PUBLIC_STRIPE_PRICE_LITE/BASE/PRO*` su Vercel. Rileggere termini e informativa aggiornati.
 4. **Progettare il diario** (schermate con Dario). Nota: [[Diario e calendario]].
 5. **Strumentazione della beta:** eventi, disdette, commenti. Nota: [[Metriche]].
 6. **Legale minimo per incassare:** consenso del genitore, esportazione e cancellazione dei dati, regione di Supabase, IVA (OSS o esenzione), assicurazione. Note: [[GDPR e minori]], [[Società e IVA]].

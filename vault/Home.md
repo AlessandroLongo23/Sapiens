@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-24
+aggiornato: 2026-09-25
 tag: [indice]
 ---
 # Sapiens
@@ -27,10 +27,11 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-24 Editor delle note]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-25 Prezzo di Studio]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-25 Studio costa 9,99 euro al mese o 49,99 fino a giugno]]
 - [[2026-09-24 Il livello degli esercizi lo sceglie la pagina]]
 - [[2026-09-24 Ogni tentativo salva l'esercizio intero]]
 - [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]
