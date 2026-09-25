@@ -53,12 +53,12 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 			className={cn('sticky top-0 z-30 border-b border-edge bg-page pt-safe-t transition-transform duration-300 ease-out', hidden && 'max-md:-translate-y-full', immersive && 'max-md:hidden', bare && 'hidden')}
 		>
 			<div id="site-header-bar" className="relative z-20 flex w-full items-center gap-2 bg-page px-3 py-2 md:justify-between md:gap-4 md:p-3">
-				<div className="flex min-w-0 items-center gap-2 md:gap-10">
+				<div className="flex min-w-0 items-center gap-2 md:shrink-0 md:gap-6 lg:gap-10">
 					<AppBackButton />
 					<Link href="/" className="flex shrink-0 items-center gap-3 rounded-md focus-ring app:max-md:hidden" aria-label="Sapiens, pagina iniziale">
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img src="/favicon.svg" alt="" width={40} height={40} className="size-10 rounded-md" />
-						<span className="hidden font-display text-[1.7rem] font-semibold tracking-tight text-fg-strong md:inline">Sapiens</span>
+						<span className="hidden font-display text-[1.7rem] font-semibold tracking-tight text-fg-strong lg:inline">Sapiens</span>
 					</Link>
 
 					{megaMenu && (
@@ -93,7 +93,8 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 						</nav>
 					)}
 
-					{/* Tablets have no room for the level menu: the short links stand in for it until `lg`. */}
+					{/* Tablets have no room for the level menu: the short links stand in for it until `lg`. The links never
+					    shrink; the search box gives way instead, up to its usual width. */}
 					<nav aria-label="Sezioni" className={cn('hidden items-center gap-6 whitespace-nowrap md:flex', megaMenu && 'lg:hidden xl:flex')}>
 						<Link href={CONTENT_ROOT} aria-current={inMateriale ? 'page' : undefined} className={cn(navLink(inMateriale), megaMenu && 'lg:hidden')}>Materiale</Link>
 						<Link href={TUTORING_ROOT} aria-current={inTutoring ? 'page' : undefined} className={navLink(inTutoring)}>Ripetizioni</Link>
@@ -102,8 +103,8 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 					</nav>
 				</div>
 
-				<div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:flex-none md:gap-3">
-					<div className="h-[40px] min-w-0 flex-1 md:h-auto md:w-64 md:flex-none lg:w-72 xl:w-96">
+				<div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:gap-3">
+					<div className="h-[40px] min-w-0 flex-1 md:h-auto md:max-w-64 lg:max-w-72 xl:max-w-80 2xl:max-w-96">
 						{isActive ? (
 							<div className="h-full w-full rounded-lg border border-transparent" aria-hidden="true" />
 						) : (
