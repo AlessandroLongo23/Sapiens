@@ -1,7 +1,7 @@
 ---
-stato: bozza
+stato: in sviluppo
 release: beta
-aggiornato: 2026-09-25
+aggiornato: 2026-09-26
 tag: [piano, studenti, tecnica]
 ---
 # Progressi dello studente
@@ -14,6 +14,9 @@ Decisioni alla base:
 - [[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]
 - [[2026-09-25 Oggi è lo schermo iniziale dell'app]]
 - [[2026-09-25 Una prova supera un livello solo con almeno 5 domande]]
+
+## Stato attuale
+Le sette funzioni sono state scritte, provate nel browser e committate tra il 25 e il 26 settembre 2026, una alla volta, non ancora pubblicate con un deploy. Cosa fa il codice di oggi è nelle note: [[Esercizi]] (funzioni 1-4), [[Pratica quotidiana]] (5), [[App mobile]] (6), [[Metriche]] (7). Scostamenti dal piano sotto: la pagina degli errori è `/errori` e non `/oggi/errori`; un errore si chiude con risposte giuste date in prove successive, non nella stessa; il segno dei capitoli dice "1/3 completate". Resta da riportare in [[Schema dati]] la migrazione `20260926090000_exercise_progress.sql` (conteggi delle prove, `exercise_days`, trigger) e `20260926140000_beta_metrics.sql`.
 
 ## Da dove si parte
 Il 25 settembre 2026 i tentativi si vedono solo nel percorso della lezione (lavoro dell'altra sessione, non ancora committato: livelli superati, ultime prove, migliore). Le pagine di materia e capitolo sono in cache (ISR, 10 minuti) e non mostrano niente dell'utente. Non esistono serie di giorni, statistiche, errori da rivedere, uno schermo "Oggi" né lavori pianificati (cron). Il risultato di una prova si ricalcola ogni volta dai suoi tentativi: non c'è un segno di "prova finita" né un conteggio per giorno.
