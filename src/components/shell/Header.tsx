@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, Search, UsersRound } from 'lucide-react';
-import { CONTENT_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
+import { CONTENT_ROOT, OGGI_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 import { nodePath } from '@/lib/seo/slug';
 import { useSearch } from '@/lib/state/search';
 import { useAuth } from '@/lib/state/auth';
@@ -44,6 +44,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 	const inMateriale = pathname.startsWith(CONTENT_ROOT);
 	const inTutoring = pathname.startsWith(TUTORING_ROOT);
 	const inZaino = pathname.startsWith(ZAINO_ROOT);
+	const inOggi = pathname === OGGI_ROOT || pathname.startsWith('/errori');
 
 	return (
 		<header
@@ -96,6 +97,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 					<nav aria-label="Sezioni" className={cn('hidden items-center gap-6 whitespace-nowrap md:flex', megaMenu && 'lg:hidden xl:flex')}>
 						<Link href={CONTENT_ROOT} aria-current={inMateriale ? 'page' : undefined} className={cn(navLink(inMateriale), megaMenu && 'lg:hidden')}>Materiale</Link>
 						<Link href={TUTORING_ROOT} aria-current={inTutoring ? 'page' : undefined} className={navLink(inTutoring)}>Ripetizioni</Link>
+						{user && <Link href={OGGI_ROOT} aria-current={inOggi ? 'page' : undefined} className={navLink(inOggi)}>Oggi</Link>}
 						<Link href={ZAINO_ROOT} aria-current={inZaino ? 'page' : undefined} className={navLink(inZaino)}>Zaino</Link>
 					</nav>
 				</div>

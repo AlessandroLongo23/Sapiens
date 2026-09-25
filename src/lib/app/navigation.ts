@@ -1,7 +1,7 @@
-import { APP_START, CONTENT_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
+import { APP_LIBRARY, APP_START, CONTENT_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 
 /** The pages the app's tabs open. They have no back arrow: the tab bar is the way out. */
-const TAB_ROOTS = new Set([APP_START, CONTENT_ROOT, ZAINO_ROOT, TUTORING_ROOT]);
+const TAB_ROOTS = new Set([APP_START, APP_LIBRARY, CONTENT_ROOT, ZAINO_ROOT, TUTORING_ROOT]);
 
 /** Path prefixes that are not pages of their own, skipped when going up. */
 const NOT_PAGES = new Set(['/zaino/nota']);

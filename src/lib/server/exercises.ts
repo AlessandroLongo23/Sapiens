@@ -650,20 +650,67 @@ export interface WeekDay {
 	today: boolean;
 }
 
-/** The streak of days, the last seven days, and today's practice, for the page that offers it. */
-export async function practiceStatus(userId: string): Promise<{ streak: Streak; week: WeekDay[]; practice: PracticeState }> {
-	const [days, practice, rows] = await Promise.all([answerDays(userId), todaysPractice(userId), allPathRuns(userId)]);
+/** A lesson on Oggi: where it is and how the student left it. */
+export interface TodayLesson {
+	titleHtml: string;
+	exercisesUrl: string;
+	chapterUrl: string;
+}
+
+/** Everything Oggi shows (vault/Decisioni/2026-09-25 Oggi è lo schermo iniziale dell'app.md). */
+export interface TodayView {
+	streak: Streak;
+	week: WeekDay[];
+	practice: PracticeState;
+	/** The newest run on a lesson, left halfway today or yesterday. */
+	resume: (TodayLesson & { kind: RunKind; level: number; answered: number; length: number }) | null;
+	/** The lesson practised most recently and the level it suggests; `done` when every level is passed. */
+	next: (TodayLesson & { level: number; levelName: string | null; done: boolean }) | null;
+	/** Levels with a mistake still to redo. */
+	openMistakes: number;
+	/** Free questions left today; null on Studio. */
+	freeLeft: number | null;
+}
+
+/** Runs left halfway are offered on Oggi for this long: today and yesterday. */
+const TODAY_RESUME_MS = 48 * 3_600_000;
+
+/** Oggi for a student, in one round of parallel queries. For a Free account (`limited`), with today's free questions. */
+export async function todayView(userId: string, limited = false): Promise<TodayView> {
+	const [days, practice, rows, recent, left, index] = await Promise.all([answerDays(userId), todaysPractice(userId), allPathRuns(userId), recentAnswers(userId), limited ? freeQuestionsLeft(userId) : Promise.resolve(null), lessonIndex()]);
 	const today = romeDate();
 	const streak = streakOf(days, today);
 	const counted = new Set(days.filter((d) => d.answered >= STREAK_MIN_ANSWERS).map((d) => d.day));
 	const week: WeekDay[] = [];
 	for (let day = today, i = 0; i < 7; i++, day = previousDay(day)) week.unshift({ day, counted: counted.has(day), today: day === today });
-	const state: PracticeState = practice
+	const practiceState: PracticeState = practice
 		? practice.finished_at
 			? { state: 'done', correct: practice.correct, length: practice.plan.length }
 			: { state: 'doing', answered: practice.answered, length: practice.plan.length }
 		: rows.length > 0
 			? { state: 'todo' }
 			: { state: 'none' };
-	return { streak, week, practice: state };
+
+	const lessonOf = (path: string): TodayLesson | null => {
+		const info = index.get(path);
+		return info ? { titleHtml: info.titleHtml, exercisesUrl: info.exercisesUrl, chapterUrl: info.chapterUrl } : null;
+	};
+	const latest = rows.find((r) => configs[r.lesson_path] && index.has(r.lesson_path));
+	const resumeLesson = latest && latest.answered > 0 && latest.answered < latest.plan.length && Date.now() - Date.parse(latest.started_at) < TODAY_RESUME_MS ? lessonOf(latest.lesson_path) : null;
+	let next: TodayView['next'] = null;
+	if (latest) {
+		const config = configs[latest.lesson_path];
+		const { states, current } = pathState(config.levels, rows.filter((r) => r.generator_id === config.generator).map(toRun));
+		const lesson = lessonOf(latest.lesson_path);
+		if (lesson) next = { ...lesson, level: current, levelName: levelName(config.generator, current), done: states.every((st) => st.status === 'passed') };
+	}
+	return {
+		streak,
+		week,
+		practice: practiceState,
+		resume: latest && resumeLesson ? { ...resumeLesson, kind: latest.kind, level: latest.level, answered: latest.answered, length: latest.plan.length } : null,
+		next,
+		openMistakes: openMistakes(recent).filter((m) => configs[m.lesson]).length,
+		freeLeft: left
+	};
 }

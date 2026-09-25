@@ -44,9 +44,16 @@ export const OGGI_ROOT = '/oggi';
 
 /**
  * Where the installed app (PWA or Capacitor) opens, in place of the landing
- * page: the beta's only subject, until an onboarding asks the student's class.
+ * page: Oggi, the student's day (vault/Decisioni/2026-09-25 Oggi è lo schermo
+ * iniziale dell'app.md). Visitors without an account find the way in there.
  */
-export const APP_START = `${CONTENT_ROOT}/scuola-superiore/matematica`;
+export const APP_START = OGGI_ROOT;
+
+/**
+ * The app's Materiale tab: the beta's only subject, until an onboarding asks
+ * the student's class.
+ */
+export const APP_LIBRARY = `${CONTENT_ROOT}/scuola-superiore/matematica`;
 
 /**
  * Path prefixes that must never be indexed: authenticated areas, checkout

@@ -1,6 +1,6 @@
 ---
 stato: in sviluppo
-release:
+release: beta
 aggiornato: 2026-09-25
 tag: [prodotto, studenti]
 ---
@@ -13,7 +13,7 @@ Dal 25 settembre 2026 (sera), sulla pagina `/oggi`:
 - Pratica di oggi: 5 domande dalle lezioni cominciate, una sola al giorno (indice unico nel database, anche con due schede aperte). Composizione in `src/lib/exercises/practice.ts`: fino a 2 dagli errori ancora da rifare, 1 dal livello a cui lo studente è arrivato nella lezione fatta per ultima, le altre da livelli già superati delle lezioni fatte da più tempo, al massimo 3 lezioni, mai un livello chiuso. È la stessa per tutto il giorno (seme da studente e data). Si riprende a metà dallo stesso esercizio; non supera né apre livelli; usa le domande gratuite del giorno.
 - Serie di giorni (`src/lib/exercises/streak.ts`): un giorno conta con almeno 5 risposte in qualunque prova, nel giorno di Roma, da `exercise_days`. La serie arriva a oggi, o a ieri finché oggi non conta: allora la pagina dice quante domande mancano per tenerla. Gli ultimi sette giorni come caselle, il record solo quando supera la serie in corso.
 - Senza lezioni cominciate la scheda rimanda al materiale. Chi non ha un account vede l'invito a crearne uno.
-- Mancano: promemoria, notifiche, premi (vedi [[Adesivi]]). Lo schermo "Oggi" completo è la funzione 6 di [[Progressi dello studente]].
+- Mancano: promemoria, notifiche, premi (vedi [[Adesivi]]). Lo schermo "Oggi" completo è descritto in [[App mobile]].
 
 ## Obiettivo
 - Dal 25 settembre 2026 il piano per la beta è in [[Progressi dello studente]]: una prova di 5 domande al giorno dalle lezioni cominciate, fatta dallo schermo "Oggi" ([[2026-09-25 Oggi è lo schermo iniziale dell'app]]); la serie conta i giorni con almeno 5 risposte (proposta).

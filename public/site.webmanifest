@@ -4,7 +4,7 @@
 	"short_name": "Sapiens",
 	"description": "Lezioni, esercizi e flashcard di matematica per le superiori",
 	"lang": "it",
-	"start_url": "/materiale/scuola-superiore/matematica",
+	"start_url": "/oggi",
 	"scope": "/",
 	"display": "standalone",
 	"orientation": "portrait",

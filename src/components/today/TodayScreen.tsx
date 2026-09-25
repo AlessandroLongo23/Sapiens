@@ -2,16 +2,17 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { AnsweredView, ExerciseView, PracticeState, SessionView, WeekDay } from '@/lib/server/exercises';
-import type { Streak } from '@/lib/exercises/streak';
+import type { AnsweredView, ExerciseView, SessionView, TodayView } from '@/lib/server/exercises';
 import { progressStore } from '@/lib/state/progress';
 import { post, type Progress } from '@/components/content/exercises/RunPlayer';
-import { MixedRun } from '@/components/content/exercises/ReviewRun';
+import { MixedRun, ReviewRun } from '@/components/content/exercises/ReviewRun';
 import { PracticeCard } from './PracticeCard';
 import { StreakCard } from './StreakCard';
+import { FreeCard, MistakesCard, NextCard, ResumeCard } from './TodayCards';
 
 /** A run under way on Oggi, possibly taken up again. */
 interface Current {
+	kind: 'practice' | 'review';
 	session: SessionView;
 	first: ExerciseView;
 	startAt: number;
@@ -20,18 +21,17 @@ interface Current {
 }
 
 interface Props {
-	streak: Streak;
-	week: WeekDay[];
-	practice: PracticeState;
-	/** A Free account with no questions left today. */
-	blocked: boolean;
+	today: TodayView;
 }
 
 /**
- * The student's day (vault/Decisioni/2026-09-25 Oggi è lo schermo iniziale dell'app.md): the streak and today's
- * practice, run right here. Back from a run, the server draws the page again with the new streak.
+ * The student's day (vault/Decisioni/2026-09-25 Oggi è lo schermo iniziale dell'app.md), most pressing first: the
+ * run left halfway, today's practice and the streak, the mistakes to redo, where the path goes on, and the free
+ * questions left. Practice and reviews run right here; back from one, the server draws the page again.
  */
-export function TodayScreen({ streak, week, practice, blocked }: Props) {
+export function TodayScreen({ today }: Props) {
+	const { streak, week, practice, resume, next, openMistakes, freeLeft } = today;
+	const blocked = freeLeft === 0;
 	const router = useRouter();
 	const [run, setRun] = useState<Current | null>(null);
 	const [starting, setStarting] = useState(false);
@@ -43,11 +43,27 @@ export function TodayScreen({ streak, week, practice, blocked }: Props) {
 		setError(null);
 		try {
 			const res = await post<{ session: SessionView; exercise: ExerciseView; startAt: number; progress?: Progress[]; mistakes?: AnsweredView[] }>('/api/esercizi', { kind: 'practice' });
-			setRun({ session: res.session, first: res.exercise, startAt: res.startAt, initial: res.progress, earlier: res.mistakes });
+			setRun({ kind: 'practice', session: res.session, first: res.exercise, startAt: res.startAt, initial: res.progress, earlier: res.mistakes });
 		} catch (err) {
 			setError((err as Error).message);
 		} finally {
 			setStarting(false);
+		}
+	};
+
+	const [reviewing, setReviewing] = useState(false);
+	const [reviewError, setReviewError] = useState<string | null>(null);
+	const startReview = async () => {
+		if (reviewing) return;
+		setReviewing(true);
+		setReviewError(null);
+		try {
+			const res = await post<{ session: SessionView; exercise: ExerciseView }>('/api/esercizi', { kind: 'review' });
+			setRun({ kind: 'review', session: res.session, first: res.exercise, startAt: 0 });
+		} catch (err) {
+			setReviewError((err as Error).message);
+		} finally {
+			setReviewing(false);
 		}
 	};
 
@@ -56,6 +72,13 @@ export function TodayScreen({ streak, week, practice, blocked }: Props) {
 		setRun(null);
 		router.refresh();
 	};
+
+	if (run?.kind === 'review')
+		return (
+			<div className="-mx-4 min-h-[70dvh] sm:mx-0">
+				<ReviewRun session={run.session} first={run.first} backLabel="Torna a Oggi" onBack={back} />
+			</div>
+		);
 
 	if (run)
 		return (
@@ -76,8 +99,21 @@ export function TodayScreen({ streak, week, practice, blocked }: Props) {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<PracticeCard practice={practice} onStart={startPractice} starting={starting} blocked={blocked} error={error} />
+			{resume && <ResumeCard resume={resume} />}
+			<PracticeCard practice={practice} onStart={startPractice} starting={starting} blocked={blocked && practice.state !== 'done'} error={error} />
 			<StreakCard streak={streak} week={week} />
+			{openMistakes > 0 && (
+				<div className="flex flex-col gap-2">
+					<MistakesCard open={openMistakes} onRedo={startReview} starting={reviewing} blocked={blocked} />
+					{reviewError && (
+						<p role="alert" className="px-1 text-sm text-danger-fg">
+							{reviewError}
+						</p>
+					)}
+				</div>
+			)}
+			{next && !(resume && resume.exercisesUrl === next.exercisesUrl) && <NextCard next={next} />}
+			{freeLeft !== null && <FreeCard left={freeLeft} />}
 		</div>
 	);
 }

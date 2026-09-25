@@ -5,7 +5,7 @@ import { OGGI_ROOT } from '@/lib/config/site';
 import { Features } from '@/lib/stripe/config';
 import { hasFeature } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
-import { freeQuestionsLeft, practiceStatus } from '@/lib/server/exercises';
+import { todayView } from '@/lib/server/exercises';
 import { HOME_CRUMB } from '@/components/content/Breadcrumb';
 import { Page, PageHeader } from '@/components/content/PageHeader';
 import { TodayInvite } from '@/components/today/TodayInvite';
@@ -21,13 +21,13 @@ const TODAY = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric'
 export default async function OggiPage() {
 	const user = await currentUser();
 	const limited = !!user && !hasFeature(user, Features.EXERCISES);
-	const [status, left] = user ? await Promise.all([practiceStatus(user.id), limited ? freeQuestionsLeft(user.id) : Promise.resolve(1)]) : [null, 0];
+	const today = user ? await todayView(user.id, limited) : null;
 	const date = TODAY.format(new Date());
 
 	return (
 		<Page width="medium">
 			<PageHeader crumbs={[HOME_CRUMB, { label: 'Oggi' }]} icon={Sun} eyebrow={date.charAt(0).toUpperCase() + date.slice(1)} title="Oggi" />
-			{status ? <TodayScreen streak={status.streak} week={status.week} practice={status.practice} blocked={limited && left === 0} /> : <TodayInvite />}
+			{today ? <TodayScreen today={today} /> : <TodayInvite />}
 		</Page>
 	);
 }

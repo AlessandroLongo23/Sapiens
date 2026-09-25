@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useAuth } from '@/lib/state/auth';
+import { APP_LIBRARY } from '@/lib/config/site';
 import { TRIAL_DAYS } from '@/lib/stripe/config';
 import { Button } from '@/components/ui/Button';
 
@@ -19,6 +21,9 @@ export function TodayInvite() {
 					Accedi
 				</Button>
 			</div>
+			<Link href={APP_LIBRARY} className="text-sm font-medium text-fg-muted underline underline-offset-2 hover:text-fg focus-ring">
+				Intanto esplora il materiale
+			</Link>
 		</section>
 	);
 }
