@@ -514,3 +514,37 @@ export function answerExercise(id: string, sealed: string, choice: number, activ
 		}
 	};
 }
+
+/** How far a student has got on a lesson's path: levels passed, out of the levels it offers. */
+export interface LessonProgress {
+	passed: number;
+	total: number;
+}
+
+/**
+ * The student's progress on every lesson they have started, by database path, for the badges on the pages of the
+ * material: one query over their runs at a level and jump tests, each lesson's path worked out with pathState as on
+ * the lesson itself. Lessons without runs are left out.
+ */
+export async function lessonProgress(userId: string): Promise<Record<string, LessonProgress>> {
+	const { data, error } = await db()
+		.from('exercise_sessions')
+		.select('generator_id, kind, level, plan, answered, correct, started_at')
+		.eq('user_id', userId)
+		.in('kind', ['level', 'jump'])
+		.order('started_at', { ascending: false })
+		.limit(5000);
+	if (error) throw error;
+	const byGenerator = new Map<string, Run[]>();
+	for (const r of (data ?? []) as (Omit<RunRow, 'id'> & { generator_id: string })[]) {
+		byGenerator.set(r.generator_id, [...(byGenerator.get(r.generator_id) ?? []), toRun({ ...r, id: '' })]);
+	}
+	const progress: Record<string, LessonProgress> = {};
+	for (const [path, config] of Object.entries(configs)) {
+		const past = byGenerator.get(config.generator);
+		if (!past) continue;
+		const { states } = pathState(config.levels, past);
+		progress[path] = { passed: states.filter((st) => st.status === 'passed').length, total: config.levels.length };
+	}
+	return progress;
+}

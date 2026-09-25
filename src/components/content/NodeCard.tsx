@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils/cn';
 import { NodeIcon } from '@/components/ui/NodeIcon';
 import { Latex } from '@/components/ui/Latex';
 import { PenStroke } from './PageHeader';
+import { ProgressMeta, type RowProgress } from './ProgressMeta';
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
@@ -53,7 +54,7 @@ function Cover({ node, href }: { node: ContentNode; href: string }) {
  * title, what it holds, an arrow. A lesson not written yet stays a link (the
  * page says it is coming) but reads as pencil, not ink.
  */
-function Row({ node, href, index }: { node: ContentNode; href: string; index: number }) {
+function Row({ node, href, index, progress }: { node: ContentNode; href: string; index: number; progress?: RowProgress }) {
 	const ready = node.type === 'chapter' ? node.children.length > 0 : node.has_theory !== false;
 	const meta = node.type === 'chapter' ? (ready ? plural(node.children.length, 'lezione', 'lezioni') : 'In arrivo') : ready ? 'Vai alla lezione' : 'In arrivo';
 	return (
@@ -68,14 +69,21 @@ function Row({ node, href, index }: { node: ContentNode; href: string; index: nu
 					</span>
 				</span>
 				{/* "Vai alla lezione" says what a tap does anyway; in the app on a phone the row and its arrow say it. */}
-				<span className={cn('label-mono shrink-0', ready ? 'text-fg-subtle' : 'italic text-fg-faint', ready && node.type !== 'chapter' && 'app:max-md:hidden')}>{meta}</span>
+				{(() => {
+					const label = <span className={cn('label-mono shrink-0', ready ? 'text-fg-subtle' : 'italic text-fg-faint', ready && node.type !== 'chapter' && 'app:max-md:hidden')}>{meta}</span>;
+					// The student's progress replaces the label once known; unlike "Vai alla lezione", it shows in the app too.
+					return progress && ready ? <ProgressMeta progress={progress} fallback={label} /> : label;
+				})()}
 				<ArrowRight className="size-4 shrink-0 self-center text-fg-faint transition-[transform,color] duration-300 ease-out-soft group-hover:translate-x-1 group-hover:text-tint-fg" aria-hidden="true" />
 			</Link>
 		</li>
 	);
 }
 
-/** A level, subject, chapter or lesson on an index page: levels and subjects are covers, chapters and lessons are numbered rows (render those inside a list). */
-export function NodeCard({ node, href, index = 0 }: { node: ContentNode; href: string; index?: number }) {
-	return node.type === 'level' || node.type === 'subject' ? <Cover node={node} href={href} /> : <Row node={node} href={href} index={index} />;
+/**
+ * A level, subject, chapter or lesson on an index page: levels and subjects are covers, chapters and lessons are
+ * numbered rows (render those inside a list). `progress` names what the row can show the student's progress for.
+ */
+export function NodeCard({ node, href, index = 0, progress }: { node: ContentNode; href: string; index?: number; progress?: RowProgress }) {
+	return node.type === 'level' || node.type === 'subject' ? <Cover node={node} href={href} /> : <Row node={node} href={href} index={index} progress={progress} />;
 }

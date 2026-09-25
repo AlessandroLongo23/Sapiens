@@ -7,6 +7,7 @@ import type { ExerciseView, PathView, SessionView } from '@/lib/server/exercises
 import { SESSION_LENGTH } from '@/lib/exercises/config';
 import { JUMP_LENGTH, MIN_PASS_LENGTH, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
 import { cn } from '@/lib/utils/cn';
+import { progressStore } from '@/lib/state/progress';
 import { Button, LinkButton } from '@/components/ui/Button';
 import { ExercisePath } from './ExercisePath';
 import { RunMistakes } from './RunMistakes';
@@ -88,6 +89,8 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 
 	/** Back to the path, which the server draws again with the runs just made. */
 	const leave = () => {
+		// The badges of the material's pages ask for the progress again.
+		progressStore.getState().invalidate();
 		setRun(null);
 		setReview(null);
 		setError(null);
