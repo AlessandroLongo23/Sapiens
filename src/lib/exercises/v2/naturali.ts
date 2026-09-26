@@ -143,6 +143,135 @@ export function latex(x: Node): string {
 	}
 }
 
+// Widths in em of a formula, fitted on 600 expressions of these generators as KaTeX draws them in
+// display (spacing around the operators included); KaTeX sets its formulas at 1.21 times the text.
+const W_DIGIT = 0.5;
+const W_THIN = 0.167;
+const W_OP: Record<Op, number> = { '+': 1.01, '-': 1.01, '*': 0.885, ':': 0.835 };
+const W_OPEN = [0.333, 0.335, 0.48];
+/** A digit of an exponent. */
+const W_SCRIPT_DIGIT = 0.4;
+const KATEX_SCALE = 1.21;
+
+/** A piece of the expression as it is written: a break may come before an operator. */
+interface Piece {
+	tex: string;
+	em: number;
+	/** How many brackets are open around it. */
+	depth: number;
+	op: boolean;
+}
+
+function numEm(v: number): number {
+	const s = String(v);
+	return s.length * W_DIGIT + (v >= 10000 ? Math.floor((s.length - 1) / 3) * W_THIN : 0);
+}
+
+/** Width in em of the formula font of the expression as latex() writes it, in one line. */
+export function widthEm(x: Node): number {
+	return pieces(x).reduce((a, p) => a + p.em, 0);
+}
+
+function pieces(x: Node, depth = 0): Piece[] {
+	switch (x.t) {
+		case 'n':
+			return [{ tex: fmt(x.v), em: numEm(x.v), depth, op: false }];
+		case 'op':
+			return [...pieces(x.l, depth), { tex: SYM[x.op], em: W_OP[x.op], depth, op: true }, ...pieces(x.r, depth)];
+		case 'pow': {
+			// base and exponent stay together
+			const b = pieces(x.b, depth);
+			const last = b[b.length - 1];
+			b[b.length - 1] = { ...last, tex: `${last.tex}${expLatex(x.e)}`, em: last.em + (W_SCRIPT_DIGIT / W_DIGIT) * widthEm(x.e) };
+			return b;
+		}
+		case 'g':
+			return [
+				{ tex: OPEN[x.k], em: W_OPEN[x.k], depth, op: false },
+				...pieces(x.c, depth + 1),
+				{ tex: CLOSE[x.k], em: W_OPEN[x.k], depth, op: false },
+			];
+	}
+}
+
+/**
+ * The widest line, in em of the formula font, that fits a phone: the exercise page gives a problem
+ * formula 350 px at 18 px, that is 16.07 em once KaTeX has scaled it by 1.21. On the expressions of
+ * these generators the estimate is between 0 and 2 px over what the browser draws, never under.
+ */
+export const LINE_EM = 350 / 18 / KATEX_SCALE;
+
+/**
+ * Where the lines of the expression begin (indices of operator pieces), each line within LINE_EM.
+ * A break before + or - inside d brackets costs 2d. A break before \cdot or : costs 2d + 1 when the
+ * term it splits begins the line ("2 \cdot 3" / "\cdot [4 + 5]"), 2d + 2 when the term began after a
+ * + or a - on the same line: "36 + 2" / "\cdot [...]" reads as (36 + 2) \cdot [...].
+ * The choice: as few lines as possible; then the smallest highest cost; then fewer lines with just a
+ * number on them ("2", "\cdot 15", under an eighth of the width); then the smallest total cost; then
+ * the shortest line as long as possible.
+ */
+function breaks(ps: Piece[]): number[] {
+	const sum = [0];
+	for (const p of ps) sum.push(sum[sum.length - 1] + p.em);
+	const width = (a: number, b: number) => sum[b] - sum[a];
+	if (width(0, ps.length) <= LINE_EM) return [0];
+	const ops = ps.map((p, i) => (p.op ? i : -1)).filter((i) => i > 0);
+	type Plan = { starts: number[]; key: number[] };
+	let best: Plan | null = null;
+	const better = (x: number[], y: number[]) => {
+		for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] < y[i];
+		return false;
+	};
+	const visit = (starts: number[], left: number) => {
+		const s = starts[starts.length - 1];
+		if (width(s, ps.length) <= LINE_EM) {
+			const cuts = starts.slice(1);
+			const lines = starts.map((a, i) => width(a, starts[i + 1] ?? ps.length));
+			const cost = (i: number, from: number) => {
+				const d = ps[i].depth;
+				if (ps[i].tex === '+' || ps[i].tex === '-') return 2 * d;
+				for (let j = i - 1; j > from && ps[j].depth >= d; j--) if (ps[j].depth === d && (ps[j].tex === '+' || ps[j].tex === '-')) return 2 * d + 2;
+				return 2 * d + 1;
+			};
+			const costs = cuts.map((i, k) => cost(i, starts[k]));
+			const key = [
+				starts.length,
+				Math.max(...costs),
+				lines.filter((w) => w < LINE_EM / 8).length,
+				costs.reduce((a, b) => a + b, 0),
+				-Math.min(...lines),
+			];
+			if (!best || better(key, best.key)) best = { starts, key };
+			return;
+		}
+		if (!left) return;
+		for (const i of ops) if (i > s && width(s, i) <= LINE_EM) visit([...starts, i], left - 1);
+	};
+	for (let n = 1; n <= 4 && !best; n++) visit([0], n);
+	if (!best) throw new Error(`problemLatex: no way to break ${ps.map((p) => p.tex).join(' ')}`);
+	return (best as Plan).starts;
+}
+
+/**
+ * The expression as the problem shows it: latex() when it fits a phone, otherwise an aligned
+ * expression broken before a +, -, \cdot or : as breaks() chooses, each line within LINE_EM.
+ * Every continuation line begins with the operator; brackets are plain, so a break may fall inside them.
+ */
+export function problemLatex(x: Node): string {
+	const ps = pieces(x);
+	const starts = breaks(ps);
+	if (starts.length === 1) return latex(x);
+	const lines = starts.map((a, i) =>
+		ps
+			.slice(a, starts[i + 1] ?? ps.length)
+			.map((p) => p.tex)
+			.join(' ')
+			.replace(/([([]|\\\{) /g, '$1')
+			.replace(/ ([)\]]|\\\})/g, '$1'),
+	);
+	return `\\begin{aligned}&${lines.join(' \\\\ &\\quad ')}\\end{aligned}`;
+}
+
 /** ASCII for the checker: * and :, brackets ( [ {, exponent "^3" or "^(12)". */
 export function ascii(x: Node): string {
 	switch (x.t) {

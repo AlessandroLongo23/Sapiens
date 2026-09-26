@@ -95,6 +95,28 @@ Livello 5: è già a scelta multipla; distrattori: la condizione $1 \le x$ dimen
 un estremo incluso invece che escluso, $\mathbb{N}$ al posto di $\mathbb{Z}$, pari al posto di
 dispari, un estremo spostato di un passo.
 
+## Righe sul telefono
+
+Il problema sta in 350 px a 18 px, ogni risposta in un pulsante di 252 px a 16 px.
+
+- Livello 2: $A = \{x \in \mathbb{N} \mid x \text{ è multiplo di } k \text{ e } 1 \le x \le n\}$ è
+  largo 380 px e va su due righe, spezzato prima della "e", con le graffe $\Big\{ \dots \Big\}$:
+  `A = \Big\{x \in \mathbb{N} \mid x \text{ è multiplo di } 5` e sotto `\text{e } 1 \le x \le 25\Big\}`.
+  Solo quando la condizione è "multiplo di" con entrambi gli estremi: le altre proprietà stanno su
+  una riga (la più larga, con $x \le n$, arriva a 345 px).
+- Livello 5: ogni proprietà con due condizioni va su due righe nello stesso modo. Così in una domanda
+  sui multipli o sui pari e dispari le quattro opzioni hanno la stessa forma.
+- Variante a scelta multipla dei livelli 1-4: un insieme elencato più largo del pulsante (stima a
+  16 px: 18 px di graffe, 10 per cifra, 11 per segno meno, 8 per virgola) va su due righe, la prima
+  metà sopra: $\Big\{-6, -5, -4, -3, -2, -1,$ e sotto $0, 1, 2, 3, 4\Big\}$. Se succede a una
+  opzione, vanno su due righe tutte quelle con almeno 4 elementi, perché la forma non tradisca la
+  risposta.
+
+Il verificatore ricostruisce le due righe dalla proprietà o dagli elementi e boccia una riga persa.
+Misura (`scripts/exercises/width.mts`, 26 settembre 2026): problemi del livello 2 al massimo 345 px
+(prima 380, 23 su 150 oltre); opzioni al massimo 243 px al livello 3 (prima 271) e 236 al livello 5
+(prima 314).
+
 ## Esercizi da evitare
 
 - Proprietà che descrivono insiemi infiniti o con più di 10 elementi.

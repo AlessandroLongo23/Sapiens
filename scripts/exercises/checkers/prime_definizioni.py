@@ -4,6 +4,7 @@ Truth comes from tables and enumerations written here: which collections are wel
 which descriptions give an empty set, which sets are finite. Option LaTeX is re-rendered and
 compared, so a label that does not match its graded meaning is caught.
 """
+import re
 from fractions import Fraction
 
 from checkers.insiemi_comune import (
@@ -27,25 +28,40 @@ CASE_RANGES = {
     6: {"infinito": (0.35, 0.65), "finito": (0.35, 0.65)},
 }
 
-# Level 1: True = well defined (it is a set).
+def line_tex(text):
+    """Prose with inline math between dollars as one LaTeX line; " | " is a space."""
+    parts = re.split(r"(\$[^$]*\$)", text.replace(" | ", " "))
+    return " ".join(p[1:-1] if p.startswith("$") else f"\\text{{{p}}}" for p in parts if p)
+
+
+def option_tex(text):
+    """An answer option: on one line, or on the lines marked by " | " in a gathered when the one line
+    would be wider than the 252 px of the answer button."""
+    lines = text.split(" | ")
+    if len(lines) == 1:
+        return line_tex(text)
+    return "\\begin{gathered} " + " \\\\ ".join(line_tex(l) for l in lines) + " \\end{gathered}"
+
+
+# Level 1: True = well defined (it is a set). " | " is where a long option goes to the second line.
 COLLECTIONS = {
     "I giorni della settimana": True,
     "Le vocali dell'alfabeto italiano": True,
-    "I mesi dell'anno che hanno 30 giorni": True,
+    "I mesi dell'anno | che hanno 30 giorni": True,
     "I numeri naturali minori di 10": True,
     "I divisori di 24": True,
     "I multipli di 5 minori di 100": True,
-    "I numeri pari compresi tra 7 e 21": True,
-    "Gli studenti della tua classe nati a marzo": True,
+    "I numeri pari | compresi tra 7 e 21": True,
+    "Gli studenti della tua classe | nati a marzo": True,
     "I numeri primi minori di 30": True,
     "Le stagioni dell'anno": True,
     "I colori della bandiera italiana": True,
     "I numeri dispari minori di 20": True,
-    "I ragazzi simpatici della tua classe": False,
+    "I ragazzi simpatici | della tua classe": False,
     "I numeri grandi": False,
     "I film più belli dell'anno": False,
     "Le città più belle d'Italia": False,
-    "I libri interessanti della biblioteca": False,
+    "I libri interessanti | della biblioteca": False,
     "Le canzoni famose": False,
     "I numeri vicini a 100": False,
     "Gli studenti bravi in matematica": False,
@@ -59,54 +75,64 @@ MONTH_DAYS = {"gennaio": 31, "febbraio": 28, "marzo": 31, "aprile": 30, "maggio"
 
 
 def empty_candidate(values):
-    """(latex, number of elements) of a level 4 candidate."""
+    """(latex of the option, number of elements) of a level 4 candidate."""
+    tex, n = _empty_candidate(values)
+    return option_tex(tex), n
+
+
+def _empty_candidate(values):
     k = values[0]
     N = range(0, 200)
     if k == "lt":
         n = int(values[1])
-        return f"\\text{{i numeri naturali minori di }} {n}", sum(1 for x in N if x < n)
+        return f"i numeri naturali minori di ${n}$", sum(1 for x in N if x < n)
     if k == "eq":
         a, b = int(values[1]), int(values[2])
-        return f"\\text{{i numeri naturali }} x \\text{{ tali che }} x + {a} = {b}", sum(1 for x in N if x + a == b)
+        return f"i numeri naturali $x$ | tali che $x + {a} = {b}$", sum(1 for x in N if x + a == b)
     if k == "btw":
         a, b = int(values[1]), int(values[2])
-        return f"\\text{{i numeri naturali maggiori di }} {a} \\text{{ e minori di }} {b}", sum(1 for x in N if a < x < b)
+        return f"i numeri naturali | maggiori di ${a}$ e minori di ${b}$", sum(1 for x in N if a < x < b)
     if k == "lit0":
-        return "\\{0\\}", 1
+        return "$\\{0\\}$", 1
     if k == "litE":
-        return "\\{\\emptyset\\}", 1
+        return "$\\{\\emptyset\\}$", 1
     if k == "mesi":
         d = int(values[1])
-        return f"\\text{{i mesi dell'anno con }} {d} \\text{{ giorni}}", sum(1 for v in MONTH_DAYS.values() if v == d)
+        return f"i mesi dell'anno con ${d}$ giorni", sum(1 for v in MONTH_DAYS.values() if v == d)
     raise ValueError(f"unknown candidate {values}")
 
 
 def finite_candidate(values):
-    """(latex, finite?) of a level 6 option."""
+    """(latex of the option, finite?) of a level 6 option."""
+    tex, fin = _finite_candidate(values)
+    return option_tex(tex), fin
+
+
+def _finite_candidate(values):
     k = values[0]
     table = {
-        "pari": ("\\text{i numeri naturali pari}", False),
-        "dispari": ("\\text{i numeri naturali dispari}", False),
-        "neg": ("\\text{i numeri interi negativi}", False),
-        "razio": ("\\text{i numeri razionali compresi tra } 0 \\text{ e } 1", False),
-        "milione": ("\\text{i numeri naturali minori di un milione}", True),
-        "vuoto": ("\\emptyset", True),
-        "alfabeto": ("\\text{le lettere dell'alfabeto italiano}", True),
+        "pari": ("i numeri naturali pari", False),
+        "dispari": ("i numeri naturali dispari", False),
+        "neg": ("i numeri interi negativi", False),
+        "razio": ("i numeri razionali | compresi tra $0$ e $1$", False),
+        "milione": ("i numeri naturali | minori di un milione", True),
+        "vuoto": ("$\\emptyset$", True),
+        "alfabeto": ("le lettere dell'alfabeto italiano", True),
     }
     if k in table:
         return table[k]
     if k == "mult":
-        return f"\\text{{i multipli di }} {int(values[1])} \\text{{ in }} \\mathbb{{N}}", False
+        return f"i multipli di ${int(values[1])}$ in $\\mathbb{{N}}$", False
     if k == "magg":
-        return f"\\text{{i numeri naturali maggiori di }} {int(values[1])}", False
+        return f"i numeri naturali | maggiori di ${int(values[1])}$", False
     if k == "div":
-        return f"\\text{{i divisori di }} {int(values[1])}", True
+        return f"i divisori di ${int(values[1])}$", True
     if k == "min":
-        return f"\\text{{i numeri naturali minori di }} {int(values[1])}", True
+        return f"i numeri naturali minori di ${int(values[1])}$", True
     if k == "multmin":
-        return f"\\text{{i multipli di }} {int(values[1])} \\text{{ minori di }} {int(values[2])}", True
+        return f"i multipli di ${int(values[1])}$ minori di ${int(values[2])}$", True
     if k == "parola":
-        return f"\\text{{le lettere della parola “{values[1]}”}}", True
+        return f"le lettere della parola | “{values[1]}”", True
     raise ValueError(f"unknown kind {values}")
 
 
@@ -134,8 +160,8 @@ def check(sample):
             errs.append("problem does not ask the question in params.ask")
 
         def grade(o):
-            text = o["latex"][len("\\text{"):-1]
-            if not o["latex"].startswith("\\text{") or text not in COLLECTIONS:
+            text = next((t for t in COLLECTIONS if option_tex(t) == o["latex"]), None)
+            if text is None:
                 raise ValueError(f"unknown collection {o['latex']}")
             return COLLECTIONS[text] == (ask == "è")
 

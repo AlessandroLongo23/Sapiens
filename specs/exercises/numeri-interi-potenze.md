@@ -127,6 +127,23 @@ Quattro opzioni intere distinte, una corretta, dagli errori della lezione:
   esponenti sommati (livello 6), il segno di `M` dimenticato (livello 6), il risultato cambiato di
   segno.
 
+## Righe sul telefono
+
+Sul telefono una formula del problema sta in 350 px a 18 px. Un'espressione più larga va su più
+righe in un `\begin{aligned}`, con un a capo prima di un `+`, di un `-`, di un `\cdot` o di `:`;
+ogni riga nuova comincia con l'operatore, dopo `&\quad`. La regola e la stima della larghezza sono
+quelle di numeri-interi-operazioni (`phoneLines` ed `emWidth`, dove un esponente vale 0,36 em per
+cifra): una riga resta entro 17 e si va a capo al livello più esterno possibile. Le espressioni che
+stanno in una riga restano come prima; la soluzione è scritta su una riga. Il controllo in Python
+rimette insieme le righe, controlla che ognuna dopo la prima cominci con un operatore e confronta
+esponenti e operazioni del testo con quelli di `params.expr`, così una riga persa viene bocciata
+anche quando il valore non cambia (una riga `\cdot (-1)^{12}` persa lascia lo stesso risultato).
+
+Misura con `scripts/exercises/width.mts` (150 esercizi per livello, 26 settembre 2026): prima 1
+formula oltre 350 px al livello 5 (max 437) e 32 al livello 6 (max 361); ora nessuna, con la più
+larga a 340 px al livello 5 e 338 px al livello 6. Su 3000 esercizi per livello vanno su due righe
+4 su 100 al livello 5 e 17 su 100 al livello 6.
+
 ## Domande per la revisione
 
 - Il livello 2 mette insieme il meno fuori dalla base e le potenze di −1: è una difficoltà sola o

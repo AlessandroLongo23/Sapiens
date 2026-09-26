@@ -112,6 +112,28 @@ Esempi: tra `-6` e `-1`, estremi esclusi, ci sono `4` interi (`-5, -4, -3, -2`);
   di `a` ignorato quando `b > 0`; nell'insieme le altre tre combinazioni di estremi; nel successivo
   il precedente (e viceversa) e i due opposti.
 
+## Righe sul telefono
+
+Sul telefono ogni opzione è una formula a 16 px in un pulsante largo 252 px.
+
+- Livello 1: le quattro affermazioni vanno sempre su due righe in un `\begin{gathered}`: il segno
+  (`è negativo`) sulla prima, l'appartenenza (`e appartiene a ℤ ma non a ℕ`) sulla seconda. Su una
+  riga erano larghe fino a 451 px. La soluzione resta su una riga.
+- Livelli 4 e 5 (ordinamenti) e livello 6 (elenco dell'insieme): se una delle quattro opzioni è
+  troppo larga, vanno su due righe tutte e quattro, così le risposte hanno la stessa forma. La prima
+  riga ha metà degli elementi, arrotondata per eccesso; la seconda comincia con il simbolo della
+  catena (`< 3 < 8`), oppure, nell'elenco, con il numero dopo la virgola che chiude la prima riga.
+  La larghezza è stimata dai caratteri (`emWidth` di numeri-interi-operazioni) e va a capo sopra
+  14,8: su 4800 esercizi misurati con KaTeX nessuna opzione sotto la soglia supera 252 px.
+
+Il controllo in Python rimette insieme le due righe, controlla la forma dell'a capo e poi rilegge
+l'opzione come prima: una riga persa lascia un'affermazione incompleta o un ordinamento che non
+contiene tutti i numeri, e viene bocciata.
+
+Misura con `scripts/exercises/width.mts` (150 esercizi per livello, 26 settembre 2026), opzioni oltre
+252 px: livello 1 da 450 su 600 (max 451) a 0 (max 227); livello 4 da 216 (max 300) a 0 (max 249);
+livello 5 da 496 (max 352) a 0 (max 233); livello 6 da 13 (max 297) a 0 (max 240).
+
 ## Domande per la revisione
 
 - Il livello 3 con quattro confronti su coppie diverse va bene, o si preferisce il classico

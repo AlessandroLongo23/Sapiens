@@ -33,6 +33,7 @@ import {
 	nearNumbers,
 	numOpt,
 	parseAscii,
+	problemLatex,
 	power,
 	shuffle,
 	sumTerms,
@@ -472,7 +473,7 @@ function exprSample(rng: Rng, seed: number): Sample {
 			level: 5,
 			seed,
 			prompt: "Calcola il valore dell'espressione.",
-			problem: latex(x),
+			problem: problemLatex(x),
 			solution: fmt(value),
 			steps: exprSteps(x),
 			answer: { kind: 'number', value: String(value) },
@@ -531,7 +532,7 @@ function check(sample: Sample): string[] {
 		}
 		case 5: {
 			const x = parseAscii(String(p.expr));
-			if (latex(x) !== sample.problem) v.push('il testo non corrisponde a params.expr');
+			if (problemLatex(x) !== sample.problem) v.push('il testo non corrisponde a params.expr');
 			v.push(...exprViolations(x));
 			const val = evaluate(x);
 			if (sample.answer.kind !== 'number' || sample.answer.value !== String(val)) v.push('risposta diversa');

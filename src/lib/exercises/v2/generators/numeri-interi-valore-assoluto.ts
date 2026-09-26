@@ -11,6 +11,7 @@
  */
 import type { ChoiceAnswer, ChoiceOption, Generator, Rng, Sample } from '../types';
 import { buildChoice, shuffle, weighted } from '../razionali';
+import { emWidth } from './numeri-interi-operazioni';
 
 export const ID = 'numeri-interi-valore-assoluto';
 
@@ -32,6 +33,35 @@ function distinctInts(rng: Rng, n: number, gen: () => number, key: (v: number) =
 }
 
 const asc = (xs: number[]) => [...xs].sort((a, b) => a - b);
+
+// ---------------------------------------------------------------------------
+// Lines for the phone
+
+/**
+ * An answer button holds 252 px at 16 px. Measured with KaTeX on the options of 4800 exercises of
+ * levels 4 to 6: every option wider than 252 px has an estimate above 14.8 (one above 15 did not).
+ */
+const OPTION_EM = 14.8;
+
+const gathered = (lines: string[]) => `\\begin{gathered}${lines.join(' \\\\ ')}\\end{gathered}`;
+
+/**
+ * The options of a chain (sym is <, > or a comma) as the phone shows them: when one of the four is too
+ * wide for an answer button, all four go on two lines, so the answers keep the same shape. The first
+ * line takes half the items, rounded up; the second starts with the symbol (after a comma, with the
+ * next item).
+ */
+function fitOptions(ans: ChoiceAnswer, sym: '<' | '>' | ','): ChoiceAnswer {
+	if (!ans.options.some((o) => emWidth(o.latex) > OPTION_EM)) return ans;
+	const sep = sym === ',' ? ', ' : ` ${sym} `;
+	const twoLines = (latex: string) => {
+		const items = latex.split(sep);
+		const k = Math.ceil(items.length / 2);
+		const head = items.slice(0, k).join(sep), tail = items.slice(k).join(sep);
+		return gathered(sym === ',' ? [`${head},`, tail] : [head, `${sym} ${tail}`]);
+	};
+	return { ...ans, options: ans.options.map((o) => ({ ...o, latex: twoLines(o.latex) })) };
+}
 
 /** Ascending order with the negatives ordered as if they were positive: -1, -7, -15, 0, 3. */
 function signMistake(xs: number[]): number[] {
@@ -58,11 +88,13 @@ type Member = 'NZ' | 'Z' | 'N';
 
 const SIGN_TEXT: Record<Sign, string> = { positivo: 'è positivo', negativo: 'è negativo', nullo: 'non è né positivo né negativo' };
 const MEMBER_LATEX: Record<Member, string> = {
-	NZ: `${t(' e appartiene a ')}${N}${t(' e a ')}${Z}`,
-	Z: `${t(' e appartiene a ')}${Z}${t(' ma non a ')}${N}`,
-	N: `${t(' e appartiene a ')}${N}${t(' ma non a ')}${Z}`,
+	NZ: `${t('e appartiene a ')}${N}${t(' e a ')}${Z}`,
+	Z: `${t('e appartiene a ')}${Z}${t(' ma non a ')}${N}`,
+	N: `${t('e appartiene a ')}${N}${t(' ma non a ')}${Z}`,
 };
-const statementOpt = (s: Sign, m: Member): ChoiceOption => ({ latex: `${t(SIGN_TEXT[s])}${MEMBER_LATEX[m]}`, values: [s, m] });
+const statementLine = (s: Sign, m: Member) => `${t(`${SIGN_TEXT[s]} `)}${MEMBER_LATEX[m]}`;
+/** On two lines, the sign and then the sets: on one line the statement is too wide for an answer button. */
+const statementOpt = (s: Sign, m: Member): ChoiceOption => ({ latex: gathered([t(SIGN_TEXT[s]), MEMBER_LATEX[m]]), values: [s, m] });
 
 function level1(rng: Rng): Built {
 	const sign = weighted<Sign>(rng, [
@@ -98,7 +130,7 @@ function level1(rng: Rng): Built {
 		prompt: 'Quale affermazione sul numero è vera?',
 		problem: shown,
 		steps,
-		solution: `${shown}${t(': ')}${answer.options[answer.correct].latex}`,
+		solution: `${shown}${t(': ')}${statementLine(sign, member)}`,
 		answer,
 		params: { number: String(n), shown, sign, member, case: sign },
 	};
@@ -257,7 +289,7 @@ function level4(rng: Rng): Built | null {
 	const reversed: ChoiceOption = { latex: [...shown(right)].reverse().join(` ${sym} `), values: [...shown(right)].reverse().map(String) };
 	// fallback: two neighbours of the same sign swapped
 	const sw = adjacentSwaps(right).filter((_, i) => Math.sign(right[i]) === Math.sign(right[i + 1]));
-	const answer = buildChoice(rng, opt(right), [opt(signMistake(xs)), opt(byAbs(xs)), reversed], (i) => (i < sw.length ? opt(sw[i]) : null));
+	const answer = fitOptions(buildChoice(rng, opt(right), [opt(signMistake(xs)), opt(byAbs(xs)), reversed], (i) => (i < sw.length ? opt(sw[i]) : null)), sym);
 	return {
 		prompt: `Ordina i numeri in ordine ${dir}.`,
 		problem: xs.join(LIST_SEP),
@@ -304,7 +336,7 @@ function level5(rng: Rng): Built | null {
 	const signOrder = signMistake(vals).map((v) => es[vals.indexOf(v)]);
 	const desc = [...right].reverse();
 	const swaps = adjacentSwaps(right.map(exprVal)).map((o) => o.map((v) => es[vals.indexOf(v)]));
-	const answer = buildChoice(rng, opt(right), [opt(outer), opt(dbl), opt(signOrder), opt(desc)], (i) => (i < swaps.length ? opt(swaps[i]) : null));
+	const answer = fitOptions(buildChoice(rng, opt(right), [opt(outer), opt(dbl), opt(signOrder), opt(desc)], (i) => (i < swaps.length ? opt(swaps[i]) : null)), '<');
 	return {
 		prompt: 'Ordina in ordine crescente.',
 		problem: es.map(exprTex).join(LIST_SEP),
@@ -359,7 +391,7 @@ function level6(rng: Rng): Built | null {
 		const L = rng.int(0, 1) === 1, R = rng.int(0, 1) === 1; // true = ≤ (endpoint included)
 		const list = (l: boolean, r: boolean) => range(l ? a : a + 1, r ? b : b - 1);
 		const opt = (l: boolean, r: boolean): ChoiceOption => ({ latex: setTex(list(l, r)), values: list(l, r).map(String) });
-		const answer = buildChoice(rng, opt(L, R), [opt(!L, R), opt(L, !R), opt(!L, !R)]);
+		const answer = fitOptions(buildChoice(rng, opt(L, R), [opt(!L, R), opt(L, !R), opt(!L, !R)]), ',');
 		const sym = (inc: boolean) => (inc ? '\\leq' : '<');
 		const problem = `\\{x \\in ${Z} \\mid ${a} ${sym(L)} x ${sym(R)} ${b}\\}`;
 		return {

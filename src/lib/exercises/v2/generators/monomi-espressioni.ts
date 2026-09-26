@@ -218,6 +218,97 @@ function render(n: Node, abs = false): Out {
 }
 
 // ---------------------------------------------------------------------------
+// Lines for the phone
+
+/**
+ * Estimated width in character units: visible characters (\left, \right and spaces do not count, a
+ * fraction counts as its longer line, \cdot and each bracket count one) plus 0.6 for each fraction.
+ * One unit is about 12 px of KaTeX at 18 px; the problem column on a phone is 350 px.
+ */
+function estWidth(latex: string): number {
+	let s = latex.replace(/\\left|\\right/g, '');
+	s = s.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, (_, a: string, b: string) => '#'.repeat(Math.max(a.length, b.length)));
+	s = s.replace(/\\cdot/g, '*').replace(/\\\{/g, '{').replace(/\\\}/g, '}');
+	s = s.replace(/\^\{([^{}]*)\}/g, '$1').replace(/\^/g, '');
+	return s.replace(/\s/g, '').length + 0.6 * (latex.match(/\\frac/g) ?? []).length;
+}
+
+/**
+ * A problem wider than ONE_LINE goes on several lines, each within LINE (LINE - 2 after the \quad of a
+ * continuation line). Measured on 1,000 problems per level: up to 33.2 units a line is at most 345 px.
+ */
+const ONE_LINE = 33.5;
+const LINE = 26;
+
+const PLAIN_OPEN = ['', '(', '[', '\\{'];
+const PLAIN_CLOSE = ['', ')', ']', '\\}'];
+
+interface Piece {
+	s: string;
+	/** The line may break before this piece: it starts with a +, a -, a \cdot or a :. */
+	brk: boolean;
+}
+
+/** The expression cut where a line may break, also inside square and curly brackets, which are then written without \left \right. Round brackets are never cut. */
+function pieces(n: Node, abs = false): Piece[] {
+	switch (n.t) {
+		case 'sum': {
+			const out: Piece[] = [];
+			n.terms.forEach((t, i) => {
+				const sign = (t.neg ? -1 : 1) * leadSign(t.n);
+				const ps = pieces(t.n, leadSign(t.n) < 0);
+				const pre = i === 0 ? (sign < 0 ? '-' : '') : sign < 0 ? ' - ' : ' + ';
+				ps[0] = { s: pre + ps[0].s, brk: i > 0 };
+				out.push(...ps);
+			});
+			return out;
+		}
+		case 'chain': {
+			const out: Piece[] = [];
+			n.items.forEach((it, i) => {
+				const ps = it.t === 'group' ? pieces(it) : [{ s: operand(it, i === 0 ? 'first' : n.ops[i - 1], i === 0 && abs).s, brk: false }];
+				if (i > 0) ps[0] = { s: `${n.ops[i - 1] === 'mul' ? ' \\cdot ' : ' : '}${ps[0].s}`, brk: true };
+				out.push(...ps);
+			});
+			return out;
+		}
+		case 'group': {
+			const lvl = render(n).lvl;
+			if (lvl < 2) return [{ s: render(n).s, brk: false }];
+			const ps = pieces(n.inner);
+			ps[0] = { ...ps[0], s: PLAIN_OPEN[lvl] + ps[0].s };
+			ps[ps.length - 1] = { ...ps[ps.length - 1], s: ps[ps.length - 1].s + PLAIN_CLOSE[lvl] };
+			return ps;
+		}
+		default:
+			return [{ s: render(n, abs).s, brk: false }];
+	}
+}
+
+/** The problem as the student sees it: one line if it fits, otherwise an aligned block, a new line before a +, a -, a \cdot or a :. */
+function problemLatex(root: Node): string {
+	const one = render(root).s;
+	if (estWidth(one) <= ONE_LINE) return one;
+	const lines: string[] = [];
+	let cur = '';
+	for (const p of pieces(root)) {
+		const limit = lines.length === 0 ? LINE : LINE - 2;
+		if (cur && p.brk && estWidth(cur + p.s) > limit) {
+			lines.push(cur);
+			cur = p.s.trimStart();
+		} else cur += p.s;
+	}
+	lines.push(cur);
+	return `\\begin{aligned}&${lines.join('\\\\&\\quad ')}\\end{aligned}`;
+}
+
+/** The lines of a problem written as an aligned block (one line if it is not). */
+function problemLines(latex: string): string[] {
+	const m = /^\\begin\{aligned\}&(.*)\\end\{aligned\}$/.exec(latex);
+	return m ? m[1].split('\\\\&\\quad ') : [latex];
+}
+
+// ---------------------------------------------------------------------------
 // Steps
 
 const BRACKET = ['', 'tonda', 'quadra', 'graffa'];
@@ -530,7 +621,13 @@ function check(sample: Sample): string[] {
 	} catch (e) {
 		return [(e as Error).message];
 	}
-	if (out.s !== sample.problem) v.push('problema diverso dall\'albero');
+	if (problemLatex(root) !== sample.problem) v.push('problema diverso dall\'albero');
+	const lines = problemLines(sample.problem);
+	if (lines.length === 1 && estWidth(lines[0]) > ONE_LINE) v.push('problema troppo largo per una riga');
+	if (lines.length > 1) lines.forEach((l, i) => {
+		if (estWidth(l) > (i === 0 ? LINE : LINE - 2)) v.push(`riga ${i + 1} troppo larga per il telefono`);
+	});
+	if (lines.length > 3) v.push('più di tre righe');
 	const a = sample.answer;
 	if (a.kind !== 'expression' || a.value !== monoSympy(r) || a.latex !== monoLatex(r)) v.push('risposta diversa dal risultato');
 	const st: Stats = { maxLeafNum: 0, maxLeafDen: 1, maxNum: 0, maxDen: 1, maxExp: 0, pows: 0, groups: 0, chainOps: [], ok: true };
@@ -620,7 +717,7 @@ function assemble(b: Built, level: number, seed: number): Sample {
 		level,
 		seed,
 		prompt: "Semplifica l'espressione.",
-		problem: render(b.root).s,
+		problem: problemLatex(b.root),
 		solution: monoLatex(r),
 		steps,
 		answer: { kind: 'expression', value: monoSympy(r), latex: monoLatex(r) },

@@ -7,7 +7,7 @@
  * Morgan's laws, problems with the Euler-Venn diagram (only one set, exactly one, neither).
  */
 import type { ChoiceAnswer, ChoiceOption, Generator, NumberAnswer, Rng, Sample, SetAnswer } from '../types';
-import { type El, assembleChoice, diff, inter, lines, norm, numberChoice, pickDistinct, range, sameSet, setOption, setTex, shuffle, subsetEq, textBlock, union } from '../insiemi';
+import { type El, assembleChoice, diff, fitSetChoice, inter, lines, listTex, norm, numberChoice, pickDistinct, range, sameSet, setOption, setTex, shuffle, subsetEq, textBlock, union } from '../insiemi';
 
 export const ID = 'insiemi-operazioni';
 
@@ -88,8 +88,16 @@ type Pair = [El, El];
 const pairKey = (p: Pair, braces = false) => `${braces ? '~' : ''}${p[0]}:${p[1]}`;
 const pairTex = (p: Pair, braces = false) => (braces ? `\\{${p[0]}, ${p[1]}\\}` : `(${p[0]}, ${p[1]})`);
 const product = (X: El[], Y: El[]): Pair[] => X.flatMap((x) => Y.map((y) => [x, y] as Pair));
+/** The pairs on one line, for the solution and the steps. */
+const pairsTex = (ps: Pair[]) => listTex(ps.map((p) => pairTex(p)));
+/** Six pairs are 294-337 px wide at 16 px, over the 252 px of an answer button: more than four go on two lines. */
 const pairsOption = (ps: Pair[], braces = false): ChoiceOption => ({
-	latex: ps.length ? `\\{${ps.map((p) => pairTex(p, braces)).join(', ')}\\}` : '\\emptyset',
+	latex: ps.length
+		? listTex(
+				ps.map((p) => pairTex(p, braces)),
+				ps.length > 4,
+			)
+		: '\\emptyset',
 	values: ps.map((p) => pairKey(p, braces)),
 });
 
@@ -289,11 +297,11 @@ function build(rng: Rng, level: number): Built | null {
 			return {
 				prompt: 'Scegli la risposta corretta.',
 				problem: lines([`P = ${setTex(P)} \\qquad Q = ${setTex(Q)}`, `${name} = \\ ?`]),
-				solution: `${name} = ${pairsOption(good).latex}`,
+				solution: `${name} = ${pairsTex(good)}`,
 				steps: [
 					`\\text{Si abbina ogni elemento di } ${xn} \\text{ con ogni elemento di } ${yn}\\text{, con quello di } ${xn} \\text{ al primo posto}`,
 					`\\text{Le coppie sono } ${X.length} \\cdot ${Y.length} = ${good.length}\\text{ e si scrivono con le parentesi tonde}`,
-					`${name} = ${pairsOption(good).latex}`,
+					`${name} = ${pairsTex(good)}`,
 				],
 				answer: ch,
 				params: { variant: 'coppie', P: strs(P), Q: strs(Q), asked: flip ? 'QxP' : 'PxQ' },
@@ -462,7 +470,7 @@ function toChoice(sample: Sample, rng: Rng): ChoiceAnswer {
 	const fallback = shuffle(rng, [...truth.map((x) => truth.filter((y) => y !== x)), ...diff(given, truth).map((x) => norm([...truth, x]) as number[])]);
 	const ch = assembleChoice(rng, setOption(truth), [...wrong, ...fallback].map(setOption));
 	if (!ch) throw new Error(`${ID}: not enough distractors for seed ${sample.seed}`);
-	return ch;
+	return fitSetChoice(ch);
 }
 
 export const insiemiOperazioni: Generator = {

@@ -145,6 +145,24 @@ Quattro interi distinti, uno corretto. Distrattori, in ordine, dagli errori dell
   il calcolo da sinistra a destra senza priorità; il segno sbagliato. Solo valori interi fino a
   ±200; se non bastano, numeri vicini (±1, ±2, ±10).
 
+## Righe sul telefono
+
+Sul telefono una formula del problema sta in 350 px a 18 px. Un'espressione più larga va su più
+righe in un `\begin{aligned}`, con un a capo prima di un `+`, di un `-`, di un `\cdot` o di `:`;
+ogni riga nuova comincia con l'operatore, dopo `&\quad`. La larghezza è stimata dai caratteri
+(`emWidth`: una cifra 0,5 em, un `+` o un `-` tra due termini 1,22, `\cdot` 0,72, `:` 0,83, una
+parentesi 0,39) e una riga resta entro 17; tra i punti in cui la riga può andare a capo si sceglie
+quello con meno parentesi aperte, così l'espressione si spezza al livello più esterno possibile
+(dentro le parentesi solo se serve: sono parentesi semplici, senza `\left` e `\right`). Le
+espressioni che stanno in una riga restano come prima. `params.expr` e la soluzione restano su una
+riga; il controllo in Python rimette insieme le righe, controlla che ognuna dopo la prima cominci
+con un operatore e confronta il risultato con `params.expr`.
+
+Misura con `scripts/exercises/width.mts` (150 esercizi per livello, 26 settembre 2026): prima 1
+formula oltre 350 px al livello 4 (max 365) e 82 al livello 6 (max 615); ora nessuna, con la più
+larga a 321 px al livello 4 e 342 px al livello 6. Su 3000 esercizi per livello vanno su due righe
+1 espressione su 100 al livello 4 e 60 su 100 al livello 6 (1 su 100 su tre righe).
+
 ## Domande per la revisione
 
 - Il livello 6 mette insieme priorità e parentesi annidate fino alle graffe: è un salto grande dal

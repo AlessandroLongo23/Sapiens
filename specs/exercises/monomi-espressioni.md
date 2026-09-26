@@ -27,6 +27,36 @@ come nell'esempio 3 della lezione.
 - Un termine che comincia con un monomio negativo porta il segno fuori: `2y^3z^4 - 3z^2 \cdot 5y^3z^2`.
 - Una potenza ha sempre la base tra parentesi: `(-3xy)^2`, `(2x^3)^2`.
 
+## Righe per il telefono
+
+Sul sito il problema è una formula KaTeX a 18 px in una colonna di circa 350 px. La larghezza si
+stima senza misurarla: caratteri visibili (senza `\left`, `\right` e spazi; una frazione conta come
+la sua riga più lunga; `\cdot` e ogni parentesi contano uno) più 0,6 per ogni frazione. Su 1.000
+problemi per livello, fino a 33,2 la formula misura al massimo 345 px; il livello 5 parte da 34,2
+(404 px).
+
+Un problema che supera 33,5 si scrive su più righe:
+`\begin{aligned}&\text{riga 1}\\&\quad \text{riga 2}\end{aligned}`, due o tre righe. Si va a capo
+prima di un `+`, di un `-`, di un `\cdot` o di `:`, anche dentro la quadra e la graffa, che su più
+righe si scrivono senza `\left \right` (`\{`, `[`); una coppia `\left( \right)` non si spezza mai.
+Ogni riga si riempie finché sta in 26 (24 dalla seconda riga, per il `\quad`). Un problema che sta
+in 33,5 resta su una riga, come prima: in pratica va a capo solo il livello 5, per esempio
+`\{-(-2xz^2)^2 \cdot 9x` / `+ [\left(-2x^2z^2 + x^2z^2\right)^2 : (2x^2)` /
+`- \frac{2}{3}x^2z^4] \cdot (-4x)\} : (4xz^3)`.
+
+Misura con `scripts/exercises/width.mts` (150 esercizi per livello, 26 settembre 2026): nessuna
+formula del problema oltre 350 px, massimi 237, 317, 263, 345 e 308 px per livello (prima il
+livello 5 arrivava a 687 px); nessuna opzione oltre 252 px, massimi 71, 77, 75, 83 e 79 px. Su
+1.000 esercizi del livello 5 (seed 7001) 282 vanno su due righe e 718 su tre; gli altri livelli
+restano su una riga.
+
+Il verificatore ricompone le righe in un'espressione sola e la legge come le altre; controlla che le
+righe siano due o tre, che ogni riga dopo la prima cominci con `+`, `-`, `\cdot` o `:`, che nessuna
+riga separi `\left` da `\right`, che ogni riga stia nel limite e che il problema vada a capo solo se
+su una riga non ci sta. Errori piantati e bocciati: una riga persa (l'ultima o quella di mezzo), un
+problema largo rimesso su una riga, un a capo in un problema corto, una coppia `\left( \right)`
+spezzata.
+
 ## Rappresentazione
 
 `params.tree` è l'albero dell'espressione: nodi `m` (monomio `{c, e}`), `pow` (base e esponente),

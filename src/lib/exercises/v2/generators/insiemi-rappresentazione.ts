@@ -14,11 +14,13 @@ import {
 	assembleChoice,
 	diff,
 	endMistakes,
+	fitSetChoice,
 	norm,
 	propElements,
 	propFromJSON,
 	propJSON,
 	propTex,
+	propTexSplit,
 	range,
 	range2,
 	sameSet,
@@ -348,13 +350,23 @@ function build5(rng: Rng): Built5 | null {
 	};
 }
 
+/** An option with two conditions goes on two lines: at 16 px it is 250-305 px wide, the button leaves 252. */
 const propOption = (p: Prop): ChoiceOption => ({
-	latex: propTex(p),
+	latex: p.conds.length === 2 ? propTexSplit(p) : propTex(p),
 	values: [JSON.stringify(propJSON(p))],
 });
 
 // ---------------------------------------------------------------------------
 // Sample
+
+/**
+ * "x è multiplo di k" with both extremes (`1 \le x \le 25`) is 380 px wide at 18 px, over the 350 px of
+ * the page: that problem goes on two lines. The others stay on one (the widest, 345 px).
+ */
+const splitProblem = (p: Prop): boolean => {
+	const [a, b] = p.conds;
+	return p.conds.length === 2 && a.t === 'mult' && b.t === 'range' && b.lo !== null && b.hi !== null;
+};
 
 function assemble(level: number, seed: number, b: Built): Sample {
 	const els = propElements(b.prop);
@@ -368,7 +380,7 @@ function assemble(level: number, seed: number, b: Built): Sample {
 		level,
 		seed,
 		prompt: "Scrivi l'insieme elencando i suoi elementi.",
-		problem: `${b.name} = ${propTex(b.prop)}`,
+		problem: splitProblem(b.prop) ? propTexSplit(b.prop, `${b.name} = `) : `${b.name} = ${propTex(b.prop)}`,
 		solution: `${b.name} = ${setTex(els)}`,
 		steps: [...b.steps, `${b.name} = ${setTex(els)}`],
 		answer,
@@ -464,7 +476,7 @@ function toChoice(sample: Sample, rng: Rng): ChoiceAnswer {
 	const cands: El[][] = [...wrong.filter((w) => w.length <= 12), ...endMistakes(nums, min), [0], [1], [0, 1]];
 	const ch = assembleChoice(rng, setOption(truth), cands.map(setOption));
 	if (!ch) throw new Error(`${ID}: not enough distractors for seed ${sample.seed}`);
-	return ch;
+	return fitSetChoice(ch);
 }
 
 export const insiemiRappresentazione: Generator = {

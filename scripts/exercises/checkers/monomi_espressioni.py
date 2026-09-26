@@ -2,7 +2,10 @@
 
 The expression is parsed from the problem LaTeX with the textbook order of operations (see
 monomi_common): the parser in strict mode also reports any bracket, quotient or final result
-that is not a nonzero monomial. Brackets must follow the convention round < square < curly."""
+that is not a nonzero monomial. Brackets must follow the convention round < square < curly.
+
+A problem too wide for a phone is written on two or three lines (see unfold): the lines are joined
+back into one expression and read as the others."""
 import re
 
 from checkers.monomi_common import (
@@ -21,6 +24,13 @@ from checkers.monomi_common import (
     val,
 )
 
+# Lines for the phone: a problem wider than ONE_LINE (estimated) is written as
+# \begin{aligned}&line 1\\&\quad line 2 ...\end{aligned}, a new line before a +, a -, a \cdot or a :,
+# each line within LINE (LINE - 2 after the \quad).
+ONE_LINE = 33.5
+LINE = 26
+ALIGNED = re.compile(r"^\\begin\{aligned\}&(.*)\\end\{aligned\}$", re.S)
+
 CASE_RANGES = {
     1: {"prodotto e somma": (0.4, 0.7), "quoziente e somma": (0.3, 0.6)},
     2: {"quoziente poi prodotto": (0.55, 0.85), "prodotto poi quoziente": (0.15, 0.45)},
@@ -31,7 +41,8 @@ CASE_RANGES = {
 def check(sample):
     errs = []
     lvl = sample["level"]
-    prob = sample["problem"]
+    prob, line_errs = unfold(sample["problem"])
+    errs += line_errs
     if sample.get("prompt") != "Semplifica l'espressione.":
         errs.append(f"unexpected prompt {sample.get('prompt')!r}")
     errs += forbidden(prob)
@@ -117,3 +128,44 @@ def _top_level_sum(toks):
 def _minus_before_power(prob):
     """A minus sign written right before a parenthesis that is raised to a power: -(2a)^2."""
     return bool(re.search(r"(?:^|\s)-\s*(?:\((?:[^()]*)\)|\\left\((?:(?!\\right\)).)*\\right\))\^\d", prob))
+
+
+def est_width(latex):
+    """Width in character units: visible characters (\\left, \\right and spaces do not count, a
+    fraction counts as its longer line, \\cdot and each bracket count one) plus 0.6 per fraction."""
+    s = re.sub(r"\\left|\\right", "", latex)
+    s = re.sub(r"\\frac\{([^{}]*)\}\{([^{}]*)\}", lambda m: "#" * max(len(m.group(1)), len(m.group(2))), s)
+    s = s.replace("\\cdot", "*").replace("\\{", "{").replace("\\}", "}")
+    s = re.sub(r"\^\{([^{}]*)\}", r"\1", s).replace("^", "")
+    return len(re.sub(r"\s", "", s)) + 0.6 * latex.count("\\frac")
+
+
+def unfold(problem):
+    """The problem on one line, and the errors of its layout. An aligned block must be needed (the
+    expression does not fit ONE_LINE), have two or three lines, each within LINE (LINE - 2 after
+    the \\quad); every line after the first starts with +, -, \\cdot or :, and no
+    \\left ... \\right pair is cut."""
+    errs = []
+    m = ALIGNED.match(problem)
+    if not m:
+        if est_width(problem) > ONE_LINE:
+            errs.append(f"problem wider than {ONE_LINE} on one line: {problem}")
+        if re.search(r"aligned|&|\\\\|\\quad", problem):
+            errs.append(f"malformed layout: {problem}")
+        return problem, errs
+    lines = m.group(1).split("\\\\&\\quad ")
+    if not 2 <= len(lines) <= 3:
+        errs.append(f"{len(lines)} lines")
+    for i, ln in enumerate(lines):
+        if re.search(r"aligned|&|\\\\|\\quad", ln):
+            errs.append(f"malformed line {i + 1}: {ln}")
+        if i > 0 and not re.match(r"(?:[+-]|\\cdot|:) ", ln):
+            errs.append(f"line {i + 1} does not start with +, -, \\cdot or :: {ln}")
+        if ln.count("\\left") != ln.count("\\right"):
+            errs.append(f"a \\left ... \\right pair is cut at line {i + 1}: {ln}")
+        if est_width(ln) > (LINE if i == 0 else LINE - 2):
+            errs.append(f"line {i + 1} too wide for a phone: {ln}")
+    flat = " ".join(lines)
+    if est_width(flat) <= ONE_LINE:
+        errs.append(f"problem split although it fits one line: {flat}")
+    return flat, errs

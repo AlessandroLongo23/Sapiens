@@ -33,7 +33,20 @@ class NotExact(Exception):
     pass
 
 
+def unwrap_lines(tex):
+    """An aligned problem (one expression broken to fit a phone) back to one line: a new line may
+    start only with a binary operator, after the indent."""
+    m = re.fullmatch(r"\\begin\{aligned\}&(.*)\\end\{aligned\}", tex, re.S)
+    if not m:
+        return tex
+    lines = m.group(1).split(r" \\ &\quad ")
+    if len(lines) < 2 or any(not re.match(r"(\+|-|\\cdot|:) ", ln) for ln in lines[1:]):
+        raise ValueError(f"bad line break in {tex!r}")
+    return " ".join(lines)
+
+
 def latex_to_ascii(tex):
+    tex = unwrap_lines(tex)
     s = tex.replace("\\cdot", "*").replace("\\{", "{").replace("\\}", "}").replace(" ", "")
     if re.search(r"[^0-9+\-*:()\[\]{}]", s):
         raise ValueError(f"unexpected characters in {tex!r}")

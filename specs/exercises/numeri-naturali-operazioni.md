@@ -19,7 +19,8 @@ un nome ("proprietà associativa", "impossibile") o una coppia quoziente e resto
 - Livello 2: `params.a`, `params.b` (dividendo e divisore), `params.case` (`zero-diviso`,
   `diviso-zero`, `zero-zero`, `resto`), e per il resto `params.q`, `params.r`.
 - Livelli 3-6: `params.expr` è l'espressione in ASCII, identica al testo LaTeX una volta tolti
-  `\cdot`, `\{`, `\}` e gli spazi; `params.value` il valore.
+  `\cdot`, `\{`, `\}` e gli spazi (e riunite le righe, se il testo va a capo: vedi "Righe per il
+  telefono"); `params.value` il valore.
 - Livello 7: `params.story` (anche in `params.case`) è la storia; i numeri della storia stanno in
   `params` con le chiavi della tabella del livello 7; `params.expr` è l'espressione risolutiva in
   ASCII, `params.value` il valore, `params.mistakes` le risposte sbagliate per la scelta multipla. Il
@@ -152,6 +153,34 @@ Esempi svolti:
 
 I passaggi dicono cosa rappresenta ogni operazione, poi calcolano l'espressione come ai livelli 3-6
 e finiscono con la risposta e l'unità di misura.
+
+## Righe per il telefono
+
+Sul sito il problema è una formula KaTeX a 18 px in una colonna di 350 px. `problemLatex()` in
+`naturali.ts` stima la larghezza dell'espressione con le misure dei caratteri di KaTeX (cifra 0,5 em;
+`+` e `-` 1,01; `\cdot` 0,885; `:` 0,835; tonde 0,333, quadre 0,335, graffe 0,48; cifra
+dell'esponente 0,4; il tutto per 1,21), ricavate da 600 espressioni di questi generatori: la stima
+supera la larghezza vera di 0-2 px, mai il contrario. Se sta in 350 px il testo è quello di una
+volta. Altrimenti diventa `\begin{aligned}&riga 1 \\ &\quad riga 2\end{aligned}`, ogni riga entro
+350 px, e sulla pagina ogni riga è una formula a sé. Si va a capo prima di un `+`, di un `-`, di un
+`\cdot` o di un `:`, mai dentro un numero o tra una base e il suo esponente; ogni riga dopo la prima
+comincia con l'operatore. Tra i modi possibili si sceglie, in quest'ordine: meno righe; il taglio
+più esterno (prima di `+` o `-` fuori dalle parentesi; poi prima di `\cdot` o `:` all'inizio del
+termine; dentro una parentesi solo se serve, e le parentesi sono semplici, senza `\left \right`);
+niente riga con un numero solo, se si può; la riga più corta più lunga possibile. Un taglio prima di
+`\cdot` a metà riga, come `36 + 2` e poi `\cdot [\dots]`, conta come un taglio dentro una parentesi,
+perché si leggerebbe `(36 + 2) \cdot [\dots]`.
+
+Il controllo Python (`join_lines` in `_naturali.py`) riunisce le righe, rifiuta una riga dopo la
+prima che non comincia con un operatore, e confronta il risultato con `params.expr`: una riga persa
+dà un'espressione diversa.
+
+Misura con `scripts/exercises/width.mts` (150 esercizi per livello, formule oltre 350 px su tutte le
+righe misurate): livello 5 da 11 su 150 (massimo 374 px) a 0 su 161 righe (massimo 348 px),
+livello 6 da 124 su 150 (massimo 472 px) a 0 su 274 righe (massimo 349 px). Vanno su due righe 11
+esercizi su 150 al livello 5 e 124 al livello 6; gli altri livelli non cambiano. Il livello 7 è
+prosa che va a capo da sola: nessuna formula da misurare. Le opzioni stanno tutte in 252 px
+(massimo 176 px al livello 1).
 
 ## Passaggi
 

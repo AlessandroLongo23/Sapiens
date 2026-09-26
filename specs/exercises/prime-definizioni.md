@@ -112,6 +112,22 @@ Livelli 1-4 e 6: sono già a scelta multipla, e i distrattori sono quelli descri
 Livello 5: la cardinalità contando le ripetizioni (lunghezza della parola o dell'elenco),
 dimenticando o aggiungendo lo 0 ($n - 1$, $n + 1$), $|\emptyset| = 1$ o $|\{0\}| = 0$; poi ±1, ±2.
 
+## Righe sul telefono
+
+Ogni risposta sta in un pulsante largo 252 px, con la formula a 16 px. Le descrizioni più larghe vanno
+su due righe (`\begin{gathered}`), spezzate dove la frase si divide da sola: "I ragazzi simpatici /
+della tua classe", "i numeri naturali $x$ / tali che $x + 4 = 1$", "i numeri naturali / maggiori di
+$2$ e minori di $3$", "le lettere della parola / “quaderno”". Vanno su due righe, al livello 1, le
+cinque collezioni oltre i 252 px (i mesi con 30 giorni, gli studenti nati a marzo, i numeri pari tra 7
+e 21, i ragazzi simpatici, i libri interessanti); al livello 4 i candidati con $x + a = b$ e con
+"maggiori di ... e minori di ..."; al livello 6 i naturali maggiori di $n$, i razionali tra 0 e 1, i
+naturali minori di un milione e le lettere di una parola. Le altre opzioni restano su una riga. Nei
+passaggi e nella soluzione la descrizione resta su una riga. Il verificatore conosce le stesse
+interruzioni e confronta il LaTeX dell'opzione riga per riga.
+
+Misura (`scripts/exercises/width.mts`, 26 settembre 2026): opzioni più larghe 249 px al livello 1
+(prima 313), 233 al livello 4 (prima 352), 233 al livello 6 (prima 294); nessuna oltre 252.
+
 ## Esercizi da evitare
 
 - Collezioni discutibili ("i pianeti del sistema solare", "i granelli di sabbia"): non sono negli

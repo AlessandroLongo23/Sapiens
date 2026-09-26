@@ -150,6 +150,23 @@ senza dividere per `2a`; divisione per `a` invece di `2a`; discriminante calcola
 una sola delle due radici; "nessuna soluzione reale". Con Δ < 0: radici ottenute usando |Δ|, il
 vertice `-b/2a` come radice doppia. Se servono altre opzioni si spostano le radici di ±1, ±2, ...
 
+### Righe delle opzioni
+
+Sul telefono un pulsante di risposta lascia 252 px a 16 px. Due soluzioni con un radicale su una
+riga (`x_1 = -6 - 2\sqrt{14},\ x_2 = -6 + 2\sqrt{14}`) arrivano fino a 288 px, e anche quelle che
+stanno dentro sono vicine al bordo. Per questo, quando almeno un'opzione dell'esercizio contiene
+un radicale, tutte le opzioni con due soluzioni vanno su due righe,
+`\begin{gathered} x_1 = … \\ x_2 = … \end{gathered}`, così le quattro risposte hanno la stessa
+forma. Senza radicali restano su una riga (`x_1 = …,\ x_2 = …`); le opzioni con una sola soluzione
+(`x = …`) e "Nessuna soluzione reale" non cambiano. I problemi e le soluzioni restano come prima.
+Il verificatore rilegge il testo di ogni opzione, controlla la forma giusta (due righe o una) e
+ricostruisce i valori dalle righe.
+
+Larghezze misurate con `width.mts` (26 settembre 2026, 150 esercizi per livello): nessuna opzione
+oltre i 252 px (massimi per livello 187, 140, 159, 133, 154, 187 px; prima erano 288, 266, 279, 288
+e 288 px ai livelli dal 2 al 6) e nessuna formula del problema oltre i 350 px (massimi 119, 151,
+173, 151, 279, 174 px).
+
 ## Domande per la revisione
 
 - Le proporzioni tra i casi (pure e spurie al livello 1, complete e pure al livello 4) sono quelle

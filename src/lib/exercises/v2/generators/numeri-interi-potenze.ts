@@ -10,6 +10,7 @@
  */
 import type { ChoiceAnswer, ChoiceOption, Generator, Rng, Sample } from '../types';
 import { buildChoice, weighted } from '../razionali';
+import { alignedLines, emWidth, phoneLines, PROBLEM_EM } from './numeri-interi-operazioni';
 
 export const ID = 'numeri-interi-potenze';
 
@@ -193,6 +194,9 @@ export function latex(x: Node, first = true): string {
 			return `${OPEN[x.k]}${latex(x.c)}${CLOSE[x.k]}`;
 	}
 }
+
+/** The problem as the student sees it: one line if it fits a phone, otherwise a new line before an operator. */
+export const problemLatex = (x: Node): string => alignedLines(phoneLines(latex(x)));
 
 const t = (s: string) => `\\text{${s}}`;
 const parity = (e: number) => (e % 2 === 0 ? 'pari' : 'dispari');
@@ -699,7 +703,8 @@ function check(sample: Sample): string[] {
 	if (!expr) return ['params.expr mancante'];
 	const value = evaluate(expr);
 	if (value === null) return ['espressione fuori da ℤ o divisione non esatta'];
-	if (sample.problem !== latex(expr)) v.push('il testo non corrisponde a params.expr');
+	if (sample.problem !== problemLatex(expr)) v.push('il testo non corrisponde a params.expr');
+	if (phoneLines(latex(expr)).some((l) => emWidth(l) > PROBLEM_EM)) v.push('riga troppo larga per il telefono');
 	if (sample.answer.kind !== 'number' || sample.answer.value !== String(value)) v.push('risposta diversa dal valore');
 	if (Math.abs(value) > 10000) v.push('risultato troppo grande');
 	if (/\+\s*-|-\s*-|\+\s*\+/.test(sample.problem)) v.push('segni doppi');
@@ -767,8 +772,9 @@ export const numeriInteriPotenze: Generator = {
 			// The typical mistakes alone must give three wrong options (two at level 2 with base -1, where
 			// only 1 and -1 make sense and the rest are the "exponent times base" slips).
 			if (wrong.length < 3) continue;
-			const problem = latex(b.expr);
-			const solution = b.asPower ? `${problem} = ${b.asPower} = ${fmt(value)}` : `${problem} = ${fmt(value)}`;
+			const problem = problemLatex(b.expr);
+			const one = latex(b.expr);
+			const solution = b.asPower ? `${one} = ${b.asPower} = ${fmt(value)}` : `${one} = ${fmt(value)}`;
 			const sample: Sample = {
 				generatorId: ID,
 				level,

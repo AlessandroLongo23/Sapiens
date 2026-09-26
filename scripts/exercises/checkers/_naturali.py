@@ -17,9 +17,35 @@ class NotNatural(Exception):
     pass
 
 
+def join_lines(tex):
+    """An expression too wide for a phone comes as \\begin{aligned}&line \\\\ &\\quad line\\end{aligned}:
+    the lines joined back into one, after checking that every line after the first begins with an
+    operator (+, -, \\cdot or :), so a break never splits a number or a power."""
+    m = re.fullmatch(r"\\begin\{aligned\}(.*)\\end\{aligned\}", tex.strip(), re.S)
+    if not m:
+        return tex
+    lines = [ln.strip() for ln in m.group(1).split("\\\\")]
+    if len(lines) < 2:
+        raise ValueError(f"aligned expression with one line: {tex!r}")
+    out = []
+    for i, ln in enumerate(lines):
+        if not ln.startswith("&"):
+            raise ValueError(f"line {i + 1} without & in {tex!r}")
+        ln = ln[1:].strip()
+        if i:
+            if not ln.startswith("\\quad"):
+                raise ValueError(f"line {i + 1} without \\quad in {tex!r}")
+            ln = ln[len("\\quad"):].strip()
+            if not re.match(r"(\+|-|\\cdot|:)", ln):
+                raise ValueError(f"line {i + 1} does not begin with an operator: {ln!r}")
+        out.append(ln)
+    return " ".join(out)
+
+
 def latex_to_ascii(tex):
-    """LaTeX of an expression in N to the compact ASCII used in params: * : ^( ) [ ] { }."""
-    s = re.sub(r"\^\{([^{}]*)\}", r"^(\1)", tex)
+    """LaTeX of an expression in N (on one line or on several, see join_lines) to the compact ASCII
+    used in params: * : ^( ) [ ] { }."""
+    s = re.sub(r"\^\{([^{}]*)\}", r"^(\1)", join_lines(tex))
     s = s.replace("\\cdot", "*").replace("\\{", "{").replace("\\}", "}").replace("\\,", "")
     s = s.replace(" ", "")
     if re.search(r"[^0-9+\-*:^()\[\]{}=]", s):

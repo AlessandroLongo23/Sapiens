@@ -95,6 +95,19 @@ Numeri (livelli 5-6): la somma senza togliere l'intersezione, l'intersezione tol
 risposta a un'altra domanda dello stesso problema (per esempio "nessuno" al posto di "almeno uno");
 poi ±1, ±2.
 
+## Righe sul telefono
+
+Ogni risposta sta in un pulsante di 252 px, a 16 px. Al livello 2 l'unione arriva a 12 elementi, fino a
+291 px su una riga. Un insieme elencato più largo del pulsante (stima: 18 px di graffe, 10 per cifra,
+11 per segno meno, 8 per virgola) va su due righe con `\begin{gathered}`, la prima metà sopra e le
+graffe grandi: $\Big\{1, 3, 5, 7, 9, 10,$ e sotto $11, 13, 15, 17, 19, 20\Big\}$. Se succede a una
+opzione, vanno su due righe tutte quelle con almeno 4 elementi, perché l'unione (l'insieme più lungo)
+non si riconosca dalla forma. Il verificatore accetta un insieme su una riga o su queste due righe e
+ricostruisce gli elementi da entrambe; una riga persa viene bocciata.
+
+Misura (`scripts/exercises/width.mts`, 26 settembre 2026): opzioni del livello 2 al massimo 236 px
+(prima 291, 28 su 600 oltre).
+
 ## Esercizi da evitare
 
 - Elementi ripetuti negli elenchi del problema.

@@ -10,6 +10,7 @@ from checkers.insiemi_comune import (
     base_errors,
     choice_errors,
     els,
+    list_tex,
     no_repeats,
     number_answer_errors,
     number_option_truth,
@@ -123,7 +124,8 @@ def check(sample):
             if len(set(braces)) > 1:
                 raise ValueError("mixed pairs and sets")
             pairs = [tuple(v.lstrip("~").split(":")) for v in o["values"]]
-            tex = "\\{" + ", ".join(pair_tex(q, braces[0]) for q in pairs) + "\\}"
+            # more than four pairs do not fit the answer button: two lines
+            tex = list_tex([pair_tex(q, braces[0]) for q in pairs], split=len(pairs) > 4)
             if o["latex"] != tex:
                 raise ValueError(f"latex {o['latex']} != {tex}")
             return not braces[0] and set(pairs) == truth_pairs and len(pairs) == len(truth_pairs)

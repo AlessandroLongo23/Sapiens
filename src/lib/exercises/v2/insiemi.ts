@@ -71,6 +71,43 @@ export function setTex(xs: readonly El[], keepOrder = false): string {
 	return `\\{${list.map(elTex).join(', ')}\\}`;
 }
 
+/**
+ * Listed items between braces, on one line or, with `split`, on two lines of a gathered: the first half
+ * (rounded up) on the first line, ending with its comma, and \Big braces so the two lines read as one
+ * set. For an answer option too wide for the phone's answer button.
+ */
+export function listTex(items: readonly string[], split = false): string {
+	if (!split) return `\\{${items.join(', ')}\\}`;
+	const k = Math.ceil(items.length / 2);
+	return `\\begin{gathered} \\Big\\{${items.slice(0, k).join(', ')}, \\\\ ${items.slice(k).join(', ')}\\Big\\} \\end{gathered}`;
+}
+
+/**
+ * A listed set wider than the 252 px an answer button leaves. The width at 16 px, measured with KaTeX on
+ * 400 sets of the generators (error under 1.1 px): 18 px for the braces, 10 per digit or letter, 11 per
+ * minus sign, 8 per comma and space.
+ */
+export const listTooWide = (items: readonly string[]): boolean => {
+	const written = items.join(', ');
+	const glyphs = (written.match(/[0-9a-z]/gi) ?? []).length;
+	const minus = (written.match(/-/g) ?? []).length;
+	return 18 + 10 * glyphs + 11 * minus + 8 * (items.length - 1) > 252;
+};
+
+/**
+ * The set options of a choice fitted to the phone: if one of them is too wide, every set option with at
+ * least 4 elements goes on two lines, so the options keep the same shape and the long one does not stand
+ * out. Options that are not listed sets are left as they are.
+ */
+export function fitSetChoice(ch: ChoiceAnswer): ChoiceAnswer {
+	const lists = ch.options.map((o) => {
+		const xs = o.values.map(parseEl);
+		return o.values.length && o.latex === setTex(xs) ? norm(xs).map(elTex) : null;
+	});
+	if (!lists.some((l) => l && listTooWide(l))) return ch;
+	return { ...ch, options: ch.options.map((o, i) => (lists[i] && lists[i].length >= 4 ? { ...o, latex: listTex(lists[i], true) } : o)) };
+}
+
 export const range = (a: number, b: number): number[] => Array.from({ length: Math.max(0, b - a + 1) }, (_, i) => a + i);
 
 // ---------------------------------------------------------------------------
@@ -374,6 +411,17 @@ export function condTex(c: Cond): string {
 }
 
 export const propTex = (p: Prop): string => `\\{x \\in \\mathbb{${p.dom}} \\mid ${p.conds.map(condTex).join(' \\text{ e } ')}\\}`;
+
+/**
+ * A property with two conditions on two lines of a gathered, broken before the "e" between them, with
+ * \Big braces: `\Big\{x \in \mathbb{N} \mid x \text{ è multiplo di } 3 \\ \text{e } 1 \le x \le 12\Big\}`.
+ * `before` goes in front of the first line (`A = `).
+ */
+export function propTexSplit(p: Prop, before = ''): string {
+	if (p.conds.length !== 2) throw new Error(`propTexSplit: ${p.conds.length} conditions`);
+	const [a, b] = p.conds.map(condTex);
+	return `\\begin{gathered} ${before}\\Big\\{x \\in \\mathbb{${p.dom}} \\mid ${a} \\\\ \\text{e } ${b}\\Big\\} \\end{gathered}`;
+}
 
 function condHolds(c: Cond, x: number): boolean {
 	switch (c.t) {

@@ -100,6 +100,19 @@ Problemi: il numero del gruppo senza togliere la parte comune, la parte comune t
 la risposta a un'altra domanda (solo il secondo al posto del primo, almeno uno al posto di uno
 solo); poi ±1, ±2.
 
+## Righe sul telefono
+
+Ogni risposta sta in un pulsante di 252 px, a 16 px. Al livello 4 sei coppie su una riga sono larghe
+294-337 px: più di quattro coppie vanno su due righe con `\begin{gathered}`, tre per riga, con le graffe
+grandi ($\Big\{(1, a), (1, c), (1, g),$ e sotto $(4, a), (4, c), (4, g)\Big\}$); vale anche per
+l'errore scritto con le graffe. Nella soluzione e nei passaggi le coppie restano su una riga. Nella
+variante a scelta multipla degli altri livelli un insieme elencato più largo del pulsante va su due
+righe allo stesso modo, e allora tutte le opzioni con almeno 4 elementi (succede al livello 3 con
+$U = \{1, \dots, 12\}$). Il verificatore ricostruisce le righe e boccia una riga persa.
+
+Misura (`scripts/exercises/width.mts`, 26 settembre 2026): opzioni del livello 4 al massimo 228 px
+(prima 337, 175 su 600 oltre); livello 3 al massimo 224 px.
+
 ## Esercizi da evitare
 
 - Espressioni con risultato vuoto o in cui la parentesi spostata non cambia niente.

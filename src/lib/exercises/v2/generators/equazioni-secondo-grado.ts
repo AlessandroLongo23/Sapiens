@@ -477,10 +477,15 @@ function check(sample: Sample): string[] {
 // ---------------------------------------------------------------------------
 // Multiple-choice variant
 
-function optionLatex(values: Surd[]): string {
+/**
+ * One option. Two values with a radical are about as wide as the answer button (252 px at 16 px on a
+ * phone), so when any option of the exercise has a radical, every two-value option goes on two lines.
+ */
+function optionLatex(values: Surd[], twoLines: boolean): string {
 	if (values.length === 0) return '\\text{Nessuna soluzione reale}';
 	if (values.length === 1) return `x = ${values[0].toLatex()}`;
-	return `x_1 = ${values[0].toLatex()},\\ x_2 = ${values[1].toLatex()}`;
+	const [x1, x2] = values.map((v) => v.toLatex());
+	return twoLines ? `\\begin{gathered} x_1 = ${x1} \\\\ x_2 = ${x2} \\end{gathered}` : `x_1 = ${x1},\\ x_2 = ${x2}`;
 }
 
 function uniq(xs: Surd[]): Surd[] {
@@ -544,8 +549,9 @@ export function toChoice(sample: Sample, rng: Rng, count = 4): ChoiceAnswer {
 		const j = rng.int(0, i);
 		[order[i], order[j]] = [order[j], order[i]];
 	}
+	const twoLines = options.some((o) => o.some((v) => !v.isRational()));
 	const shuffled: ChoiceOption[] = order.map((i) => ({
-		latex: optionLatex(options[i]),
+		latex: optionLatex(options[i], twoLines),
 		values: options[i].map(String),
 	}));
 	return { kind: 'choice', options: shuffled, correct: order.indexOf(0) };

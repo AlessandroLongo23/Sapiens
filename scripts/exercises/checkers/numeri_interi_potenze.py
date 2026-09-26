@@ -26,6 +26,18 @@ RANK = {"(": 0, "[": 1, "{": 2}
 CLOSE = {"(": ")", "[": "]", "{": "}"}
 
 
+def unwrap_lines(tex):
+    """An aligned problem (one expression broken to fit a phone) back to one line: a new line may
+    start only with a binary operator, after the indent."""
+    m = re.fullmatch(r"\\begin\{aligned\}&(.*)\\end\{aligned\}", tex, re.S)
+    if not m:
+        return tex
+    lines = m.group(1).split(r" \\ &\quad ")
+    if len(lines) < 2 or any(not re.match(r"(\+|-|\\cdot|:) ", ln) for ln in lines[1:]):
+        raise ValueError(f"bad line break in {tex!r}")
+    return " ".join(lines)
+
+
 def tokenize(s):
     out, i = [], 0
     s = s.strip()
@@ -195,6 +207,31 @@ def leftmost(n):
     return n
 
 
+def expr_shape(n):
+    """Exponents and operators of params.expr, to tell that no line of the problem was lost."""
+    t = n["t"]
+    if t == "pow":
+        return [("^", n["e"])] + expr_shape(n["b"])
+    if t == "op":
+        return expr_shape(n["l"]) + [("op", n["op"])] + expr_shape(n["r"])
+    if t == "neg":
+        return expr_shape(n["x"])
+    if t == "g":
+        return expr_shape(n["c"])
+    return []
+
+
+def tree_shape(n):
+    t = n["t"]
+    if t == "pow":
+        return [("^", n["e"])] + tree_shape(n["b"])
+    if t == "op":
+        return tree_shape(n["l"]) + [("op", n["op"])] + tree_shape(n["r"])
+    if t in ("neg", "br"):
+        return tree_shape(n["x"])
+    return []
+
+
 def parse_int(latex):
     m = re.fullmatch(r"(-?)(\d+(?:\\,\d{3})*)", latex)
     if not m:
@@ -206,8 +243,8 @@ def parse_int(latex):
 def check(sample):
     errs = []
     lvl = sample["level"]
-    prob = sample["problem"]
     try:
+        prob = unwrap_lines(sample["problem"])
         tree = Parser(prob).parse()
         truth = ev(tree)
     except Exception as ex:  # noqa: BLE001
@@ -215,6 +252,9 @@ def check(sample):
     ans = sample["answer"]
     if ans.get("kind") != "number" or rat(ans["value"]) != truth:
         errs.append(f"answer {ans.get('value')} != {truth}")
+    expr = sample["params"].get("expr")
+    if expr is not None and sorted(map(str, expr_shape(expr))) != sorted(map(str, tree_shape(tree))):
+        errs.append("the problem does not show every power and operation of params.expr")
     if re.search(r"\+\s*-|-\s*-|\+\s*\+", prob):
         errs.append("double sign in problem")
 

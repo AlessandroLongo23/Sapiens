@@ -250,6 +250,73 @@ export function tex(n: Node): string {
 }
 
 // ---------------------------------------------------------------------------
+// Lines for the phone. The exercise page draws each formula line at 18 px in about 350 px; a problem
+// wider than LINE goes on several lines, each within LINE (spec, "Righe sul telefono").
+
+/**
+ * Estimated width in px at 18 px of a problem line, summing the widths KaTeX gives to its parts: a digit
+ * 10.9, a \dfrac its longer side plus 5.2, an exponent character 8.7, a + or - between terms 21.9, a
+ * \cdot 19.2, a : 18.1, a bracket 7.25 (a curly one 10.4), a minus sign 12.3, a decimal comma 5.
+ * Measured on 900 problems it is never more than 1 px under the real width.
+ */
+export function estWidth(latex: string): number {
+	let w = 0;
+	let s = latex.replace(/\\(left|right)/g, '');
+	const eat = (re: RegExp, f: (m: string[]) => number) => {
+		s = s.replace(re, (...m: string[]) => {
+			w += f(m);
+			return '';
+		});
+	};
+	eat(/\\dfrac\{(\d+)\}\{(\d+)\}/g, (m) => 10.9 * Math.max(m[1].length, m[2].length) + 5.2);
+	eat(/\^\{(-?\d+)\}/g, (m) => 8.7 * m[1].length);
+	eat(/ [+-] /g, () => 21.9);
+	eat(/\\cdot/g, () => 19.2);
+	eat(/ : /g, () => 18.1);
+	eat(/\\[{}]/g, () => 10.4);
+	eat(/\{,\}/g, () => 5);
+	eat(/-/g, () => 12.3);
+	eat(/[()[\]]/g, () => 7.25);
+	eat(/\d/g, () => 10.9);
+	return w;
+}
+
+/** A problem wider than this (estimated px) goes on several lines, each within it. */
+export const LINE = 348;
+
+/**
+ * The problem as the student sees it: tex(expr) if it fits LINE, otherwise an aligned block with a new
+ * line before a +, a -, a \cdot or a : of the outer level, so that no \left \right pair is cut. Only
+ * level 6 is ever this wide, and there the curly bracket alone always fits: the break comes before the
+ * last factor (measured on 5000 exercises).
+ */
+export function problemLatex(expr: Node): string {
+	const one = tex(expr);
+	if (estWidth(one) <= LINE) return one;
+	// The outer level: the terms of a sum or the factors of a chain, each with the sign or operation before it.
+	let parts: string[];
+	if (expr.t === 'sum') parts = expr.terms.map((t, i) => (i === 0 ? (t.s < 0 ? '-' : '') : t.s < 0 ? '- ' : '+ ') + tex(t.x));
+	else if (expr.t === 'ch') parts = expr.items.map((it, i) => (i === 0 ? '' : expr.ops[i - 1] === '*' ? '\\cdot ' : ': ') + tex(it));
+	else return one;
+	const lines: string[] = [];
+	let cur = '';
+	for (const p of parts) {
+		if (cur && estWidth(`${cur} ${p}`) > LINE) {
+			lines.push(cur);
+			cur = p;
+		} else cur = cur ? `${cur} ${p}` : p;
+	}
+	lines.push(cur);
+	return lines.length === 1 ? one : `\\begin{aligned}&${lines.join('\\\\&\\quad ')}\\end{aligned}`;
+}
+
+/** The lines of a problem written as an aligned block (one line if it is not). */
+export function problemLines(latex: string): string[] {
+	const m = /^\\begin\{aligned\}&(.*)\\end\{aligned\}$/.exec(latex);
+	return m ? m[1].split('\\\\&\\quad ') : [latex];
+}
+
+// ---------------------------------------------------------------------------
 // Steps: the innermost bracket first, then the fractions of fractions, then the rest.
 
 /** Map over a tree, bottom-up. */
@@ -664,7 +731,12 @@ function check(sample: Sample): string[] {
 	} catch (e) {
 		return [`espressione non valida: ${(e as Error).message}`];
 	}
-	if (sample.problem !== tex(expr)) v.push('il testo non corrisponde a params.expr');
+	if (sample.problem !== problemLatex(expr)) v.push('il testo non corrisponde a params.expr');
+	const lines = problemLines(sample.problem);
+	if (lines.length > 3) v.push('più di tre righe');
+	lines.forEach((l, i) => {
+		if (estWidth(l) > LINE) v.push(`riga ${i + 1} troppo larga per il telefono`);
+	});
 	if (sample.answer.kind !== 'number' || sample.answer.value !== value.toString()) v.push('risposta diversa dal valore');
 	if (value.isZero() || Math.abs(value.num) > END || value.den > END) v.push('risultato zero o troppo grande');
 	if (/\+\s*-|-\s*-|\+\s*\+|\^\{1\}|\d\.\d/.test(sample.problem)) v.push('segni doppi, esponente 1 o punto decimale');
@@ -763,14 +835,14 @@ export const numeriRazionaliEspressioni: Generator = {
 			if (sizeAndShape(b.expr).length > 0) continue;
 			const wrong = mistakes(b.expr, level);
 			if (wrong.length < 3) continue;
-			const problem = tex(b.expr);
+			const problem = problemLatex(b.expr);
 			const sample: Sample = {
 				generatorId: ID,
 				level,
 				seed: rng.seed,
 				prompt: 'Calcola il valore dell’espressione.',
 				problem,
-				solution: `${problem} = ${value.toLatex()}`,
+				solution: `${tex(b.expr)} = ${value.toLatex()}`,
 				steps: buildSteps(b.expr),
 				answer: { kind: 'number', value: value.toString() },
 				params: { expr: b.expr, case: b.case, wrong: wrong.map((w) => w.toString()) },

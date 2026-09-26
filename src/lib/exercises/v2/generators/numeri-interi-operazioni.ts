@@ -155,6 +155,90 @@ const fmt = (v: number): string => String(v);
 const fmtS = (v: number): string => (v > 0 ? `+${v}` : String(v));
 const t = (s: string): string => `\\text{${s}}`;
 
+// ---------------------------------------------------------------------------
+// Lines for the phone
+
+/**
+ * Estimated width in em of a formula as KaTeX draws it: a digit 0.5, a digit in an exponent 0.36, a
+ * binary + or - with its spaces 1.22, \cdot 0.72, : 0.83, a tonda or quadra 0.39, a graffa 0.5, a
+ * minus in front of a number 0.78. Binary operators are the ones written with a space on each side.
+ */
+export function emWidth(tex: string): number {
+	const BIN: Record<string, number> = { '+': 1.22, '-': 1.22, '\\cdot': 0.72, ':': 0.83, '=': 1.33, '<': 1.33, '>': 1.33 };
+	let w = 0;
+	for (let i = 0; i < tex.length; ) {
+		const rest = tex.slice(i);
+		const bin = /^ (\+|-|\\cdot|:|=|<|>) /.exec(rest);
+		const sup = /^\^(\{[^{}]*\}|\d)/.exec(rest);
+		if (bin) {
+			w += BIN[bin[1]];
+			i += bin[0].length - 1;
+		} else if (sup) {
+			w += 0.36 * sup[1].replace(/\\,|[{}]/g, '').length;
+			i += sup[0].length;
+		} else if (rest.startsWith('\\{') || rest.startsWith('\\}')) {
+			w += 0.5;
+			i += 2;
+		} else if (rest.startsWith('\\,')) {
+			w += 0.17;
+			i += 2;
+		} else if (rest.startsWith('\\cdot')) {
+			w += 0.72;
+			i += 5;
+		} else {
+			const c = tex[i++];
+			w += /\d/.test(c) ? 0.5 : '()[]'.includes(c) ? 0.39 : c === '+' || c === '-' ? 0.78 : c === ' ' ? 0 : 0.5;
+		}
+	}
+	return w;
+}
+
+/**
+ * A problem line at 18 px holds 350 px on a phone. Measured with KaTeX on 1600 expressions of
+ * this generator and of numeri-interi-potenze, every line of more than 350 px has an estimate above
+ * 17, and only 25 of those above 17 would have fitted.
+ */
+export const PROBLEM_EM = 17;
+
+/**
+ * Cuts a formula into lines of at most maxEm, each new line starting with the binary operator
+ * (+, -, \cdot, :) it breaks before. Among the cuts that keep the line long enough, the one with
+ * the fewest brackets open wins, so the line breaks at the outermost level it can.
+ */
+export function phoneLines(tex: string, maxEm = PROBLEM_EM): string[] {
+	const cuts: { at: number; depth: number }[] = [];
+	let depth = 0;
+	for (let i = 0; i < tex.length; i++) {
+		const rest = tex.slice(i);
+		if (/^ (\+|-|\\cdot|:) /.test(rest)) cuts.push({ at: i, depth });
+		if (rest.startsWith('\\{') || rest.startsWith('\\}')) {
+			depth += rest[1] === '{' ? 1 : -1;
+			i++;
+		} else if ('(['.includes(tex[i])) depth++;
+		else if (')]'.includes(tex[i])) depth--;
+	}
+	const lines: string[] = [];
+	let start = 0;
+	while (emWidth(tex.slice(start)) > maxEm) {
+		const fit = cuts.filter((c) => c.at > start && emWidth(tex.slice(start, c.at)) <= maxEm);
+		if (!fit.length) break;
+		const long = fit.filter((c) => emWidth(tex.slice(start, c.at)) >= maxEm / 2);
+		const pool = long.length ? long : fit;
+		const least = Math.min(...pool.map((c) => c.depth));
+		const cut = pool.filter((c) => c.depth === least).at(-1)!;
+		lines.push(tex.slice(start, cut.at));
+		start = cut.at + 1;
+	}
+	lines.push(tex.slice(start));
+	return lines;
+}
+
+/** One line if it fits, otherwise an aligned block: a new line before an operator, as present.ts lays it out. */
+export const alignedLines = (lines: string[]): string => (lines.length === 1 ? lines[0] : `\\begin{aligned}&${lines.join(' \\\\ &\\quad ')}\\end{aligned}`);
+
+/** The problem as the student sees it. */
+export const problemLatex = (x: Node): string => alignedLines(phoneLines(latex(x)));
+
 /** Parses the ASCII form back into a tree; the bracket kinds come from the symbols. */
 export function parseAscii(s: string): Sum {
 	let i = 0;
@@ -743,7 +827,8 @@ function check(sample: Sample): string[] {
 	} catch (e) {
 		return [`params.expr non valido: ${(e as Error).message}`];
 	}
-	if (latex(x) !== sample.problem) v.push('il testo non corrisponde a params.expr');
+	if (problemLatex(x) !== sample.problem) v.push('il testo non corrisponde a params.expr');
+	if (phoneLines(latex(x)).some((l) => emWidth(l) > PROBLEM_EM)) v.push('riga troppo larga per il telefono');
 	const value = evaluate(x);
 	if (value === null) return [...v, 'una divisione non è esatta'];
 	if (sample.answer.kind !== 'number' || sample.answer.value !== String(value)) v.push('risposta diversa dal valore');
@@ -851,7 +936,7 @@ function build(rng: Rng, level: number): Sample {
 		level,
 		seed: rng.seed,
 		prompt,
-		problem: latex(x),
+		problem: problemLatex(x),
 		solution: SIGNED_LEVELS.includes(level) ? fmtS(value) : fmt(value),
 		steps,
 		answer: { kind: 'number', value: String(value) },

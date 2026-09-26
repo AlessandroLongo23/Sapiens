@@ -6,7 +6,10 @@
  *
  *   node node_modules/jiti/lib/jiti-cli.mjs scripts/exercises/width.mts <id> [<id> …]
  *
- * For each level: problems over 350 px and options over 252 px, out of 150 exercises, with the widest.
+ * The problem is split the way src/lib/exercises/present.ts splits it: prose wraps and is not measured, each
+ * given of a row is measured on its own, each formula line on its own.
+ *
+ * For each level: problem formulas over 350 px and options over 252 px, from 150 exercises, with the widest.
  * Exits with 1 if anything is over. Needs Playwright's Chromium (installed with the e2e tests).
  */
 import { readFileSync } from 'node:fs';
@@ -15,6 +18,7 @@ import katex from 'katex';
 import { chromium } from 'playwright';
 import { getGenerator } from '../../src/lib/exercises/v2/registry';
 import { createRng } from '../../src/lib/exercises/v2/rng';
+import { presentProblem } from '../../src/lib/exercises/present';
 
 const PROBLEM = { px: 18, max: 350 };
 const OPTION = { px: 16, max: 252 };
@@ -46,14 +50,18 @@ for (const id of process.argv.slice(2)) {
 		for (let s = 1; s <= SAMPLES; s++) {
 			const x = g.generate(createRng(s * 7919 + level), level);
 			if (x.format === 'text') continue;
-			problems.push(x.problem);
+			// As the page lays it out: prose wraps, each given is its own item in a wrapping row, formulas stand alone.
+			for (const block of presentProblem(x.problem)) {
+				if (block.kind === 'math') problems.push(block.tex);
+				else if (block.kind === 'givens') problems.push(...block.items);
+			}
 			const choice = x.answer.kind === 'choice' ? x.answer : g.toChoice?.(x, createRng(s + 99));
 			for (const o of choice?.options ?? []) if (!o.figure) options.push(o.latex);
 		}
 		const p = await widths(problems, PROBLEM.px);
 		const o = await widths(options, OPTION.px);
 		over += p.filter((w) => w > PROBLEM.max).length + o.filter((w) => w > OPTION.max).length;
-		console.log(`  livello ${level}: problemi oltre ${PROBLEM.max} px ${report(p, PROBLEM.max)}, opzioni oltre ${OPTION.max} px ${report(o, OPTION.max)}`);
+		console.log(`  livello ${level}: formule del problema oltre ${PROBLEM.max} px ${report(p, PROBLEM.max)}, opzioni oltre ${OPTION.max} px ${report(o, OPTION.max)}`);
 	}
 }
 await browser.close();

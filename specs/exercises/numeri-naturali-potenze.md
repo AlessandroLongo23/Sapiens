@@ -13,7 +13,8 @@ espressioni. La risposta è un numero (`number`), tranne la domanda su `0^0`, ch
 
 - Livello 1: `params.base`, `params.exponent`, `params.value`, `params.case`.
 - Livelli 2-5: `params.expr` è l'espressione in ASCII (`2^5*2^8:(2^4)^2`, esponenti di più cifre
-  come `^(12)`), identica al testo LaTeX tolti `\cdot` e gli spazi; `params.value` il valore.
+  come `^(12)`), identica al testo LaTeX tolti `\cdot` e gli spazi (e riunite le righe al
+  livello 5, se il testo va a capo); `params.value` il valore.
 
 ## Regole comuni
 
@@ -84,6 +85,20 @@ Esempi svolti:
 1. `(2^2 \cdot 18 : 12 + 14) : 4 \cdot 3^2`. Tonde: 4 · 18 : 12 + 14 = 6 + 14 = 20; resta
    20 : 4 · 9 = 45.
 2. `37 - (3 \cdot 2 - 2^5 : 2^3 + 30)`. Tonde: 6 − 32 : 8 + 30 = 6 − 4 + 30 = 32; resta 37 − 32 = 5.
+
+## Righe per il telefono
+
+Sul sito il problema è una formula KaTeX a 18 px in una colonna di 350 px. Al livello 5 il testo è
+`problemLatex()` di `naturali.ts`, con le stesse regole di `numeri-naturali-operazioni` (sezione
+"Righe per il telefono" della sua specifica): se l'espressione stimata sta in 350 px resta su una
+riga; altrimenti diventa `\begin{aligned}&riga 1 \\ &\quad riga 2\end{aligned}`, a capo prima di
+`+`, `-`, `\cdot` o `:`, il più fuori possibile dalle parentesi, mai tra una base e il suo
+esponente. Il controllo Python riunisce le righe (`join_lines` in `_naturali.py`) e le confronta con
+`params.expr`.
+
+Misura con `scripts/exercises/width.mts` (150 esercizi per livello): livello 5 da 12 formule oltre
+350 px su 150 (massimo 373 px) a 0 su 163 righe (massimo 349 px); vanno su due righe 13 esercizi su
+150. I livelli 1-4 restano su una riga (massimo 152 px) e le opzioni stanno tutte in 252 px.
 
 ## Esercizi "brutti" da evitare
 

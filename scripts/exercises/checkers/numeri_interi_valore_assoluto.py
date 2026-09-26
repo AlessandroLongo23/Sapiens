@@ -63,17 +63,48 @@ def as_int(s):
 
 # ---------------------------------------------------------------------------
 
-STATEMENT = re.compile(
-    r"\\text\{(è positivo|è negativo|non è né positivo né negativo)\}"
-    r"\\text\{ e appartiene a \}\\mathbb\{([NZ])\}\\text\{ (e a|ma non a) \}\\mathbb\{([NZ])\}"
+# An option on two lines, for the phone: \begin{gathered} line \\ line \end{gathered}.
+GATHERED = re.compile(r"\\begin\{gathered\}(.*)\\end\{gathered\}", re.S)
+
+
+def option_lines(latex):
+    m = GATHERED.fullmatch(latex)
+    return m.group(1).split(r" \\ ") if m else [latex]
+
+
+def one_line(latex, sym):
+    """A chain or a set written on two lines back to one line; the second line starts with the
+    symbol of the chain (with the next number after a comma)."""
+    lines = option_lines(latex)
+    if len(lines) == 1:
+        return latex
+    if len(lines) != 2:
+        raise ValueError(f"{len(lines)} lines in {latex!r}")
+    head, tail = lines
+    if sym == ",":
+        if not head.endswith(",") or tail.startswith((",", " ")):
+            raise ValueError(f"bad line break in {latex!r}")
+    elif not tail.startswith(f"{sym} "):
+        raise ValueError(f"bad line break in {latex!r}")
+    return f"{head} {tail}"
+
+
+# The sign on the first line, the sets on the second.
+STATEMENT_LINES = (
+    re.compile(r"\\text\{(è positivo|è negativo|non è né positivo né negativo)\}"),
+    re.compile(r"\\text\{e appartiene a \}\\mathbb\{([NZ])\}\\text\{ (e a|ma non a) \}\\mathbb\{([NZ])\}"),
 )
 
 
 def statement_true(latex, n):
-    m = STATEMENT.fullmatch(latex)
+    lines = option_lines(latex)
+    parts = [r.fullmatch(ln) for r, ln in zip(STATEMENT_LINES, lines)] if len(lines) == 2 else []
+    if len(parts) != 2 or not all(parts):
+        raise ValueError(f"unknown statement {latex!r}")
+    m = parts[0].groups() + parts[1].groups()
     if not m:
         raise ValueError(f"unknown statement {latex!r}")
-    sign, first, link, second = m.groups()
+    sign, first, link, second = m
     sign_ok = {"è positivo": n > 0, "è negativo": n < 0, "non è né positivo né negativo": n == 0}[sign]
     member = {"N": n >= 0, "Z": True}
     if first == second:
@@ -217,7 +248,7 @@ def check(sample):
         if idx is not None:
             truths = []
             for o in ans["options"]:
-                items = [as_int(v) for v in o["latex"].split(f" {sym} ")]
+                items = [as_int(v) for v in one_line(o["latex"], sym).split(f" {sym} ")]
                 if sorted(items) != sorted(xs):
                     errs.append(f"option {o['latex']} is not an order of the numbers")
                 if [str(v) for v in items] != o["values"]:
@@ -242,7 +273,7 @@ def check(sample):
         if idx is not None:
             truths = []
             for o in ans["options"]:
-                its = o["latex"].split(" < ")
+                its = one_line(o["latex"], "<").split(" < ")
                 if sorted(its) != sorted(items):
                     errs.append(f"option {o['latex']} is not an order of the expressions")
                 ov = [eval_expr(e) for e in its]
@@ -292,7 +323,7 @@ def check(sample):
             if idx is not None:
                 lists = []
                 for o in ans["options"]:
-                    mm = re.fullmatch(r"\\\{(.*)\\\}", o["latex"])
+                    mm = re.fullmatch(r"\\\{(.*)\\\}", one_line(o["latex"], ","))
                     items = [as_int(v) for v in mm.group(1).split(", ")] if mm and mm.group(1) else []
                     if [str(v) for v in items] != o["values"]:
                         errs.append("option values differ from latex")

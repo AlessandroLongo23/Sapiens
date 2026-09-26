@@ -232,8 +232,53 @@ def check_quadratic(sample):
         for o in opts:
             if not o.get("latex"):
                 errs.append("choice option without latex")
+        # The option text must say the same values. Two values with a radical are too wide for the
+        # answer button on a phone: when any option has a radical, every two-value option is
+        # "\begin{gathered} x_1 = ... \\ x_2 = ... \end{gathered}", otherwise "x_1 = ...,\ x_2 = ...".
+        radical = any(not canon(exact(v)).is_rational for o in opts for v in o["values"])
+        for o in opts:
+            if o.get("latex"):
+                errs += quadratic_option_errors(o["latex"], o["values"], radical)
 
     return errs, kind
+
+
+def latex_value(t):
+    """A root as the generator writes it: -3, \\frac{7}{2}, -\\frac{\\sqrt{5}}{2}, \\frac{-1 + 2\\sqrt{3}}{4}."""
+    s = t.strip()
+    s = re.sub(r"(\d)\s*\\sqrt", r"\1*\\sqrt", s)
+    s = re.sub(r"\\sqrt\{(\d+)\}", r"sqrt(\1)", s)
+    s = re.sub(r"\\frac\{([^{}]*(?:\([^()]*\))?[^{}]*)\}\{(\d+)\}", r"((\1)/(\2))", s)
+    if not re.fullmatch(r"[0-9+\-*/() ]*(?:sqrt\(\d+\)[0-9+\-*/() ]*)*", s) or not s.strip():
+        raise ValueError(f"unreadable value {t!r}")
+    return sympify(s)
+
+
+def quadratic_option_errors(latex, values, radical):
+    errs = []
+    if not values:
+        return [] if latex == r"\text{Nessuna soluzione reale}" else [f"empty option written {latex!r}"]
+    if len(values) == 1:
+        m = re.fullmatch(r"x = (.+)", latex)
+        parts = [m.group(1)] if m else None
+    else:
+        g = re.fullmatch(r"\\begin\{gathered\} x_1 = (.+) \\\\ x_2 = (.+) \\end\{gathered\}", latex)
+        one = re.fullmatch(r"x_1 = (.+),\\ x_2 = (.+)", latex)
+        if radical and not g:
+            errs.append(f"option with radicals not on two lines: {latex!r}")
+        if not radical and not one:
+            errs.append(f"rational option not on one line: {latex!r}")
+        m = g or one
+        parts = [m.group(1), m.group(2)] if m else None
+    if parts is None:
+        return errs + [f"option latex not in the expected form: {latex!r}"]
+    try:
+        shown = [canon(latex_value(t)) for t in parts]
+    except Exception as e:  # noqa: BLE001 - any parse failure is an error of the option
+        return errs + [f"option latex unreadable: {e}"]
+    if shown != [canon(exact(v)) for v in values]:
+        errs.append(f"option latex {latex!r} != values {values}")
+    return errs
 
 
 def terms_expr(terms):

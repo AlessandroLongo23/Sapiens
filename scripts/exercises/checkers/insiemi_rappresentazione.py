@@ -12,6 +12,7 @@ from checkers.insiemi_comune import (
     els,
     prop_elements,
     prop_tex,
+    prop_tex_split,
     prose,
     set_answer_errors,
     set_option_truth,
@@ -23,6 +24,20 @@ CASE_RANGES = {
 }
 
 WORDS = {"pari", "dispari", "mult", "div"}
+
+
+def problem_tex(prop):
+    """A = {x in N | x è multiplo di k e a <= x <= b} does not fit a phone on one line (380 px of 350):
+    that one goes on two, broken before the "e". Every other property stays on one line."""
+    cs = prop["conds"]
+    if len(cs) == 2 and cs[0]["t"] == "mult" and cs[1]["t"] == "range" and cs[1].get("lo") is not None and cs[1].get("hi") is not None:
+        return prop_tex_split(prop, "A = ")
+    return f"A = {prop_tex(prop)}"
+
+
+def option_tex(prop):
+    """Level 5 options: a property with two conditions on two lines, the others on one."""
+    return prop_tex_split(prop) if len(prop["conds"]) == 2 else prop_tex(prop)
 
 
 def check(sample):
@@ -42,8 +57,8 @@ def check(sample):
 
         def grade(o):
             prop = json.loads(o["values"][0])
-            if o["latex"] != prop_tex(prop):
-                raise ValueError(f"latex {o['latex']} != {prop_tex(prop)}")
+            if o["latex"] != option_tex(prop):
+                raise ValueError(f"latex {o['latex']} != {option_tex(prop)}")
             return set(prop_elements(prop)) == set(E)
 
         errs += choice_errors(ans, grade)
@@ -51,8 +66,8 @@ def check(sample):
 
     prop = p["prop"]
     truth = prop_elements(prop)
-    if sample["problem"] != f"A = {prop_tex(prop)}":
-        errs.append(f"problem {sample['problem']} != A = {prop_tex(prop)}")
+    if sample["problem"] != problem_tex(prop):
+        errs.append(f"problem {sample['problem']} != {problem_tex(prop)}")
     errs += set_answer_errors(sample, truth)
     if len(truth) > 10:
         errs.append(f"{len(truth)} elements, more than 10")

@@ -38,7 +38,37 @@ interface Coll {
 	why: string;
 }
 
-/** Well defined: for any object the answer "does it belong?" is yes or no, for everybody. */
+// ---------------------------------------------------------------------------
+// Verbal options that fit the phone
+
+/**
+ * Prose with inline math between dollars as one LaTeX line: `i numeri naturali $x$ tali che $x + 1 = 1$`
+ * becomes `\text{i numeri naturali } x \text{ tali che } x + 1 = 1`. A ` | ` in the prose is where the
+ * option breaks (see optionTex); on one line it is a space.
+ */
+function lineTex(prose: string): string {
+	return prose
+		.replace(/ \| /g, ' ')
+		.split(/(\$[^$]*\$)/)
+		.filter(Boolean)
+		.map((part) => (part.startsWith('$') ? part.slice(1, -1) : `\\text{${part}}`))
+		.join(' ');
+}
+
+/**
+ * An answer option from prose. An answer button leaves 252 px at 16 px: the descriptions wider than that
+ * carry a ` | ` where they break, and go on two lines of a gathered (`\text{I ragazzi simpatici}` over
+ * `\text{della tua classe}`); the others stay on one line.
+ */
+function optionTex(prose: string): string {
+	const parts = prose.split(' | ');
+	return parts.length === 1 ? lineTex(prose) : `\\begin{gathered} ${parts.map(lineTex).join(' \\\\ ')} \\end{gathered}`;
+}
+
+/** The collection as a sentence, without the break. */
+const plain = (text: string) => text.replace(' | ', ' ');
+
+/** Well defined: for any object the answer "does it belong?" is yes or no, for everybody. A ` | ` marks the break of a long option. */
 export const WELL_DEFINED: Coll[] = [
 	{
 		id: 'giorni',
@@ -52,7 +82,7 @@ export const WELL_DEFINED: Coll[] = [
 	},
 	{
 		id: 'mesi30',
-		text: "I mesi dell'anno che hanno 30 giorni",
+		text: "I mesi dell'anno | che hanno 30 giorni",
 		why: 'sono aprile, giugno, settembre e novembre',
 	},
 	{
@@ -72,12 +102,12 @@ export const WELL_DEFINED: Coll[] = [
 	},
 	{
 		id: 'pari',
-		text: 'I numeri pari compresi tra 7 e 21',
+		text: 'I numeri pari | compresi tra 7 e 21',
 		why: 'sono 8, 10, ..., 20',
 	},
 	{
 		id: 'marzo',
-		text: 'Gli studenti della tua classe nati a marzo',
+		text: 'Gli studenti della tua classe | nati a marzo',
 		why: 'per ogni studente la risposta è sì o no',
 	},
 	{
@@ -106,7 +136,7 @@ export const WELL_DEFINED: Coll[] = [
 export const NOT_DEFINED: Coll[] = [
 	{
 		id: 'simpatici',
-		text: 'I ragazzi simpatici della tua classe',
+		text: 'I ragazzi simpatici | della tua classe',
 		why: 'essere simpatici è un giudizio personale',
 	},
 	{
@@ -126,7 +156,7 @@ export const NOT_DEFINED: Coll[] = [
 	},
 	{
 		id: 'libri',
-		text: 'I libri interessanti della biblioteca',
+		text: 'I libri interessanti | della biblioteca',
 		why: 'un libro interessante per te può non esserlo per un altro',
 	},
 	{
@@ -163,7 +193,7 @@ export const NOT_DEFINED: Coll[] = [
 
 const collById = (id: string) => [...WELL_DEFINED, ...NOT_DEFINED].find((c) => c.id === id);
 const collOption = (c: Coll): ChoiceOption => ({
-	latex: `\\text{${c.text}}`,
+	latex: optionTex(c.text),
 	values: [c.id],
 });
 
@@ -199,20 +229,21 @@ function candElements(c: Cand): El[] {
 	}
 }
 
-function candLatex(c: Cand): string {
+/** The candidate as prose; `x + a = b` and "maggiori di n e minori di m" are too wide for one line. */
+function candProse(c: Cand): string {
 	switch (c[0]) {
 		case 'lt':
-			return `\\text{i numeri naturali minori di } ${c[1]}`;
+			return `i numeri naturali minori di $${c[1]}$`;
 		case 'eq':
-			return `\\text{i numeri naturali } x \\text{ tali che } x + ${c[1]} = ${c[2]}`;
+			return `i numeri naturali $x$ | tali che $x + ${c[1]} = ${c[2]}$`;
 		case 'btw':
-			return `\\text{i numeri naturali maggiori di } ${c[1]} \\text{ e minori di } ${c[2]}`;
+			return `i numeri naturali | maggiori di $${c[1]}$ e minori di $${c[2]}$`;
 		case 'lit0':
-			return '\\{0\\}';
+			return '$\\{0\\}$';
 		case 'litE':
-			return '\\{\\emptyset\\}';
+			return '$\\{\\emptyset\\}$';
 		case 'mesi':
-			return `\\text{i mesi dell'anno con } ${c[1]} \\text{ giorni}`;
+			return `i mesi dell'anno con $${c[1]}$ giorni`;
 		default:
 			throw new Error(`${ID}: unknown candidate ${c[0]}`);
 	}
@@ -250,34 +281,35 @@ function finFinite(f: Fin): boolean {
 	return ['milione', 'div', 'vuoto', 'min', 'alfabeto', 'multmin', 'parola'].includes(f[0]);
 }
 
-function finLatex(f: Fin): string {
+/** The set as prose; the four descriptions wider than an answer button carry their break. */
+function finProse(f: Fin): string {
 	switch (f[0]) {
 		case 'pari':
-			return '\\text{i numeri naturali pari}';
+			return 'i numeri naturali pari';
 		case 'dispari':
-			return '\\text{i numeri naturali dispari}';
+			return 'i numeri naturali dispari';
 		case 'mult':
-			return `\\text{i multipli di } ${f[1]} \\text{ in } \\mathbb{N}`;
+			return `i multipli di $${f[1]}$ in $\\mathbb{N}$`;
 		case 'neg':
-			return '\\text{i numeri interi negativi}';
+			return 'i numeri interi negativi';
 		case 'magg':
-			return `\\text{i numeri naturali maggiori di } ${f[1]}`;
+			return `i numeri naturali | maggiori di $${f[1]}$`;
 		case 'razio':
-			return `\\text{i numeri razionali compresi tra } 0 \\text{ e } 1`;
+			return 'i numeri razionali | compresi tra $0$ e $1$';
 		case 'milione':
-			return '\\text{i numeri naturali minori di un milione}';
+			return 'i numeri naturali | minori di un milione';
 		case 'div':
-			return `\\text{i divisori di } ${f[1]}`;
+			return `i divisori di $${f[1]}$`;
 		case 'vuoto':
-			return '\\emptyset';
+			return '$\\emptyset$';
 		case 'min':
-			return `\\text{i numeri naturali minori di } ${f[1]}`;
+			return `i numeri naturali minori di $${f[1]}$`;
 		case 'alfabeto':
-			return "\\text{le lettere dell'alfabeto italiano}";
+			return "le lettere dell'alfabeto italiano";
 		case 'multmin':
-			return `\\text{i multipli di } ${f[1]} \\text{ minori di } ${f[2]}`;
+			return `i multipli di $${f[1]}$ minori di $${f[2]}$`;
 		case 'parola':
-			return `\\text{le lettere della parola “${f[1]}”}`;
+			return `le lettere della parola | “${f[1]}”`;
 		default:
 			throw new Error(`${ID}: unknown kind ${f[0]}`);
 	}
@@ -474,13 +506,13 @@ function build(rng: Rng, level: number): Built | null {
 			const opts = choice.options.map((o) => collById(o.values[0])!);
 			const steps = opts.map((c) => {
 				const ok = WELL_DEFINED.includes(c);
-				return `\\text{“${c.text}” ${ok ? 'è' : 'non è'} un insieme: ${c.why}}`;
+				return `\\text{“${plain(c.text)}” ${ok ? 'è' : 'non è'} un insieme: ${c.why}}`;
 			});
 			steps.unshift(`\\text{Un insieme è una collezione ben definita: per ogni oggetto si decide senza discutere se ne fa parte}`);
 			return {
 				prompt: PROMPT,
 				problem: textBlock(`Quale di queste collezioni ${ask} un insieme?`),
-				solution: `\\text{${correct.text}}`,
+				solution: `\\text{${plain(correct.text)}}`,
 				steps,
 				answer: choice,
 				params: { ask, options: opts.map((c) => c.id) },
@@ -517,16 +549,16 @@ function build(rng: Rng, level: number): Built | null {
 			]);
 			const choice = assembleChoice(
 				rng,
-				{ latex: candLatex(correct), values: correct },
-				traps.map((t) => ({ latex: candLatex(t), values: t })),
+				{ latex: optionTex(candProse(correct)), values: correct },
+				traps.map((t) => ({ latex: optionTex(candProse(t)), values: t })),
 			);
 			if (!choice) return null;
 			const cands = choice.options.map((o) => o.values);
 			return {
 				prompt: PROMPT,
 				problem: textBlock('Quale di questi insiemi è vuoto?'),
-				solution: candLatex(correct),
-				steps: cands.map((c) => `${candLatex(c)}\\text{: } ${candWhy(c)}`),
+				solution: lineTex(candProse(correct)),
+				steps: cands.map((c) => `${lineTex(candProse(c))}\\text{: } ${candWhy(c)}`),
 				answer: choice,
 				params: { candidates: cands },
 			};
@@ -604,14 +636,14 @@ function build(rng: Rng, level: number): Built | null {
 			const ask: 'infinito' | 'finito' = rng.int(0, 1) ? 'infinito' : 'finito';
 			const correct = finCandidates(rng, ask === 'finito')[0];
 			const others = finCandidates(rng, ask !== 'finito');
-			const opt = (f: Fin): ChoiceOption => ({ latex: finLatex(f), values: f });
+			const opt = (f: Fin): ChoiceOption => ({ latex: optionTex(finProse(f)), values: f });
 			const choice = assembleChoice(rng, opt(correct), others.map(opt))!;
 			const fs = choice.options.map((o) => o.values);
 			return {
 				prompt: PROMPT,
 				problem: textBlock(`Quale di questi insiemi è ${ask}?`),
-				solution: finLatex(correct),
-				steps: fs.map((f) => `${finLatex(f)}\\text{: ${finFinite(f) ? 'finito' : 'infinito'}, } ${finWhy(f)}`),
+				solution: lineTex(finProse(correct)),
+				steps: fs.map((f) => `${lineTex(finProse(f))}\\text{: ${finFinite(f) ? 'finito' : 'infinito'}, } ${finWhy(f)}`),
 				answer: choice,
 				params: { ask, options: fs },
 			};

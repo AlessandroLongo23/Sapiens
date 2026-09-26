@@ -10,6 +10,7 @@ import {
 	type El,
 	assembleChoice,
 	diff,
+	fitSetChoice,
 	inter,
 	lines,
 	norm,
@@ -481,7 +482,7 @@ function toChoice(sample: Sample, rng: Rng): ChoiceAnswer {
 	const fallback = truth.map((x) => truth.filter((y) => y !== x));
 	const ch = assembleChoice(rng, setOption(truth), [...wrong, ...shuffle(rng, fallback)].map(setOption));
 	if (!ch) throw new Error(`${ID}: not enough distractors for seed ${sample.seed}`);
-	return ch;
+	return fitSetChoice(ch);
 }
 
 export const insiemiUnione: Generator = {

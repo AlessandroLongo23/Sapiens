@@ -24,6 +24,11 @@ CASE_RANGES = {
 
 DEC_RE = re.compile(r"^(\d+),(\d+)$")
 FRAC_RE = re.compile(r"^(-?)\\frac\{(\d+)\}\{(\d+)\}$|^(-?\d+)$")
+# Lines for the phone (spec, "Righe sul telefono"): a problem wider than LINE (estimated px at 18 px)
+# is written as \begin{aligned}&line 1\\&\quad line 2\end{aligned}, a new line before a +, a -,
+# a \cdot or a : of the outer level; each line within LINE.
+LINE = 348
+ALIGNED = re.compile(r"^\\begin\{aligned\}&(.*)\\end\{aligned\}$", re.S)
 
 
 def dec(s):
@@ -145,6 +150,57 @@ def tex(n):
     raise ValueError(t)
 
 
+def est_width(latex):
+    """Estimated width in px at 18 px, the spec's sum of the widths KaTeX gives to each part."""
+    w = 0.0
+    s = re.sub(r"\\(left|right)", "", latex)
+    for rx, f in (
+        (r"\\dfrac\{(\d+)\}\{(\d+)\}", lambda m: 10.9 * max(len(m.group(1)), len(m.group(2))) + 5.2),
+        (r"\^\{(-?\d+)\}", lambda m: 8.7 * len(m.group(1))),
+        (r" [+-] ", lambda m: 21.9),
+        (r"\\cdot", lambda m: 19.2),
+        (r" : ", lambda m: 18.1),
+        (r"\\[{}]", lambda m: 10.4),
+        (r"\{,\}", lambda m: 5),
+        (r"-", lambda m: 12.3),
+        (r"[()\[\]]", lambda m: 7.25),
+        (r"\d", lambda m: 10.9),
+    ):
+        w += sum(f(m) for m in re.finditer(rx, s))
+        s = re.sub(rx, "", s)
+    return w
+
+
+def unfold(problem):
+    """The problem on one line, and the errors of its layout: an aligned block only when one line does
+    not fit LINE, two or three lines, each within LINE, every line after the first starting with
+    +, -, \\cdot or :, no \\left ... \\right pair cut."""
+    errs = []
+    m = ALIGNED.match(problem)
+    if not m:
+        if re.search(r"aligned|&|\\\\|\\quad", problem):
+            errs.append(f"malformed layout: {problem}")
+        if est_width(problem) > LINE:
+            errs.append(f"problem wider than {LINE} px on one line")
+        return problem, errs
+    lines = m.group(1).split("\\\\&\\quad ")
+    if not 2 <= len(lines) <= 3:
+        errs.append(f"{len(lines)} lines")
+    for i, ln in enumerate(lines):
+        if re.search(r"aligned|&|\\\\|\\quad", ln):
+            errs.append(f"malformed line {i + 1}: {ln}")
+        if i > 0 and not re.match(r"([+-]|\\cdot|:) ", ln):
+            errs.append(f"line {i + 1} does not start with +, -, \\cdot or :: {ln}")
+        if ln.count("\\left") != ln.count("\\right"):
+            errs.append(f"a \\left ... \\right pair is cut at line {i + 1}")
+        if est_width(ln) > LINE:
+            errs.append(f"line {i + 1} too wide for a phone: {ln}")
+    flat = " ".join(lines)
+    if est_width(flat) <= LINE:
+        errs.append("problem split although it fits one line")
+    return flat, errs
+
+
 def parse_opt(latex):
     m = FRAC_RE.match(latex)
     if not m:
@@ -235,8 +291,10 @@ def check(sample):
         errs += general(e)
     except Exception as ex:  # noqa: BLE001
         return [f"cannot evaluate: {ex}"], None
-    if sample["problem"] != tex(e):
-        errs.append(f"problem {sample['problem']} != tree {tex(e)}")
+    flat, layout = unfold(sample["problem"])
+    errs += layout
+    if flat != tex(e):
+        errs.append(f"problem {flat} != tree {tex(e)}")
     ans = sample["answer"]
     if ans.get("kind") != "number" or rat(ans["value"]) != truth:
         errs.append(f"answer {ans.get('value')} != {truth}")

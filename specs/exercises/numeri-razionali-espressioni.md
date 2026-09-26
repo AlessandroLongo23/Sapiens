@@ -101,6 +101,28 @@ Esempi:
 `\left\{\left[\left(2 - \dfrac{9}{5}\right)^{2} \cdot \left(\dfrac{1}{5}\right)^{-1} - 2\right] \cdot 2^{-2} + \dfrac{3}{5}\right\} : \left(-\dfrac{3}{10}\right) = -\dfrac{1}{2}`;
 `\left\{3 \cdot \left[\left(2 - \dfrac{5}{2}\right)^{2} : \left(-\dfrac{1}{2}\right)^{3} - \dfrac{1}{3}\right] + 1\right\} : \left(-\dfrac{2}{9}\right) = 27`.
 
+## Righe sul telefono
+
+La pagina dell'esercizio disegna ogni riga del problema a 18 px in circa 350 px. La larghezza si stima
+sommando quelle che KaTeX dà alle parti della formula (a 18 px: una cifra 10,9 px, un `\dfrac` il lato
+più lungo più 5,2, un carattere dell'esponente 8,7, un `+` o `-` tra termini 21,9, un `\cdot` 19,2, un
+`:` 18,1, una parentesi 7,25, una graffa 10,4, un segno meno 12,3, una virgola decimale 5); su 900
+problemi misurati la stima non sta mai più di 1 px sotto la larghezza vera. Un problema che supera
+348 px stimati va su più righe con
+`\begin{aligned}&riga 1\\&\quad riga 2\end{aligned}`, a capo prima di un `+`, un `-`, un `\cdot` o un
+`:` del livello più esterno, così nessuna coppia `\left … \right` si spezza; ogni riga resta entro 348
+px, al massimo tre righe. Le formule più corte restano su una riga. Succede solo al livello 6, dove la
+graffa da sola sta sempre in una riga e l'ultimo fattore va a capo:
+
+`\begin{aligned}&\left\{\left[\left(1 - \dfrac{4}{3}\right)^{3} : \left(-\dfrac{1}{3}\right)^{2} + \dfrac{1}{12}\right] \cdot 2^{-2} + \dfrac{5}{8}\right\}\\&\quad : \left(-\dfrac{1}{8}\right)\end{aligned}`.
+
+La soluzione (`solution`) resta su una riga. La verifica ricompone le righe, controlla che il testo
+sia quello dell'albero e che l'a capo serva davvero.
+
+Misura con `scripts/exercises/width.mts` (26 settembre 2026, 150 esercizi per livello): prima il
+livello 6 aveva 57 problemi su 150 oltre 350 px (il più largo 430 px); dopo nessuna riga oltre 350 px
+in nessun livello (il massimo è 348 px al livello 6) e nessuna opzione oltre 252 px (massimo 45 px).
+
 ## Passaggi
 
 Seguono lo schema della lezione: prima i decimali in frazione, poi la parentesi più interna (tonda,

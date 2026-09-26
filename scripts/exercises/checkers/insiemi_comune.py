@@ -54,6 +54,26 @@ def set_tex(xs):
     return "\\{" + ", ".join(el_tex(e) for e in xs) + "\\}"
 
 
+def list_tex(items, split=False):
+    """Items between braces; split: two lines of a gathered, the first half (rounded up) on the first
+    line ending with its comma, with \\Big braces. That is how a set too wide for the answer button of
+    a phone is written."""
+    if not split:
+        return "\\{" + ", ".join(items) + "\\}"
+    k = (len(items) + 1) // 2
+    return ("\\begin{gathered} \\Big\\{" + ", ".join(items[:k]) + ", \\\\ " + ", ".join(items[k:])
+            + "\\Big\\} \\end{gathered}")
+
+
+def set_option_texes(xs):
+    """The LaTeX an option with the set xs may have: on one line or, with at least 4 elements, on two."""
+    xs = canon(xs)
+    out = [set_tex(xs)]
+    if len(xs) >= 4:
+        out.append(list_tex([el_tex(e) for e in xs], split=True))
+    return out
+
+
 def is_sorted_distinct(values):
     return [str(v) for v in values] == [str(v) for v in canon(els(values))] and len(set(values)) == len(values)
 
@@ -215,8 +235,8 @@ def set_option_truth(truth_set):
         xs = els(o["values"])
         if not is_sorted_distinct(o["values"]):
             raise ValueError(f"option values not canonical: {o['values']}")
-        if o["latex"] != set_tex(xs):
-            raise ValueError(f"option latex {o['latex']} != {set_tex(xs)}")
+        if o["latex"] not in set_option_texes(xs):
+            raise ValueError(f"option latex {o['latex']} != {set_tex(xs)} (on one or two lines)")
         return set(xs) == t
 
     return grade
@@ -308,6 +328,13 @@ def cond_tex(c):
 def prop_tex(p):
     body = " \\text{ e } ".join(cond_tex(c) for c in p["conds"])
     return f"\\{{x \\in \\mathbb{{{p['dom']}}} \\mid {body}\\}}"
+
+
+def prop_tex_split(p, before=""):
+    """A property with two conditions on two lines of a gathered, broken before the "e"."""
+    a, b = (cond_tex(c) for c in p["conds"])
+    return (f"\\begin{{gathered}} {before}\\Big\\{{x \\in \\mathbb{{{p['dom']}}} \\mid {a} \\\\ "
+            f"\\text{{e }} {b}\\Big\\}} \\end{{gathered}}")
 
 
 def _rel(l, rel, r):
