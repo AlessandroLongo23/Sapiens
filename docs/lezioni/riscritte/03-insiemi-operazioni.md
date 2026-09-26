@@ -83,17 +83,10 @@ L'**intersezione** di $A$ e $B$ è l'insieme degli elementi che appartengono sia
 
 $$A \cap B = \{x \mid x \in A \text{ e } x \in B\}$$
 
-Il simbolo $\cap$ si legge "intersezione".
-
 ```ad-example
 Esempio 2: intersezione
 Gli elementi che stanno sia in $A = \{1, 2, 3, 4\}$ sia in $B = \{3, 4, 5, 6\}$ sono $3$ e $4$:
 $$A \cap B = \{3, 4\}$$
-```
-
-```ad-warning
-Confondere $\cup$ e $\cap$
-Un aiuto per ricordarli: $\cup$ è aperto in alto come una coppa che raccoglie tutto (unione), $\cap$ è chiuso in alto e tiene solo la parte comune (intersezione).
 ```
 
 Nel diagramma l'intersezione è la zona in cui i due cerchi si sovrappongono:
@@ -112,19 +105,7 @@ Nel diagramma l'intersezione è la zona in cui i due cerchi si sovrappongono:
 \end{tikzpicture}
 ```
 
-Due insiemi che non hanno elementi in comune, cioè tali che $A \cap B = \emptyset$, si dicono **disgiunti**. Per esempio $\{1, 2\}$ e $\{5, 6\}$ sono disgiunti, e lo sono anche l'insieme dei numeri pari e quello dei numeri dispari.
-
-L'intersezione serve anche con insiemi descritti da una proprietà: l'intersezione tra i numeri naturali pari e i multipli di 3 contiene i numeri che sono pari e multipli di 3 insieme, cioè i multipli di 6.
-
-$$
-\begin{gathered}
-\{x \in \mathbb{N} \mid x \text{ è pari}\} \\
-\cap \, \{x \in \mathbb{N} \mid x \text{ è multiplo di } 3\} \\
-= \{0, 6, 12, 18, \dots\}
-\end{gathered}
-$$
-
-Qualunque sia $A$, valgono $A \cap A = A$ e $A \cap \emptyset = \emptyset$.
+Due insiemi che non hanno elementi in comune, cioè tali che $A \cap B = \emptyset$, si dicono **disgiunti**. Con insiemi descritti da una proprietà, l'intersezione contiene gli elementi che le hanno tutte e due: i numeri naturali pari e multipli di $3$ sono i multipli di $6$, cioè $\{0, 6, 12, 18, \dots\}$. Qualunque sia $A$, valgono $A \cap A = A$ e $A \cap \emptyset = \emptyset$. Le altre proprietà, l'intersezione di tre insiemi e il numero di elementi di un'intersezione sono nella lezione [Intersezione insiemistica](/materiale/scuola-superiore/matematica/insiemi-e-logica/intersezione-insiemistica).
 
 ## Differenza
 
@@ -132,7 +113,7 @@ La **differenza** tra $A$ e $B$ è l'insieme degli elementi che appartengono ad 
 
 $$A \setminus B = \{x \mid x \in A \text{ e } x \notin B\}$$
 
-Si legge "$A$ meno $B$"; molti libri la scrivono anche $A - B$. Per calcolarla parti da $A$ e togli gli elementi che stanno anche in $B$.
+Si legge "$A$ meno $B$" e si scrive anche $A - B$.
 
 ```ad-example
 Esempio 3: le due differenze
@@ -143,39 +124,13 @@ $$B \setminus A = \{5, 6\}$$
 I due risultati sono diversi: nella differenza l'ordine degli insiemi conta.
 ```
 
-```ad-warning
-Pensare che $A \setminus B$ e $B \setminus A$ siano uguali
-Nella differenza l'ordine conta: $A \setminus B$ contiene elementi di $A$, $B \setminus A$ elementi di $B$. Se $A$ e $B$ hanno elementi diversi, i due risultati sono diversi.
-```
-
-Nel diagramma $A \setminus B$ è la parte del cerchio di $A$ che resta fuori dal cerchio di $B$:
-
-```tikz
-% nome: differenza-insiemi-diagramma-venn
-% alt: Differenza A meno B: nel diagramma di Eulero-Venn è colorata la parte del cerchio A che resta fuori dal cerchio B
-% svg: differenza-insiemi-diagramma-venn-9a6f5d80.svg 231x155
-\begin{tikzpicture}
-  \begin{scope}
-    \draw (-3,-2) rectangle (3,2) node[anchor=north east] {$U$};
-    \begin{scope}
-      \clip (-3,-2) rectangle (3,2);
-      \fill[blue!20] (0,0.98) arc[start angle=44.42, end angle=315.58, radius=1.4] arc[start angle=224.42, end angle=135.58, radius=1.4] -- cycle;
-      \draw ( -1,0) circle (1.4) node[left] {$A$};
-      \draw (  1,0) circle (1.4) node[right] {$B$};
-    \end{scope}
-  \end{scope}
-\end{tikzpicture}
-```
-
-Qualunque sia $A$, valgono $A \setminus \emptyset = A$ e $A \setminus A = \emptyset$. Se $A$ e $B$ sono disgiunti, togliere $B$ non cambia niente: $A \setminus B = A$.
+Casi particolari, diagramma e numero di elementi della differenza sono nella lezione [Differenza e complementare](/materiale/scuola-superiore/matematica/insiemi-e-logica/differenza-e-complementare).
 
 ## Complementare
 
 Il **complementare** di $A$ rispetto all'universo $U$ è l'insieme degli elementi di $U$ che non appartengono ad $A$:
 
 $$\overline{A} = \{x \in U \mid x \notin A\} = U \setminus A$$
-
-Oltre a $\overline{A}$ trovi anche le scritture $\complement_U A$ e $A^c$.
 
 ```ad-example
 Esempio 4: complementari
@@ -188,39 +143,7 @@ $$
 $$
 ```
 
-Nel diagramma il complementare di $A$ è tutto il rettangolo tranne il cerchio di $A$:
-
-```tikz
-% nome: complementare-insieme-diagramma-venn
-% alt: Complementare di A: nel diagramma di Eulero-Venn è colorato tutto il rettangolo dell'universo tranne il cerchio A
-% svg: complementare-insieme-diagramma-venn-1e312f38.svg 231x155
-\begin{tikzpicture}
-  \fill[blue!20, even odd rule] (-3,-2) rectangle (3,2) (-1,0) circle (1.4);
-  \draw (-3,-2) rectangle (3,2) node[anchor=north east] {$U$};
-  \draw ( -1,0) circle (1.4) node[left] {$A$};
-\end{tikzpicture}
-```
-
-Il complementare dipende dall'universo: lo stesso insieme ha complementari diversi in universi diversi. Se $A = \{2, 4\}$, rispetto a $U = \{1, 2, 3, 4\}$ il complementare è $\{1, 3\}$, mentre rispetto a $U = \{1, 2, 3, 4, 5, 6\}$ è $\{1, 3, 5, 6\}$. Allo stesso modo, il complementare dei numeri pari è l'insieme dei numeri dispari se l'universo è $\mathbb{N}$, ma non se l'universo è $\mathbb{Q}$, dove ci sono anche le frazioni come $\frac{1}{2}$, che non sono né pari né dispari.
-
-```ad-warning
-Calcolare il complementare senza guardare l'universo
-Il complementare di $\{2, 4\}$ non si può calcolare finché non sai qual è $U$. Prima di calcolarlo, scrivi l'universo per esteso.
-```
-
-Dalla definizione seguono alcune uguaglianze che valgono per ogni insieme $A$ contenuto in $U$:
-
-$$
-\begin{gathered}
-A \cup \overline{A} = U \qquad A \cap \overline{A} = \emptyset \\
-\overline{\overline{A}} = A \qquad \overline{U} = \emptyset \qquad \overline{\emptyset} = U
-\end{gathered}
-$$
-
-```ad-note
-Complementare rispetto a un insieme qualsiasi
-Se $B$ è contenuto in $A$, il complementare di $B$ rispetto ad $A$ è l'insieme degli elementi di $A$ che non stanno in $B$, cioè $A \setminus B$, e si scrive $\complement_A B$. Il complementare rispetto all'universo è il caso in cui al posto di $A$ c'è $U$.
-```
+Il complementare dipende dall'universo: il complementare di $\{2, 4\}$ è $\{1, 3\}$ rispetto a $U = \{1, 2, 3, 4\}$ e $\{1, 3, 5, 6\}$ rispetto a $U = \{1, 2, 3, 4, 5, 6\}$. Per ogni $A$ valgono $A \cup \overline{A} = U$ e $A \cap \overline{A} = \emptyset$. Le altre proprietà, il complementare rispetto a un insieme e le leggi di De Morgan spiegate con il diagramma sono nella lezione [Differenza e complementare](/materiale/scuola-superiore/matematica/insiemi-e-logica/differenza-e-complementare).
 
 ## Prodotto cartesiano
 

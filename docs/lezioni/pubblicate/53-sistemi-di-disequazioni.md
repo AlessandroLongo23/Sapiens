@@ -21,7 +21,7 @@ Se $S_1$ è l'insieme delle soluzioni della prima disequazione e $S_2$ quello de
 
 $$S = S_1 \cap S_2$$
 
-Il simbolo $\cap$ e le sue proprietà sono nella lezione [Proprietà delle operazioni tra insiemi](/materiale/scuola-superiore/matematica/insiemi-e-logica/proprieta-delle-operazioni-tra-insiemi). Con tre o più disequazioni vale lo stesso: $S = S_1 \cap S_2 \cap S_3$.
+Il simbolo $\cap$ e le sue proprietà sono nella lezione [Intersezione insiemistica](/materiale/scuola-superiore/matematica/insiemi-e-logica/intersezione-insiemistica). Con tre o più disequazioni vale lo stesso: $S = S_1 \cap S_2 \cap S_3$.
 
 ## Il grafico del sistema
 

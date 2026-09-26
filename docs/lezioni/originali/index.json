@@ -584,5 +584,45 @@
     "path": "high_school/math/geometria-piano-triangoli/geometria-quadrilateri",
     "chapter": "Geometria del piano: triangoli e quadrilateri",
     "new": true
+  },
+  {
+    "id": "40152921-bd49-41dd-ad5c-cd2fd38cabb6",
+    "title": "Intersezione insiemistica",
+    "slug": "insiemi-intersezione",
+    "path": "high_school/math/insiemi-e-logica/insiemi-intersezione",
+    "chapter": "Insiemi e logica",
+    "new": true
+  },
+  {
+    "id": "0a40681a-2f17-4527-92a6-3e9e018d8b48",
+    "title": "Differenza e complementare",
+    "slug": "insiemi-differenza",
+    "path": "high_school/math/insiemi-e-logica/insiemi-differenza",
+    "chapter": "Insiemi e logica",
+    "new": true
+  },
+  {
+    "id": "343a8512-f6d4-40e6-9eee-73f9e080606e",
+    "title": "Proposizioni e connettivi logici",
+    "slug": "logica-proposizioni",
+    "path": "high_school/math/insiemi-e-logica/logica-proposizioni",
+    "chapter": "Insiemi e logica",
+    "new": true
+  },
+  {
+    "id": "fa2b1a4a-e538-4969-b758-ae79e412f831",
+    "title": "Implicazione, condizioni necessarie e sufficienti",
+    "slug": "logica-implicazione",
+    "path": "high_school/math/insiemi-e-logica/logica-implicazione",
+    "chapter": "Insiemi e logica",
+    "new": true
+  },
+  {
+    "id": "30553436-5cf6-499e-b0bc-5245789fc8a1",
+    "title": "Quantificatori",
+    "slug": "logica-quantificatori",
+    "path": "high_school/math/insiemi-e-logica/logica-quantificatori",
+    "chapter": "Insiemi e logica",
+    "new": true
   }
 ]

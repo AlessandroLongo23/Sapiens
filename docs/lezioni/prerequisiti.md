@@ -26,10 +26,10 @@ prime-definizioni <-
 insiemi-rappresentazione <- prime-definizioni
 sottoinsiemi-ugualianza <- insiemi-rappresentazione
 insiemi-unione <- sottoinsiemi-ugualianza
-insiemi-intersezione <- sottoinsiemi-ugualianza
+insiemi-intersezione <- insiemi-unione
 insiemi-differenza <- insiemi-intersezione
 insiemi-prodotto-cartesiano <- insiemi-rappresentazione
-insiemi-operazioni <- insiemi-unione, insiemi-differenza, insiemi-prodotto-cartesiano
+insiemi-operazioni <- insiemi-differenza, insiemi-prodotto-cartesiano
 logica-proposizioni <-
 logica-implicazione <- logica-proposizioni, sottoinsiemi-ugualianza
 logica-quantificatori <- logica-proposizioni, insiemi-rappresentazione
@@ -117,8 +117,6 @@ geometria-quadrilateri <- geometria-perpendicolari-parallele
 equazioni-secondo-grado <- equazioni-primo-grado, scomposizione-raccoglimento, numeri-reali-radici
 
 # Dubbi da sciogliere
-- Proposizioni e connettivi logici è una lezione di base. Se la lezione mostra il legame tra "e",
-  "o", "non" e intersezione, unione, complementare, le servono le operazioni tra insiemi.
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
   frazioni). Per il ripasso dopo una prova conta proprio quel collegamento: il ripasso dovrà cercare
   tra tutti gli antenati, non solo tra i prerequisiti diretti.
