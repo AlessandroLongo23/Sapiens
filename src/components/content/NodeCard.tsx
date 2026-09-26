@@ -55,7 +55,8 @@ function Cover({ node, href }: { node: ContentNode; href: string }) {
  * page says it is coming) but reads as pencil, not ink.
  */
 function Row({ node, href, index, progress }: { node: ContentNode; href: string; index: number; progress?: RowProgress }) {
-	const ready = node.type === 'chapter' ? node.children.length > 0 : node.has_theory !== false;
+	// A chapter is pencil too while none of its lessons is written.
+	const ready = node.type === 'chapter' ? node.children.some((lesson) => lesson.has_theory !== false) : node.has_theory !== false;
 	const meta = node.type === 'chapter' ? (ready ? plural(node.children.length, 'lezione', 'lezioni') : 'In arrivo') : ready ? 'Vai alla lezione' : 'In arrivo';
 	return (
 		<li className="border-b border-edge">

@@ -14,6 +14,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { contentCrumbs } from '@/components/content/Breadcrumb';
 import { CardGridSection, Page, PageHeader } from '@/components/content/PageHeader';
 import { NodeCard } from '@/components/content/NodeCard';
+import { ChapterYears, chaptersByYear } from '@/components/content/ChapterYears';
 import type { RowProgress } from '@/components/content/ProgressMeta';
 import { SubjectGuide } from '@/components/content/SubjectGuide';
 import { CoverStickers, CoverStickersButton } from '@/components/content/CoverStickers';
@@ -78,6 +79,9 @@ export default async function IndexPage({ params }: Params) {
 	const structured: JsonLdData | undefined =
 		node.type === 'subject' ? courseJsonLd(node, ancestors, seo.description) : node.type === 'chapter' ? learningResourceJsonLd(node, ancestors, { description: seo.description, resourceType: 'Capitolo', free: true }) : undefined;
 	const heading = HEADINGS[node.type];
+	const rows = node.children.map((child, index) => <NodeCard key={child.id} node={child} index={index} href={nodePath([...ancestors, child])} progress={rowProgress([...ancestors, child])} />);
+	// A subject whose chapters all have a school year lists them by year.
+	const years = node.type === 'subject' ? chaptersByYear(node.children) : null;
 	// The trail above the title already names the level and the subject: only a chapter adds its number.
 	const subject = ancestors[1];
 	const eyebrow = node.type === 'chapter' && subject ? `${heading.eyebrow} ${String(subject.children.findIndex((c) => c.id === node.id) + 1).padStart(2, '0')}` : undefined;
@@ -98,11 +102,11 @@ export default async function IndexPage({ params }: Params) {
 				))}
 				aside={<CoverStickersButton />}
 			/>
-			{node.children.length > 0 ? (
+			{years ? (
+				<ChapterYears id="children-heading" chapters={node.children} years={years} rows={rows} />
+			) : node.children.length > 0 ? (
 				<CardGridSection id="children-heading" title={heading.title} count={node.children.length} layout={heading.layout}>
-					{node.children.map((child, index) => (
-						<NodeCard key={child.id} node={child} index={index} href={nodePath([...ancestors, child])} progress={rowProgress([...ancestors, child])} />
-					))}
+					{rows}
 				</CardGridSection>
 			) : (
 				<div className="flex animate-fade-in flex-col items-center justify-center py-24 text-center">
