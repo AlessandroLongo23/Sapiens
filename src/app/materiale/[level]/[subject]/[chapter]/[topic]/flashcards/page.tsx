@@ -31,10 +31,11 @@ const description = ({ node, ancestors, flashcards }: Awaited<ReturnType<typeof 
 /** A card's markdown as HTML; the two blank lines stand in for the title lines renderMarkdown drops. */
 const cardHtml = (markdown: string) => renderMarkdown(`\n\n${markdown}`);
 
+/** Never indexed: few people search for flashcards, and the cards repeat the formulary, which is. */
 export function generateMetadata(props: LessonParams): Promise<Metadata> {
 	return metadataOr404(async () => {
 		const lesson = await load(props);
-		return pageMetadata({ title: subviewTitle('Flashcards', lesson.node, lesson.ancestors), description: description(lesson), path: lesson.paths.flashcards, noindex: !lesson.flashcards });
+		return pageMetadata({ title: subviewTitle('Flashcards', lesson.node, lesson.ancestors), description: description(lesson), path: lesson.paths.flashcards, noindex: true });
 	});
 }
 

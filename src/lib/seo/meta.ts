@@ -1,6 +1,6 @@
 import { SITE_NAME } from '@/lib/config/site';
 import { plainTitle } from '@/lib/seo/slug';
-import { countByType, type ContentNode } from '@/lib/utils/tree';
+import { publishedLessons, type ContentNode } from '@/lib/utils/tree';
 
 /**
  * Title and description templates per node type (Tasks 3, 4 and 18).
@@ -118,36 +118,39 @@ function clamp(text: string, max = 158): string {
 	return cut.slice(0, Math.max(cut.lastIndexOf(' '), 80)).replace(/[,;:]$/, '') + '…';
 }
 
-/** Distinct description per node type, interpolating real names and counts. */
+/**
+ * Distinct description per node type, interpolating real names and counts.
+ * Counts are of published lessons (with theory), so an index page never
+ * promises lessons that are still empty.
+ */
 export function nodeDescription(node: ContentNode, ancestors: ContentNode[]): string {
 	const [level, subject, chapter] = ancestors;
 	const name = plainTitle(node.title);
-	const counts = countByType(node.children);
+	const lessons = publishedLessons(node);
+	const withLessons = node.children.filter((c) => publishedLessons(c).length > 0);
 
 	switch (node.type) {
 		case 'level': {
-			const subjects = node.children.map((s) => plainTitle(s.title));
+			if (!lessons.length) return clamp(`Materiale didattico per ${levelLong(node)}: le lezioni sono in preparazione su ${SITE_NAME}.`);
+			const subjects = withLessons.map((s) => plainTitle(s.title));
 			return clamp(
-				`Teoria, formulari ed esercizi per ${levelLong(node)}: ${plural(counts.subject, 'materia', 'materie')} (${joinList(subjects)}), ${plural(counts.chapter, 'capitolo', 'capitoli')} e ${plural(counts.topic, 'lezione', 'lezioni')} da consultare online gratuitamente.`
+				`Teoria, formulari ed esercizi per ${levelLong(node)}: ${joinList(subjects)}, con ${plural(lessons.length, 'lezione', 'lezioni')} da consultare online gratuitamente.`
 			);
 		}
 		case 'subject': {
-			const chapters = node.children.map((c) => plainTitle(c.title));
-			const range =
-				chapters.length > 1
-					? ` da ${chapters[0]} a ${chapters[chapters.length - 1]}`
-					: chapters.length === 1
-						? `: ${chapters[0]}`
-						: '';
+			if (!lessons.length) return clamp(`${name} per ${levelLong(level)}: le lezioni sono in preparazione su ${SITE_NAME}.`);
+			const chapters = withLessons.map((c) => plainTitle(c.title));
+			const range = chapters.length > 1 ? ` da ${chapters[0]} a ${chapters[chapters.length - 1]}` : `: ${chapters[0]}`;
 			return clamp(
-				`${name} per ${levelLong(level)}: ${plural(counts.chapter, 'capitolo', 'capitoli')} e ${plural(counts.topic, 'lezione', 'lezioni')} con teoria ed esercizi,${range}. Materiale gratuito su ${SITE_NAME}.`
+				`${name} per ${levelLong(level)}: ${plural(lessons.length, 'lezione', 'lezioni')} con teoria ed esercizi in ${plural(chapters.length, 'capitolo', 'capitoli')},${range}. Materiale gratuito su ${SITE_NAME}.`
 			);
 		}
 		case 'chapter': {
-			const lessons = node.children.map((t) => plainTitle(t.title));
-			const preview = lessons.length ? ` Lezioni: ${joinList(lessons.slice(0, 4))}${lessons.length > 4 ? ' e altre' : ''}.` : '';
+			if (!lessons.length) return clamp(`${name}, capitolo di ${plainTitle(subject?.title)} per ${levelLong(level)}: le lezioni sono in preparazione su ${SITE_NAME}.`);
+			const titles = lessons.map((t) => plainTitle(t.title));
+			const preview = ` Lezioni: ${joinList(titles.slice(0, 4))}${titles.length > 4 ? ' e altre' : ''}.`;
 			return clamp(
-				`${name}, capitolo di ${plainTitle(subject?.title)} per ${levelLong(level)}: ${plural(counts.topic, 'lezione', 'lezioni')} con teoria, formulario ed esercizi.${preview}`
+				`${name}, capitolo di ${plainTitle(subject?.title)} per ${levelLong(level)}: ${plural(lessons.length, 'lezione', 'lezioni')} con teoria ed esercizi.${preview}`
 			);
 		}
 		case 'topic':

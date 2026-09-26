@@ -108,6 +108,15 @@ export function countByType(tree: ContentNode[]): Record<NodeType, number> {
 }
 
 /**
+ * The lessons under a node (the node itself included) that have theory: the
+ * ones a reader can actually open. An index page with none is not indexed.
+ */
+export function publishedLessons(node: ContentNode): ContentNode[] {
+    if (node.type === 'topic') return node.has_theory ? [node] : [];
+    return node.children.flatMap(publishedLessons);
+}
+
+/**
  * Walks the tree depth-first, calling `visit` with every node and its ancestors (node included).
  */
 export function walkTree(

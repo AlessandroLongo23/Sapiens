@@ -8,7 +8,7 @@ import { dbPath, nodePath, plainTitle } from '@/lib/seo/slug';
 import { configs } from '@/lib/exercises/config';
 import { courseJsonLd, learningResourceJsonLd, type JsonLd as JsonLdData } from '@/lib/seo/jsonld';
 import { subjectCopy } from '@/lib/content/subject-copy';
-import { countByType, type ContentNode, type NodeType } from '@/lib/utils/tree';
+import { countByType, publishedLessons, type ContentNode, type NodeType } from '@/lib/utils/tree';
 import { toneFor } from '@/lib/utils/icons';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { contentCrumbs } from '@/components/content/Breadcrumb';
@@ -65,8 +65,9 @@ const HEADINGS: Record<NodeType, { title: string; eyebrow: string; layout: 'grid
 
 export function generateMetadata({ params }: Params): Promise<Metadata> {
 	return metadataOr404(async () => {
-		const { seo, path } = await loadNodePage((await params).slug.join('/'), 'index');
-		return pageMetadata({ title: seo.title, description: seo.description, path });
+		const { node, seo, path } = await loadNodePage((await params).slug.join('/'), 'index');
+		// Still reachable and linked, but kept out of search until a lesson under it is published.
+		return pageMetadata({ title: seo.title, description: seo.description, path, noindex: publishedLessons(node).length === 0 });
 	});
 }
 
