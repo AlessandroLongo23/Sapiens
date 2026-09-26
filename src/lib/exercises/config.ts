@@ -72,6 +72,11 @@ export const configs: Record<string, LessonExercises> = {
 	'high_school/math/geometria-piano-triangoli/geometria-perpendicolari-parallele': { generator: 'geometria-perpendicolari-parallele', levels: [1, 2, 3, 4, 5, 6, 7] },
 	'high_school/math/geometria-piano-triangoli/geometria-punti-notevoli': { generator: 'geometria-punti-notevoli', levels: [1, 2, 3, 4, 5, 6, 7] },
 	'high_school/math/geometria-piano-triangoli/geometria-quadrilateri': { generator: 'geometria-quadrilateri', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/insiemi-e-logica/insiemi-intersezione': { generator: 'insiemi-intersezione', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/insiemi-e-logica/insiemi-differenza': { generator: 'insiemi-differenza', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/insiemi-e-logica/logica-proposizioni': { generator: 'logica-proposizioni', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/insiemi-e-logica/logica-implicazione': { generator: 'logica-implicazione', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/insiemi-e-logica/logica-quantificatori': { generator: 'logica-quantificatori', levels: [1, 2, 3, 4, 5, 6, 7] },
 	// Chemistry: pools drawn and verified in Python (src/lib/exercises/chimica/pool.ts).
 	'high_school/chemistry/chim-quantita-sostanza/mole-massa-molare': { generator: 'mole-massa-molare', levels: [1, 2, 3, 4, 5] },
 	'high_school/chemistry/chim-forma-molecole/geometria-molecolare-vsepr': { generator: 'geometria-molecolare-vsepr', levels: [1, 2, 3, 4, 5] },

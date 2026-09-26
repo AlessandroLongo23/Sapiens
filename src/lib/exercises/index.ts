@@ -67,6 +67,11 @@ export const generators: Record<string, () => Promise<Generator>> = {
 	'geometria-perpendicolari-parallele': () => import('./v2/generators/geometria-perpendicolari-parallele').then((m) => m.default),
 	'geometria-punti-notevoli': () => import('./v2/generators/geometria-punti-notevoli').then((m) => m.default),
 	'geometria-quadrilateri': () => import('./v2/generators/geometria-quadrilateri').then((m) => m.default),
+	'insiemi-intersezione': () => import('./v2/generators/insiemi-intersezione').then((m) => m.default),
+	'insiemi-differenza': () => import('./v2/generators/insiemi-differenza').then((m) => m.default),
+	'logica-proposizioni': () => import('./v2/generators/logica-proposizioni').then((m) => m.default),
+	'logica-implicazione': () => import('./v2/generators/logica-implicazione').then((m) => m.default),
+	'logica-quantificatori': () => import('./v2/generators/logica-quantificatori').then((m) => m.default),
 	// Chemistry: pools pregenerated in Python (chimica/pool.ts).
 	'mole-massa-molare': () => import('./chimica/mole-massa-molare').then((m) => m.default),
 	'geometria-molecolare-vsepr': () => import('./chimica/geometria-molecolare-vsepr').then((m) => m.default),
