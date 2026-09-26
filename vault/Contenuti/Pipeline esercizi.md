@@ -52,6 +52,9 @@ Questioni aperte segnalate dagli agenti (dettagli nella sezione "Domande per la 
 
 Da quel giorno i generatori non aspettano la conferma di Alessandro uno per uno: Claude li scrive, li verifica e li collega, e riferisce cosa ha fatto con le pagine di revisione. Dal 24 settembre 2026 la rilettura la fa Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]).
 
+## Terzo lotto (26 settembre 2026)
+Dodici generatori per monomi, polinomi e scomposizione (79 livelli), uno per agente in parallelo, ognuno verificato su 1.000 esercizi per livello con due seed ed errori piantati, e di nuovo da Claude con un terzo seed. Le scomposizioni hanno risposta `expression` con `form: "factored"`: il controllo Python accetta solo i fattori irriducibili in ℤ (con `factor_list`), e i distrattori "non scomposti fino in fondo" hanno lo stesso valore della risposta ma vengono bocciati per quel motivo. Divisione e Ruffini chiedono quoziente e resto insieme, a scelta multipla, perché nessun tipo di risposta ha due campi. Due agenti hanno trovato un bug in `collect()` di `monomi.ts` (un gruppo che si annulla assorbiva i termini noti), corretto. I problemi troppo larghi per il telefono vanno a capo con `aligned`, misurati con KaTeX a 18 px su 350 px. Vedi [[2026-09-26 Terzo lotto, monomi polinomi e scomposizione]].
+
 ## Chimica
 Gli esercizi di chimica sono generatori Python con RDKit (`scripts/chimica/esercizi/`), stesso contratto dei generatori TypeScript, verificati da un controllo indipendente (OPSIN per i nomi). Sul sito arrivano pregenerati, con immagini nella domanda, nelle risposte e nella soluzione: vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]] e [[2026-09-25 Chimica con RDKit]].
 
