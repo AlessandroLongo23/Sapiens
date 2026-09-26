@@ -35,6 +35,7 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-26 Gli adesivi sono per tutti gli iscritti]]
 - [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]
 - [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]
 - [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]]

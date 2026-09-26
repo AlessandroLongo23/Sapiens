@@ -28,19 +28,26 @@ const toSaved = (s: PlacedSticker, width: number): PlacedSticker => ({ ...s, x: 
  * Between the cover, drawn over the band, and its button, which sits in the header's flow under the
  * figures so that it never covers the trail on a phone.
  */
-const useCover = create<{ ready: boolean; full: boolean; open: boolean }>(() => ({ ready: false, full: false, open: false }));
+const useCover = create<{ ready: boolean; full: boolean; open: boolean; wanted: boolean }>(() => ({ ready: false, full: false, open: false, wanted: false }));
 
-/** Opens the album of the cover on this page, at the end of the trail; there for signed-in students only. */
+/**
+ * Opens the album of the cover on this page, at the end of the trail. A visitor gets it too: it asks
+ * them to sign up, and the album opens once their cover is ready (vault/Decisioni/2026-09-26 Gli
+ * adesivi sono per tutti gli iscritti.md). Nothing is saved without an account.
+ */
 export function CoverStickersButton() {
-	const { user } = useAuth();
+	const { user, openModal } = useAuth();
 	const { ready, full } = useCover();
-	if (!user) return null;
+	const onClick = () => {
+		if (user) useCover.setState({ open: true });
+		else openModal({ register: true, next: () => useCover.setState({ wanted: true }) });
+	};
 	return (
 		<button
 			type="button"
-			onClick={() => useCover.setState({ open: true })}
-			disabled={!ready || full}
-			title={full ? `Al massimo ${MAX_STICKERS} adesivi: staccane uno per attaccarne un altro.` : 'Attacca un adesivo sulla copertina'}
+			onClick={onClick}
+			disabled={!!user && (!ready || full)}
+			title={!user ? 'Crea un account per attaccare adesivi sulla copertina' : full ? `Al massimo ${MAX_STICKERS} adesivi: staccane uno per attaccarne un altro.` : 'Attacca un adesivo sulla copertina'}
 			className="label-mono flex h-7 items-center gap-1.5 rounded-full border border-edge bg-surface/80 px-3 text-fg-muted shadow-xs backdrop-blur-sm transition-colors hover:border-edge-strong hover:text-fg disabled:opacity-50 focus-ring"
 		>
 			<Sticker className="size-3.5" aria-hidden="true" />
@@ -126,7 +133,12 @@ export function CoverStickers({ page }: { page: string }) {
 	useEffect(() => {
 		useCover.setState({ ready: active, full: count >= MAX_STICKERS });
 	}, [active, count]);
-	useEffect(() => () => useCover.setState({ ready: false, full: false, open: false }), []);
+	// Signed up from the button: the album opens as soon as the new student's cover is on the board.
+	const wanted = useCover((s) => s.wanted);
+	useEffect(() => {
+		if (active && wanted) useCover.setState({ wanted: false, open: true });
+	}, [active, wanted]);
+	useEffect(() => () => useCover.setState({ ready: false, full: false, open: false, wanted: false }), []);
 
 	// Measured before the paint, so the board replaces the still stickers in the same frame.
 	useLayoutEffect(() => {

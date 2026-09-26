@@ -14,6 +14,7 @@ Sessione del 25-26 settembre 2026: prima le copertine con gli adesivi sulle pagi
 - Dopo la discussione: guida di stile `stickers/STILE.md`, pipeline `npm run stickers` con foglio di prova, gli 8 adesivi convertiti in file e il primo lotto di 10 adesivi di capitolo. Dettagli in [[Adesivi]].
 
 ## Decisioni prese
+- [[2026-09-26 Gli adesivi sono per tutti gli iscritti]]: con la stima dello spazio (50-100 MB per 10.000 studenti) e il controllo delle pagine vere nel salvataggio.
 - [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]]
 - [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]
 - [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]

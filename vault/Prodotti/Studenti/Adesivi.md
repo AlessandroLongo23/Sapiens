@@ -27,6 +27,8 @@ Copertine delle pagine del materiale, del 26 settembre 2026 (richiesta di Alessa
 
 Caricamento delle copertine, corretto il 26 settembre 2026: uno studente vedeva per un attimo gli adesivi predefiniti, poi sostituiti dai suoi. Ora uno script nel layout segna `html.signed-in` prima del primo disegno e il CSS nasconde i predefiniti a chi ha una sessione; il sito chiede tutte le copertine dello studente con una sola richiesta (`GET /api/adesivi`) e ne tiene una copia nel browser (`src/lib/state/covers.ts`), cancellata all'uscita; la tavola si monta prima del disegno. Misurato fotogramma per fotogramma: gli adesivi dello studente compaiono nello stesso fotogramma dell'idratazione della pagina (circa 200 ms sul server di sviluppo), senza adesivi che compaiono e spariscono.
 
+Accesso, del 26 settembre 2026: il bottone "Adesivi" c'è anche per chi non ha un account e apre la registrazione, poi l'album; il salvataggio accetta solo le pagine vere del materiale. Provato nel browser: pagina inventata e pagina di lezione rifiutate (400), capitolo, materia, livello e biblioteca accettati. Vedi [[2026-09-26 Gli adesivi sono per tutti gli iscritti]].
+
 Catalogo, del 26 settembre 2026, committato: gli adesivi sono file SVG in `stickers/<pacchetto>/`, scritti da Claude secondo la guida `stickers/STILE.md`. `npm run stickers` li controlla, converte il testo in tracciati (Fraunces e JetBrains Mono da Fontsource, simboli dai font di KaTeX) e scrive `public/stickers/` e l'indice `src/lib/zaino/sticker-catalog.json`; con `--png` fa anche una foto del foglio di prova (`stickers/foglio.html`). Un controllo prima del commit ferma sorgenti e file generati non allineati. Due pacchetti: i primi 8 adesivi, convertiti in file con gli stessi `id`, e i 10 capitoli del primo anno di matematica, ciascuno predefinito sulla copertina del suo capitolo accanto al π. L'album li mostra divisi per pacchetto. Provato nel browser il 26 settembre: copertina di "Insiemi e logica" per visitatore e studente, album, attacco e salvataggio.
 
 Adesivi fustellati e dimensione, del 26 settembre 2026, su richiesta di Alessandro, committati:
@@ -37,6 +39,7 @@ Adesivi fustellati e dimensione, del 26 settembre 2026, su richiesta di Alessand
 I pezzi grafici di partenza erano `src/components/ui/Sticker.tsx` e `src/components/content/flashcards/PeelSticker.tsx`. Non esiste un avatar.
 
 ## Obiettivo
+- Per tutti gli studenti con un account, Free e Studio; chi non ha un account vede i predefiniti e il bottone lo porta alla registrazione: vedi [[2026-09-26 Gli adesivi sono per tutti gli iscritti]].
 - Un catalogo in file SVG scritti da Claude, con un indice e un foglio di prova, in pacchetti per capitolo di matematica, per materia, sullo studio e per stagione: vedi [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]] e [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]. Ogni copertina ha i predefiniti del suo pacchetto.
 - Dopo la beta, lo studente crea adesivi suoi solo da modelli nostri (testo o formula su una sagoma), senza caricare immagini: vedi [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]].
 - Un album per materia, come quello delle figurine, con le caselle vuote per gli adesivi mancanti.
@@ -84,7 +87,7 @@ Il 24 settembre 2026 è pronto un prototipo del gesto in una pagina sola, fuori 
 - Nell'MVP ogni adesivo si usa quante volte si vuole: va bene anche dopo, o un adesivo guadagnato è un pezzo solo, come una figurina?
 - Perché gli adesivi entrano nella beta (vedi [[2026-09-24 Adesivi nella beta, a partire dalle note]]).
 - Il suono degli adesivi è acceso o spento per default?
-- Gli utenti Free guadagnano adesivi come gli abbonati? La sessione gratuita giornaliera è proprio l'abitudine che gli adesivi dovrebbero sostenere.
+- Dopo la beta, gli utenti Free guadagnano adesivi come gli abbonati? Attaccarli è per tutti gli iscritti ([[2026-09-26 Gli adesivi sono per tutti gli iscritti]]); resta da decidere come si guadagnano.
 - Quanti adesivi per materia e per stagione, e ogni quanto esce un pacchetto stagionale.
 - Perché non aspettare Dario per lo stile ([[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]).
 - Com'è fatto l'avatar, e se serve.
@@ -93,5 +96,5 @@ Il 24 settembre 2026 è pronto un prototipo del gesto in una pagina sola, fuori 
 ## Collegamenti
 - Attori: [[Studente]]
 - Release: [[Release Beta]]
-- Decisioni: [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]], [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]], [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]], [[2026-09-24 Adesivi nella beta, a partire dalle note]], [[2026-09-24 Le note sono fogli a larghezza fissa]], [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]], [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]
+- Decisioni: [[2026-09-26 Gli adesivi sono per tutti gli iscritti]], [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]], [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]], [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]], [[2026-09-24 Adesivi nella beta, a partire dalle note]], [[2026-09-24 Le note sono fogli a larghezza fissa]], [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]], [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]
 - Idee: [[Mascotte per materia]]
