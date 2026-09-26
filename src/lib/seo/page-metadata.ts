@@ -45,11 +45,17 @@ export function pageMetadata({
 	};
 }
 
-/** The 404 page: named, never indexed. */
+/**
+ * The 404 page: named, never indexed, and without the home page's canonical,
+ * which it would otherwise inherit from the root layout. Every not-found.tsx
+ * exports it: a nested one without metadata falls back to the layouts'.
+ */
 export const NOT_FOUND_METADATA: Metadata = {
 	title: `Pagina non trovata | ${SITE_NAME}`,
 	description: 'L’indirizzo non corrisponde a nessuna pagina di Sapiens.',
-	robots: { index: false, follow: false }
+	robots: { index: false, follow: false },
+	alternates: { canonical: null },
+	openGraph: null
 };
 
 /**
