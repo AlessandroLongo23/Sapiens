@@ -224,50 +224,7 @@ Se $B$ è contenuto in $A$, il complementare di $B$ rispetto ad $A$ è l'insieme
 
 ## Prodotto cartesiano
 
-Le operazioni viste finora producono insiemi fatti degli stessi elementi di partenza. Il prodotto cartesiano invece produce coppie.
-
-Una **coppia ordinata** $(a, b)$ è formata da due elementi presi in un ordine preciso: $a$ è il primo, $b$ il secondo. Per questo $(1, 2)$ e $(2, 1)$ sono coppie diverse, mentre $\{1, 2\}$ e $\{2, 1\}$ sono lo stesso insieme.
-
-Il **prodotto cartesiano** di $A$ e $B$ è l'insieme di tutte le coppie ordinate che hanno il primo elemento in $A$ e il secondo in $B$:
-
-$$A \times B = \{(a, b) \mid a \in A \text{ e } b \in B\}$$
-
-Si legge "$A$ per $B$".
-
-```ad-example
-Esempio 5: prodotto cartesiano
-Siano $P = \{1, 2\}$ e $Q = \{a, b, c\}$. Si abbina ogni elemento di $P$ con ogni elemento di $Q$, tenendo quello di $P$ al primo posto:
-$$
-\begin{gathered}
-P \times Q = \{(1, a), (1, b), (1, c), \\
-(2, a), (2, b), (2, c)\}
-\end{gathered}
-$$
-Scambiando i due insiemi, l'elemento di $Q$ va al primo posto:
-$$
-\begin{gathered}
-Q \times P = \{(a, 1), (a, 2), (b, 1), \\
-(b, 2), (c, 1), (c, 2)\}
-\end{gathered}
-$$
-Le coppie di $P \times Q$ e di $Q \times P$ sono diverse, quindi $P \times Q \neq Q \times P$. In tutti e due i casi le coppie sono $2 \cdot 3 = 6$.
-```
-
-```ad-warning
-Scrivere le coppie con le graffe
-Gli elementi di $A \times B$ sono coppie ordinate e si scrivono con le parentesi tonde: $(1, a)$. Con le graffe, $\{1, a\}$ è un insieme di due elementi, in cui l'ordine non conta.
-```
-
-Se $A$ ha $m$ elementi e $B$ ne ha $n$, il prodotto $A \times B$ ha $m \cdot n$ elementi. Se uno dei due insiemi è vuoto non si può formare nessuna coppia, quindi $A \times \emptyset = \emptyset$.
-
-Un modo comodo di elencare le coppie è la tabella a doppia entrata: gli elementi del primo insieme sulle righe, quelli del secondo sulle colonne, e in ogni casella la coppia corrispondente.
-
-| $P \times Q$ | $a$ | $b$ | $c$ |
-|---|---|---|---|
-| $1$ | $(1, a)$ | $(1, b)$ | $(1, c)$ |
-| $2$ | $(2, a)$ | $(2, b)$ | $(2, c)$ |
-
-Il prodotto di un insieme per sé stesso si scrive anche $A^2 = A \times A$. Il caso più famoso è $\mathbb{R} \times \mathbb{R}$, l'insieme delle coppie di numeri reali: ogni coppia $(x, y)$ corrisponde a un punto del piano cartesiano.
+Le operazioni viste finora producono insiemi fatti degli stessi elementi di partenza. Il prodotto cartesiano $A \times B$ invece è l'insieme delle coppie ordinate $(a, b)$ con $a \in A$ e $b \in B$: con $A = \{1, 2\}$ e $B = \{a\}$ si ha $A \times B = \{(1, a), (2, a)\}$. L'ordine conta, perché $(1, 2) \neq (2, 1)$; il prodotto ha $|A| \cdot |B|$ elementi, non è commutativo e $A \times \emptyset = \emptyset$. Definizione, rappresentazioni e proprietà sono nella lezione [Prodotto cartesiano](/materiale/scuola-superiore/matematica/insiemi-e-logica/prodotto-cartesiano).
 
 ## Operazioni e inclusione
 
@@ -293,14 +250,14 @@ Unione e intersezione hanno proprietà simili a quelle dell'addizione e della mo
 
 A differenza dei numeri, qui la distributiva vale in tutti e due i sensi: l'intersezione si distribuisce rispetto all'unione e l'unione si distribuisce rispetto all'intersezione. Le leggi di De Morgan dicono che, passando al complementare, l'unione diventa intersezione e l'intersezione diventa unione.
 
-La differenza invece non è né commutativa né associativa: nell'Esempio 3 hai visto che $A \setminus B \neq B \setminus A$, e nell'Esempio 7 qui sotto trovi un caso in cui $(A \setminus B) \setminus C \neq A \setminus (B \setminus C)$. Anche il prodotto cartesiano in generale non è commutativo, come nell'Esempio 5.
+La differenza invece non è né commutativa né associativa: nell'Esempio 3 hai visto che $A \setminus B \neq B \setminus A$, e nell'Esempio 6 qui sotto trovi un caso in cui $(A \setminus B) \setminus C \neq A \setminus (B \setminus C)$. Anche il prodotto cartesiano non è commutativo (lo trovi nella lezione [Prodotto cartesiano](/materiale/scuola-superiore/matematica/insiemi-e-logica/prodotto-cartesiano)).
 
 Tra unione, intersezione e differenza non c'è un ordine di precedenza su cui tutti i libri siano d'accordo: nelle espressioni con più operazioni si usano le parentesi e si calcola partendo da quelle più interne.
 
 ## Esempi svolti
 
 ```ad-example
-Esempio 6: tutte le operazioni su insiemi descritti a parole
+Esempio 5: tutte le operazioni su insiemi descritti a parole
 Sia $U$ l'insieme dei numeri naturali da 1 a 12, $A$ l'insieme dei divisori di 12 e $B$ l'insieme dei numeri dispari di $U$. Calcola $A \cup B$, $A \cap B$, $A \setminus B$, $B \setminus A$, $\overline{A}$ e $\overline{A \cup B}$.
 
 Prima si elencano gli elementi:
@@ -322,7 +279,7 @@ Controllo con la legge di De Morgan: $\overline{B} = \{2, 4, 6, 8, 10, 12\}$, qu
 ```
 
 ```ad-example
-Esempio 7: un'espressione con le parentesi
+Esempio 6: un'espressione con le parentesi
 Con $A = \{1, 2, 3, 4\}$, $B = \{3, 4, 5, 6\}$ e $C = \{2, 4, 6, 8\}$, calcola $(A \setminus B) \setminus C$ e $A \setminus (B \setminus C)$.
 
 Primo calcolo: $A \setminus B = \{1, 2\}$, e togliendo gli elementi di $C$ resta
@@ -333,8 +290,8 @@ I risultati sono diversi: spostare le parentesi in una differenza cambia il risu
 ```
 
 ```ad-example
-Esempio 8: verificare la proprietà distributiva
-Con gli stessi $A$, $B$, $C$ dell'Esempio 7, verifica che $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.
+Esempio 7: verificare la proprietà distributiva
+Con gli stessi $A$, $B$, $C$ dell'Esempio 6, verifica che $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.
 
 Primo membro: $B \cup C = \{2, 3, 4, 5, 6, 8\}$, quindi $A \cap (B \cup C) = \{2, 3, 4\}$.
 
@@ -344,7 +301,7 @@ I due membri coincidono.
 ```
 
 ```ad-example
-Esempio 9: un problema con il diagramma
+Esempio 8: un problema con il diagramma
 In una classe di 25 studenti, 14 giocano a calcio, 9 fanno nuoto e 4 fanno tutti e due gli sport. Quanti studenti fanno solo calcio, quanti solo nuoto, quanti almeno uno dei due sport e quanti nessuno?
 
 Chiama $C$ l'insieme di chi gioca a calcio e $N$ quello di chi fa nuoto; l'universo è la classe. Si riempie il diagramma partendo dalla zona comune:

@@ -56,11 +56,11 @@ numeri-razionali-proporzioni <- numeri-razionali-operazioni, numeri-razionali-co
 
 ## Relazioni e funzioni
 relazioni-binarie <- insiemi-prodotto-cartesiano
-relazioni-equivalenza-ordine <- relazioni-binarie
-definizione-funzione <- relazioni-binarie
+relazioni-equivalenza-ordine <- relazioni-binarie, sottoinsiemi-ugualianza
+definizione-funzione <- relazioni-binarie, numeri-razionali-espressioni
 dominio-codominio-immagine <- definizione-funzione
 funzioni-iniettive-suriettive-biettive <- dominio-codominio-immagine
-composizione-di-funzioni <- funzioni-iniettive-suriettive-biettive
+composizione-di-funzioni <- funzioni-iniettive-suriettive-biettive, equazioni-primo-grado
 funzioni-lineari <- definizione-funzione, numeri-razionali-proporzioni
 
 ## Monomi e polinomi
@@ -85,13 +85,13 @@ polinomi-mcd-mcm <- scomposizione-prodotti-notevoli, scomposizione-trinomio
 
 ## Frazioni algebriche
 frazioni-algebriche-esistenza <- scomposizione-prodotti-notevoli, scomposizione-trinomio
-frazioni-algebriche-semplificazione <- frazioni-algebriche-esistenza
-frazioni-algebriche-operazioni <- frazioni-algebriche-semplificazione, polinomi-mcd-mcm
+frazioni-algebriche-semplificazione <- frazioni-algebriche-esistenza, polinomi-mcd-mcm
+frazioni-algebriche-operazioni <- frazioni-algebriche-semplificazione
 
 ## Equazioni di primo grado
 equazioni-primo-grado <- polinomi-operazioni, numeri-razionali-espressioni
 equazioni-fratte <- equazioni-primo-grado, frazioni-algebriche-operazioni
-equazioni-letterali <- equazioni-primo-grado
+equazioni-letterali <- equazioni-primo-grado, frazioni-algebriche-semplificazione
 equazioni-problemi <- equazioni-primo-grado, numeri-razionali-proporzioni
 
 ## Disequazioni di primo grado
@@ -119,14 +119,14 @@ equazioni-secondo-grado <- equazioni-primo-grado, scomposizione-raccoglimento, n
 # Dubbi da sciogliere
 - Proposizioni e connettivi logici è una lezione di base. Se la lezione mostra il legame tra "e",
   "o", "non" e intersezione, unione, complementare, le servono le operazioni tra insiemi.
-- Proporzionalità diretta e inversa disegna i grafici nel piano cartesiano, che nell'albero è una
-  lezione del secondo anno.
 - Indici di variabilità usa la radice quadrata (scarto quadratico medio) prima dei radicali, che sono
   al secondo anno.
 - Punti notevoli del triangolo usa assi e altezze, quindi le perpendicolari: nell'albero viene prima
   di Rette perpendicolari e parallele.
-- La legge di annullamento del prodotto compare in Equazioni di secondo grado e non ha una lezione
-  sua nel primo anno.
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
   frazioni). Per il ripasso dopo una prova conta proprio quel collegamento: il ripasso dovrà cercare
   tra tutti gli antenati, non solo tra i prerequisiti diretti.
+- Dominio, codominio e immagine e Composizione e funzione inversa risolvono equazioni di primo grado
+  (la controimmagine, il dominio naturale, l'inversa di $ax + b$), ma nell'albero le funzioni vengono
+  prima del capitolo delle equazioni. Per la composizione l'arco c'è (metà della lezione ricava $x$);
+  per Dominio, codominio e immagine no, perché bastano equazioni da una riga.

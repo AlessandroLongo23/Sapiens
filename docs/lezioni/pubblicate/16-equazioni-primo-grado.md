@@ -2,7 +2,7 @@
 
 Un'**equazione** è un'uguaglianza tra due espressioni che contengono una lettera, l'**incognita**, di cui ci si chiede per quali valori della lettera è vera. L'uguaglianza $2x + 3 = 11$, per esempio, è vera se al posto di $x$ metti $4$, perché $2 \cdot 4 + 3 = 11$, ed è falsa per qualunque altro numero. Risolvere un'equazione vuol dire trovare tutti i valori che la rendono vera.
 
-Le equazioni di primo grado sono le più semplici, e il metodo con cui si risolvono ritorna in tutto quello che viene dopo: nelle [equazioni di secondo grado](/materiale/scuola-superiore/matematica/equazioni-di-secondo-grado/equazioni-di-secondo-grado), nei [sistemi di equazioni](/materiale/scuola-superiore/matematica/sistemi-lineari/sistemi-di-due-equazioni-in-due-incognite) e nelle [disequazioni di primo grado](/materiale/scuola-superiore/matematica/disequazioni-di-primo-grado/disequazioni-di-primo-grado-e-intervalli).
+Le equazioni di primo grado sono le più semplici, e il metodo con cui si risolvono ritorna in tutto quello che viene dopo: nelle [equazioni fratte](/materiale/scuola-superiore/matematica/equazioni-di-primo-grado/equazioni-fratte), nelle [equazioni di secondo grado](/materiale/scuola-superiore/matematica/equazioni-di-secondo-grado/equazioni-di-secondo-grado), nei [sistemi di equazioni](/materiale/scuola-superiore/matematica/sistemi-lineari/sistemi-di-due-equazioni-in-due-incognite) e nelle [disequazioni di primo grado](/materiale/scuola-superiore/matematica/disequazioni-di-primo-grado/disequazioni-di-primo-grado-e-intervalli).
 
 ## Membri, soluzioni e forma normale
 
@@ -248,45 +248,4 @@ L'equazione $8x = 0$ è determinata e ha soluzione $x = 0$: $S = \{0\}$, che non
 
 ## Dal testo all'equazione
 
-Molti problemi si risolvono con un'equazione di primo grado. Il procedimento è sempre lo stesso: scegli l'incognita e scrivi che cosa rappresenta, traduci il testo in un'equazione, la risolvi, controlli che la soluzione abbia senso nel problema (un prezzo non può essere negativo, un numero di persone deve essere intero) e rispondi alla domanda con una frase.
-
-```ad-example
-Esempio 8: un problema
-Compri tre quaderni uguali e una penna da $1{,}50$ euro, e spendi in tutto $9$ euro. Quanto costa un quaderno?
-
-Chiama $x$ il prezzo di un quaderno, in euro. Tre quaderni costano $3x$, e con la penna la spesa è $3x + 1{,}50$:
-
-$$
-\begin{gathered}
-3x + 1{,}50 = 9 \\
-\Rightarrow 3x = 7{,}50 \\
-\Rightarrow x = 2{,}50
-\end{gathered}
-$$
-
-Controllo: $3 \cdot 2{,}50 + 1{,}50 = 7{,}50 + 1{,}50 = 9$. Un quaderno costa $2{,}50$ euro.
-```
-
-```ad-example
-Esempio 9: un problema sulle età
-Oggi Marco ha $38$ anni e sua figlia Sara ne ha $8$. Tra quanti anni Marco avrà il triplo degli anni di Sara?
-
-Chiama $x$ il numero di anni che devono passare. Tra $x$ anni Marco avrà $38 + x$ anni e Sara $8 + x$: invecchiano tutti e due, quindi la $x$ si aggiunge a entrambe le età. Il testo dice che allora l'età di Marco sarà il triplo di quella di Sara:
-
-$$
-\begin{gathered}
-38 + x = 3(8 + x) \\
-\Rightarrow 38 + x = 24 + 3x
-\end{gathered}
-$$
-
-$$
-\begin{gathered}
-x - 3x = 24 - 38 \\
-\Rightarrow -2x = -14 \\
-\Rightarrow x = 7
-\end{gathered}
-$$
-
-Controllo: tra $7$ anni Marco avrà $45$ anni e Sara $15$, e $3 \cdot 15 = 45$. La soluzione è un numero intero positivo, quindi ha senso nel problema: Marco avrà il triplo degli anni di Sara tra $7$ anni.
-```
+Molti problemi si risolvono con un'equazione di primo grado: scegli l'incognita, traduci il testo in un'equazione, la risolvi e controlli che la soluzione abbia senso nel problema. Il procedimento, con esempi di tutti i tipi (numeri, età, geometria, percentuali, moto, miscele, lavoro), è in [Problemi con le equazioni](/materiale/scuola-superiore/matematica/equazioni-di-primo-grado/problemi-con-le-equazioni).

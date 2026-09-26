@@ -35,13 +35,7 @@ $$
 
 ## Prodotto cartesiano
 
-Coppia ordinata $(a, b)$: conta l'ordine, $(1, 2) \neq (2, 1)$.
-
-$$A \times B = \{(a, b) \mid a \in A \text{ e } b \in B\}$$
-
-Se $A$ ha $m$ elementi e $B$ ne ha $n$, $A \times B$ ne ha $m \cdot n$. Inoltre $A \times \emptyset = \emptyset$ e $A^2 = A \times A$.
-
-Per esempio $\{1, 2\} \times \{a, b, c\} = \{(1, a), (1, b), (1, c), (2, a), (2, b), (2, c)\}$.
+$A \times B$ è l'insieme delle coppie ordinate $(a, b)$ con $a \in A$ e $b \in B$, e ha $|A| \cdot |B|$ elementi. Il resto è nella lezione [Prodotto cartesiano](/materiale/scuola-superiore/matematica/insiemi-e-logica/prodotto-cartesiano).
 
 ## Operazioni e inclusione
 
@@ -63,7 +57,7 @@ $$
 | Distributiva | $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$ | $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ |
 | Leggi di De Morgan | $\overline{A \cup B} = \overline{A} \cap \overline{B}$ | $\overline{A \cap B} = \overline{A} \cup \overline{B}$ |
 
-La differenza non è né commutativa né associativa; il prodotto cartesiano in generale non è commutativo. Nelle espressioni si usano le parentesi e si parte dalle più interne.
+La differenza non è né commutativa né associativa; il prodotto cartesiano non è commutativo. Nelle espressioni si usano le parentesi e si parte dalle più interne.
 
 ```ad-warning
 L'ordine nella differenza
@@ -73,9 +67,4 @@ $A \setminus B = \{1, 2\}$ ma $B \setminus A = \{5, 6\}$: sono insiemi diversi.
 ```ad-warning
 Il complementare senza universo
 Il complementare di $\{2, 4\}$ non si calcola finché non sai qual è $U$.
-```
-
-```ad-warning
-Coppie con le graffe
-Gli elementi di $A \times B$ si scrivono $(1, a)$; $\{1, a\}$ è un insieme, senza ordine.
 ```

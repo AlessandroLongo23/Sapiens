@@ -44,7 +44,7 @@ Secondo principio: moltiplicare o dividere entrambi i membri per lo stesso numer
 
 ## Dal testo all'equazione
 
-Scegli l'incognita e scrivi cosa rappresenta, traduci il testo, risolvi, controlla che la soluzione abbia senso nel problema, rispondi con una frase.
+Scegli l'incognita, traduci il testo, risolvi, controlla che la soluzione abbia senso: il resto è in [Problemi con le equazioni](/materiale/scuola-superiore/matematica/equazioni-di-primo-grado/problemi-con-le-equazioni).
 
 ```ad-warning
 Trasportare senza cambiare segno

@@ -2,15 +2,11 @@
 
 Associa a ogni studente di una classe il suo numero sul registro: se conosci il numero, sai subito di quale studente si tratta, perché studenti diversi hanno numeri diversi. Associa invece a ogni studente il mese in cui è nato: in una classe di venticinque studenti almeno due sono nati nello stesso mese, dato che i mesi sono dodici, e dal mese non puoi risalire alla persona. Tutte e due sono funzioni, ma solo la prima si può percorrere all'indietro senza ambiguità. Le parole iniettiva, suriettiva e biettiva servono a descrivere con precisione questa differenza.
 
-## Dominio, codominio e immagine
+## Un esempio con il diagramma a frecce
 
-Una funzione $f: A \to B$ associa a ogni elemento $x$ dell'insieme $A$ uno e un solo elemento $f(x)$ dell'insieme $B$ (la definizione completa è nella lezione [Definizione di funzione](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/definizione-di-funzione)). Ti servono tre nomi, spiegati più a fondo in [Dominio, codominio e immagine](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/dominio-codominio-e-immagine):
+Una funzione $f: A \to B$ associa a ogni elemento $x$ dell'insieme $A$ uno e un solo elemento $f(x)$ dell'insieme $B$ (la definizione completa è nella lezione [Definizione di funzione](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/definizione-di-funzione)). Ti servono i nomi di [Dominio, codominio e immagine](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/dominio-codominio-e-immagine): il dominio $A$, il codominio $B$ e l'insieme immagine $\mathrm{Im}(f) = \{f(x) \mid x \in A\}$ (scritto anche $f(A)$), fatto dei valori che $f$ assume davvero e sempre contenuto in $B$.
 
-- il **dominio** è l'insieme di partenza $A$;
-- il **codominio** è l'insieme di arrivo $B$, quello in cui la funzione prende i suoi valori;
-- l'**immagine** di $f$, indicata con $\mathrm{Im}(f)$, è l'insieme dei valori che la funzione assume davvero: $\mathrm{Im}(f) = \{f(x) \mid x \in A\}$.
-
-L'immagine è sempre contenuta nel codominio, ma può essere più piccola. Prendi $A = \{-1,\ 0,\ 1,\ 2\}$, $B = \{0,\ 1,\ 2,\ 3,\ 4\}$ e $f(x) = x^2$:
+L'immagine può essere più piccola del codominio. Prendi $A = \{-1,\ 0,\ 1,\ 2\}$, $B = \{0,\ 1,\ 2,\ 3,\ 4\}$ e $f(x) = x^2$:
 
 $$
 \begin{gathered}
@@ -333,7 +329,7 @@ $$f \text{ è invertibile} \iff f \text{ è biettiva}$$
 
 Le due condizioni servono entrambe. Se $f$ non è iniettiva, qualche $y$ proviene da due elementi diversi, e $f^{-1}(y)$ non saprebbe quale scegliere. Se $f$ non è suriettiva, qualche $y$ di $B$ non proviene da nessun elemento, e $f^{-1}(y)$ non avrebbe un valore. In entrambi i casi $f^{-1}$ non sarebbe una funzione.
 
-Per trovare l'inversa di una funzione biettiva si risolve $y = f(x)$ rispetto a $x$. Per $f(x) = 2x + 1$ da $\mathbb{R}$ a $\mathbb{R}$ si ottiene $x = \dfrac{y - 1}{2}$, quindi $f^{-1}(y) = \dfrac{y - 1}{2}$. Per $f(x) = x^2$ da $[0, +\infty)$ a $[0, +\infty)$, che è biettiva, l'inversa è la radice quadrata, $f^{-1}(y) = \sqrt{y}$. Le funzioni inverse hanno una lezione dedicata, [Composizione e funzione inversa](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/composizione-e-funzione-inversa).
+Per esempio, $f(x) = x^2$ da $[0, +\infty)$ a $[0, +\infty)$ è biettiva, e la sua inversa è la radice quadrata, $f^{-1}(y) = \sqrt{y}$. Per una funzione lineare l'inversa si trova ricavando $x$: da $y = 2x + 1$ viene $f^{-1}(y) = \dfrac{y - 1}{2}$. Come si trova l'inversa in generale, come si compone con $f$ e com'è fatto il suo grafico è spiegato in [Composizione e funzione inversa](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/composizione-e-funzione-inversa).
 
 ## Errori frequenti
 

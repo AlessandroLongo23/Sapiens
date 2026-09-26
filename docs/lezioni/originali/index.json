@@ -392,5 +392,109 @@
     "path": "high_school/math/scomposizione/polinomi-mcd-mcm",
     "chapter": "Scomposizione in fattori",
     "new": true
+  },
+  {
+    "id": "c66b81fd-457c-41fa-9d78-debe7496788f",
+    "title": "Prodotto cartesiano",
+    "slug": "insiemi-prodotto-cartesiano",
+    "path": "high_school/math/insiemi-e-logica/insiemi-prodotto-cartesiano",
+    "chapter": "Insiemi e logica",
+    "new": true
+  },
+  {
+    "id": "8855bae9-10cf-417f-85ba-a672d6c18343",
+    "title": "Relazioni binarie",
+    "slug": "relazioni-binarie",
+    "path": "high_school/math/funzioni/relazioni-binarie",
+    "chapter": "Relazioni e funzioni",
+    "new": true
+  },
+  {
+    "id": "61604a59-4a36-47c2-9d1a-bbed3c694a45",
+    "title": "Relazioni di equivalenza e d'ordine",
+    "slug": "relazioni-equivalenza-ordine",
+    "path": "high_school/math/funzioni/relazioni-equivalenza-ordine",
+    "chapter": "Relazioni e funzioni",
+    "new": true
+  },
+  {
+    "id": "878014b9-0537-4e61-920f-462bfcee76e2",
+    "title": "Definizione di funzione",
+    "slug": "definizione-funzione",
+    "path": "high_school/math/funzioni/definizione-funzione",
+    "chapter": "Relazioni e funzioni",
+    "new": true
+  },
+  {
+    "id": "00bf3668-02b3-449a-8ffe-fc8f33657ffd",
+    "title": "Dominio, codominio e immagine",
+    "slug": "dominio-codominio-immagine",
+    "path": "high_school/math/funzioni/dominio-codominio-immagine",
+    "chapter": "Relazioni e funzioni",
+    "new": true
+  },
+  {
+    "id": "47b521a9-1898-422a-8d0e-cc4fa4a949b8",
+    "title": "Composizione e funzione inversa",
+    "slug": "composizione-di-funzioni",
+    "path": "high_school/math/funzioni/composizione-di-funzioni",
+    "chapter": "Relazioni e funzioni",
+    "new": true
+  },
+  {
+    "id": "daeb501f-6aed-4db0-8612-6c9defff88c6",
+    "title": "Proporzionalità diretta e inversa",
+    "slug": "funzioni-lineari",
+    "path": "high_school/math/funzioni/funzioni-lineari",
+    "chapter": "Relazioni e funzioni",
+    "new": true
+  },
+  {
+    "id": "2321b9f3-468f-4688-81ff-e8a28a2fc4df",
+    "title": "Frazioni algebriche e condizioni di esistenza",
+    "slug": "frazioni-algebriche-esistenza",
+    "path": "high_school/math/frazioni-algebriche/frazioni-algebriche-esistenza",
+    "chapter": "Frazioni algebriche",
+    "new": true
+  },
+  {
+    "id": "d424b0f7-f4d7-4c6f-8270-96036010a6f3",
+    "title": "Semplificazione delle frazioni algebriche",
+    "slug": "frazioni-algebriche-semplificazione",
+    "path": "high_school/math/frazioni-algebriche/frazioni-algebriche-semplificazione",
+    "chapter": "Frazioni algebriche",
+    "new": true
+  },
+  {
+    "id": "ea07c395-6d1c-43c4-9d61-ed8f71a407f2",
+    "title": "Operazioni con le frazioni algebriche",
+    "slug": "frazioni-algebriche-operazioni",
+    "path": "high_school/math/frazioni-algebriche/frazioni-algebriche-operazioni",
+    "chapter": "Frazioni algebriche",
+    "new": true
+  },
+  {
+    "id": "ab095e11-6988-464f-bf4a-88085faaeab9",
+    "title": "Equazioni fratte",
+    "slug": "equazioni-fratte",
+    "path": "high_school/math/equazioni-sistemi/equazioni-fratte",
+    "chapter": "Equazioni di primo grado",
+    "new": true
+  },
+  {
+    "id": "619fd8d5-706f-448b-8c18-185e69381bf5",
+    "title": "Equazioni letterali",
+    "slug": "equazioni-letterali",
+    "path": "high_school/math/equazioni-sistemi/equazioni-letterali",
+    "chapter": "Equazioni di primo grado",
+    "new": true
+  },
+  {
+    "id": "81ce837d-0352-49ca-9e5b-10f1ad4c7cc4",
+    "title": "Problemi con le equazioni",
+    "slug": "equazioni-problemi",
+    "path": "high_school/math/equazioni-sistemi/equazioni-problemi",
+    "chapter": "Equazioni di primo grado",
+    "new": true
   }
 ]
