@@ -58,6 +58,9 @@ Dodici generatori per monomi, polinomi e scomposizione (79 livelli), uno per age
 ## Quarto lotto (26 settembre 2026)
 Tredici generatori (85 livelli) per prodotto cartesiano, relazioni e funzioni, frazioni algebriche, equazioni fratte, letterali e problemi. Il brief chiedeva fin dall'inizio `width.mts` a 0, e nessun generatore ha avuto bisogno di correzioni sulla larghezza dopo la consegna. Parecchie risposte non entrano nei tipi di oggi (dominio $\mathbb{R}$, $\mathbb{R}$ tranne alcuni valori, discussione di un'equazione letterale, ore e minuti) e sono solo a scelta multipla: per le risposte aperte serviranno tipi nuovi. Vedi [[2026-09-26 Quarto lotto, relazioni funzioni e frazioni algebriche]].
 
+## Quinto lotto (26 settembre 2026)
+Undici generatori (77 livelli) per disequazioni, statistica e geometria del piano. La geometria è tutta sul testo: il sito non genera ancora figure per gli esercizi di matematica, e le specifiche segnano i livelli che ne avrebbero bisogno. Il terzo seed di Claude ha trovato un FAIL che i due seed dell'agente non vedevano, e ha portato alla luce un limite di `rng.ts`: con seed consecutivi la prima estrazione non è uniforme. Non tocca il sito, che usa seed casuali. Vedi [[2026-09-26 Quinto lotto, disequazioni statistica e geometria]].
+
 ## Chimica
 Gli esercizi di chimica sono generatori Python con RDKit (`scripts/chimica/esercizi/`), stesso contratto dei generatori TypeScript, verificati da un controllo indipendente (OPSIN per i nomi). Sul sito arrivano pregenerati, con immagini nella domanda, nelle risposte e nella soluzione: vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]] e [[2026-09-25 Chimica con RDKit]].
 
