@@ -61,6 +61,9 @@ Tredici generatori (85 livelli) per prodotto cartesiano, relazioni e funzioni, f
 ## Quinto lotto (26 settembre 2026)
 Undici generatori (77 livelli) per disequazioni, statistica e geometria del piano. La geometria è tutta sul testo: il sito non genera ancora figure per gli esercizi di matematica, e le specifiche segnano i livelli che ne avrebbero bisogno. Il terzo seed di Claude ha trovato un FAIL che i due seed dell'agente non vedevano, e ha portato alla luce un limite di `rng.ts`: con seed consecutivi la prima estrazione non è uniforme. Non tocca il sito, che usa seed casuali. Vedi [[2026-09-26 Quinto lotto, disequazioni statistica e geometria]].
 
+## Sesto lotto (26 settembre 2026)
+Cinque generatori (34 livelli) per intersezione, differenza e complementare, proposizioni e connettivi, implicazione, quantificatori: con questi ogni lezione del primo anno ha i suoi esercizi. Per la logica non c'è un modulo condiviso: tavole di verità e valutazione delle formule stanno dentro ogni generatore, e i controlli Python le ricalcolano con `itertools.product`. Le frasi del linguaggio comune (negazioni, quantificatori, condizioni) escono da modelli con pezzi intercambiabili, e il controllo ricostruisce il valore di verità dai pezzi, non dal testo. Quasi tutto è a scelta multipla; solo gli insiemi di verità e i risultati delle operazioni sono di tipo `set`. Vedi [[2026-09-26 Sesto lotto, intersezione differenza e logica]].
+
 ## Chimica
 Gli esercizi di chimica sono generatori Python con RDKit (`scripts/chimica/esercizi/`), stesso contratto dei generatori TypeScript, verificati da un controllo indipendente (OPSIN per i nomi). Sul sito arrivano pregenerati, con immagini nella domanda, nelle risposte e nella soluzione: vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]] e [[2026-09-25 Chimica con RDKit]].
 
