@@ -7,18 +7,18 @@ tag: [indice]
 Questo vault è la memoria del progetto: cosa è Sapiens, per chi, cosa si costruisce e in che ordine, e perché. Ogni argomento ha la sua nota; le note si collegano tra loro. Quando nasce un'idea va in [[#Idee]], quando si prende una decisione va in [[#Decisioni]] e aggiorna le note che tocca.
 
 ## Dove siamo (24 settembre 2026)
-Sapiens è online come biblioteca di lezioni con Zaino, esercizi generati, Sapiens AI e un marketplace di tutor, ma ha poco contenuto (26 lezioni complete su 183) e nessun utente reale. Il prossimo traguardo è la [[Release Beta]] a pagamento di gennaio 2027, con la sola matematica delle superiori.
+Sapiens è online come biblioteca di lezioni con Zaino, esercizi generati, Sapiens AI e un marketplace di tutor, ma ha poco contenuto (38 lezioni complete su 183 di matematica) e nessun utente reale. Il prossimo traguardo è la [[Release Beta]] a pagamento di gennaio 2027, con la sola matematica delle superiori.
 
 Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio, prova al contrario), il provider AI (OpenAI con dati nell'UE) e i progressi per tentativo. È emerso che 6 generatori di esercizi su 15 erano rotti in produzione. Il primo generatore della nuova [[Pipeline esercizi]], le equazioni di secondo grado, è verificato su 6.000 esercizi e collegato al sito; aspetta la revisione di Andrea. Ne restano rotti 5. Le 18 lezioni di teoria sono state riscritte e sono online al posto degli originali, che avevano errori e in tre casi erano troncati. Le figure delle lezioni sono diventate file SVG indicizzabili. Dal 24 settembre si lavora a lotti completi (teoria, esercizi, formulario, flashcard), partendo dal programma e dalle 18 lezioni esistenti; i contenuti li produce Claude e li rilegge Andrea (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]). Il 24 settembre le 18 lezioni hanno anche esercizi dai generatori nuovi, un formulario e un mazzo di [[Flashcard]] (346 carte), e gli errori frequenti stanno accanto alle regole; il 24 settembre è fatto anche il secondo lotto (8 lezioni sui numeri), 26 lezioni complete in tutto. Dettagli in [[2026-09-24 Deploy e secondo lotto]]. Dettagli in [[2026-09-24 Figure e organizzazione dei lotti]]. La sera del 24 settembre master è in produzione (il sito Next.js ha sostituito quello SvelteKit) e il pagamento funziona, in modalità test, sul sandbox "Sapiens sandbox" di Stripe (vedi [[2026-09-24 Pagamento in produzione]]). Andrea ha accettato di rileggere i contenuti, e sono decisi i tentativi degli esercizi: ogni tentativo salva l'esercizio intero, corretto sul server, e il livello lo sceglie la pagina. Dettagli in [[2026-09-24 Tentativi degli esercizi]].
 
 Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: lo studente sceglie il livello prima della prova, supera un livello con 8 risposte giuste su 10 e può saltare avanti con una prova di salto. Nel codice, non ancora pubblicato. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]]. Lo stesso giorno si è deciso che ogni lezione dichiara i suoi prerequisiti: il grafo che ne esce serve a suggerire un ripasso dopo una prova andata male, e dopo la beta diventerà una torre di blocchi (vedi [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]).
 
-Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]]. Lo stesso giorno fisica e informatica delle superiori e le medie (matematica, Scienze e Tecnologia) hanno avuto l'albero per anno dal programma ministeriale: 856 lezioni ancora vuote. Vedi [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]].
+Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]]. Lo stesso giorno fisica e informatica delle superiori e le medie (matematica, Scienze e Tecnologia) hanno avuto l'albero per anno dal programma ministeriale: 856 lezioni ancora vuote. Vedi [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]. Sempre il 26 settembre è fatto il terzo lotto, monomi, polinomi e scomposizione: 12 lezioni con esercizi, formulario e flashcard, 38 lezioni complete in tutto. Vedi [[2026-09-26 Terzo lotto, monomi polinomi e scomposizione]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
@@ -31,16 +31,17 @@ Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le m
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-26 Sistema degli adesivi]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-26 Terzo lotto, monomi polinomi e scomposizione]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
-- [[2026-09-26 Gli adesivi sono per tutti gli iscritti]]
 - [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]
+- [[2026-09-26 Gli adesivi sono per tutti gli iscritti]]
 - [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]
 - [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]
 - [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]]
 - [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]
+- [[2026-09-25 I capitoli si mostrano per anno]]
 - [[2026-09-25 Una prova supera un livello solo con almeno 5 domande]]
 - [[2026-09-25 Oggi è lo schermo iniziale dell'app]]
 - [[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]
