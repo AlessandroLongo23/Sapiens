@@ -13,5 +13,5 @@ export const GUIDE_FIGURES: Record<string, [width: number, height: number]> = {
 	'university-analisi-2': [198, 190],
 	'university-fisica-1': [290, 144],
 	'university-fisica-2': [215, 166],
-	'university-fondamenti-informatica': [301, 99]
+	'university-fondamenti-informatica': [310, 99]
 };

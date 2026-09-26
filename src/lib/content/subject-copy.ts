@@ -560,7 +560,7 @@ const guides: Record<string, SubjectGuideContent> = {
 		scribble: 'la logica digitale',
 		intro: 'La logica digitale che apre i corsi di informatica e ingegneria. Ogni lezione passa ==da una rappresentazione all’altra==: **tavola, espressione, circuito**.',
 		figure: {
-			alt: 'Una porta AND con ingressi A e B e uscita A·B, accanto alla sua tavola di verità: l’uscita vale 1 solo quando A e B valgono 1.',
+			alt: 'Una porta AND con ingressi A e B e uscita A ∧ B, accanto alla sua tavola di verità: l’uscita vale 1 solo quando A e B valgono 1.',
 			caption: 'la stessa funzione, due modi di scriverla'
 		},
 		blocks: [
@@ -576,7 +576,7 @@ const guides: Record<string, SubjectGuideContent> = {
 						{ label: 'Memorie', topics: 'I flip-flop, primo passo verso le reti sequenziali.', pencil: 'ogni capitolo usa il precedente' }
 					]
 				},
-				{ kind: 'card', heading: 'Esercizio lampo', tilt: 2, question: 'Quanto vale A + A · B?', answer: 'A: è la legge di assorbimento.' }
+				{ kind: 'card', heading: 'Esercizio lampo', tilt: 2, question: 'Quanto vale A ∨ (A ∧ B)?', answer: 'A: è la legge di assorbimento.' }
 			],
 			{
 				kind: 'checklist',

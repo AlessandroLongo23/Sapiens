@@ -205,19 +205,19 @@ dec/.style={draw,thick,diamond,aspect=2.1,inner sep=1pt,fill=fillred}]
 \draw[very thick,fill=fillred] (0,0) -- (0.8,0) arc (-90:90:0.7) -- (0,1.4) -- cycle;
 \draw[thick] (-0.8,1.05) node[left] {$A$} -- (0,1.05);
 \draw[thick] (-0.8,0.35) node[left] {$B$} -- (0,0.35);
-\draw[thick] (1.5,0.7) -- (2.3,0.7) node[right] {$A\cdot B$};
+\draw[thick] (1.5,0.7) -- (2.3,0.7) node[right] {$A\wedge B$};
 \begin{scope}[shift={(4.3,1.8)}]
 \foreach \a/\b/\y [count=\i] in {0/0/0,0/1/0,1/0/0,1/1/1} {
 \node at (0,-0.5*\i) {$\a$};
 \node at (0.7,-0.5*\i) {$\b$};
-\node at (1.6,-0.5*\i) {$\y$};
+\node at (1.75,-0.5*\i) {$\y$};
 }
 \node at (0,0) {$A$};
 \node at (0.7,0) {$B$};
-\node at (1.6,0) {$A\cdot B$};
-\draw[thick] (-0.35,-0.25) -- (2.1,-0.25);
+\node at (1.75,0) {$A\wedge B$};
+\draw[thick] (-0.35,-0.25) -- (2.35,-0.25);
 \draw[thick] (1.1,0.25) -- (1.1,-2.25);
-\draw[pen,thick] (1.6,-2) circle (0.22);
+\draw[pen,thick] (1.75,-2) circle (0.22);
 \end{scope}
 \end{tikzpicture}`
 };
