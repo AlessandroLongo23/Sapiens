@@ -70,9 +70,12 @@ function pad(svg) {
 	return new XMLSerializer().serializeToString(doc);
 }
 
-/** Compiles one tikzpicture. Calls must not overlap: node-tikzjax keeps one TeX engine. */
-export async function compileFigure(code) {
-	const raw = await tex2svg(`\\begin{document}\n${code}\n\\end{document}`);
+/**
+ * Compiles one tikzpicture. Calls must not overlap: node-tikzjax keeps one TeX engine.
+ * `options` go to node-tikzjax as they are, for example `{ tikzLibraries: 'shapes.geometric' }`.
+ */
+export async function compileFigure(code, options) {
+	const raw = await tex2svg(`\\begin{document}\n${code}\n\\end{document}`, options);
 	const svg = pad(textToPaths(raw));
 	const m = svg.match(/<svg[^>]*\swidth="([\d.]+)"[^>]*\sheight="([\d.]+)"/);
 	if (!m) throw new Error('compiled SVG has no width/height');

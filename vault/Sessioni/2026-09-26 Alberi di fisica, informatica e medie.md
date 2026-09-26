@@ -15,13 +15,14 @@ Sessione del 26 settembre 2026. Alessandro ha chiesto di organizzare per anno, s
 - `tree.mts`: livello e creazione della materia; accetta una lezione assorbita dentro un capitolo assorbito; legge a pagine.
 - Trovato un limite che avrebbe rotto il sito: le query su `content_nodes` restituiscono al massimo 1.000 righe e la tabella ora ne ha 1.509. Corretti il sito (`src/lib/server/content.ts`), `tree.mts` e `scripts/chimica/pubblica.mts`. Il sito in produzione ha il codice vecchio e per qualche minuto ha mostrato 4 capitoli di matematica su 39 (i nodi oltre la posizione 3 cadevano fuori). Rimedio senza deploy: `max_rows` di PostgREST portato da 1.000 a 10.000 dall'API di gestione di Supabase; l'API anonima ora restituisce tutte le 1.509 righe.
 
+- Pagine delle materie: testi riscritti sui nuovi alberi (fisica, informatica, chimica, matematica delle medie) e scritti per Scienze e Tecnologia; su richiesta di Alessandro ogni pagina ha una composizione sua, fatta di blocchi diversi (vedi [[2026-09-24 Linguaggio visivo del quaderno a quadretti]]). Provate sul localhost, anche al telefono e nel tema scuro.
+
 ## Informazioni nuove
 - Nuove Indicazioni del primo ciclo in vigore: DM 221/2025, Gazzetta del 27 gennaio 2026, dalle prime del 2026/27; seconde e terze sul DM 254/2012 fino al 2028/29. La programmazione (variabili, strutture di controllo) sta negli obiettivi di matematica, ma l'informatica è "prevalentemente affidata" al docente di tecnologia.
 - La bozza dei licei del 22 aprile 2026 per le scienze applicate aggiunge l'intelligenza artificiale e chiede un linguaggio testuale già nel biennio.
 
 ## Domande aperte
 - Il deploy porta in produzione la lettura a pagine; con `max_rows` a 10.000 non è più urgente, ma la tabella ci arriverà con i contenuti dell'università.
-- Testi delle pagine delle materie in `src/lib/content/subject-copy.ts`, in modifica in un'altra sessione.
 - Le lezioni di educazione sessuale di scienze vanno rilette prima della pubblicazione; il disegno tecnico di tecnologia chiede figure costruite passo per passo.
 - Quando entrano le medie e da quale materia si comincia a scrivere.
 - Prerequisiti delle nuove materie, da scrivere nei lotti.

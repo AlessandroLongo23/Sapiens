@@ -1,284 +1,606 @@
 /**
- * Editorial copy for subject index pages. Each text is written for
- * one subject at one level and describes only the chapters that exist in the
- * database for it. Keyed by `<level slug>/<subject slug>` (database slugs).
+ * The study note at the foot of a subject index page, laid out like a page of a
+ * student's diary. Each note is written for one subject at one level, describes
+ * only the chapters that exist in the database for it, and lays out its own
+ * page from a few kinds of blocks, so that no two subjects share the same
+ * shape. Keyed by `<level slug>/<subject slug>` (database slugs); the figure is
+ * `public/guide/<level>-<subject>.svg`, drawn in TikZ by
+ * `scripts/figure/guides.mjs`.
  *
- * The owner can move these texts into the `description` column or a CMS later;
- * until then this file is the single place to edit them.
+ * Text fields take two marks: `**bold**` and `==highlighter==`.
  */
 
-export interface GuideSection {
-	heading: string;
-	paragraphs: string[];
+import { GUIDE_FIGURES } from './guide-figures';
+
+export interface GuideStop {
+	/** The stretch of the route, in a word or two: "Primo anno", "I viventi". */
+	label: string;
+	/** Its chapters, in the order they come. */
+	topics: string;
+	/** A red stamp beside the stop, for an exam it prepares for. */
+	stamp?: string;
+	/** A pencil note in the margin of the stop. */
+	pencil?: string;
 }
 
+export type PostitColor = 'yellow' | 'pink' | 'blue' | 'green';
+
+export type GuideBlock =
+	/** A paragraph of the note. */
+	| { kind: 'text'; text: string }
+	/** The chapters in stops: circled down the page (`path`), across it by year (`timeline`), or in boxes by area (`areas`). */
+	| { kind: 'route'; heading: string; style: 'path' | 'timeline' | 'areas'; stops: GuideStop[] }
+	/** The subject's figure, taped to the page; `tilt` in degrees. */
+	| { kind: 'figure'; tilt?: number }
+	/** Steps with a red tick. */
+	| { kind: 'checklist'; heading: string; items: string[] }
+	| { kind: 'postit'; heading: string; text: string; color?: PostitColor; tilt?: number }
+	/** A dashed rule and a short list with pencil arrows, for what to know first. */
+	| { kind: 'arrows'; heading: string; items: string[] }
+	/** Mistakes struck through in red, each with the correction in pencil. */
+	| { kind: 'mistakes'; heading: string; items: { wrong: string; right: string }[] }
+	/** An index card: a question and its answer in pencil. */
+	| { kind: 'card'; heading: string; question: string; answer: string; tilt?: number }
+	/** A method or a definition framed by hand; lines are numbered unless `numbered` is false (then set as formulas). */
+	| { kind: 'boxed'; heading: string; lines: string[]; numbered?: boolean; pencil?: string }
+	/** A small table of terms and what they mean. */
+	| { kind: 'table'; heading: string; rows: [string, string][]; pencil?: string }
+	/** A pencil note on its own. */
+	| { kind: 'scribble'; text: string };
+
+/** A block across the page, or blocks side by side. */
+export type GuideRow = GuideBlock | GuideBlock[];
+
 export interface SubjectGuideContent {
-	sections: GuideSection[];
+	/** The note's title; the subject's name, often. */
+	title: string;
+	/** A few words in pencil beside the title. */
+	scribble?: string;
+	intro: string;
+	figure: { alt: string; caption: string };
+	blocks: GuideRow[];
 }
 
 const guides: Record<string, SubjectGuideContent> = {
 	'high_school/math': {
-		sections: [
+		title: 'Matematica per le superiori',
+		scribble: 'cinque anni, un filo solo',
+		intro: "Gli argomenti arrivano ==nell'ordine in cui li incontri in classe==, anno per anno, dagli insiemi agli integrali. Ogni capitolo è diviso in **lezioni corte, una per idea**: ognuna usa solo quello che viene prima.",
+		figure: {
+			alt: 'La parabola y = x² − 2x − 3 con le radici −1 e 3 cerchiate in rosso, il vertice V e la retta tangente in x = 3, di pendenza 4.',
+			caption: 'la stessa parabola: equazione in seconda, derivata in quinta'
+		},
+		blocks: [
 			{
-				heading: 'Cosa trovi in Matematica per le superiori',
-				paragraphs: [
-					"Il percorso di matematica per la scuola superiore segue l'ordine in cui gli argomenti si incontrano in classe. Si parte da insiemi e logica, il linguaggio con cui è scritto tutto il resto, e si attraversano i numeri naturali, interi, razionali e reali, ognuno con le sue operazioni e le sue potenze. Seguono monomi e polinomi, poi equazioni, disequazioni e sistemi, che sono il cuore del biennio.",
-					"La seconda parte copre la geometria analitica della retta, la trigonometria con i teoremi sui triangoli e la geometria solida. L'ultima parte è quella del triennio: funzioni, limiti, derivate, integrali e probabilità, gli argomenti che tornano nella seconda prova di maturità dello scientifico.",
-					"Ogni capitolo è spezzato in lezioni corte, una per idea. Nel capitolo sui numeri naturali, per esempio, operazioni, MCD e MCM e potenze sono tre lezioni distinte. Ogni lezione ha una scheda di teoria, un formulario, esercizi interattivi e flashcard; dove una sezione non è ancora pronta lo trovi scritto in pagina."
+				kind: 'route',
+				heading: 'Anno per anno',
+				style: 'timeline',
+				stops: [
+					{ label: 'Primo anno', topics: 'Insiemi e logica, i numeri fino ai razionali, **polinomi ed equazioni di primo grado**, statistica, triangoli.' },
+					{ label: 'Secondo anno', topics: 'Sistemi, radicali, la retta, **equazioni di secondo grado** e parabola, probabilità.', pencil: 'il cuore del biennio' },
+					{ label: 'Terzo anno', topics: 'Funzioni, successioni, coniche, esponenziali e logaritmi.' },
+					{ label: 'Quarto anno', topics: 'Goniometria e trigonometria, numeri complessi, calcolo combinatorio, geometria dello spazio.' },
+					{ label: 'Quinto anno', topics: 'Limiti, **derivate**, studio di funzione, **integrali**, equazioni differenziali.', stamp: 'Maturità' }
 				]
 			},
-			{
-				heading: 'Come prepararsi a una verifica',
-				paragraphs: [
-					"Per una verifica su un capitolo preciso leggi le lezioni nell'ordine in cui compaiono: ognuna usa solo quello che viene prima. Alla prima lettura non fermarti sui dettagli, arriva in fondo. Alla seconda copri gli esempi svolti e prova a rifarli da solo, confrontando poi passaggio per passaggio.",
-					"Gli esercizi interattivi, dove disponibili, danno la correzione subito: usali per capire quale tipo di errore ripeti, non per collezionare risposte giuste. Il formulario è utile come ripasso finale la sera prima, quando la teoria è già chiara; da solo non basta, perché nelle verifiche si chiede di applicare, non di ricordare.",
-					"Se ti stai preparando alla maturità, i capitoli su funzioni, limiti, derivate e integrali coprono la parte di analisi; geometria analitica e trigonometria coprono gli strumenti che servono nei problemi. Parti dai capitoli in cui hai più dubbi e torna alle lezioni precedenti ogni volta che un passaggio non torna."
-				]
-			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Per i primi capitoli bastano le basi delle medie: le quattro operazioni, le frazioni, le percentuali e un po' di geometria piana, tutte disponibili nella sezione per la scuola media. Per monomi, polinomi ed equazioni servono soprattutto le proprietà delle potenze e la sicurezza con i numeri razionali, che qui trovi nei capitoli precedenti.",
-					"Per limiti, derivate e integrali serve una buona familiarità con le funzioni e con l'equazione della retta. Se uno di questi prerequisiti ti manca, segui il collegamento al capitolo corrispondente prima di andare avanti: recuperare una base costa meno che rileggere tre volte una dimostrazione."
-				]
-			}
+			[
+				{ kind: 'figure', tilt: -1.5 },
+				{
+					kind: 'mistakes',
+					heading: 'Errori che costano mezzo voto',
+					items: [
+						{ wrong: '(a + b)² = a² + b²', right: 'manca il doppio prodotto: a² + 2ab + b²' },
+						{ wrong: '−3² = 9', right: 'la potenza viene prima del segno: −9' },
+						{ wrong: '√(9 + 16) = 3 + 4', right: 'la radice non si spezza su una somma: √25 = 5' }
+					]
+				}
+			],
+			[
+				{
+					kind: 'checklist',
+					heading: 'Verso la verifica',
+					items: [
+						'Leggi le lezioni **in ordine** e arriva in fondo senza fermarti sui dettagli.',
+						'Alla seconda lettura ==copri gli esempi svolti== e rifalli da solo, passaggio per passaggio.',
+						'Negli esercizi guarda **che tipo di errore ripeti**, non quante risposte giuste collezioni.'
+					]
+				},
+				{ kind: 'postit', heading: 'La sera prima', color: 'pink', text: 'Il formulario serve al ripasso finale, ma in verifica si chiede di **applicare**, non di ricordare.' }
+			],
+			{ kind: 'scribble', text: 'recuperare una base costa meno che rileggere tre volte una dimostrazione' }
 		]
 	},
 
 	'high_school/physics': {
-		sections: [
+		title: 'Fisica per le superiori',
+		scribble: 'dalle misure ai quanti',
+		intro: "Il primo anno sembra poca fisica: misure, grafici, vettori, equilibrio. È ==l'attrezzatura che serve dopo==: senza vettori non si capiscono né le forze né i campi. Ogni capitolo è diviso in **lezioni brevi, una per idea**.",
+		figure: {
+			alt: 'Un blocco su un piano inclinato di angolo alfa, con le tre forze in rosso: il peso P, la reazione normale N e l’attrito f.',
+			caption: 'prima di ogni conto: disegna le forze'
+		},
+		blocks: [
+			[
+				{ kind: 'figure', tilt: 2 },
+				{
+					kind: 'route',
+					heading: 'Il percorso',
+					style: 'path',
+					stops: [
+						{ label: 'Primo anno', topics: 'Grandezze e misura, relazioni e grafici, vettori e forze, equilibrio dei solidi e dei fluidi, ottica geometrica.', pencil: 'la cassetta degli attrezzi' },
+						{ label: 'Secondo anno', topics: 'Moto rettilineo e nel piano, **principi della dinamica**, lavoro ed energia, temperatura e calore.' },
+						{ label: 'Terzo anno', topics: 'Quantità di moto, corpo rigido, **gravitazione**, fluidi, gas e principi della termodinamica.' },
+						{ label: 'Quarto anno', topics: 'Onde, suono e luce; carica, campo e potenziale elettrico, corrente continua, campo magnetico.' },
+						{ label: 'Quinto anno', topics: '**Induzione** e onde elettromagnetiche, relatività ristretta, quanti, atomo e nucleo.', stamp: 'Maturità', pencil: 'può essere la seconda prova' }
+					]
+				}
+			],
 			{
-				heading: 'Cosa trovi in Fisica per le superiori',
-				paragraphs: [
-					"La fisica delle superiori parte dalla meccanica: cinematica, con velocità, accelerazione e i moti uniforme e uniformemente accelerato; dinamica, con le leggi di Newton e le forze più comuni come peso, attrito e tensione; lavoro ed energia, con potenza ed energia cinetica e potenziale. È la parte che occupa quasi tutto il primo biennio ed è anche quella su cui si costruisce il resto.",
-					"Il percorso continua con la termodinamica (calore, temperatura, leggi dei gas e i primi due principi), le onde meccaniche e l'acustica, l'ottica con riflessione e rifrazione, e poi elettrostatica ed elettromagnetismo: carica e campo elettrico, potenziale, campi magnetici, legge di Ampère, induzione e legge di Faraday.",
-					"L'ultima parte raccoglie i temi del quinto anno e dei licei che li affrontano: meccanica razionale, modelli atomici, relatività ristretta, quantizzazione dell'energia, radioattività e cicli di vita delle stelle. Ogni capitolo è diviso in lezioni brevi, con teoria, formulario, esercizi e flashcard; le sezioni ancora in scrittura sono indicate in pagina."
-				]
+				kind: 'boxed',
+				heading: 'Un problema in quattro righe',
+				lines: [
+					'**Disegno**: i corpi, le forze, il verso positivo.',
+					'Dati e incognite, tutti in unità del Sistema Internazionale.',
+					'La legge che lega i dati alle incognite, poi i conti.',
+					"Il risultato: ==unità di misura e ordine di grandezza==."
+				],
+				pencil: "se il numero è assurdo, l'errore è quasi sempre al punto 2"
 			},
+			[
+				{
+					kind: 'table',
+					heading: 'Unità da sapere a occhi chiusi',
+					rows: [
+						['N', 'newton, la forza: kg · m/s²'],
+						['J', 'joule, lavoro ed energia: N · m'],
+						['W', 'watt, la potenza: J/s'],
+						['Pa', 'pascal, la pressione: N/m²'],
+						['C', 'coulomb, la carica: A · s']
+					]
+				},
+				{ kind: 'postit', heading: 'Formule inverse', color: 'blue', tilt: 2, text: 'Non impararle tutte: impara quella diretta e ==ricava le altre==. In verifica si chiede proprio questo.' }
+			],
 			{
-				heading: 'Come prepararsi a una verifica di fisica',
-				paragraphs: [
-					"Le verifiche di fisica premiano chi sa impostare un problema, e per impostarlo serve prima di tutto capire quali grandezze entrano in gioco e quali leggi le collegano. Leggi la teoria della lezione facendo attenzione alle definizioni e alle unità di misura, poi rifai gli esempi svolti da solo, scrivendo per esteso i dati, le incognite e la formula prima di sostituire i numeri.",
-					"Il formulario serve per il ripasso rapido, ma controlla sempre da dove viene ogni formula: nelle verifiche si chiede spesso di ricavarne una a partire da un'altra, e chi le ha imparate a memoria si blocca. Con gli esercizi interattivi, quando disponibili, verifica se l'errore è di concetto o di calcolo: si correggono in modo diverso.",
-					"Per l'esame di maturità i capitoli di elettromagnetismo e quelli di fisica moderna sono i più richiesti nei licei scientifici; conviene ripassarli insieme alla meccanica, perché le domande collegano spesso più argomenti."
-				]
-			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Per cinematica e dinamica bastano le proporzioni, le equazioni di primo grado e un uso sicuro delle potenze di dieci. Lavoro ed energia usano anche le equazioni di secondo grado. Onde, ottica ed elettromagnetismo si appoggiano alla trigonometria di base (seno, coseno e i teoremi sui triangoli), mentre per i capitoli di fisica moderna aiuta conoscere le funzioni esponenziali.",
-					"Tutti questi argomenti sono nella sezione di matematica per le superiori: se un passaggio matematico ti frena, recuperalo lì prima di riprendere la fisica."
+				kind: 'arrows',
+				heading: 'Da matematica',
+				items: [
+					'Primo anno: proporzioni, **potenze di dieci**, equazioni di primo grado.',
+					'Seno e coseno servono già per i vettori: una lezione del primo anno li spiega.',
+					'Quinto anno: **derivate e integrali**, per induzione e circuiti.'
 				]
 			}
 		]
 	},
 
 	'high_school/computer-science': {
-		sections: [
+		title: 'Informatica per le superiori',
+		scribble: 'si parte da zero',
+		intro: "Il percorso del liceo scientifico delle scienze applicate. Il primo anno spiega ==come un computer rappresenta le informazioni==; dal secondo si programma, e ogni anno aggiunge uno strumento: funzioni, oggetti, basi di dati, reti. **Non servono prerequisiti.**",
+		figure: {
+			alt: 'Un diagramma di flusso: Inizio, leggi n, la domanda n > 0 in un rombo rosso, due rami che scrivono positivo o no, e Fine.',
+			caption: 'un algoritmo: una domanda, due strade'
+		},
+		blocks: [
 			{
-				heading: 'Cosa trovi in Informatica per le superiori',
-				paragraphs: [
-					"Il materiale di informatica per le superiori copre le basi che si incontrano nel biennio e negli istituti che la insegnano come materia autonoma. Si parte da cosa sono hardware e software e da come si descrive un procedimento con algoritmi e pseudocodice; seguono i sistemi operativi, con processi, thread, memoria e file system, e poi internet e il web, con le reti, il protocollo HTTP e i primi elementi di HTML.",
-					"Una parte è dedicata alla sicurezza informatica (virus, malware, password sicure e cifratura) e una alla programmazione visuale a blocchi con Scratch e ai diagrammi di flusso, che sono il modo più diretto per imparare a ragionare per passi prima di scrivere codice.",
-					"Chiudono il percorso gli strumenti di lavoro quotidiano: elaboratore di testi, foglio di calcolo e presentazioni, i formati per immagini, audio e video con le nozioni di editing, e la collaborazione digitale attraverso servizi cloud e strumenti condivisi. Ogni capitolo è spezzato in lezioni brevi con teoria, formulario, esercizi e flashcard; dove una sezione non è ancora pronta lo trovi indicato in pagina."
+				kind: 'route',
+				heading: 'Cinque anni in una riga',
+				style: 'timeline',
+				stops: [
+					{ label: 'Primo anno', topics: 'Numeri binari, codifica, architettura del computer, sistema operativo, foglio di calcolo.' },
+					{ label: 'Secondo anno', topics: 'Internet e sicurezza; **algoritmi**, primi programmi, selezione e cicli.', pencil: 'qui si comincia a programmare' },
+					{ label: 'Terzo anno', topics: 'Funzioni, vettori e stringhe, ordinamento, file; HTML, CSS e pagine interattive.' },
+					{ label: 'Quarto anno', topics: 'Ricorsione, oggetti, strutture dati, **basi di dati e SQL**, intelligenza artificiale.' },
+					{ label: 'Quinto anno', topics: 'Reti e TCP/IP, crittografia, grafi, calcolo numerico, apprendimento automatico.' }
 				]
 			},
-			{
-				heading: 'Come usare il materiale per verifiche e prove pratiche',
-				paragraphs: [
-					"In informatica le verifiche sono spesso miste: domande di teoria e una parte pratica al computer. Per la teoria leggi la lezione e prova a spiegare ogni concetto con un esempio concreto (un processo è come..., un pacchetto viaggia così...): se non riesci a trovarne uno, il concetto non è ancora chiaro.",
-					"Per la parte pratica non basta leggere: apri il programma di cui parla la lezione e ripeti i passaggi mentre li leggi. Per gli algoritmi, scrivi lo pseudocodice a mano e seguilo con un esempio numerico, riga per riga, come farebbe la macchina. Il formulario raccoglie comandi, sigle e definizioni da ripassare prima della prova."
-				]
-			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Non servono prerequisiti particolari: il materiale parte da zero. Aiuta avere confidenza con l'uso di un computer e con la logica elementare, che si incontra anche nel capitolo su insiemi e logica di matematica. Per il foglio di calcolo tornano utili percentuali e proporzioni, disponibili nella sezione di matematica."
-				]
-			}
+			[
+				{
+					kind: 'mistakes',
+					heading: 'Errori da primo programma',
+					items: [
+						{ wrong: 'if x = 5:', right: 'un uguale assegna, due confrontano: x == 5' },
+						{ wrong: 'range(1, 10) conta fino a 10', right: "si ferma a 9: l'ultimo numero è escluso" },
+						{ wrong: 'funziona con 3, quindi è giusto', right: 'provalo con 0, con un negativo e con il caso più grande' }
+					]
+				},
+				{ kind: 'figure', tilt: 1 }
+			],
+			[
+				{ kind: 'postit', heading: 'Il linguaggio', color: 'green', tilt: -2, text: 'Negli esempi usiamo **Python**. Se in classe usate C++ le idee sono le stesse: cambia la grammatica.' },
+				{
+					kind: 'checklist',
+					heading: 'Per imparare a programmare',
+					items: [
+						'Scrivi il procedimento **in italiano** prima di scrivere codice.',
+						'Esegui a mano, ==una riga alla volta e con un numero vero==, annotando il valore delle variabili.',
+						"Quando sbagli, leggi il messaggio di errore **fino in fondo**: di solito dice la riga."
+					]
+				}
+			]
 		]
 	},
 
 	'high_school/chemistry': {
-		sections: [
-			{
-				heading: 'Cosa trovi in Chimica per le superiori',
-				paragraphs: [
-					"La chimica delle superiori inizia dalla struttura dell'atomo, con protoni, neutroni ed elettroni, numero atomico e numero di massa, e dalla tavola periodica, con gruppi, periodi e proprietà periodiche come raggio ed energia di ionizzazione. Su queste basi si costruiscono i legami chimici, ionico e covalente, e la stechiometria: il concetto di mole e il bilanciamento delle reazioni.",
-					"Seguono le reazioni redox con il numero di ossidazione, la chimica organica con idrocarburi e gruppi funzionali, e la chimica fisica con la legge dei gas ideali. Equilibrio chimico, cinetica ed elettrochimica (come funziona una pila) sono i capitoli del triennio, insieme alla chimica analitica con le titolazioni acido-base.",
-					"Chiudono il percorso tre capitoli di raccordo con altre discipline: biochimica, con le macromolecole del vivente; chimica ambientale, con gli inquinanti in aria, acqua e suolo; chimica industriale, con i grandi processi produttivi. Ogni capitolo è diviso in lezioni con teoria, formulario, esercizi e flashcard; le sezioni ancora in scrittura sono indicate in pagina."
-				]
-			},
-			{
-				heading: 'Come prepararsi a una verifica di chimica',
-				paragraphs: [
-					"In chimica le verifiche mescolano domande di teoria e problemi numerici, e i problemi si risolvono quasi tutti con lo stesso metodo: scrivere la reazione bilanciata, passare a moli, usare i rapporti stechiometrici, tornare a grammi o litri. Se il capitolo sulla stechiometria è chiaro, buona parte degli esercizi successivi lo diventa.",
-					"Studia ogni lezione partendo dalle definizioni e dai nomi: in chimica il lessico è metà del lavoro. Rifai gli esempi svolti da solo, poi usa gli esercizi interattivi dove disponibili per verificare la parte di calcolo. Il formulario raccoglie costanti, formule e regole (per esempio le regole per il numero di ossidazione) da tenere a portata di mano durante il ripasso."
-				]
-			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Bastano le proporzioni, le percentuali, le potenze di dieci e le equazioni di primo grado, tutte nella sezione di matematica. Per l'equilibrio e la cinetica servono anche le equazioni di secondo grado e un'idea di cosa sia una funzione. Chi arriva dalle medie trova utile ripassare la differenza tra massa e volume e gli stati della materia prima di iniziare dalla struttura dell'atomo."
-				]
-			}
+		title: 'Chimica per le superiori',
+		intro: "Nei primi due anni la chimica si vede: miscugli, passaggi di stato, gas. Dal terzo si entra ==dentro l'atomo==, e da lì si spiega tutto il resto: legami, reazioni, equilibri. Il quinto anno è **chimica organica e biochimica**.",
+		figure: {
+			alt: 'La reazione 2 H₂ + O₂ → 2 H₂O e lo schema per risolvere i problemi: grammi diviso massa molare dà le moli, i coefficienti danno le moli del prodotto, per massa molare si torna ai grammi.',
+			caption: 'il metodo che risolve quasi tutti i problemi'
+		},
+		blocks: [
+			[
+				{
+					kind: 'route',
+					heading: 'Il percorso',
+					style: 'path',
+					stops: [
+						{ label: 'Primo anno', topics: 'Misure, stati della materia e miscugli, leggi ponderali e **teoria atomica di Dalton**.' },
+						{ label: 'Secondo anno', topics: "Leggi dei gas, **la mole**, le particelle dell'atomo, la chimica dell'acqua.", pencil: 'la mole torna in ogni capitolo dopo' },
+						{ label: 'Terzo anno', topics: 'Configurazione elettronica, tavola periodica, legami e forma delle molecole, nomenclatura.' },
+						{ label: 'Quarto anno', topics: 'Soluzioni, stechiometria, energia e velocità delle reazioni, **equilibrio**, acidi e basi, redox e pile.' },
+						{ label: 'Quinto anno', topics: 'Idrocarburi e gruppi funzionali, biomolecole, metabolismo.' }
+					]
+				},
+				{ kind: 'card', heading: 'Domanda da interrogazione', tilt: 1.5, question: "Che cos'è una mole?", answer: 'Tante particelle quanto il numero di Avogadro, 6,022 · 10²³.' }
+			],
+			[
+				{ kind: 'figure', tilt: -1 },
+				{
+					kind: 'checklist',
+					heading: 'Nei problemi',
+					items: [
+						'Scrivi la reazione e **bilanciala** prima di ogni conto.',
+						'Passa ==da grammi a moli==: i coefficienti parlano di moli, non di grammi.',
+						'Alla fine torna alle unità richieste e controlla le **cifre significative**.'
+					]
+				}
+			],
+			{ kind: 'postit', heading: 'Nomenclatura', tilt: 1.5, text: 'Si impara come un vocabolario: **dieci minuti al giorno** rendono più di un pomeriggio prima della verifica.' }
 		]
 	},
 
 	'middle_school/math': {
-		sections: [
+		title: 'Matematica per le medie',
+		scribble: 'tre anni, le basi di tutto',
+		intro: 'Tre anni che ==stanno sotto a tutto quello che viene dopo==. In ogni anno ci sono numeri e geometria, e le lezioni sono brevi, una per argomento: **studi quello che serve** per il compito della settimana.',
+		figure: {
+			alt: 'Un cerchio diviso in quattro spicchi con tre colorati, uguale a 0,75, uguale a un quadrato di cento quadretti con settantacinque colorati: 3/4 = 0,75 = 75%.',
+			caption: 'lo stesso numero, scritto in tre modi'
+		},
+		blocks: [
+			[
+				{
+					kind: 'route',
+					heading: 'Il percorso',
+					style: 'path',
+					stops: [
+						{ label: 'Prima', topics: 'Numeri naturali e potenze, **divisibilità**, frazioni; enti geometrici, angoli, triangoli.', pencil: 'm.c.m. e M.C.D. servono per le frazioni' },
+						{ label: 'Seconda', topics: 'Decimali e radice quadrata, **proporzioni e percentuali**; quadrilateri, aree, Pitagora, similitudine.' },
+						{ label: 'Terza', topics: 'Numeri relativi, calcolo letterale, **equazioni**, funzioni, statistica e probabilità; cerchio e solidi.', stamp: 'Esame' }
+					]
+				},
+				{ kind: 'figure', tilt: 2 }
+			],
+			[
+				{ kind: 'card', heading: 'Prova tu', tilt: -1.5, question: 'Quanto fa 3/4 in percentuale?', answer: '75%: 3 diviso 4 fa 0,75, cioè 75 centesimi.' },
+				{ kind: 'postit', heading: 'Per i genitori', tilt: 2.5, text: 'Le spiegazioni partono **sempre da un esempio concreto**: vanno bene anche per seguire i compiti.' }
+			],
 			{
-				heading: 'Cosa trovi in Matematica per le medie',
-				paragraphs: [
-					"Il materiale di matematica per la scuola media copre quattro capitoli che stanno alla base di tutto quello che viene dopo. L'aritmetica riprende il sistema di numerazione decimale, le quattro operazioni con le loro proprietà, le espressioni, le potenze e la radice quadrata. Frazioni e decimali spiegano frazioni proprie, improprie e apparenti, le frazioni equivalenti, le operazioni tra frazioni e il passaggio da frazione a numero decimale.",
-					"Il capitolo sulle percentuali mostra come calcolarle e come usarle nei problemi, dagli sconti agli aumenti. La geometria piana presenta punto, retta e piano, gli angoli, i triangoli con le loro proprietà, i quadrilateri e il cerchio con le sue parti.",
-					"Ogni capitolo è diviso in lezioni brevi, una per argomento, così da poter studiare solo quello che serve per il compito della settimana. Ogni lezione ha una scheda di teoria, un formulario, esercizi e flashcard; le sezioni ancora in preparazione sono segnalate in pagina."
+				kind: 'checklist',
+				heading: 'Compiti e verifiche',
+				items: [
+					'Leggi con **carta e penna vicino** e rifai ogni esempio prima di andare avanti.',
+					'Se un passaggio non torna, ==torna alla lezione precedente==.',
+					'Negli esercizi **conta gli errori dello stesso tipo** e rileggi solo quella parte.'
 				]
 			},
+			{ kind: 'scribble', text: 'dopo la terza si passa alle superiori, e si riparte dagli insiemi' }
+		]
+	},
+
+	'middle_school/science': {
+		title: 'Scienze per le medie',
+		scribble: 'quattro scienze in una',
+		intro: "Scienze mette insieme ==fisica, chimica, biologia e scienze della Terra==. Durante l'anno gli argomenti si alternano: qui sotto li trovi divisi per area, e ogni area cresce dalla prima alla terza. Sopra, i capitoli sono in ordine di classe.",
+		figure: {
+			alt: "Il ciclo dell'acqua: il sole scalda il mare, una freccia rossa di evaporazione sale fino a una nuvola dove avviene la condensazione, la pioggia cade su una montagna e una freccia riporta l'acqua al mare.",
+			caption: "la stessa acqua, in tre stati diversi"
+		},
+		blocks: [
 			{
-				heading: 'Come usare il materiale per i compiti e le verifiche',
-				paragraphs: [
-					"Leggi la teoria della lezione con carta e penna vicino e rifai ogni esempio prima di andare avanti: alle medie la matematica si impara facendo, e leggere soltanto dà l'impressione di aver capito. Se un passaggio non torna, torna alla lezione precedente, che contiene quello che serve.",
-					"Per una verifica sulle frazioni o sulle percentuali fai gli esercizi interattivi, dove disponibili, e conta gli errori dello stesso tipo: se sbagli sempre nello stesso punto, rileggi solo quella parte di teoria. Il formulario serve per ripassare le formule di aree e perimetri e le regole delle operazioni la sera prima.",
-					"Anche i genitori possono usare queste pagine per rivedere un argomento e seguire i compiti: le spiegazioni partono sempre da un esempio concreto."
+				kind: 'route',
+				heading: 'Quattro aree',
+				style: 'areas',
+				stops: [
+					{ label: 'Materia ed energia', topics: 'In prima misure, stati della materia, calore. In seconda **atomi e reazioni**, moto e forze. In terza energia, suono, elettricità, luce.' },
+					{ label: 'La Terra e il cielo', topics: "In prima acqua, aria e suolo. In seconda minerali e rocce. In terza vulcani, terremoti, **tettonica** e Sistema solare." },
+					{ label: 'I viventi', topics: 'In prima la cellula, piante e animali. In seconda gli ecosistemi. In terza **evoluzione**, genetica e DNA.' },
+					{ label: 'Il corpo umano', topics: 'In seconda movimento, digestione, respirazione, circolazione. In terza sistema nervoso, sensi e riproduzione.' }
 				]
 			},
+			[
+				{
+					kind: 'boxed',
+					heading: 'Il metodo scientifico',
+					lines: [
+						'Osservo un fenomeno e mi faccio una domanda.',
+						"Formulo un'**ipotesi** che si possa controllare.",
+						"Faccio un esperimento ==cambiando una cosa sola==.",
+						"Guardo i dati: confermano l'ipotesi o no?"
+					],
+					pencil: 'vale per ogni capitolo, non solo per il primo'
+				},
+				{ kind: 'figure', tilt: -2 }
+			],
+			[
+				{
+					kind: 'table',
+					heading: 'Parole che si confondono',
+					rows: [
+						['massa', 'quanta materia ha un corpo, in kilogrammi'],
+						['peso', 'la forza con cui la Terra lo attira, in newton'],
+						['calore', 'energia che passa da un corpo più caldo a uno più freddo'],
+						['temperatura', 'quanto è caldo un corpo, in gradi Celsius']
+					]
+				},
+				{ kind: 'postit', heading: 'Interrogazione', color: 'green', tilt: 2, text: 'Per ogni capitolo fai ==uno schema con parole chiave e frecce==. Se sai spiegarlo guardando solo lo schema, sei pronto.' }
+			]
+		]
+	},
+
+	'middle_school/technology': {
+		title: 'Tecnologia per le medie',
+		scribble: 'si studia e si disegna',
+		intro: "Tecnologia ha due anime: ==la teoria== (materiali, alimenti, edifici, energia, computer) e **il disegno tecnico**, che si fa con squadre e compasso. Le lezioni di disegno seguono una costruzione alla volta, un passo dopo l'altro.",
+		figure: {
+			alt: 'Le proiezioni ortogonali di un pezzo a forma di L con il metodo europeo: il prospetto in alto a sinistra, il fianco alla sua destra, la pianta sotto, con le linee di richiamo e la retta a 45 gradi; lo spigolo del gradino è in rosso nella pianta.',
+			caption: 'tre viste, un solo pezzo'
+		},
+		blocks: [
 			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Basta quello che si impara alle elementari: contare, fare le quattro operazioni in colonna e conoscere le figure geometriche più comuni. Il capitolo di aritmetica riparte comunque dal sistema decimale, quindi si può iniziare da lì anche con qualche lacuna. Chi finisce le medie con questi quattro capitoli chiari parte bene con il materiale per le superiori, che inizia da insiemi e numeri naturali."
+				kind: 'route',
+				heading: 'Tre anni',
+				style: 'timeline',
+				stops: [
+					{ label: 'Prima', topics: 'Legno, carta, fibre, metalli e plastiche; **costruzioni geometriche**; hardware, software e algoritmi.' },
+					{ label: 'Seconda', topics: '**Proiezioni ortogonali**; agricoltura e alimenti; edifici e città; Internet, sicurezza, programmazione a blocchi.' },
+					{ label: 'Terza', topics: 'Assonometrie; **energia** e sue fonti, elettricità; macchine e trasporti; dati, intelligenza artificiale e robot.', pencil: "all'esame entra nel colloquio" }
 				]
-			}
+			},
+			[
+				{ kind: 'figure', tilt: -1.5 },
+				{
+					kind: 'table',
+					heading: 'Le scale',
+					rows: [
+						['1 : 1', 'il disegno è grande come il vero'],
+						['1 : 2', 'è la metà del vero'],
+						['1 : 100', '1 cm sul foglio è 1 m nella realtà'],
+						['2 : 1', 'è il doppio: si usa per i pezzi piccoli']
+					],
+					pencil: 'il primo numero è il disegno, il secondo la realtà'
+				}
+			],
+			[
+				{
+					kind: 'checklist',
+					heading: 'Prima di consegnare la tavola',
+					items: [
+						'Squadratura e **cartiglio** con nome, classe, titolo e scala.',
+						'Linee di costruzione ==sottili e leggere==, contorni in vista spessi.',
+						'Misure controllate con il righello, **non a occhio**.'
+					]
+				},
+				{ kind: 'postit', heading: 'Proiezioni', color: 'pink', tilt: -3, text: 'La **pianta** va sotto il prospetto, il **fianco** alla sua destra. Se sbagli il posto, sbagli la tavola.' }
+			]
 		]
 	},
 
 	'university/analisi-1': {
-		sections: [
+		title: 'Analisi matematica I',
+		scribble: 'il primo esame',
+		intro: "Il percorso tipico del primo esame di analisi. Rispetto alle superiori cambia ==il livello di rigore==: definizioni con epsilon e delta, teoremi con **ipotesi precise, da enunciare e dimostrare**.",
+		figure: {
+			alt: 'La definizione di limite: una curva, una fascia rossa larga 2ε attorno a L sull’asse y e una fascia azzurra larga 2δ attorno a x₀ sull’asse x.',
+			caption: 'fissi la fascia di L, trovi quella di x₀'
+		},
+		blocks: [
+			[
+				{
+					kind: 'boxed',
+					heading: 'La definizione da sapere',
+					numbered: false,
+					lines: ['lim f(x) = L  per x → x₀  se', 'per ogni ε > 0 esiste δ > 0 tale che', '0 < |x − x₀| < δ  ⇒  |f(x) − L| < ε'],
+					pencil: 'epsilon prima, delta dopo'
+				},
+				{ kind: 'figure', tilt: 1.5 }
+			],
 			{
-				heading: 'Cosa trovi in Analisi matematica I',
-				paragraphs: [
-					"Il materiale di Analisi I segue la struttura tipica del primo esame di analisi nei corsi di laurea scientifici e di ingegneria. Si parte dalle successioni di numeri reali e dalle serie numeriche con i criteri di convergenza, poi si passa alla definizione di limite di funzione, alle regole e ai teoremi sulle derivate, agli integrali definiti e indefiniti con il teorema fondamentale del calcolo, e infine alle equazioni differenziali del primo e del secondo ordine.",
-					"Rispetto alle superiori cambia il livello di rigore: le definizioni sono date con epsilon e delta, i teoremi hanno ipotesi precise e vanno saputi enunciare e dimostrare. Le lezioni sono organizzate per accompagnare questo passaggio: definizione, enunciato, dimostrazione, esempi e controesempi. Ogni lezione ha teoria, formulario, esercizi e flashcard; le sezioni ancora in scrittura sono indicate in pagina."
+				kind: 'route',
+				heading: 'Il programma',
+				style: 'timeline',
+				stops: [
+					{ label: 'Successioni', topics: 'Successioni di numeri reali, serie numeriche e criteri di convergenza.' },
+					{ label: 'Limiti e derivate', topics: '**Limite di funzione**, regole e teoremi sulle derivate.' },
+					{ label: 'Integrali', topics: 'Integrali definiti e indefiniti, teorema fondamentale del calcolo.' },
+					{ label: 'Equazioni differenziali', topics: 'Del primo e del secondo ordine.' }
 				]
 			},
 			{
-				heading: "Come prepararsi all'esame",
-				paragraphs: [
-					"L'esame di Analisi I ha quasi sempre una prova scritta di esercizi e una prova orale su definizioni, enunciati e dimostrazioni. Per lo scritto conta la pratica: studia la lezione, rifai gli esempi e poi risolvi esercizi a tempo, senza guardare le soluzioni finché non hai finito. Per l'orale la strategia è diversa: per ogni teorema scrivi su un foglio ipotesi, tesi e schema della dimostrazione, e chiediti perché ogni ipotesi serve.",
-					"Il formulario raccoglie limiti notevoli, derivate e integrali elementari e le forme standard delle equazioni differenziali: va usato per il ripasso finale, dopo aver capito da dove viene ogni formula. Cerca di collegare i capitoli tra loro, perché all'orale le domande saltano facilmente dalle successioni ai limiti di funzione e dalle derivate agli integrali."
+				kind: 'checklist',
+				heading: "Verso l'esame",
+				items: [
+					'Per lo scritto: esercizi **a tempo**, senza guardare le soluzioni finché non hai finito.',
+					"Per l'orale: per ogni teorema ==ipotesi, tesi e schema della dimostrazione== su un foglio.",
+					'Chiediti **perché serve ogni ipotesi**, e collega i capitoli tra loro.'
 				]
 			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Servono con sicurezza gli argomenti del triennio delle superiori: funzioni e loro proprietà, limiti, derivate e integrali a livello introduttivo, trigonometria, esponenziali e logaritmi. Tutti sono trattati nella sezione di matematica per le superiori, che è il posto giusto da cui ripartire se una base manca. Anche l'algebra dei polinomi e delle disequazioni torna in continuazione nello studio dei domini e dei segni."
-				]
-			}
+			{ kind: 'arrows', heading: 'Prima di iniziare', items: ['Il triennio delle superiori: **funzioni, limiti, derivate, integrali**.', 'Trigonometria, esponenziali e logaritmi.', 'Polinomi e disequazioni, per domini e segni.'] }
 		]
 	},
 
 	'university/analisi-2': {
-		sections: [
-			{
-				heading: 'Cosa trovi in Analisi matematica II',
-				paragraphs: [
-					"Il materiale di Analisi II raccoglie tre capitoli del secondo corso di analisi: gli integrali doppi in coordinate cartesiane e polari, gli integrali tripli con il cambio di coordinate, e le serie di Taylor e Maclaurin. Sono gli argomenti che estendono il calcolo integrale a più variabili e mostrano come approssimare una funzione con polinomi.",
-					"Le lezioni presentano prima l'idea geometrica (un volume, una massa, un'area), poi la definizione formale e le tecniche di calcolo: ordine di integrazione, descrizione del dominio, scelta delle coordinate. Ogni lezione ha teoria, formulario, esercizi e flashcard; le sezioni ancora in scrittura sono indicate in pagina."
-				]
-			},
-			{
-				heading: "Come prepararsi all'esame",
-				paragraphs: [
-					"Negli esercizi di Analisi II la difficoltà sta quasi sempre nella descrizione del dominio e nella scelta delle coordinate, non nel calcolo dell'integrale. Prima di integrare disegna il dominio, scrivi le disuguaglianze che lo descrivono e decidi in quale ordine integrare; solo dopo passa ai conti. Rifai gli esempi svolti seguendo questo schema finché non diventa automatico.",
-					"Per le serie di Taylor impara a memoria gli sviluppi delle funzioni elementari, raccolti nel formulario, e allenati a combinarli: la maggior parte degli esercizi si risolve componendo sviluppi noti invece di derivare da capo. All'orale aspettati domande sul teorema del cambio di variabili e sul resto di Taylor: preparali con ipotesi, tesi e idea della dimostrazione."
-				]
-			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"È necessario avere superato o almeno studiato Analisi I: derivate, integrali in una variabile, successioni e serie numeriche sono usati in ogni lezione. Serve anche un po' di geometria analitica dello spazio (piani, sfere, cilindri) per descrivere i domini, e le funzioni trigonometriche per le coordinate polari, cilindriche e sferiche."
-				]
-			}
+		title: 'Analisi matematica II',
+		scribble: 'il calcolo in più variabili',
+		intro: 'Tre capitoli che ==portano gli integrali in più variabili== e mostrano come approssimare una funzione con polinomi. Ogni lezione parte **dall’idea geometrica**: un volume, una massa, un’area.',
+		figure: {
+			alt: 'Il dominio D tra la parabola y = x² e la retta y = x, colorato, con una sezione verticale rossa in corrispondenza di x.',
+			caption: 'prima il dominio, poi i conti'
+		},
+		blocks: [
+			[
+				{
+					kind: 'route',
+					heading: 'Il percorso',
+					style: 'path',
+					stops: [
+						{ label: 'Integrali doppi', topics: 'In coordinate cartesiane e polari.' },
+						{ label: 'Integrali tripli', topics: 'Con il cambio di coordinate: cilindriche e sferiche.' },
+						{ label: 'Taylor', topics: 'Serie di Taylor e Maclaurin.', pencil: 'si combinano sviluppi noti' }
+					]
+				},
+				{ kind: 'figure', tilt: -2 }
+			],
+			[
+				{
+					kind: 'mistakes',
+					heading: 'Dove si perde il punto',
+					items: [
+						{ wrong: 'estremi di integrazione presi a occhio', right: 'scrivi le disuguaglianze che descrivono il dominio' },
+						{ wrong: 'dx dy = dρ dθ', right: 'manca lo jacobiano: dx dy = ρ dρ dθ' }
+					]
+				},
+				{ kind: 'postit', heading: 'A memoria', tilt: 2, text: 'Gli sviluppi delle funzioni elementari: quasi ogni esercizio si risolve **componendoli**, non derivando da capo.' }
+			]
 		]
 	},
 
 	'university/fisica-1': {
-		sections: [
+		title: 'Fisica I',
+		scribble: 'meccanica classica',
+		intro: 'La meccanica del primo anno, ==con il calcolo differenziale==: la velocità è una derivata, il lavoro un integrale, le leggi del moto **equazioni differenziali**.',
+		figure: {
+			alt: 'La traiettoria parabolica di un proiettile; in due punti la velocità in rosso e le sue componenti: v_x sempre uguale, v_y che cambia verso.',
+			caption: 'v_x non cambia mai; v_y sì'
+		},
+		blocks: [
+			[
+				{ kind: 'figure', tilt: 1 },
+				{ kind: 'card', heading: "Domanda d'orale", tilt: -1.5, question: "Quando si conserva l'energia meccanica?", answer: 'Quando lavorano solo forze conservative. Con l’attrito una parte diventa calore.' }
+			],
 			{
-				heading: 'Cosa trovi in Fisica I',
-				paragraphs: [
-					"Il materiale di Fisica I copre la meccanica classica del primo anno: la cinematica del punto materiale, con il moto in una dimensione e il moto di un proiettile; la dinamica del punto, con i principi di Newton e i sistemi di riferimento inerziali; lavoro ed energia, con il lavoro di una forza e la conservazione dell'energia; e la meccanica del corpo rigido, con il moto rotazionale e il momento d'inerzia.",
-					"Rispetto alla fisica delle superiori il trattamento usa il calcolo differenziale: velocità e accelerazione sono derivate, il lavoro è un integrale, le leggi del moto sono equazioni differenziali. Le lezioni introducono ogni concetto in questa forma e lo collegano alla versione già nota dalle superiori. Ogni lezione ha teoria, formulario, esercizi e flashcard; le sezioni ancora in scrittura sono indicate in pagina."
+				kind: 'route',
+				heading: 'Il percorso',
+				style: 'timeline',
+				stops: [
+					{ label: 'Cinematica', topics: 'Moto in una dimensione, moto di un proiettile.' },
+					{ label: 'Dinamica', topics: 'I principi di Newton, i sistemi di riferimento inerziali.' },
+					{ label: 'Energia', topics: 'Lavoro di una forza, **conservazione dell’energia**.' },
+					{ label: 'Corpo rigido', topics: "Moto rotazionale, momento d'inerzia." }
 				]
 			},
 			{
-				heading: "Come prepararsi all'esame",
-				paragraphs: [
-					"Gli esercizi di Fisica I si risolvono con un metodo fisso: disegnare il sistema, scegliere il riferimento, scrivere le forze o le energie in gioco, impostare le equazioni, risolvere e controllare le unità di misura e i casi limite. Rifai gli esempi svolti seguendo questi passaggi per esteso, anche quando sembrano ovvi: all'esame gli errori nascono quasi sempre nell'impostazione.",
-					"Per l'orale prepara le definizioni e i teoremi di conservazione (energia, quantità di moto, momento angolare) con le ipotesi sotto cui valgono. Il formulario raccoglie le leggi del moto, le espressioni delle energie e i momenti d'inerzia dei corpi più comuni: usalo per il ripasso, non al posto della derivazione."
+				kind: 'checklist',
+				heading: "Verso l'esame",
+				items: [
+					'Un metodo fisso: ==disegno, riferimento, forze o energie, equazioni==, poi i conti.',
+					'Alla fine controlla **unità di misura e casi limite**.',
+					"Per l'orale: i teoremi di conservazione **con le ipotesi** sotto cui valgono."
 				]
 			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Servono derivate e integrali di base (Analisi I, almeno la prima parte), i vettori con prodotto scalare e vettoriale, e la trigonometria. È utile avere presente la fisica delle superiori, in particolare cinematica, dinamica e lavoro ed energia, che qui vengono riprese con più strumenti matematici."
-				]
-			}
+			{ kind: 'scribble', text: "all'esame gli errori nascono quasi sempre nell'impostazione, non nei conti" }
 		]
 	},
 
 	'university/fisica-2': {
-		sections: [
+		title: 'Fisica II',
+		scribble: 'campi, gas e luce',
+		intro: 'Tre capitoli del secondo corso di fisica, dalle leggi sperimentali ==alla forma con campi, flussi e circuitazioni==.',
+		figure: {
+			alt: 'Un ciclo sul piano pressione-volume: un’isobara da A a B, un’isocora da B a C e un’isoterma da C ad A; l’area rossa racchiusa è il lavoro L.',
+			caption: "il lavoro del ciclo è l'area dentro"
+		},
+		blocks: [
 			{
-				heading: 'Cosa trovi in Fisica II',
-				paragraphs: [
-					"Il materiale di Fisica II raccoglie tre capitoli del secondo corso di fisica: la termodinamica, con le leggi dei gas perfetti e i principi della termodinamica; l'elettromagnetismo, dalla legge di Coulomb e il campo elettrico fino alla legge di Faraday e all'induzione; l'ottica, con la propagazione delle onde luminose.",
-					"Le lezioni introducono i concetti a partire dalle leggi sperimentali e li portano alla forma matematica usata all'università, con campi, flussi e circuitazioni. Ogni lezione ha teoria, formulario, esercizi e flashcard; le sezioni ancora in scrittura sono indicate in pagina."
+				kind: 'route',
+				heading: 'Tre capitoli',
+				style: 'areas',
+				stops: [
+					{ label: 'Termodinamica', topics: 'Gas perfetti e **principi della termodinamica**.', pencil: 'leggi bene il grafico p–V' },
+					{ label: 'Elettromagnetismo', topics: 'Dalla legge di Coulomb e il campo elettrico fino a Faraday e all’induzione.' },
+					{ label: 'Ottica', topics: 'La propagazione delle onde luminose.' }
 				]
 			},
+			[
+				{ kind: 'figure', tilt: -1.5 },
+				{
+					kind: 'table',
+					heading: 'Stato o processo?',
+					rows: [
+						['p, V, T', 'grandezze di stato: dipendono solo da dove sei'],
+						['U, S', 'energia interna ed entropia: anche loro di stato'],
+						['L, Q', 'lavoro e calore: dipendono dalla strada fatta']
+					]
+				}
+			],
 			{
-				heading: "Come prepararsi all'esame",
-				paragraphs: [
-					"In elettromagnetismo la parte più delicata è la geometria: prima di calcolare un campo o un flusso disegna la configurazione, individua le simmetrie e scegli la superficie o il percorso su cui applicare la legge. Rifai gli esempi svolti con questo schema, e per ogni legge chiediti in quali condizioni si può usare in forma semplificata.",
-					"In termodinamica allenati a distinguere le grandezze di stato dalle grandezze di processo e a rappresentare le trasformazioni sul piano pressione-volume: molti esercizi si riducono a leggere correttamente un grafico. Il formulario raccoglie le leggi dei gas, le espressioni di lavoro e calore per le trasformazioni principali e le leggi dell'elettromagnetismo in forma integrale."
-				]
-			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Sono necessari Fisica I e gli integrali di Analisi I; per gli integrali di flusso e di linea aiutano gli integrali doppi e tripli di Analisi II. Dalla fisica delle superiori conviene ripassare termodinamica, elettrostatica ed elettromagnetismo, che qui vengono ripresi con più formalismo."
+				kind: 'checklist',
+				heading: "Verso l'esame",
+				items: [
+					'In elettromagnetismo **disegna la configurazione** e cerca le simmetrie.',
+					'Scegli ==la superficie o il percorso== su cui applicare la legge.',
+					'Nel formulario tieni le leggi di Maxwell **in forma integrale**.'
 				]
 			}
 		]
 	},
 
 	'university/fondamenti-informatica': {
-		sections: [
+		title: 'Fondamenti di Informatica',
+		scribble: 'la logica digitale',
+		intro: 'La logica digitale che apre i corsi di informatica e ingegneria. Ogni lezione passa ==da una rappresentazione all’altra==: **tavola, espressione, circuito**.',
+		figure: {
+			alt: 'Una porta AND con ingressi A e B e uscita A·B, accanto alla sua tavola di verità: l’uscita vale 1 solo quando A e B valgono 1.',
+			caption: 'la stessa funzione, due modi di scriverla'
+		},
+		blocks: [
+			{ kind: 'figure', tilt: -1 },
+			[
+				{
+					kind: 'route',
+					heading: 'Il percorso',
+					style: 'path',
+					stops: [
+						{ label: 'Booleani', topics: 'Variabili e funzioni booleane, tavole di verità.' },
+						{ label: 'Porte logiche', topics: 'AND, OR, NOT e i circuiti combinatori elementari.' },
+						{ label: 'Memorie', topics: 'I flip-flop, primo passo verso le reti sequenziali.', pencil: 'ogni capitolo usa il precedente' }
+					]
+				},
+				{ kind: 'card', heading: 'Esercizio lampo', tilt: 2, question: 'Quanto vale A + A · B?', answer: 'A: è la legge di assorbimento.' }
+			],
 			{
-				heading: 'Cosa trovi in Fondamenti di Informatica',
-				paragraphs: [
-					"Il materiale di Fondamenti di Informatica copre la parte di logica digitale che apre i corsi di informatica e ingegneria: le variabili booleane, le funzioni booleane con le tavole di verità, le porte logiche di base (AND, OR, NOT), i circuiti combinatori elementari e le memorie di base con i flip-flop, primo passo verso le reti sequenziali.",
-					"I cinque capitoli sono in ordine di dipendenza: ognuno usa il precedente. Le lezioni presentano il concetto, il modo di rappresentarlo (tavola, espressione, schema circuitale) e le regole per passare da una rappresentazione all'altra. Ogni lezione ha teoria, formulario, esercizi e flashcard; le sezioni ancora in scrittura sono indicate in pagina."
+				kind: 'checklist',
+				heading: "Verso l'esame",
+				items: [
+					'Tavole, semplificazioni e circuiti: ==attività meccaniche, da fare molte volte==.',
+					'Rifai gli esempi e poi **inventa varianti**: cambia una riga o un operatore.',
+					'Per i flip-flop **disegna il diagramma temporale** a ogni fronte di clock.'
 				]
 			},
-			{
-				heading: "Come prepararsi all'esame",
-				paragraphs: [
-					"Gli esercizi tipici chiedono di costruire una tavola di verità da un'espressione, di semplificare una funzione booleana o di disegnare il circuito corrispondente. Sono attività meccaniche, ma vanno fatte molte volte per diventare veloci: rifai gli esempi svolti e poi inventa varianti cambiando una riga della tavola o un operatore.",
-					"Per la parte sulle reti sequenziali disegna sempre il diagramma temporale dei segnali: è il modo più sicuro per capire cosa fa un flip-flop a ogni fronte di clock. Il formulario raccoglie le identità dell'algebra booleana e le tabelle caratteristiche dei flip-flop, da ripassare prima della prova."
-				]
-			},
-			{
-				heading: 'Cosa conviene sapere prima',
-				paragraphs: [
-					"Non servono prerequisiti universitari. Aiuta il capitolo su insiemi e logica della matematica per le superiori, perché le operazioni tra insiemi e i connettivi logici sono le stesse idee delle funzioni booleane, e il capitolo di informatica per le superiori su hardware, software e algoritmi per il contesto generale."
-				]
-			}
+			{ kind: 'arrows', heading: 'Aiuta sapere', items: ['Nessun prerequisito universitario.', 'Insiemi e **connettivi logici**, dalla matematica per le superiori.', 'Hardware, software e algoritmi, dall’informatica per le superiori.'] }
 		]
 	}
 };
 
-export function subjectCopy(levelSlug: string | undefined, subjectSlug: string): SubjectGuideContent | null {
+export interface SubjectGuide extends SubjectGuideContent {
+	image: { src: string; width: number; height: number } | null;
+}
+
+export function subjectCopy(levelSlug: string | undefined, subjectSlug: string): SubjectGuide | null {
 	if (!levelSlug) return null;
-	return guides[`${levelSlug}/${subjectSlug}`] ?? null;
+	const guide = guides[`${levelSlug}/${subjectSlug}`];
+	if (!guide) return null;
+	const name = `${levelSlug}-${subjectSlug}`;
+	const size = GUIDE_FIGURES[name];
+	return { ...guide, image: size ? { src: `/guide/${name}.svg`, width: size[0], height: size[1] } : null };
 }

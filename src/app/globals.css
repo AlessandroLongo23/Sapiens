@@ -404,6 +404,32 @@
 		transparent calc(var(--rule-at) + 1px) var(--rule)
 	);
 }
+/* What a student adds to a printed page: pencil in the margin and a yellow
+   highlighter over the words that matter. The highlighter is a band a little
+   shorter than the line, with soft ends, as a felt tip leaves it. */
+:root {
+	--graphite: oklch(0.47 0.012 265);
+	--marker: oklch(0.93 0.15 102 / 0.8);
+}
+.dark,
+.paper-dark {
+	--graphite: oklch(0.76 0.012 265);
+	--marker: oklch(0.82 0.16 100 / 0.34);
+}
+@utility pencil {
+	font-family: var(--font-hand), 'Caveat', cursive;
+	color: var(--graphite);
+	font-weight: 600;
+	line-height: 1.1;
+}
+@utility marker {
+	color: inherit;
+	padding: 0 0.2em;
+	margin: 0 -0.1em;
+	background: linear-gradient(98deg, transparent 0.15em, var(--marker) 0.35em, var(--marker) calc(100% - 0.3em), transparent calc(100% - 0.1em)) 0 75% / 100% 70% no-repeat;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
 /* Labels, counts and numbering: small monospaced caps. */
 @utility label-mono {
 	font-family: var(--font-mono);
