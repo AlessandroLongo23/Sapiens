@@ -64,6 +64,10 @@ Poi:
   sbagliata) devono essere bocciati;
 - `review.mts <id> <file>` deve uscire con codice 0 (tutto il LaTeX passa da KaTeX); la pagina si
   guarda.
+- `width.mts <id>` deve uscire con codice 0: sul telefono il problema sta in 350 px a 18 px e ogni
+  opzione in 252 px a 16 px. Un problema più largo va su più righe con `\begin{aligned}` (la pagina lo
+  mostra una riga alla volta, vedi `src/lib/exercises/present.ts`); un'opzione più larga con
+  `\begin{gathered}`. Il controllo Python deve ricomporre le righe.
 
 Il collegamento alla lezione si fa per ultimo, in due righe: il generatore in
 `src/lib/exercises/index.ts` e la lezione in `config.ts`, con il percorso nel database, l'id del
