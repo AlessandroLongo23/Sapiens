@@ -121,8 +121,6 @@ Esempio 9: esponente dispari e coefficiente frazionario
 $$\left(-\frac{2}{3}a^2b\right)^3 = \left(-\frac{2}{3}\right)^3 a^{2\cdot 3}b^{1\cdot 3} = -\frac{8}{27}a^6b^3$$
 ```
 
-I casi particolari e gli altri esempi sono nella lezione sulla [potenza di un monomio](/materiale/scuola-superiore/matematica/monomi-e-polinomi/operazioni-tra-monomi).
-
 ## Le quattro regole a confronto
 
 | Operazione | Coefficienti | Esponenti di ogni lettera | Il risultato è un monomio? |

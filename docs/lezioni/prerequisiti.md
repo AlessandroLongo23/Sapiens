@@ -80,7 +80,7 @@ polinomi-ruffini <- polinomi-divisione
 scomposizione-raccoglimento <- polinomi-operazioni, monomi-mcm-mcd
 scomposizione-prodotti-notevoli <- scomposizione-raccoglimento, polinomi-prodotti-notevoli
 scomposizione-trinomio <- scomposizione-raccoglimento
-scomposizione-ruffini <- scomposizione-raccoglimento, polinomi-ruffini
+scomposizione-ruffini <- polinomi-ruffini, scomposizione-trinomio, scomposizione-prodotti-notevoli
 polinomi-mcd-mcm <- scomposizione-prodotti-notevoli, scomposizione-trinomio
 
 ## Frazioni algebriche

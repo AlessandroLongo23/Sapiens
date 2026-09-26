@@ -296,5 +296,101 @@
     "path": "high_school/math/numeri-razionali/numeri-razionali-proporzioni",
     "chapter": "Numeri razionali \\mathbb{Q}",
     "new": true
+  },
+  {
+    "id": "afcca4e4-a1a1-4cf9-b47c-704f0b4cbf28",
+    "title": "Monomi",
+    "slug": "monomi",
+    "path": "high_school/math/monomi-polinomi/monomi",
+    "chapter": "Monomi e polinomi",
+    "new": true
+  },
+  {
+    "id": "37f0c0d2-e798-437d-9b50-9a784ef41761",
+    "title": "Polinomi e grado di un polinomio",
+    "slug": "polinomi",
+    "path": "high_school/math/monomi-polinomi/polinomi",
+    "chapter": "Monomi e polinomi",
+    "new": true
+  },
+  {
+    "id": "8e16b875-c8b1-4e5c-ad4d-96abff299595",
+    "title": "Operazioni tra polinomi",
+    "slug": "polinomi-operazioni",
+    "path": "high_school/math/monomi-polinomi/polinomi-operazioni",
+    "chapter": "Monomi e polinomi",
+    "new": true
+  },
+  {
+    "id": "d5ebf42a-be8c-4ea5-80bc-eb1fd020da0c",
+    "title": "Prodotti notevoli",
+    "slug": "polinomi-prodotti-notevoli",
+    "path": "high_school/math/monomi-polinomi/polinomi-prodotti-notevoli",
+    "chapter": "Monomi e polinomi",
+    "new": true
+  },
+  {
+    "id": "7627ae6e-b7d0-417b-bd39-0b09f003b0cc",
+    "title": "Espressioni con polinomi",
+    "slug": "polinomi-espressioni",
+    "path": "high_school/math/monomi-polinomi/polinomi-espressioni",
+    "chapter": "Monomi e polinomi",
+    "new": true
+  },
+  {
+    "id": "96d310c6-f547-48ab-b577-95a92e8f63ee",
+    "title": "Divisione tra polinomi",
+    "slug": "polinomi-divisione",
+    "path": "high_school/math/monomi-polinomi/polinomi-divisione",
+    "chapter": "Monomi e polinomi",
+    "new": true
+  },
+  {
+    "id": "0b16ade8-ac8a-477f-844a-fbe7cf2c2c4b",
+    "title": "Regola di Ruffini e teorema del resto",
+    "slug": "polinomi-ruffini",
+    "path": "high_school/math/monomi-polinomi/polinomi-ruffini",
+    "chapter": "Monomi e polinomi",
+    "new": true
+  },
+  {
+    "id": "1bf270e6-23b4-41ad-84c0-2ed15ff376b0",
+    "title": "Raccoglimento totale e parziale",
+    "slug": "scomposizione-raccoglimento",
+    "path": "high_school/math/scomposizione/scomposizione-raccoglimento",
+    "chapter": "Scomposizione in fattori",
+    "new": true
+  },
+  {
+    "id": "c473eb65-de5b-414a-8da1-be48226c23c9",
+    "title": "Scomposizione con i prodotti notevoli",
+    "slug": "scomposizione-prodotti-notevoli",
+    "path": "high_school/math/scomposizione/scomposizione-prodotti-notevoli",
+    "chapter": "Scomposizione in fattori",
+    "new": true
+  },
+  {
+    "id": "c94fdb9a-b93a-4f93-9e9e-da9877f922ad",
+    "title": "Trinomio di secondo grado",
+    "slug": "scomposizione-trinomio",
+    "path": "high_school/math/scomposizione/scomposizione-trinomio",
+    "chapter": "Scomposizione in fattori",
+    "new": true
+  },
+  {
+    "id": "d1bd759c-11de-48de-a54d-b4200397c1f0",
+    "title": "Scomposizione con la regola di Ruffini",
+    "slug": "scomposizione-ruffini",
+    "path": "high_school/math/scomposizione/scomposizione-ruffini",
+    "chapter": "Scomposizione in fattori",
+    "new": true
+  },
+  {
+    "id": "d4cbf891-4afa-4cee-9362-19e1224aedaa",
+    "title": "MCD e MCM di polinomi",
+    "slug": "polinomi-mcd-mcm",
+    "path": "high_school/math/scomposizione/polinomi-mcd-mcm",
+    "chapter": "Scomposizione in fattori",
+    "new": true
   }
 ]
