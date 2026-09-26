@@ -110,13 +110,17 @@ export function addSimilar(terms: Mono[]): Mono | null {
 
 /** A sum reduced by collecting similar terms, in order of first appearance; zero terms dropped. */
 export function collect(terms: Mono[]): Mono[] {
-	const out: Mono[] = [];
+	// Summed by literal part, not by comparing monomials: a group that cancels is the zero monomial,
+	// which has no letters and would otherwise absorb the constant terms that follow it.
+	const sums = new Map<string, { c: Rational; e: Exps }>();
 	for (const t of terms) {
-		const i = out.findIndex((o) => similar(o, t));
-		if (i === -1) out.push(t);
-		else out[i] = mono(out[i].c.add(t.c), { ...t.e });
+		if (t.c.isZero()) continue;
+		const key = literalKey(t.e);
+		const s = sums.get(key);
+		if (s) s.c = s.c.add(t.c);
+		else sums.set(key, { c: t.c, e: t.e });
 	}
-	return out.filter((t) => !t.c.isZero());
+	return [...sums.values()].filter((s) => !s.c.isZero()).map((s) => mono(s.c, { ...s.e }));
 }
 
 // ---------------------------------------------------------------------------
