@@ -85,8 +85,8 @@
 ## Geometria del piano: triangoli e quadrilateri  /materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri
 - Enti geometrici, segmenti e angoli: /materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/enti-geometrici-segmenti-e-angoli
 - Triangoli e criteri di congruenza: /materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/triangoli-e-criteri-di-congruenza
-- Punti notevoli del triangolo: /materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/punti-notevoli-del-triangolo
 - Rette perpendicolari e parallele: /materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/rette-perpendicolari-e-parallele
+- Punti notevoli del triangolo: /materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/punti-notevoli-del-triangolo
 - Parallelogrammi e trapezi: /materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/parallelogrammi-e-trapezi
 
 ## Sistemi lineari  /materiale/scuola-superiore/matematica/sistemi-lineari

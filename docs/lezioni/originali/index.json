@@ -496,5 +496,93 @@
     "path": "high_school/math/equazioni-sistemi/equazioni-problemi",
     "chapter": "Equazioni di primo grado",
     "new": true
+  },
+  {
+    "id": "f68c1ec5-ae7e-48a1-a9a2-8c81dd497868",
+    "title": "Disequazioni di primo grado e intervalli",
+    "slug": "disequazioni-primo-grado",
+    "path": "high_school/math/disequazioni-lineari/disequazioni-primo-grado",
+    "chapter": "Disequazioni di primo grado",
+    "new": true
+  },
+  {
+    "id": "c3bba727-4587-4dba-8c4d-9aec24aaf3e8",
+    "title": "Sistemi di disequazioni",
+    "slug": "sistemi-di-disequazioni",
+    "path": "high_school/math/disequazioni-lineari/sistemi-di-disequazioni",
+    "chapter": "Disequazioni di primo grado",
+    "new": true
+  },
+  {
+    "id": "79663416-12b5-4a2d-857d-e0d50781dd6c",
+    "title": "Studio del segno e disequazioni fratte",
+    "slug": "disequazioni-razionali",
+    "path": "high_school/math/disequazioni-lineari/disequazioni-razionali",
+    "chapter": "Disequazioni di primo grado",
+    "new": true
+  },
+  {
+    "id": "6848e278-e2ab-4842-9c44-62a8f61d972a",
+    "title": "Dati, frequenze e grafici",
+    "slug": "statistica-dati",
+    "path": "high_school/math/statistica/statistica-dati",
+    "chapter": "Statistica",
+    "new": true
+  },
+  {
+    "id": "ba08e0ef-2b7d-4543-ae97-006ba377f36e",
+    "title": "Media, mediana e moda",
+    "slug": "statistica-medie",
+    "path": "high_school/math/statistica/statistica-medie",
+    "chapter": "Statistica",
+    "new": true
+  },
+  {
+    "id": "2571abf1-2cd8-4939-9829-06abbece60a4",
+    "title": "Indici di variabilità",
+    "slug": "statistica-variabilita",
+    "path": "high_school/math/statistica/statistica-variabilita",
+    "chapter": "Statistica",
+    "new": true
+  },
+  {
+    "id": "e7d2e493-9c5e-469e-a01e-fd3807ee3bcb",
+    "title": "Enti geometrici, segmenti e angoli",
+    "slug": "geometria-enti",
+    "path": "high_school/math/geometria-piano-triangoli/geometria-enti",
+    "chapter": "Geometria del piano: triangoli e quadrilateri",
+    "new": true
+  },
+  {
+    "id": "01596edf-6f58-4d1b-aaca-4b19f96fcedb",
+    "title": "Triangoli e criteri di congruenza",
+    "slug": "angoli-e-lati-dei-triangoli",
+    "path": "high_school/math/geometria-piano-triangoli/angoli-e-lati-dei-triangoli",
+    "chapter": "Geometria del piano: triangoli e quadrilateri",
+    "new": true
+  },
+  {
+    "id": "7be5b2f0-89b9-48dd-90c8-3431c819848d",
+    "title": "Rette perpendicolari e parallele",
+    "slug": "geometria-perpendicolari-parallele",
+    "path": "high_school/math/geometria-piano-triangoli/geometria-perpendicolari-parallele",
+    "chapter": "Geometria del piano: triangoli e quadrilateri",
+    "new": true
+  },
+  {
+    "id": "53f16356-ff5a-4d38-af0b-d5132a34fb88",
+    "title": "Punti notevoli del triangolo",
+    "slug": "geometria-punti-notevoli",
+    "path": "high_school/math/geometria-piano-triangoli/geometria-punti-notevoli",
+    "chapter": "Geometria del piano: triangoli e quadrilateri",
+    "new": true
+  },
+  {
+    "id": "7716e234-a39b-49a5-a891-c4771f14ec88",
+    "title": "Parallelogrammi e trapezi",
+    "slug": "geometria-quadrilateri",
+    "path": "high_school/math/geometria-piano-triangoli/geometria-quadrilateri",
+    "chapter": "Geometria del piano: triangoli e quadrilateri",
+    "new": true
   }
 ]

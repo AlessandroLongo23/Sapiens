@@ -97,7 +97,7 @@ equazioni-problemi <- equazioni-primo-grado, numeri-razionali-proporzioni
 ## Disequazioni di primo grado
 disequazioni-primo-grado <- equazioni-primo-grado
 sistemi-di-disequazioni <- disequazioni-primo-grado, insiemi-intersezione
-disequazioni-razionali <- disequazioni-primo-grado, frazioni-algebriche-esistenza
+disequazioni-razionali <- disequazioni-primo-grado, frazioni-algebriche-operazioni
 
 ## Statistica
 statistica-dati <- numeri-razionali-proporzioni
@@ -119,10 +119,6 @@ equazioni-secondo-grado <- equazioni-primo-grado, scomposizione-raccoglimento, n
 # Dubbi da sciogliere
 - Proposizioni e connettivi logici è una lezione di base. Se la lezione mostra il legame tra "e",
   "o", "non" e intersezione, unione, complementare, le servono le operazioni tra insiemi.
-- Indici di variabilità usa la radice quadrata (scarto quadratico medio) prima dei radicali, che sono
-  al secondo anno.
-- Punti notevoli del triangolo usa assi e altezze, quindi le perpendicolari: nell'albero viene prima
-  di Rette perpendicolari e parallele.
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
   frazioni). Per il ripasso dopo una prova conta proprio quel collegamento: il ripasso dovrà cercare
   tra tutti gli antenati, non solo tra i prerequisiti diretti.

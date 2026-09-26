@@ -101,8 +101,8 @@ dal titolo. Le righe `#` sono solo per chi legge.
 ## geometria-piano-triangoli | Geometria del piano: triangoli e quadrilateri
 - geometria-enti | Enti geometrici, segmenti e angoli
 - angoli-e-lati-dei-triangoli | Triangoli e criteri di congruenza
-- geometria-punti-notevoli | Punti notevoli del triangolo
 - geometria-perpendicolari-parallele | Rette perpendicolari e parallele
+- geometria-punti-notevoli | Punti notevoli del triangolo
 - geometria-quadrilateri | Parallelogrammi e trapezi
 
 # Secondo anno
