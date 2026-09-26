@@ -948,7 +948,9 @@ body {
 	.markdown-content ol { margin-left: 1.25rem; }
 	.markdown-content table { table-layout: auto; }
 	.markdown-content td,
-	.markdown-content th { width: auto; min-width: 6rem; }
+	.markdown-content th { width: auto; min-width: 2.5rem; }
+	/* An image sized to its cell needs a floor; text and formulas take their own width (truth tables have six columns). */
+	.markdown-content :is(td, th):has(img, .markdown-gif) { min-width: 6rem; }
 	.markdown-content .katex-display { padding: 0.5rem; }
 }
 @media (max-width: 767px) {
