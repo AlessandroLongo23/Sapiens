@@ -594,16 +594,20 @@ export async function saveNoteStickers(supabase: SupabaseClient, userId: string,
 }
 
 /**
- * The stickers on the cover of a subject's page (see the cover_stickers migration), or null when the
- * student has never changed that cover: the page then shows the stickers it comes with. A failed read
- * throws, so the page does not offer a cover whose save would overwrite the real one.
+ * Every cover the student has changed (see the cover_stickers migration), by page path; a page that is
+ * missing still has the stickers it comes with. One read for all of them, so the browser knows every
+ * page's cover after the first. A failed read throws, so the page does not offer a cover whose save
+ * would overwrite the real one.
  */
-export async function getCoverStickers(supabase: SupabaseClient, userId: string, page: string): Promise<PlacedSticker[] | null> {
-	const { data, error } = await supabase.from('cover_stickers').select('stickers').eq('user_id', userId).eq('page', page).maybeSingle();
+export async function getCoverStickers(supabase: SupabaseClient, userId: string): Promise<Record<string, PlacedSticker[]>> {
+	const { data, error } = await supabase.from('cover_stickers').select('page, stickers').eq('user_id', userId);
 	if (error) fail('cover stickers lookup failed', error);
-	if (!data) return null;
-	const parsed = parseStickers((data as Row).stickers, COVER_BOUNDS);
-	return typeof parsed === 'string' ? [] : parsed;
+	const covers: Record<string, PlacedSticker[]> = {};
+	for (const row of (data ?? []) as Row[]) {
+		const parsed = parseStickers(row.stickers, COVER_BOUNDS);
+		covers[row.page as string] = typeof parsed === 'string' ? [] : parsed;
+	}
+	return covers;
 }
 
 /** Replaces the whole set on one cover. */

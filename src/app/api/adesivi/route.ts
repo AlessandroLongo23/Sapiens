@@ -7,13 +7,11 @@ import { fail, guarded, json, readJson } from '@/lib/server/http';
 const PAGE = /^[a-z0-9_-]+(\/[a-z0-9_-]+){0,4}$/;
 const isPage = (value: unknown): value is string => typeof value === 'string' && value.length <= 200 && PAGE.test(value);
 
-/** The student's stickers on the cover of one subject's page: `?pagina=high_school/math`. `null` until the student changes it. */
-export async function GET(request: Request) {
+/** Every cover the student has changed, by page path (`high_school/math`); the others still have what they come with. */
+export async function GET() {
 	const { supabase, user } = await getSession();
 	if (!user) return fail('Accedi per continuare.', 401);
-	const page = new URL(request.url).searchParams.get('pagina');
-	if (!isPage(page)) return fail('Pagina non valida.', 400);
-	return guarded('cover stickers read', async () => json({ stickers: await getCoverStickers(supabase, user.id, page) }));
+	return guarded('cover stickers read', async () => json({ covers: await getCoverStickers(supabase, user.id) }));
 }
 
 /** The stickers on one cover, replaced as a set: the page always sends all of them. */

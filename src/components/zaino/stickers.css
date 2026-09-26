@@ -1,6 +1,12 @@
 /* Stickers on a note's sheet and on the cover of a subject's page. The geometry is set inline by StickerBoard
    (src/lib/zaino/sticker-board.ts); this file is the layers it draws into. */
 
+/* The stickers every cover comes with: a signed-in student's cover may differ, so they wait for it
+   (html.signed-in is set before the first paint, see the root layout). */
+html.signed-in .cover-defaults {
+	visibility: hidden;
+}
+
 .sticker-layer {
 	position: absolute;
 	inset: 0;

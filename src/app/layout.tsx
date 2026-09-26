@@ -54,12 +54,20 @@ const THEME_SCRIPT = `(function(){try{var s=localStorage.getItem('theme'),d=wind
  */
 const APP_SCRIPT = `(function(){try{var n=navigator;if(!(window.matchMedia('(display-mode: standalone)').matches||n.standalone===true||/SapiensApp/.test(n.userAgent)))return;document.documentElement.classList.add('app');if(location.pathname==='/')location.replace('${APP_START}')}catch(e){}})();`;
 
+/**
+ * Marks a signed-in visit (`html.signed-in`) before the first paint, from the session cookie that Boot
+ * also checks: the cached pages carry the covers' default stickers, which a student's own cover
+ * replaces (CoverStickers), so a student must not see them flash first.
+ */
+const SESSION_SCRIPT = `(function(){try{if(document.cookie.indexOf('-auth-token')>-1)document.documentElement.classList.add('signed-in')}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang={SITE_LANG} className={`${inter.variable} ${fraunces.variable} ${mono.variable}`} suppressHydrationWarning>
 			<head>
 				<script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 				<script dangerouslySetInnerHTML={{ __html: APP_SCRIPT }} />
+				<script dangerouslySetInnerHTML={{ __html: SESSION_SCRIPT }} />
 			</head>
 			<body>
 				<JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />

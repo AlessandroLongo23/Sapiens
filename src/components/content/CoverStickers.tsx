@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Sticker } from 'lucide-react';
 import { create } from 'zustand';
 import { useAuth } from '@/lib/state/auth';
+import { clearCovers, coversStore } from '@/lib/state/covers';
 import { useCoarsePointer } from '@/lib/hooks/use-media';
 import type { BoardState } from '@/lib/zaino/sticker-board';
 import { COVER_HEIGHT, COVER_WIDTH, MAX_STICKERS, STICKER_BY_ID, coverDefaults, stickerArt, type PlacedSticker } from '@/lib/zaino/stickers';
@@ -51,11 +52,13 @@ export function CoverStickersButton() {
 /**
  * The stickers of a cover drawn as plain markup, at the same places as on the board: for visitors, and
  * while a student's own set loads. Rendered on the server too, so the cached page has them. The distance
- * from the middle shrinks as in `squeeze`, through the container's width.
+ * from the middle shrinks as in `squeeze`, through the container's width. `defaults` marks the set every
+ * page comes with, which a signed-in student does not see (html.signed-in, set before the first paint in
+ * the root layout): their own cover may have different stickers, and those would flash and go.
  */
-function StaticCover({ stickers }: { stickers: PlacedSticker[] }) {
+function StaticCover({ stickers, defaults = false }: { stickers: PlacedSticker[]; defaults?: boolean }) {
 	return (
-		<div className="absolute inset-0 [container-type:inline-size]" aria-hidden="true">
+		<div className={`absolute inset-0 [container-type:inline-size] ${defaults ? 'cover-defaults' : ''}`} aria-hidden="true">
 			{stickers.map((s) => {
 				const d = STICKER_BY_ID.get(s.sticker);
 				if (!d) return null;
@@ -82,11 +85,12 @@ function StaticCover({ stickers }: { stickers: PlacedSticker[] }) {
 }
 
 /**
- * The squared paper at the top of a subject's page as a notebook's cover: the signed-in student sticks
- * stickers on it with the gesture of the notes (StickerBoard), and they are there on the next visit
- * (table cover_stickers, route /api/adesivi). The page is cached for everybody, so the stickers are
- * fetched in the browser. Until a student changes the cover it has coverDefaults(page), which is also what
- * visitors see, stuck on and still.
+ * The squared paper at the top of a page of the material as a notebook's cover: the signed-in student
+ * sticks stickers on it with the gesture of the notes (StickerBoard), and they are there on the next
+ * visit (table cover_stickers, route /api/adesivi). The page is cached for everybody, so the covers are
+ * fetched in the browser, all of them at once (lib/state/covers), with a copy kept in the browser: a
+ * page draws the student's stickers from the copy at once, and the board takes over when the server has
+ * answered. Until a student changes the cover it has coverDefaults(page), which is what visitors see.
  */
 export function CoverStickers({ page }: { page: string }) {
 	const { user, ready } = useAuth();
@@ -94,42 +98,38 @@ export function CoverStickers({ page }: { page: string }) {
 	const coarse = useCoarsePointer();
 	const cover = useRef<HTMLDivElement>(null);
 	const controls = useRef<StickerControls>(null);
-	/** The saved set, in saved coordinates; null until it has been read. */
-	const [loaded, setLoaded] = useState<{ user: string; page: string } | null>(null);
-	const set = useRef<PlacedSticker[]>([]);
-	const [count, setCount] = useState(0);
+	const covers = coversStore((s) => s.covers);
+	const coversUser = coversStore((s) => s.user);
+	const fresh = coversStore((s) => s.fresh);
 	const [state, setState] = useState<BoardState>({ holding: null, placing: false, hovering: false, size: 1 });
 	const album = useCover((s) => s.open);
 	const setAlbum = (open: boolean) => useCover.setState({ open });
 	const [error, setError] = useState(false);
 	// The board is laid out in CSS px, so it is mounted again when the cover changes width.
 	const [width, setWidth] = useState(0);
+	const hinted = coversStore((s) => s.hinted);
 
+	// Before the first paint after hydration: the browser's copy, so a student's own stickers show at once.
+	useLayoutEffect(() => coversStore.getState().restore(), []);
 	useEffect(() => {
-		if (!ready || !userId) return;
-		let live = true;
-		fetch(`/api/adesivi?pagina=${encodeURIComponent(page)}`, { cache: 'no-store' })
-			.then((res) => (res.ok ? res.json() : null))
-			.catch(() => null)
-			.then((body: { stickers: PlacedSticker[] | null } | null) => {
-				// Without the saved set there is no cover to stick on: a save would overwrite it.
-				if (!live || !body) return;
-				// null: never changed, so the cover still has what it comes with.
-				set.current = body.stickers ?? coverDefaults(page);
-				setCount(set.current.length);
-				setLoaded({ user: userId, page });
-			});
-		return () => {
-			live = false;
-		};
-	}, [ready, userId, page]);
-	const active = loaded !== null && loaded.user === userId && loaded.page === page;
+		if (!ready) return;
+		document.documentElement.classList.toggle('signed-in', !!userId);
+		if (userId) coversStore.getState().load(userId);
+		else if (coversStore.getState().covers) clearCovers();
+	}, [ready, userId]);
+
+	/** The cover as saved, in saved coordinates: the student's, or what the page comes with. */
+	const own = covers && (userId ? coversUser === userId : !ready && hinted) ? (covers[page] ?? coverDefaults(page)) : null;
+	const active = userId !== null && fresh && coversUser === userId;
+	const set = useRef<PlacedSticker[]>([]);
+	const count = own?.length ?? 0;
 	useEffect(() => {
 		useCover.setState({ ready: active, full: count >= MAX_STICKERS });
 	}, [active, count]);
 	useEffect(() => () => useCover.setState({ ready: false, full: false, open: false }), []);
 
-	useEffect(() => {
+	// Measured before the paint, so the board replaces the still stickers in the same frame.
+	useLayoutEffect(() => {
 		const node = cover.current;
 		if (!node || !active) return;
 		let timer: ReturnType<typeof setTimeout> | null = null;
@@ -169,16 +169,19 @@ export function CoverStickers({ page }: { page: string }) {
 		(next: PlacedSticker[]) => {
 			const w = cover.current?.getBoundingClientRect().width ?? COVER_WIDTH;
 			set.current = next.map((s) => toSaved(s, w));
-			setCount(next.length);
+			// The shared copy follows at once, so this page and its copy in the browser are right on the next visit.
+			if (userId) coversStore.getState().put(userId, page, set.current);
 			if (timer.current) clearTimeout(timer.current);
 			timer.current = setTimeout(() => save(), SAVE_DEBOUNCE_MS);
 		},
-		[save]
+		[save, userId, page]
 	);
+	// Read once, when the board mounts: the cover as the server last gave it.
 	const initial = useCallback(() => {
 		const w = cover.current?.getBoundingClientRect().width ?? COVER_WIDTH;
+		set.current = coversStore.getState().covers?.[page] ?? coverDefaults(page);
 		return set.current.map((s) => toBoard(s, w));
-	}, []);
+	}, [page]);
 	// A pending save goes out when the page is left or hidden.
 	useEffect(() => {
 		const flush = () => timer.current && save(true);
@@ -192,10 +195,16 @@ export function CoverStickers({ page }: { page: string }) {
 		};
 	}, [save]);
 
-	const board = userId !== null && active && width > 0;
+	const board = active && width > 0;
 	const layer = (
 		<div ref={cover} className="sticker-cover pointer-events-none absolute inset-x-0 top-0 z-20" style={{ height: COVER_HEIGHT }}>
-			{board ? <NoteStickers key={width} sheet={cover} initial={initial} onChange={onChange} onState={setState} fluid ref={controls} /> : <StaticCover stickers={coverDefaults(page)} />}
+			{board ? (
+				<NoteStickers key={`${page}:${width}`} sheet={cover} initial={initial} onChange={onChange} onState={setState} fluid ref={controls} />
+			) : own ? (
+				<StaticCover stickers={own} />
+			) : (
+				<StaticCover stickers={coverDefaults(page)} defaults />
+			)}
 		</div>
 	);
 	if (!userId) return layer;

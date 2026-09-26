@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useImperativeHandle, useRef, type Ref, type RefObject } from 'react';
+import { useEffect, useImperativeHandle, useLayoutEffect, useRef, type Ref, type RefObject } from 'react';
 import { StickerBoard, type BoardState } from '@/lib/zaino/sticker-board';
 import { Minus, Plus } from 'lucide-react';
 import { MAX_SIZE, MIN_SIZE, STICKER_PACKS, STICKERS, stickerArt, type PlacedSticker } from '@/lib/zaino/stickers';
@@ -47,7 +47,8 @@ export function NoteStickers({
 	});
 
 	const seed = useRef(initial);
-	useEffect(() => {
+	// Before the paint: whatever stood in for the stickers until now goes in the same frame they appear.
+	useLayoutEffect(() => {
 		const node = sheet.current;
 		if (!node || !layer.current || !canvas.current) return;
 		const mounted = new StickerBoard(node, layer.current, canvas.current, {
