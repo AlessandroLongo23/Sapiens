@@ -14,7 +14,7 @@ Migrazioni in `supabase/migrations/`:
 
 - `exercise_sessions`, le prove degli esercizi (25 settembre 2026): migrazione `20260925150000_exercise_sessions.sql`, applicata lo stesso giorno al progetto `godqhjgwmlzfnymzhqdq` con l'API di gestione di Supabase. Una riga per prova: `kind` (`level` o `jump`), `level` (il livello della prova, o quello che la prova di salto apre), `plan` (il livello di ogni domanda, in ordine). Il risultato si legge dai tentativi. In `exercise_attempts` due colonne nuove, `session_id` e `position`, unici in coppia: la stessa domanda chiesta due volte è la stessa riga. RLS come per i tentativi. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]].
 
-Fuori dalle migrazioni: `content_nodes`, l'albero dei contenuti, usato dal codice ma creato a mano. Il piano dell'utente sta in `app_metadata` di Supabase Auth.
+Fuori dalle migrazioni: `content_nodes`, l'albero dei contenuti, usato dal codice ma creato a mano. Le colonne aggiunte dopo sono nelle migrazioni: `flashcards` e `school_year` (25 settembre 2026, `20260926120000_chapter_school_year.sql`, applicata lo stesso giorno: l'anno scolastico da 1 a 5 in cui si studia un capitolo, per ora solo per la matematica delle superiori; vedi [[2026-09-25 I capitoli si mostrano per anno]]). Il piano dell'utente sta in `app_metadata` di Supabase Auth.
 
 ## Tentativi degli esercizi (24 settembre 2026, applicata)
 Una riga per ogni esercizio mostrato a uno studente, scritta dal server quando lo mostra e completata alla risposta. Vedi [[2026-09-24 Ogni tentativo salva l'esercizio intero]].

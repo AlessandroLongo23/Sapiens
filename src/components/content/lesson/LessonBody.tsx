@@ -85,10 +85,25 @@ export function LessonBody({ html }: { html: string }) {
 		};
 	}, [html]);
 
-	// Jump requested by the table of contents.
+	// A link to a section (the site search opens lessons at a paragraph) arrives as the URL's hash.
+	useEffect(() => {
+		const hash = decodeURIComponent(location.hash.slice(1));
+		if (hash) jumpTo(hash);
+	}, [html, jumpTo]);
+
+	// Jump requested by the table of contents or by the hash. A heading reached
+	// through the hash also gets the highlighter, so the eye finds it.
 	useEffect(() => {
 		if (!targetSection) return;
 		const section = container.current?.querySelector(`#${CSS.escape(targetSection)}`);
+		if (section && decodeURIComponent(location.hash.slice(1)) === targetSection) {
+			const words = document.createRange();
+			words.selectNodeContents(section);
+			(section as HTMLElement).style.setProperty('--hl-w', `${Math.round(words.getBoundingClientRect().width)}px`);
+			section.classList.remove('search-target');
+			void (section as HTMLElement).offsetWidth;
+			section.classList.add('search-target');
+		}
 		section?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
 		if (section) setActiveSection(targetSection);
 		jumpTo('');
@@ -99,7 +114,7 @@ export function LessonBody({ html }: { html: string }) {
 		const frame = requestAnimationFrame(() => {
 			let current = '';
 			for (const heading of container.current?.querySelectorAll('h2[id], h3[id], h4[id]') ?? []) {
-				if (heading.getBoundingClientRect().top <= 140) current = heading.id;
+				if (heading.getBoundingClientRect().top <= 180) current = heading.id;
 				else break;
 			}
 			if (current && current !== activeSection) setActiveSection(current);

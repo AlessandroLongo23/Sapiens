@@ -448,6 +448,69 @@
 @keyframes pen-draw {
 	to { stroke-dashoffset: 0; }
 }
+/* The site search opens as a sheet laid on the page and lifts off when it
+   closes. Reduced motion keeps only the fade. */
+.search-in { animation: search-in 0.38s var(--ease-out-soft) both; }
+.search-out { animation: search-out 0.16s ease-in both; }
+@keyframes search-in {
+	from { opacity: 0; transform: translateY(-10px) scale(0.99); filter: blur(4px); }
+}
+@keyframes search-out {
+	to { opacity: 0; transform: translateY(-6px); }
+}
+/* The highlighter drawn by hand: a felt-tip band with ragged ends and a wavy
+   edge, as a mask over the marker colour so it follows the theme. Three
+   strokes, so words highlighted side by side are never identical. */
+:root {
+	--hl-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M4 9C30 6 62 8 96 6.5S166 7.5 194 5L197 12 195 20 198 29C170 33 132 31 98 33S32 32 6 35L3 27 6 19Z'/%3E%3C/svg%3E");
+	--hl-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M2 11C40 8 80 10.5 120 8S175 9 197 7L199 16 196 24 198 31C160 34 120 31.5 80 34S25 33 4 34.5L6 25 2 17Z'/%3E%3C/svg%3E");
+	--hl-c: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M6 7C38 9 70 5.5 104 8S170 6 195 9L193 17 197 25 194 33C160 30 128 34 92 31.5S30 33.5 3 31L5 22 2 14Z'/%3E%3C/svg%3E");
+}
+.marker-hand {
+	position: relative;
+	isolation: isolate;
+	background: none;
+	color: inherit;
+}
+.marker-hand::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	inset: 0.12em -0.22em -0.04em -0.18em;
+	background: var(--marker);
+	mask: var(--hl-a) center / 100% 100% no-repeat;
+	transform: rotate(-0.6deg);
+}
+.marker-hand:nth-of-type(3n + 2)::before { mask-image: var(--hl-b); transform: rotate(0.5deg); inset: 0.06em -0.16em 0 -0.24em; }
+.marker-hand:nth-of-type(3n)::before { mask-image: var(--hl-c); transform: rotate(-0.2deg); inset: 0.16em -0.26em -0.06em -0.14em; }
+
+/* A heading reached from the search: the highlighter is drawn across it left
+   to right, stays a moment, then fades. */
+.search-target { position: relative; isolation: isolate; }
+.search-target::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	/* As wide as the words (`--hl-w`, measured by the lesson body), not the whole line. */
+	inset: -0.05em auto -0.1em -0.3em;
+	width: calc(var(--hl-w, 100%) + 0.65em);
+	background: var(--marker);
+	mask: var(--hl-b) center / 100% 100% no-repeat;
+	transform: rotate(-0.4deg);
+	animation: search-target 3s var(--ease-out-soft) 0.3s both;
+}
+/* Clear of the lesson's sticky bar (the headings' own margin is for the table of contents' jumps). */
+.markdown-content :is(h2, h3, h4).search-target { scroll-margin-top: 8.25rem; outline: none; }
+@keyframes search-target {
+	0% { clip-path: inset(0 100% 0 0); opacity: 1; }
+	22% { clip-path: inset(0 0 0 0); opacity: 1; animation-timing-function: linear; }
+	65% { clip-path: inset(0 0 0 0); opacity: 1; }
+	100% { clip-path: inset(0 0 0 0); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.search-in, .search-out { animation-name: fade-in; }
+	.search-out { animation-direction: reverse; }
+}
 /* The home page sketch. The markup is the finished drawing; with motion allowed
    each stroke starts undrawn and the pen writes it after its delay (--d) over
    its duration (--t). Every stroke carries pathLength="1". */

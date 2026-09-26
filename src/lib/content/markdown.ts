@@ -17,7 +17,7 @@ import { CHEM_BLOCKS, FIGURE_SCALE, figureUrl, parseFigure, publishedChemSvg, pu
  * current code is left out, since nothing in the browser can draw it.
  */
 
-const slugifyHeading = (s: string) => s.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+export const slugifyHeading = (s: string) => s.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 
 
 export function renderTex(tex: string, displayMode: boolean): string {
@@ -84,6 +84,8 @@ function formula(tex: string, display: boolean): string {
 
 function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock; code: string }[] = []): string {
 	return html
+		// A heading with a formula got its anchor from the placeholder; it takes the formula's own text, as the table of contents does.
+		.replace(/ id="([^"]*mathplaceholder\d+end[^"]*)"/g, (_, id: string) => ` id="${id.replace(/mathplaceholder(\d+)end/g, (_m, i: string) => slugifyHeading(math[Number(i)].content))}"`)
 		.replace(/MATHPLACEHOLDER(\d+)END/g, (_, i: string) => {
 			const { display, content } = math[Number(i)];
 			return formula(content, display);
