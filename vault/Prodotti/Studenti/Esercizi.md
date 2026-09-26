@@ -9,6 +9,7 @@ tag: [prodotto, studenti, contenuti]
 Esercizi con correzione immediata, collegati alle lezioni, con i progressi salvati.
 
 ## Stato attuale
+- Dal 26 settembre 2026 (nel codice, non ancora pubblicato) ogni pagina esercizi ha anche una scheda da fare sul quaderno: 6 esercizi per livello dal generatore della lezione, numerati, con la consegna una volta per livello e il risultato piegato sotto ogni esercizio (`src/lib/server/worksheet.ts`, `src/components/content/exercises/Worksheet.tsx`). I seed vengono dalla lezione e dal numero di scheda, quindi la scheda 1 è la stessa per tutti ed è indicizzata; "Un'altra scheda" apre le schede 2-20 (`?scheda=n`), `noindex`. Le opzioni compaiono solo negli esercizi che sono una scelta per natura. Chi non ha accesso al percorso vede prima la scheda. Vedi [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]].
 - Dal 25 settembre 2026 (sera) ogni prova tiene i suoi conteggi (`answered`, `correct`, `finished_at`) e ogni giorno di risposte ha la sua riga in `exercise_days`, aggiornati da un trigger quando un tentativo riceve la risposta (migrazione `20260926090000_exercise_progress.sql`, applicata). Il percorso e la sessione gratuita leggono i conteggi. Una prova sotto le 5 domande non supera il livello ([[2026-09-25 Una prova supera un livello solo con almeno 5 domande]]): il percorso lo dice prima di cominciare, il riepilogo dice "Allenamento fatto".
 - Progressi nel materiale: sulle righe delle lezioni "3/7 livelli" o "Completata", sulle righe dei capitoli "1/3 completate" (lezioni con esercizi con tutti i livelli superati). Le pagine restano in cache per tutti: il browser chiede i progressi una volta (`GET /api/esercizi/progressi`, una query sulle prove) e li tiene un minuto, o finché una prova finisce. Chi non ha un account, o non ha cominciato, vede l'etichetta di sempre. Funzione 4 di [[Progressi dello studente]].
 - Rifai gli errori: dal riepilogo di una prova con errori, e dalla pagina `/errori` (privata), una prova di ripasso di 5 esercizi nuovi sui livelli sbagliati, anche di lezioni diverse; non supera né apre livelli ([[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]). Un errore resta da rifare finché lo studente non risponde giusto 2 volte a quel livello in prove successive, entro 30 giorni (`src/lib/exercises/review.ts`): le risposte giuste più avanti nella stessa prova non contano, perché una prova di livello chiede dieci volte lo stesso livello. La pagina `/errori` elenca gli errori con la risposta giusta, i passaggi e lo stato (da rifare, rifatto), a pagine di 20. Funzione 3 di [[Progressi dello studente]].
@@ -31,6 +32,7 @@ Esercizi con correzione immediata, collegati alle lezioni, con i progressi salva
 - Registrazione in due tabelle (`index.ts`, `config.ts`), classi che generano nel costruttore, `Math.random` senza seed, nessun livello, risposte salvate come stringhe LaTeX. File JavaScript e TypeScript mescolati.
 
 ## Obiettivo
+- Due modalità: la prova veloce a scelta multipla dal telefono e la scheda da scrivania, da fare sul quaderno come un eserciziario, con esercizi più lunghi. Poi la correzione dello svolgimento da una foto ([[Foto e soluzione]]).
 - Esercizi per tutti gli argomenti della [[Release Beta]], prodotti dalla [[Pipeline esercizi]].
 - Risposta aperta oltre alla multipla: un numero o un'espressione, con controllo di equivalenza nel browser.
 - Progressi salvati per utente: esercizi fatti, errori, argomenti deboli. È la base della [[Pratica quotidiana]] e il messaggio principale contro ChatGPT (vedi [[2026-09-23 Pratica con progressi come messaggio principale]]).
@@ -47,9 +49,11 @@ Esercizi con correzione immediata, collegati alle lezioni, con i progressi salva
 - Le prove lasciate a metà non compaiono nel percorso: se mostrarle o riprenderle.
 - Svolgimento passo passo: si mostra la soluzione completa, un suggerimento alla volta, o si passa a [[Sapiens AI]]?
 - Esercizi a fine capitolo e simulazioni di verifica: nella beta o dopo?
-- Esercizi gratuiti di assaggio nel piano Free per convertire?
+- Esercizi gratuiti di assaggio nel piano Free per convertire? In parte risposta dalla scheda gratuita del 26 settembre 2026.
+- Livelli con esercizi lunghi per la scheda (espressioni, equazioni con più passaggi, problemi): quali generatori e in che ordine.
 
 ## Collegamenti
 - [[Pipeline esercizi]], [[Pratica quotidiana]], [[Schema dati]]
 - Funzioni sui progressi (errori, prova da riprendere, progressi nel materiale, "Oggi"): [[Progressi dello studente]]
 - [[2026-09-23 Esercizi da generatori scritti dall'AI]]
+- [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]], [[SEO]]
