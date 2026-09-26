@@ -34,7 +34,12 @@ $$x_{1,2} = \frac{-b \pm \sqrt{\Delta}}{2a}$$
 
 Formula ridotta, quando $b$ è pari:
 
-$$\frac{\Delta}{4} = \left(\frac{b}{2}\right)^2 - ac \qquad x_{1,2} = \frac{-\dfrac{b}{2} \pm \sqrt{\dfrac{\Delta}{4}}}{a}$$
+$$
+\begin{gathered}
+\frac{\Delta}{4} = \left(\frac{b}{2}\right)^2 - ac \\
+x_{1,2} = \frac{-\dfrac{b}{2} \pm \sqrt{\dfrac{\Delta}{4}}}{a}
+\end{gathered}
+$$
 
 Soluzioni irrazionali: semplifica il radicale; poi, se $-b$, il coefficiente del radicale e $2a$ hanno un divisore comune, dividili tutti e tre. Per esempio $\dfrac{8 \pm 6\sqrt{2}}{2} = 4 \pm 3\sqrt{2}$.
 

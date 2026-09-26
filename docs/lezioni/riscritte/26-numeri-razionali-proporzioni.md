@@ -102,7 +102,12 @@ Risolvi $x : 12 = 5 : 4$.
 
 $x$ è un estremo, quindi va con $4$; i medi sono $12$ e $5$:
 
-$$4 \cdot x = 12 \cdot 5 \qquad 4x = 60 \qquad x = \dfrac{60}{4} = 15$$
+$$
+\begin{gathered}
+4 \cdot x = 12 \cdot 5 \qquad 4x = 60 \\
+x = \dfrac{60}{4} = 15
+\end{gathered}
+$$
 
 Controllo: $15 : 12 = \dfrac{5}{4}$ e $5 : 4 = \dfrac{5}{4}$.
 ```
@@ -118,7 +123,12 @@ Risolvi $7 : x = 21 : 9$.
 
 $x$ è un medio, quindi va con $21$; gli estremi sono $7$ e $9$:
 
-$$21 \cdot x = 7 \cdot 9 \qquad 21x = 63 \qquad x = 3$$
+$$
+\begin{gathered}
+21 \cdot x = 7 \cdot 9 \qquad 21x = 63 \\
+x = 3
+\end{gathered}
+$$
 
 Controllo: $7 : 3 = \dfrac{7}{3}$ e $21 : 9 = \dfrac{7}{3}$.
 ```
@@ -127,7 +137,12 @@ Controllo: $7 : 3 = \dfrac{7}{3}$ e $21 : 9 = \dfrac{7}{3}$.
 Esempio 3: termini negativi
 Risolvi $(-3) : x = 9 : (-12)$.
 
-$$9 \cdot x = (-3) \cdot (-12) \qquad 9x = 36 \qquad x = 4$$
+$$
+\begin{gathered}
+9 \cdot x = (-3) \cdot (-12) \\
+9x = 36 \qquad x = 4
+\end{gathered}
+$$
 
 Il prodotto degli estremi è positivo, perché i due fattori sono entrambi negativi. Controllo: $(-3) : 4 = -\dfrac{3}{4}$ e $9 : (-12) = -\dfrac{3}{4}$.
 ```
@@ -149,14 +164,26 @@ Controllo: $\dfrac{2}{3} : \dfrac{5}{7} = \dfrac{14}{15}$ e $\dfrac{4}{5} : \dfr
 Esempio 5: termini decimali
 Risolvi $0{,}4 : 1{,}2 = x : 4{,}5$.
 
-$$1{,}2 \cdot x = 0{,}4 \cdot 4{,}5 \qquad 1{,}2\,x = 1{,}8 \qquad x = \dfrac{1{,}8}{1{,}2} = \dfrac{18}{12} = \dfrac{3}{2} = 1{,}5$$
+$$
+\begin{gathered}
+1{,}2 \cdot x = 0{,}4 \cdot 4{,}5 \\
+1{,}2\,x = 1{,}8 \\
+x = \dfrac{1{,}8}{1{,}2} = \dfrac{18}{12} = \dfrac{3}{2} = 1{,}5
+\end{gathered}
+$$
 ```
 
 ## Le percentuali
 
 Una **percentuale** è un rapporto con conseguente $100$: $p\%$, che si legge "$p$ per cento", vuol dire $\dfrac{p}{100}$. Per questo ogni percentuale si scrive anche come frazione o come numero decimale.
 
-$$25\% = \dfrac{25}{100} = \dfrac{1}{4} = 0{,}25 \qquad 8\% = \dfrac{8}{100} = 0{,}08 \qquad 150\% = \dfrac{150}{100} = 1{,}5$$
+$$
+\begin{gathered}
+25\% = \dfrac{25}{100} = \dfrac{1}{4} = 0{,}25 \\
+8\% = \dfrac{8}{100} = 0{,}08 \\
+150\% = \dfrac{150}{100} = 1{,}5
+\end{gathered}
+$$
 
 Alcune percentuali tornano spesso e conviene riconoscerle come frazioni: $50\% = \dfrac{1}{2}$, $25\% = \dfrac{1}{4}$, $75\% = \dfrac{3}{4}$, $20\% = \dfrac{1}{5}$, $10\% = \dfrac{1}{10}$.
 
@@ -199,7 +226,12 @@ Il $30\%$ dei biglietti di un concerto, cioè $12$ biglietti, è stato venduto o
 
 Dalla proporzione $12 : T = 30 : 100$:
 
-$$30 \cdot T = 12 \cdot 100 \qquad T = \dfrac{1200}{30} = 40$$
+$$
+\begin{gathered}
+30 \cdot T = 12 \cdot 100 \\
+T = \dfrac{1200}{30} = 40
+\end{gathered}
+$$
 ```
 
 ```ad-warning
@@ -211,7 +243,12 @@ Calcolare la percentuale sul numero sbagliato
 
 Aumentare un prezzo $T$ del $p\%$ vuol dire aggiungergli il $p\%$ di $T$; scontarlo del $p\%$ vuol dire toglierglielo. Raccogliendo $T$, ogni variazione diventa una sola moltiplicazione:
 
-$$\text{aumento del } p\%: \quad T \cdot \left(1 + \dfrac{p}{100}\right) \qquad\qquad \text{sconto del } p\%: \quad T \cdot \left(1 - \dfrac{p}{100}\right)$$
+$$
+\begin{gathered}
+\text{aumento del } p\%: \quad T \cdot \left(1 + \dfrac{p}{100}\right) \\
+\text{sconto del } p\%: \quad T \cdot \left(1 - \dfrac{p}{100}\right)
+\end{gathered}
+$$
 
 Il numero per cui si moltiplica si chiama **coefficiente** della variazione: un aumento del $12\%$ è una moltiplicazione per $1{,}12$, uno sconto del $15\%$ è una moltiplicazione per $0{,}85$.
 
@@ -260,7 +297,12 @@ Per risalire al prezzo iniziale non si calcola $48 + 20\%$ di $48$, che dà $57{
 
 Per sapere di quale percentuale è cambiato un valore, si divide la variazione per il valore iniziale:
 
-$$\text{variazione percentuale} = \dfrac{\text{valore finale} - \text{valore iniziale}}{\text{valore iniziale}} \cdot 100$$
+$$
+\begin{aligned}
+&\text{variazione percentuale} \\
+&= \dfrac{\text{valore finale} - \text{valore iniziale}}{\text{valore iniziale}} \cdot 100
+\end{aligned}
+$$
 
 ```ad-example
 Esempio 3: la variazione percentuale
@@ -308,7 +350,12 @@ Per $4$ persone servono $300$ g di farina. Quanta ne serve per $6$ persone?
 
 Il rapporto tra le persone è uguale al rapporto tra le quantità di farina: $4 : 6 = 300 : x$.
 
-$$4 \cdot x = 6 \cdot 300 \qquad x = \dfrac{1800}{4} = 450 \text{ g}$$
+$$
+\begin{gathered}
+4 \cdot x = 6 \cdot 300 \\
+x = \dfrac{1800}{4} = 450 \text{ g}
+\end{gathered}
+$$
 ```
 
 ```ad-example
@@ -317,7 +364,13 @@ $3$ kg di mele costano $7{,}20$ €. Quanto costano $5$ kg?
 
 Il rapporto tra i pesi è uguale al rapporto tra i prezzi:
 
-$$3 : 5 = 7{,}20 : x \qquad 3 \cdot x = 5 \cdot 7{,}20 = 36 \qquad x = 12$$
+$$
+\begin{gathered}
+3 : 5 = 7{,}20 : x \\
+3 \cdot x = 5 \cdot 7{,}20 = 36 \\
+x = 12
+\end{gathered}
+$$
 
 $5$ kg costano $12$ €. Si arriva allo stesso risultato passando dal prezzo al chilo: $7{,}20 : 3 = 2{,}40$ €/kg, e $2{,}40 \cdot 5 = 12$ €.
 ```
@@ -328,7 +381,13 @@ La **scala** di una carta geografica è il rapporto tra una distanza misurata su
 Esempio 3: una cartina in scala 1 : 25 000
 Sulla carta due rifugi distano $6$ cm. Quanto distano davvero?
 
-$$1 : 25\,000 = 6 : x \qquad x = 6 \cdot 25\,000 = 150\,000 \text{ cm} = 1{,}5 \text{ km}$$
+$$
+\begin{gathered}
+1 : 25\,000 = 6 : x \\
+x = 6 \cdot 25\,000 = 150\,000 \text{ cm} \\
+150\,000 \text{ cm} = 1{,}5 \text{ km}
+\end{gathered}
+$$
 
 Al contrario, un sentiero lungo $2$ km, cioè $200\,000$ cm, sulla carta misura $200\,000 : 25\,000 = 8$ cm.
 ```

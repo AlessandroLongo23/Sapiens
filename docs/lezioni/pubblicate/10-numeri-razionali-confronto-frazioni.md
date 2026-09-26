@@ -8,7 +8,12 @@ Prima di confrontare conviene sempre ridurre le frazioni ai minimi termini: i nu
 
 Se due frazioni hanno lo stesso denominatore (positivo), è maggiore quella con il numeratore maggiore: le parti in cui è diviso l'intero sono uguali, e ne prendi di più.
 
-$$\dfrac{a}{c} < \dfrac{b}{c} \quad \text{se e solo se} \quad a < b \qquad (c > 0)$$
+$$
+\begin{gathered}
+\dfrac{a}{c} < \dfrac{b}{c} \quad \text{se e solo se} \quad a < b \\
+(c > 0)
+\end{gathered}
+$$
 
 ```ad-example
 Esempio: stesso denominatore
@@ -52,7 +57,12 @@ Quando numeratori e denominatori sono tutti diversi, si trasformano le frazioni 
 Esempio 1: confrontare 2/3 e 3/4
 $\text{MCM}(3, 4) = 12$.
 
-$$\dfrac{2}{3} = \dfrac{2 \cdot 4}{3 \cdot 4} = \dfrac{8}{12} \qquad \dfrac{3}{4} = \dfrac{3 \cdot 3}{4 \cdot 3} = \dfrac{9}{12}$$
+$$
+\begin{gathered}
+\dfrac{2}{3} = \dfrac{2 \cdot 4}{3 \cdot 4} = \dfrac{8}{12} \\
+\dfrac{3}{4} = \dfrac{3 \cdot 3}{4 \cdot 3} = \dfrac{9}{12}
+\end{gathered}
+$$
 
 Poiché $8 < 9$, si ha $\dfrac{2}{3} < \dfrac{3}{4}$.
 ```
@@ -120,7 +130,15 @@ Ordina $\dfrac{3}{4}$, $-\dfrac{1}{2}$, $\dfrac{5}{6}$, $\dfrac{2}{3}$, $-\dfrac
 
 I denominatori sono $4, 2, 6, 3, 8$ e $\text{MCM}(4, 2, 6, 3, 8) = 24$.
 
-$$\dfrac{3}{4} = \dfrac{18}{24} \quad -\dfrac{1}{2} = -\dfrac{12}{24} \quad \dfrac{5}{6} = \dfrac{20}{24} \quad \dfrac{2}{3} = \dfrac{16}{24} \quad -\dfrac{3}{8} = -\dfrac{9}{24}$$
+$$
+\begin{gathered}
+\dfrac{3}{4} = \dfrac{18}{24} \\
+-\dfrac{1}{2} = -\dfrac{12}{24} \\
+\dfrac{5}{6} = \dfrac{20}{24} \\
+\dfrac{2}{3} = \dfrac{16}{24} \\
+-\dfrac{3}{8} = -\dfrac{9}{24}
+\end{gathered}
+$$
 
 I numeratori in ordine crescente sono $-12 < -9 < 16 < 18 < 20$, quindi
 

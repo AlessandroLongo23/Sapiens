@@ -91,7 +91,12 @@ Per elencare gli elementi di un insieme descritto con una proprietà:
 
 ```ad-example
 Esempio 2: divisori di 12
-$$A = \{x \in \mathbb{N} \mid x \text{ è un divisore di } 12\}$$
+$$
+\begin{gathered}
+A = \{x \in \mathbb{N} \mid \\
+x \text{ è un divisore di } 12\}
+\end{gathered}
+$$
 I divisori di 12 sono i numeri che dividono 12 senza resto: $1, 2, 3, 4, 6, 12$. Lo $0$ non è un divisore di 12, perché non si può dividere per 0. Quindi
 $$A = \{1, 2, 3, 4, 6, 12\}$$
 ```
@@ -129,7 +134,12 @@ Qui il lavoro è trovare che cosa hanno in comune gli elementi, e poi controllar
 Esempio 6: multipli di 3
 $$E = \{3, 6, 9, 12, 15\}$$
 Sono i multipli di 3 da 3 a 15:
-$$E = \{x \in \mathbb{N} \mid x \text{ è multiplo di } 3 \text{ e } 1 \le x \le 15\}$$
+$$
+\begin{gathered}
+E = \{x \in \mathbb{N} \mid x \text{ è multiplo di } 3 \\
+\text{e } 1 \le x \le 15\}
+\end{gathered}
+$$
 Serve la condizione $1 \le x$: anche $0$ è multiplo di 3 ($0 = 3 \cdot 0$), e senza quella condizione entrerebbe nell'insieme.
 ```
 
@@ -142,7 +152,12 @@ $\{x \in \mathbb{N} \mid x \text{ è pari e } x \le 8\}$ è $\{0, 2, 4, 6, 8\}$:
 Esempio 7: quadrati
 $$F = \{1, 4, 9, 16, 25\}$$
 Sono i quadrati dei numeri da 1 a 5: $1^2, 2^2, 3^2, 4^2, 5^2$. Una proprietà caratteristica è
-$$F = \{x \in \mathbb{N} \mid x = n^2 \text{ con } n \in \mathbb{N} \text{ e } 1 \le n \le 5\}$$
+$$
+\begin{aligned}
+F &= \{x \in \mathbb{N} \mid x \\
+&= n^2 \text{ con } n \in \mathbb{N} \text{ e } 1 \le n \le 5\}
+\end{aligned}
+$$
 ```
 
 ```ad-example

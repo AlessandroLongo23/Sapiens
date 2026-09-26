@@ -31,11 +31,28 @@ Il coefficiente del risultato è sempre positivo. Alcuni libri mettono sempre co
 
 ## Esempi
 
-$$12x^3y^2,\ 18x^2y^5 \quad\to\quad \text{MCD} = 6x^2y^2, \quad \text{MCM} = 36x^3y^5$$
+$$
+\begin{gathered}
+12x^3y^2,\ 18x^2y^5 \qquad \to \\
+\text{MCD} = 6x^2y^2, \\
+\text{MCM} = 36x^3y^5
+\end{gathered}
+$$
 
-$$-8a^3b,\ 12a^2c^2,\ 20ab^4c \quad\to\quad \text{MCD} = 4a, \quad \text{MCM} = 120a^3b^4c^2$$
+$$
+\begin{gathered}
+-8a^3b,\ 12a^2c^2,\ 20ab^4c \\
+\to \qquad \text{MCD} = 4a, \\
+\text{MCM} = 120a^3b^4c^2
+\end{gathered}
+$$
 
-$$\frac{3}{2}a^4b,\ -\frac{9}{4}a^2b^3,\ \frac{1}{8}ab \quad\to\quad \text{MCD} = ab, \quad \text{MCM} = a^4b^3$$
+$$
+\begin{gathered}
+\frac{3}{2}a^4b,\ -\frac{9}{4}a^2b^3,\ \frac{1}{8}ab \\
+\to \qquad \text{MCD} = ab, \qquad \text{MCM} = a^4b^3
+\end{gathered}
+$$
 
 ## Controllo per due monomi
 

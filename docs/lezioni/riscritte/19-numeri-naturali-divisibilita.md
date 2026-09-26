@@ -34,7 +34,15 @@ Per elencare i divisori di un numero $n$ si cercano le coppie di naturali che mo
 
 ```ad-example
 Esempio 1: i divisori di 36
-$$36 = 1 \cdot 36 = 2 \cdot 18 = 3 \cdot 12 = 4 \cdot 9 = 6 \cdot 6$$
+$$
+\begin{aligned}
+36 &= 1 \cdot 36 \\
+&= 2 \cdot 18 \\
+&= 3 \cdot 12 \\
+&= 4 \cdot 9 \\
+&= 6 \cdot 6
+\end{aligned}
+$$
 Il $5$ non divide $36$, e il $6$ fa coppia con sé stesso. Il numero successivo da provare è $7$, e $7 \cdot 7 = 49$ supera $36$: ci si ferma. I divisori sono $1, 2, 3, 4, 6, 9, 12, 18, 36$: nove in tutto, perché il $6$ si conta una volta sola.
 ```
 
@@ -160,7 +168,14 @@ Si comincia a cancellare dal quadrato perché i multipli più piccoli sono già 
 
 I primi minori di $100$ sono $25$:
 
-$$2,\ 3,\ 5,\ 7,\ 11,\ 13,\ 17,\ 19,\ 23,\ 29,\ 31,\ 37,\ 41,\ 43,\ 47,\ 53,\ 59,\ 61,\ 67,\ 71,\ 73,\ 79,\ 83,\ 89,\ 97$$
+$$
+\begin{gathered}
+2,\ 3,\ 5,\ 7,\ 11,\ 13,\ 17,\ 19, \\
+23,\ 29,\ 31,\ 37,\ 41,\ 43,\ 47, \\
+53,\ 59,\ 61,\ 67,\ 71,\ 73,\ 79, \\
+83,\ 89,\ 97
+\end{gathered}
+$$
 
 ### Come capire se un numero è primo
 

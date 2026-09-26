@@ -8,7 +8,12 @@ Prima di confrontare conviene sempre ridurre ai minimi termini.
 
 È maggiore la frazione con il numeratore maggiore:
 
-$$\dfrac{a}{c} < \dfrac{b}{c} \quad \text{se e solo se} \quad a < b \qquad (c > 0)$$
+$$
+\begin{gathered}
+\dfrac{a}{c} < \dfrac{b}{c} \quad \text{se e solo se} \quad a < b \\
+(c > 0)
+\end{gathered}
+$$
 
 Vale anche con numeratori negativi: $-\dfrac{5}{7} < -\dfrac{3}{7}$.
 

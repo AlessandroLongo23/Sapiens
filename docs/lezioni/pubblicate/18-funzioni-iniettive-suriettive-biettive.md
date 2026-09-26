@@ -12,7 +12,12 @@ Una funzione $f: A \to B$ associa a ogni elemento $x$ dell'insieme $A$ uno e un 
 
 L'immagine è sempre contenuta nel codominio, ma può essere più piccola. Prendi $A = \{-1,\ 0,\ 1,\ 2\}$, $B = \{0,\ 1,\ 2,\ 3,\ 4\}$ e $f(x) = x^2$:
 
-$$-1 \mapsto 1, \qquad 0 \mapsto 0, \qquad 1 \mapsto 1, \qquad 2 \mapsto 4$$
+$$
+\begin{gathered}
+-1 \mapsto 1, \qquad 0 \mapsto 0, \\
+1 \mapsto 1, \qquad 2 \mapsto 4
+\end{gathered}
+$$
 
 L'immagine è $\{0,\ 1,\ 4\}$: i numeri $2$ e $3$ stanno nel codominio, ma nessun elemento di $A$ ci arriva.
 
@@ -49,7 +54,12 @@ Questo è il diagramma di $f(x) = x^2$ dell'esempio sopra: a $1$ arrivano due fr
 
 Una funzione $f: A \to B$ è **iniettiva** se elementi diversi del dominio hanno immagini diverse:
 
-$$x_1 \neq x_2 \implies f(x_1) \neq f(x_2) \qquad \text{per ogni } x_1, x_2 \in A$$
+$$
+\begin{gathered}
+x_1 \neq x_2 \implies f(x_1) \neq f(x_2) \\
+\text{per ogni } x_1, x_2 \in A
+\end{gathered}
+$$
 
 La stessa condizione si scrive anche così, ed è la forma che si usa nelle dimostrazioni:
 
@@ -68,7 +78,12 @@ Confondere la definizione di funzione con l'iniettività
 
 Una funzione $f: A \to B$ è **suriettiva** se ogni elemento del codominio è immagine di almeno un elemento del dominio:
 
-$$\text{per ogni } y \in B \text{ esiste almeno un } x \in A \text{ tale che } f(x) = y$$
+$$
+\begin{gathered}
+\text{per ogni } y \in B \text{ esiste almeno} \\
+\text{un } x \in A \text{ tale che } f(x) = y
+\end{gathered}
+$$
 
 Detto in un altro modo, $f$ è suriettiva quando l'immagine coincide con il codominio: $\mathrm{Im}(f) = B$. Nel diagramma a frecce, a ogni elemento di $B$ arriva almeno una freccia.
 
@@ -78,7 +93,12 @@ La funzione $f(x) = x^2$ dell'esempio precedente non è suriettiva, perché $2$ 
 
 Una funzione $f: A \to B$ è **biettiva** (o **biunivoca**) se è sia iniettiva sia suriettiva. Questo vuol dire che ogni elemento di $B$ è immagine di uno e un solo elemento di $A$:
 
-$$\text{per ogni } y \in B \text{ esiste uno e un solo } x \in A \text{ tale che } f(x) = y$$
+$$
+\begin{gathered}
+\text{per ogni } y \in B \text{ esiste uno} \\
+\text{e un solo } x \in A \text{ tale che } f(x) = y
+\end{gathered}
+$$
 
 Nel diagramma a frecce, a ogni elemento di $B$ arriva esattamente una freccia. Gli elementi di $A$ e quelli di $B$ sono accoppiati a due a due: per questo si parla anche di corrispondenza biunivoca.
 
@@ -125,7 +145,12 @@ A $a$, $b$ e $c$ arriva una freccia sola, quindi la funzione è iniettiva. A $d$
 Esempio 2: suriettiva ma non iniettiva
 $A = \{1,\ 2,\ 3,\ 4\}$, $B = \{a,\ b,\ c\}$, con
 
-$$1 \mapsto a, \qquad 2 \mapsto a, \qquad 3 \mapsto b, \qquad 4 \mapsto c$$
+$$
+\begin{gathered}
+1 \mapsto a, \qquad 2 \mapsto a, \\
+3 \mapsto b, \qquad 4 \mapsto c
+\end{gathered}
+$$
 
 Ogni elemento di $B$ riceve almeno una freccia, quindi la funzione è suriettiva. Ad $a$ ne arrivano due, da $1$ e da $2$, quindi non è iniettiva.
 

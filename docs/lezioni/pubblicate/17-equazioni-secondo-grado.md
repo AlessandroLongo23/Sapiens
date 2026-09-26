@@ -38,7 +38,13 @@ Se il numero a secondo membro è positivo, le soluzioni sono due, opposte tra lo
 Esempio 1: pura con due soluzioni razionali
 $$4x^2 - 49 = 0$$
 
-$$4x^2 = 49 \quad\Rightarrow\quad x^2 = \frac{49}{4} \quad\Rightarrow\quad x = \pm\sqrt{\frac{49}{4}} = \pm\frac{7}{2}$$
+$$
+\begin{gathered}
+4x^2 = 49 \\
+\Rightarrow x^2 = \frac{49}{4} \\
+\Rightarrow x = \pm\sqrt{\frac{49}{4}} = \pm\frac{7}{2}
+\end{gathered}
+$$
 
 Le soluzioni sono $x_1 = -\dfrac{7}{2}$ e $x_2 = \dfrac{7}{2}$, quindi $S = \left\{-\dfrac{7}{2},\ \dfrac{7}{2}\right\}$.
 ```
@@ -56,7 +62,13 @@ Nessun numero reale ha il quadrato uguale a $-4$. L'equazione non ha soluzioni r
 Esempio 3: pura con soluzioni irrazionali
 $$3x^2 - 24 = 0$$
 
-$$3x^2 = 24 \quad\Rightarrow\quad x^2 = 8 \quad\Rightarrow\quad x = \pm\sqrt{8}$$
+$$
+\begin{gathered}
+3x^2 = 24 \\
+\Rightarrow x^2 = 8 \\
+\Rightarrow x = \pm\sqrt{8}
+\end{gathered}
+$$
 
 Il radicale si semplifica, perché $8 = 4 \cdot 2$: $\sqrt{8} = 2\sqrt{2}$. Quindi $x_1 = -2\sqrt{2}$ e $x_2 = 2\sqrt{2}$.
 ```
@@ -94,7 +106,13 @@ Da $2x^2 - 6x = 0$ non si passa a $2x - 6 = 0$ dividendo per $x$: così perdi la
 Esempio 5: spuria con soluzione frazionaria
 $$3x^2 + 5x = 0$$
 
-$$x(3x + 5) = 0 \quad\Rightarrow\quad x = 0 \quad \text{oppure} \quad 3x + 5 = 0 \ \Rightarrow\ x = -\frac{5}{3}$$
+$$
+\begin{gathered}
+x(3x + 5) = 0 \\
+\Rightarrow x = 0 \quad \text{oppure} \quad 3x + 5 = 0 \ \\
+\Rightarrow \ x = -\frac{5}{3}
+\end{gathered}
+$$
 
 In ordine crescente, $x_1 = -\dfrac{5}{3}$ e $x_2 = 0$.
 ```
@@ -150,7 +168,12 @@ Il risultato va semplificato in due passaggi:
 La formula ridotta, quando b è pari
 Se $b$ è pari, i conti si accorciano con la formula ridotta, che usa $\dfrac{b}{2}$ al posto di $b$:
 
-$$\frac{\Delta}{4} = \left(\frac{b}{2}\right)^2 - ac \qquad x_{1,2} = \frac{-\dfrac{b}{2} \pm \sqrt{\dfrac{\Delta}{4}}}{a}$$
+$$
+\begin{gathered}
+\frac{\Delta}{4} = \left(\frac{b}{2}\right)^2 - ac \\
+x_{1,2} = \frac{-\dfrac{b}{2} \pm \sqrt{\dfrac{\Delta}{4}}}{a}
+\end{gathered}
+$$
 
 Dà le stesse soluzioni della formula completa, con numeri più piccoli e spesso senza bisogno di semplificare alla fine. Per $x^2 - 8x - 2 = 0$ hai $\dfrac{b}{2} = -4$, $\dfrac{\Delta}{4} = 16 + 2 = 18$ e $\sqrt{18} = 3\sqrt{2}$, quindi $x_{1,2} = 4 \pm 3\sqrt{2}$.
 ```
@@ -176,7 +199,13 @@ $$x^2 - 5x + 6 = 0$$
 
 I coefficienti sono $a = 1$, $b = -5$, $c = 6$.
 
-$$\Delta = (-5)^2 - 4 \cdot 1 \cdot 6 = 25 - 24 = 1$$
+$$
+\begin{aligned}
+\Delta &= (-5)^2 - 4 \cdot 1 \cdot 6 \\
+&= 25 - 24 \\
+&= 1
+\end{aligned}
+$$
 
 $$x_{1,2} = \frac{5 \pm \sqrt{1}}{2} = \frac{5 \pm 1}{2}$$
 
@@ -194,9 +223,20 @@ $$x^2 + 2x - 15 = 0$$
 
 Qui $a = 1$, $b = 2$, $c = -15$. Con $c$ negativo, $-4ac$ diventa positivo:
 
-$$\Delta = 2^2 - 4 \cdot 1 \cdot (-15) = 4 + 60 = 64$$
+$$
+\begin{aligned}
+\Delta &= 2^2 - 4 \cdot 1 \cdot (-15) \\
+&= 4 + 60 \\
+&= 64
+\end{aligned}
+$$
 
-$$x_{1,2} = \frac{-2 \pm 8}{2} \quad\Rightarrow\quad x_1 = \frac{-10}{2} = -5, \quad x_2 = \frac{6}{2} = 3$$
+$$
+\begin{gathered}
+x_{1,2} = \frac{-2 \pm 8}{2} \\
+\Rightarrow x_1 = \frac{-10}{2} = -5, \quad x_2 = \frac{6}{2} = 3
+\end{gathered}
+$$
 
 $S = \{-5,\ 3\}$.
 ```
@@ -207,9 +247,20 @@ $S = \{-5,\ 3\}$.
 Esempio 8: una soluzione frazionaria
 $$2x^2 + 5x - 3 = 0$$
 
-$$\Delta = 5^2 - 4 \cdot 2 \cdot (-3) = 25 + 24 = 49$$
+$$
+\begin{aligned}
+\Delta &= 5^2 - 4 \cdot 2 \cdot (-3) \\
+&= 25 + 24 \\
+&= 49
+\end{aligned}
+$$
 
-$$x_{1,2} = \frac{-5 \pm 7}{4} \quad\Rightarrow\quad x_1 = \frac{-12}{4} = -3, \quad x_2 = \frac{2}{4} = \frac{1}{2}$$
+$$
+\begin{gathered}
+x_{1,2} = \frac{-5 \pm 7}{4} \\
+x_1 = \frac{-12}{4} = -3, \quad x_2 = \frac{2}{4} = \frac{1}{2}
+\end{gathered}
+$$
 
 $S = \left\{-3,\ \dfrac{1}{2}\right\}$. Il denominatore è $2a = 4$, non $2$.
 ```
@@ -228,9 +279,21 @@ Si divide per $2a$, e si divide tutto il numeratore, non solo il radicale. Con $
 Esempio 9: due soluzioni frazionarie
 $$6x^2 - x - 2 = 0$$
 
-$$\Delta = (-1)^2 - 4 \cdot 6 \cdot (-2) = 1 + 48 = 49$$
+$$
+\begin{aligned}
+\Delta &= (-1)^2 - 4 \cdot 6 \cdot (-2) \\
+&= 1 + 48 \\
+&= 49
+\end{aligned}
+$$
 
-$$x_{1,2} = \frac{1 \pm 7}{12} \quad\Rightarrow\quad x_1 = \frac{-6}{12} = -\frac{1}{2}, \quad x_2 = \frac{8}{12} = \frac{2}{3}$$
+$$
+\begin{gathered}
+x_{1,2} = \frac{1 \pm 7}{12} \\
+x_1 = \frac{-6}{12} = -\frac{1}{2} \\
+x_2 = \frac{8}{12} = \frac{2}{3}
+\end{gathered}
+$$
 
 $S = \left\{-\dfrac{1}{2},\ \dfrac{2}{3}\right\}$.
 ```
@@ -243,7 +306,13 @@ Tutti i coefficienti sono multipli di $3$. Dividendo per $3$ ottieni un'equazion
 
 $$x^2 + 4x - 5 = 0$$
 
-$$\Delta = 16 + 20 = 36 \qquad x_{1,2} = \frac{-4 \pm 6}{2} \quad\Rightarrow\quad x_1 = -5, \quad x_2 = 1$$
+$$
+\begin{gathered}
+\Delta = 16 + 20 = 36 \\
+x_{1,2} = \frac{-4 \pm 6}{2} \\
+x_1 = -5, \quad x_2 = 1
+\end{gathered}
+$$
 
 $S = \{-5,\ 1\}$.
 ```
@@ -265,7 +334,13 @@ $$x_1 = \frac{5 - \sqrt{21}}{2}, \qquad x_2 = \frac{5 + \sqrt{21}}{2}$$
 Esempio 12: radicale da semplificare
 $$x^2 - 8x - 2 = 0$$
 
-$$\Delta = (-8)^2 - 4 \cdot 1 \cdot (-2) = 64 + 8 = 72$$
+$$
+\begin{aligned}
+\Delta &= (-8)^2 - 4 \cdot 1 \cdot (-2) \\
+&= 64 + 8 \\
+&= 72
+\end{aligned}
+$$
 
 Semplifica il radicale: $\sqrt{72} = \sqrt{36 \cdot 2} = 6\sqrt{2}$. Poi dividi per $2$ tutti e tre i numeri, $8$, $6$ e il denominatore:
 
@@ -283,7 +358,12 @@ In $\dfrac{8 \pm 6\sqrt{2}}{2}$ il $2$ divide sia $8$ sia $6\sqrt{2}$: il risult
 Esempio 13: coefficiente di x² diverso da 1
 $$2x^2 - 2x - 1 = 0$$
 
-$$\Delta = 4 + 8 = 12, \qquad \sqrt{12} = \sqrt{4 \cdot 3} = 2\sqrt{3}$$
+$$
+\begin{gathered}
+\Delta = 4 + 8 = 12, \\
+\sqrt{12} = \sqrt{4 \cdot 3} = 2\sqrt{3}
+\end{gathered}
+$$
 
 $$x_{1,2} = \frac{2 \pm 2\sqrt{3}}{4} = \frac{1 \pm \sqrt{3}}{2}$$
 
@@ -298,13 +378,24 @@ $$x^2 + 2x - 1 = 7x^2 - 11x + 5$$
 
 Porta tutto a primo membro, cambiando segno ai termini che attraversano l'uguale, e riduci:
 
-$$x^2 - 7x^2 + 2x + 11x - 1 - 5 = 0 \quad\Rightarrow\quad -6x^2 + 13x - 6 = 0$$
+$$
+\begin{gathered}
+x^2 - 7x^2 + 2x + 11x - 1 - 5 = 0 \\
+\Rightarrow -6x^2 + 13x - 6 = 0
+\end{gathered}
+$$
 
 Il coefficiente di $x^2$ è negativo: moltiplica per $-1$.
 
 $$6x^2 - 13x + 6 = 0$$
 
-$$\Delta = 169 - 144 = 25 \qquad x_{1,2} = \frac{13 \pm 5}{12} \quad\Rightarrow\quad x_1 = \frac{8}{12} = \frac{2}{3}, \quad x_2 = \frac{18}{12} = \frac{3}{2}$$
+$$
+\begin{gathered}
+\Delta = 169 - 144 = 25 \\
+x_{1,2} = \frac{13 \pm 5}{12} \\
+x_1 = \frac{8}{12} = \frac{2}{3}, \quad x_2 = \frac{18}{12} = \frac{3}{2}
+\end{gathered}
+$$
 
 $S = \left\{\dfrac{2}{3},\ \dfrac{3}{2}\right\}$.
 ```
@@ -320,9 +411,20 @@ $$(x - 1)^2 = 2x + 3$$
 
 Sviluppa il quadrato del binomio, poi porta tutto a primo membro:
 
-$$x^2 - 2x + 1 = 2x + 3 \quad\Rightarrow\quad x^2 - 4x - 2 = 0$$
+$$
+\begin{gathered}
+x^2 - 2x + 1 = 2x + 3 \\
+\Rightarrow x^2 - 4x - 2 = 0
+\end{gathered}
+$$
 
-$$\Delta = 16 + 8 = 24, \qquad \sqrt{24} = 2\sqrt{6}, \qquad x_{1,2} = \frac{4 \pm 2\sqrt{6}}{2} = 2 \pm \sqrt{6}$$
+$$
+\begin{gathered}
+\Delta = 16 + 8 = 24, \\
+\sqrt{24} = 2\sqrt{6}, \\
+x_{1,2} = \frac{4 \pm 2\sqrt{6}}{2} = 2 \pm \sqrt{6}
+\end{gathered}
+$$
 
 Quindi $x_1 = 2 - \sqrt{6}$ e $x_2 = 2 + \sqrt{6}$.
 ```
@@ -333,7 +435,13 @@ Quindi $x_1 = 2 - \sqrt{6}$ e $x_2 = 2 + \sqrt{6}$.
 Esempio 16: soluzione doppia
 $$4x^2 - 12x + 9 = 0$$
 
-$$\Delta = (-12)^2 - 4 \cdot 4 \cdot 9 = 144 - 144 = 0$$
+$$
+\begin{aligned}
+\Delta &= (-12)^2 - 4 \cdot 4 \cdot 9 \\
+&= 144 - 144 \\
+&= 0
+\end{aligned}
+$$
 
 Le due soluzioni coincidono:
 
@@ -346,7 +454,13 @@ $S = \left\{\dfrac{3}{2}\right\}$. Infatti il primo membro è il quadrato di un 
 Esempio 17: nessuna soluzione reale
 $$2x^2 - 4x + 5 = 0$$
 
-$$\Delta = (-4)^2 - 4 \cdot 2 \cdot 5 = 16 - 40 = -24$$
+$$
+\begin{aligned}
+\Delta &= (-4)^2 - 4 \cdot 2 \cdot 5 \\
+&= 16 - 40 \\
+&= -24
+\end{aligned}
+$$
 
 Il discriminante è negativo: l'equazione non ha soluzioni reali, $S = \emptyset$. Non serve applicare la formula.
 ```

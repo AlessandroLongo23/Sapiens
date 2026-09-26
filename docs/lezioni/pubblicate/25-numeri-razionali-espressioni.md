@@ -57,7 +57,14 @@ $\dfrac{2}{3} + \dfrac{3}{4}$ non si può semplificare "in croce" il $3$ con il 
 
 Quando due potenze hanno basi uguali o reciproche, conviene applicare le [proprietà delle potenze](/materiale/scuola-superiore/matematica/numeri-razionali/potenze-in-q) prima di fare i conti, perché gli esponenti si semplificano e i numeri restano piccoli. Una base reciproca si trasforma nell'altra cambiando segno all'esponente:
 
-$$\left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{3}{2}\right)^3 = \left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{2}{3}\right)^{-3} = \left(\dfrac{2}{3}\right)^2 = \dfrac{4}{9}$$
+$$
+\begin{aligned}
+&\left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{3}{2}\right)^3 \\
+&= \left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{2}{3}\right)^{-3} \\
+&= \left(\dfrac{2}{3}\right)^2 \\
+&= \dfrac{4}{9}
+\end{aligned}
+$$
 
 Calcolare prima le due potenze darebbe $\dfrac{32}{243} \cdot \dfrac{27}{8}$: stesso risultato, con molti più conti.
 
@@ -132,7 +139,13 @@ $$\dfrac{1}{3} - \dfrac{3}{4} = \dfrac{4}{12} - \dfrac{9}{12} = -\dfrac{5}{12}$$
 
 Il quoziente viene prima della differenza. Si trasforma in prodotto per il reciproco di $-\dfrac{5}{2}$, cioè $-\dfrac{2}{5}$; i fattori negativi sono due, quindi il segno è più:
 
-$$-\dfrac{5}{12} : \left(-\dfrac{5}{2}\right) = -\dfrac{5}{12} \cdot \left(-\dfrac{2}{5}\right) = +\dfrac{1}{6}$$
+$$
+\begin{aligned}
+&-\dfrac{5}{12} : \left(-\dfrac{5}{2}\right) \\
+&= -\dfrac{5}{12} \cdot \left(-\dfrac{2}{5}\right) \\
+&= +\dfrac{1}{6}
+\end{aligned}
+$$
 
 Resta la differenza:
 
@@ -145,11 +158,22 @@ $$\left(-\dfrac{1}{2}\right)^3 \cdot \left(\dfrac{4}{3}\right)^2 - \left(\dfrac{
 
 Prima le potenze. La base $-\dfrac{1}{2}$ ha esponente dispari, quindi resta negativa; l'esponente $-1$ dà il reciproco:
 
-$$\left(-\dfrac{1}{2}\right)^3 = -\dfrac{1}{8} \qquad \left(\dfrac{4}{3}\right)^2 = \dfrac{16}{9} \qquad \left(\dfrac{2}{3}\right)^{-1} = \dfrac{3}{2} \qquad 3^2 = 9$$
+$$
+\begin{gathered}
+\left(-\dfrac{1}{2}\right)^3 = -\dfrac{1}{8} \\
+\left(\dfrac{4}{3}\right)^2 = \dfrac{16}{9} \\
+\left(\dfrac{2}{3}\right)^{-1} = \dfrac{3}{2} \qquad 3^2 = 9
+\end{gathered}
+$$
 
 L'espressione diventa $-\dfrac{1}{8} \cdot \dfrac{16}{9} - \dfrac{3}{2} : 9$. Poi il prodotto e il quoziente:
 
-$$-\dfrac{1}{8} \cdot \dfrac{16}{9} = -\dfrac{2}{9} \qquad \dfrac{3}{2} : 9 = \dfrac{3}{2} \cdot \dfrac{1}{9} = \dfrac{1}{6}$$
+$$
+\begin{gathered}
+-\dfrac{1}{8} \cdot \dfrac{16}{9} = -\dfrac{2}{9} \\
+\dfrac{3}{2} : 9 = \dfrac{3}{2} \cdot \dfrac{1}{9} = \dfrac{1}{6}
+\end{gathered}
+$$
 
 Infine la differenza, con denominatore comune $18$:
 
@@ -191,21 +215,45 @@ Resta la divisione: $\dfrac{11}{3} : 2 = \dfrac{11}{3} \cdot \dfrac{1}{2} = \dfr
 
 ```ad-example
 Esempio 6: tonde, quadre e graffe
-$$\left\{\left[\left(\dfrac{2}{3} - 1\right)^2 : \left(-\dfrac{1}{3}\right)^3 + \dfrac{5}{2}\right] \cdot \left(\dfrac{1}{2}\right)^{-2} - \dfrac{3}{4}\right\} : \left(-\dfrac{5}{4}\right)$$
+$$
+\begin{aligned}
+&\Bigg\{\left[\left(\dfrac{2}{3} - 1\right)^2 : \left(-\dfrac{1}{3}\right)^3 + \dfrac{5}{2}\right] \\
+&\quad \cdot \left(\dfrac{1}{2}\right)^{-2} - \dfrac{3}{4}\Bigg\} \\
+&\quad : \left(-\dfrac{5}{4}\right)
+\end{aligned}
+$$
 
 La tonda più interna: $\dfrac{2}{3} - 1 = \dfrac{2}{3} - \dfrac{3}{3} = -\dfrac{1}{3}$.
 
 Nella quadra ora c'è $\left(-\dfrac{1}{3}\right)^2 : \left(-\dfrac{1}{3}\right)^3 + \dfrac{5}{2}$. Il quoziente ha la stessa base, quindi si sottraggono gli esponenti:
 
-$$\left(-\dfrac{1}{3}\right)^2 : \left(-\dfrac{1}{3}\right)^3 = \left(-\dfrac{1}{3}\right)^{-1} = -3$$
+$$
+\begin{aligned}
+&\left(-\dfrac{1}{3}\right)^2 : \left(-\dfrac{1}{3}\right)^3 \\
+&= \left(-\dfrac{1}{3}\right)^{-1} \\
+&= -3
+\end{aligned}
+$$
 
 e la quadra vale $-3 + \dfrac{5}{2} = -\dfrac{6}{2} + \dfrac{5}{2} = -\dfrac{1}{2}$.
 
 Nella graffa ora c'è $-\dfrac{1}{2} \cdot \left(\dfrac{1}{2}\right)^{-2} - \dfrac{3}{4}$. Prima la potenza, $\left(\dfrac{1}{2}\right)^{-2} = 4$, poi il prodotto e la differenza:
 
-$$-\dfrac{1}{2} \cdot 4 - \dfrac{3}{4} = -2 - \dfrac{3}{4} = -\dfrac{8}{4} - \dfrac{3}{4} = -\dfrac{11}{4}$$
+$$
+\begin{aligned}
+-\dfrac{1}{2} \cdot 4 - \dfrac{3}{4} &= -2 - \dfrac{3}{4} \\
+&= -\dfrac{8}{4} - \dfrac{3}{4} \\
+&= -\dfrac{11}{4}
+\end{aligned}
+$$
 
 Resta l'ultimo quoziente. I fattori negativi sono due, quindi il risultato è positivo:
 
-$$-\dfrac{11}{4} : \left(-\dfrac{5}{4}\right) = -\dfrac{11}{4} \cdot \left(-\dfrac{4}{5}\right) = \dfrac{11}{5}$$
+$$
+\begin{aligned}
+&-\dfrac{11}{4} : \left(-\dfrac{5}{4}\right) \\
+&= -\dfrac{11}{4} \cdot \left(-\dfrac{4}{5}\right) \\
+&= \dfrac{11}{5}
+\end{aligned}
+$$
 ```

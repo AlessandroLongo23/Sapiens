@@ -26,7 +26,14 @@ Nelle somme mai tra un termine e l'altro: denominatore comune, poi si semplifica
 
 Potenze con basi uguali o reciproche: prima le proprietà, poi i conti.
 
-$$\left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{3}{2}\right)^3 = \left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{2}{3}\right)^{-3} = \left(\dfrac{2}{3}\right)^2 = \dfrac{4}{9}$$
+$$
+\begin{aligned}
+&\left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{3}{2}\right)^3 \\
+&= \left(\dfrac{2}{3}\right)^5 \cdot \left(\dfrac{2}{3}\right)^{-3} \\
+&= \left(\dfrac{2}{3}\right)^2 \\
+&= \dfrac{4}{9}
+\end{aligned}
+$$
 
 ## Frazioni di frazioni
 

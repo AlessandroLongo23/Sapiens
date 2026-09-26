@@ -32,7 +32,12 @@ I sottoinsiemi di $\{a, b, c\}$ sono 8: $\emptyset$, $\{a\}$, $\{b\}$, $\{c\}$, 
 
 Due insiemi sono uguali quando hanno esattamente gli stessi elementi. Si dimostra con la doppia inclusione:
 
-$$A = B \quad \text{se e solo se} \quad A \subseteq B \ \text{ e } \ B \subseteq A$$
+$$
+\begin{gathered}
+A = B \qquad \text{se e solo se} \\
+A \subseteq B \ \text{ e } \ B \subseteq A
+\end{gathered}
+$$
 
 L'ordine e le ripetizioni non contano: $\{1, 2, 3\} = \{3, 1, 2\} = \{1, 1, 2, 3\}$.
 

@@ -60,7 +60,12 @@ Il denominatore si scrive positivo: $\dfrac{28}{-42} = -\dfrac{2}{3}$.
 
 Numero razionale: l'insieme di tutte le frazioni equivalenti a una frazione data; si indica con la frazione ridotta ai minimi termini con il denominatore positivo.
 
-$$\mathbb{Q} = \left\{ \dfrac{a}{b} \mid a \in \mathbb{Z},\ b \in \mathbb{Z},\ b \neq 0 \right\} \qquad \mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q}$$
+$$
+\begin{gathered}
+\mathbb{Q} = \left\{ \dfrac{a}{b} \mid a \in \mathbb{Z},\ b \in \mathbb{Z},\ b \neq 0 \right\} \\
+\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q}
+\end{gathered}
+$$
 
 Ogni intero è razionale: $-3 = \dfrac{-3}{1}$. In $\mathbb{Q}$ si può sempre dividere per un numero diverso da zero. Tra due razionali diversi ce n'è sempre un altro: $\dfrac{4}{12} < \dfrac{5}{12} < \dfrac{6}{12}$.
 

@@ -58,7 +58,12 @@ Lettera $x$: esponenti $3$ e $2$, il minimo è $2$ e il massimo è $3$.
 
 Lettera $y$: esponenti $2$ e $5$, il minimo è $2$ e il massimo è $5$.
 
-$$\text{MCD} = 6x^2y^2 \qquad \text{MCM} = 36x^3y^5$$
+$$
+\begin{gathered}
+\text{MCD} = 6x^2y^2 \\
+\text{MCM} = 36x^3y^5
+\end{gathered}
+$$
 ```
 
 ```ad-warning

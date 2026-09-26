@@ -13,7 +13,13 @@ Una parentesi con un solo monomio si tiene finché serve (per esempio per applic
 
 È un monomio se tutti i termini rimasti sono simili. Se restano monomi non simili è un polinomio, e si lascia così.
 
-$$3a^2b \cdot (-2ab) + 4a^3b^2 = -6a^3b^2 + 4a^3b^2 = -2a^3b^2$$
+$$
+\begin{aligned}
+&3a^2b \cdot (-2ab) + 4a^3b^2 \\
+&= -6a^3b^2 + 4a^3b^2 \\
+&= -2a^3b^2
+\end{aligned}
+$$
 
 ## Il segno nelle potenze
 

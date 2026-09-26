@@ -17,11 +17,21 @@ Insiemi disgiunti: $A \cap B = \emptyset$.
 
 ## Casi particolari
 
-$$A \cup A = A \qquad A \cup \emptyset = A \qquad A \cap A = A \qquad A \cap \emptyset = \emptyset$$
+$$
+\begin{gathered}
+A \cup A = A \qquad A \cup \emptyset = A \\
+A \cap A = A \qquad A \cap \emptyset = \emptyset
+\end{gathered}
+$$
 
 $$A \setminus \emptyset = A \qquad A \setminus A = \emptyset$$
 
-$$A \cup \overline{A} = U \qquad A \cap \overline{A} = \emptyset \qquad \overline{\overline{A}} = A \qquad \overline{U} = \emptyset \qquad \overline{\emptyset} = U$$
+$$
+\begin{gathered}
+A \cup \overline{A} = U \qquad A \cap \overline{A} = \emptyset \\
+\overline{\overline{A}} = A \qquad \overline{U} = \emptyset \qquad \overline{\emptyset} = U
+\end{gathered}
+$$
 
 ## Prodotto cartesiano
 
@@ -37,7 +47,12 @@ Per esempio $\{1, 2\} \times \{a, b, c\} = \{(1, a), (1, b), (1, c), (2, a), (2,
 
 Queste affermazioni sono equivalenti:
 
-$$A \subseteq B \qquad A \cup B = B \qquad A \cap B = A \qquad A \setminus B = \emptyset$$
+$$
+\begin{gathered}
+A \subseteq B \qquad A \cup B = B \\
+A \cap B = A \qquad A \setminus B = \emptyset
+\end{gathered}
+$$
 
 ## Proprietà
 

@@ -19,11 +19,21 @@ $0^0$ non ha significato. La base negativa si scrive tra parentesi: $(-3)^2 = 9$
 
 $0$ è pari: $(-5)^0 = 1$. Il valore assoluto: $|a^n| = |a|^n$.
 
-$$(-1)^n = 1 \text{ se } n \text{ è pari} \qquad (-1)^n = -1 \text{ se } n \text{ è dispari}$$
+$$
+\begin{gathered}
+(-1)^n = 1 \text{ se } n \text{ è pari} \\
+(-1)^n = -1 \text{ se } n \text{ è dispari}
+\end{gathered}
+$$
 
 Potenze di numeri opposti:
 
-$$(-a)^n = a^n \text{ se } n \text{ è pari} \qquad (-a)^n = -a^n \text{ se } n \text{ è dispari}$$
+$$
+\begin{gathered}
+(-a)^n = a^n \text{ se } n \text{ è pari} \\
+(-a)^n = -a^n \text{ se } n \text{ è dispari}
+\end{gathered}
+$$
 
 Per calcolare una potenza:
 
@@ -35,7 +45,13 @@ Per calcolare una potenza:
 
 L'esponente vale solo per il numero o la parentesi subito alla sua sinistra:
 
-$$(-3)^2 = 9 \qquad -3^2 = -9 \qquad -(-2)^4 = -16 \qquad -(-2)^3 = 8$$
+$$
+\begin{gathered}
+(-3)^2 = 9 \qquad -3^2 = -9 \\
+-(-2)^4 = -16 \\
+-(-2)^3 = 8
+\end{gathered}
+$$
 
 ## Proprietà delle potenze
 

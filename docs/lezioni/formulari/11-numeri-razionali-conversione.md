@@ -16,7 +16,13 @@ Limitati e periodici si scrivono tutti come frazione; i decimali infiniti che no
 2. Al denominatore $1$ seguito da tanti zeri quante sono le cifre dopo la virgola.
 3. Riduci ai minimi termini dividendo per il MCD.
 
-$$0{,}75 = \dfrac{75}{100} = \dfrac{3}{4} \qquad 2{,}35 = \dfrac{235}{100} = \dfrac{47}{20} \qquad -0{,}08 = -\dfrac{8}{100} = -\dfrac{2}{25}$$
+$$
+\begin{gathered}
+0{,}75 = \dfrac{75}{100} = \dfrac{3}{4} \\
+2{,}35 = \dfrac{235}{100} = \dfrac{47}{20} \\
+-0{,}08 = -\dfrac{8}{100} = -\dfrac{2}{25}
+\end{gathered}
+$$
 
 ## Da decimale periodico a frazione
 
@@ -26,9 +32,19 @@ La frazione generatrice, per periodici semplici e misti:
 2. Al denominatore tanti $9$ quante sono le cifre del periodo, seguiti da tanti $0$ quante sono le cifre dell'antiperiodo.
 3. Riduci ai minimi termini.
 
-$$0{,}\overline{3} = \dfrac{3 - 0}{9} = \dfrac{1}{3} \qquad 1{,}\overline{45} = \dfrac{145 - 1}{99} = \dfrac{16}{11}$$
+$$
+\begin{gathered}
+0{,}\overline{3} = \dfrac{3 - 0}{9} = \dfrac{1}{3} \\
+1{,}\overline{45} = \dfrac{145 - 1}{99} = \dfrac{16}{11}
+\end{gathered}
+$$
 
-$$0{,}1\overline{6} = \dfrac{16 - 1}{90} = \dfrac{1}{6} \qquad 2{,}3\overline{18} = \dfrac{2318 - 23}{990} = \dfrac{51}{22}$$
+$$
+\begin{gathered}
+0{,}1\overline{6} = \dfrac{16 - 1}{90} = \dfrac{1}{6} \\
+2{,}3\overline{18} = \dfrac{2318 - 23}{990} = \dfrac{51}{22}
+\end{gathered}
+$$
 
 Il periodo $9$ non si usa: $0{,}\overline{9} = 1$ e $0{,}4\overline{9} = 0{,}5$.
 

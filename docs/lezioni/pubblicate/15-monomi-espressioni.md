@@ -54,7 +54,12 @@ $$-8x^6y^3 : (4x^3y^2) = -2x^3y$$
 
 Infine la somma di monomi simili:
 
-$$-2x^3y - \frac{1}{2}x^3y = \left(-\frac{4}{2} - \frac{1}{2}\right)x^3y = -\frac{5}{2}x^3y$$
+$$
+\begin{aligned}
+-2x^3y - \frac{1}{2}x^3y &= \left(-\frac{4}{2} - \frac{1}{2}\right)x^3y \\
+&= -\frac{5}{2}x^3y
+\end{aligned}
+$$
 ```
 
 ```ad-warning
@@ -64,7 +69,12 @@ $(2x^3)^2 = 4x^6$: si eleva al quadrato anche il $2$. Non è $2x^6$, e non è ne
 
 ```ad-example
 Esempio 3: una parentesi quadra
-$$\left[2x^2 \cdot (-3xy)^2 - 5x^4y^2\right] : \left(-\frac{13}{2}x^2y\right)$$
+$$
+\begin{aligned}
+&\left[2x^2 \cdot (-3xy)^2 - 5x^4y^2\right] \\
+&\quad : \left(-\frac{13}{2}x^2y\right)
+\end{aligned}
+$$
 
 Dentro la quadra si comincia dalla potenza. L'esponente è pari, quindi il segno diventa positivo:
 
@@ -72,11 +82,23 @@ $$(-3xy)^2 = 9x^2y^2$$
 
 Poi il prodotto e la somma, sempre dentro la quadra:
 
-$$2x^2 \cdot 9x^2y^2 - 5x^4y^2 = 18x^4y^2 - 5x^4y^2 = 13x^4y^2$$
+$$
+\begin{aligned}
+&2x^2 \cdot 9x^2y^2 - 5x^4y^2 \\
+&= 18x^4y^2 - 5x^4y^2 \\
+&= 13x^4y^2
+\end{aligned}
+$$
 
 Resta il quoziente. Dividere per $-\frac{13}{2}$ equivale a moltiplicare per $-\frac{2}{13}$:
 
-$$13x^4y^2 : \left(-\frac{13}{2}x^2y\right) = 13 \cdot \left(-\frac{2}{13}\right)x^{4-2}y^{2-1} = -2x^2y$$
+$$
+\begin{aligned}
+&13x^4y^2 : \left(-\frac{13}{2}x^2y\right) \\
+&= 13 \cdot \left(-\frac{2}{13}\right)x^{4-2}y^{2-1} \\
+&= -2x^2y
+\end{aligned}
+$$
 ```
 
 ```ad-warning
@@ -86,7 +108,13 @@ $(-2a)^2 = 4a^2$, perché il meno è dentro la parentesi e viene elevato al quad
 
 ```ad-example
 Esempio 4: tonde, quadre e graffe
-$$\left\{\left[\left(\frac{1}{2}a^2b - a^2b\right)^2 : \left(\frac{1}{4}a^3\right) - \frac{3}{2}ab^2\right] \cdot (-2a^2b) + \left(\frac{2}{3}ab\right)^2 \cdot 9ab\right\} : (-3a^3b^2)$$
+$$
+\begin{aligned}
+&\Bigg\{\left[\left(\frac{1}{2}a^2b - a^2b\right)^2 : \left(\frac{1}{4}a^3\right) \right. \\
+&\qquad \left. - \frac{3}{2}ab^2\right] \cdot (-2a^2b) \\
+&\quad + \left(\frac{2}{3}ab\right)^2 \cdot 9ab\Bigg\} : (-3a^3b^2)
+\end{aligned}
+$$
 
 La parentesi tonda più interna contiene una somma di monomi simili:
 
@@ -94,11 +122,23 @@ $$\frac{1}{2}a^2b - a^2b = -\frac{1}{2}a^2b$$
 
 Nella quadra ora c'è $\left(-\frac{1}{2}a^2b\right)^2 : \left(\frac{1}{4}a^3\right) - \frac{3}{2}ab^2$. Prima la potenza, poi il quoziente, poi la somma:
 
-$$\left(-\frac{1}{2}a^2b\right)^2 = \frac{1}{4}a^4b^2 \qquad \frac{1}{4}a^4b^2 : \left(\frac{1}{4}a^3\right) = ab^2 \qquad ab^2 - \frac{3}{2}ab^2 = -\frac{1}{2}ab^2$$
+$$
+\begin{gathered}
+\left(-\frac{1}{2}a^2b\right)^2 = \frac{1}{4}a^4b^2 \\
+\frac{1}{4}a^4b^2 : \left(\frac{1}{4}a^3\right) = ab^2 \\
+ab^2 - \frac{3}{2}ab^2 = -\frac{1}{2}ab^2
+\end{gathered}
+$$
 
 Nella graffa ora c'è $\left(-\frac{1}{2}ab^2\right) \cdot (-2a^2b) + \left(\frac{2}{3}ab\right)^2 \cdot 9ab$. Il primo termine è un prodotto; nel secondo viene prima la potenza, poi il prodotto:
 
-$$\left(-\frac{1}{2}ab^2\right) \cdot (-2a^2b) = a^3b^3 \qquad \left(\frac{2}{3}ab\right)^2 \cdot 9ab = \frac{4}{9}a^2b^2 \cdot 9ab = 4a^3b^3$$
+$$
+\begin{gathered}
+\left(-\frac{1}{2}ab^2\right) \cdot (-2a^2b) = a^3b^3 \\
+\left(\frac{2}{3}ab\right)^2 \cdot 9ab = \frac{4}{9}a^2b^2 \cdot 9ab \\
+= 4a^3b^3
+\end{gathered}
+$$
 
 I due termini sono simili, quindi la graffa vale $a^3b^3 + 4a^3b^3 = 5a^3b^3$. Resta l'ultimo quoziente:
 

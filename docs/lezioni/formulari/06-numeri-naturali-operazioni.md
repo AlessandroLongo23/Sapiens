@@ -19,13 +19,23 @@ $$a + b = b + a \qquad a \cdot b = b \cdot a$$
 
 Associativa:
 
-$$(a + b) + c = a + (b + c) \qquad (a \cdot b) \cdot c = a \cdot (b \cdot c)$$
+$$
+\begin{gathered}
+(a + b) + c = a + (b + c) \\
+(a \cdot b) \cdot c = a \cdot (b \cdot c)
+\end{gathered}
+$$
 
 Dissociativa, cioè scomporre un addendo o un fattore: $27 + 8 = 27 + 3 + 5$ e $15 \cdot 12 = 15 \cdot 2 \cdot 6$.
 
 Distributiva della moltiplicazione:
 
-$$a \cdot (b + c) = a \cdot b + a \cdot c \qquad a \cdot (b - c) = a \cdot b - a \cdot c \quad (b \geq c)$$
+$$
+\begin{gathered}
+a \cdot (b + c) = a \cdot b + a \cdot c \\
+a \cdot (b - c) = a \cdot b - a \cdot c \quad (b \geq c)
+\end{gathered}
+$$
 
 Elemento neutro, $0$ per l'addizione e $1$ per la moltiplicazione:
 
@@ -37,11 +47,21 @@ Elemento assorbente: $a \cdot 0 = 0 \cdot a = 0$. Legge di annullamento del prod
 
 Invariantiva della sottrazione (quando si toglie, $n$ non supera il sottraendo):
 
-$$a - b = (a + n) - (b + n) = (a - n) - (b - n)$$
+$$
+\begin{aligned}
+a - b &= (a + n) - (b + n) \\
+&= (a - n) - (b - n)
+\end{aligned}
+$$
 
 Invariantiva della divisione ($n \neq 0$; quando si divide, $n$ divide esattamente entrambi):
 
-$$a : b = (a \cdot n) : (b \cdot n) = (a : n) : (b : n)$$
+$$
+\begin{aligned}
+a : b &= (a \cdot n) : (b \cdot n) \\
+&= (a : n) : (b : n)
+\end{aligned}
+$$
 
 Per esempio $1000 - 297 = 1003 - 300 = 703$ e $350 : 50 = 35 : 5 = 7$.
 

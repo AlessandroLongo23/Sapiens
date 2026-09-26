@@ -117,7 +117,12 @@ Anche qui i libri non sono tutti d'accordo. Alcuni chiamano "proprio" ogni sotto
 
 Due insiemi sono **uguali** quando hanno esattamente gli stessi elementi. Con l'inclusione lo si dice così: $A = B$ quando ogni elemento di $A$ sta in $B$ e ogni elemento di $B$ sta in $A$, cioè
 
-$$A = B \quad \text{se e solo se} \quad A \subseteq B \ \text{ e } \ B \subseteq A$$
+$$
+\begin{gathered}
+A = B \qquad \text{se e solo se} \\
+A \subseteq B \ \text{ e } \ B \subseteq A
+\end{gathered}
+$$
 
 Per questo, quando si deve dimostrare che due insiemi sono uguali, si controllano le due inclusioni una alla volta. Il metodo si chiama **doppia inclusione**.
 
@@ -153,7 +158,13 @@ Se invece la proprietà fosse $x \in \mathbb{N}$, cioè $C = \{x \in \mathbb{N} 
 ```ad-example
 Esempio 6: dimostrare un'uguaglianza con la doppia inclusione
 Siano
-$$A = \{x \in \mathbb{N} \mid x \text{ è un divisore pari di } 12\}, \qquad B = \{2k \mid k \text{ è un divisore di } 6\}.$$
+$$
+\begin{gathered}
+A = \{x \in \mathbb{N} \mid \\
+x \text{ è un divisore pari di } 12\}, \\
+B = \{2k \mid k \text{ è un divisore di } 6\}.
+\end{gathered}
+$$
 
 Troviamo gli elementi. I divisori di $12$ sono $1, 2, 3, 4, 6, 12$ e quelli pari sono $2, 4, 6, 12$: quindi $A = \{2, 4, 6, 12\}$. I divisori di $6$ sono $1, 2, 3, 6$ e i loro doppi sono $2, 4, 6, 12$: quindi $B = \{2, 4, 6, 12\}$.
 

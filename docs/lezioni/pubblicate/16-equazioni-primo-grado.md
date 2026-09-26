@@ -86,7 +86,13 @@ $$5x - 3 = 2x + 9$$
 
 Porta $2x$ a primo membro e $-3$ a secondo membro, cambiando segno a entrambi:
 
-$$5x - 2x = 9 + 3 \quad\Rightarrow\quad 3x = 12 \quad\Rightarrow\quad x = \frac{12}{3} = 4$$
+$$
+\begin{gathered}
+5x - 2x = 9 + 3 \\
+\Rightarrow 3x = 12 \\
+\Rightarrow x = \frac{12}{3} = 4
+\end{gathered}
+$$
 
 La soluzione è $S = \{4\}$.
 ```
@@ -102,7 +108,12 @@ $$7 - 2x = 5x + 21$$
 
 Porta i termini con $x$ a primo membro e i numeri a secondo membro:
 
-$$-2x - 5x = 21 - 7 \quad\Rightarrow\quad -7x = 14$$
+$$
+\begin{gathered}
+-2x - 5x = 21 - 7 \\
+\Rightarrow -7x = 14
+\end{gathered}
+$$
 
 Dividi per $-7$, facendo attenzione al segno:
 
@@ -125,7 +136,13 @@ $$-x - 8 = 5 - 4x$$
 
 Trasporta e riduci:
 
-$$-x + 4x = 5 + 8 \quad\Rightarrow\quad 3x = 13 \quad\Rightarrow\quad x = \frac{13}{3}$$
+$$
+\begin{gathered}
+-x + 4x = 5 + 8 \\
+\Rightarrow 3x = 13 \\
+\Rightarrow x = \frac{13}{3}
+\end{gathered}
+$$
 
 La soluzione è $S = \left\{\dfrac{13}{3}\right\}$: una frazione è una soluzione come un'altra, e non va trasformata in un numero decimale approssimato.
 ```
@@ -136,15 +153,33 @@ $$\frac{x - 1}{3} - \frac{x + 2}{4} = \frac{1}{6}$$
 
 Il MCM tra $3$, $4$ e $6$ è $12$. Moltiplica per $12$ ogni termine, tenendo i numeratori tra parentesi:
 
-$$12 \cdot \frac{x - 1}{3} - 12 \cdot \frac{x + 2}{4} = 12 \cdot \frac{1}{6} \quad\Rightarrow\quad 4(x - 1) - 3(x + 2) = 2$$
+$$
+\begin{gathered}
+12 \cdot \frac{x - 1}{3} - 12 \cdot \frac{x + 2}{4} = 12 \cdot \frac{1}{6} \\
+\Rightarrow 4(x - 1) - 3(x + 2) = 2
+\end{gathered}
+$$
 
 Togli le parentesi. Il $-3$ cambia il segno di entrambi i termini di $x + 2$:
 
-$$4x - 4 - 3x - 6 = 2 \quad\Rightarrow\quad x - 10 = 2 \quad\Rightarrow\quad x = 12$$
+$$
+\begin{gathered}
+4x - 4 - 3x - 6 = 2 \\
+\Rightarrow x - 10 = 2 \\
+\Rightarrow x = 12
+\end{gathered}
+$$
 
 Verifica, sostituendo $12$ nell'equazione di partenza:
 
-$$\frac{12 - 1}{3} - \frac{12 + 2}{4} = \frac{11}{3} - \frac{7}{2} = \frac{22}{6} - \frac{21}{6} = \frac{1}{6}$$
+$$
+\begin{aligned}
+&\frac{12 - 1}{3} - \frac{12 + 2}{4} \\
+&= \frac{11}{3} - \frac{7}{2} \\
+&= \frac{22}{6} - \frac{21}{6} \\
+&= \frac{1}{6}
+\end{aligned}
+$$
 
 Il primo membro vale $\dfrac{1}{6}$, come il secondo. La soluzione è $S = \{12\}$.
 ```
@@ -175,7 +210,13 @@ Un'equazione **impossibile** non ha soluzioni, perché chiede che $0$ sia uguale
 Esempio 6: equazione impossibile
 $$2(x + 3) = 2x + 5$$
 
-$$2x + 6 = 2x + 5 \quad\Rightarrow\quad 2x - 2x = 5 - 6 \quad\Rightarrow\quad 0x = -1$$
+$$
+\begin{gathered}
+2x + 6 = 2x + 5 \\
+\Rightarrow 2x - 2x = 5 - 6 \\
+\Rightarrow 0x = -1
+\end{gathered}
+$$
 
 Nessun numero moltiplicato per $0$ dà $-1$. L'equazione è impossibile: $S = \emptyset$.
 ```
@@ -184,7 +225,13 @@ Nessun numero moltiplicato per $0$ dà $-1$. L'equazione è impossibile: $S = \e
 Esempio 7: equazione indeterminata
 $$3(x - 1) + x = 4x - 3$$
 
-$$3x - 3 + x = 4x - 3 \quad\Rightarrow\quad 4x - 4x = -3 + 3 \quad\Rightarrow\quad 0x = 0$$
+$$
+\begin{gathered}
+3x - 3 + x = 4x - 3 \\
+\Rightarrow 4x - 4x = -3 + 3 \\
+\Rightarrow 0x = 0
+\end{gathered}
+$$
 
 Qualunque numero moltiplicato per $0$ dà $0$, quindi l'uguaglianza è vera per ogni $x$. L'equazione è indeterminata: $S = \mathbb{R}$.
 ```
@@ -209,7 +256,13 @@ Compri tre quaderni uguali e una penna da $1{,}50$ euro, e spendi in tutto $9$ e
 
 Chiama $x$ il prezzo di un quaderno, in euro. Tre quaderni costano $3x$, e con la penna la spesa è $3x + 1{,}50$:
 
-$$3x + 1{,}50 = 9 \quad\Rightarrow\quad 3x = 7{,}50 \quad\Rightarrow\quad x = 2{,}50$$
+$$
+\begin{gathered}
+3x + 1{,}50 = 9 \\
+\Rightarrow 3x = 7{,}50 \\
+\Rightarrow x = 2{,}50
+\end{gathered}
+$$
 
 Controllo: $3 \cdot 2{,}50 + 1{,}50 = 7{,}50 + 1{,}50 = 9$. Un quaderno costa $2{,}50$ euro.
 ```
@@ -220,9 +273,20 @@ Oggi Marco ha $38$ anni e sua figlia Sara ne ha $8$. Tra quanti anni Marco avrà
 
 Chiama $x$ il numero di anni che devono passare. Tra $x$ anni Marco avrà $38 + x$ anni e Sara $8 + x$: invecchiano tutti e due, quindi la $x$ si aggiunge a entrambe le età. Il testo dice che allora l'età di Marco sarà il triplo di quella di Sara:
 
-$$38 + x = 3(8 + x) \quad\Rightarrow\quad 38 + x = 24 + 3x$$
+$$
+\begin{gathered}
+38 + x = 3(8 + x) \\
+\Rightarrow 38 + x = 24 + 3x
+\end{gathered}
+$$
 
-$$x - 3x = 24 - 38 \quad\Rightarrow\quad -2x = -14 \quad\Rightarrow\quad x = 7$$
+$$
+\begin{gathered}
+x - 3x = 24 - 38 \\
+\Rightarrow -2x = -14 \\
+\Rightarrow x = 7
+\end{gathered}
+$$
 
 Controllo: tra $7$ anni Marco avrà $45$ anni e Sara $15$, e $3 \cdot 15 = 45$. La soluzione è un numero intero positivo, quindi ha senso nel problema: Marco avrà il triplo degli anni di Sara tra $7$ anni.
 ```

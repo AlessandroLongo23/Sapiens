@@ -32,7 +32,12 @@ Per esempio $7 + 2 = 2 + 7 = 9$ e $4 \cdot 6 = 6 \cdot 4 = 24$.
 
 La **proprietà associativa** dice che, in una somma o in un prodotto di tre o più termini, si possono raggruppare due termini vicini sostituendoli con il loro risultato:
 
-$$(a + b) + c = a + (b + c) \qquad (a \cdot b) \cdot c = a \cdot (b \cdot c)$$
+$$
+\begin{gathered}
+(a + b) + c = a + (b + c) \\
+(a \cdot b) \cdot c = a \cdot (b \cdot c)
+\end{gathered}
+$$
 
 Per esempio $(2 + 3) + 4 = 5 + 4 = 9$ e $2 + (3 + 4) = 2 + 7 = 9$; allo stesso modo $(2 \cdot 3) \cdot 4 = 6 \cdot 4 = 24$ e $2 \cdot (3 \cdot 4) = 2 \cdot 12 = 24$.
 
@@ -40,7 +45,12 @@ La **proprietà dissociativa** è la stessa cosa letta al contrario: un addendo 
 
 La **proprietà distributiva** della moltiplicazione rispetto all'addizione e alla sottrazione dice che moltiplicare un numero per una somma (o una differenza) dà lo stesso risultato che moltiplicarlo per ciascun termine e poi sommare (o sottrarre) i prodotti:
 
-$$a \cdot (b + c) = a \cdot b + a \cdot c \qquad a \cdot (b - c) = a \cdot b - a \cdot c \quad (b \geq c)$$
+$$
+\begin{gathered}
+a \cdot (b + c) = a \cdot b + a \cdot c \\
+a \cdot (b - c) = a \cdot b - a \cdot c \quad (b \geq c)
+\end{gathered}
+$$
 
 Per esempio $3 \cdot (4 + 5) = 3 \cdot 9 = 27$ e $3 \cdot 4 + 3 \cdot 5 = 12 + 15 = 27$.
 
@@ -56,11 +66,21 @@ La sottrazione e la divisione non sono né commutative né associative. Lo mostr
 
 Hanno però la **proprietà invariantiva**. Nella sottrazione la differenza non cambia se si aggiunge o si toglie lo stesso numero sia al minuendo sia al sottraendo (quando si toglie, il numero non deve superare il sottraendo):
 
-$$a - b = (a + n) - (b + n) = (a - n) - (b - n)$$
+$$
+\begin{aligned}
+a - b &= (a + n) - (b + n) \\
+&= (a - n) - (b - n)
+\end{aligned}
+$$
 
 Nella divisione il quoziente non cambia se si moltiplicano o si dividono dividendo e divisore per lo stesso numero diverso da $0$ (quando si divide, il numero deve dividere esattamente entrambi):
 
-$$a : b = (a \cdot n) : (b \cdot n) = (a : n) : (b : n)$$
+$$
+\begin{aligned}
+a : b &= (a \cdot n) : (b \cdot n) \\
+&= (a : n) : (b : n)
+\end{aligned}
+$$
 
 Per esempio $1000 - 297 = 1003 - 300 = 703$, dove si è aggiunto $3$ a entrambi i termini, e $350 : 50 = 35 : 5 = 7$, dove si sono divisi entrambi per $10$.
 
@@ -185,7 +205,14 @@ Esempio 7: posti divisi tra le classi
 L'aula magna della scuola ha $10$ file da $15$ posti. I docenti occupano $6$ posti e gli altri sono divisi in parti uguali tra $6$ classi. Quanti posti spettano a ogni classe?
 
 I posti in tutto sono $10 \cdot 15$; tolti quelli dei docenti restano $10 \cdot 15 - 6$, e questo numero va diviso per $6$. La sottrazione deve venire prima della divisione, quindi va tra parentesi:
-$$(10 \cdot 15 - 6) : 6 = (150 - 6) : 6 = 144 : 6 = 24$$
+$$
+\begin{aligned}
+&(10 \cdot 15 - 6) : 6 \\
+&= (150 - 6) : 6 \\
+&= 144 : 6 \\
+&= 24
+\end{aligned}
+$$
 A ogni classe spettano $24$ posti.
 ```
 

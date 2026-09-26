@@ -26,7 +26,13 @@ La parte letterale resta quella che era: gli esponenti non si sommano.
 
 ```ad-example
 Esempio 1: coefficienti frazionari
-$$\frac{2}{3}a^2b - \frac{3}{4}a^2b = \left(\frac{2}{3} - \frac{3}{4}\right)a^2b = \left(\frac{8}{12} - \frac{9}{12}\right)a^2b = -\frac{1}{12}a^2b$$
+$$
+\begin{aligned}
+\frac{2}{3}a^2b - \frac{3}{4}a^2b &= \left(\frac{2}{3} - \frac{3}{4}\right)a^2b \\
+&= \left(\frac{8}{12} - \frac{9}{12}\right)a^2b \\
+&= -\frac{1}{12}a^2b
+\end{aligned}
+$$
 ```
 
 ```ad-example
@@ -45,7 +51,12 @@ Se i monomi non sono simili, la somma non si può ridurre a un solo monomio e re
 
 ```ad-example
 Esempio 3: una somma con monomi non simili
-$$4ab - 3a + ab = (4 + 1)\,ab - 3a = 5ab - 3a$$
+$$
+\begin{aligned}
+4ab - 3a + ab &= (4 + 1)\,ab - 3a \\
+&= 5ab - 3a
+\end{aligned}
+$$
 
 $ab$ e $a$ non sono simili, quindi $5ab - 3a$ è il risultato finale.
 ```
@@ -59,18 +70,36 @@ $3x + 2y$ non è $5xy$, e $2x^2 + 3x$ non è $5x^2$ né $5x^3$: sono somme di mo
 
 Il prodotto di due o più monomi è sempre un monomio. Moltiplichi i coefficienti tra loro, con la regola dei segni, e per ogni lettera sommi gli esponenti, perché $x^m \cdot x^n = x^{m+n}$. Le lettere che compaiono in un solo fattore passano al risultato così come sono.
 
-$$(2x^3y)\cdot(-4xy^2) = (2 \cdot (-4))\,x^{3+1}y^{1+2} = -8x^4y^3$$
+$$
+\begin{aligned}
+&(2x^3y)\cdot(-4xy^2) \\
+&= (2 \cdot (-4))\,x^{3+1}y^{1+2} \\
+&= -8x^4y^3
+\end{aligned}
+$$
 
 ```ad-example
 Esempio 4: coefficienti frazionari
-$$\left(-\frac{3}{5}ab^2\right)\cdot\left(\frac{10}{3}a^2b\right) = \left(-\frac{3}{5}\cdot\frac{10}{3}\right)a^{1+2}b^{2+1} = -2a^3b^3$$
+$$
+\begin{aligned}
+&\left(-\frac{3}{5}ab^2\right)\cdot\left(\frac{10}{3}a^2b\right) \\
+&= \left(-\frac{3}{5}\cdot\frac{10}{3}\right)a^{1+2}b^{2+1} \\
+&= -2a^3b^3
+\end{aligned}
+$$
 
 Prima di moltiplicare, semplifica in croce: il $3$ con il $3$, il $5$ con il $10$.
 ```
 
 ```ad-example
 Esempio 5: tre fattori e due segni meno
-$$(-2x^2)\cdot\left(-\frac{1}{4}xy\right)\cdot(3y^3) = \left((-2)\cdot\left(-\frac{1}{4}\right)\cdot 3\right)x^{2+1}y^{1+3} = \frac{3}{2}x^3y^4$$
+$$
+\begin{aligned}
+&(-2x^2)\cdot\left(-\frac{1}{4}xy\right)\cdot(3y^3) \\
+&= \left((-2)\cdot\left(-\frac{1}{4}\right)\cdot 3\right)x^{2+1}y^{1+3} \\
+&= \frac{3}{2}x^3y^4
+\end{aligned}
+$$
 
 I segni meno sono due, quindi il coefficiente è positivo.
 ```
@@ -88,14 +117,26 @@ Quando la divisione si può fare, dividi i coefficienti e per ogni lettera sottr
 
 ```ad-example
 Esempio 6: coefficienti frazionari
-$$\left(-\frac{9}{4}x^5y^2\right) : \left(\frac{3}{2}x^2y\right) = \left(-\frac{9}{4}\cdot\frac{2}{3}\right)x^{5-2}y^{2-1} = -\frac{3}{2}x^3y$$
+$$
+\begin{aligned}
+&\left(-\frac{9}{4}x^5y^2\right) : \left(\frac{3}{2}x^2y\right) \\
+&= \left(-\frac{9}{4}\cdot\frac{2}{3}\right)x^{5-2}y^{2-1} \\
+&= -\frac{3}{2}x^3y
+\end{aligned}
+$$
 
 Dividere per $\frac{3}{2}$ equivale a moltiplicare per il reciproco $\frac{2}{3}$.
 ```
 
 ```ad-example
 Esempio 7: una lettera che sparisce
-$$(12a^3b^2) : (-4a^3b) = (12 : (-4))\,a^{3-3}b^{2-1} = -3b$$
+$$
+\begin{aligned}
+&(12a^3b^2) : (-4a^3b) \\
+&= (12 : (-4))\,a^{3-3}b^{2-1} \\
+&= -3b
+\end{aligned}
+$$
 
 $a^0 = 1$, quindi nel risultato la $a$ non compare più.
 ```
@@ -118,7 +159,12 @@ Per elevare a potenza un monomio elevi il coefficiente e moltiplichi ogni espone
 
 ```ad-example
 Esempio 9: esponente dispari e coefficiente frazionario
-$$\left(-\frac{2}{3}a^2b\right)^3 = \left(-\frac{2}{3}\right)^3 a^{2\cdot 3}b^{1\cdot 3} = -\frac{8}{27}a^6b^3$$
+$$
+\begin{aligned}
+\left(-\frac{2}{3}a^2b\right)^3 &= \left(-\frac{2}{3}\right)^3 a^{2\cdot 3}b^{1\cdot 3} \\
+&= -\frac{8}{27}a^6b^3
+\end{aligned}
+$$
 ```
 
 ## Le quattro regole a confronto

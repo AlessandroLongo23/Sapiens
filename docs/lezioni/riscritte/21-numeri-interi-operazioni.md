@@ -10,11 +10,21 @@ La regola per sommare due interi dipende dai loro segni: se sono [concordi](/mat
 
 La somma di due interi concordi ha lo stesso segno degli addendi e per valore assoluto la somma dei valori assoluti:
 
-$$(+3) + (+5) = +8 \qquad (-3) + (-5) = -8$$
+$$
+\begin{gathered}
+(+3) + (+5) = +8 \\
+(-3) + (-5) = -8
+\end{gathered}
+$$
 
 La somma di due interi discordi ha il segno dell'addendo con il valore assoluto maggiore e per valore assoluto la differenza tra il valore assoluto maggiore e il minore:
 
-$$(+7) + (-4) = +3 \qquad (-7) + (+4) = -3$$
+$$
+\begin{gathered}
+(+7) + (-4) = +3 \\
+(-7) + (+4) = -3
+\end{gathered}
+$$
 
 In $(-7) + (+4)$ i valori assoluti sono $7$ e $4$: la differenza è $7 - 4 = 3$, e il segno è quello di $-7$, che ha il valore assoluto maggiore. Se gli addendi sono opposti la somma è $0$, per esempio $(-6) + (+6) = 0$. Lo $0$ resta l'elemento neutro: $(-9) + 0 = -9$.
 
@@ -84,7 +94,14 @@ Una **somma algebrica** è una sequenza di addizioni e sottrazioni tra interi, c
 
 In una somma algebrica i termini si possono spostare e raggruppare come si vuole, purché ognuno si porti dietro il suo segno. Conviene sommare a parte i positivi e i negativi:
 
-$$5 - 8 + 3 - 7 + 2 = (5 + 3 + 2) - (8 + 7) = 10 - 15 = -5$$
+$$
+\begin{aligned}
+&5 - 8 + 3 - 7 + 2 \\
+&= (5 + 3 + 2) - (8 + 7) \\
+&= 10 - 15 \\
+&= -5
+\end{aligned}
+$$
 
 Quando un numero con il suo segno è preceduto da $+$ o da $-$, i due segni si riducono a uno: segni uguali danno $+$, segni diversi danno $-$.
 
@@ -129,9 +146,19 @@ $7 - (3 - 5 + 2)$ non è $7 - 3 - 5 + 2 = 1$: il $-$ davanti alla parentesi camb
 
 Il prodotto di due interi ha per valore assoluto il prodotto dei valori assoluti; il segno è $+$ se i fattori sono concordi e $-$ se sono discordi. Se un fattore è $0$, il prodotto è $0$.
 
-$$(+3) \cdot (+4) = +12 \qquad (-3) \cdot (-4) = +12$$
+$$
+\begin{gathered}
+(+3) \cdot (+4) = +12 \\
+(-3) \cdot (-4) = +12
+\end{gathered}
+$$
 
-$$(+3) \cdot (-4) = -12 \qquad (-3) \cdot (+4) = -12$$
+$$
+\begin{gathered}
+(+3) \cdot (-4) = -12 \\
+(-3) \cdot (+4) = -12
+\end{gathered}
+$$
 
 Questa è la **regola dei segni**, e vale anche per la divisione:
 
@@ -158,7 +185,13 @@ In un prodotto lungo conta i fattori negativi e scrivi subito il segno; poi molt
 
 Dati due interi $a$ e $b$ con $b \neq 0$, il quoziente $a : b$ è il numero intero $q$ tale che $q \cdot b = a$, quando esiste. Il segno segue la regola dei segni, e il valore assoluto è il quoziente dei valori assoluti:
 
-$$(-12) : (+3) = -4 \qquad (-12) : (-4) = +3 \qquad (+15) : (-5) = -3$$
+$$
+\begin{gathered}
+(-12) : (+3) = -4 \\
+(-12) : (-4) = +3 \\
+(+15) : (-5) = -3
+\end{gathered}
+$$
 
 Per esempio $(-12) : (+3) = -4$ perché $(-4) \cdot (+3) = -12$.
 
@@ -226,7 +259,12 @@ Togliendo le parentesi: la tonda è preceduta da $-$, quindi $15 - [4 - 6 + 11 +
 
 ```ad-example
 Esempio 5: tonde, quadre e graffe
-$$-[5 - (3 - 8)] + \{-2 \cdot [4 - (-6 + 1)]\} : (-3)$$
+$$
+\begin{aligned}
+&-[5 - (3 - 8)] + \{ \\
+&\quad -2 \cdot [4 - (-6 + 1)]\} : (-3)
+\end{aligned}
+$$
 Tonde: $3 - 8 = -5$ e $-6 + 1 = -5$. L'espressione diventa $-[5 - (-5)] + \{-2 \cdot [4 - (-5)]\} : (-3)$.
 
 Quadre: $5 - (-5) = 5 + 5 = 10$ e $4 - (-5) = 4 + 5 = 9$. Resta $-10 + \{-2 \cdot 9\} : (-3)$.

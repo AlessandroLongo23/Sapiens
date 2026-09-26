@@ -64,11 +64,26 @@ $$(2^3)^2 = 2^3 \cdot 2^3 = 2^{3 + 3} = 2^6 = 64$$
 
 Con lo stesso esponente si raggruppano i fattori a coppie:
 
-$$2^3 \cdot 5^3 = (2 \cdot 2 \cdot 2) \cdot (5 \cdot 5 \cdot 5) = (2 \cdot 5) \cdot (2 \cdot 5) \cdot (2 \cdot 5) = 10^3 = 1000$$
+$$
+\begin{aligned}
+2^3 \cdot 5^3 &= (2 \cdot 2 \cdot 2) \cdot (5 \cdot 5 \cdot 5) \\
+&= (2 \cdot 5) \cdot (2 \cdot 5) \cdot (2 \cdot 5) \\
+&= 10^3 \\
+&= 1000
+\end{aligned}
+$$
 
 ```ad-example
 Esempio 1: stessa base
-$$2^5 \cdot 2^3 : 2^6 = 2^{5 + 3} : 2^6 = 2^8 : 2^6 = 2^{8 - 6} = 2^2 = 4$$
+$$
+\begin{aligned}
+2^5 \cdot 2^3 : 2^6 &= 2^{5 + 3} : 2^6 \\
+&= 2^8 : 2^6 \\
+&= 2^{8 - 6} \\
+&= 2^2 \\
+&= 4
+\end{aligned}
+$$
 Le operazioni si fanno da sinistra a destra, come in ogni espressione: prima il prodotto, poi il quoziente.
 ```
 
@@ -79,7 +94,14 @@ $2^2 + 2^3 = 4 + 8 = 12$, mentre $2^{2+3} = 32$. La regola $a^m \cdot a^n = a^{m
 
 ```ad-example
 Esempio 2: potenza di potenza ed esponente zero
-$$[(3^4)^2 : 3^5] \cdot 3^0 = [3^8 : 3^5] \cdot 1 = 3^3 = 27$$
+$$
+\begin{aligned}
+&[(3^4)^2 : 3^5] \cdot 3^0 \\
+&= [3^8 : 3^5] \cdot 1 \\
+&= 3^3 \\
+&= 27
+\end{aligned}
+$$
 ```
 
 ```ad-warning
@@ -118,6 +140,11 @@ Nell'ordine delle operazioni le potenze vengono prima di moltiplicazioni e divis
 
 Le potenze di $10$ servono a scrivere in forma compatta i numeri grandi e a leggere la scrittura decimale:
 
-$$4352 = 4 \cdot 10^3 + 3 \cdot 10^2 + 5 \cdot 10^1 + 2 \cdot 10^0$$
+$$
+\begin{aligned}
+4352 &= 4 \cdot 10^3 + 3 \cdot 10^2 \\
+&\quad + 5 \cdot 10^1 + 2 \cdot 10^0
+\end{aligned}
+$$
 
 Un numero che finisce con molti zeri si scrive come prodotto per una potenza di $10$: $3\,000\,000 = 3 \cdot 10^6$, e $250\,000 = 25 \cdot 10^4$. La notazione scientifica, che usa anche numeri decimali davanti alla potenza di $10$, si studia con i numeri razionali.

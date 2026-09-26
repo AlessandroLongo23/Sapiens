@@ -31,7 +31,14 @@ Due criteri si combinano solo se i numeri non hanno fattori primi in comune: per
 
 Primo: ha esattamente due divisori, $1$ e sé stesso. Composto: maggiore di $1$ e non primo. $0$ e $1$ non sono né primi né composti; $2$ è l'unico primo pari. I primi sono infiniti.
 
-$$2,\ 3,\ 5,\ 7,\ 11,\ 13,\ 17,\ 19,\ 23,\ 29,\ 31,\ 37,\ 41,\ 43,\ 47,\ 53,\ 59,\ 61,\ 67,\ 71,\ 73,\ 79,\ 83,\ 89,\ 97$$
+$$
+\begin{gathered}
+2,\ 3,\ 5,\ 7,\ 11,\ 13,\ 17,\ 19, \\
+23,\ 29,\ 31,\ 37,\ 41,\ 43,\ 47, \\
+53,\ 59,\ 61,\ 67,\ 71,\ 73,\ 79, \\
+83,\ 89,\ 97
+\end{gathered}
+$$
 
 Crivello di Eratostene fino a $100$:
 

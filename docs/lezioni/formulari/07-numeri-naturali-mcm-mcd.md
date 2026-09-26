@@ -26,7 +26,12 @@ $$\text{MCD}(a, b) = \text{MCD}(b, r)$$
 
 Per due numeri $a$ e $b$ diversi da zero:
 
-$$\text{MCD}(a, b) \cdot \text{MCM}(a, b) = a \cdot b \qquad \text{MCM}(a, b) = \frac{a \cdot b}{\text{MCD}(a, b)}$$
+$$
+\begin{gathered}
+\text{MCD}(a, b) \cdot \text{MCM}(a, b) = a \cdot b \\
+\text{MCM}(a, b) = \frac{a \cdot b}{\text{MCD}(a, b)}
+\end{gathered}
+$$
 
 Due numeri sono primi tra loro quando il loro MCD è $1$; in quel caso il MCM è il prodotto: $\text{MCM}(8, 15) = 120$.
 

@@ -32,7 +32,12 @@ $\left(-\dfrac{2}{3}\right)^3 = \left(-\dfrac{2}{3}\right) \cdot \left(-\dfrac{2
 
 In $\left(-\dfrac{2}{3}\right)^2$ la base è $-\dfrac{2}{3}$, segno compreso. In $-\left(\dfrac{2}{3}\right)^2$ la base è $\dfrac{2}{3}$: prima si calcola la potenza, poi si mette il segno meno davanti al risultato. È la differenza tra $(-a)^n$ e $-a^n$ spiegata in [Potenze in ℤ](/materiale/scuola-superiore/matematica/numeri-interi/potenze-in-z).
 
-$$\left(-\dfrac{2}{3}\right)^2 = +\dfrac{4}{9} \qquad\qquad -\left(\dfrac{2}{3}\right)^2 = -\dfrac{4}{9}$$
+$$
+\begin{aligned}
+\left(-\dfrac{2}{3}\right)^2 &= +\dfrac{4}{9} \qquad\qquad -\left(\dfrac{2}{3}\right)^2 \\
+&= -\dfrac{4}{9}
+\end{aligned}
+$$
 
 ```ad-warning
 Dimenticare le parentesi

@@ -30,13 +30,31 @@ Vale anche al contrario: $4 : 6 = 10 : 15$ è una proporzione perché $6 \cdot 1
 2. Dividi per il numero che moltiplica $x$.
 3. Controlla rifacendo i due prodotti.
 
-$$x : 12 = 5 : 4 \quad \Longrightarrow \quad 4x = 60 \quad \Longrightarrow \quad x = 15$$
+$$
+\begin{gathered}
+x : 12 = 5 : 4 \\
+\Longrightarrow \quad 4x = 60 \\
+\Longrightarrow \quad x = 15
+\end{gathered}
+$$
 
-$$7 : x = 21 : 9 \quad \Longrightarrow \quad 21x = 63 \quad \Longrightarrow \quad x = 3$$
+$$
+\begin{gathered}
+7 : x = 21 : 9 \\
+\Longrightarrow \quad 21x = 63 \\
+\Longrightarrow \quad x = 3
+\end{gathered}
+$$
 
 ## Percentuali
 
-$$p\% = \dfrac{p}{100} \qquad 25\% = \dfrac{1}{4} = 0{,}25 \qquad 8\% = 0{,}08$$
+$$
+\begin{gathered}
+p\% = \dfrac{p}{100} \\
+25\% = \dfrac{1}{4} = 0{,}25 \\
+8\% = 0{,}08
+\end{gathered}
+$$
 
 Totale $T$, parte $P$, percentuale $p$:
 
@@ -50,13 +68,23 @@ $$P : T = p : 100$$
 
 ## Aumenti e sconti
 
-$$\text{aumento del } p\%: \ T \cdot \left(1 + \dfrac{p}{100}\right) \qquad \text{sconto del } p\%: \ T \cdot \left(1 - \dfrac{p}{100}\right)$$
+$$
+\begin{gathered}
+\text{aumento del } p\%: \ T \cdot \left(1 + \dfrac{p}{100}\right) \\
+\text{sconto del } p\%: \ T \cdot \left(1 - \dfrac{p}{100}\right)
+\end{gathered}
+$$
 
 Aumento del $12\%$: coefficiente $1{,}12$. Sconto del $15\%$: coefficiente $0{,}85$.
 
 Prezzo prima dello sconto: si divide per il coefficiente. Dopo uno sconto del $20\%$ paghi $48$ €: $48 : 0{,}8 = 60$ €.
 
-$$\text{variazione percentuale} = \dfrac{\text{valore finale} - \text{valore iniziale}}{\text{valore iniziale}} \cdot 100$$
+$$
+\begin{aligned}
+&\text{variazione percentuale} \\
+&= \dfrac{\text{valore finale} - \text{valore iniziale}}{\text{valore iniziale}} \cdot 100
+\end{aligned}
+$$
 
 Variazioni successive: si moltiplicano i coefficienti, in qualunque ordine. Sconto del $20\%$ e poi del $10\%$: $0{,}8 \cdot 0{,}9 = 0{,}72$, sconto totale del $28\%$.
 

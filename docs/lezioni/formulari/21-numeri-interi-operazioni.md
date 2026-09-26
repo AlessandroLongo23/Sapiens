@@ -4,11 +4,21 @@
 
 Concordi (stesso segno): segno comune, si sommano i valori assoluti.
 
-$$(+3) + (+5) = +8 \qquad (-3) + (-5) = -8$$
+$$
+\begin{gathered}
+(+3) + (+5) = +8 \\
+(-3) + (-5) = -8
+\end{gathered}
+$$
 
 Discordi (segni diversi): segno dell'addendo con il valore assoluto maggiore, si sottraggono i valori assoluti.
 
-$$(+7) + (-4) = +3 \qquad (-7) + (+4) = -3$$
+$$
+\begin{gathered}
+(+7) + (-4) = +3 \\
+(-7) + (+4) = -3
+\end{gathered}
+$$
 
 Numeri opposti: $a + (-a) = 0$. Elemento neutro: $a + 0 = a$.
 

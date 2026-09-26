@@ -4,7 +4,13 @@ Con due insiemi se ne possono costruire altri: quello degli elementi che stanno 
 
 In tutta la lezione gli insiemi sono presi dentro un insieme universo $U$, e negli esempi si usano questi tre insiemi:
 
-$$U = \{1, 2, 3, 4, 5, 6, 7, 8\} \qquad A = \{1, 2, 3, 4\} \qquad B = \{3, 4, 5, 6\}$$
+$$
+\begin{gathered}
+U = \{1, 2, 3, 4, 5, 6, 7, 8\} \\
+A = \{1, 2, 3, 4\} \\
+B = \{3, 4, 5, 6\}
+\end{gathered}
+$$
 
 Nel diagramma di Eulero-Venn, ogni elemento sta nella sua zona:
 
@@ -110,7 +116,13 @@ Due insiemi che non hanno elementi in comune, cioè tali che $A \cap B = \emptys
 
 L'intersezione serve anche con insiemi descritti da una proprietà: l'intersezione tra i numeri naturali pari e i multipli di 3 contiene i numeri che sono pari e multipli di 3 insieme, cioè i multipli di 6.
 
-$$\{x \in \mathbb{N} \mid x \text{ è pari}\} \cap \{x \in \mathbb{N} \mid x \text{ è multiplo di } 3\} = \{0, 6, 12, 18, \dots\}$$
+$$
+\begin{gathered}
+\{x \in \mathbb{N} \mid x \text{ è pari}\} \\
+\cap \, \{x \in \mathbb{N} \mid x \text{ è multiplo di } 3\} \\
+= \{0, 6, 12, 18, \dots\}
+\end{gathered}
+$$
 
 Qualunque sia $A$, valgono $A \cap A = A$ e $A \cap \emptyset = \emptyset$.
 
@@ -168,7 +180,12 @@ Oltre a $\overline{A}$ trovi anche le scritture $\complement_U A$ e $A^c$.
 ```ad-example
 Esempio 4: complementari
 Con $U = \{1, 2, 3, 4, 5, 6, 7, 8\}$:
-$$\overline{A} = \{5, 6, 7, 8\} \qquad \overline{B} = \{1, 2, 7, 8\}$$
+$$
+\begin{gathered}
+\overline{A} = \{5, 6, 7, 8\} \\
+\overline{B} = \{1, 2, 7, 8\}
+\end{gathered}
+$$
 ```
 
 Nel diagramma il complementare di $A$ è tutto il rettangolo tranne il cerchio di $A$:
@@ -193,7 +210,12 @@ Il complementare di $\{2, 4\}$ non si può calcolare finché non sai qual è $U$
 
 Dalla definizione seguono alcune uguaglianze che valgono per ogni insieme $A$ contenuto in $U$:
 
-$$A \cup \overline{A} = U \qquad A \cap \overline{A} = \emptyset \qquad \overline{\overline{A}} = A \qquad \overline{U} = \emptyset \qquad \overline{\emptyset} = U$$
+$$
+\begin{gathered}
+A \cup \overline{A} = U \qquad A \cap \overline{A} = \emptyset \\
+\overline{\overline{A}} = A \qquad \overline{U} = \emptyset \qquad \overline{\emptyset} = U
+\end{gathered}
+$$
 
 ```ad-note
 Complementare rispetto a un insieme qualsiasi
@@ -215,9 +237,19 @@ Si legge "$A$ per $B$".
 ```ad-example
 Esempio 5: prodotto cartesiano
 Siano $P = \{1, 2\}$ e $Q = \{a, b, c\}$. Si abbina ogni elemento di $P$ con ogni elemento di $Q$, tenendo quello di $P$ al primo posto:
-$$P \times Q = \{(1, a), (1, b), (1, c), (2, a), (2, b), (2, c)\}$$
+$$
+\begin{gathered}
+P \times Q = \{(1, a), (1, b), (1, c), \\
+(2, a), (2, b), (2, c)\}
+\end{gathered}
+$$
 Scambiando i due insiemi, l'elemento di $Q$ va al primo posto:
-$$Q \times P = \{(a, 1), (a, 2), (b, 1), (b, 2), (c, 1), (c, 2)\}$$
+$$
+\begin{gathered}
+Q \times P = \{(a, 1), (a, 2), (b, 1), \\
+(b, 2), (c, 1), (c, 2)\}
+\end{gathered}
+$$
 Le coppie di $P \times Q$ e di $Q \times P$ sono diverse, quindi $P \times Q \neq Q \times P$. In tutti e due i casi le coppie sono $2 \cdot 3 = 6$.
 ```
 
@@ -272,7 +304,12 @@ Esempio 6: tutte le operazioni su insiemi descritti a parole
 Sia $U$ l'insieme dei numeri naturali da 1 a 12, $A$ l'insieme dei divisori di 12 e $B$ l'insieme dei numeri dispari di $U$. Calcola $A \cup B$, $A \cap B$, $A \setminus B$, $B \setminus A$, $\overline{A}$ e $\overline{A \cup B}$.
 
 Prima si elencano gli elementi:
-$$A = \{1, 2, 3, 4, 6, 12\} \qquad B = \{1, 3, 5, 7, 9, 11\}$$
+$$
+\begin{gathered}
+A = \{1, 2, 3, 4, 6, 12\} \\
+B = \{1, 3, 5, 7, 9, 11\}
+\end{gathered}
+$$
 Poi si calcola:
 - $A \cup B = \{1, 2, 3, 4, 5, 6, 7, 9, 11, 12\}$
 - $A \cap B = \{1, 3\}$

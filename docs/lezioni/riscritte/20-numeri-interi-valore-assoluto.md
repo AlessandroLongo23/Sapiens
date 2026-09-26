@@ -214,7 +214,12 @@ $|-6| = 6 \qquad -(-4) = 4 \qquad -|-9| = -9 \qquad -|5| = -5 \qquad -(+2) = -2$
 
 I negativi sono $-9, -5, -2$ e i positivi $4, 6$, quindi
 
-$$-|-9| < -|5| < -(+2) < -(-4) < |-6|$$
+$$
+\begin{aligned}
+&-|-9| < -|5| < \\
+&\quad -(+2) < -(-4) < |-6|
+\end{aligned}
+$$
 
 cioè $-9 < -5 < -2 < 4 < 6$.
 ```

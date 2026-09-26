@@ -38,7 +38,12 @@ $$3 \cdot 2^2 = 12 \qquad (3 \cdot 2)^2 = 36$$
 
 ## Potenze di 10
 
-$$4352 = 4 \cdot 10^3 + 3 \cdot 10^2 + 5 \cdot 10^1 + 2 \cdot 10^0$$
+$$
+\begin{aligned}
+4352 &= 4 \cdot 10^3 + 3 \cdot 10^2 \\
+&\quad + 5 \cdot 10^1 + 2 \cdot 10^0
+\end{aligned}
+$$
 
 Numeri con molti zeri: $3\,000\,000 = 3 \cdot 10^6$, $250\,000 = 25 \cdot 10^4$.
 

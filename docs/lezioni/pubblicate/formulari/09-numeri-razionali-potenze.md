@@ -14,7 +14,12 @@ Con base negativa, esponente pari dà risultato positivo, esponente dispari dà 
 
 Le parentesi decidono qual è la base:
 
-$$\left(-\dfrac{2}{3}\right)^2 = +\dfrac{4}{9} \qquad\qquad -\left(\dfrac{2}{3}\right)^2 = -\dfrac{4}{9}$$
+$$
+\begin{aligned}
+\left(-\dfrac{2}{3}\right)^2 &= +\dfrac{4}{9} \qquad\qquad -\left(\dfrac{2}{3}\right)^2 \\
+&= -\dfrac{4}{9}
+\end{aligned}
+$$
 
 ## Esponente 1 ed esponente 0
 

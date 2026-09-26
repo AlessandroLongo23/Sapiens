@@ -86,13 +86,23 @@ $(-2)^3$ non fa $8$: i fattori negativi sono tre, due si accoppiano e il terzo r
 
 La base $-1$ merita un posto a parte, perché $|-1|^n = 1$ e resta solo il segno:
 
-$$(-1)^n = 1 \text{ se } n \text{ è pari} \qquad (-1)^n = -1 \text{ se } n \text{ è dispari}$$
+$$
+\begin{gathered}
+(-1)^n = 1 \text{ se } n \text{ è pari} \\
+(-1)^n = -1 \text{ se } n \text{ è dispari}
+\end{gathered}
+$$
 
 Per esempio $(-1)^{100} = 1$ e $(-1)^{37} = -1$, senza fare nessuna moltiplicazione.
 
 Lo stesso ragionamento lega le potenze di due numeri opposti. Con esponente pari sono uguali, con esponente dispari sono opposte (se $n = 0$, serve $a \neq 0$):
 
-$$(-a)^n = a^n \text{ se } n \text{ è pari} \qquad (-a)^n = -a^n \text{ se } n \text{ è dispari}$$
+$$
+\begin{gathered}
+(-a)^n = a^n \text{ se } n \text{ è pari} \\
+(-a)^n = -a^n \text{ se } n \text{ è dispari}
+\end{gathered}
+$$
 
 Per esempio $(-4)^2 = 4^2 = 16$ e $(-4)^3 = -4^3 = -64$.
 
@@ -100,7 +110,14 @@ Per esempio $(-4)^2 = 4^2 = 16$ e $(-4)^3 = -4^3 = -64$.
 
 L'esponente si riferisce solo a quello che gli sta subito a sinistra: un numero o una parentesi. In $(-3)^2$ gli sta a sinistra la parentesi, quindi la base è $-3$. In $-3^2$ gli sta a sinistra il $3$, quindi la base è $3$, e il meno davanti indica l'opposto del risultato: si calcola prima la potenza e poi si cambia segno.
 
-$$(-3)^2 = (-3) \cdot (-3) = 9 \qquad\qquad -3^2 = -(3 \cdot 3) = -9$$
+$$
+\begin{aligned}
+(-3)^2 &= (-3) \cdot (-3) \\
+&= 9 \qquad\qquad -3^2 \\
+&= -(3 \cdot 3) \\
+&= -9
+\end{aligned}
+$$
 
 Con esponente dispari le due scritture danno lo stesso numero, ma per motivi diversi: $(-2)^3 = -8$ perché i fattori negativi sono tre, $-2^3 = -8$ perché è l'opposto di $2^3 = 8$.
 
@@ -162,7 +179,13 @@ Calcola $-2^4 + (-2)^3 \cdot (-1)^{10} - (-5)^0$.
 
 In $-2^4$ la base è $2$: $2^4 = 16$, e il meno davanti dà $-16$. Poi $(-2)^3 = -8$, $(-1)^{10} = 1$ e $(-5)^0 = 1$. Si fa prima la moltiplicazione:
 
-$$-16 + (-8) \cdot 1 - 1 = -16 - 8 - 1 = -25$$
+$$
+\begin{aligned}
+&-16 + (-8) \cdot 1 - 1 \\
+&= -16 - 8 - 1 \\
+&= -25
+\end{aligned}
+$$
 ```
 
 ```ad-example
@@ -171,7 +194,15 @@ Calcola $(-3)^7 : 3^5 - (-3)^4 : 3^3$.
 
 L'esponente $7$ è dispari, quindi $(-3)^7 = -3^7$; l'esponente $4$ è pari, quindi $(-3)^4 = 3^4$. Ora le basi sono uguali:
 
-$$-3^7 : 3^5 - 3^4 : 3^3 = -3^{7-5} - 3^{4-3} = -3^2 - 3^1 = -9 - 3 = -12$$
+$$
+\begin{aligned}
+&-3^7 : 3^5 - 3^4 : 3^3 \\
+&= -3^{7-5} - 3^{4-3} \\
+&= -3^2 - 3^1 \\
+&= -9 - 3 \\
+&= -12
+\end{aligned}
+$$
 
 Nel primo termine il meno è fuori dalla base: $-3^2$ vale $-9$.
 ```

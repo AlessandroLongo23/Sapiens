@@ -4,7 +4,13 @@
 
 Si sommano o sottraggono i numeratori, il denominatore resta:
 
-$$\dfrac{a}{c} + \dfrac{b}{c} = \dfrac{a + b}{c} \qquad \dfrac{a}{c} - \dfrac{b}{c} = \dfrac{a - b}{c} \qquad (c \neq 0)$$
+$$
+\begin{gathered}
+\dfrac{a}{c} + \dfrac{b}{c} = \dfrac{a + b}{c} \\
+\dfrac{a}{c} - \dfrac{b}{c} = \dfrac{a - b}{c} \\
+(c \neq 0)
+\end{gathered}
+$$
 
 ## Addizione e sottrazione con denominatori diversi
 
@@ -40,7 +46,12 @@ Reciproco di $\dfrac{a}{b}$ (con $a \neq 0$): $\dfrac{b}{a}$, perché il prodott
 
 Per dividere si moltiplica per il reciproco del divisore:
 
-$$\dfrac{a}{b} : \dfrac{c}{d} = \dfrac{a}{b} \cdot \dfrac{d}{c} \qquad (b \neq 0,\ c \neq 0,\ d \neq 0)$$
+$$
+\begin{gathered}
+\dfrac{a}{b} : \dfrac{c}{d} = \dfrac{a}{b} \cdot \dfrac{d}{c} \\
+(b \neq 0,\ c \neq 0,\ d \neq 0)
+\end{gathered}
+$$
 
 Esempio: $\dfrac{3}{4} : \dfrac{9}{8} = \dfrac{3}{4} \cdot \dfrac{8}{9} = \dfrac{2}{3}$. La linea di frazione è una divisione: $\dfrac{a}{b} = a : b$.
 

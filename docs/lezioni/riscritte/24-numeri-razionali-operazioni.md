@@ -6,7 +6,13 @@ Con le frazioni si fanno le stesse quattro operazioni dei numeri interi, ma con 
 
 Se due frazioni hanno lo stesso denominatore, si sommano (o si sottraggono) i numeratori e il denominatore resta quello:
 
-$$\dfrac{a}{c} + \dfrac{b}{c} = \dfrac{a + b}{c} \qquad \dfrac{a}{c} - \dfrac{b}{c} = \dfrac{a - b}{c} \qquad (c \neq 0)$$
+$$
+\begin{gathered}
+\dfrac{a}{c} + \dfrac{b}{c} = \dfrac{a + b}{c} \\
+\dfrac{a}{c} - \dfrac{b}{c} = \dfrac{a - b}{c} \\
+(c \neq 0)
+\end{gathered}
+$$
 
 Il denominatore dice in quante parti è diviso l'intero e il numeratore quante di quelle parti prendi: due settimi più tre settimi fanno cinque settimi.
 
@@ -81,7 +87,12 @@ Per scrivere $\dfrac{3}{4}$ in dodicesimi il numeratore va moltiplicato per lo s
 
 Un numero intero è una frazione con denominatore $1$, per esempio $3 = \dfrac{3}{1}$, quindi si somma a una frazione con la stessa regola:
 
-$$3 - \dfrac{7}{4} = \dfrac{12 - 7}{4} = \dfrac{5}{4} \qquad 2 + \dfrac{3}{5} = \dfrac{10 + 3}{5} = \dfrac{13}{5}$$
+$$
+\begin{gathered}
+3 - \dfrac{7}{4} = \dfrac{12 - 7}{4} = \dfrac{5}{4} \\
+2 + \dfrac{3}{5} = \dfrac{10 + 3}{5} = \dfrac{13}{5}
+\end{gathered}
+$$
 
 ```ad-note
 Numeri misti
@@ -112,7 +123,13 @@ $$\dfrac{a}{b} - \dfrac{c}{d} = \dfrac{a}{b} + \left(-\dfrac{c}{d}\right)$$
 Esempio: sottrarre una frazione negativa
 Togliere $-\dfrac{3}{4}$ vuol dire aggiungere $\dfrac{3}{4}$, e $\text{MCM}(6, 4) = 12$:
 
-$$\dfrac{1}{6} - \left(-\dfrac{3}{4}\right) = \dfrac{1}{6} + \dfrac{3}{4} = \dfrac{2 + 9}{12} = \dfrac{11}{12}$$
+$$
+\begin{aligned}
+\dfrac{1}{6} - \left(-\dfrac{3}{4}\right) &= \dfrac{1}{6} + \dfrac{3}{4} \\
+&= \dfrac{2 + 9}{12} \\
+&= \dfrac{11}{12}
+\end{aligned}
+$$
 ```
 
 ## Moltiplicazione
@@ -158,7 +175,12 @@ L'opposto di $\dfrac{2}{5}$ è $-\dfrac{2}{5}$ (la somma fa $0$), il reciproco �
 
 Per dividere per una frazione si moltiplica per il suo reciproco:
 
-$$\dfrac{a}{b} : \dfrac{c}{d} = \dfrac{a}{b} \cdot \dfrac{d}{c} \qquad (b \neq 0,\ c \neq 0,\ d \neq 0)$$
+$$
+\begin{gathered}
+\dfrac{a}{b} : \dfrac{c}{d} = \dfrac{a}{b} \cdot \dfrac{d}{c} \\
+(b \neq 0,\ c \neq 0,\ d \neq 0)
+\end{gathered}
+$$
 
 Il quoziente $\dfrac{a}{b} : \dfrac{c}{d}$ è il numero che, moltiplicato per $\dfrac{c}{d}$, dà $\dfrac{a}{b}$, e $\dfrac{a}{b} \cdot \dfrac{d}{c}$ fa proprio questo: $\dfrac{a}{b} \cdot \dfrac{d}{c} \cdot \dfrac{c}{d} = \dfrac{a}{b} \cdot 1 = \dfrac{a}{b}$. Il segno del quoziente segue la stessa regola del prodotto.
 
@@ -198,7 +220,14 @@ In ℚ valgono le proprietà dell'addizione e della moltiplicazione che conosci 
 
 La proprietà distributiva aiuta nei conti a mente:
 
-$$\dfrac{3}{4} \cdot \left(8 + \dfrac{4}{3}\right) = \dfrac{3}{4} \cdot 8 + \dfrac{3}{4} \cdot \dfrac{4}{3} = 6 + 1 = 7$$
+$$
+\begin{aligned}
+&\dfrac{3}{4} \cdot \left(8 + \dfrac{4}{3}\right) \\
+&= \dfrac{3}{4} \cdot 8 + \dfrac{3}{4} \cdot \dfrac{4}{3} \\
+&= 6 + 1 \\
+&= 7
+\end{aligned}
+$$
 
 Sottrazione e divisione restano non commutative: $\dfrac{1}{2} - \dfrac{1}{3} = \dfrac{1}{6}$ mentre $\dfrac{1}{3} - \dfrac{1}{2} = -\dfrac{1}{6}$, e $\dfrac{1}{2} : \dfrac{1}{3} = \dfrac{3}{2}$ mentre $\dfrac{1}{3} : \dfrac{1}{2} = \dfrac{2}{3}$. Scambiando i termini si ottiene l'opposto nella sottrazione e il reciproco nella divisione.
 
@@ -241,7 +270,14 @@ Calcola $\left(-\dfrac{8}{9}\right) : \left(-\dfrac{4}{15}\right)$.
 
 Dividendo e divisore sono concordi, quindi il quoziente è positivo. Si capovolge il divisore e poi si semplifica: $8$ con $4$, $15$ con $9$ (per $3$).
 
-$$\left(-\dfrac{8}{9}\right) : \left(-\dfrac{4}{15}\right) = +\dfrac{8}{9} \cdot \dfrac{15}{4} = \dfrac{2}{3} \cdot \dfrac{5}{1} = \dfrac{10}{3}$$
+$$
+\begin{aligned}
+&\left(-\dfrac{8}{9}\right) : \left(-\dfrac{4}{15}\right) \\
+&= +\dfrac{8}{9} \cdot \dfrac{15}{4} \\
+&= \dfrac{2}{3} \cdot \dfrac{5}{1} \\
+&= \dfrac{10}{3}
+\end{aligned}
+$$
 ```
 
 ```ad-example
@@ -287,7 +323,12 @@ Marta spende i $\dfrac{2}{5}$ dello stipendio per l'affitto e $\dfrac{1}{4}$ per
 
 Tutte e due le frazioni sono dello stipendio, quindi si sommano, con $\text{MCM}(5, 4) = 20$:
 
-$$\dfrac{2}{5} + \dfrac{1}{4} = \dfrac{8 + 5}{20} = \dfrac{13}{20} \qquad 1 - \dfrac{13}{20} = \dfrac{20 - 13}{20} = \dfrac{7}{20}$$
+$$
+\begin{gathered}
+\dfrac{2}{5} + \dfrac{1}{4} = \dfrac{8 + 5}{20} = \dfrac{13}{20} \\
+1 - \dfrac{13}{20} = \dfrac{20 - 13}{20} = \dfrac{7}{20}
+\end{gathered}
+$$
 
 Le restano i $\dfrac{7}{20}$ dello stipendio. Se lo stipendio è di $1600$ euro, sono $1600 : 20 \cdot 7 = 560$ euro.
 ```

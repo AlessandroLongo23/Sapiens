@@ -2,7 +2,12 @@
 
 ## L'insieme ℤ
 
-$$\mathbb{Z} = \{\dots, -3, -2, -1, 0, 1, 2, 3, \dots\} \qquad \mathbb{N} \subset \mathbb{Z}$$
+$$
+\begin{gathered}
+\mathbb{Z} = \{\dots, -3, -2, -1, 0, 1, 2, 3, \dots\} \\
+\mathbb{N} \subset \mathbb{Z}
+\end{gathered}
+$$
 
 Positivi: maggiori di $0$. Negativi: minori di $0$. Lo zero non è né positivo né negativo. $+7 = 7$, ma $-7 \neq 7$.
 
