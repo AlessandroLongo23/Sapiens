@@ -76,8 +76,14 @@ if (apply)
 	}
 
 // 3. Lessons: the chemistry lesson with the file's slug.
-const { data: nodes, error } = await db.from('content_nodes').select('id,parent_id,slug,type');
-if (error) throw new Error(error.message);
+// In pages: a select stops at 1000 rows, and the table is larger.
+const nodes: { id: string; parent_id: string | null; slug: string; type: string }[] = [];
+for (let from = 0; ; from += 1000) {
+	const { data, error } = await db.from('content_nodes').select('id,parent_id,slug,type').order('id').range(from, from + 999);
+	if (error) throw new Error(error.message);
+	nodes.push(...data);
+	if (data.length < 1000) break;
+}
 const byId = new Map(nodes.map((n) => [n.id, n]));
 const level = nodes.find((n) => n.slug === 'high_school' && !n.parent_id)!;
 const subject = nodes.find((n) => n.slug === 'chemistry' && n.parent_id === level.id)!;

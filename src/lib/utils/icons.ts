@@ -5,8 +5,10 @@ import {
 	BookOpen,
 	Calculator,
 	CodeXml,
+	DraftingCompass,
 	Layers,
 	LibraryBig,
+	Microscope,
 	Pi,
 	School,
 	University,
@@ -31,6 +33,8 @@ const BY_SLUG: Record<string, IconComponent> = {
 	'fisica-1': Atom,
 	'fisica-2': Atom,
 	chemistry: Beaker,
+	science: Microscope,
+	technology: DraftingCompass,
 	'computer-science': CodeXml,
 	'fondamenti-informatica': CodeXml
 };
@@ -53,6 +57,9 @@ const TONE_BY_SLUG: Record<string, SubjectTone> = {
 	'fisica-1': 'physics',
 	'fisica-2': 'physics',
 	chemistry: 'chemistry',
+	// The middle-school subjects borrow the tone of their closest high-school one.
+	science: 'chemistry',
+	technology: 'cs',
 	'computer-science': 'cs',
 	'fondamenti-informatica': 'cs'
 };

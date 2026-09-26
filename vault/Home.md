@@ -13,7 +13,7 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 
 Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: lo studente sceglie il livello prima della prova, supera un livello con 8 risposte giuste su 10 e può saltare avanti con una prova di salto. Nel codice, non ancora pubblicato. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]]. Lo stesso giorno si è deciso che ogni lezione dichiara i suoi prerequisiti: il grafo che ne esce serve a suggerire un ripasso dopo una prova andata male, e dopo la beta diventerà una torre di blocchi (vedi [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]).
 
-Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]].
+Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]]. Lo stesso giorno fisica e informatica delle superiori e le medie (matematica, Scienze e Tecnologia) hanno avuto l'albero per anno dal programma ministeriale: 856 lezioni ancora vuote. Vedi [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
@@ -36,6 +36,7 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
 - [[2026-09-26 Gli adesivi sono per tutti gli iscritti]]
+- [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]
 - [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]
 - [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]
 - [[2026-09-26 Gli adesivi li crea Sapiens, gli studenti poi solo da modelli]]

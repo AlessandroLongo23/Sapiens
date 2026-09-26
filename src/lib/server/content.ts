@@ -24,9 +24,28 @@ let inflight: Promise<FlatNode[]> | null = null;
 
 const LIGHT_COLUMNS = 'id,parent_id,type,title,slug,description,position,updated_at,school_year';
 
+/** PostgREST returns at most this many rows per request, and the tree is larger. */
+const PAGE = 1000;
+
+/** Every node's light columns, read page by page in a stable order (position, then id). */
+async function fetchAllLightRows() {
+	const rows = [];
+	for (let from = 0; ; from += PAGE) {
+		const res = await supabase
+			.from('content_nodes')
+			.select(LIGHT_COLUMNS)
+			.order('position', { ascending: true })
+			.order('id', { ascending: true })
+			.range(from, from + PAGE - 1);
+		if (res.error) return { data: null, error: res.error };
+		rows.push(...res.data);
+		if (res.data.length < PAGE) return { data: rows, error: null };
+	}
+}
+
 async function fetchFlatNodes(): Promise<FlatNode[]> {
 	const [nodesRes, theoryRes, formularyRes, flashcardsRes] = await Promise.all([
-		supabase.from('content_nodes').select(LIGHT_COLUMNS).order('position', { ascending: true }),
+		fetchAllLightRows(),
 		supabase.from('content_nodes').select('id').not('theory', 'is', null).neq('theory', ''),
 		supabase.from('content_nodes').select('id').not('formulary', 'is', null).neq('formulary', ''),
 		supabase.from('content_nodes').select('id').not('flashcards', 'is', null)

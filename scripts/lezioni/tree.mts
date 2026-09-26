@@ -1,10 +1,13 @@
 /**
- * Applies a tree file to one high-school subject of content_nodes: docs/lezioni/albero.md to maths (the
- * default), docs/lezioni/chimica/albero.md to chemistry.
+ * Applies a tree file to one subject of content_nodes: docs/lezioni/albero.md to high-school maths (the
+ * default), docs/lezioni/chimica/albero.md to chemistry, docs/lezioni/medie/<materia>/albero.md to a
+ * middle-school subject with `--level middle_school`. A subject that does not exist yet is created with the
+ * title given by `--title`.
  *
  *   node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/tree.mts           # plan only
  *   node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/tree.mts --apply
  *   node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/tree.mts --subject chemistry --file docs/lezioni/chimica/albero.md
+ *   node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/tree.mts --level middle_school --subject science --title Scienze --file docs/lezioni/medie/scienze/albero.md
  *
  * Nodes are matched by slug and reused (title, parent and position updated), so ids stay stable;
  * missing ones are created. A lesson listed with `+ old-slug` absorbs that node, which is deleted
@@ -28,7 +31,9 @@ const arg = (name: string, fallback: string) => {
 	const i = process.argv.indexOf(`--${name}`);
 	return i > 0 ? process.argv[i + 1] : fallback;
 };
+const levelSlug = arg('level', 'high_school');
 const subjectSlug = arg('subject', 'math');
+const subjectTitle = arg('title', '');
 const file = arg('file', 'docs/lezioni/albero.md');
 const YEARS: Record<string, number> = { primo: 1, secondo: 2, terzo: 3, quarto: 4, quinto: 5 };
 
@@ -63,12 +68,20 @@ function parse(md: string): Chapter[] {
 
 const spec = parse(readFileSync(file, 'utf8'));
 const db = createClient(process.env.PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
-const { data, error } = await db.from('content_nodes').select('id,parent_id,type,title,slug,position,theory,formulary');
-if (error) throw error;
-const all = data as Row[];
-const level = all.find((n) => n.slug === 'high_school')!;
-const math = all.find((n) => n.slug === subjectSlug && n.parent_id === level.id);
-if (!math) throw new Error(`materia ${subjectSlug} non trovata sotto high_school`);
+// Read in pages: a select stops at 1000 rows, and the table is larger.
+const all: Row[] = [];
+for (let from = 0; ; from += 1000) {
+	const { data, error } = await db.from('content_nodes').select('id,parent_id,type,title,slug,position,theory,formulary').order('id').range(from, from + 999);
+	if (error) throw error;
+	all.push(...(data as Row[]));
+	if (data.length < 1000) break;
+}
+const level = all.find((n) => n.slug === levelSlug && n.parent_id === null);
+if (!level) throw new Error(`livello ${levelSlug} non trovato`);
+const found = all.find((n) => n.slug === subjectSlug && n.parent_id === level.id);
+if (!found && !subjectTitle) throw new Error(`materia ${subjectSlug} non trovata sotto ${levelSlug}: per crearla serve --title`);
+// A subject still to create stands in with an id no node has, so it has no chapters.
+const math: Row = found ?? { id: 'nuova', parent_id: level.id, type: 'subject', title: subjectTitle, slug: subjectSlug, position: all.filter((n) => n.parent_id === level.id).length, theory: null, formulary: null };
 const oldChapters = all.filter((n) => n.parent_id === math.id);
 const oldLessons = all.filter((n) => oldChapters.some((c) => c.id === n.parent_id));
 const byId = new Map(all.map((n) => [n.id, n]));
@@ -101,7 +114,7 @@ for (const c of spec) for (const a of c.absorbs) {
 	const n = oldChapters.find((x) => x.slug === a);
 	if (!n) continue;
 	for (const child of oldLessons.filter((l) => l.parent_id === n.id))
-		if (!spec.some((s) => s.lessons.some((l) => l.slug === child.slug))) errors.push(`il capitolo assorbito ${a} ha una lezione che non va da nessuna parte: ${child.slug}`);
+		if (!lessonSlugs.includes(child.slug)) errors.push(`il capitolo assorbito ${a} ha una lezione che non va da nessuna parte: ${child.slug}`);
 }
 
 // Plan.
@@ -143,10 +156,11 @@ for (const [ci, c] of spec.entries()) {
 		const from = `${base}/${slugify(oldParent.title)}/${slugify(ol.title)}`;
 		const to = `${base}/${slugify(c.title)}/${slugify(l.title)}`;
 		if (has(ol.theory) && from !== to) aliases.push([from, to]);
-		if (moved) configMoves.push([`high_school/${subjectSlug}/${oldParent.slug}/${l.slug}`, `high_school/${subjectSlug}/${c.slug}/${l.slug}`]);
+		if (moved) configMoves.push([`${levelSlug}/${subjectSlug}/${oldParent.slug}/${l.slug}`, `${levelSlug}/${subjectSlug}/${c.slug}/${l.slug}`]);
 	}
 }
 
+if (!found) plan.unshift(`+ materia ${levelSlug}/${subjectSlug} "${subjectTitle}"`);
 console.log(plan.join('\n'));
 console.log(`\ncapitoli ${spec.length}, lezioni ${spec.reduce((s, c) => s + c.lessons.length, 0)}; da creare ${creates}, da aggiornare ${updates}, da cancellare ${deletes}`);
 // Lesson redirects first: aliasTarget() takes the first match, and a chapter alias would also match its lessons as a prefix.
@@ -164,7 +178,12 @@ if (!apply) {
 	process.exit(0);
 }
 
-// Apply: chapters, then lessons, then deletions (children have moved by then).
+// Apply: the subject if new, chapters, then lessons, then deletions (children have moved by then).
+if (!found) {
+	const { data: row, error } = await db.from('content_nodes').insert({ parent_id: level.id, type: 'subject', title: math.title, slug: math.slug, position: math.position }).select('id').single();
+	if (error) throw new Error(`materia ${subjectSlug}: ${error.message}`);
+	math.id = row.id;
+}
 const chapterId = new Map<string, string>();
 for (const [ci, c] of spec.entries()) {
 	const oc = oldChapters.find((x) => x.slug === c.slug);

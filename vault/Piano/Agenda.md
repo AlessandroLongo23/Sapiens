@@ -38,6 +38,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-09-26: alberi per anno di fisica e informatica delle superiori e di matematica, Scienze e Tecnologia delle medie, dal programma ministeriale; applicati al database. Vedi [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]].
 - 2026-09-26: sistema degli adesivi: li crea Sapiens (gli studenti poi solo da modelli), SVG scritti da Claude senza aspettare Dario, pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Copertine con adesivi su ogni pagina indice del materiale. Vedi [[2026-09-26 Sistema degli adesivi]].
 - 2026-09-25: prerequisiti come DAG di lezioni con un solo tipo di arco, scritti nei lotti; ripasso suggerito dopo una prova andata male per la beta; torre dopo la beta. Vedi [[2026-09-25 Mappa dei prerequisiti]].
 - 2026-09-26: progressi dello studente, le sette funzioni: errori nel riepilogo, prova da riprendere, rifai gli errori e `/errori`, progressi nel materiale, pratica quotidiana e serie, schermo "Oggi" come apertura dell'app, metriche della beta. Da pubblicare con un deploy. Vedi [[Progressi dello studente]] e [[2026-09-26 Progressi dello studente]].
