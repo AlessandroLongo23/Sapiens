@@ -93,7 +93,10 @@ export function presentProblem(problem: string): ProblemBlock[] {
 	let body = problem.trim();
 	const env = /^\\begin\{(array|gathered|aligned)\}(?:\{[^}]*\})?([\s\S]*)\\end\{\1\}$/.exec(body);
 	if (env) body = env[2];
-	const lines = env ? splitTop(body, /\\\\/) : [body];
+	let lines = env ? splitTop(body, /\\\\/) : [body];
+	// An aligned problem is one expression broken to fit a phone: each line stands alone, without its
+	// alignment marks and without the indent of a continuation line (which would read as a list of givens).
+	if (env?.[1] === 'aligned') lines = lines.map((line) => line.replace(/(^|[^\\])&/g, '$1').replace(/^\s*\\q?quad\b\s*/, '').trim());
 
 	const blocks: ProblemBlock[] = [];
 	for (const line of lines) {
