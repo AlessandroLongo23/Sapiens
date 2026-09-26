@@ -39,7 +39,54 @@ const FORMULAS = {
 	'chem.w1': ['ogni t_{½}', 26],
 	'chem.w2': ['si dimezza', 26],
 	'chem.ax.x': ['t', 26],
-	'chem.ax.y': ['[A]', 22]
+	'chem.ax.y': ['[A]', 22],
+	// The library's levels (src/components/content/LibraryCovers.tsx): one piece of working per level.
+	'lib.mid.eq': ['3^{2} + 4^{2} = 5^{2}', 30],
+	'lib.mid.sum': ['9 + 16 = 25', 24],
+	'lib.mid.a': ['3', 20],
+	'lib.mid.b': ['4', 20],
+	'lib.mid.c': ['5', 20],
+	'lib.high.eq': ['x^{2} – 5x + 6 = 0', 30],
+	'lib.high.f': ['(x – 2)(x – 3) = 0', 24],
+	'lib.high.x1': ['x_{1} = 2', 24],
+	'lib.high.x2': ['x_{2} = 3', 24],
+	'lib.uni.eq': ['∫_{0}^{1} x^{2} dx = \\frac{1}{3}', 30],
+	'lib.uni.area': ['area', 22],
+	'lib.mt.t': ['proiezione ortogonale', 22],
+	'lib.mt.dim': ['40 mm', 18],
+	'lib.mt.view': ['vista frontale', 18],
+	'lib.ms.t': ['la cellula', 26],
+	'lib.ms.n': ['nucleo', 18],
+	'lib.ms.m': ['membrana', 18],
+	'lib.ms.c': ['citoplasma', 18],
+	'lib.hp.eq': ['F = m a', 30],
+	'lib.hp.n': ['= 2 kg · 3 m/s^{2}', 24],
+	'lib.hp.r': ['= 6 N', 26],
+	'lib.hp.F': ['F', 20],
+	'lib.hc.eq': ['13 = 1101_{2}', 30],
+	'lib.hc.s': ['8 + 4 + 0 + 1', 24],
+	'lib.d0': ['0', 22],
+	'lib.d1': ['1', 22],
+	'lib.hc.p8': ['8', 15],
+	'lib.hc.p4': ['4', 15],
+	'lib.hc.p2': ['2', 15],
+	'lib.hc.p1': ['1', 15],
+	'lib.hk.eq': ['2H_{2} + O_{2} → 2H_{2}O', 26],
+	'lib.hk.H': ['H', 18],
+	'lib.hk.O': ['O', 18],
+	'lib.hk.w': ['acqua', 20],
+	'lib.u2.eq': ['e^{x} ≈ 1 + x + \\frac{x^{2}}{2}', 26],
+	'lib.u3.eq': ['mgh = ½ m v^{2}', 28],
+	'lib.u3.r': ['v^{2} = 2gh', 26],
+	'lib.u3.h': ['h', 20],
+	'lib.u4.eq': ['PV = nRT', 30],
+	'lib.u4.P': ['P', 18],
+	'lib.u4.V': ['V', 18],
+	'lib.u4.T': ['T costante', 20],
+	'lib.u5.A': ['A', 20],
+	'lib.u5.B': ['B', 20],
+	'lib.u5.AB': ['A · B', 20],
+	'lib.u5.t': ['AND', 22]
 };
 
 // ---------------------------------------------------------------------------
@@ -62,6 +109,12 @@ for (const m of src.matchAll(/<glyph ([^>]*)\/>/g)) {
 glyphs.set('Δ', { adv: 620, strokes: [[[300, 520], [60, 0], [560, 0], [320, 540]]] });
 // The font's capital A is a looped script letter that reads as a delta in [A]; a hand-printed A, slanted like the script.
 glyphs.set('A', { adv: 660, strokes: [[[40, 0], [390, 580], [560, 10]], [[170, 230], [500, 250]]] });
+// ∫ is not in the font: a long S leaning right, written in one stroke from the top hook.
+glyphs.set('∫', { adv: 520, strokes: [[[520, 820], [470, 860], [400, 850], [350, 780], [300, 450], [240, 40], [190, -250], [140, -330], [70, -330], [20, -280]]] });
+// →, ≈ and a multiplication dot, where the font has none, as a hand writes them.
+if (!glyphs.has('→')) glyphs.set('→', { adv: 760, strokes: [[[60, 300], [660, 300]], [[500, 420], [670, 300], [500, 180]]] });
+if (!glyphs.has('≈')) glyphs.set('≈', { adv: 660, strokes: [[[60, 380], [180, 450], [330, 380], [480, 310], [600, 380]], [[60, 180], [180, 250], [330, 180], [480, 110], [600, 180]]] });
+if (!glyphs.has('·')) glyphs.set('·', { adv: 320, strokes: [[[160, 330], [190, 300], [160, 270], [130, 300], [160, 330]]] });
 // The font's ± reads as "+-"; a plus over a bar, as written by hand.
 glyphs.set('±', { adv: 640, strokes: [[[320, 520], [320, 160]], [[120, 340], [520, 340]], [[120, 40], [520, 40]]] });
 
@@ -106,6 +159,8 @@ function parse(s) {
 function layout(nodes, k = 1) {
 	const strokes = [];
 	let x = 0;
+	let prev = null;
+	let limitsFrom = null; // where an integral's limits start, while they are being written
 	for (const n of nodes) {
 		if (n.kind === 'char') {
 			const g = glyphs.get(n.ch);
@@ -114,9 +169,15 @@ function layout(nodes, k = 1) {
 			x += (g.adv / 1000) * k;
 		} else if (n.kind === 'sup' || n.kind === 'sub') {
 			const inner = layout(n.body, k * 0.62);
-			const dy = n.kind === 'sup' ? -0.36 * k : 0.14 * k;
-			for (const st of inner.strokes) strokes.push(st.map(([px, py]) => [x + px, py + dy]));
-			x += inner.width + 0.04 * k;
+			// Limits on an integral stand one above the other, low and high, as a hand writes them.
+			const onIntegral = prev?.kind === 'char' && prev.ch === '∫';
+			const stacked = n.kind === 'sup' && prev?.kind === 'sub' && limitsFrom != null;
+			const at = stacked ? limitsFrom : x;
+			const dy = n.kind === 'sup' ? (stacked ? -0.62 * k : -0.36 * k) : onIntegral || stacked ? 0.3 * k : 0.14 * k;
+			for (const st of inner.strokes) strokes.push(st.map(([px, py]) => [at + px, py + dy]));
+			if (onIntegral && n.kind === 'sub') limitsFrom = x;
+			x = Math.max(x, at + inner.width + 0.04 * k);
+			if (!(onIntegral && n.kind === 'sub')) limitsFrom = null;
 		} else if (n.kind === 'frac') {
 			const num = layout(n.num, k * 0.78);
 			const den = layout(n.den, k * 0.78);
@@ -128,6 +189,7 @@ function layout(nodes, k = 1) {
 			for (const st of den.strokes) strokes.push(st.map(([px, py]) => [x + (w - den.width) / 2 + px, py + bar + 0.52 * k]));
 			x += w + 0.06 * k;
 		}
+		prev = n;
 	}
 	return { strokes, width: x };
 }

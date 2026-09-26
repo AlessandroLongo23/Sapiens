@@ -39,8 +39,8 @@ export default async function LibraryPage() {
 			/>
 			{tree.length > 0 && (
 				<CardGridSection id="livelli-heading" title="Livelli didattici" count={tree.length}>
-					{tree.map((node) => (
-						<NodeCard key={node.id} node={node} href={nodePath([node])} />
+					{tree.map((node, index) => (
+						<NodeCard key={node.id} node={node} index={index} href={nodePath([node])} />
 					))}
 				</CardGridSection>
 			)}

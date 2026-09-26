@@ -18,7 +18,7 @@ export function PenStroke({ className, onHover = false }: { className?: string; 
 				stroke="currentColor"
 				strokeWidth="3.2"
 				strokeLinecap="round"
-				className={onHover ? '[stroke-dasharray:1] [stroke-dashoffset:1] transition-[stroke-dashoffset] duration-500 ease-out-soft group-hover:[stroke-dashoffset:0] group-focus-visible:[stroke-dashoffset:0] group-active:[stroke-dashoffset:0] motion-reduce:transition-none' : 'pen-stroke'}
+				className={onHover ? '[stroke-dasharray:1_2] [stroke-dashoffset:1.01] transition-[stroke-dashoffset] duration-500 ease-out-soft group-hover:[stroke-dashoffset:0] group-focus-visible:[stroke-dashoffset:0] group-active:[stroke-dashoffset:0] motion-reduce:transition-none' : 'pen-stroke'}
 				pathLength={1}
 			/>
 		</svg>

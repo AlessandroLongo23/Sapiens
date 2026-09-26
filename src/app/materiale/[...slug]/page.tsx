@@ -79,7 +79,7 @@ export default async function IndexPage({ params }: Params) {
 	const structured: JsonLdData | undefined =
 		node.type === 'subject' ? courseJsonLd(node, ancestors, seo.description) : node.type === 'chapter' ? learningResourceJsonLd(node, ancestors, { description: seo.description, resourceType: 'Capitolo', free: true }) : undefined;
 	const heading = HEADINGS[node.type];
-	const rows = node.children.map((child, index) => <NodeCard key={child.id} node={child} index={index} href={nodePath([...ancestors, child])} progress={rowProgress([...ancestors, child])} />);
+	const rows = node.children.map((child, index) => <NodeCard key={child.id} node={child} index={index} level={level} href={nodePath([...ancestors, child])} progress={rowProgress([...ancestors, child])} />);
 	// A subject whose chapters all have a school year lists them by year.
 	const years = node.type === 'subject' ? chaptersByYear(node.children) : null;
 	// The trail above the title already names the level and the subject: only a chapter adds its number.
