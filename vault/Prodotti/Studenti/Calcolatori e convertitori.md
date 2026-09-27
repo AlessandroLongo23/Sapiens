@@ -12,7 +12,7 @@ Strumenti gratuiti, una pagina ciascuno, che risolvono un calcolo o una conversi
 Nessuno strumento nel codice. [[Strumenti DSA]] cita calcolatrice, calcolatrice scientifica e convertitore di unità dalla bozza originale.
 
 ## Cosa fanno gli altri
-Ricerca del 27 settembre 2026, dettagli in `reports/` e nella sessione [[2026-09-26 SEO e scheda degli esercizi]].
+Ricerca del 27 settembre 2026 (Claude): pagine di Theoremz lette direttamente, YouMath dagli estratti dei motori di ricerca perché blocca le richieste automatiche, gli altri siti letti direttamente.
 - Theoremz: 15 calcolatori sotto `/calcolatori/` (percentuale, MCD, mcm, fattori primi, numero primo, equivalenze, frazioni, proporzioni, potenze, derivate, integrali, espressioni, equazioni, secondo grado, sistemi 2x2). Tutti gratuiti, con i passaggi, già compilati con un esempio, 100-200 parole di teoria e 4 FAQ sotto, nessun link alle lezioni. In più strumenti AI su foto.
 - YouMath: circa 90 strumenti (da verificare), dall'aritmetica ad analisi 2 e algebra lineare, più calcolatori dentro le pagine di domande e risposte (kW e CV, Celsius e Fahrenheit, pollici e centimetri) e DeepMath, un risolutore AI. Con pubblicità; i passaggi solo su una parte.
 - Portali generalisti italiani (calcolatore.online, calcolo.tools): centinaia di calcolatori, soprattutto fisco e salute. Omni Calculator ha la struttura migliore ma testi tradotti. Symbolab e Mathway mettono i passaggi a pagamento.
