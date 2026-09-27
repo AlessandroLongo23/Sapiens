@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils/cn';
 
 interface Props {
 	sheet: Sheet;
-	/** The exercise page's path: the other sheets are `?scheda=<n>` on it. */
+	/** The worksheet page's path: the other sheets are `?numero=<n>` on it. */
 	path: string;
-	/** At the top of the page (visitors without the path), without the rule that parts it from the path above. */
+	/** Right under the page header, without the rule that parts it from content above. */
 	first?: boolean;
 }
 
@@ -30,7 +30,7 @@ export function Worksheet({ sheet, path, first = false }: Props) {
 					</h2>
 					<p className="max-w-xl text-fg-muted">Divisi per livello, dal più facile. Scrivi lo svolgimento per intero, poi apri il risultato sotto l&apos;esercizio per controllare.</p>
 				</div>
-				<Link href={`${path}?scheda=${next}#scheda`} rel="nofollow" className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-edge bg-surface px-4 text-sm font-medium text-fg shadow-paper transition-colors hover:border-edge-strong focus-ring">
+				<Link href={`${path}?numero=${next}`} rel="nofollow" className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-edge bg-surface px-4 text-sm font-medium text-fg shadow-paper transition-colors hover:border-edge-strong focus-ring">
 					<RefreshCw className="size-4" aria-hidden="true" />
 					Un&apos;altra scheda
 				</Link>

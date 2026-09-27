@@ -8,6 +8,8 @@ export interface PageMeta {
 	path: string;
 	/** Force noindex. Private paths (see site config) are noindex regardless. */
 	noindex?: boolean;
+	/** Let crawlers follow the links of a noindex page (a page that leads to indexed ones). Default: as index. */
+	follow?: boolean;
 	type?: 'website' | 'article';
 	image?: { path: string; width: number; height: number; alt: string };
 }
@@ -21,6 +23,7 @@ export function pageMetadata({
 	description = DEFAULT_DESCRIPTION,
 	path,
 	noindex = false,
+	follow,
 	type = 'website',
 	image = OG_IMAGE
 }: PageMeta): Metadata {
@@ -30,7 +33,7 @@ export function pageMetadata({
 	return {
 		title,
 		description,
-		robots: { index, follow: index },
+		robots: { index, follow: follow ?? index },
 		alternates: { canonical },
 		openGraph: {
 			siteName: SITE_NAME,

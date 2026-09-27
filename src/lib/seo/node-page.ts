@@ -1,5 +1,5 @@
 import { findNodeById, type ContentNode } from '@/lib/utils/tree';
-import { nodePath, subviewPath } from '@/lib/seo/slug';
+import { nodePath, subviewPath, worksheetPath } from '@/lib/seo/slug';
 import { nodeTitle, nodeDescription, markdownExcerpt } from '@/lib/seo/meta';
 import { lessonNavigation, type LessonNavigation } from '@/lib/utils/lesson-navigation';
 import { CONTENT_ROOT } from '@/lib/config/site';
@@ -19,7 +19,7 @@ export interface NodePageData extends NodePageServerData {
 	node: ContentNode;
 	ancestors: ContentNode[];
 	path: string;
-	paths: { theory: string; exercises: string; formulary: string; flashcards: string };
+	paths: { theory: string; exercises: string; worksheet: string; formulary: string; flashcards: string };
 	parentLink: { url: string; label: string };
 	navigation: LessonNavigation | null;
 	seo: { title: string; description: string };
@@ -46,6 +46,7 @@ export function buildNodePage(tree: ContentNode[], data: NodePageServerData): No
 		paths: {
 			theory: path,
 			exercises: subviewPath(ancestors, 'exercises'),
+			worksheet: worksheetPath(ancestors),
 			formulary: subviewPath(ancestors, 'formulary'),
 			flashcards: subviewPath(ancestors, 'flashcards')
 		},

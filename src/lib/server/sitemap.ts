@@ -2,7 +2,7 @@ import 'server-only';
 import { escapeHtml } from '@/lib/utils/escape';
 import { getContentTree, latestUpdate } from '@/lib/server/content';
 import { publishedLessons, walkTree, type ContentNode } from '@/lib/utils/tree';
-import { nodePath, subviewPath, dbPath } from '@/lib/seo/slug';
+import { nodePath, subviewPath, worksheetPath, dbPath } from '@/lib/seo/slug';
 import { configs } from '@/lib/exercises/config';
 import { absoluteUrl, CONTENT_ROOT, isPrivatePath, TUTORING_ROOT } from '@/lib/config/site';
 import { getPublishedTutors, latestTutorUpdate } from '@/lib/server/tutoring';
@@ -55,7 +55,8 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 		if (node.type === 'topic') {
 			const lastmod = day(node.updated_at);
 			if (node.has_theory) urls.push({ loc: nodePath(ancestors), lastmod });
-			if (configs[dbPath(ancestors)]) urls.push({ loc: subviewPath(ancestors, 'exercises'), lastmod });
+			// The worksheet is the exercise page search engines read; the quick path is noindex.
+			if (configs[dbPath(ancestors)]) urls.push({ loc: worksheetPath(ancestors), lastmod });
 			if (node.has_formulary) urls.push({ loc: subviewPath(ancestors, 'formulary'), lastmod });
 		} else if (publishedLessons(node).length > 0) {
 			urls.push({ loc: nodePath(ancestors), lastmod: day(latestUpdate(descendants(node))) });

@@ -187,6 +187,11 @@ export function subviewPath(ancestors: SlugSource[], view: SubView): string {
 	return segment ? `${nodePath(ancestors)}/${segment}` : nodePath(ancestors);
 }
 
+/** Path of a lesson's worksheet: the exercises to do on paper, next to the quick path of `esercizi`. */
+export function worksheetPath(ancestors: SlugSource[]): string {
+	return `${subviewPath(ancestors, 'exercises')}/scheda`;
+}
+
 /** The database slug path (`high_school/math/...`), the key of exercise configs. */
 export function dbPath(ancestors: Pick<ContentNode, 'slug'>[]): string {
 	return ancestors.map((n) => n.slug).join('/');

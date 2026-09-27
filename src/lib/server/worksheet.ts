@@ -13,8 +13,8 @@ import type { QuestionBlock } from '@/lib/server/exercises';
 /**
  * The worksheet of a lesson: the exercises to do at a desk, on paper, one after another, as in a textbook, with
  * the result under each. Unlike a run, it is the same for everybody and on every visit: the seeds derive from the
- * lesson and the sheet number, so the page Google indexes is the page a student reads. Sheet 1 is the one on the
- * page; "Un'altra scheda" asks for the next ones, which are not indexed.
+ * lesson and the sheet number, so the page Google indexes is the page a student reads. Sheet 1 is the one at
+ * `esercizi/scheda`; "Un'altra scheda" asks for the next ones (`?numero=<n>`), which are not indexed.
  */
 
 /** Exercises per level on a sheet. */
