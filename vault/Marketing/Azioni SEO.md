@@ -1,0 +1,34 @@
+---
+stato: in sviluppo
+aggiornato: 2026-09-27
+tag: [marketing, seo, piano]
+---
+# Azioni SEO
+
+La lista delle cose da fare per farsi trovare su Google, nata dalla verifica SEO del 26 settembre 2026 ([[2026-09-26 SEO e scheda degli esercizi]]) e dall'analisi di Theoremz del 27 settembre (`reports/Analisi competitiva di Theoremz.md`). Si affrontano una alla volta, in quest'ordine; lo stato e le decisioni stanno in [[SEO]].
+
+## Da fare
+1. [ ] **Dominio definitivo.** Scegliere l'indirizzo e comprarlo. In discussione dal 27 settembre 2026.
+2. [ ] Collegare il dominio: Vercel, `PUBLIC_SITE_URL`, redirect 301 da `sapiens-edu.vercel.app`, controllo con `scripts/check-seo.mjs`.
+3. [ ] Search Console come proprietà DNS; inviare la sitemap. Da decidere se subito o dopo la rilettura del primo anno da parte di Andrea.
+4. [ ] Deploy delle modifiche SEO del 26 e 27 settembre (404, nodi vuoti e flashcard in `noindex`, scheda degli esercizi).
+5. [ ] Collegamenti interni: dalla lezione alla sua scheda di esercizi e al formulario, e ritorno. Theoremz non collega lezione ed esercizi.
+6. [ ] Parole cercate: volumi da Google Keyword Planner per gli argomenti del primo anno, poi title e description con le parole degli studenti ("spiegazione", "esempi", "esercizi con soluzioni").
+7. [ ] Calcolatori gratuiti, una pagina ciascuno (MCD e mcm, scomposizione, equazioni di secondo grado, frazioni). "mcm online" è la prima fonte di traffico di Theoremz secondo Similarweb (agosto 2026, stima).
+8. [ ] Un paragrafo introduttivo per ogni capitolo e le descrizioni dei nodi: 7 capitoli hanno 106-116 parole.
+9. [ ] Peso delle pagine: una lezione pesa 1,5 MB di HTML, di cui 1,15 MB di payload React. Misurare i Core Web Vitals su telefono e ridurre.
+10. [ ] Chi scrive e chi rilegge: autore e revisore su ogni lezione, con una pagina su Andrea e sul metodo.
+11. [ ] Crawler AI: decidere se `robots.txt` li lascia entrare (Theoremz sì, YouMath no).
+12. [ ] `scripts/check-seo.mjs` prima di ogni deploy, come script npm o controllo automatico.
+13. [ ] Misurare: Search Console ogni settimana, Speed Insights, e confrontare con le stime su YouMath e Theoremz.
+
+## Fuori dalla SEO, dalla stessa analisi
+Da riprendere dopo, ognuno nella sua nota:
+- Una pagina d'ingresso per i genitori, separata da quella per gli studenti ([[Area genitori]]).
+- Strumenti legati a un momento di scuola, come "Simula verifica" e "Simula interrogazione" ([[Esercizi]]).
+- Video brevi con esercizi veri, pubblicati con continuità nei mesi di scuola ([[Social]]).
+- Termini coerenti con le pagine di vendita su recesso e rimborsi ([[Tutela del consumatore]]); numeri pubblici uguali su ogni pagina.
+
+## Fatto
+- 2026-09-26: 404 corrette, nodi vuoti e flashcard fuori dalla ricerca, `scripts/check-seo.mjs`, scheda di esercizi indicizzata. Nel codice, non ancora pubblicato.
+- 2026-09-27: scheda su una pagina sua (`…/esercizi/scheda`), percorso in `noindex, follow`.
