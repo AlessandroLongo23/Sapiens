@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import { Minus, Plus } from 'lucide-react';
+import { ArrowDown, ArrowUp, Minus, Plus } from 'lucide-react';
 import { hasMath } from '@/lib/content/note-markdown';
 import { splitPages } from '@/lib/zaino/pages';
 import type { Paper } from '@/lib/zaino/paper';
@@ -110,7 +110,7 @@ export function NotePrint({ markdown, stickers, paper, onDone }: { markdown: str
 	);
 }
 
-/** What each command is, and its keys; `mod` stands for Ctrl or ⌘. */
+/** What each command is, and its keys; `mod` stands for Ctrl or ⌘, `up` and `down` for the arrow keys, drawn as icons. */
 const SHORTCUTS: [string, string[]][] = [
 	['Grassetto', ['mod', 'B']],
 	['Corsivo', ['mod', 'I']],
@@ -121,7 +121,7 @@ const SHORTCUTS: [string, string[]][] = [
 	['Formula nel testo', ['$x^2$']],
 	['Nuova pagina', ['mod', 'Invio']],
 	['Lettura, e ritorno a scrivere', ['mod', 'E']],
-	['Pagina prima o dopo', ['↑', '↓']],
+	['Pagina prima o dopo', ['up', 'down']],
 	['Zoom', ['mod', '+', '−']],
 	['Adatta alla finestra', ['mod', '0']],
 	['Mostra le pagine', ['mod', 'Maiusc', 'P']],
@@ -140,7 +140,7 @@ export function ShortcutsSheet({ open, onClose }: { open: boolean; onClose: () =
 						<dd className="flex shrink-0 gap-1">
 							{keys.map((k) => (
 								<kbd key={k} className="label-mono min-w-6 rounded-md border border-edge bg-surface-2 px-1.5 py-0.5 text-center text-[11px] text-fg shadow-paper">
-									{k === 'mod' ? mod : k}
+									{k === 'mod' ? mod : k === 'up' ? <ArrowUp className="mx-auto size-3" aria-label="Freccia su" /> : k === 'down' ? <ArrowDown className="mx-auto size-3" aria-label="Freccia giù" /> : k}
 								</kbd>
 							))}
 						</dd>

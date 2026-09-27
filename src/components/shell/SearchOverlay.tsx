@@ -3,7 +3,7 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, CornerDownLeft, NotebookPen } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUp, CornerDownLeft, NotebookPen } from 'lucide-react';
 import { focusSearchTrigger, useSearch } from '@/lib/state/search';
 import { useLessonLayout } from '@/lib/state/lesson-layout';
 import { useNoteHits } from '@/lib/hooks/use-note-hits';
@@ -237,7 +237,10 @@ export function SearchOverlay() {
 
 					{rows.length > 0 && (
 						<p className="label-mono hidden items-center justify-center gap-4 text-fg-faint md:flex" aria-hidden="true">
-							<span>↑ ↓ scegli</span>
+							<span className="flex items-center gap-1">
+								<ArrowUp className="size-3" />
+								<ArrowDown className="size-3" /> scegli
+							</span>
 							<span className="flex items-center gap-1">
 								<CornerDownLeft className="size-3" /> apri
 							</span>

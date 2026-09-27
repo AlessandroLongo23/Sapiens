@@ -178,7 +178,7 @@ function Block({ block, guide }: { block: GuideBlock; guide: Guide }) {
 					<ul className="grid gap-x-8 gap-y-2 text-fg-muted sm:grid-cols-2 lg:grid-cols-3">
 						{block.items.map((item) => (
 							<li key={item} className="flex gap-2 leading-relaxed">
-								<span className="pencil text-2xl leading-6" aria-hidden="true">→</span>
+								<ArrowRight className="mt-1 size-4 shrink-0 text-[var(--graphite)]" strokeWidth={2.25} aria-hidden="true" />
 								<span>{rich(item)}</span>
 							</li>
 						))}
@@ -196,8 +196,10 @@ function Block({ block, guide }: { block: GuideBlock; guide: Guide }) {
 									<span className="sr-only">Sbagliato: </span>
 									{m.wrong}
 								</p>
-								<p className="pencil mt-0.5 text-2xl">
-									<span className="sr-only">Giusto: </span>→ {m.right}
+								<p className="pencil mt-0.5 flex items-center gap-1.5 text-2xl">
+									<span className="sr-only">Giusto: </span>
+									<ArrowRight className="size-4 shrink-0" strokeWidth={2.25} aria-hidden="true" />
+									{m.right}
 								</p>
 							</li>
 						))}
