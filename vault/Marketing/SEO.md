@@ -1,6 +1,6 @@
 ---
 stato: in sviluppo
-aggiornato: 2026-09-26
+aggiornato: 2026-09-27
 tag: [marketing]
 ---
 # SEO
@@ -19,7 +19,7 @@ Verifica del 26 settembre 2026 sulla produzione (`sapiens-edu.vercel.app`, sito 
 Corretto nel codice il 26 settembre 2026, non ancora pubblicato:
 - 404 annidate con i meta giusti (`noindex, nofollow`, niente canonical), commit `59d7154`.
 - Livelli, materie e capitoli senza lezioni pubblicate restano sul sito ma sono `noindex` e fuori dalla sitemap; le descrizioni contano solo le lezioni con la teoria. Flashcard sempre `noindex`. La sitemap passa da 469 a 232 URL. Commit `a54a507`.
-- Scheda di esercizi indicizzata su ogni pagina esercizi ([[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]]), commit `c170b79`. In locale 243 pagine su 243 passano il controllo, mediana 980 parole.
+- Scheda di esercizi indicizzata per ogni lezione ([[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]]), commit `c170b79`, dal 27 settembre su una pagina sua (`…/esercizi/scheda`, commit `c59c518`); la pagina del percorso (`…/esercizi`) è `noindex, follow` e fuori dalla sitemap. Build di produzione del 27 settembre: 258 pagine su 258 passano il controllo, mediana 868 parole.
 
 ## Dominio
 Consiglio di Claude, 26 settembre 2026, non ancora deciso: un dominio `.it` col nome del marchio, corto e senza parole chiave dentro, comprato e collegato prima di chiedere l'indicizzazione. I link guadagnati su `vercel.app` andrebbero persi in parte con un trasloco successivo, e per un pubblico italiano il `.it` è l'unico segnale geografico che Google legge dal dominio. Se `sapiens.it` è preso (da verificare), varianti come `sapiensscuola.it` o `studiasapiens.it`. Il codice è pronto: si imposta `PUBLIC_SITE_URL` su Vercel, si rifà il deploy, si mette un 301 da `sapiens-edu.vercel.app` e si verifica il dominio in Search Console come proprietà DNS.
