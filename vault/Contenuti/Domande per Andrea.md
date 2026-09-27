@@ -1,7 +1,7 @@
 ---
 stato: in uso
 release: beta
-aggiornato: 2026-09-27
+aggiornato: 2026-09-28
 tag: [contenuti, revisione]
 ---
 # Domande per Andrea
@@ -95,6 +95,20 @@ Le lezioni di chimica non sono nella beta; le domande restano per quando entrera
 - [ ] La tavola delle masse atomiche, la classificazione degli amminoacidi, la soglia di polarità del legame.
 - [ ] I nomi: coppia solitaria, propan-2-olo.
 - [ ] Date e dati scritti a memoria, segnati "da verificare" nelle note di ogni lezione (`docs/lezioni/chimica/`).
+
+## Strumenti, seconda onda (28 settembre 2026)
+Le 55 pagine nuove di `/strumenti` (vedi [[Calcolatori e convertitori]]). Tra parentesi la scelta fatta; ogni articolo in `src/content/strumenti/` spiega la sua.
+- [ ] Funzioni goniometriche: $\sin$ e $\cos$ (scelta fatta) oppure "sen" come in molti libri italiani; $\text{tg}$ e $\text{cotg}$.
+- [ ] Accelerazione di gravità: $9{,}8\ \text{m/s}^2$ (scelta fatta) oppure $9{,}81$. Lo studente può cambiarla.
+- [ ] Energia: $K$ e $U$ (scelta fatta) oppure $E_c$ ed $E_p$.
+- [ ] Caloria: $4{,}184\ \text{J}$, la termochimica (scelta fatta), oppure $4{,}186\ \text{J}$.
+- [ ] Ordine di grandezza: soglia 5 (scelta fatta) oppure $\sqrt{10} \approx 3{,}16$.
+- [ ] Intervalli: quadre rovesciate $\left]2, 5\right[$ e "oppure" tra due intervalli (scelta fatta), come nella lezione; oppure tonde e $\cup$.
+- [ ] Varianza: divisore $n$ (scelta fatta), con quella campionaria ($n - 1$) come riga in più.
+- [ ] Solidi: $A_b$, $A_l$, $A_t$ (scelta fatta) oppure $S_b$, $S_l$, $S_t$; numeri fissi dei poligoni regolari a tre decimali (0,688 per il pentagono).
+- [ ] Trinomi con primo coefficiente diverso da 1: scomposti con Ruffini (scelta fatta), non con il metodo "ac".
+- [ ] Crediti scolastici: la media M comprende il voto di comportamento? La norma dice solo "media dei voti dello scrutinio finale"; lo strumento chiede la media già calcolata.
+- [ ] Tabelle di verità: precedenza $\neg$, poi $\wedge$, $\vee$, $\veebar$, poi $\to$, poi $\leftrightarrow$; tra $\wedge$ e $\vee$ mescolati si chiedono le parentesi (scelta fatta), come nella lezione.
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

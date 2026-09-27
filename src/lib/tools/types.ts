@@ -4,7 +4,7 @@
  * as the student types; a client component draws its inputs, and a markdown article under it explains the method.
  */
 
-export type ToolCategory = 'numeri' | 'algebra' | 'geometria' | 'statistica' | 'trigonometria' | 'conversioni' | 'informatica' | 'scuola';
+export type ToolCategory = 'numeri' | 'algebra' | 'geometria' | 'statistica' | 'trigonometria' | 'conversioni' | 'fisica' | 'chimica' | 'informatica' | 'scuola';
 
 export const CATEGORY_NAMES: Record<ToolCategory, string> = {
 	numeri: 'Numeri e aritmetica',
@@ -13,6 +13,8 @@ export const CATEGORY_NAMES: Record<ToolCategory, string> = {
 	statistica: 'Statistica',
 	trigonometria: 'Trigonometria',
 	conversioni: 'Conversioni di unità',
+	fisica: 'Fisica',
+	chimica: 'Chimica',
 	informatica: 'Informatica',
 	scuola: 'Vita scolastica'
 };
@@ -31,6 +33,13 @@ export interface ToolMeta {
 	lessons?: string[];
 	/** Other tools to link at the bottom, by slug. */
 	related?: string[];
+	/**
+	 * What the tool does, as one short worked example in LaTeX, shown on its card in the index: `\text{mcm}(12, 18) = 36`.
+	 * It lets a student recognise the calculation before reading the title. At most about 24 characters once typeset.
+	 */
+	sample: string;
+	/** Other words a student might search the index with, lower case: `['sconto', 'iva']`. */
+	keywords?: string[];
 }
 
 /**

@@ -21,7 +21,10 @@ Per uno strumento con indirizzo `/strumenti/<slug>`:
    gli errori frequenti in un blocco ```` ```ad-error ````, `## Domande frequenti` con due o tre `###`. Tra 250 e 450
    parole. Formule con `$…$` e `$$…$$`.
 5. **La scheda nel registro**, `src/lib/tools/registry.ts` (`ToolMeta`), e **il componente** in
-   `src/components/tools/registry.ts`.
+   `src/components/tools/registry.ts`. Nella scheda, `sample` è un esempio svolto brevissimo in LaTeX
+   (`'\\text{mcm}(12, 18) = 36'`), che compare sulla carta dell'indice e fa riconoscere lo strumento a colpo
+   d'occhio: al massimo una ventina di caratteri a video, una riga sola (o due, come un sistema), niente virgole
+   come separatori. `keywords` sono i sinonimi che la ricerca dell'indice deve trovare (`['sconto', 'iva']`).
 6. Uno strumento con più pagine (area e perimetro, una per figura) ha un motore solo e una voce di registro per
    pagina.
 

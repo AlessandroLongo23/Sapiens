@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: da decidere
-aggiornato: 2026-09-27
+aggiornato: 2026-09-28
 tag: [prodotto, studenti, seo, dsa]
 ---
 # Calcolatori e convertitori
@@ -9,14 +9,23 @@ tag: [prodotto, studenti, seo, dsa]
 Strumenti gratuiti, una pagina ciascuno, che risolvono un calcolo o una conversione con i passaggi e portano alla lezione e agli esercizi dello stesso argomento. Servono a tre cose: aiutano lo studente mentre studia, sono strumenti compensativi per chi ha un DSA ([[2026-09-23 Formulari e calcolatrici gratuiti]]), e prendono ricerche che le lezioni non prendono ("mcm online" è la prima fonte di traffico di Theoremz secondo Similarweb, agosto 2026, stima).
 
 ## Stato attuale
-Dal 27 settembre 2026 (nel codice, non ancora pubblicato) c'è la prima onda: 25 pagine sotto `/strumenti`, con l'indice per categorie, collegato dal footer.
-- Numeri: percentuali (quattro modi), mcm, MCD, scomposizione in fattori primi, calcolatrice di frazioni, espressioni con le parentesi, potenze, radici quadrate e cubiche, proporzioni.
-- Algebra: equazioni di primo grado e di secondo grado, scritte per intero o per coefficienti, con i radicali esatti.
-- Geometria: area e perimetro di quadrato, rettangolo, triangolo (anche Erone), trapezio, rombo, parallelogramma e cerchio, una pagina per figura con un disegno delle misure; teorema di Pitagora.
-- Statistica: media, mediana e moda, media ponderata. Scuola: media dei voti scritti all'italiana (6+ vale 6,25, 6- vale 5,75, 6½ vale 6,5, 7/8 vale 7,5) e "che voto mi serve"; il voto in pagella lo decide il consiglio di classe, e lo strumento lo dice.
-- Conversioni: equivalenze (lunghezza, massa, capacità, superficie, volume, tempo), temperatura, gradi e radianti, basi 2, 8, 10 e 16.
+Dal 28 settembre 2026 (nel codice, non ancora pubblicato) ci sono 80 pagine sotto `/strumenti`, in dieci categorie. La prima onda (25 pagine, 27 settembre) e la seconda (55 pagine, 28 settembre) coprono quasi tutta la lista qui sotto.
+- Numeri (14): percentuali, mcm, MCD, fattori primi, frazioni, espressioni, potenze, radici, proporzioni, numeri primi, notazione scientifica, arrotondamento e cifre significative, frazione generatrice, numeri romani.
+- Algebra (10): equazioni di primo e secondo grado, sistemi 2x2 e 3x3 (sostituzione, riduzione, Cramer), disequazioni di primo e secondo grado, prodotti notevoli, divisione tra polinomi, regola di Ruffini, scomposizione di polinomi.
+- Geometria (20): area e perimetro delle figure piane e dei poligoni regolari, Pitagora, superficie e volume di cubo, parallelepipedo, prisma, piramide, cilindro, cono e sfera (con il disegno del solido), distanza tra due punti, punto medio, retta per due punti (anche parallela e perpendicolare), vertice e fuoco della parabola.
+- Statistica (5): media, mediana e moda, varianza e deviazione standard, fattoriale, calcolo combinatorio, distribuzione binomiale.
+- Trigonometria (5): gradi e radianti, gradi primi e secondi, seno coseno e tangente con gli archi associati, triangolo rettangolo, triangolo qualsiasi (con il caso ambiguo).
+- Conversioni (8): equivalenze, temperatura, velocità, energia, potenza, kW e CV, pressione, pollici e centimetri.
+- Fisica (6): moto rettilineo uniforme e uniformemente accelerato, densità, energia cinetica e potenziale, legge di Ohm.
+- Chimica (4): massa molare, grammi e moli, molarità, diluizione.
+- Informatica (4): basi numeriche, tabelle di verità, complemento a due, codici ASCII.
+- Scuola (4): media dei voti, crediti scolastici, voto di maturità, conversione dei voti. Crediti e maturità seguono le regole dell'esame 2026 (D.Lgs. 62/2017 allegato A, legge 150/2024, D.L. 127/2025, OM 54 del 26 marzo 2026): per il 2027 le regole non sono ancora uscite, e la pagina lo dice.
 
-Ogni strumento ha il motore in `src/lib/tools/` con i test in `tests/unit/tools-*.test.mjs` (112 test, con controlli a forza bruta dove si può), i controlli in `src/components/tools/`, l'articolo in `src/content/strumenti/`. Come se ne aggiunge uno: `docs/strumenti.md`. Le pagine sono statiche e si aprono su un esempio, quindi risultato e passaggi sono nell'HTML; l'input sta nell'indirizzo e il canonical è la pagina senza parametri. I link "Impara" ed "Esercitati" compaiono solo quando la lezione ha la teoria pubblicata. Commit `9c7bbd6` e `90283e4`. I testi (risultati, passaggi, articoli) sono scritti da Claude e vanno riletti come le lezioni.
+L'indice (`src/components/tools/ToolIndex.tsx`) ha una ricerca in alto, che cerca anche nei sinonimi e ignora gli accenti, e una linguetta per categoria come gli anni nella pagina di una materia; la categoria scelta sta nell'indirizzo (`#geometria`). Ogni strumento è una carta con un esempio svolto su una striscia a quadretti ("mcm(12, 18) = 36"), così si riconosce il calcolo prima di leggere il titolo. Tutte le categorie sono nell'HTML, quindi i motori di ricerca leggono tutti i link.
+
+Ogni strumento ha il motore in `src/lib/tools/` con i test in `tests/unit/tools-*.test.mjs` (284 test, con controlli a forza bruta dove si può), i controlli in `src/components/tools/`, l'articolo in `src/content/strumenti/`. Come se ne aggiunge uno: `docs/strumenti.md`. Le pagine sono statiche e si aprono su un esempio, quindi risultato e passaggi sono nell'HTML; l'input sta nell'indirizzo e il canonical è la pagina senza parametri. I link "Impara" ed "Esercitati" compaiono solo quando la lezione ha la teoria pubblicata. I testi (risultati, passaggi, articoli) sono scritti da Claude e vanno riletti come le lezioni.
+
+Convenzioni scelte nella seconda onda da far controllare (ad Andrea o a un insegnante): sin e cos (molti libri scrivono sen), tg e cotg; g = 9,8 m/s² di default; caloria da 4,184 J; ordine di grandezza con la soglia 5; intervalli con le quadre rovesciate e "oppure" tra due intervalli; simboli A_b, A_l, A_t per i solidi; numeri fissi dei poligoni a tre decimali; se la media per i crediti comprende il voto di comportamento (non chiaro dalla norma).
 
 [[Strumenti DSA]] cita calcolatrice, calcolatrice scientifica e convertitore di unità dalla bozza originale: la calcolatrice scientifica non c'è ancora.
 
