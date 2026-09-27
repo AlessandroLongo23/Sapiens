@@ -5,6 +5,23 @@ I calcolatori e i convertitori gratuiti di `/strumenti`. Il perché, la lista e 
 abbiano lo stesso aspetto e gli stessi controlli. Esempi completi: `calcolo-mcm` (una lista di numeri),
 `calcolo-percentuale` (più modi, due campi).
 
+## Quando uno strumento sì e quando no
+
+Uno strumento non è una lezione. Prima di aggiungerne uno, deve valere almeno una di queste due condizioni:
+
+1. **Il calcolo è da strumento**: chi apre la pagina ha già dei numeri in mano, e il calcolo è lungo, noioso o facile
+   da sbagliare (scomposizione, sistemi, massa molare, conversioni, varianza, resistenze in parallelo). Una formula
+   di tre lettere da invertire (F = m·a, L = F·s) non basta: lì il valore è capire la formula, e quello è della
+   lezione o del formulario.
+2. **Le ricerche sono da strumento**: la ricerca ("calcolo densità", "da kW a CV") ha volume, e in cima ai risultati
+   di Google ci sono calcolatori, non spiegazioni. Allora la pagina prende traffico che una lezione non
+   prenderebbe, e si fa anche se il calcolo è semplice. Se in cima ci sono spiegazioni e video, l'argomento resta
+   alla lezione.
+
+In entrambi i casi l'articolo sotto lo strumento resta corto (come si fa a mano, un esempio, gli errori frequenti) e
+il perché lo lascia alla lezione, collegata con "Impara". La sovrapposizione con la lezione va bene, perché l'intento
+è diverso; il testo però non si copia da una all'altra.
+
 ## I file di uno strumento
 
 Per uno strumento con indirizzo `/strumenti/<slug>`:

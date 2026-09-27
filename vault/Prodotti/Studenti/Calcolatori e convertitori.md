@@ -29,6 +29,13 @@ Convenzioni scelte nella seconda onda da far controllare (ad Andrea o a un inseg
 
 [[Strumenti DSA]] cita calcolatrice, calcolatrice scientifica e convertitore di unità dalla bozza originale: la calcolatrice scientifica non c'è ancora.
 
+## Quando uno strumento sì e quando no
+Criterio discusso con Alessandro il 28 settembre 2026: gli strumenti non devono diventare lezioni. Uno strumento si fa se vale almeno una delle due condizioni.
+- Il calcolo è da strumento: chi apre la pagina ha già i numeri e il calcolo è lungo, noioso o facile da sbagliare. Una formula di tre lettere da invertire (forza peso, lavoro, pressione) non basta: è materia della lezione o del formulario.
+- Le ricerche sono da strumento: la ricerca ha volume e in cima a Google ci sono calcolatori. Allora la pagina porta traffico organico che la lezione non prenderebbe, anche se il calcolo è semplice. Se in cima ci sono spiegazioni e video, l'argomento resta alla lezione.
+
+La sovrapposizione tra l'articolo dello strumento e la lezione non è un problema (intenti di ricerca diversi), ma l'articolo resta corto e rimanda alla lezione per il perché. Tra gli 80 strumenti attuali moto uniforme ed energia potenziale sono al limite: restano per le ricerche e per le conversioni di unità, dove gli studenti sbagliano.
+
 ## Cosa fanno gli altri
 Ricerca del 27 settembre 2026 (Claude): pagine di Theoremz lette direttamente, YouMath dagli estratti dei motori di ricerca perché blocca le richieste automatiche, gli altri siti letti direttamente.
 - Theoremz: 15 calcolatori sotto `/calcolatori/` (percentuale, MCD, mcm, fattori primi, numero primo, equivalenze, frazioni, proporzioni, potenze, derivate, integrali, espressioni, equazioni, secondo grado, sistemi 2x2). Tutti gratuiti, con i passaggi, già compilati con un esempio, 100-200 parole di teoria e 4 FAQ sotto, nessun link alle lezioni. In più strumenti AI su foto.
