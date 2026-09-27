@@ -16,7 +16,7 @@ Come si produce una lezione pronta da pubblicare.
 - 24 settembre 2026: formulari e flashcard delle 18 lezioni, cinque agenti in parallelo sulle regole aggiunte a `docs/lezioni/stile.md`, circa 4 minuti di esecuzione. File in `docs/lezioni/formulari/` e `docs/lezioni/flashcard/`, stesso controllo automatico; `scripts/lezioni/publish.mts` pubblica teoria, formulario e flashcard, e non sovrascrive mai un contenuto cambiato nel database dopo l'ultima pubblicazione.
 
 ## Obiettivo
-Claude produce le lezioni alla velocità che può e Andrea le rilegge con i suoi tempi, entro la scadenza della beta (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]), a lotti completi di teoria, esercizi, formulario e flashcard (vedi [[2026-09-24 Si lavora a lotti completi]]); servono abbastanza per la matematica dei cinque anni entro gennaio 2027 (150-200 lezioni). Il minimo per il lancio è il biennio.
+Claude produce le lezioni alla velocità che può e Andrea le rilegge con i suoi tempi, entro la scadenza della beta (vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]]); dal 27 settembre 2026 rilegge anche Alessandro ([[2026-09-27 I contenuti li rileggono Andrea e Alessandro]]). Dopo la matematica delle superiori vengono le altre materie delle superiori, poi le medie a partire dalla matematica ([[2026-09-27 Dopo la matematica delle superiori le altre materie, poi le medie]]), a lotti completi di teoria, esercizi, formulario e flashcard (vedi [[2026-09-24 Si lavora a lotti completi]]); servono abbastanza per la matematica dei cinque anni entro gennaio 2027 (150-200 lezioni). Il minimo per il lancio è il biennio.
 
 Flusso proposto:
 1. Scaletta dell'argomento dal [[Programma ministeriale]]: prerequisiti, obiettivi, cosa includere.
