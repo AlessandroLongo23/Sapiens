@@ -25,6 +25,8 @@ Per uno strumento con indirizzo `/strumenti/<slug>`:
    (`'\\text{mcm}(12, 18) = 36'`), che compare sulla carta dell'indice e fa riconoscere lo strumento a colpo
    d'occhio: al massimo una ventina di caratteri a video, una riga sola (o due, come un sistema), niente virgole
    come separatori. `keywords` sono i sinonimi che la ricerca dell'indice deve trovare (`['sconto', 'iva']`).
+   Il disegno della carta va in `src/components/tools/art/<categoria>.tsx`, con le primitive e le regole di
+   `art/primitives.tsx` (griglia 120 × 80, un solo elemento in rosso: quello che lo strumento trova).
 6. Uno strumento con più pagine (area e perimetro, una per figura) ha un motore solo e una voce di registro per
    pagina.
 

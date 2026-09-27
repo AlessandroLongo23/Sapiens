@@ -356,7 +356,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'algebra',
 		lessons: ['high_school/math/sistemi-lineari/sistemi-cramer'],
 		related: ['sistemi-lineari-2x2', 'equazioni-primo-grado'],
-		sample: 'x = \\frac{D_x}{D}\\quad y = \\frac{D_y}{D}\\quad z = \\frac{D_z}{D}',
+		sample: 'x = \\frac{D_x}{D}',
 		keywords: ['tre incognite', 'regola di sarrus', 'determinante', 'regola di cramer']
 	},
 	{
@@ -378,7 +378,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'algebra',
 		lessons: ['high_school/math/parabola-disequazioni/disequazioni-secondo-grado'],
 		related: ['disequazioni-primo-grado', 'equazioni-secondo-grado'],
-		sample: 'x^2 < 4 \\Rightarrow -2 < x < 2',
+		sample: 'x^2 - 4 < 0',
 		keywords: ['disequazioni quadratiche', 'segno del trinomio', 'parabola', 'valori esterni', 'valori interni']
 	},
 	{
@@ -389,7 +389,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'algebra',
 		lessons: ['high_school/math/monomi-polinomi/polinomi-prodotti-notevoli'],
 		related: ['scomposizione-polinomi', 'divisione-polinomi', 'equazioni-secondo-grado'],
-		sample: '(x + 3)^2 = x^2 + 6x + 9',
+		sample: '(a + b)^2',
 		keywords: ['quadrato di binomio', 'somma per differenza', 'cubo di binomio', 'sviluppo']
 	},
 	{
@@ -400,7 +400,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'algebra',
 		lessons: ['high_school/math/monomi-polinomi/polinomi-divisione'],
 		related: ['regola-di-ruffini', 'scomposizione-polinomi'],
-		sample: '(x^2 - 1) : (x - 1) = x + 1',
+		sample: '(x^2 - 1) : (x - 1)',
 		keywords: ['quoziente', 'resto', 'divisione in colonna', 'polinomi']
 	},
 	{
@@ -427,7 +427,7 @@ export const TOOLS: ToolMeta[] = [
 			'high_school/math/scomposizione/scomposizione-ruffini'
 		],
 		related: ['regola-di-ruffini', 'prodotti-notevoli', 'equazioni-secondo-grado'],
-		sample: 'x^2 - 4 = (x - 2)(x + 2)',
+		sample: '(x + 1)(x + 2)',
 		keywords: ['scomporre', 'fattorizzazione', 'raccoglimento totale', 'trinomio notevole', 'differenza di quadrati']
 	},
 	{
@@ -592,7 +592,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'trigonometria',
 		lessons: ['high_school/math/trigonometria/teorema-seni', 'high_school/math/trigonometria/teorema-coseno'],
 		related: ['risoluzione-triangolo-rettangolo', 'seno-coseno-tangente', 'area-perimetro-triangolo'],
-		sample: 'a^2 = b^2 + c^2 - 2bc\\cos\\alpha',
+		sample: '\\frac{a}{\\sin\\alpha} = \\frac{b}{\\sin\\beta}',
 		keywords: ['teorema dei seni', 'teorema del coseno', 'teorema di carnot', 'triangolo scaleno']
 	},
 	{
@@ -766,7 +766,7 @@ export const TOOLS: ToolMeta[] = [
 		description: 'Calcola il voto della maturità: credito scolastico, prima e seconda prova e colloquio, con il bonus fino a 3 punti e la lode. Regole aggiornate.',
 		category: 'scuola',
 		related: ['calcolo-crediti-scolastici', 'calcolo-media-voti', 'conversione-voti'],
-		sample: '36 + 18 + 17 + 19 = 90',
+		sample: '36 + 54 = 90',
 		keywords: ['voto maturità', 'esame di stato', 'punteggio maturità', 'bonus maturità', 'centesimi']
 	},
 	{
@@ -787,7 +787,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'fisica',
 		lessons: ['high_school/physics/cinematica/fis-moto-rettilineo-uniforme', 'high_school/physics/cinematica/velocita'],
 		related: ['moto-uniformemente-accelerato', 'equivalenze', 'calcolo-proporzioni'],
-		sample: 'v = \\frac{150\\ \\text{km}}{2\\ \\text{h}} = 75\\ \\text{km/h}',
+		sample: 'v = \\frac{150\\ \\text{km}}{2\\ \\text{h}}',
 		keywords: ['velocità', 'spazio tempo', 'legge oraria', 'mru']
 	},
 	{
@@ -809,7 +809,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'fisica',
 		lessons: ['high_school/physics/fis-grandezze/fis-grandezze-derivate', 'high_school/chemistry/chim-misure/chim-massa-volume-densita'],
 		related: ['equivalenze', 'calcolo-energia-potenziale', 'calcolo-moli'],
-		sample: '\\frac{540\\ \\text{g}}{200\\ \\text{cm}^3} = 2{,}7\\ \\text{g/cm}^3',
+		sample: 'd = \\frac{m}{V}',
 		keywords: ['densità', 'massa volume', 'peso specifico', 'massa volumica']
 	},
 	{
@@ -853,7 +853,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'chimica',
 		lessons: ['high_school/chemistry/chim-quantita-sostanza/mole-massa-molare'],
 		related: ['calcolo-moli', 'calcolo-molarita'],
-		sample: 'M(\\mathrm{H_2O}) = 18{,}02\\ \\text{g/mol}',
+		sample: '\\mathrm{H_2O}\\!: 18{,}02\\ \\text{g/mol}',
 		keywords: ['peso molecolare', 'massa molecolare', 'g/mol', 'formula chimica']
 	},
 	{
@@ -864,7 +864,7 @@ export const TOOLS: ToolMeta[] = [
 		category: 'chimica',
 		lessons: ['high_school/chemistry/chim-quantita-sostanza/mole-massa-molare'],
 		related: ['calcolo-massa-molare', 'calcolo-molarita'],
-		sample: '\\frac{36\\ \\text{g}}{18{,}02\\ \\text{g/mol}} \\approx 2\\ \\text{mol}',
+		sample: 'n = \\frac{m}{M}',
 		keywords: ['grammi moli', 'mole', 'numero di avogadro', 'particelle']
 	},
 	{

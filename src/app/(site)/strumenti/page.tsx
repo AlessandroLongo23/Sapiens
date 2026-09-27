@@ -11,6 +11,7 @@ import { Page, PageHeader } from '@/components/content/PageHeader';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { normalise } from '@/lib/tools/search';
 import { ToolIndex, type ToolGroup } from '@/components/tools/ToolIndex';
+import { TOOL_ART } from '@/components/tools/art';
 
 export const metadata: Metadata = pageMetadata({
 	title: `Calcolatori e convertitori online gratis | ${SITE_NAME}`,
@@ -43,6 +44,7 @@ export default function ToolsIndex() {
 			title: t.title,
 			lead: t.lead,
 			sample: mathLine(t.sample),
+			art: TOOL_ART[t.slug],
 			haystack: normalise([t.title, t.lead, ...(t.keywords ?? []), CATEGORY_NAMES[category]].join(' '))
 		}))
 	}));

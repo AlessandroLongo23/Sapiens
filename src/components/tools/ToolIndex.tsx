@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useDeferredValue, useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useDeferredValue, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { ArrowLeftRight, Atom, Binary, ChartColumn, FlaskConical, GraduationCap, Hash, Search, Shapes, TriangleRight, Variable, X, type LucideIcon } from 'lucide-react';
 import type { ToolCategory } from '@/lib/tools/types';
 import { normalise } from '@/lib/tools/search';
@@ -13,6 +13,8 @@ export interface ToolCard {
 	title: string;
 	lead: string;
 	sample: string;
+	/** A small drawing of what the tool does (art/), rendered on the server. */
+	art?: ReactNode;
 	/** Everything the search matches against, normalised: title, lead, keywords, category. */
 	haystack: string;
 }
@@ -193,9 +195,11 @@ function CardGrid({ tools, showCategory }: { tools: (ToolCard & { group?: ToolGr
 			{tools.map((t) => (
 				<li key={t.href}>
 					<Link href={t.href} className="group flex h-full flex-col overflow-hidden rounded-xl border border-edge bg-surface shadow-paper transition-colors hover:border-edge-strong focus-ring">
-						{/* The worked example, in ink on a strip of squared paper. */}
-						<span aria-hidden="true" className="grid-paper flex h-16 items-center justify-center overflow-hidden border-b border-edge px-2 text-sm text-fg-strong sm:h-20 sm:px-4 sm:text-lg">
-							<span className="whitespace-nowrap" dangerouslySetInnerHTML={{ __html: t.sample }} />
+						{/* The drawing and the worked example, in ink on squared paper, as on a page of the notebook. */}
+						<span aria-hidden="true" className="grid-paper flex flex-col items-center justify-center gap-2 overflow-hidden border-b border-edge px-3 pb-3 pt-4 text-fg-strong sm:gap-3 sm:px-5 sm:pb-4 sm:pt-5">
+							{t.art && <span className="h-[4.5rem] w-28 shrink-0 sm:h-28 sm:w-44">{t.art}</span>}
+							{/* A fixed height, so a fraction does not push its card's title below the others in the row. */}
+							<span className="flex h-10 max-w-full items-center whitespace-nowrap text-[13px] sm:h-12 sm:text-lg" dangerouslySetInnerHTML={{ __html: t.sample }} />
 						</span>
 						<span className="flex flex-1 flex-col gap-1 p-3 sm:p-4">
 							{showCategory && t.group && <span className="label-mono text-fg-subtle">{t.group.short}</span>}
