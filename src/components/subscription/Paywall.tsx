@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Check, Loader2, Lock } from 'lucide-react';
 import { Features, FeaturesDetails, SCHOOL_YEAR_PASS, TRIAL_DAYS, formatDay, formatPrice, passEnd, passOnSale } from '@/lib/stripe/config';
@@ -32,6 +32,8 @@ interface Props {
 	preview?: ReactNode;
 	/** Narrow version for sidebars. */
 	compact?: boolean;
+	/** Inside a panel of the page, in place of the actions it locks: compact, without a card of its own. */
+	embedded?: boolean;
 }
 
 /**
@@ -42,8 +44,12 @@ interface Props {
  * January and February, until June. No timers, no fake scarcity: the content
  * behind is what sells it.
  */
-export function Paywall({ feature, returnTo, backUrl, benefit, title, preview, compact = false }: Props) {
+export function Paywall({ feature, returnTo, backUrl, benefit, title, preview, compact: narrow = false, embedded = false }: Props) {
+	const compact = narrow || embedded;
 	const { user, ready, openModal } = useAuth();
+	// An embedded paywall can be on the page twice (the phone's layout and the wide one): its title id is unique.
+	const uid = useId();
+	const titleId = embedded ? uid : 'paywall-title';
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const plan = requiredPlanFor(feature);
@@ -65,18 +71,18 @@ export function Paywall({ feature, returnTo, backUrl, benefit, title, preview, c
 	};
 
 	return (
-		<div className={cn('relative', !compact && 'h-full min-h-[60vh]')} id="paywall">
+		<div className={cn('relative', !compact && 'h-full min-h-[60vh]')} id={embedded ? undefined : 'paywall'}>
 			{preview && (
 				<div className="pointer-events-none select-none opacity-50 blur-sm" aria-hidden="true" inert>
 					{preview}
 				</div>
 			)}
-			<div className={cn('flex items-center justify-center', !!preview && 'absolute inset-0', compact ? 'p-3' : 'p-6')}>
-				<section className={cn('w-full rounded-3xl border border-edge bg-surface text-center shadow-xl', compact ? 'max-w-sm p-5' : 'max-w-md p-8')} aria-labelledby="paywall-title">
+			<div className={cn('flex items-center justify-center', !!preview && 'absolute inset-0', embedded ? '' : compact ? 'p-3' : 'p-6')}>
+				<section className={cn('w-full text-center', embedded ? '' : 'rounded-3xl border border-edge bg-surface shadow-xl', embedded ? '' : compact ? 'max-w-sm p-5' : 'max-w-md p-8')} aria-labelledby={titleId}>
 					<div className={cn('mx-auto flex items-center justify-center rounded-full bg-accent-soft text-accent-fg', compact ? 'mb-3 size-11' : 'mb-5 size-16')}>
 						<Lock className={compact ? 'size-5' : 'size-7'} aria-hidden="true" />
 					</div>
-					<h2 id="paywall-title" className={cn('font-bold leading-snug tracking-tight text-fg-strong', compact ? 'text-base' : 'text-2xl')}>
+					<h2 id={titleId} className={cn('font-bold leading-snug tracking-tight text-fg-strong', compact ? 'text-base' : 'text-2xl')}>
 						{title ?? COPY[feature](name)}
 					</h2>
 					<p className={cn('mt-2 leading-relaxed text-fg-muted', compact && 'text-sm')}>{benefit}</p>

@@ -101,7 +101,8 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 	const backLabel = `Torna a ${plainTitle(parentLink.label)}`;
 
 	return (
-		<div data-subject={tone} className="relative flex h-dvh w-full justify-center overflow-hidden bg-surface text-fg md:h-[calc(100dvh-var(--header-h,60px))]">
+		// data-peel-*: where a sticker's lifted flap may be drawn (see PeelSticker).
+		<div data-subject={tone} data-peel-bounds className="relative flex h-dvh w-full justify-center overflow-hidden bg-surface text-fg md:h-[calc(100dvh-var(--header-h,60px))]">
 			<ImmersiveFrame />
 			{/* The side columns sit on the open page, with no frame, so the lesson keeps the weight. Their labels ride on the header's row as it shrinks; their feet (reading progress, chat input) share a line. */}
 			<aside className={cn('absolute inset-y-0 left-0 hidden w-1/4 overflow-hidden transition-[padding] duration-300 lg:flex lg:flex-col', side)} aria-label="Indice della lezione">
@@ -120,10 +121,11 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 				)}
 			</aside>
 
-			{/* A page that needs the width (a run's mistakes, data-wide-page) takes the empty side columns. */}
-			<div ref={scroller} onScroll={onScroll} className="no-scrollbar relative flex h-full w-full flex-col justify-between overflow-y-scroll overscroll-y-contain pb-tabbar lg:mx-[25%] lg:pb-0 lg:has-[[data-wide-page]]:mx-[8%]">
+			{/* A page that needs the width (a run's mistakes, data-wide-page) takes the empty side columns.
+			    No scroll anchoring: when the header compacts, the browser would pull scrollTop back under the threshold and the header would reopen, so a slow scroll never got past it. */}
+			<div ref={scroller} onScroll={onScroll} className="no-scrollbar relative flex h-full w-full flex-col justify-between overflow-y-scroll overscroll-y-contain [overflow-anchor:none] pb-tabbar lg:mx-[25%] lg:pb-0 lg:has-[[data-wide-page]]:mx-[8%]">
 				{/* The page is full-screen on phones: the header pads itself below the status bar (zero in a browser tab). */}
-				<header className="sticky top-0 z-20 bg-surface pt-safe-t transition-all duration-300">
+				<header data-peel-cover="top" className="sticky top-0 z-20 bg-surface pt-safe-t transition-all duration-300">
 					<div className={cn('flex min-h-[56px] items-center justify-between gap-1 bg-surface px-2 transition-all duration-300 lg:min-h-0 lg:gap-4 lg:px-10', compact ? 'lg:py-3' : 'lg:py-8')}>
 						<div className="flex min-w-0 flex-1 items-center gap-1 lg:gap-3">
 							<Link href={parentLink.url} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl text-fg-muted transition-all hover:bg-surface-3 hover:text-fg active:bg-surface-3 focus-ring" title={backLabel} aria-label={backLabel}>
@@ -165,19 +167,21 @@ export function LessonFrame({ titleHtml, note, parentLink, paths, left, withAssi
 					<div className="h-0.5 bg-surface-3 lg:hidden" role="progressbar" aria-label="Avanzamento della lettura" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
 						<div className="h-full bg-accent transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
 					</div>
-					{compact && <div className="relative hidden h-8 w-full bg-gradient-to-b from-surface to-transparent lg:block" />}
+					{/* Hangs below the header, over the text, so the lines fade out instead of being cut. */}
+					{compact && <div data-peel-cover="top" className="pointer-events-none absolute inset-x-0 top-full hidden h-10 bg-gradient-to-b from-surface to-transparent lg:block" aria-hidden="true" />}
 				</header>
 				<div className="flex flex-1 flex-col">
 					<div className="flex-1">{children}</div>
 				</div>
 			</div>
 
-			<aside className={cn('absolute inset-y-0 right-0 hidden w-1/4 overflow-hidden transition-[padding] duration-300 lg:flex lg:flex-col', side)} aria-label="Assistente">
+			{/* Empty without the assistant: then it lets clicks through, to a wide page that runs under it. */}
+			<aside className={cn('absolute inset-y-0 right-0 hidden w-1/4 overflow-hidden transition-[padding] duration-300 lg:flex lg:flex-col', side, !withAssistant && 'pointer-events-none')} aria-label="Assistente">
 				{lg && withAssistant && <AISidebar lesson={note?.title} />}
 			</aside>
 
 			{/* Phones and tablets: the lesson's sections and the assistant, in the thumb zone. */}
-			<nav aria-label="Sezioni" className="fixed inset-x-0 bottom-0 z-30 border-t border-edge-soft bg-surface pb-safe lg:hidden">
+			<nav aria-label="Sezioni" data-peel-cover="bottom" className="fixed inset-x-0 bottom-0 z-30 border-t border-edge-soft bg-surface pb-safe lg:hidden">
 				<ul className="grid h-tabbar grid-cols-5">
 					{sections.map(({ href, label, icon: Icon }) => (
 						<li key={href}>

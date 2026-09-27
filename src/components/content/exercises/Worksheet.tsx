@@ -1,85 +1,148 @@
 import 'katex/dist/katex.min.css';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { RefreshCw } from 'lucide-react';
 import type { QuestionBlock } from '@/lib/server/exercises';
-import { SHEET_MAX, type SheetItem, type Worksheet as Sheet } from '@/lib/server/worksheet';
+import type { SheetItem, SheetLevel, Worksheet as Sheet } from '@/lib/server/worksheet';
+import { dayName } from '@/lib/exercises/sheet-day';
 import { Html } from '@/components/ui/Html';
 import { cn } from '@/lib/utils/cn';
+import { DayNav, LevelIndex, PrintMenu, RevealAll, SheetAnswer, SheetAnswers } from './WorksheetControls';
 
 interface Props {
 	sheet: Sheet;
-	/** The worksheet page's path: the other sheets are `?numero=<n>` on it. */
+	/** Today in Italy: the sheet at the plain address, and the last day of the archive. */
+	today: string;
+	/** The worksheet page's path; past days are `?giorno=<date>` on it. */
 	path: string;
-	/** Right under the page header, without the rule that parts it from content above. */
-	first?: boolean;
+	/** The lesson in plain text, for the printed copy's header. */
+	lesson: { title: string; context: string };
+	/** The switch to the quick path, on the card's first row. */
+	modes?: ReactNode;
 }
 
-/**
- * The lesson's exercises as a textbook page, to do on paper: numbered, grouped by level, the result folded under
- * each. Rendered on the server in full, so it is what a search engine reads of the exercise page.
- */
-export function Worksheet({ sheet, path, first = false }: Props) {
-	const next = sheet.sheet < SHEET_MAX ? sheet.sheet + 1 : 1;
-	return (
-		<section id="scheda" aria-labelledby="scheda-heading" className={cn('mx-4 mb-10 flex flex-col gap-6 sm:mx-6 md:mx-10', first ? 'mt-2' : 'mt-6 border-t border-edge pt-8')}>
-			<header className="flex flex-wrap items-end justify-between gap-4">
-				<div className="flex min-w-0 flex-col gap-1">
-					<p className="label-mono text-fg-subtle">{sheet.sheet === 1 ? 'Scheda di esercizi' : `Scheda ${sheet.sheet}`}</p>
-					<h2 id="scheda-heading" className="font-display text-2xl font-semibold text-fg-strong">
-						{sheet.count} esercizi da fare sul quaderno
-					</h2>
-					<p className="max-w-xl text-fg-muted">Divisi per livello, dal più facile. Scrivi lo svolgimento per intero, poi apri il risultato sotto l&apos;esercizio per controllare.</p>
-				</div>
-				<Link href={`${path}?numero=${next}`} rel="nofollow" className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-edge bg-surface px-4 text-sm font-medium text-fg shadow-paper transition-colors hover:border-edge-strong focus-ring">
-					<RefreshCw className="size-4" aria-hidden="true" />
-					Un&apos;altra scheda
-				</Link>
-			</header>
+const capital = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-			{sheet.levels.map(({ level, name, promptHtml, items }) => (
-				<section key={level} aria-labelledby={`scheda-livello-${level}`} className="flex flex-col gap-3">
-					<h3 id={`scheda-livello-${level}`} className="flex flex-wrap items-baseline gap-x-2 border-b border-edge-soft pb-2 text-lg font-semibold text-fg-strong">
-						<span className="label-mono text-fg-subtle">Livello {level}</span>
-						{name && <span>{name}</span>}
-					</h3>
-					{promptHtml && <Html html={promptHtml} className="math-content font-medium text-fg" />}
-					<ol className="flex flex-col">
-						{items.map((item) => (
-							<Exercise key={item.number} item={item} />
+/**
+ * The lesson's sheet of the day as a textbook page, to do on paper: numbered, grouped by level from the easiest, the
+ * result under each behind a sticker to peel. Rendered on the server in full, so it is what a search engine reads of
+ * the exercise page. It takes the page's width (data-wide-page): the levels beside it from `lg` up, two columns of
+ * exercises where there is room for them.
+ */
+export function Worksheet({ sheet, today, path, lesson, modes }: Props) {
+	const isToday = sheet.day === today;
+	const name = dayName(sheet.day);
+	const href = isToday ? path : `${path}?giorno=${sheet.day}`;
+	return (
+		<SheetAnswers>
+			<section id="scheda" aria-labelledby="scheda-heading" data-wide-page className="@container mx-4 mb-12 mt-2 flex flex-col gap-10 sm:mx-6 md:mx-10">
+				<header className="grid-paper flex flex-col gap-6 rounded-2xl border border-edge bg-surface p-5 shadow-lift sm:p-7">
+					{modes}
+					<div className="flex flex-col gap-6 @3xl:flex-row @3xl:items-end @3xl:justify-between">
+						<div className="flex min-w-0 flex-col gap-2">
+							<p className="label-mono flex flex-wrap items-baseline gap-x-3 text-fg-subtle">
+								{isToday ? 'La scheda di oggi' : 'Una scheda dei giorni scorsi'}
+								{!isToday && (
+									<Link href={path} className="rounded font-sans text-sm font-medium normal-case tracking-normal text-accent-fg underline underline-offset-4 focus-ring">
+										Torna a oggi
+									</Link>
+								)}
+							</p>
+							<h2 id="scheda-heading" className="text-balance font-display text-3xl font-semibold tracking-tight text-fg-strong sm:text-4xl">
+								{capital(name)}
+							</h2>
+							<p className="max-w-xl text-pretty leading-relaxed text-fg-muted">
+								{sheet.count} esercizi in {sheet.levels.length} livelli, dal più facile. Fai lo svolgimento sul quaderno, poi stacca l&apos;adesivo sotto l&apos;esercizio per vedere la soluzione. {isToday ? 'Domani ne trovi una nuova.' : 'Con le frecce passi da un giorno all’altro.'}
+							</p>
+						</div>
+						<div className="flex shrink-0 flex-wrap items-center gap-3">
+							<DayNav day={sheet.day} today={today} path={path} />
+							<PrintMenu meta={{ title: lesson.title, context: lesson.context, day: sheet.day, dayName: dayName(sheet.day, true), count: sheet.count, href }} />
+						</div>
+					</div>
+				</header>
+
+				<div className="lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12 xl:gap-16">
+					{/* The levels, beside the sheet as the reader goes down it. */}
+					<aside className="hidden lg:block">
+						<div className="sticky top-28 flex flex-col gap-6">
+							<LevelIndex levels={sheet.levels.map((l) => ({ level: l.level, name: l.name }))} />
+							<RevealAll className="-ml-2.5 self-start" />
+						</div>
+					</aside>
+
+					<div data-sheet-content className="flex min-w-0 flex-col gap-16">
+						<div data-no-print className="-mb-10 lg:hidden">
+							<RevealAll className="-ml-2.5" />
+						</div>
+						{sheet.levels.map((level, i) => (
+							<Level key={level.level} level={level} index={i} />
 						))}
-					</ol>
-				</section>
-			))}
+					</div>
+				</div>
+			</section>
+		</SheetAnswers>
+	);
+}
+
+/** A level: a stamp with its number and a heading that reads from across the page, then its exercises. */
+function Level({ level, index }: { level: SheetLevel; index: number }) {
+	const { level: n, name, promptHtml, items } = level;
+	const title = name ?? `Livello ${n}`;
+	return (
+		<section id={`livello-${n}`} data-level={n} data-sheet-level data-level-label={name ? `Livello ${n} · ${name}` : `Livello ${n}`} aria-labelledby={`livello-${n}-titolo`} className="scroll-mt-28">
+			<header data-sheet-level-head className="flex items-start gap-4 border-b-2 border-fg-strong/80 pb-4 sm:gap-5">
+				<span
+					data-no-print
+					className={cn(
+						'flex size-12 shrink-0 items-center justify-center rounded-2xl border border-inverse bg-inverse font-display text-xl font-medium tabular-nums text-inverse-fg shadow-key sm:size-14 sm:text-2xl',
+						index % 2 === 0 ? '-rotate-3' : 'rotate-2'
+					)}
+					aria-hidden="true"
+				>
+					{n}
+				</span>
+				<div className="flex min-w-0 flex-1 flex-col gap-1">
+					<p className="label-mono text-fg-subtle">
+						Livello {n} · {items.length === 1 ? '1 esercizio' : `${items.length} esercizi`}
+					</p>
+					<h3 id={`livello-${n}-titolo`} className="text-pretty font-display text-2xl font-semibold leading-tight tracking-tight text-fg-strong sm:text-[1.75rem]">
+						{title}
+					</h3>
+					{promptHtml && <Html html={promptHtml} className="math-content mt-1 text-fg-muted" />}
+				</div>
+			</header>
+			<ol data-sheet-items className="grid gap-x-12 @4xl:grid-cols-2">
+				{items.map((item) => (
+					<Exercise key={item.number} item={item} />
+				))}
+			</ol>
 		</section>
 	);
 }
 
 function Exercise({ item }: { item: SheetItem }) {
 	return (
-		<li className="flex gap-3 border-b border-edge-soft py-3 last:border-b-0">
-			<span className="w-7 shrink-0 pt-0.5 text-right font-mono text-sm text-fg-subtle tabular-nums" aria-hidden="true">
-				{item.number}.
+		<li data-sheet-item data-number={item.number} className="flex gap-4 border-b border-edge-soft py-6">
+			<span data-sheet-num className="mt-px flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md bg-surface-3 px-1.5 font-mono text-sm font-medium tabular-nums text-fg-strong" aria-hidden="true">
+				{item.number}
 			</span>
-			<div className="flex min-w-0 flex-1 flex-col gap-2">
+			<div className="flex min-w-0 flex-1 flex-col gap-3">
 				<span className="sr-only">Esercizio {item.number}.</span>
 				{item.promptHtml && <Html html={item.promptHtml} className="math-content text-fg" />}
 				{item.blocks.map((block, i) => (
 					<SheetBlock key={i} block={block} />
 				))}
 				{item.optionsHtml && (
-					<ol className="flex flex-wrap gap-x-6 gap-y-1 text-fg">
+					<ol data-sheet-options className="grid gap-x-6 gap-y-2 text-fg" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(100%, ${item.optionWidth}rem), 1fr))` }}>
 						{item.optionsHtml.map((html, i) => (
-							<li key={i} className="flex items-baseline gap-1.5">
+							<li key={i} className="flex items-baseline gap-2">
 								<span className="font-mono text-sm text-fg-subtle">{'abcdefgh'[i]})</span>
-								<Html as="span" html={html} className="math-content" />
+								<Html as="span" html={html} className="math-content min-w-0" />
 							</li>
 						))}
 					</ol>
 				)}
-				<details className="group mt-1 text-sm">
-					<summary className="w-fit cursor-pointer select-none rounded-md text-fg-subtle underline decoration-edge-strong underline-offset-4 hover:text-fg focus-ring">Risultato</summary>
-					<Html html={item.answerHtml} className="math-content mt-2 break-words rounded-lg bg-surface-2 px-3 py-2 text-base text-fg-strong" />
-				</details>
+				<SheetAnswer number={item.number} html={item.answerHtml} />
 			</div>
 		</li>
 	);

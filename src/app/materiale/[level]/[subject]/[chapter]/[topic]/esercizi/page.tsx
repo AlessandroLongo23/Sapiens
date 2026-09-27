@@ -57,6 +57,7 @@ export default async function ExercisesPage(props: LessonParams & { searchParams
 	// Exercises are part of the paid plans (see the plan config); the markup declares the gated part.
 	const free = SUBSCRIPTION_PLANS.FREE.access[Features.EXERCISES];
 	const title = toHtml(`Esercizi: ${node.title}`);
+	const modes = <ExerciseModes current="path" paths={paths} inCard />;
 
 	return (
 		<>
@@ -65,27 +66,36 @@ export default async function ExercisesPage(props: LessonParams & { searchParams
 				{!available ? (
 					<ComingSoon kind="exercises" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />
 				) : (
-					// The modes on top, the path in the height left: the runner fills its box, answers at the bottom.
+					// The path in the height left: the runner fills its box, answers at the bottom. The page has one shape
+					// whatever the access: without it the path is the same, and only the way into a level is locked.
 					<div className="flex h-full flex-col">
-						<ExerciseModes current="path" paths={paths} />
 						<div className="min-h-0 flex-1">
 							{!unlocked ? (
-								<div id="esercizi" className="h-full">
-									<Paywall
-										feature={Features.EXERCISES}
-										returnTo={paths.exercises}
-										backUrl={paths.theory}
-										title={user ? "Hai fatto la sessione di oggi" : 'Crea un account per fare gli esercizi'}
-										benefit={
-											user
-												? "Domani hai un'altra sessione gratuita. Con Studio ti eserciti senza limiti, su tutte le lezioni, con i progressi salvati."
-												: 'Con un account gratuito hai una sessione di esercizi al giorno, generati ogni volta diversi, con correzione immediata e progressi salvati.'
-										}
-										preview={path && <ExercisePath titleHtml={title} path={path} questionCount={SESSION_LENGTH} />}
-									/>
-								</div>
+								path && (
+									<div id="esercizi">
+										<ExercisePath
+											titleHtml={title}
+											path={path}
+											questionCount={SESSION_LENGTH}
+											modes={modes}
+											locked={
+												<Paywall
+													embedded
+													feature={Features.EXERCISES}
+													returnTo={paths.exercises}
+													title={user ? 'Hai fatto la sessione di oggi' : 'Crea un account per fare gli esercizi'}
+													benefit={
+														user
+															? "Domani hai un'altra sessione gratuita. Con Studio ti eserciti senza limiti, su tutte le lezioni, con i progressi salvati."
+															: 'Con un account gratuito hai una sessione di esercizi al giorno, generati ogni volta diversi, con correzione immediata e progressi salvati.'
+													}
+												/>
+											}
+										/>
+									</div>
+								)
 							) : (
-								path && <ExerciseRunner lesson={dbPath} path={path} free={!full} questionsLeft={full ? SESSION_LENGTH : left} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} finished={finished} />
+								path && <ExerciseRunner lesson={dbPath} path={path} free={!full} questionsLeft={full ? SESSION_LENGTH : left} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} finished={finished} modes={modes} />
 							)}
 						</div>
 					</div>

@@ -1,11 +1,13 @@
 ---
-stato: decisa
+stato: superata
 aggiornato: 2026-09-27
 tag: [decisione, esercizi, seo]
 ---
 # Una scheda di esercizi gratuita e indicizzata per ogni lezione
 
 ## Decisione
+Superata in parte il 27 settembre 2026 da [[2026-09-27 La scheda degli esercizi è giornaliera]]: niente più "Un'altra scheda" e schede numerate, ogni giorno una scheda nuova con la data come seed; indicizzata resta solo quella di oggi.
+
 Ogni lezione con esercizi ha, accanto al percorso di livelli, una scheda da fare sul quaderno: 6 esercizi per livello presi dai generatori della lezione, numerati come in un libro, con la consegna scritta una volta per livello e il risultato piegato sotto ogni esercizio. La scheda 1 è la stessa per tutti, è gratuita e Google la indicizza. "Un'altra scheda" apre le schede da 2 a 20 (`?numero=n`), che non si indicizzano.
 
 Dal 27 settembre 2026 le due modalità hanno ciascuna la sua pagina: `/esercizi` è il percorso (prova veloce), `/esercizi/scheda` la scheda, con un selettore in cima a entrambe. Si indicizza solo la scheda; il percorso è `noindex` ma Google ne segue i link. Il 26 settembre erano sulla stessa pagina, con la scheda sotto il percorso.

@@ -12,15 +12,13 @@ import type { QuestionBlock } from '@/lib/server/exercises';
 
 /**
  * The worksheet of a lesson: the exercises to do at a desk, on paper, one after another, as in a textbook, with
- * the result under each. Unlike a run, it is the same for everybody and on every visit: the seeds derive from the
- * lesson and the sheet number, so the page Google indexes is the page a student reads. Sheet 1 is the one at
- * `esercizi/scheda`; "Un'altra scheda" asks for the next ones (`?numero=<n>`), which are not indexed.
+ * the result under each. There is one a day: the seeds derive from the lesson and the date, so on a given day the
+ * sheet is the same for everybody and on every visit (the page Google indexes is the page a student reads), and
+ * tomorrow it is another. Past days stay where they were (`?giorno=<date>`), and are not indexed.
  */
 
 /** Exercises per level on a sheet. */
 export const SHEET_PER_LEVEL = 6;
-/** Sheets a lesson offers: enough for a month of homework, not an endless space of URLs for a crawler. */
-export const SHEET_MAX = 20;
 /** Seeds tried per level to find SHEET_PER_LEVEL different exercises. */
 const TRIES = 40;
 
@@ -31,6 +29,8 @@ export interface SheetItem {
 	blocks: QuestionBlock[];
 	/** The options, for exercises that are a choice by nature (true or false, which set); null for the others. */
 	optionsHtml: string[] | null;
+	/** Width of an option's column, in rem, from the longest option: short ones sit four to a row, long ones fewer. */
+	optionWidth: number;
 	/** The result: the right option's letter and text, or the final solution. */
 	answerHtml: string;
 }
@@ -44,12 +44,13 @@ export interface SheetLevel {
 }
 
 export interface Worksheet {
-	sheet: number;
+	/** The day, `2026-09-27`: the sheet's seed. */
+	day: string;
 	count: number;
 	levels: SheetLevel[];
 }
 
-/** FNV-1a: a stable 32-bit seed from the lesson path and the sheet number. */
+/** FNV-1a: a stable 32-bit seed from the lesson path and the day. */
 function hash(text: string): number {
 	let h = 0x811c9dc5;
 	for (let i = 0; i < text.length; i++) {
@@ -79,6 +80,13 @@ function figureHtml(ref: NonNullable<Sample['figure']>): string {
 
 const LETTERS = 'abcdefgh';
 
+/** About how many characters a formula or a line of text takes once set: commands count as one symbol. */
+const printedLength = (source: string) => source.replace(/\\(?:begin|end)\{[a-z]+\}/g, '').replace(/\\text\{([^}]*)\}/g, '$1').replace(/\\[a-zA-Z]+/g, 'x').replace(/[{}^_$\\ ]/g, '').length;
+
+/** A column that holds the longest option on one line, up to a width that wraps text of a few words anyway. A
+ *  symbol of a formula, with the space around a relation, takes about 0.85rem; a letter of text half that. */
+const optionWidth = (lengths: number[], text: boolean) => Math.min(22, Math.max(7, Math.round(Math.max(...lengths) * (text ? 0.5 : 0.85) + 3)));
+
 function item(number: number, s: Sample): SheetItem {
 	const text = s.format === 'text';
 	const blocks: QuestionBlock[] = !s.problem.trim()
@@ -104,6 +112,7 @@ function item(number: number, s: Sample): SheetItem {
 		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
 		optionsHtml: choice ? choice.options.map(option) : null,
+		optionWidth: choice ? optionWidth(choice.options.map((o) => (o.figure ? 40 : printedLength(o.latex))), text) : 0,
 		answerHtml: choice ? `<b>${LETTERS[choice.correct]})</b> ${option(choice.options[choice.correct])}` : solution
 	};
 }
@@ -127,12 +136,12 @@ function samples(generator: Generator, base: number, level: number, count: numbe
 	return out;
 }
 
-async function build(dbPath: string, sheet: number): Promise<Worksheet | null> {
+async function build(dbPath: string, day: string): Promise<Worksheet | null> {
 	const config = configs[dbPath];
 	const load = config && generators[config.generator];
 	if (!load) return null;
 	const generator = await load();
-	const base = hash(`${dbPath}#${sheet}`);
+	const base = hash(`${dbPath}#${day}`);
 	let number = 0;
 	const levels = config.levels
 		.map((level): SheetLevel => {
@@ -141,19 +150,21 @@ async function build(dbPath: string, sheet: number): Promise<Worksheet | null> {
 			return { level, name: levelName(config.generator, level), promptHtml: shared, items: shared ? items.map((i) => ({ ...i, promptHtml: '' })) : items };
 		})
 		.filter((l) => l.items.length > 0);
-	return levels.length ? { sheet, count: number, levels } : null;
+	return levels.length ? { day, count: number, levels } : null;
 }
 
-// A sheet never changes for a given build, so each one is built once per server instance.
+// A day's sheet never changes for a given build, so each one is built once per server instance. Most visits ask for
+// today's; the map is emptied when it grows past what a few days of every lesson take.
 const built = new Map<string, Promise<Worksheet | null>>();
+const BUILT_MAX = 1000;
 
-/** Sheet `sheet` (1 to SHEET_MAX) of a lesson, by database path; null when the lesson has no exercises. */
-export function worksheet(dbPath: string, sheet = 1): Promise<Worksheet | null> {
-	const n = Number.isInteger(sheet) && sheet >= 1 && sheet <= SHEET_MAX ? sheet : 1;
-	const key = `${dbPath}#${n}`;
+/** The sheet of `day` (an ISO date, checked by the caller) of a lesson, by database path; null when the lesson has no exercises. */
+export function worksheet(dbPath: string, day: string): Promise<Worksheet | null> {
+	const key = `${dbPath}#${day}`;
 	let sheetPromise = built.get(key);
 	if (!sheetPromise) {
-		sheetPromise = build(dbPath, n).catch((err) => {
+		if (built.size >= BUILT_MAX) built.clear();
+		sheetPromise = build(dbPath, day).catch((err) => {
 			built.delete(key);
 			throw err;
 		});

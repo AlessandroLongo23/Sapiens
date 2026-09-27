@@ -1267,7 +1267,7 @@ body {
 #note-print { display: none; }
 @media print {
 	@page { size: A4; margin: 0; }
-	body > :not(#note-print) { display: none !important; }
+	body:has(> #note-print) > :not(#note-print) { display: none !important; }
 	#note-print { display: block; }
 	#note-print .note-sheet {
 		box-shadow: none;
@@ -1275,6 +1275,73 @@ body {
 		print-color-adjust: exact;
 		-webkit-print-color-adjust: exact;
 	}
+}
+
+/* Printing a worksheet: the copy built for the occasion (PrintMenu in
+   WorksheetControls.tsx), on A4 with margins, light whatever the theme. A header
+   with room for a name, the exercises in two columns, and with the results
+   chosen, a page of solutions at the back. */
+#sheet-print { display: none; }
+/* No page margin: without room for them, the browser prints no header and footer of its own (address, date,
+   page number). The margins are drawn inside: padding on the sides, a repeated table head and foot above and below. */
+@page sheet { size: A4; margin: 0; }
+@media print {
+	body:has(> #sheet-print) > :not(#sheet-print) { display: none !important; }
+	html:has(#sheet-print),
+	body:has(> #sheet-print) { background: white !important; height: auto !important; overflow: visible !important; }
+	#sheet-print {
+		display: block;
+		page: sheet;
+		background: white;
+		color: var(--fg);
+		font-size: 10pt;
+		line-height: 1.4;
+		padding: 0 13mm;
+	}
+	#sheet-print .sp-frame { width: 100%; border-collapse: collapse; }
+	#sheet-print .sp-frame > thead .sp-band { height: 13mm; }
+	#sheet-print .sp-frame > tfoot .sp-band { height: 14mm; }
+	#sheet-print .sp-frame td { padding: 0; vertical-align: top; }
+	#sheet-print img { filter: none !important; }
+	#sheet-print .scroll-x { overflow: visible !important; }
+	#sheet-print .sp-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: 8mm;
+		padding-bottom: 4mm;
+		margin-bottom: 2mm;
+		border-bottom: 1.5pt solid var(--fg-strong);
+	}
+	#sheet-print .sp-kicker { font-family: var(--font-mono); font-size: 7.5pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-subtle); }
+	#sheet-print .sp-title { font-family: var(--font-display); font-size: 19pt; font-weight: 600; line-height: 1.15; color: var(--fg-strong); margin: 1mm 0; }
+	#sheet-print .sp-meta { font-size: 9pt; color: var(--fg-muted); }
+	#sheet-print .sp-fields { display: grid; gap: 3.5mm; width: 62mm; flex-shrink: 0; font-size: 8.5pt; color: var(--fg-muted); }
+	#sheet-print .sp-field { display: flex; align-items: baseline; gap: 2mm; }
+	#sheet-print .sp-line { flex: 1; border-bottom: 0.75pt solid var(--fg-subtle); }
+	#sheet-print .sp-body { display: block; }
+	#sheet-print [data-sheet-level] { margin-top: 6mm; }
+	/* A heading never ends a page alone: it carries 24mm of empty room that breaks with it, which the exercises
+	   then take back, so it moves to the next page unless a row of exercises fits under it. */
+	#sheet-print [data-sheet-level-head] { border-bottom: none; break-inside: avoid; padding-bottom: 24mm; margin-bottom: -24mm; }
+	#sheet-print [data-sheet-items] { margin-top: 1.5mm; border-top: 0.75pt solid var(--fg-strong); }
+	#sheet-print [data-sheet-level-head] h3 { font-size: 13pt; }
+	#sheet-print [data-sheet-items] { display: block; columns: 2; column-gap: 9mm; }
+	#sheet-print [data-sheet-item] { break-inside: avoid; padding: 2.8mm 0; gap: 3mm; }
+	#sheet-print [data-sheet-item] > div { gap: 1.5mm; }
+	#sheet-print [data-sheet-num] { display: block; align-self: flex-start; height: auto; min-width: 0; margin-top: 0.1em; padding: 0; background: none; font-size: 9pt; }
+	#sheet-print [data-sheet-num]::after { content: '.'; }
+	#sheet-print [data-sheet-options] { column-gap: 5mm; row-gap: 1mm; }
+	#sheet-print .math-content.text-lg { font-size: 11pt; }
+	#sheet-print .sp-solutions { break-before: page; }
+	#sheet-print .sp-solutions-title { font-family: var(--font-display); font-size: 17pt; font-weight: 600; color: var(--fg-strong); }
+	#sheet-print .sp-solutions > .sp-meta { padding-bottom: 3mm; margin-bottom: 2mm; border-bottom: 1.5pt solid var(--fg-strong); }
+	#sheet-print .sp-solutions-level { margin-top: 4mm; break-inside: avoid; }
+	#sheet-print .sp-solutions-level h3 { font-family: var(--font-mono); font-size: 7.5pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-subtle); margin-bottom: 1.5mm; }
+	#sheet-print .sp-solutions-level ol { columns: 2; column-gap: 9mm; }
+	#sheet-print .sp-solutions-level li { display: flex; gap: 2mm; align-items: baseline; break-inside: avoid; padding: 0.8mm 0; }
+	#sheet-print .sp-num { font-family: var(--font-mono); font-size: 8.5pt; color: var(--fg-subtle); flex-shrink: 0; }
+	#sheet-print .sp-foot { margin-top: 8mm; padding-top: 2mm; border-top: 0.75pt solid var(--edge-strong); font-size: 7.5pt; color: var(--fg-subtle); }
 }
 
 /* The Zaino's own entrance: shelves and lists stagger in once per page load.

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, BookOpen, ListChecks, Repeat, RotateCcw, Route } from 'lucide-react';
 import type { ExerciseView, FinishedRun, PathView, SessionView } from '@/lib/server/exercises';
@@ -29,6 +29,8 @@ interface Props {
 	nextHref: string | null;
 	/** A finished run whose mistakes the address asks for (`?prova=<id>`): the page opens on them. */
 	finished?: FinishedRun | null;
+	/** The switch to the daily worksheet, shown in the path's card. */
+	modes?: ReactNode;
 }
 
 /** The address of a run's mistakes: the exercises page with `?prova=<id>`, so a reload or a link opens them again. */
@@ -56,7 +58,7 @@ interface Current {
  * levels, then a run at the level picked (see RunPlayer), then its summary. The summary says how the run went
  * and what to do next; the mistakes have a page of their own (RunReview), at `?prova=<id>`.
  */
-export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SESSION_LENGTH, titleHtml, theoryHref, nextHref, finished = null }: Props) {
+export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SESSION_LENGTH, titleHtml, theoryHref, nextHref, finished = null, modes }: Props) {
 	const router = useRouter();
 	const [run, setRun] = useState<Current | null>(() =>
 		finished ? { session: finished.session, first: null, startAt: 0, done: { results: finished.results, progress: finished.results.map((r) => (r.verdict.correct ? 'correct' : 'incorrect')) } } : null
@@ -166,7 +168,7 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 		return (
 			<>
 				{/* Keyed by the suggested level: back from a run that passed, the path opens on the level it unlocked. */}
-				<ExercisePath key={path.current} titleHtml={titleHtml} path={path} questionCount={questionCount} onStart={start} starting={starting} onResume={resume} resuming={resuming} />
+				<ExercisePath key={path.current} titleHtml={titleHtml} path={path} questionCount={questionCount} onStart={start} starting={starting} onResume={resume} resuming={resuming} modes={modes} />
 				{alert}
 				{free && !error && <p className="px-4 pb-6 text-center text-sm text-fg-muted">La sessione gratuita di oggi: {left} {left === 1 ? 'domanda' : 'domande'}. Con Studio ti eserciti senza limiti.</p>}
 			</>

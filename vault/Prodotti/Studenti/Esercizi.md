@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-26
+aggiornato: 2026-09-27
 tag: [prodotto, studenti, contenuti]
 ---
 # Esercizi
@@ -9,6 +9,7 @@ tag: [prodotto, studenti, contenuti]
 Esercizi con correzione immediata, collegati alle lezioni, con i progressi salvati.
 
 ## Stato attuale
+- Dal 27 settembre 2026 (nel codice, non committato né pubblicato) la scheda è giornaliera: il seed è la lezione più la data italiana, `…/esercizi/scheda` è la scheda di oggi (indicizzata) e i giorni passati sono `?giorno=AAAA-MM-GG` dal 1° settembre 2026 (`noindex`); "Un'altra scheda" e `?numero=n` non ci sono più (`src/lib/exercises/sheet-day.ts`). La pagina è rifatta: prende tutta la larghezza, con l'indice dei livelli a lato che segue la lettura, un timbro e un titolo grande per ogni livello, due colonne di esercizi dove c'è spazio e colonne delle opzioni larghe quanto l'opzione più lunga. Il risultato di ogni esercizio sta sotto l'adesivo da staccare delle flashcard (`PeelSticker`, taglia `strip`); "Scopri tutti i risultati" li toglie tutti e "Ricopri" li rimette. "Stampa o PDF" stampa la scheda senza soluzioni o con le soluzioni in fondo, su una pagina a parte: una copia costruita al momento, A4, con Nome, Classe e Data in testa e gli esercizi su due colonne; il PDF si ottiene con "Salva come PDF" nella finestra di stampa e il file si chiama "Scheda <lezione> <gg-mm-aaaa>". Anche Ctrl+P stampa la scheda, con le soluzioni in fondo. Codice in `src/components/content/exercises/Worksheet.tsx` e `WorksheetControls.tsx`. Vedi [[2026-09-27 La scheda degli esercizi è giornaliera]]. Provato nel browser a 1512 e 390 px, chiaro e scuro, e stampato in PDF. Lo stesso giorno, dopo il primo giro: l'adesivo del risultato è di carta neutra (non più nel colore della materia, che toglieva attenzione agli esercizi), l'accento resta solo su "Torna a oggi", il calendario è un popup di Sapiens al posto di quello del browser, e la linguetta dell'adesivo non passa più sopra l'intestazione né sulla barra in basso. La pagina della prova veloce (`ExercisePath.tsx`) ha la stessa larghezza della scheda: da computer i livelli a sinistra e il livello scelto in un pannello a destra, che resta in vista; dal telefono il livello si apre sotto la sua riga come prima. Il selettore tra "Prova veloce" e "Scheda giornaliera" sta nella card a quadretti di entrambe le pagine; le soluzioni si chiamano "Soluzione". Senza accesso la prova veloce ha la stessa forma: al posto dei bottoni del livello c'è l'invito al piano (vedi [[2026-09-27 Una pagina ha la stessa forma per ogni livello di accesso]]).
 - Dal 26 settembre 2026 (nel codice, non ancora pubblicato) ogni lezione con esercizi ha anche una scheda da fare sul quaderno, dal 27 settembre su una pagina sua (`…/esercizi/scheda`) accanto al percorso (`…/esercizi`), con un selettore "Prova veloce" e "Scheda sul quaderno" in cima a entrambe: 6 esercizi per livello dal generatore della lezione, numerati, con la consegna una volta per livello e il risultato piegato sotto ogni esercizio (`src/lib/server/worksheet.ts`, `src/components/content/exercises/Worksheet.tsx`). I seed vengono dalla lezione e dal numero di scheda, quindi la scheda 1 è la stessa per tutti ed è indicizzata; "Un'altra scheda" apre le schede 2-20 (`?numero=n`), `noindex`. Le opzioni compaiono solo negli esercizi che sono una scelta per natura. La pagina del percorso è `noindex`. Vedi [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]].
 - Dal 25 settembre 2026 (sera) ogni prova tiene i suoi conteggi (`answered`, `correct`, `finished_at`) e ogni giorno di risposte ha la sua riga in `exercise_days`, aggiornati da un trigger quando un tentativo riceve la risposta (migrazione `20260926090000_exercise_progress.sql`, applicata). Il percorso e la sessione gratuita leggono i conteggi. Una prova sotto le 5 domande non supera il livello ([[2026-09-25 Una prova supera un livello solo con almeno 5 domande]]): il percorso lo dice prima di cominciare, il riepilogo dice "Allenamento fatto".
 - Progressi nel materiale: sulle righe delle lezioni "3/7 livelli" o "Completata", sulle righe dei capitoli "1/3 completate" (lezioni con esercizi con tutti i livelli superati). Le pagine restano in cache per tutti: il browser chiede i progressi una volta (`GET /api/esercizi/progressi`, una query sulle prove) e li tiene un minuto, o finché una prova finisce. Chi non ha un account, o non ha cominciato, vede l'etichetta di sempre. Funzione 4 di [[Progressi dello studente]].
@@ -51,9 +52,12 @@ Esercizi con correzione immediata, collegati alle lezioni, con i progressi salva
 - Esercizi a fine capitolo e simulazioni di verifica: nella beta o dopo?
 - Esercizi gratuiti di assaggio nel piano Free per convertire? In parte risposta dalla scheda gratuita del 26 settembre 2026.
 - Livelli con esercizi lunghi per la scheda (espressioni, equazioni con più passaggi, problemi): quali generatori e in che ordine.
+- Alcuni livelli della scheda hanno 1 o 2 esercizi invece di 6, perché il generatore dà pochi esercizi diversi (Prime definizioni: 19 esercizi, il livello 4 ne ha uno).
+- Un PDF scaricabile direttamente, senza la finestra di stampa: servirebbe un Chromium sul server. Rimandato.
+- Per un utente iscritto, la scheda di oggi deve ricordare quali risultati ha già staccato?
 
 ## Collegamenti
 - [[Pipeline esercizi]], [[Pratica quotidiana]], [[Schema dati]]
 - Funzioni sui progressi (errori, prova da riprendere, progressi nel materiale, "Oggi"): [[Progressi dello studente]]
 - [[2026-09-23 Esercizi da generatori scritti dall'AI]]
-- [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]], [[SEO]]
+- [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]], [[2026-09-27 La scheda degli esercizi è giornaliera]], [[SEO]]

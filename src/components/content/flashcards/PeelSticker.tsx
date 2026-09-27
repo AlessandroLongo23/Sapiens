@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { useReducedMotion } from '@/lib/hooks/use-media';
+import { cn } from '@/lib/utils/cn';
 
 /**
  * The sticker over a flashcard's answer. Peeling it off is the reveal.
@@ -32,6 +33,16 @@ import { useReducedMotion } from '@/lib/hooks/use-media';
  *
  * Space and Enter reveal at once (keyboard users are going fast), and so does
  * every input under reduced motion, with a short fade.
+ *
+ * Two sizes: `card` covers a flashcard's answer; `strip` is a label over one
+ * line, the result under an exercise of the worksheet, where a page holds a few
+ * dozen of them, so it is plain paper and not the subject's colour: it must not
+ * outshout the exercises. Only the stickers on screen follow the scroll: the
+ * flap of one that is off screen is hidden instead of redrawn.
+ *
+ * The flap's layer is above the whole page, so it is clipped to the lesson's
+ * frame (`data-peel-bounds`) minus what covers it there (`data-peel-cover`, top
+ * or bottom: the sticky header, the tab bar), or it would ride over them.
  */
 
 type Point = { x: number; y: number };
@@ -87,6 +98,23 @@ function gradient(w: number, h: number, m: Point, n: Point, stops: [string, numb
 	return `linear-gradient(${theta}rad, ${stops.map(([color, d]) => `${color} ${(at + d).toFixed(2)}px`).join(', ')})`;
 }
 
+/** The part of the screen the flap may cover, as a clip-path in the coordinates of a layer placed at `box`. */
+function visibleArea(el: HTMLElement, box: DOMRect): string {
+	const bounds = el.closest('[data-peel-bounds]');
+	if (!bounds) return 'none';
+	const b = bounds.getBoundingClientRect();
+	let top = b.top;
+	let bottom = b.bottom;
+	bounds.querySelectorAll<HTMLElement>('[data-peel-cover]').forEach((cover) => {
+		const r = cover.getBoundingClientRect();
+		if (!r.height) return;
+		if (cover.dataset.peelCover === 'bottom') bottom = Math.min(bottom, r.top);
+		else top = Math.max(top, r.bottom);
+	});
+	const [l, t, r, d] = [b.left - box.left, top - box.top, b.right - box.left, bottom - box.top].map((v) => `${v.toFixed(1)}px`);
+	return `polygon(${l} ${t}, ${r} ${t}, ${r} ${d}, ${l} ${d})`;
+}
+
 type Phase = 'idle' | 'pressed' | 'dragging' | 'releasing' | 'leaving' | 'gone';
 const noSubscribe = () => () => {};
 /** A corner: 1 is the right or bottom edge, 0 the left or top. */
@@ -95,7 +123,15 @@ const HOME: Corner = { x: 0, y: 1 }; // the dog-ear: bottom-left, so the sticker
 /** From the bottom-right frame to the corner's own (the same flip turns a screen move into the frame). */
 const mirror = (p: Point, c: Corner): Point => ({ x: c.x ? p.x : -p.x, y: c.y ? p.y : -p.y });
 
-export function PeelSticker({ revealed, onPeel }: { revealed: boolean; onPeel: () => void }) {
+interface Props {
+	revealed: boolean;
+	onPeel: () => void;
+	/** What peeling uncovers, for screen readers and the face. */
+	label?: string;
+	size?: 'card' | 'strip';
+}
+
+export function PeelSticker({ revealed, onPeel, label = 'Mostra la risposta', size = 'card' }: Props) {
 	const reduced = useReducedMotion();
 	const [gone, setGone] = useState(false);
 	const root = useRef<HTMLButtonElement>(null);
@@ -107,7 +143,7 @@ export function PeelSticker({ revealed, onPeel }: { revealed: boolean; onPeel: (
 	// is no <body> to portal into on the server, so the flap arrives with hydration.
 	const client = useSyncExternalStore(noSubscribe, () => true, () => false);
 	const layer = client ? document.body : null;
-	const state = useRef({ phase: 'idle' as Phase, corner: HOME, p: { x: -REST, y: -REST } as Point, base: PRESS, frame: 0, start: { x: 0, y: 0 } as Point, last: { x: 0, y: 0, t: 0 }, v: 0, gave: false, settling: false });
+	const state = useRef({ phase: 'idle' as Phase, corner: HOME, p: { x: -REST, y: -REST } as Point, base: PRESS, frame: 0, start: { x: 0, y: 0 } as Point, last: { x: 0, y: 0, t: 0 }, v: 0, gave: false, settling: false, visible: true });
 
 	/** Draws the sticker with its corner pulled by p (in the bottom-right frame). */
 	const draw = (p: Point, opacity = 1) => {
@@ -126,6 +162,7 @@ export function PeelSticker({ revealed, onPeel }: { revealed: boolean; onPeel: (
 		lift.current.style.transform = `translate(${box.left}px, ${box.top}px)`;
 		lift.current.style.width = `${w}px`;
 		lift.current.style.height = `${h}px`;
+		lift.current.style.clipPath = visibleArea(el, box);
 		// Both clips meet on the crease, where the face's antialiased edge would show as a
 		// coloured hairline beside the flap: the face stops half a pixel short, and the
 		// flap reaches a pixel past it.
@@ -221,19 +258,42 @@ export function PeelSticker({ revealed, onPeel }: { revealed: boolean; onPeel: (
 		}, 130);
 	};
 
-	// The dog-ear at rest, and redrawn when the card resizes or the page scrolls.
+	// The dog-ear at rest, and redrawn when the card resizes or the page scrolls; off screen, the flap is hidden.
+	// A scroll is followed for a moment after it stops: the lesson header shrinks with a transition as the page
+	// scrolls, moving the sticker without another scroll event.
 	useEffect(() => {
 		const el = root.current;
 		if (!el || !layer) return;
-		const redraw = () => draw(state.current.p);
-		redraw();
-		const observer = new ResizeObserver(redraw);
-		observer.observe(el);
-		window.addEventListener('scroll', redraw, { capture: true, passive: true });
 		const s = state.current;
+		const redraw = () => {
+			if (s.visible) draw(s.p);
+		};
+		redraw();
+		let until = 0;
+		let loop = 0;
+		const follow = () => {
+			redraw();
+			loop = performance.now() < until ? requestAnimationFrame(follow) : 0;
+		};
+		const onScroll = () => {
+			until = performance.now() + 400;
+			redraw();
+			if (!loop) loop = requestAnimationFrame(follow);
+		};
+		const resize = new ResizeObserver(redraw);
+		resize.observe(el);
+		const seen = new IntersectionObserver(([entry]) => {
+			s.visible = entry.isIntersecting;
+			if (lift.current) lift.current.style.visibility = s.visible ? '' : 'hidden';
+			redraw();
+		});
+		seen.observe(el);
+		window.addEventListener('scroll', onScroll, { capture: true, passive: true });
 		return () => {
-			observer.disconnect();
-			window.removeEventListener('scroll', redraw, { capture: true });
+			resize.disconnect();
+			seen.disconnect();
+			window.removeEventListener('scroll', onScroll, { capture: true });
+			cancelAnimationFrame(loop);
 			cancelAnimationFrame(s.frame);
 		};
 	}, [layer]);
@@ -372,7 +432,7 @@ export function PeelSticker({ revealed, onPeel }: { revealed: boolean; onPeel: (
 		<button
 			ref={root}
 			type="button"
-			aria-label="Mostra la risposta"
+			aria-label={label}
 			onPointerEnter={onPointerEnter}
 			onPointerLeave={onPointerLeave}
 			onPointerDown={onPointerDown}
@@ -384,18 +444,28 @@ export function PeelSticker({ revealed, onPeel }: { revealed: boolean; onPeel: (
 				if (e.detail === 0 || reduced) vanish();
 			}}
 			// The sticker takes drags in every direction, so it can be peeled downward too.
-			className="group absolute inset-x-3 inset-y-2 z-10 touch-none select-none rounded-xl text-left focus-ring-offset"
+			className={cn('group absolute z-10 touch-none select-none text-left focus-ring-offset', size === 'card' ? 'inset-x-3 inset-y-2 rounded-xl' : 'inset-0 rounded-lg print:hidden')}
 		>
 			{/* The flat part of the sticker, still stuck down. */}
-			<span ref={face} className="absolute inset-0 overflow-hidden rounded-xl bg-tint-cover text-tint-cover-fg shadow-paper" aria-hidden="true">
-				<span className="grid-paper absolute inset-0 opacity-60 [--grid:color-mix(in_oklab,white_14%,transparent)]" />
-				<span className="relative flex h-full flex-col items-center justify-center gap-1.5 px-6 text-center">
-					<span className="font-display text-xl font-semibold tracking-tight sm:text-2xl">Mostra la risposta</span>
-					<span className="label-mono text-white/75">
-						<span className="pointer-coarse:hidden">Clic, trascina l&apos;angolo o Spazio</span>
-						<span className="hidden pointer-coarse:inline">Tocca o tira l&apos;angolo</span>
+			<span ref={face} className={cn('absolute inset-0 overflow-hidden shadow-paper', size === 'card' ? 'rounded-xl bg-tint-cover text-tint-cover-fg' : 'rounded-lg border border-edge bg-surface-3 text-fg')} aria-hidden="true">
+				<span className={cn('grid-paper absolute inset-0', size === 'card' ? 'opacity-60 [--grid:color-mix(in_oklab,white_14%,transparent)]' : 'opacity-70')} />
+				{size === 'card' ? (
+					<span className="relative flex h-full flex-col items-center justify-center gap-1.5 px-6 text-center">
+						<span className="font-display text-xl font-semibold tracking-tight sm:text-2xl">{label}</span>
+						<span className="label-mono text-white/75">
+							<span className="pointer-coarse:hidden">Clic, trascina l&apos;angolo o Spazio</span>
+							<span className="hidden pointer-coarse:inline">Tocca o tira l&apos;angolo</span>
+						</span>
 					</span>
-				</span>
+				) : (
+					<span className="relative flex h-full items-center justify-center gap-2 px-4">
+						<span className="text-sm font-medium">Soluzione</span>
+						<span className="label-mono text-fg-subtle">
+							<span className="pointer-coarse:hidden">stacca</span>
+							<span className="hidden pointer-coarse:inline">tocca</span>
+						</span>
+					</span>
+				)}
 				{/* The shadow the lifted flap throws on what is still stuck. */}
 				<span ref={shade} className="absolute inset-0" />
 			</span>
@@ -403,7 +473,7 @@ export function PeelSticker({ revealed, onPeel }: { revealed: boolean; onPeel: (
 			{layer &&
 				createPortal(
 					<span ref={lift} className="pointer-events-none fixed left-0 top-0 z-40 drop-shadow-[0_3px_5px_rgb(0_0_0/0.22)]" aria-hidden="true">
-						<span ref={flap} className="absolute inset-0 origin-top-left rounded-xl bg-paper-50" />
+						<span ref={flap} className={cn('absolute inset-0 origin-top-left bg-paper-50', size === 'card' ? 'rounded-xl' : 'rounded-lg dark:bg-ink-700')} />
 					</span>,
 					layer
 				)}
