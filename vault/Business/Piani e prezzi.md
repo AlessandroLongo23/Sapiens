@@ -45,4 +45,5 @@ Fatti emersi nella discussione:
 - I prezzi Lite e Base sono giusti per le famiglie italiane? Confronto con i concorrenti in [[Concorrenti]].
 - Piano famiglia con più figli?
 - Piano annuale, prezzi per studenti universitari.
+- Pubblicità per chi non paga, nelle sezioni dove chi paga trova le funzioni in più: idea in [[Pubblicità per chi non paga]], con una stima dei ricavi.
 - Tutti i piani studente sono B2C: il piano per il singolo docente e la licenza per le scuole sono in [[Vendita alle scuole]].

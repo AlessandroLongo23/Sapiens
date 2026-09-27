@@ -25,3 +25,4 @@ Pensare ai DSA fin dall'inizio costa meno che aggiungerli dopo. Font, spaziature
 - Ai tutor si dice apertamente come funziona il modello di guadagno. Vedi [[Pay-per-lead]].
 - Le ricompense non si comprano e non scadono: gli [[Adesivi]] si guadagnano solo studiando, e una collezione stagionale resta ottenibile dopo la stagione (vedi [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]).
 - Si vende quello che esiste. Le funzioni in arrivo hanno una lista d'attesa, non un prezzo.
+- Una pagina ha la stessa forma per ogni livello di accesso: il piano blocca le funzioni al loro posto, non cambia il layout. Vedi [[2026-09-27 Una pagina ha la stessa forma per ogni livello di accesso]].

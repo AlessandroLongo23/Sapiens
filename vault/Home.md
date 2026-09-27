@@ -13,7 +13,7 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 
 Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: lo studente sceglie il livello prima della prova, supera un livello con 8 risposte giuste su 10 e può saltare avanti con una prova di salto. Nel codice, non ancora pubblicato. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]]. Lo stesso giorno si è deciso che ogni lezione dichiara i suoi prerequisiti: il grafo che ne esce serve a suggerire un ripasso dopo una prova andata male, e dopo la beta diventerà una torre di blocchi (vedi [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]).
 
-Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]]. Lo stesso giorno fisica e informatica delle superiori e le medie (matematica, Scienze e Tecnologia) hanno avuto l'albero per anno dal programma ministeriale: 856 lezioni ancora vuote. Vedi [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]. Sempre il 26 settembre è fatto il terzo lotto, monomi, polinomi e scomposizione: 12 lezioni con esercizi, formulario e flashcard, 38 lezioni complete in tutto. Vedi [[2026-09-26 Terzo lotto, monomi polinomi e scomposizione]]. Lo stesso giorno il quarto lotto, 13 lezioni su prodotto cartesiano, relazioni e funzioni, frazioni algebriche ed equazioni: 51 lezioni complete. Vedi [[2026-09-26 Quarto lotto, relazioni funzioni e frazioni algebriche]]. Poi il quinto lotto, 11 lezioni su disequazioni, statistica e geometria del piano, e il sesto, le 5 lezioni che mancavano di insiemi e logica: il primo anno di matematica è completo, 67 lezioni con esercizi, formulario e flashcard. Vedi [[2026-09-26 Quinto lotto, disequazioni statistica e geometria]] e [[2026-09-26 Sesto lotto, intersezione differenza e logica]]. Il 27 settembre il settimo lotto apre il secondo anno: sistemi lineari, radicali ed equazioni di secondo grado, 12 lezioni, 79 complete in tutto. Vedi [[2026-09-27 Settimo lotto, sistemi radicali e secondo grado]]. Lo stesso giorno l'ottavo lotto, piano cartesiano, retta e parabola, 10 lezioni: 89 complete. Vedi [[2026-09-27 Ottavo lotto, piano cartesiano retta e parabola]].
+Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]]. Lo stesso giorno fisica e informatica delle superiori e le medie (matematica, Scienze e Tecnologia) hanno avuto l'albero per anno dal programma ministeriale: 856 lezioni ancora vuote. Vedi [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]. Sempre il 26 settembre è fatto il terzo lotto, monomi, polinomi e scomposizione: 12 lezioni con esercizi, formulario e flashcard, 38 lezioni complete in tutto. Vedi [[2026-09-26 Terzo lotto, monomi polinomi e scomposizione]]. Lo stesso giorno il quarto lotto, 13 lezioni su prodotto cartesiano, relazioni e funzioni, frazioni algebriche ed equazioni: 51 lezioni complete. Vedi [[2026-09-26 Quarto lotto, relazioni funzioni e frazioni algebriche]]. Poi il quinto lotto, 11 lezioni su disequazioni, statistica e geometria del piano, e il sesto, le 5 lezioni che mancavano di insiemi e logica: il primo anno di matematica è completo, 67 lezioni con esercizi, formulario e flashcard. Vedi [[2026-09-26 Quinto lotto, disequazioni statistica e geometria]] e [[2026-09-26 Sesto lotto, intersezione differenza e logica]]. Il 27 settembre il settimo lotto apre il secondo anno: sistemi lineari, radicali ed equazioni di secondo grado, 12 lezioni, 79 complete in tutto. Vedi [[2026-09-27 Settimo lotto, sistemi radicali e secondo grado]]. Lo stesso giorno l'ottavo lotto, piano cartesiano, retta e parabola, 10 lezioni: 89 complete. Vedi [[2026-09-27 Ottavo lotto, piano cartesiano retta e parabola]]. Lo schermo "Oggi" è diventato il Diario: pagina del giorno con le voci della scuola scritte in una riga, i consigli di Sapiens come post-it, il ripasso prima delle verifiche, il registro dei giorni passati e una pagina personale con gli adesivi. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Diario]]. Sempre il 26 settembre una verifica SEO ha trovato il sito non indicizzato e circa 250 pagine vuote nella sitemap: ora sono fuori dalla ricerca (restano sul sito), e ogni pagina esercizi ha una scheda gratuita e indicizzata da fare sul quaderno. Resta da scegliere il dominio. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 SEO e scheda degli esercizi]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
@@ -31,10 +31,18 @@ Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le m
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-26 Terzo lotto, monomi polinomi e scomposizione]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-26 Diario]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-27 Dopo la matematica delle superiori le altre materie, poi le medie]]
+- [[2026-09-27 I contenuti li rileggono Andrea e Alessandro]]
+- [[2026-09-27 Gli adesivi si vedono anche nella modalità Avanzata]]
+- [[2026-09-27 Una pagina ha la stessa forma per ogni livello di accesso]]
+- [[2026-09-27 La scheda degli esercizi è giornaliera]]
+- [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]] (superata in parte)
+- [[2026-09-26 Navigazione del diario, calendario dentro e niente vista log]]
+- [[2026-09-26 Il diario prende il posto di Oggi]]
 - [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]
 - [[2026-09-26 Gli adesivi sono per tutti gli iscritti]]
 - [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]
@@ -43,7 +51,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]
 - [[2026-09-25 I capitoli si mostrano per anno]]
 - [[2026-09-25 Una prova supera un livello solo con almeno 5 domande]]
-- [[2026-09-25 Oggi è lo schermo iniziale dell'app]]
+- [[2026-09-25 Oggi è lo schermo iniziale dell'app]] (superata in parte)
 - [[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]
 - [[2026-09-25 La pratica quotidiana entra nella beta]]
 - [[2026-09-25 Gli esercizi sono un percorso di livelli]]
@@ -86,7 +94,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]]
 
 ## Idee
-Idee non ancora valutate, in `Idee/`: [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]].
+Idee non ancora valutate, in `Idee/`: [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]].
 
 ## Decisioni aperte più importanti
 Ognuna ha il dettaglio nella nota collegata.

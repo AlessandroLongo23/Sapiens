@@ -90,6 +90,13 @@ Altre domande nella sezione "Domande per Andrea" di ogni nota (`docs/lezioni/not
 - [ ] Nella tabella dei segni un trinomio con $\Delta > 0$ sta in una riga sola con i suoi zeri (89), oppure si scompone sempre in due fattori di primo grado?
 - [ ] Soluzioni di $(x - 3)^2 > 0$: $\mathbb{R} \setminus \{3\}$ con "$x \neq 3$", oppure l'unione di due intervalli.
 
+## Guida alle formule (27 settembre 2026)
+La pagina `/guida-latex` insegna agli studenti a scrivere le formule nelle note (`src/lib/guide/writing.ts`). Le scelte di notazione vanno rilette come quelle delle lezioni.
+- [ ] Minore o uguale scritto `\leq` ($\leq$); molti libri italiani stampano $\leqslant$ (`\leqslant`). Quale si insegna?
+- [ ] La virgola decimale scritta `3{,}14`, con le graffe perché LaTeX non lasci lo spazio dopo la virgola: si spiega così, o si lascia perdere e si accetta lo spazio?
+- [ ] Il diviso scritto con i due punti `a : b`, come alle medie, e il segno $\div$ come alternativa.
+- [ ] Le coordinate con la virgola, come nelle lezioni: dipende dalla domanda sulle coordinate dell'ottavo lotto.
+
 ## Chimica (25 settembre 2026)
 Le lezioni di chimica non sono nella beta; le domande restano per quando entreranno. Vedi [[2026-09-25 Chimica con RDKit]].
 - [ ] La tavola delle masse atomiche, la classificazione degli amminoacidi, la soglia di polarità del legame.
