@@ -9,6 +9,14 @@ import { CHIMICA_ART } from './chimica';
 import { INFORMATICA_ART } from './informatica';
 import { SCUOLA_ART } from './scuola';
 import { GEOMETRIA_ART } from './geometria';
+import { DATI_ART } from './dati';
+import { ESAMI_ART } from './esami';
+import { EQUAZIONI_ART } from './equazioni';
+import { DIVISORI_INTERESSE_ART, RETI_ART } from './numeri-informatica';
+import { STECHIOMETRIA_ART } from './stechiometria';
+import { LOGARITMI_ART } from './logaritmi';
+import { CERCHIO_PIANO_ART } from './cerchio-piano';
+import { CIRCUITI_GAS_ART } from './circuiti-gas';
 
 /** The drawing on each tool's card in the index, by slug (see primitives.tsx for how they are drawn). */
 export const TOOL_ART: Record<string, ReactNode> = {
@@ -21,5 +29,14 @@ export const TOOL_ART: Record<string, ReactNode> = {
 	...FISICA_ART,
 	...CHIMICA_ART,
 	...INFORMATICA_ART,
-	...SCUOLA_ART
+	...SCUOLA_ART,
+	...DATI_ART,
+	...ESAMI_ART,
+	...EQUAZIONI_ART,
+	...DIVISORI_INTERESSE_ART,
+	...RETI_ART,
+	...STECHIOMETRIA_ART,
+	...LOGARITMI_ART,
+	...CERCHIO_PIANO_ART,
+	...CIRCUITI_GAS_ART
 };

@@ -110,5 +110,16 @@ Le 55 pagine nuove di `/strumenti` (vedi [[Calcolatori e convertitori]]). Tra pa
 - [ ] Crediti scolastici: la media M comprende il voto di comportamento? La norma dice solo "media dei voti dello scrutinio finale"; lo strumento chiede la media già calcolata.
 - [ ] Tabelle di verità: precedenza $\neg$, poi $\wedge$, $\vee$, $\veebar$, poi $\to$, poi $\leftrightarrow$; tra $\wedge$ e $\vee$ mescolati si chiedono le parentesi (scelta fatta), come nella lezione.
 
+## Strumenti, terza onda (28 settembre 2026)
+Le 33 pagine aggiunte a `/strumenti`. Tra parentesi la scelta fatta.
+- [ ] Quartili: metodo delle due metà, con la mediana esclusa quando i dati sono dispari (scelta fatta); Excel e le calcolatrici interpolano.
+- [ ] Temperatura assoluta: $T = t + 273{,}15$ (scelta fatta) oppure $273$, come molti libri di chimica.
+- [ ] Logaritmi: $\log$ senza base vale base 10 e $\ln$ è la base $e$ (scelta fatta); il cambio di base usa $\ln$.
+- [ ] Settore circolare: attraverso la frazione $\frac{\alpha}{360°}$ (scelta fatta) oppure la proporzione $\ell : C = \alpha : 360°$.
+- [ ] Acido solforico trattato come acido forte che si dissocia due volte (scelta fatta, come molti libri), anche se la seconda dissociazione non è completa.
+- [ ] Equazioni con il valore assoluto: argomento $= \pm k$ quando dall'altra parte c'è un numero, due casi sul segno dell'argomento quando c'è la $x$ (scelta fatta).
+- [ ] Interesse composto con i mesi: $M = C(1 + i)^t$ con $t$ frazionario (convenzione esponenziale, scelta fatta) oppure la convenzione mista.
+- [ ] Forza della correlazione: debole sotto $|r| = 0{,}3$, forte sopra $0{,}7$ (scelta fatta; soglie diffuse ma non universali).
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]
