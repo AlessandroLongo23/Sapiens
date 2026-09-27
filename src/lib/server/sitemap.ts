@@ -6,6 +6,7 @@ import { nodePath, subviewPath, worksheetPath, dbPath } from '@/lib/seo/slug';
 import { configs } from '@/lib/exercises/config';
 import { absoluteUrl, CONTENT_ROOT, isPrivatePath, TUTORING_ROOT } from '@/lib/config/site';
 import { getPublishedTutors, latestTutorUpdate } from '@/lib/server/tutoring';
+import { TOOLS, TOOLS_ROOT } from '@/lib/tools/registry';
 
 export interface SitemapUrl {
 	loc: string;
@@ -62,6 +63,8 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 			urls.push({ loc: nodePath(ancestors), lastmod: day(latestUpdate(descendants(node))) });
 		}
 	});
+
+	urls.push({ loc: TOOLS_ROOT }, ...TOOLS.map((t) => ({ loc: `${TOOLS_ROOT}/${t.slug}` })));
 
 	for (const tutor of tutors) {
 		urls.push({ loc: `${TUTORING_ROOT}/${tutor.slug}`, lastmod: day(tutor.updated_at) });
