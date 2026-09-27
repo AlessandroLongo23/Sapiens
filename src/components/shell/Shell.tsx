@@ -49,6 +49,19 @@ export function Shell({ tree = [], children }: { tree?: ContentNode[]; children:
 		setShownPath(pathname);
 		setHidden(false);
 	}
+	/*
+	 * The page fades only when the path changes. Other transitions inside it
+	 * (useDeferredValue in the note editor, on every keystroke) would cross-fade
+	 * the whole screen. `fadedPath` catches up a frame after the commit, so the
+	 * render of a navigation is the only one that sees the two apart.
+	 */
+	const [fadedPath, setFadedPath] = useState(pathname);
+	const navigating = pathname !== fadedPath;
+	useEffect(() => {
+		if (!navigating) return;
+		const frame = requestAnimationFrame(() => setFadedPath(pathname));
+		return () => cancelAnimationFrame(frame);
+	}, [navigating, pathname]);
 
 	const onScroll = (e: UIEvent<HTMLDivElement>) => {
 		const top = e.currentTarget.scrollTop;
@@ -94,7 +107,7 @@ export function Shell({ tree = [], children }: { tree?: ContentNode[]; children:
 				<div ref={scroller} onScroll={onScroll} inert={searching || undefined} className={cn('no-scrollbar flex-1 overflow-y-auto transition-opacity duration-300 ease-out', !immersive && 'pb-tabbar md:pb-0', immersive && (bare ? 'overflow-clip' : 'overflow-hidden'), searching ? 'pointer-events-none opacity-0' : 'opacity-100')}>
 					<Header hidden={hidden} immersive={immersive} bare={bare} />
 					<main id="contenuto" tabIndex={-1} className="min-h-[calc(100dvh-var(--header-h,64px))] outline-none">
-						<ViewTransition update="page" default="none">
+						<ViewTransition update={navigating ? 'page' : 'none'} default="none">
 							<div>{children}</div>
 						</ViewTransition>
 					</main>
