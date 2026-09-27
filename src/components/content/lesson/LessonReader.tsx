@@ -14,6 +14,8 @@ import { TableOfContents } from './TableOfContents';
 interface Props {
 	html: string;
 	sections: TocSection[];
+	/** Between the outline and the text: the lessons this one builds on, rendered by the page. */
+	header?: ReactNode;
 	/** The tutor call to action and the previous/next row, rendered by the page. */
 	footer?: ReactNode;
 }
@@ -31,7 +33,7 @@ function figures(html: string) {
  * top on phones (and as a sheet from the header's button), the text, then
  * whatever the page puts after it.
  */
-export function LessonReader({ html, sections, footer }: Props) {
+export function LessonReader({ html, sections, header, footer }: Props) {
 	const lg = useLg();
 	const compact = useLessonLayout((s) => s.scrollY > 20);
 	const tocOpen = useLessonLayout((s) => s.tocOpen);
@@ -91,6 +93,8 @@ export function LessonReader({ html, sections, footer }: Props) {
 						</ol>
 					</details>
 				)}
+
+				{header}
 
 				<div className="prose prose-zinc max-w-none prose-strong:text-fg-strong">
 					<LessonBody html={html} />

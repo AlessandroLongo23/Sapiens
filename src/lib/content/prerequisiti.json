@@ -1,0 +1,224 @@
+{
+	"prime-definizioni": [],
+	"insiemi-rappresentazione": [
+		"prime-definizioni"
+	],
+	"sottoinsiemi-ugualianza": [
+		"insiemi-rappresentazione"
+	],
+	"insiemi-unione": [
+		"sottoinsiemi-ugualianza"
+	],
+	"insiemi-intersezione": [
+		"insiemi-unione"
+	],
+	"insiemi-differenza": [
+		"insiemi-intersezione"
+	],
+	"insiemi-prodotto-cartesiano": [
+		"insiemi-rappresentazione"
+	],
+	"insiemi-operazioni": [
+		"insiemi-differenza",
+		"insiemi-prodotto-cartesiano"
+	],
+	"logica-proposizioni": [],
+	"logica-implicazione": [
+		"logica-proposizioni",
+		"sottoinsiemi-ugualianza"
+	],
+	"logica-quantificatori": [
+		"logica-proposizioni",
+		"insiemi-rappresentazione"
+	],
+	"numeri-naturali-operazioni": [],
+	"numeri-naturali-potenze": [
+		"numeri-naturali-operazioni"
+	],
+	"numeri-naturali-divisibilita": [
+		"numeri-naturali-potenze"
+	],
+	"numeri-naturali-mcm-mcd": [
+		"numeri-naturali-divisibilita"
+	],
+	"numeri-interi-valore-assoluto": [
+		"numeri-naturali-operazioni"
+	],
+	"numeri-interi-operazioni": [
+		"numeri-interi-valore-assoluto"
+	],
+	"numeri-interi-potenze": [
+		"numeri-interi-operazioni",
+		"numeri-naturali-potenze"
+	],
+	"numeri-razionali-frazioni": [
+		"numeri-interi-operazioni",
+		"numeri-naturali-mcm-mcd"
+	],
+	"numeri-razionali-confronto-frazioni": [
+		"numeri-razionali-frazioni"
+	],
+	"numeri-razionali-operazioni": [
+		"numeri-razionali-confronto-frazioni"
+	],
+	"numeri-razionali-potenze": [
+		"numeri-razionali-operazioni",
+		"numeri-interi-potenze"
+	],
+	"numeri-razionali-espressioni": [
+		"numeri-razionali-potenze"
+	],
+	"numeri-razionali-conversione": [
+		"numeri-razionali-frazioni"
+	],
+	"numeri-razionali-proporzioni": [
+		"numeri-razionali-operazioni",
+		"numeri-razionali-conversione"
+	],
+	"relazioni-binarie": [
+		"insiemi-prodotto-cartesiano"
+	],
+	"relazioni-equivalenza-ordine": [
+		"relazioni-binarie",
+		"sottoinsiemi-ugualianza"
+	],
+	"definizione-funzione": [
+		"relazioni-binarie",
+		"numeri-razionali-espressioni"
+	],
+	"dominio-codominio-immagine": [
+		"definizione-funzione"
+	],
+	"funzioni-iniettive-suriettive-biettive": [
+		"dominio-codominio-immagine"
+	],
+	"composizione-di-funzioni": [
+		"funzioni-iniettive-suriettive-biettive",
+		"equazioni-primo-grado"
+	],
+	"funzioni-lineari": [
+		"definizione-funzione",
+		"numeri-razionali-proporzioni"
+	],
+	"monomi": [
+		"numeri-razionali-potenze"
+	],
+	"monomi-grado": [
+		"monomi"
+	],
+	"monomi-operazioni": [
+		"monomi"
+	],
+	"monomi-mcm-mcd": [
+		"monomi-operazioni"
+	],
+	"monomi-espressioni": [
+		"monomi-operazioni",
+		"numeri-razionali-espressioni"
+	],
+	"polinomi": [
+		"monomi-grado",
+		"monomi-operazioni"
+	],
+	"polinomi-operazioni": [
+		"polinomi"
+	],
+	"polinomi-prodotti-notevoli": [
+		"polinomi-operazioni"
+	],
+	"polinomi-espressioni": [
+		"polinomi-prodotti-notevoli",
+		"monomi-espressioni"
+	],
+	"polinomi-divisione": [
+		"polinomi-operazioni"
+	],
+	"polinomi-ruffini": [
+		"polinomi-divisione"
+	],
+	"scomposizione-raccoglimento": [
+		"polinomi-operazioni",
+		"monomi-mcm-mcd"
+	],
+	"scomposizione-prodotti-notevoli": [
+		"scomposizione-raccoglimento",
+		"polinomi-prodotti-notevoli"
+	],
+	"scomposizione-trinomio": [
+		"scomposizione-raccoglimento"
+	],
+	"scomposizione-ruffini": [
+		"polinomi-ruffini",
+		"scomposizione-trinomio",
+		"scomposizione-prodotti-notevoli"
+	],
+	"polinomi-mcd-mcm": [
+		"scomposizione-prodotti-notevoli",
+		"scomposizione-trinomio"
+	],
+	"frazioni-algebriche-esistenza": [
+		"scomposizione-prodotti-notevoli",
+		"scomposizione-trinomio"
+	],
+	"frazioni-algebriche-semplificazione": [
+		"frazioni-algebriche-esistenza",
+		"polinomi-mcd-mcm"
+	],
+	"frazioni-algebriche-operazioni": [
+		"frazioni-algebriche-semplificazione"
+	],
+	"equazioni-primo-grado": [
+		"polinomi-operazioni",
+		"numeri-razionali-espressioni"
+	],
+	"equazioni-fratte": [
+		"equazioni-primo-grado",
+		"frazioni-algebriche-operazioni"
+	],
+	"equazioni-letterali": [
+		"equazioni-primo-grado",
+		"frazioni-algebriche-semplificazione"
+	],
+	"equazioni-problemi": [
+		"equazioni-primo-grado",
+		"numeri-razionali-proporzioni"
+	],
+	"disequazioni-primo-grado": [
+		"equazioni-primo-grado"
+	],
+	"sistemi-di-disequazioni": [
+		"disequazioni-primo-grado",
+		"insiemi-intersezione"
+	],
+	"disequazioni-razionali": [
+		"disequazioni-primo-grado",
+		"frazioni-algebriche-operazioni"
+	],
+	"statistica-dati": [
+		"numeri-razionali-proporzioni"
+	],
+	"statistica-medie": [
+		"statistica-dati"
+	],
+	"statistica-variabilita": [
+		"statistica-medie"
+	],
+	"geometria-enti": [],
+	"angoli-e-lati-dei-triangoli": [
+		"geometria-enti"
+	],
+	"geometria-perpendicolari-parallele": [
+		"angoli-e-lati-dei-triangoli"
+	],
+	"geometria-punti-notevoli": [
+		"geometria-perpendicolari-parallele"
+	],
+	"geometria-quadrilateri": [
+		"geometria-perpendicolari-parallele"
+	],
+	"equazioni-secondo-grado": [
+		"equazioni-primo-grado",
+		"scomposizione-raccoglimento",
+		"numeri-reali-radici"
+	]
+}

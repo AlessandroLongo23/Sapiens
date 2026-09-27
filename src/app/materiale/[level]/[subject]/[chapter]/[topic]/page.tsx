@@ -11,6 +11,9 @@ import { TableOfContents } from '@/components/content/lesson/TableOfContents';
 import { ComingSoon } from '@/components/content/ComingSoon';
 import { NavigationButtons } from '@/components/content/NavigationButtons';
 import { TutorCta } from '@/components/content/TutorCta';
+import { LessonNeeds, LessonUsedIn } from '@/components/content/lesson/LessonNeighbours';
+import { getContentTree } from '@/lib/server/content';
+import { lessonNeighbours } from '@/lib/content/prerequisites';
 import { loadLesson, renderDocument, type LessonParams } from './lesson';
 
 /** No params are prerendered at build; each address renders on first request and is then served from the cache (see `revalidate` in the layout). */
@@ -32,8 +35,10 @@ export default async function TheoryPage(props: LessonParams) {
 	const { node, ancestors, paths, parentLink, navigation, seo, updatedAt, breadcrumb, titleHtml } = lesson;
 	const doc = renderDocument(lesson.theory);
 	const tutorHref = tutoringSearchHref(ancestors);
+	const { needs, usedIn } = lessonNeighbours(await getContentTree(), ancestors);
 	const footer = (
 		<>
+			<LessonUsedIn links={usedIn} />
 			{tutorHref && <TutorCta href={tutorHref} />}
 			<NavigationButtons navigation={navigation} />
 		</>
@@ -42,7 +47,7 @@ export default async function TheoryPage(props: LessonParams) {
 		<>
 			<JsonLd data={[breadcrumb, learningResourceJsonLd(node, ancestors, { description: seo.description, resourceType: 'Lezione', free: true, dateModified: updatedAt })]} />
 			<LessonFrame tone={toneFor(...ancestors)} titleHtml={titleHtml} note={{ path: paths.theory, title: plainTitle(node.title) }} parentLink={parentLink} paths={paths} withAssistant left={doc && <TableOfContents sections={doc.sections} />}>
-				{doc ? <LessonReader html={doc.html} sections={doc.sections} footer={footer} /> : <ComingSoon kind="theory" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />}
+				{doc ? <LessonReader html={doc.html} sections={doc.sections} header={<LessonNeeds links={needs} />} footer={footer} /> : <ComingSoon kind="theory" chapterUrl={parentLink.url} theoryUrl={paths.theory} footer={<NavigationButtons navigation={navigation} />} />}
 			</LessonFrame>
 		</>
 	);

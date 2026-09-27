@@ -4,12 +4,15 @@
  *
  *   node node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/prerequisiti.mts
  *   node node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/prerequisiti.mts --json > grafo.json
+ *   node node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/prerequisiti.mts --write   # src/lib/content/prerequisiti.json
+ *
+ * The lesson pages read src/lib/content/prerequisiti.json: rerun with --write after editing the graph.
  *
  * Errors (exit 1): unknown slug, lesson listed twice, self edge, cycle, more than 4 direct
  * prerequisites. Warnings: redundant edges (implied by another path), prerequisites that come later
  * in the tree order, lessons of a covered year with no line.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 
 type Lesson = { slug: string; title: string; chapter: string; year: number; order: number };
 
@@ -88,6 +91,13 @@ for (const p of missing) warnings.push(`prerequisito senza riga (fuori dall'anno
 // Floor = longest chain below the lesson.
 const floor = new Map<string, number>();
 for (const s of topo) floor.set(s, Math.max(-1, ...(prereqs.get(s) ?? []).map((p) => floor.get(p) ?? 0)) + 1);
+
+if (process.argv.includes('--write')) {
+	// What the site reads: each declared lesson's direct prerequisites, by database slug.
+	const edges = Object.fromEntries([...prereqs].sort(([a], [b]) => lessons.get(a)!.order - lessons.get(b)!.order));
+	writeFileSync('src/lib/content/prerequisiti.json', JSON.stringify(edges, null, '\t') + '\n');
+	console.log(`scritto src/lib/content/prerequisiti.json (${prereqs.size} lezioni)`);
+}
 
 if (process.argv.includes('--json')) {
 	const nodes = [...new Set([...prereqs.keys(), ...missing])].map((s) => {

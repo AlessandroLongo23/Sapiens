@@ -13,7 +13,8 @@ stesso giorno, al posto degli originali (colonna `theory` di `content_nodes`).
 - `albero.md`: l'albero delle lezioni di matematica, applicato al database con
   `scripts/lezioni/tree.mts` (prima senza scrivere, poi con `--apply`).
 - `prerequisiti.md`: il grafo dei prerequisiti (una riga per lezione), controllato con
-  `scripts/lezioni/prerequisiti.mts`. `prerequisiti-layout.json` è la sua disposizione come albero
+  `scripts/lezioni/prerequisiti.mts`; con `--write` rigenera `src/lib/content/prerequisiti.json`, che le
+  pagine delle lezioni leggono per "Prima di cominciare" e "Dove si usa". `prerequisiti-layout.json` è la sua disposizione come albero
   delle abilità, generata da `node scripts/grafo/layout.mjs` (la prima volta serve `npm install` in
   `scripts/grafo`; con `--html file.html` scrive anche un'anteprima).
 - `backup/`: i nodi di matematica com'erano prima della riorganizzazione del 24 settembre 2026.
