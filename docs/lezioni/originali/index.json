@@ -624,5 +624,101 @@
     "path": "high_school/math/insiemi-e-logica/logica-quantificatori",
     "chapter": "Insiemi e logica",
     "new": true
+  },
+  {
+    "id": "3f2b3d5d-4861-45e3-887e-0d967f98ebfa",
+    "title": "Sistemi di due equazioni in due incognite",
+    "slug": "sistemi-di-equazioni",
+    "path": "high_school/math/sistemi-lineari/sistemi-di-equazioni",
+    "chapter": "Sistemi lineari",
+    "new": true
+  },
+  {
+    "id": "e02d7158-f4e0-43a7-9faf-2dfedc89a273",
+    "title": "Determinanti e regola di Cramer",
+    "slug": "sistemi-cramer",
+    "path": "high_school/math/sistemi-lineari/sistemi-cramer",
+    "chapter": "Sistemi lineari",
+    "new": true
+  },
+  {
+    "id": "b94b4bf8-b953-40f8-9706-482390265e33",
+    "title": "Problemi con i sistemi",
+    "slug": "sistemi-problemi",
+    "path": "high_school/math/sistemi-lineari/sistemi-problemi",
+    "chapter": "Sistemi lineari",
+    "new": true
+  },
+  {
+    "id": "2008669f-20b6-4fd9-a354-69700ec2168c",
+    "title": "Numeri irrazionali e numeri reali",
+    "slug": "numeri-reali-irrazionali",
+    "path": "high_school/math/numeri-reali/numeri-reali-irrazionali",
+    "chapter": "Numeri reali e radicali",
+    "new": true
+  },
+  {
+    "id": "6fbb3512-b3ff-4992-8042-989b48423e9c",
+    "title": "Radicali e loro proprietà",
+    "slug": "numeri-reali-radici",
+    "path": "high_school/math/numeri-reali/numeri-reali-radici",
+    "chapter": "Numeri reali e radicali",
+    "new": true
+  },
+  {
+    "id": "35fe1b7a-a4bd-489f-b69a-b16a4959a0be",
+    "title": "Operazioni con i radicali",
+    "slug": "radicali-operazioni",
+    "path": "high_school/math/numeri-reali/radicali-operazioni",
+    "chapter": "Numeri reali e radicali",
+    "new": true
+  },
+  {
+    "id": "cc69dd36-9f63-4683-aff4-d41d040c6940",
+    "title": "Razionalizzazione",
+    "slug": "radicali-razionalizzazione",
+    "path": "high_school/math/numeri-reali/radicali-razionalizzazione",
+    "chapter": "Numeri reali e radicali",
+    "new": true
+  },
+  {
+    "id": "e456b30d-b8cd-4c6f-8725-8cb36e32330a",
+    "title": "Espressioni con i radicali",
+    "slug": "numeri-reali-espressioni",
+    "path": "high_school/math/numeri-reali/numeri-reali-espressioni",
+    "chapter": "Numeri reali e radicali",
+    "new": true
+  },
+  {
+    "id": "3b7c6841-ad0f-4e68-b5b2-970c80f37374",
+    "title": "Potenze con esponente razionale",
+    "slug": "radicali-esponente-razionale",
+    "path": "high_school/math/numeri-reali/radicali-esponente-razionale",
+    "chapter": "Numeri reali e radicali",
+    "new": true
+  },
+  {
+    "id": "dd765ee7-254f-432d-97f4-5fff68adbfe9",
+    "title": "Relazioni tra soluzioni e coefficienti",
+    "slug": "equazioni-secondo-grado-relazioni",
+    "path": "high_school/math/equazioni-di-secondo-grado/equazioni-secondo-grado-relazioni",
+    "chapter": "Equazioni di secondo grado",
+    "new": true
+  },
+  {
+    "id": "0faf7249-411e-4194-b13c-1a950744a854",
+    "title": "Equazioni parametriche",
+    "slug": "equazioni-parametriche",
+    "path": "high_school/math/equazioni-di-secondo-grado/equazioni-parametriche",
+    "chapter": "Equazioni di secondo grado",
+    "new": true
+  },
+  {
+    "id": "c657271c-1e11-4ad8-9c30-91bfa15ad5b4",
+    "title": "Problemi di secondo grado",
+    "slug": "equazioni-secondo-grado-problemi",
+    "path": "high_school/math/equazioni-di-secondo-grado/equazioni-secondo-grado-problemi",
+    "chapter": "Equazioni di secondo grado",
+    "new": true
   }
 ]

@@ -2,7 +2,7 @@
 
 Un quadrato ha l'area di $49\ \text{cm}^2$ e vuoi sapere quanto misura il lato. Se chiami $x$ la misura del lato, devi trovare i numeri che elevati al quadrato danno $49$, cioè risolvere $x^2 = 49$. I numeri sono due, $7$ e $-7$, ma una lunghezza non può essere negativa, quindi il lato misura $7\ \text{cm}$. Le equazioni come questa, in cui l'incognita compare al quadrato, si chiamano di secondo grado: hanno al massimo due soluzioni, e in certi casi nessuna.
 
-Per seguire questa lezione ti servono le [equazioni di primo grado](/materiale/scuola-superiore/matematica/equazioni-di-primo-grado/equazioni-di-primo-grado-intere), perché i principi di equivalenza sono gli stessi, e la semplificazione dei radicali, che trovi in [Radicali e loro proprietà](/materiale/scuola-superiore/matematica/numeri-reali-e-radicali/radicali-e-loro-proprieta).
+Per seguire questa lezione ti servono le [equazioni di primo grado](/materiale/scuola-superiore/matematica/equazioni-di-primo-grado/equazioni-di-primo-grado-intere), perché i principi di equivalenza sono gli stessi, e il trasporto di un fattore fuori dalla radice, come $\sqrt{12} = 2\sqrt{3}$, che trovi in [Operazioni con i radicali](/materiale/scuola-superiore/matematica/numeri-reali-e-radicali/operazioni-con-i-radicali).
 
 ## Forma normale
 
@@ -467,7 +467,7 @@ Il discriminante è negativo: l'equazione non ha soluzioni reali, $S = \emptyset
 
 ```ad-tip
 Controllo veloce con somma e prodotto
-Se le soluzioni sono $x_1$ e $x_2$, allora $x_1 + x_2 = -\dfrac{b}{a}$ e $x_1 \cdot x_2 = \dfrac{c}{a}$. Nell'esempio 14, con $6x^2 - 13x + 6 = 0$: $\dfrac{2}{3} + \dfrac{3}{2} = \dfrac{13}{6}$, che è $-\dfrac{b}{a}$, e $\dfrac{2}{3} \cdot \dfrac{3}{2} = 1$, che è $\dfrac{c}{a}$. Se uno dei due conti non torna, c'è un errore.
+Se le soluzioni sono $x_1$ e $x_2$, allora $x_1 + x_2 = -\dfrac{b}{a}$ e $x_1 \cdot x_2 = \dfrac{c}{a}$. Nell'esempio 14, con $6x^2 - 13x + 6 = 0$: $\dfrac{2}{3} + \dfrac{3}{2} = \dfrac{13}{6}$, che è $-\dfrac{b}{a}$, e $\dfrac{2}{3} \cdot \dfrac{3}{2} = 1$, che è $\dfrac{c}{a}$. Se uno dei due conti non torna, c'è un errore. Da dove vengono queste due formule, e come si usano per scomporre un trinomio o scrivere un'equazione con soluzioni date, lo trovi nella lezione [Relazioni tra soluzioni e coefficienti](/materiale/scuola-superiore/matematica/equazioni-di-secondo-grado/relazioni-tra-soluzioni-e-coefficienti).
 ```
 
 Dopo questa lezione puoi passare alle [disequazioni di secondo grado](/materiale/scuola-superiore/matematica/parabola-e-disequazioni-di-secondo-grado/disequazioni-di-secondo-grado), che si risolvono partendo proprio dalle soluzioni dell'equazione associata.

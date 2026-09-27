@@ -11,7 +11,7 @@ Tre quaderni e una penna costano $9$ €, la base di un rettangolo supera l'alte
 5. Risolvi l'equazione.
 6. Controlla che la soluzione rispetti le limitazioni, verificala sui dati del testo e rispondi alla domanda con una frase.
 
-Di solito conviene chiamare $x$ la grandezza che il problema chiede. Quando le grandezze incognite sono più di una, conviene chiamare $x$ quella da cui le altre si ricavano più facilmente: se la base supera l'altezza di $7$ cm, $x$ è l'altezza e la base è $x + 7$.
+Di solito conviene chiamare $x$ la grandezza che il problema chiede. Quando le grandezze incognite sono più di una, conviene chiamare $x$ quella da cui le altre si ricavano più facilmente: se la base supera l'altezza di $7$ cm, $x$ è l'altezza e la base è $x + 7$. Quando le grandezze incognite sono due e il testo dà due informazioni, puoi anche chiamarle $x$ e $y$ e scrivere un sistema: lo trovi in [Problemi con i sistemi](/materiale/scuola-superiore/matematica/sistemi-lineari/problemi-con-i-sistemi).
 
 La verifica del passo 6 si fa sul testo e non sull'equazione. Se hai tradotto male il testo, la soluzione soddisfa l'equazione sbagliata e il controllo sull'equazione non se ne accorge; rileggendo il testo con i numeri trovati, invece, l'errore salta fuori.
 

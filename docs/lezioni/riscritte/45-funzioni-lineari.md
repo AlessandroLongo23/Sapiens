@@ -169,7 +169,7 @@ Sono proporzionali, invece, gli aumenti: ogni chilometro in più costa sempre $1
 \end{tikzpicture}
 ```
 
-La retta e i numeri $m$ e $q$ hanno una lezione tutta loro al secondo anno, [Equazione della retta e casi particolari](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/equazione-della-retta-e-casi-particolari): in questa lezione serve solo riconoscere la funzione lineare e distinguerla dalla proporzionalità diretta.
+La retta e i numeri $m$ e $q$ hanno una lezione tutta loro al secondo anno, [Equazione della retta e casi particolari](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/equazione-della-retta-e-casi-particolari): in questa lezione serve solo riconoscere la funzione lineare e distinguerla dalla proporzionalità diretta. Due rette di questo tipo si incontrano, in generale, in un punto: trovarlo vuol dire risolvere un [sistema di due equazioni](/materiale/scuola-superiore/matematica/sistemi-lineari/sistemi-di-due-equazioni-in-due-incognite).
 
 ## Riconoscere il tipo da una tabella
 

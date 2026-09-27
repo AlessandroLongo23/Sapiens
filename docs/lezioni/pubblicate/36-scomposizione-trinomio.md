@@ -163,7 +163,7 @@ Allo stesso modo sono irriducibili $x^2 + x + 1$ (le coppie con prodotto $1$ son
 
 ```ad-note
 Numeri non interi
-Alcuni trinomi irriducibili con i coefficienti interi si scompongono se si ammettono numeri irrazionali: per esempio $x^2 + 4x + 2$. I due numeri si trovano con la formula delle [equazioni di secondo grado](/materiale/scuola-superiore/matematica/equazioni-di-secondo-grado/equazioni-di-secondo-grado), che si studia al secondo anno.
+Alcuni trinomi irriducibili con i coefficienti interi si scompongono se si ammettono numeri irrazionali: per esempio $x^2 + 4x + 2 = (x + 2 - \sqrt{2})(x + 2 + \sqrt{2})$. Il metodo, che usa le soluzioni dell'[equazione di secondo grado](/materiale/scuola-superiore/matematica/equazioni-di-secondo-grado/equazioni-di-secondo-grado) associata, è nella lezione [Relazioni tra soluzioni e coefficienti](/materiale/scuola-superiore/matematica/equazioni-di-secondo-grado/relazioni-tra-soluzioni-e-coefficienti), al secondo anno.
 ```
 
 ```ad-tip

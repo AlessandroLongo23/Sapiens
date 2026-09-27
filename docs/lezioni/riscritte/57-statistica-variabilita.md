@@ -191,7 +191,7 @@ Per esempio $\sqrt{49} = 7$ perché $7^2 = 49$, $\sqrt{0{,}36} = 0{,}6$ perché 
 
 Un numero negativo non ha radice quadrata, perché nessun numero elevato al quadrato dà un risultato negativo. La varianza è una somma di quadrati divisa per $n$, quindi non è mai negativa e la sua radice esiste sempre.
 
-Quasi sempre la radice quadrata non è un numero intero né un decimale finito: in quel caso si calcola con il tasto $\sqrt{\phantom{x}}$ della calcolatrice e si arrotonda. Per esempio la calcolatrice dà $\sqrt{2} = 1{,}41421\dots$, che al centesimo diventa $\sqrt{2} \approx 1{,}41$. Per controllare, eleva al quadrato il risultato: $1{,}41^2 = 1{,}9881$, molto vicino a $2$. I numeri come $\sqrt{2}$ e le regole di calcolo con le radici si studiano al secondo anno; in questa lezione la radice serve solo per passare dalla varianza allo scarto quadratico medio.
+Quasi sempre la radice quadrata non è un numero intero né un decimale finito: in quel caso si calcola con il tasto $\sqrt{\phantom{x}}$ della calcolatrice e si arrotonda. Per esempio la calcolatrice dà $\sqrt{2} = 1{,}41421\dots$, che al centesimo diventa $\sqrt{2} \approx 1{,}41$. Per controllare, eleva al quadrato il risultato: $1{,}41^2 = 1{,}9881$, molto vicino a $2$. I numeri come $\sqrt{2}$ e le regole di calcolo con le radici si studiano al secondo anno, nella lezione [Radicali e loro proprietà](/materiale/scuola-superiore/matematica/numeri-reali-e-radicali/radicali-e-loro-proprieta); in questa lezione la radice serve solo per passare dalla varianza allo scarto quadratico medio.
 
 ## Lo scarto quadratico medio
 

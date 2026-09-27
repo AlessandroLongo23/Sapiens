@@ -202,6 +202,8 @@ Il parametro al denominatore
 Se il parametro compare in un denominatore, come in $\dfrac{x}{a} = 3$, l'equazione ha senso solo quando quel denominatore non vale zero: qui $a \neq 0$. Questa condizione sul parametro si scrive prima di cominciare e vale per tutta la risoluzione. Con $a \neq 0$ si moltiplica per $a$ e si ottiene $x = 3a$.
 ```
 
+Le equazioni con un parametro tornano con il secondo grado, nelle [equazioni parametriche](/materiale/scuola-superiore/matematica/equazioni-di-secondo-grado/equazioni-parametriche), dove si cerca il valore del parametro per cui le soluzioni hanno una proprietà data.
+
 ## Formule inverse
 
 Una formula della fisica o della geometria è un'equazione letterale con molte lettere. Ricavare una lettera, cioè scrivere la **formula inversa**, vuol dire risolvere l'equazione prendendo come incognita quella lettera e trattando le altre come parametri. I passaggi sono gli stessi di sempre: trasporto, moltiplicazione e divisione di entrambi i membri per la stessa espressione.

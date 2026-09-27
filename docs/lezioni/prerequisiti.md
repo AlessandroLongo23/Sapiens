@@ -113,8 +113,24 @@ geometria-quadrilateri <- geometria-perpendicolari-parallele
 
 # Secondo anno
 
+## Sistemi lineari
+sistemi-di-equazioni <- equazioni-fratte, funzioni-lineari
+sistemi-cramer <- sistemi-di-equazioni, equazioni-letterali
+sistemi-problemi <- sistemi-di-equazioni, equazioni-problemi
+
+## Numeri reali e radicali
+numeri-reali-irrazionali <- numeri-razionali-conversione, numeri-razionali-potenze, logica-implicazione
+numeri-reali-radici <- numeri-reali-irrazionali, disequazioni-primo-grado
+radicali-operazioni <- numeri-reali-radici, polinomi-prodotti-notevoli
+radicali-razionalizzazione <- radicali-operazioni
+numeri-reali-espressioni <- radicali-razionalizzazione
+radicali-esponente-razionale <- numeri-reali-radici
+
 ## Equazioni di secondo grado
-equazioni-secondo-grado <- equazioni-primo-grado, scomposizione-raccoglimento, numeri-reali-radici
+equazioni-secondo-grado <- scomposizione-raccoglimento, radicali-operazioni
+equazioni-secondo-grado-relazioni <- equazioni-secondo-grado, scomposizione-trinomio
+equazioni-parametriche <- equazioni-secondo-grado-relazioni, equazioni-letterali, equazioni-fratte
+equazioni-secondo-grado-problemi <- equazioni-secondo-grado, equazioni-problemi, equazioni-fratte
 
 # Dubbi da sciogliere
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
