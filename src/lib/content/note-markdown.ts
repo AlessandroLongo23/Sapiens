@@ -56,3 +56,9 @@ export function renderNoteMarkdown(markdown: string, katex: Katex | null): strin
 	const { text, math } = protect(markdown);
 	return restore(md.render(text), math, katex);
 }
+
+/** One line of a note, a title for instance, as HTML with no block around it. */
+export function renderNoteInline(markdown: string, katex: Katex | null): string {
+	const { text, math } = protect(markdown);
+	return restore(md.renderInline(text), math, katex);
+}

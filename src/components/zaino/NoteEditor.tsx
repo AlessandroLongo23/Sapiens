@@ -607,7 +607,7 @@ export function NoteEditor({
 								paper={paper}
 							/>
 						) : (
-							<AdvancedEditor value={markdown} onChange={onChange} paper={paper} />
+							<AdvancedEditor value={markdown} onChange={onChange} paper={paper} stickers={readStickers} onStickersChange={onStickersChange} />
 						)}
 					</div>
 

@@ -1,11 +1,24 @@
 'use client';
 
-import { useDeferredValue, useEffect, useMemo, useRef, type RefObject } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { ListTree, X } from 'lucide-react';
-import { outline } from '@/lib/zaino/outline';
+import type katexType from 'katex';
+import { hasMath, renderNoteInline } from '@/lib/content/note-markdown';
+import { outline, type OutlineEntry } from '@/lib/zaino/outline';
 import { headingAt, headingInView, scrollToHeading } from '@/lib/zaino/outline-dom';
 import { useNoteView } from '@/lib/state/note-view';
 import { cn } from '@/lib/utils/cn';
+import 'katex/dist/katex.min.css';
+
+type Katex = typeof katexType;
+
+let katexPromise: Promise<Katex> | null = null;
+const loadKatex = () => (katexPromise ??= import('katex').then((m) => m.default));
+
+/** A title as the sheet shows it, formulas typeset. Its links are plain text: the whole entry is a button. */
+function titleHtml(entry: OutlineEntry, katex: Katex | null): string {
+	return renderNoteInline(entry.source || entry.text, katex).replace(/<a\b[^>]*>|<\/a>/g, '');
+}
 
 /**
  * Scrolls a view to the title picked in the outline, or back to where the
@@ -76,6 +89,11 @@ export function OutlinePanel({ markdown, layout, onClose }: { markdown: string; 
 		return [...byPage].map(([page, items]) => ({ page, items }));
 	}, [entries]);
 	const pages = groups.length;
+	const [katex, setKatex] = useState<Katex | null>(null);
+	const needsMath = useMemo(() => entries.some((e) => hasMath(e.source)), [entries]);
+	useEffect(() => {
+		if (needsMath && !katex) loadKatex().then(setKatex);
+	}, [needsMath, katex]);
 
 	return (
 		<nav aria-label="Indice della nota" className={cn('flex min-h-0 flex-col', layout === 'column' && 'h-full')}>
@@ -132,7 +150,7 @@ export function OutlinePanel({ markdown, layout, onClose }: { markdown: string; 
 												{/* The guide line that shows the nesting, and the red stroke on the title being read. */}
 												{entry.level > 1 && <span className={cn('absolute inset-y-1 w-px bg-edge', entry.level === 2 ? 'left-4' : 'left-8')} aria-hidden="true" />}
 												{current && <span className="absolute inset-y-1.5 left-0.5 w-0.5 rounded-full bg-accent" aria-hidden="true" />}
-												<span className="line-clamp-2">{entry.text}</span>
+												<span className="line-clamp-2" dangerouslySetInnerHTML={{ __html: titleHtml(entry, katex) }} />
 											</button>
 										</li>
 									);

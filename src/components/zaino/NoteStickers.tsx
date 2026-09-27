@@ -49,7 +49,8 @@ export function NoteStickers({
 	const seed = useRef(initial);
 	// Before the paint: whatever stood in for the stickers until now goes in the same frame they appear.
 	useLayoutEffect(() => {
-		const node = sheet.current;
+		// A sheet mounted in the same commit has no ref yet (a parent's ref is set after its children's layout effects): the layer sits right inside it.
+		const node = sheet.current ?? (layer.current?.parentElement as HTMLDivElement | null);
 		if (!node || !layer.current || !canvas.current) return;
 		const mounted = new StickerBoard(node, layer.current, canvas.current, {
 			initial: seed.current(),

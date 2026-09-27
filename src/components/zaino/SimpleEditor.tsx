@@ -43,6 +43,11 @@ import { LinkDialog } from './LinkDialog';
 import { useModKey } from './NoteViewControls';
 import { syncHeading, useOutlineJump } from './OutlinePanel';
 import { useSheetFit } from './useSheetFit';
+import { SlashMenu, type SlashMenuHandle } from './SlashMenu';
+import type { SuggestionProps } from '@tiptap/suggestion';
+import type { SlashHandlers } from '@/lib/zaino/slash';
+import type { SlashItem } from '@/lib/zaino/slash-items';
+import { WRITING_GUIDE_PATH } from '@/lib/guide/path';
 import 'katex/dist/katex.min.css';
 
 type Katex = typeof katexType;
@@ -115,7 +120,8 @@ export function SimpleEditor({
 	paper: Paper;
 }) {
 	const [katex, setKatex] = useState<Katex | null>(null);
-	const [mathTarget, setMathTarget] = useState<(MathTarget & { page: string }) | null>(null);
+	// `fresh`: a formula not written yet, inserted on Fine (TipTap refuses an empty one).
+	const [mathTarget, setMathTarget] = useState<(MathTarget & { page: string; fresh?: boolean }) | null>(null);
 	const [linking, setLinking] = useState<Editor | null>(null);
 	// The document as loaded, handed back untouched if nothing is edited.
 	const pristine = useRef(initialMarkdown);
@@ -142,6 +148,32 @@ export function SimpleEditor({
 	const { dock, zoom: zoomSetting, fit, jump, setPage, setZoom } = useNoteView();
 	const zoom = effectiveZoom({ zoom: zoomSetting, fit });
 	const sideDock = md && dock !== 'bottom';
+
+	/*
+	 * The slash menu, one for every page: each page's editor reports to these
+	 * handlers, which never change, so the editors are made once. After three
+	 * letters that match nothing the menu goes away and the keys go back to the
+	 * text, as BlockNote does; it comes back if they are deleted.
+	 */
+	// `hit`: the length of the last query that matched something.
+	const [slashState, setSlashState] = useState<{ props: SuggestionProps<SlashItem, SlashItem>; hit: number } | null>(null);
+	const slash = slashState?.props ?? null;
+	const slashMenu = useRef<SlashMenuHandle>(null);
+	const slashShown = !!slashState && (slashState.props.items.length > 0 || slashState.props.query.length <= slashState.hit + 3);
+	const slashOpen = useRef(false);
+	useEffect(() => {
+		slashOpen.current = slashShown;
+	});
+	const runSlash = useRef<(item: SlashItem, editor: Editor) => void>(() => {});
+	const slashHandlers = useMemo<SlashHandlers>(
+		() => ({
+			show: (props) => setSlashState((prev) => ({ props, hit: props.items.length ? props.query.length : (prev?.hit ?? 0) })),
+			hide: () => setSlashState(null),
+			keyDown: (event) => (slashOpen.current ? (slashMenu.current?.onKeyDown(event) ?? false) : false),
+			run: (item, editor) => runSlash.current(item, editor)
+		}),
+		[]
+	);
 
 	const textMap = useCallback(() => (texts.current ??= new Map(list.current.map((e) => [e.id, e.initial]))), []);
 	const stickerMap = useCallback(() => {
@@ -347,9 +379,7 @@ export function SimpleEditor({
 				icon: Sigma,
 				startsGroup: true,
 				run: () => {
-					const pos = editor.state.selection.from;
-					editor.chain().focus().insertInlineMath({ latex: '' }).run();
-					setMathTarget({ latex: '', pos, block: false, page: active });
+					setMathTarget({ latex: '', pos: editor.state.selection.from, block: false, page: active, fresh: true });
 				}
 			},
 			{
@@ -358,9 +388,7 @@ export function SimpleEditor({
 				icon: SquareSigma,
 				secondary: true,
 				run: () => {
-					const pos = editor.state.selection.from;
-					editor.chain().focus().insertBlockMath({ latex: '' }).run();
-					setMathTarget({ latex: '', pos, block: true, page: active });
+					setMathTarget({ latex: '', pos: editor.state.selection.from, block: true, page: active, fresh: true });
 				}
 			},
 			{ id: 'link', label: 'Collegamento', icon: Link2, shortcut: 'Control+K', secondary: true, run: () => setLinking(editor), isActive: () => editor.isActive('link') },
@@ -368,6 +396,40 @@ export function SimpleEditor({
 			{ id: 'page', priority: 1.5, label: 'Nuova pagina', icon: Plus, shortcut: 'Control+Enter', run: () => runPageOp({ kind: 'add', at: activeIndex + 1 }), isDisabled: () => pageCount >= MAX_PAGES }
 		];
 	}, [editor, active, activeIndex, pageCount, runPageOp]);
+
+	useEffect(() => {
+		runSlash.current = (item, target) => {
+			const chain = () => target.chain().focus();
+			const page = [...handles.current.entries()].find(([, h]) => h.editor === target)?.[0] ?? active;
+			switch (item.id) {
+				case 'p':
+					return void chain().setParagraph().run();
+				case 'h1':
+				case 'h2':
+				case 'h3':
+					return void chain().setHeading({ level: Number(item.id[1]) as 1 | 2 | 3 }).run();
+				case 'ul':
+					return void chain().toggleBulletList().run();
+				case 'ol':
+					return void chain().toggleOrderedList().run();
+				case 'quote':
+					return void chain().toggleBlockquote().run();
+				case 'hr':
+					return void chain().setHorizontalRule().run();
+				case 'math':
+				case 'block-math':
+					return setMathTarget({ latex: '', pos: target.state.selection.from, block: item.id === 'block-math', page, fresh: true });
+				case 'link':
+					return setLinking(target);
+				case 'sticker':
+					return setAlbum(true);
+				case 'page':
+					return void runPageOp({ kind: 'add', at: list.current.findIndex((e) => e.id === page) + 1 });
+				case 'guide':
+					return void window.open(WRITING_GUIDE_PATH, '_blank', 'noopener');
+			}
+		};
+	});
 
 	// Ctrl+K opens the link dialog wherever the caret is.
 	useEffect(() => {
@@ -393,7 +455,7 @@ export function SimpleEditor({
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col">
 			<p id="simple-editor-help" className="sr-only">
-				Modalità Semplice. Usa la barra degli strumenti o le scorciatoie: {mod}+B grassetto, {mod}+I corsivo, {mod}+Invio nuova pagina. Scrivi il simbolo del dollaro attorno a una formula.
+				Modalità Semplice. Scrivi / per il menu dei comandi, oppure usa la barra degli strumenti o le scorciatoie: {mod}+B grassetto, {mod}+I corsivo, {mod}+Invio nuova pagina. Scrivi il simbolo del dollaro attorno a una formula.
 			</p>
 
 			<div
@@ -436,6 +498,7 @@ export function SimpleEditor({
 								stickers={readPageStickers}
 								onStickersChange={onPageStickers}
 								onBoard={onBoard}
+								slash={slashHandlers}
 							/>
 							<p className="label-mono text-[11px] text-fg-subtle" aria-hidden="true">
 								{i + 1} / {entries.length}
@@ -483,6 +546,8 @@ export function SimpleEditor({
 				</button>
 			)}
 
+			{slash && slashShown && <SlashMenu suggestion={slash} ref={slashMenu} />}
+
 			<StickerAlbum
 				open={album}
 				onClose={() => setAlbum(false)}
@@ -502,13 +567,20 @@ export function SimpleEditor({
 				onSave={(latex) => {
 					const target = handles.current.get(mathTarget?.page ?? '')?.editor;
 					if (!mathTarget || !target) return;
-					const command = mathTarget.block ? 'updateBlockMath' : 'updateInlineMath';
-					target.chain().focus()[command]({ latex, pos: mathTarget.pos }).run();
+					if (mathTarget.fresh) {
+						const command = mathTarget.block ? 'insertBlockMath' : 'insertInlineMath';
+						if (latex.trim()) target.chain().focus()[command]({ latex, pos: mathTarget.pos }).run();
+						else target.commands.focus();
+					} else {
+						const command = mathTarget.block ? 'updateBlockMath' : 'updateInlineMath';
+						target.chain().focus()[command]({ latex, pos: mathTarget.pos }).run();
+					}
 					setMathTarget(null);
 				}}
 				onDelete={() => {
 					const target = handles.current.get(mathTarget?.page ?? '')?.editor;
 					if (!mathTarget || !target) return;
+					if (mathTarget.fresh) return setMathTarget(null);
 					const command = mathTarget.block ? 'deleteBlockMath' : 'deleteInlineMath';
 					target.chain().focus()[command]({ pos: mathTarget.pos }).run();
 					setMathTarget(null);
@@ -537,7 +609,8 @@ function PageSheet({
 	onNewPage,
 	stickers,
 	onStickersChange,
-	onBoard
+	onBoard,
+	slash
 }: {
 	id: string;
 	index: number;
@@ -556,6 +629,7 @@ function PageSheet({
 	stickers: (id: string) => PlacedSticker[];
 	onStickersChange: (id: string, stickers: PlacedSticker[]) => void;
 	onBoard: (id: string, state: BoardState) => void;
+	slash: SlashHandlers;
 }) {
 	const sheet = useRef<HTMLDivElement>(null);
 	const controls = useRef<StickerControls | null>(null);
@@ -569,6 +643,7 @@ function PageSheet({
 		extensions: noteExtensions({
 			onMathClick: (latex, pos, block) => onMathClick({ latex, pos, block, page: id }),
 			onEditSource,
+			slash
 		}),
 		content: initial,
 		contentType: 'markdown',

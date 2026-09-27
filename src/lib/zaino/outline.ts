@@ -11,6 +11,8 @@ import { splitPages } from './pages';
 export interface OutlineEntry {
 	level: 1 | 2 | 3;
 	text: string;
+	/** The title as written, markdown and formulas included, for the outline to typeset. */
+	source: string;
 	page: number;
 	/** Its place among the titles of its page, from 0. */
 	index: number;
@@ -39,7 +41,7 @@ export function outline(markdown: string): OutlineEntry[] {
 			if (token.type !== 'heading_open' || !['h1', 'h2', 'h3'].includes(token.tag)) return;
 			const inline = tokens[i + 1];
 			const title = plain(inline?.children ?? null, inline?.content ?? '');
-			out.push({ level: Number(token.tag[1]) as 1 | 2 | 3, text: title || 'Titolo senza testo', page, index, line: token.map?.[0] ?? 0 });
+			out.push({ level: Number(token.tag[1]) as 1 | 2 | 3, text: title || 'Titolo senza testo', source: title ? (inline?.content ?? title) : '', page, index, line: token.map?.[0] ?? 0 });
 			index++;
 		});
 	});
@@ -70,4 +72,33 @@ export function titleOffset(markdown: string, page: number, line: number): numbe
 	const target = Math.min(start + line, lines.length - 1);
 	for (let i = 0; i < target; i++) offset += lines[i].length + 1;
 	return offset;
+}
+
+/**
+ * The lines of the source that have a counterpart in the pages on screen, for
+ * the Advanced editor to keep its two panes level: each page break (index −1,
+ * the top of the page after it) and each title, by line of the whole
+ * document, in order.
+ */
+export function sourceAnchors(markdown: string): { page: number; index: number; line: number }[] {
+	const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+	const breaks: number[] = [];
+	let fenced = false;
+	lines.forEach((l, i) => {
+		if (/^[ \t]*```/.test(l)) fenced = !fenced;
+		if (!fenced && /^[ \t]*<!--[ \t]*pagina[ \t]*-->[ \t]*$/.test(l)) breaks.push(i);
+	});
+	// A page's text starts after its break and the blank lines splitPages drops (see titleOffset).
+	const first = [-1, ...breaks].map((b) => {
+		let s = b + 1;
+		while (s < lines.length && lines[s].trim() === '') s++;
+		return s;
+	});
+	const titles = outline(markdown);
+	const out: { page: number; index: number; line: number }[] = [];
+	first.forEach((start, page) => {
+		if (page > 0) out.push({ page, index: -1, line: breaks[page - 1] });
+		for (const t of titles) if (t.page === page) out.push({ page, index: t.index, line: start + t.line });
+	});
+	return out;
 }
