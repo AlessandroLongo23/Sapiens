@@ -39,18 +39,21 @@ export const TUTORING_ROOT = '/ripetizioni';
 /** Path of the student's backpack: quaderni and note. */
 export const ZAINO_ROOT = '/zaino';
 
-/** The student's day: practice, streak, runs to take up, mistakes to redo (vault/Piano/Progressi dello studente.md). */
-export const OGGI_ROOT = '/oggi';
+/**
+ * The student's diary: school entries, what Sapiens suggests for the day, the streak, a page of their own
+ * (vault/Decisioni/2026-09-26 Il diario prende il posto di Oggi.md).
+ */
+export const DIARIO_ROOT = '/diario';
 
 /** The student's account: profile, sign-in, preferences, plan and their data, one section per page. */
 export const ACCOUNT_ROOT = '/account';
 
 /**
  * Where the installed app (PWA or Capacitor) opens, in place of the landing
- * page: Oggi, the student's day (vault/Decisioni/2026-09-25 Oggi è lo schermo
- * iniziale dell'app.md). Visitors without an account find the way in there.
+ * page: the diary, open on today (vault/Decisioni/2026-09-26 Il diario prende il
+ * posto di Oggi.md). Visitors without an account find the way in there.
  */
-export const APP_START = OGGI_ROOT;
+export const APP_START = DIARIO_ROOT;
 
 /**
  * The app's Materiale tab: the beta's only subject, until an onboarding asks
@@ -70,7 +73,7 @@ export const PRIVATE_PATH_PREFIXES = [
 	'/subscription',
 	'/account',
 	'/errori',
-	'/oggi',
+	'/diario',
 	'/richieste',
 	'/dashboard',
 	'/leads',
@@ -91,7 +94,7 @@ export const isPrivatePath = (pathname: string): boolean => startsWithAny(pathna
  * sells it.
  */
 export const AUTH_REQUIRED_PREFIXES = PRIVATE_PATH_PREFIXES.filter(
-	(p) => p !== '/api' && p !== ZAINO_ROOT && p !== OGGI_ROOT && !p.startsWith('/pricing/')
+	(p) => p !== '/api' && p !== ZAINO_ROOT && p !== DIARIO_ROOT && !p.startsWith('/pricing/')
 );
 
 export const requiresLogin = (pathname: string): boolean => startsWithAny(pathname, AUTH_REQUIRED_PREFIXES);

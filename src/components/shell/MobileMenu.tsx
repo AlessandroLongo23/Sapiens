@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Backpack, Calculator, ChevronRight, CircleHelp, CreditCard, House, LibraryBig, LogIn, Mail, Sun, UserPlus, UserRound, UsersRound } from 'lucide-react';
-import { CONTENT_ROOT, OGGI_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
+import { Backpack, Calculator, ChevronRight, CircleHelp, CreditCard, House, LibraryBig, LogIn, Mail, NotebookPen, UserPlus, UserRound, UsersRound } from 'lucide-react';
+import { CONTENT_ROOT, DIARIO_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 import { nodePath } from '@/lib/seo/slug';
 import { useAuth } from '@/lib/state/auth';
 import { useAppMode } from '@/lib/hooks/use-app-mode';
@@ -40,7 +40,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 
 	const links = [
 		...(app ? [] : [{ href: '/', label: 'Home', icon: House, active: pathname === '/' }]),
-		...(user ? [{ href: OGGI_ROOT, label: 'Oggi', icon: Sun, active: pathname === OGGI_ROOT }] : []),
+		...(user ? [{ href: DIARIO_ROOT, label: 'Diario', icon: NotebookPen, active: pathname === DIARIO_ROOT }] : []),
 		{ href: CONTENT_ROOT, label: 'Materiale didattico', icon: LibraryBig, active: pathname.startsWith(CONTENT_ROOT) },
 		{ href: ZAINO_ROOT, label: 'Il tuo zaino', icon: Backpack, active: pathname.startsWith(ZAINO_ROOT) },
 		{ href: '/strumenti', label: 'Strumenti', icon: Calculator, active: pathname.startsWith('/strumenti') },

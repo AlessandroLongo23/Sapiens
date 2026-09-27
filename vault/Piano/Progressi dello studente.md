@@ -6,6 +6,8 @@ tag: [piano, studenti, tecnica]
 ---
 # Progressi dello studente
 
+Dal 26 settembre 2026 lo schermo "Oggi" diventa il Diario, con lo stesso ruolo di schermo iniziale: vedi [[2026-09-26 Il diario prende il posto di Oggi]]. Dal 26 settembre anche nel codice: `/diario`, `DIARIO_ROOT`, `start_url` del manifest, scheda "Diario" con l'icona di un quaderno; lo schermo "Oggi" (`src/components/today/`) non esiste più, il suo contenuto è nella pagina del giorno (vedi [[Diario e calendario]]).
+
 Piano del 25 settembre 2026 per le funzioni costruite sulle prove (`exercise_sessions`) e sui tentativi (`exercise_attempts`): cosa si costruisce per la [[Release Beta]], dove sta nel sito e nell'app, come funziona, in che ordine. Le fasi dopo la beta sono indicate solo per dove si agganciano.
 
 Decisioni alla base:

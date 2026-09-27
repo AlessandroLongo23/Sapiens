@@ -1,11 +1,13 @@
 ---
-stato: decisa
-aggiornato: 2026-09-25
+stato: superata
+aggiornato: 2026-09-26
 tag: [decisione, studenti, prodotto, app]
 ---
 # Oggi è lo schermo iniziale dell'app
 
 ## Decisione
+Superata in parte il 26 settembre 2026 da [[2026-09-26 Il diario prende il posto di Oggi]]: lo schermo resta quello iniziale, ma si chiama Diario e comprende il diario scolastico.
+
 L'app installata si apre su "Oggi", la casa dei progressi dello studente: la prova da riprendere, la pratica del giorno, la serie di giorni, gli errori da rivedere, le domande gratuite rimaste. Prende il posto della pagina di Matematica come schermo iniziale e diventa una scheda della barra in basso. La struttura la scrive Claude, la grafica si rifinisce con Dario.
 
 ## Perché

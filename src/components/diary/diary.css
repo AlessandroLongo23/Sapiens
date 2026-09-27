@@ -1,0 +1,569 @@
+/* The diary as an object (vault/Decisioni/2026-09-26 Il diario prende il posto di Oggi.md): a hard cover behind,
+   pages stacked at the edges, a ribbon in the spine, flags for the tests to come, a tab for every month. What the
+   student writes is in blue pen; what Sapiens says is on post-its stuck to the page. */
+
+/* In the components layer, so a utility on the same element (a margin, a padding) still wins. */
+@layer components {
+	:root {
+		/* A blue ballpoint, as Italian students write with. */
+		--pen: oklch(0.43 0.15 262);
+		--diary-cover-a: oklch(0.44 0.16 22);
+		--diary-cover-b: oklch(0.33 0.13 20);
+		--diary-shade: 30 18 8;
+		--postit-yellow: oklch(0.95 0.1 98);
+		--postit-pink: oklch(0.93 0.055 12);
+		--postit-blue: oklch(0.935 0.04 232);
+		--postit-green: oklch(0.945 0.06 150);
+		--tape: rgb(255 255 255 / 0.5);
+		--tape-edge: rgb(var(--diary-shade) / 0.08);
+	}
+	.dark {
+		--pen: oklch(0.8 0.1 258);
+		--diary-cover-a: oklch(0.36 0.12 22);
+		--diary-cover-b: oklch(0.26 0.09 20);
+		--diary-shade: 0 0 0;
+		--postit-yellow: oklch(0.43 0.09 95);
+		--postit-pink: oklch(0.39 0.08 10);
+		--postit-blue: oklch(0.39 0.06 245);
+		--postit-green: oklch(0.4 0.07 155);
+		--tape: rgb(255 255 255 / 0.13);
+		--tape-edge: rgb(255 255 255 / 0.06);
+	}
+
+	.diary-pen {
+		font-family: var(--font-hand);
+		color: var(--pen);
+		font-weight: 500;
+		font-size: 1.5rem;
+		line-height: 28px;
+		letter-spacing: 0.005em;
+	}
+
+	/* ------------------------------------------------------------------ the book */
+
+	.diary-book {
+		position: relative;
+		isolation: isolate;
+		/* Room above for the flags that stick out of the top edge. */
+		margin-top: 2.25rem;
+	}
+
+	/* The hard cover, larger than the pages, in cloth: two fine weaves over the colour. */
+	.diary-cover {
+		position: absolute;
+		inset: -10px -12px -12px -12px;
+		z-index: -2;
+		border-radius: 18px;
+		background:
+			repeating-linear-gradient(0deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 3px),
+			repeating-linear-gradient(90deg, rgb(0 0 0 / 0.06) 0 1px, transparent 1px 3px),
+			linear-gradient(140deg, var(--diary-cover-a), var(--diary-cover-b));
+		box-shadow:
+			inset 0 0 0 1px rgb(255 255 255 / 0.07),
+			inset 0 -3px 0 rgb(0 0 0 / 0.18),
+			0 36px 60px -34px rgb(var(--diary-shade) / 0.6),
+			0 10px 22px -12px rgb(var(--diary-shade) / 0.4);
+	}
+
+	/* Pages of a diary are all the same height: the book is as tall as the screen allows, within bounds, whatever the
+	   day holds. What does not fit scrolls inside the page (.diary-scroll). */
+	.diary-spread {
+		/* On a phone, clear of the header, the week, the flags above and the tab bar and the ribbon's tail below. */
+		--book-h: max(20rem, calc(100dvh - 21rem));
+		position: relative;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: minmax(0, 1fr);
+		height: var(--book-h);
+	}
+	@media (min-width: 1024px) {
+		.diary-spread {
+			--book-h: clamp(34rem, calc(100dvh - 18.5rem), 52rem);
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	/* A page: the curve of the paper towards the spine is drawn over it; the squares are on the scroller, so they move
+	   with the writing. */
+	.diary-leaf {
+		position: relative;
+		z-index: 1;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+		background-color: var(--surface);
+		touch-action: pan-y;
+	}
+	.diary-leaf::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		border-radius: inherit;
+	}
+	/* The written part of a page: squared paper a square to a line of the pen, scrolling with the text, and a fade at
+	   the bottom edge so a page with more on it shows that it goes on. */
+	.diary-scroll {
+		height: 100%;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		/* The browser keeps the vertical scroll; a sideways drag is the page's, to turn it. */
+		touch-action: pan-y;
+		scrollbar-width: thin;
+		scrollbar-color: var(--edge-strong) transparent;
+		background-image:
+			linear-gradient(var(--grid-faint) 1px, transparent 1px),
+			linear-gradient(90deg, var(--grid-faint) 1px, transparent 1px);
+		background-size: 28px 28px;
+		background-position: -1px -1px;
+		background-attachment: local;
+	}
+	/* The bottom edge of a page fades into the paper, over the text and the squares alike, so a full page shows that
+	   it goes on while the squares still reach the edge. */
+	.diary-leaf::before {
+		content: '';
+		position: absolute;
+		z-index: 3;
+		inset: auto 0 0 0;
+		height: 2.75rem;
+		pointer-events: none;
+		background: linear-gradient(to bottom, transparent, var(--surface) 85%);
+		border-radius: inherit;
+	}
+
+	/* On a phone: one page at a time. The student's own page is the back of the sheet, turned over by its corner;
+	   both sides share the grid cell, so the sheet keeps its height. */
+	@media (max-width: 1023.98px) {
+		.diary-spread {
+			perspective: 2200px;
+		}
+		.diary-sheet {
+			position: relative;
+			display: grid;
+			grid-template-rows: minmax(0, 1fr);
+			height: 100%;
+			transform-style: preserve-3d;
+			transition: transform 0.7s var(--ease-out-soft);
+		}
+		.diary-sheet[data-side='back'] {
+			transform: rotateY(-180deg);
+		}
+		.diary-leaf--left,
+		.diary-leaf--right {
+			grid-area: 1 / 1;
+			backface-visibility: hidden;
+			border-radius: 4px 8px 8px 4px;
+			box-shadow:
+				1px 1px 0 var(--surface-2),
+				2px 2px 0 var(--edge),
+				3px 3px 0 var(--surface-2),
+				4px 4px 0 var(--edge),
+				5px 5px 0 var(--surface-2),
+				6px 6px 0 var(--edge),
+				8px 12px 18px -8px rgb(var(--diary-shade) / 0.3);
+		}
+		.diary-leaf--right {
+			transform: rotateY(180deg);
+		}
+		.diary-leaf--left::after,
+		.diary-leaf--right::after {
+			background: linear-gradient(to right, rgb(var(--diary-shade) / 0.13), rgb(var(--diary-shade) / 0.03) 18px, transparent 42px);
+		}
+		.diary-ribbon--spine {
+			display: none;
+		}
+	}
+	@media (max-width: 1023.98px) and (prefers-reduced-motion: reduce) {
+		.diary-sheet {
+			transition: none;
+		}
+	}
+	@media (min-width: 1024px) {
+		.diary-sheet {
+			display: contents;
+		}
+	}
+
+	/* The corner of the page, folded up to be turned: the way to the back of the sheet on a phone. */
+	.diary-curl {
+		position: absolute;
+		z-index: 4;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		border-radius: 0 0 8px 0;
+	}
+	.diary-curl::after {
+		content: '';
+		width: 2.6rem;
+		height: 2.6rem;
+		border-radius: 0 0 8px 0;
+		background: linear-gradient(135deg, transparent 50%, var(--surface-3) 50%, var(--surface) 72%, var(--surface-2));
+		box-shadow: -3px -3px 6px -2px rgb(var(--diary-shade) / 0.25);
+		transition: width 0.25s var(--ease-out-soft), height 0.25s var(--ease-out-soft);
+	}
+	.dark .diary-curl::after {
+		background: linear-gradient(135deg, transparent 50%, oklch(0.42 0.01 260) 50%, oklch(0.3 0.01 260));
+		box-shadow: -3px -3px 6px -2px rgb(0 0 0 / 0.5);
+	}
+	.diary-curl:hover::after,
+	.diary-curl:focus-visible::after {
+		width: 3.1rem;
+		height: 3.1rem;
+	}
+	@media (min-width: 1024px) {
+		.diary-curl {
+			display: none;
+		}
+	}
+
+	/* Open on a desk: the left page stacked to the left, the right one to the right, both curving into the spine. */
+	@media (min-width: 1024px) {
+		.diary-leaf--left {
+			border-radius: 8px 3px 3px 8px;
+			box-shadow:
+				-1px 1px 0 var(--surface-2),
+				-2px 2px 0 var(--edge),
+				-3px 3px 0 var(--surface-2),
+				-4px 4px 0 var(--edge),
+				-5px 5px 0 var(--surface-2),
+				-6px 6px 0 var(--edge),
+				-10px 12px 20px -10px rgb(var(--diary-shade) / 0.3);
+		}
+		.diary-leaf--left::after {
+			background: linear-gradient(to right, rgb(255 255 255 / 0.05), transparent 30%, transparent 80%, rgb(var(--diary-shade) / 0.06) 93%, rgb(var(--diary-shade) / 0.2));
+		}
+		.diary-leaf--right {
+			border-radius: 3px 8px 8px 3px;
+			box-shadow:
+				1px 1px 0 var(--surface-2),
+				2px 2px 0 var(--edge),
+				3px 3px 0 var(--surface-2),
+				4px 4px 0 var(--edge),
+				5px 5px 0 var(--surface-2),
+				6px 6px 0 var(--edge),
+				10px 12px 20px -10px rgb(var(--diary-shade) / 0.3);
+		}
+		.diary-leaf--right::after {
+			background: linear-gradient(to left, rgb(255 255 255 / 0.05), transparent 30%, transparent 80%, rgb(var(--diary-shade) / 0.06) 93%, rgb(var(--diary-shade) / 0.2));
+		}
+		.diary-ribbon--tail {
+			display: none;
+		}
+	}
+
+	/* The satin ribbon in the spine, hanging out at the bottom with its end cut in a V. */
+	.diary-ribbon {
+		position: absolute;
+		z-index: 3;
+		width: 13px;
+		pointer-events: none;
+		background: linear-gradient(90deg, oklch(0.38 0.15 22), oklch(0.55 0.2 22) 45%, oklch(0.62 0.18 22) 60%, oklch(0.45 0.17 22));
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 9px), 0 100%);
+		filter: drop-shadow(0 2px 2px rgb(var(--diary-shade) / 0.35));
+	}
+	.diary-ribbon--spine {
+		left: calc(50% - 4px);
+		top: -8px;
+		bottom: -54px;
+	}
+	/* On the left, clear of the page corner and its label on the right. */
+	.diary-ribbon--tail {
+		left: 20%;
+		top: calc(100% - 6px);
+		height: 36px;
+		transform: rotate(-4deg);
+		transform-origin: top center;
+	}
+
+	/* The flags of the tests to come, stuck out of the top edge; pulled a little when pointed at. */
+	.diary-flag {
+		position: relative;
+		z-index: 0;
+		display: flex;
+		align-items: flex-start;
+		gap: 0.3rem;
+		max-width: 11rem;
+		height: 3.1rem;
+		margin-bottom: -1.35rem;
+		padding: 0.2rem 0.65rem 0;
+		border: 1px solid var(--tint-edge);
+		border-bottom: 0;
+		border-radius: 7px 7px 0 0;
+		background: linear-gradient(to bottom, color-mix(in oklab, var(--tint-soft), white 25%), var(--tint-soft));
+		color: var(--tint-fg);
+		box-shadow: 0 -1px 3px rgb(var(--diary-shade) / 0.08);
+		transition: transform 0.25s var(--ease-out-soft);
+	}
+	.dark .diary-flag {
+		background: var(--tint-soft);
+	}
+	.diary-flag:hover,
+	.diary-flag:focus-visible {
+		transform: translateY(-5px);
+	}
+
+	/* A tab for every month on the right edge, as on the side of a paper diary. */
+	.diary-months {
+		position: absolute;
+		z-index: 0;
+		top: 1.5rem;
+		bottom: 1.5rem;
+		right: -2.6rem;
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
+	@media (max-width: 1023.98px) {
+		.diary-months {
+			display: none;
+		}
+	}
+	.diary-month {
+		flex: 1;
+		width: 2.6rem;
+		padding-left: 0.55rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0 6px 6px 0;
+		background: oklch(0.9 0.05 var(--h));
+		color: oklch(0.38 0.08 var(--h));
+		box-shadow: inset 1px 0 0 rgb(var(--diary-shade) / 0.15), 2px 1px 3px rgb(var(--diary-shade) / 0.12);
+		writing-mode: vertical-rl;
+		transition: transform 0.2s var(--ease-out-soft), background-color 0.2s;
+	}
+	.dark .diary-month {
+		background: oklch(0.34 0.05 var(--h));
+		color: oklch(0.85 0.06 var(--h));
+	}
+	.diary-month:hover,
+	.diary-month:focus-visible {
+		transform: translateX(4px);
+	}
+	.diary-month[aria-current='true'] {
+		transform: translateX(6px);
+		background: var(--surface);
+		color: var(--accent-fg);
+	}
+
+	/* ------------------------------------------------------------------ turning the page */
+
+	@media (prefers-reduced-motion: no-preference) {
+		.diary-turn[data-turn='next'] {
+			transform-origin: left center;
+			animation: diary-turn-next 0.46s var(--ease-out-soft) both;
+		}
+		.diary-turn[data-turn='prev'] {
+			transform-origin: right center;
+			animation: diary-turn-prev 0.46s var(--ease-out-soft) both;
+		}
+		.diary-turn[data-turn='jump'] {
+			animation: note-in 0.34s var(--ease-out-soft) both;
+		}
+		.ink-draw {
+			stroke-dasharray: 1 2;
+			animation: sk-draw 0.5s var(--ease-out-soft) var(--d, 0s) backwards;
+		}
+		/* A new entry is written left to right. */
+		.ink-write {
+			animation: ink-write 0.7s cubic-bezier(0.45, 0, 0.3, 1) both;
+		}
+		.postit {
+			animation: postit-in 0.5s var(--ease-out-soft) var(--d, 0s) backwards;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.diary-turn[data-turn] {
+			animation: fade-in 0.2s ease-out both;
+		}
+	}
+	@keyframes diary-turn-next {
+		from {
+			opacity: 0.2;
+			transform: perspective(1600px) rotateY(-16deg) translateX(14px);
+			filter: brightness(0.93);
+		}
+	}
+	@keyframes diary-turn-prev {
+		from {
+			opacity: 0.2;
+			transform: perspective(1600px) rotateY(16deg) translateX(-14px);
+			filter: brightness(0.93);
+		}
+	}
+	@keyframes ink-write {
+		from {
+			clip-path: inset(0 100% 0 0);
+		}
+		to {
+			clip-path: inset(0 0 0 0);
+		}
+	}
+	@keyframes postit-in {
+		from {
+			opacity: 0;
+			transform: translateY(-10px) rotate(calc(var(--tilt, 0deg) * 3)) scale(1.04);
+		}
+	}
+
+	/* ------------------------------------------------------------------ what is stuck on the page */
+
+	/* A sticky note: a glue strip a shade lighter at the top, the paper lifting off at the bottom right. */
+	.postit {
+		--postit: var(--postit-yellow);
+		position: relative;
+		padding: 1.1rem 1.1rem 1rem;
+		background: linear-gradient(to bottom, color-mix(in oklab, var(--postit), white 22%) 0 14px, var(--postit) 22px);
+		border-radius: 2px 2px 3px 18px / 2px 2px 3px 6px;
+		color: var(--fg);
+		transform: rotate(var(--tilt, 0deg));
+		box-shadow:
+			0 1px 1px rgb(var(--diary-shade) / 0.1),
+			0 14px 14px -12px rgb(var(--diary-shade) / 0.35);
+	}
+	.dark .postit {
+		background: linear-gradient(to bottom, color-mix(in oklab, var(--postit), white 6%) 0 14px, var(--postit) 22px);
+	}
+	.postit::after {
+		content: '';
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		width: 22px;
+		height: 22px;
+		pointer-events: none;
+		background: linear-gradient(135deg, transparent 48%, rgb(var(--diary-shade) / 0.12) 50%, color-mix(in oklab, var(--postit), white 35%) 56%, color-mix(in oklab, var(--postit), black 4%));
+		border-radius: 0 0 4px 0;
+	}
+	.postit[data-tone='pink'] {
+		--postit: var(--postit-pink);
+	}
+	.postit[data-tone='blue'] {
+		--postit: var(--postit-blue);
+	}
+	.postit[data-tone='green'] {
+		--postit: var(--postit-green);
+	}
+	/* A slip of plain paper taped in: what the diary wrote down by itself. */
+	.postit[data-tone='paper'] {
+		--postit: var(--surface);
+		/* Warmer tape: plain white vanishes on a white slip. */
+		--tape: oklch(0.95 0.05 85 / 0.55);
+		border-radius: 2px;
+		box-shadow:
+			0 0 0 1px var(--edge-soft),
+			0 10px 12px -10px rgb(var(--diary-shade) / 0.3);
+	}
+	.postit[data-tone='paper']::after {
+		display: none;
+	}
+
+	/* Paper tape, translucent, its ends torn. */
+	.diary-tape {
+		position: absolute;
+		z-index: 2;
+		top: -11px;
+		left: 50%;
+		width: 72px;
+		height: 22px;
+		margin-left: -36px;
+		background: var(--tape);
+		box-shadow: inset 0 0 0 1px var(--tape-edge);
+		transform: rotate(-3deg);
+		clip-path: polygon(0 8%, 5% 0, 9% 10%, 14% 0, 86% 0, 91% 12%, 95% 0, 100% 10%, 100% 92%, 96% 100%, 91% 88%, 86% 100%, 14% 100%, 9% 90%, 4% 100%, 0 88%);
+		backdrop-filter: blur(0.5px);
+	}
+
+	/* A rubber stamp, in the accent's ink, pressed unevenly. */
+	.diary-stamp {
+		display: inline-flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 5.4rem;
+		height: 5.4rem;
+		border: 2.5px solid currentColor;
+		outline: 1px solid currentColor;
+		outline-offset: -7px;
+		border-radius: 999px;
+		color: var(--accent-fg);
+		font-family: var(--font-mono);
+		font-size: 0.6rem;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		line-height: 1.15;
+		text-align: center;
+		text-transform: uppercase;
+		transform: rotate(-12deg);
+		opacity: 0.82;
+		mask-image: radial-gradient(circle at 28% 30%, black 55%, rgb(0 0 0 / 0.72) 78%, black 100%);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.diary-stamp {
+			animation: stamp-in 0.36s cubic-bezier(0.3, 1.6, 0.5, 1) 0.2s backwards;
+		}
+	}
+	@keyframes stamp-in {
+		from {
+			opacity: 0;
+			transform: rotate(-4deg) scale(1.5);
+		}
+	}
+
+
+	/* The student's own page takes the stickers of the notes. */
+	.diary-own.is-holding .sticker-layer {
+		pointer-events: auto;
+		touch-action: pan-y;
+	}
+	.diary-own[data-sticker-cursor='none'] .sticker-layer {
+		cursor: none;
+	}
+	.diary-own[data-sticker-cursor='grabbing'] .sticker-layer {
+		cursor: grabbing;
+	}
+	.diary-own.is-holding .sticker[data-mode='hand'],
+	.diary-own.is-holding .sticker[data-mode='placing'] {
+		pointer-events: auto;
+		touch-action: none;
+	}
+
+	/* ------------------------------------------------------------------ the closed diary, for a visitor */
+
+	.diary-closed {
+		position: relative;
+		aspect-ratio: 3 / 4;
+		width: min(100%, 22rem);
+		margin-inline: auto;
+		border-radius: 10px 18px 18px 10px;
+		background:
+			repeating-linear-gradient(0deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 3px),
+			repeating-linear-gradient(90deg, rgb(0 0 0 / 0.06) 0 1px, transparent 1px 3px),
+			linear-gradient(140deg, var(--diary-cover-a), var(--diary-cover-b));
+		box-shadow:
+			inset 10px 0 0 rgb(0 0 0 / 0.16),
+			inset 12px 0 0 rgb(255 255 255 / 0.05),
+			inset 0 -3px 0 rgb(0 0 0 / 0.2),
+			5px 5px 0 var(--surface),
+			6px 6px 0 var(--edge),
+			9px 9px 0 var(--surface),
+			10px 10px 0 var(--edge),
+			0 36px 50px -26px rgb(var(--diary-shade) / 0.55);
+		transform: rotate(-2deg);
+	}
+	/* The elastic band that keeps it shut. */
+	.diary-closed::after {
+		content: '';
+		position: absolute;
+		top: -4px;
+		bottom: -4px;
+		right: 13%;
+		width: 11px;
+		border-radius: 3px;
+		background: linear-gradient(90deg, oklch(0.2 0.02 265), oklch(0.32 0.02 265) 50%, oklch(0.2 0.02 265));
+		box-shadow: 2px 0 3px rgb(0 0 0 / 0.3);
+	}
+}

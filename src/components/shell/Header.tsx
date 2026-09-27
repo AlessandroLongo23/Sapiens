@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, Menu, Search, UsersRound } from 'lucide-react';
-import { CONTENT_ROOT, OGGI_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
+import { CONTENT_ROOT, DIARIO_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 import { nodePath } from '@/lib/seo/slug';
 import { useSearch } from '@/lib/state/search';
 import { useAuth } from '@/lib/state/auth';
@@ -84,7 +84,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 	const inMateriale = pathname.startsWith(CONTENT_ROOT);
 	const inTutoring = pathname.startsWith(TUTORING_ROOT);
 	const inZaino = pathname.startsWith(ZAINO_ROOT);
-	const inOggi = pathname === OGGI_ROOT || pathname.startsWith('/errori');
+	const inDiario = pathname === DIARIO_ROOT || pathname.startsWith('/errori');
 	const inTools = pathname.startsWith(TOOLS_ROOT);
 
 	return (
@@ -169,7 +169,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 					<nav aria-label="Sezioni" className={cn('flex items-baseline gap-6 whitespace-nowrap 2xl:gap-7', megaMenu && 'lg:hidden xl:flex')}>
 						<NavLink href={CONTENT_ROOT} active={inMateriale} className={cn(megaMenu && 'lg:hidden')}>Materiale</NavLink>
 						<NavLink href={TUTORING_ROOT} active={inTutoring}>Ripetizioni</NavLink>
-						{user && <NavLink href={OGGI_ROOT} active={inOggi}>Oggi</NavLink>}
+						{user && <NavLink href={DIARIO_ROOT} active={inDiario}>Diario</NavLink>}
 						<NavLink href={ZAINO_ROOT} active={inZaino}>Zaino</NavLink>
 						<NavLink href={TOOLS_ROOT} active={inTools}>Strumenti</NavLink>
 					</nav>

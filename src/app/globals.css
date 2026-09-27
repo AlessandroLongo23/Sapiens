@@ -44,6 +44,8 @@
 	--font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
 	--font-display: var(--font-fraunces), 'Fraunces', Georgia, serif;
 	--font-mono: var(--font-jetbrains), 'JetBrains Mono', Menlo, monospace;
+	/* Handwriting, loaded by next/font as --font-caveat: pencil notes and the diary's pen. */
+	--font-hand: var(--font-caveat), 'Caveat', cursive;
 
 	/* Compact scale: Tailwind's defaults read oversized for a study tool, so
 	   spacing is trimmed by 10%, text by about 6%, the larger radii by 2px. */
@@ -419,7 +421,7 @@
 	--marker: oklch(0.82 0.16 100 / 0.34);
 }
 @utility pencil {
-	font-family: var(--font-hand), 'Caveat', cursive;
+	font-family: var(--font-hand);
 	color: var(--graphite);
 	font-weight: 600;
 	line-height: 1.1;
@@ -657,11 +659,12 @@ body {
 .prose {
 	font-size: var(--text-base);
 }
-/* iOS zooms into any field smaller than 16px: keep form controls at 16px on touch screens. */
+/* iOS zooms into any field smaller than 16px: keep form controls at 16px on touch screens. The diary's pen is
+   larger already (.diary-pen, 24px) and keeps its size. */
 @media (pointer: coarse) {
-	input:not([type='checkbox']):not([type='radio']):not([type='range']),
+	input:not([type='checkbox']):not([type='radio']):not([type='range']):not(.diary-pen),
 	select,
-	textarea {
+	textarea:not(.diary-pen) {
 		font-size: max(1rem, 16px);
 	}
 }

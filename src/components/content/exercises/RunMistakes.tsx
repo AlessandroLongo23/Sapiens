@@ -1,6 +1,6 @@
 'use client';
 
-// Runs and mistakes are shown outside the lesson pages too (the list of mistakes, Oggi), where the layout does not load KaTeX's styles.
+// Runs and mistakes are shown outside the lesson pages too (the list of mistakes, the diary), where the layout does not load KaTeX's styles.
 import 'katex/dist/katex.min.css';
 import type { ReactNode } from 'react';
 import { ChevronDown, X } from 'lucide-react';

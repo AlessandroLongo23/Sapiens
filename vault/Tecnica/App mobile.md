@@ -1,9 +1,11 @@
 ---
 stato: in sviluppo
-aggiornato: 2026-09-25
+aggiornato: 2026-09-26
 tag: [tecnica, mobile]
 ---
 # App mobile
+
+Dal 26 settembre 2026 lo schermo "Oggi" diventa il Diario, con lo stesso ruolo di schermo iniziale: vedi [[2026-09-26 Il diario prende il posto di Oggi]]. Dal 26 settembre anche nel codice: `/diario`, `DIARIO_ROOT`, `start_url` del manifest, scheda "Diario" con l'icona di un quaderno; lo schermo "Oggi" (`src/components/today/`) non esiste più, il suo contenuto è nella pagina del giorno (vedi [[Diario e calendario]]).
 
 Decisione in [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]].
 

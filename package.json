@@ -16,6 +16,7 @@
 		"check:placeholder": "node scripts/check-placeholder.mjs",
 		"check:secrets": "node scripts/check-secrets.mjs",
 		"test:e2e": "playwright test",
+		"test:unit": "node --test \"tests/unit/*.test.mjs\"",
 		"screenshots:mobile": "node scripts/mobile-screenshots.mjs",
 		"generate:images": "node scripts/generate-images.mjs",
 		"cap:sync": "npx cap sync",

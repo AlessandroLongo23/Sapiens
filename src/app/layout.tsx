@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
+import { Caveat, Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
 import { APP_START, GSC_VERIFICATION, SITE_LANG, SITE_URL } from '@/lib/config/site';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { organizationJsonLd, webSiteJsonLd } from '@/lib/seo/jsonld';
@@ -17,6 +17,8 @@ const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-int
 const fraunces = Fraunces({ subsets: ['latin'], display: 'swap', variable: '--font-fraunces', axes: ['opsz', 'SOFT'] });
 // Mono sets counts, numbering and code; it is not preloaded on every page.
 const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], display: 'swap', variable: '--font-jetbrains', preload: false });
+// Handwriting: the pencil in the margins and the student's own pen in the diary (`pencil`, `.diary-pen`).
+const hand = Caveat({ subsets: ['latin'], weight: ['400', '500', '600', '700'], display: 'swap', variable: '--font-caveat', preload: false });
 
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
@@ -63,7 +65,7 @@ const SESSION_SCRIPT = `(function(){try{if(document.cookie.indexOf('-auth-token'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
-		<html lang={SITE_LANG} className={`${inter.variable} ${fraunces.variable} ${mono.variable}`} suppressHydrationWarning>
+		<html lang={SITE_LANG} className={`${inter.variable} ${fraunces.variable} ${mono.variable} ${hand.variable}`} suppressHydrationWarning>
 			<head>
 				<script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 				<script dangerouslySetInnerHTML={{ __html: APP_SCRIPT }} />

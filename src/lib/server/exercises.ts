@@ -3,7 +3,7 @@ import { createCipheriv, createDecipheriv, hkdfSync, randomBytes } from 'node:cr
 import { configs, SESSION_LENGTH } from '@/lib/exercises/config';
 import { romeDate } from '@/lib/stripe/config';
 import { generators } from '@/lib/exercises';
-import { JUMP_LENGTH, jumpPlan, pathState, skippedBy, type LevelStatus, type Run, type RunKind } from '@/lib/exercises/levels';
+import { JUMP_LENGTH, jumpPlan, pathState, runPassed, skippedBy, type LevelStatus, type Run, type RunKind } from '@/lib/exercises/levels';
 import { levelName } from '@/lib/exercises/level-names';
 import { REVIEW_LENGTH, REVIEW_WINDOW_DAYS, isOpen, openMistakes, reviewPlan, type AnswerRecord, type ReviewItem } from '@/lib/exercises/review';
 import { lessonIndex } from '@/lib/server/lessons';
@@ -773,4 +773,72 @@ export async function todayView(userId: string, limited = false): Promise<TodayV
 		openMistakes: openMistakes(recent).filter((m) => configs[m.lesson]).length,
 		freeLeft: left
 	};
+}
+
+/** A run of a past day, as the diary tells it: where, how it went, whether it passed its level. */
+export interface LoggedRun {
+	kind: SessionKind;
+	/** The lesson, for a run on a lesson's path; practice and reviews cross lessons. */
+	titleHtml: string | null;
+	exercisesUrl: string | null;
+	level: number;
+	answered: number;
+	length: number;
+	correct: number;
+	passed: boolean;
+}
+
+/** What a student did on a day, for the diary's page of that day: answers, and the runs started. */
+export interface DayLog {
+	answered: number;
+	correct: number;
+	runs: LoggedRun[];
+}
+
+/**
+ * The diary writes a past day by itself from these (vault/Decisioni/2026-09-26 Il diario prende il posto di Oggi.md):
+ * the day's answers as the trigger counted them, and the runs started that day in Rome, oldest first. Runs without an
+ * answer are left out: opened and abandoned, they did not happen.
+ */
+export async function dayLog(userId: string, day: string): Promise<DayLog> {
+	const [counts, runs, index] = await Promise.all([
+		db().from('exercise_days').select('answered, correct').eq('user_id', userId).eq('day', day).maybeSingle(),
+		db()
+			.from('exercise_sessions')
+			.select('kind, lesson_path, level, plan, answered, correct')
+			.eq('user_id', userId)
+			.eq('day', day)
+			.gt('answered', 0)
+			.order('started_at', { ascending: true })
+			.limit(50),
+		lessonIndex()
+	]);
+	if (counts.error) throw counts.error;
+	if (runs.error) throw runs.error;
+	const row = counts.data as { answered: number; correct: number } | null;
+	return {
+		answered: row?.answered ?? 0,
+		correct: row?.correct ?? 0,
+		runs: ((runs.data ?? []) as { kind: SessionKind; lesson_path: string | null; level: number; plan: number[]; answered: number; correct: number }[]).map((r) => {
+			const lesson = r.lesson_path ? index.get(r.lesson_path) : undefined;
+			const onPath = r.kind === 'level' || r.kind === 'jump';
+			return {
+				kind: r.kind,
+				titleHtml: lesson?.titleHtml ?? null,
+				exercisesUrl: lesson?.exercisesUrl ?? null,
+				level: r.level,
+				answered: r.answered,
+				length: r.plan.length,
+				correct: r.correct,
+				passed: onPath && runPassed({ total: r.plan.length, answered: r.answered, correct: r.correct })
+			};
+		})
+	};
+}
+
+/** The days between `from` and `to` that counted for the streak: the diary's calendar ticks them. */
+export async function studiedDays(userId: string, from: string, to: string): Promise<string[]> {
+	const { data, error } = await db().from('exercise_days').select('day, answered').eq('user_id', userId).gte('day', from).lte('day', to).gte('answered', STREAK_MIN_ANSWERS);
+	if (error) throw error;
+	return ((data ?? []) as { day: string }[]).map((d) => d.day);
 }
