@@ -10,13 +10,16 @@ export function tex(source: string, display = false): string {
 	return katex.renderToString(source, { displayMode: display, throwOnError: false, strict: 'ignore', output: 'htmlAndMathml' });
 }
 
-/** Prose with `$…$` inline and `$$…$$` display formulas: the prose escaped, the formulas typeset. */
+/**
+ * Prose with `$…$` inline and `$$…$$` display formulas: the prose escaped, the formulas typeset. Inline formulas are
+ * set in display style, so a fraction in a step is as large as in the lessons and never shrinks to a footnote.
+ */
 export function mathText(text: string): string {
 	return text
 		.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g)
 		.map((part, i) => {
 			if (i % 2 === 0) return escapeHtml(part);
-			return part.startsWith('$$') ? tex(part.slice(2, -2).trim(), true) : tex(part.slice(1, -1).trim());
+			return part.startsWith('$$') ? tex(part.slice(2, -2).trim(), true) : tex(`\\displaystyle ${part.slice(1, -1).trim()}`);
 		})
 		.join('');
 }

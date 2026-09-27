@@ -131,7 +131,7 @@ export function ResultPanel({ outcome }: { outcome: Outcome }) {
 			<div aria-live="polite" className="min-h-[3.5rem]">
 				{outcome.ok ? (
 					<div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-edge bg-surface px-4 py-3 shadow-paper">
-						<Html html={result} className="math-content min-w-0 break-words text-2xl font-medium text-fg-strong sm:text-3xl" />
+						<Html html={result} className="math-content scroll-x min-w-0 break-words text-2xl font-medium text-fg-strong sm:text-3xl" />
 						<div className="flex shrink-0 gap-1">
 							<IconButton
 								label={copied ? 'Copiato' : 'Copia il risultato'}
@@ -166,7 +166,7 @@ export function ResultPanel({ outcome }: { outcome: Outcome }) {
 								<span className="mt-0.5 font-mono text-xs text-fg-faint tabular-nums" aria-hidden="true">
 									{String(i + 1).padStart(2, '0')}
 								</span>
-								<Html html={html} className="math-content min-w-0 flex-1 break-words" />
+								<Html html={html} className="math-content scroll-x min-w-0 flex-1 break-words" />
 							</li>
 						))}
 					</ol>
