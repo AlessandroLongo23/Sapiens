@@ -17,6 +17,7 @@ import {
 	PanelRightClose,
 	PanelRightOpen,
 	Printer,
+	Sigma,
 	SwatchBook,
 	Type
 } from 'lucide-react';
@@ -32,6 +33,7 @@ import { cn } from '@/lib/utils/cn';
 import { SaveStatus } from './SaveStatus';
 import { useModKey } from './NoteViewControls';
 import { MenuItem, MenuSeparator, Popover } from './Popover';
+import { WRITING_GUIDE_PATH } from '@/lib/guide/path';
 import { PaperPanel } from './PaperPanel';
 
 const iconButton =
@@ -137,6 +139,9 @@ export function NoteHeader({
 			</MenuItem>
 			<MenuItem icon={Printer} hint={md ? `${mod} P` : undefined} onSelect={() => { close(); onPrint(); }}>
 				Stampa o salva in PDF
+			</MenuItem>
+			<MenuItem icon={Sigma} onSelect={() => { close(); window.open(WRITING_GUIDE_PATH, '_blank', 'noopener'); }}>
+				Guida alle formule e al testo
 			</MenuItem>
 			{md && (
 				<>

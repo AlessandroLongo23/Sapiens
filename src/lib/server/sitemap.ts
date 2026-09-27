@@ -46,6 +46,7 @@ export async function buildSitemapUrls(): Promise<SitemapUrl[]> {
 		{ loc: `${TUTORING_ROOT}/diventa-tutor` },
 		{ loc: '/pricing' },
 		{ loc: '/faq' },
+		{ loc: '/guida-latex' },
 		{ loc: '/contacts' },
 		{ loc: '/terms' },
 		{ loc: '/privacy' },

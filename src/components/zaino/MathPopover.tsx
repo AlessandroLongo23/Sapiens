@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Sheet } from '@/components/ui/Sheet';
 import { useCoarsePointer } from '@/lib/hooks/use-media';
 import { escapeHtml } from '@/lib/utils/escape';
+import { WRITING_GUIDE_PATH } from '@/lib/guide/path';
 
 type Katex = typeof katexType;
 
@@ -97,7 +98,10 @@ export function MathPopover({
 				placeholder="\\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"
 			/>
 			<p id="math-help" className="text-xs text-fg-subtle">
-				Invio per confermare, Maiusc+Invio per andare a capo.
+				Invio per confermare, Maiusc+Invio per andare a capo.{' '}
+				<a href={WRITING_GUIDE_PATH} target="_blank" rel="noopener" className="rounded font-medium text-accent-fg underline underline-offset-2 focus-ring">
+					Come si scrive una formula?
+				</a>
 			</p>
 			<div className="min-h-12 rounded-xl border border-edge-soft bg-surface-2 px-3 py-2 text-center" aria-live="polite">
 				{preview ? <span dangerouslySetInnerHTML={{ __html: preview }} /> : <span className="text-sm text-fg-faint">Anteprima</span>}
