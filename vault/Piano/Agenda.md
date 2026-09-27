@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-26
+aggiornato: 2026-09-28
 tag: [piano, agenda]
 ---
 # Agenda
@@ -21,6 +21,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 8. **Catalogo degli adesivi:** guida di stile, pipeline e primo lotto (10 capitoli del primo anno) fatti e committati il 26 settembre, con i primi adesivi fustellati e la dimensione regolabile. Restano i lotti: 29 capitoli, materie, studio, stagionali. Viene dopo i contenuti, che restano il collo di bottiglia. Note: [[Adesivi]], [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]].
 
 9. **SEO e dominio:** scegliere e comprare il dominio (consiglio: un `.it` col nome del marchio), collegarlo a Vercel e a Search Console, inviare la sitemap dopo la rilettura del primo anno. Poi i livelli con esercizi lunghi per la scheda. Nota: [[SEO]].
+10. **Grafico interattivo negli strumenti:** punti trascinabili sul piano cartesiano e l'angolo sulla circonferenza goniometrica, come primo pezzo del componente tipo GeoGebra. Da fare con calma, in una conversazione dedicata. Nota: [[Grafici e simulazioni interattive]].
 
 ## Prima della v1.0 e della v2
 - Onboarding su classe e indirizzo. Lo schermo "Oggi" è deciso ed entra nella beta (vedi [[2026-09-25 Oggi è lo schermo iniziale dell'app]]); la grafica con Dario. Note: [[App mobile]], [[Progressi dello studente]].
