@@ -37,6 +37,8 @@ $$
 
 Il terzo motivo è storico: prima delle calcolatrici i conti si facevano a mano, e dividere $1{,}4142$ per $2$ è molto più facile che dividere $1$ per $1{,}4142$. Il risultato è lo stesso, circa $0{,}7071$.
 
+Lo userai spesso in geometria analitica, per esempio nella [distanza di un punto da una retta](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/distanza-di-un-punto-da-una-retta), dove i risultati come $\frac{8}{\sqrt{5}}$ si scrivono $\frac{8\sqrt{5}}{5}$.
+
 ## Denominatore con una radice quadrata
 
 Se il denominatore è $\sqrt{a}$, il fattore razionalizzante è $\sqrt{a}$ stesso, perché $\sqrt{a} \cdot \sqrt{a} = a$:

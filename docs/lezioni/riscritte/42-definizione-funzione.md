@@ -312,7 +312,7 @@ Per disegnarlo a mano:
 3. disegna nel piano i punti $(x, f(x))$;
 4. se il dominio è $\mathbb{R}$, unisci i punti con una linea continua, seguendo l'andamento che suggeriscono; se il dominio è un insieme finito, il grafico è fatto solo dei punti e non si uniscono.
 
-Unire i punti è un passaggio intuitivo: quanti più punti calcoli, tanto più il disegno si avvicina al grafico vero. Come si disegnano con precisione rette e parabole lo vedrai al secondo anno.
+Unire i punti è un passaggio intuitivo: quanti più punti calcoli, tanto più il disegno si avvicina al grafico vero. Come si disegnano con precisione le rette lo vedrai nella lezione [Equazione della retta e casi particolari](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/equazione-della-retta-e-casi-particolari), e le parabole nella lezione [La parabola](/materiale/scuola-superiore/matematica/parabola-e-disequazioni-di-secondo-grado/la-parabola).
 
 ```ad-example
 Esempio 6: grafico di una funzione di primo grado
@@ -347,7 +347,7 @@ Disegna il grafico di $f: \mathbb{R} \to \mathbb{R}$, $f(x) = x^2 - 2$.
 |---|---|---|---|---|---|
 | $f(x)$ | $2$ | $-1$ | $-2$ | $-1$ | $2$ |
 
-Per esempio $f(-2) = (-2)^2 - 2 = 2$. I punti non sono allineati: numeri opposti hanno la stessa immagine, quindi i punti sono a due a due alla stessa altezza, e il più basso è $(0, -2)$. Unendoli si ottiene una curva a forma di U, che si chiama parabola.
+Per esempio $f(-2) = (-2)^2 - 2 = 2$. I punti non sono allineati: numeri opposti hanno la stessa immagine, quindi i punti sono a due a due alla stessa altezza, e il più basso è $(0, -2)$. Unendoli si ottiene una curva a forma di U, che si chiama parabola, e che studierai nella lezione [La parabola](/materiale/scuola-superiore/matematica/parabola-e-disequazioni-di-secondo-grado/la-parabola).
 
 ```tikz
 % nome: grafico-per-punti-x-quadro-meno-2

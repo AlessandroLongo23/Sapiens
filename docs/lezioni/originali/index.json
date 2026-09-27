@@ -720,5 +720,85 @@
     "path": "high_school/math/equazioni-di-secondo-grado/equazioni-secondo-grado-problemi",
     "chapter": "Equazioni di secondo grado",
     "new": true
+  },
+  {
+    "id": "19d00b5a-513e-421b-955f-83d43ba5f68b",
+    "title": "Il piano cartesiano: distanza e punto medio",
+    "slug": "il-piano-cartesiano",
+    "path": "high_school/math/geometria-analitica/il-piano-cartesiano",
+    "chapter": "Piano cartesiano e retta",
+    "new": true
+  },
+  {
+    "id": "64c8844a-9994-4607-851b-ec523171c9be",
+    "title": "Equazione della retta e casi particolari",
+    "slug": "equazione-di-una-retta",
+    "path": "high_school/math/geometria-analitica/equazione-di-una-retta",
+    "chapter": "Piano cartesiano e retta",
+    "new": true
+  },
+  {
+    "id": "db6f3eb6-3873-40c3-b0b2-b30a4e8228a5",
+    "title": "Coefficiente angolare e retta per due punti",
+    "slug": "il-coefficiente-angolare",
+    "path": "high_school/math/geometria-analitica/il-coefficiente-angolare",
+    "chapter": "Piano cartesiano e retta",
+    "new": true
+  },
+  {
+    "id": "43b26ed1-dda7-4c11-9250-f20094199e47",
+    "title": "Rette parallele e perpendicolari",
+    "slug": "rette-parallele-tra-loro",
+    "path": "high_school/math/geometria-analitica/rette-parallele-tra-loro",
+    "chapter": "Piano cartesiano e retta",
+    "new": true
+  },
+  {
+    "id": "69700d09-b885-4040-86bd-4f82d102d9b0",
+    "title": "Intersezione tra due rette",
+    "slug": "intersezione-tra-due-rette",
+    "path": "high_school/math/geometria-analitica/intersezione-tra-due-rette",
+    "chapter": "Piano cartesiano e retta",
+    "new": true
+  },
+  {
+    "id": "08adbeef-8e00-4c0a-a6c6-2834b79f32c8",
+    "title": "Distanza di un punto da una retta",
+    "slug": "distanza-punto-retta",
+    "path": "high_school/math/geometria-analitica/distanza-punto-retta",
+    "chapter": "Piano cartesiano e retta",
+    "new": true
+  },
+  {
+    "id": "1fdd80aa-a8eb-42c9-b23d-46731fa9ddba",
+    "title": "Fasci di rette",
+    "slug": "retta-fasci",
+    "path": "high_school/math/geometria-analitica/retta-fasci",
+    "chapter": "Piano cartesiano e retta",
+    "new": true
+  },
+  {
+    "id": "46796c25-5b92-48aa-9d18-8a1aa51e3035",
+    "title": "La parabola",
+    "slug": "funzioni-quadratiche",
+    "path": "high_school/math/parabola-disequazioni/funzioni-quadratiche",
+    "chapter": "Parabola e disequazioni di secondo grado",
+    "new": true
+  },
+  {
+    "id": "d4372a2d-898d-4394-b5d5-c7efb1ae97de",
+    "title": "Disequazioni di secondo grado",
+    "slug": "disequazioni-secondo-grado",
+    "path": "high_school/math/parabola-disequazioni/disequazioni-secondo-grado",
+    "chapter": "Parabola e disequazioni di secondo grado",
+    "new": true
+  },
+  {
+    "id": "4fe4772c-9d18-4f1a-8418-d6f8bc2f8a0c",
+    "title": "Disequazioni fratte e sistemi di secondo grado",
+    "slug": "disequazioni-secondo-grado-fratte",
+    "path": "high_school/math/parabola-disequazioni/disequazioni-secondo-grado-fratte",
+    "chapter": "Parabola e disequazioni di secondo grado",
+    "new": true
   }
 ]

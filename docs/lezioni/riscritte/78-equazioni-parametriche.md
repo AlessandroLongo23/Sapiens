@@ -85,7 +85,7 @@ Il meno davanti al prodotto
 In $(-k)^2 - (k - 1)(k + 3)$ il meno cambia segno a tutto il prodotto: prima si svolge $(k - 1)(k + 3) = k^2 + 2k - 3$ tra parentesi, poi si toglie. Scrivere $k^2 - k^2 + 2k - 3$ dà $2k - 3$, con il segno sbagliato.
 ```
 
-Se invece il discriminante resta di secondo grado in $k$, la condizione $\Delta \geq 0$ è una disequazione di secondo grado, che studierai più avanti. In alcuni esercizi, però, il discriminante è il quadrato di un binomio e il suo segno si legge subito, come nell'esempio 9.
+Se invece il discriminante resta di secondo grado in $k$, la condizione $\Delta \geq 0$ è una [disequazione di secondo grado](/materiale/scuola-superiore/matematica/parabola-e-disequazioni-di-secondo-grado/disequazioni-di-secondo-grado). In alcuni esercizi, però, il discriminante è il quadrato di un binomio e il suo segno si legge subito, come nell'esempio 9.
 
 ## Condizioni sulle soluzioni
 

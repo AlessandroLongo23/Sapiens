@@ -165,7 +165,7 @@ Con riga e compasso l'asse si disegna così: punta il compasso in $A$ con un'ape
 \end{tikzpicture}
 ```
 
-I trattini uguali su $AM$ e su $MB$ dicono che i due segmenti sono congruenti.
+I trattini uguali su $AM$ e su $MB$ dicono che i due segmenti sono congruenti. Nel piano cartesiano l'asse si trova con le coordinate: lo vedi nella lezione [Rette parallele e perpendicolari](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/rette-parallele-e-perpendicolari).
 
 ## Rette parallele
 

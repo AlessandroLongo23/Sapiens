@@ -143,7 +143,7 @@ Il segno di $\Delta$ dice quante soluzioni ha l'equazione, prima ancora di usare
 | $\Delta = 0$ | due coincidenti (una soluzione doppia) | $S = \left\{-\dfrac{b}{2a}\right\}$ |
 | $\Delta < 0$ | nessuna | $S = \emptyset$ |
 
-Con $\Delta = 0$ la radice vale $0$, e i due conti con il più e con il meno danno lo stesso numero, $-\dfrac{b}{2a}$. Con $\Delta < 0$ la radice quadrata di un numero negativo non esiste tra i numeri reali, e quindi l'equazione non ha soluzioni reali.
+Con $\Delta = 0$ la radice vale $0$, e i due conti con il più e con il meno danno lo stesso numero, $-\dfrac{b}{2a}$. Con $\Delta < 0$ la radice quadrata di un numero negativo non esiste tra i numeri reali, e quindi l'equazione non ha soluzioni reali. Il significato grafico dei tre casi, con la parabola che taglia, tocca o non incontra l'asse $x$, è nella lezione [La parabola](/materiale/scuola-superiore/matematica/parabola-e-disequazioni-di-secondo-grado/la-parabola).
 
 ```ad-note
 Per i curiosi: i numeri complessi

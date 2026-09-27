@@ -140,7 +140,7 @@ $$8 \cdot 2{,}25 = 18$$
 La pizza grande costa $18$ €, non $12$ €: $12$ € è il prezzo che si ottiene se si tratta il diametro come una grandezza direttamente proporzionale al prezzo.
 ```
 
-Il grafico di $y = kx^2$ non è una retta: per $x \geq 0$ è metà di una parabola con il vertice nell'origine, la curva che trovi nella lezione [La parabola nel piano cartesiano](/materiale/scuola-superiore/matematica/circonferenza-e-coniche/la-parabola-nel-piano-cartesiano).
+Il grafico di $y = kx^2$ non è una retta: per $x \geq 0$ è metà di una parabola con il vertice nell'origine, la curva che trovi nella lezione [La parabola](/materiale/scuola-superiore/matematica/parabola-e-disequazioni-di-secondo-grado/la-parabola).
 
 ## La funzione lineare
 
@@ -252,7 +252,7 @@ Esempio 5: funzione lineare con passi diversi
 |---|---|---|---|---|
 | $y$ | $4$ | $10$ | $13$ | $19$ |
 
-I valori di $x$ non vanno avanti di $1$ alla volta, quindi non basta guardare gli aumenti di $y$: vanno divisi per gli aumenti di $x$.
+I valori di $x$ non vanno avanti di $1$ alla volta, quindi non basta guardare gli aumenti di $y$: vanno divisi per gli aumenti di $x$. Questo rapporto è il coefficiente angolare della retta, spiegato nella lezione [Coefficiente angolare e retta per due punti](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/coefficiente-angolare-e-retta-per-due-punti).
 
 $$
 \begin{gathered}

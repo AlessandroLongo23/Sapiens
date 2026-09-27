@@ -487,7 +487,7 @@ Le due equazioni dell'esempio 7 diventano tutte e due $y = \dfrac{1}{2}x - \dfra
 | impossibile | nessuna | parallele distinte |
 | indeterminato | infinite coppie | coincidenti |
 
-Il grafico aiuta a capire e a controllare, ma non sostituisce il conto: se il punto d'incontro ha coordinate come $\left(\dfrac{5}{3}, \dfrac{7}{3}\right)$, dal disegno non si leggono con precisione.
+Il grafico aiuta a capire e a controllare, ma non sostituisce il conto: se il punto d'incontro ha coordinate come $\left(\dfrac{5}{3}, \dfrac{7}{3}\right)$, dal disegno non si leggono con precisione. Come si usa il sistema per trovare il punto d'incontro di due rette, e per i problemi con i triangoli, è nella lezione [Intersezione tra due rette](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/intersezione-tra-due-rette).
 
 ## Sistemi fratti
 

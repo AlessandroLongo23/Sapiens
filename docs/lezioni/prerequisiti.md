@@ -126,11 +126,25 @@ radicali-razionalizzazione <- radicali-operazioni
 numeri-reali-espressioni <- radicali-razionalizzazione
 radicali-esponente-razionale <- numeri-reali-radici
 
+## Piano cartesiano e retta
+il-piano-cartesiano <- radicali-operazioni, definizione-funzione
+equazione-di-una-retta <- il-piano-cartesiano, funzioni-lineari
+il-coefficiente-angolare <- equazione-di-una-retta, sistemi-di-equazioni
+rette-parallele-tra-loro <- il-coefficiente-angolare
+intersezione-tra-due-rette <- il-coefficiente-angolare
+distanza-punto-retta <- rette-parallele-tra-loro, radicali-razionalizzazione
+retta-fasci <- rette-parallele-tra-loro, intersezione-tra-due-rette, equazioni-letterali
+
 ## Equazioni di secondo grado
 equazioni-secondo-grado <- scomposizione-raccoglimento, radicali-operazioni
 equazioni-secondo-grado-relazioni <- equazioni-secondo-grado, scomposizione-trinomio
 equazioni-parametriche <- equazioni-secondo-grado-relazioni, equazioni-letterali, equazioni-fratte
 equazioni-secondo-grado-problemi <- equazioni-secondo-grado, equazioni-problemi, equazioni-fratte
+
+## Parabola e disequazioni di secondo grado
+funzioni-quadratiche <- il-piano-cartesiano, equazioni-secondo-grado
+disequazioni-secondo-grado <- funzioni-quadratiche, disequazioni-razionali
+disequazioni-secondo-grado-fratte <- disequazioni-secondo-grado, sistemi-di-disequazioni
 
 # Dubbi da sciogliere
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
