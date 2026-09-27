@@ -22,7 +22,7 @@ Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le m
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
-- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]]
+- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]], [[Domande per Andrea]]
 - **Business:** [[Piani e prezzi]], [[Margini per cliente]], [[Vendita alle scuole]]
 - **Marketing:** [[SEO]], [[Social]], [[Stagionalità]]
 - **Legale:** [[GDPR e minori]], [[Contratti con le scuole]], [[AI Act]], [[Società e IVA]], [[Tutela del consumatore]], [[Accordi del team]]

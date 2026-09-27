@@ -34,6 +34,7 @@ Poi rispondi come chi conosce già il progetto: Alessandro non deve rispiegare i
 - Le nuove idee vanno in `Idee/`; le decisioni vanno in `Decisioni/`, e poi si aggiornano le note che toccano e l'elenco in `Home.md`. Per farlo c'è la skill `/vault`.
 - Per discutere, fare brainstorming o decidere cosa fare dopo c'è la skill `/sparring`: parte dall'Agenda, discute e registra tutto nel vault.
 - Nelle note, "Stato attuale" descrive il codice di oggi e "Obiettivo" quello che deve diventare. Quello che non è stato discusso va in "Domande aperte": niente testo inventato.
+- Le domande sui contenuti per Andrea (convenzioni, notazioni, scelte degli esercizi) vanno in `vault/Contenuti/Domande per Andrea.md`: ogni lotto aggiunge le sue, e le risposte si segnano lì. Non devono restare solo in una chat o nella nota di sessione.
 - Il vault segue le regole di scrittura globali: niente trattini lunghi, niente "piuttosto che" usato come contrasto, grassetto raro, fonti con nome e data, "da verificare" sui dati non controllati.
 - Le regole per il codice sono in `.cursorrules` e `README.md`.
 

@@ -1,7 +1,7 @@
 ---
 stato: bozza
 release: beta
-aggiornato: 2026-09-25
+aggiornato: 2026-09-27
 tag: [contenuti, ai]
 ---
 # Pipeline lezioni
@@ -21,7 +21,7 @@ Claude produce le lezioni alla velocità che può e Andrea le rilegge con i suoi
 Flusso proposto:
 1. Scaletta dell'argomento dal [[Programma ministeriale]]: prerequisiti, obiettivi, cosa includere.
 2. Bozza generata dall'AI.
-3. Controllo automatico (`scripts/lezioni/check.mts`) e rilettura di Andrea secondo lo [[Standard di qualità]]: correttezza, ordine, esempi, notazione.
+3. Controllo automatico (`scripts/lezioni/check.mts`) e rilettura di Andrea secondo lo [[Standard di qualità]]: correttezza, ordine, esempi, notazione. Le domande principali di ogni lotto vanno in [[Domande per Andrea]], dove si segnano anche le risposte.
 4. Formulario, flashcard e collegamenti agli esercizi generati insieme alla lezione.
 5. Pubblicazione: la pagina diventa indicizzabile.
 

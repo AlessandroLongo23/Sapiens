@@ -21,7 +21,7 @@ Sessione del 27 settembre 2026, seguito di [[2026-09-26 Sesto lotto, intersezion
 - Commit: lezioni a56a3c9, generatori 848218d.
 
 ## Domande aperte
-Per Andrea, oltre ai dubbi in fondo a ogni nota (`docs/lezioni/note/68-79`) e a ogni specifica:
+Per Andrea (raccolte anche in [[Domande per Andrea]], dove si segnano le risposte), oltre ai dubbi in fondo a ogni nota (`docs/lezioni/note/68-79`) e a ogni specifica:
 - la convenzione sulle lettere sotto radice (valori assoluti nella 72, lettere positive dalla 73) e il senso di "semplificare";
 - le coppie soluzione dei sistemi: $(x, y)$ con la virgola, $S = \{(3, 2)\}$ nella 68 e "la coppia $(2, 1)$" nella 69;
 - i nomi "regola di Cartesio", "permanenza" e "variazione" (77), e le lettere $s$ e $p$, che nella 36 hanno un altro segno;
