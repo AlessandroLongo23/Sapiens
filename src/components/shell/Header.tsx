@@ -14,11 +14,25 @@ import { useContentTree } from './ContentTreeContext';
 import { SearchField } from './SearchField';
 import { SubjectMegaMenu } from './SubjectMegaMenu';
 import { ThemeToggle } from './ThemeToggle';
-import { LoginButton, LogoutButton } from './AuthButtons';
+import { LoginButton } from './AuthButtons';
+import { AccountMenu } from './AccountMenu';
 import { MobileMenu } from './MobileMenu';
 import { AppBackButton } from './AppBackButton';
 
-const navLink = (active: boolean) => cn('rounded font-medium transition-colors focus-ring', active ? 'text-fg' : 'text-fg-muted hover:text-fg');
+// The tools' registry holds every tool's metadata, too much to pull into the header for one path.
+const TOOLS_ROOT = '/strumenti';
+
+/** `nav-mark` (globals.css) is the highlighter: faint on hover, full (`data-on`) on the current section and on an open level menu. */
+const navLink = (active: boolean) => cn('nav-mark rounded font-medium transition-colors focus-ring', active ? 'text-fg-strong' : 'text-fg-muted hover:text-fg');
+
+/** A section link in the desktop bar. */
+function NavLink({ href, active, className, children }: { href: string; active: boolean; className?: string; children: string }) {
+	return (
+		<Link href={href} aria-current={active ? 'page' : undefined} data-on={active || undefined} className={cn(navLink(active), className)}>
+			{children}
+		</Link>
+	);
+}
 
 /**
  * Site header. Below `md` it is a phone bar: logo, a search field that
@@ -71,6 +85,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 	const inTutoring = pathname.startsWith(TUTORING_ROOT);
 	const inZaino = pathname.startsWith(ZAINO_ROOT);
 	const inOggi = pathname === OGGI_ROOT || pathname.startsWith('/errori');
+	const inTools = pathname.startsWith(TOOLS_ROOT);
 
 	return (
 		<header
@@ -88,17 +103,21 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 			className={cn('sticky top-0 z-30 border-b border-edge bg-page pt-safe-t transition-transform duration-300 ease-out', hidden && 'max-md:-translate-y-full', immersive && 'max-md:hidden', bare && 'hidden')}
 		>
 			<div id="site-header-bar" className="relative z-20 flex w-full items-center gap-2 bg-page px-3 py-2 md:justify-between md:gap-4 md:p-3">
-				<div className="flex min-w-0 items-center gap-2 md:shrink-0 md:gap-6 lg:gap-10">
+				{/* From `lg`, where the word Sapiens shows, the row sits on its baseline so the links line up with it; the
+				    logo's image stays centred. */}
+				<div className="flex min-w-0 items-center gap-2 md:shrink-0 md:gap-8 lg:items-baseline xl:gap-10 2xl:gap-12">
 					<AppBackButton />
-					<Link href="/" className="flex shrink-0 items-center gap-3 rounded-md focus-ring app:max-md:hidden" aria-label="Sapiens, pagina iniziale">
+					<Link href="/" className="flex shrink-0 items-center gap-3 rounded-md focus-ring lg:items-baseline app:max-md:hidden" aria-label="Sapiens, pagina iniziale">
 						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img src="/favicon.svg" alt="" width={40} height={40} className="size-10 rounded-md" />
+						<img src="/favicon.svg" alt="" width={40} height={40} className="size-10 self-center rounded-md" />
 						<span className="hidden font-display text-[1.7rem] font-semibold tracking-tight text-fg-strong lg:inline">Sapiens</span>
 					</Link>
 
+					{/* One gap between every item, levels and sections alike (a level's chevron counts as part of it). */}
+					<div className="hidden items-center gap-6 md:flex lg:items-baseline 2xl:gap-7">
 					{megaMenu && (
 						<nav aria-label="Livelli didattici" className="hidden lg:block">
-							<ul className="flex items-center justify-center gap-8">
+							<ul className="flex items-center gap-6 2xl:gap-7">
 								{tree.map((level) => {
 									const open = mega?.level.id === level.id;
 									return (
@@ -122,10 +141,10 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 													}
 												}}
 												aria-current={pathname === nodePath([level]) ? 'page' : undefined}
-												className={cn('relative flex items-center gap-2', navLink(open))}
+												data-on={open || pathname.startsWith(nodePath([level])) || undefined}
+												className={navLink(open || pathname.startsWith(nodePath([level])))}
 											>
-												<span className="font-medium">{level.title}</span>
-												<span className={cn('absolute -bottom-2 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-accent transition-all', open ? 'w-full opacity-100' : 'w-0 opacity-0')} aria-hidden="true" />
+												{level.title}
 											</Link>
 											<button
 												type="button"
@@ -134,7 +153,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 												aria-expanded={open}
 												aria-controls={open ? 'level-menu' : undefined}
 												aria-label={`Materie di ${level.title}`}
-												className={cn('ml-0.5 grid size-6 place-items-center rounded transition-colors focus-ring', open ? 'text-fg' : 'text-fg-subtle hover:text-fg')}
+												className={cn('ml-0.5 -mr-1 grid size-6 place-items-center rounded transition-colors focus-ring', open ? 'text-fg' : 'text-fg-subtle hover:text-fg')}
 											>
 												<ChevronDown className={cn('size-3.5 transition-transform', open && 'rotate-180')} aria-hidden="true" />
 											</button>
@@ -147,12 +166,14 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 
 					{/* Tablets have no room for the level menu: the short links stand in for it until `lg`. The links never
 					    shrink; the search box gives way instead, up to its usual width. */}
-					<nav aria-label="Sezioni" className={cn('hidden items-center gap-6 whitespace-nowrap md:flex', megaMenu && 'lg:hidden xl:flex')}>
-						<Link href={CONTENT_ROOT} aria-current={inMateriale ? 'page' : undefined} className={cn(navLink(inMateriale), megaMenu && 'lg:hidden')}>Materiale</Link>
-						<Link href={TUTORING_ROOT} aria-current={inTutoring ? 'page' : undefined} className={navLink(inTutoring)}>Ripetizioni</Link>
-						{user && <Link href={OGGI_ROOT} aria-current={inOggi ? 'page' : undefined} className={navLink(inOggi)}>Oggi</Link>}
-						<Link href={ZAINO_ROOT} aria-current={inZaino ? 'page' : undefined} className={navLink(inZaino)}>Zaino</Link>
+					<nav aria-label="Sezioni" className={cn('flex items-baseline gap-6 whitespace-nowrap 2xl:gap-7', megaMenu && 'lg:hidden xl:flex')}>
+						<NavLink href={CONTENT_ROOT} active={inMateriale} className={cn(megaMenu && 'lg:hidden')}>Materiale</NavLink>
+						<NavLink href={TUTORING_ROOT} active={inTutoring}>Ripetizioni</NavLink>
+						{user && <NavLink href={OGGI_ROOT} active={inOggi}>Oggi</NavLink>}
+						<NavLink href={ZAINO_ROOT} active={inZaino}>Zaino</NavLink>
+						<NavLink href={TOOLS_ROOT} active={inTools}>Strumenti</NavLink>
 					</nav>
+					</div>
 				</div>
 
 				<div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:gap-3">
@@ -177,8 +198,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 					</Link>
 					<div className="hidden items-center gap-3 md:flex">
 						<ThemeToggle />
-						<LoginButton />
-						{user && <LogoutButton />}
+						{user ? <AccountMenu /> : <LoginButton />}
 					</div>
 					<button type="button" onClick={() => setMenuOpen(true)} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl border border-edge bg-surface-2 text-fg active:bg-surface-4 focus-ring md:hidden app:hidden" aria-label="Apri il menu" aria-haspopup="dialog" aria-expanded={menuOpen}>
 						<Menu className="size-6" aria-hidden="true" />

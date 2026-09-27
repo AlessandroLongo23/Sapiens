@@ -1,18 +1,7 @@
-import type { Metadata } from 'next';
-import { pageMetadata } from '@/lib/seo/page-metadata';
-import { passEnd, passOnSale } from '@/lib/stripe/config';
-import { currentUser } from '@/lib/server/auth';
-import { accountPlan } from '@/lib/server/plan';
-import { SubscriptionPanel } from '@/components/subscription/SubscriptionPanel';
+import { redirect } from 'next/navigation';
+import { ACCOUNT_ROOT } from '@/lib/config/site';
 
-export const metadata: Metadata = pageMetadata({ title: 'Il tuo abbonamento | Sapiens', path: '/subscription' });
-
-export default async function SubscriptionPage() {
-	const user = await currentUser();
-	const { plan, source, subscription, passUntil, trialUntil } = accountPlan(user);
-	return (
-		<div className="min-h-screen bg-page-alt">
-			<SubscriptionPanel subscription={subscription} state={{ signedIn: !!user, planId: plan.id, source, passUntil, trialUntil, passOnSale: passOnSale(), passEnd: passEnd() }} />
-		</div>
-	);
+/** The subscription moved into the account; the old address still leads there (the terms and Stripe's returns point here). */
+export default function SubscriptionPage() {
+	redirect(`${ACCOUNT_ROOT}/abbonamento`);
 }

@@ -6,6 +6,7 @@ import { SUBSCRIPTION_PLANS, formatDay, formatPrice } from '@/lib/stripe/config'
 import type { SubscriptionClaim } from '@/lib/auth/entitlements';
 import { Badge, type BadgeTone } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { ACCOUNT_ROOT } from '@/lib/config/site';
 import { CheckoutOverlay, PlanCards, usePlanCheckout, type PlanState } from './Plans';
 
 const STATUS: Record<string, { text: string; tone: BadgeTone }> = {
@@ -26,9 +27,9 @@ function summary(state: PlanState): { badge: { text: string; tone: BadgeTone }; 
 	return { badge: STATUS.active, lines: ['Teoria, formulari e una sessione di esercizi al giorno'], price: null };
 }
 
-/** The account page: the plan in force, the Stripe portal when there is a subscription, then the plans. */
+/** The account's Abbonamento section: the plan in force, the Stripe portal when there is a subscription, then the plans. */
 export function SubscriptionPanel({ subscription, state }: { subscription: SubscriptionClaim | null; state: PlanState }) {
-	const { loading, error, select } = usePlanCheckout('/subscription');
+	const { loading, error, select } = usePlanCheckout(`${ACCOUNT_ROOT}/abbonamento`);
 	const [portal, setPortal] = useState<{ busy?: boolean; error?: string }>({});
 	const name = state.source === 'free' ? SUBSCRIPTION_PLANS.FREE.name : SUBSCRIPTION_PLANS.STUDIO.name;
 	const { badge, lines, price } = summary(state);
@@ -47,13 +48,9 @@ export function SubscriptionPanel({ subscription, state }: { subscription: Subsc
 	};
 
 	return (
-		<div className="mx-auto max-w-7xl px-4 py-8">
+		<>
 			<CheckoutOverlay error={error ?? portal.error ?? null} loading={loading || !!portal.busy} />
-			<header className="mb-8">
-				<h1 className="mb-2 text-3xl font-bold text-fg">Il tuo abbonamento</h1>
-				<p className="text-fg-muted">Il tuo piano, il metodo di pagamento e le ricevute.</p>
-			</header>
-			<div className="mb-12 rounded-xl border border-edge bg-surface p-6">
+			<div className="mb-12 rounded-2xl border border-edge bg-surface p-6 shadow-paper">
 				<div className="mb-4 flex items-start justify-between gap-4">
 					<div className="flex items-center gap-3">
 						<div className="flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent-fg">
@@ -71,7 +68,7 @@ export function SubscriptionPanel({ subscription, state }: { subscription: Subsc
 						</div>
 					)}
 				</div>
-				<div className="mb-6 space-y-3 text-sm">
+				<div className="space-y-3 text-sm">
 					{lines.map((line, i) => (
 						<p key={line} className="flex items-center gap-2 text-fg-muted">
 							{i === 0 ? <Calendar className="size-4 text-fg-subtle" aria-hidden="true" /> : <CreditCard className="size-4 text-fg-subtle" aria-hidden="true" />}
@@ -80,12 +77,12 @@ export function SubscriptionPanel({ subscription, state }: { subscription: Subsc
 					))}
 				</div>
 				{(subscription?.customerId || state.source === 'pass') && (
-					<Button variant="secondary" onClick={manage} loading={portal.busy} className="w-full sm:w-auto">
+					<Button variant="secondary" onClick={manage} loading={portal.busy} className="mt-6 w-full sm:w-auto">
 						{state.source === 'subscription' ? 'Gestisci abbonamento' : 'Pagamenti e ricevute'}
 					</Button>
 				)}
 			</div>
 			<PlanCards state={state} onSelect={select} />
-		</div>
+		</>
 	);
 }

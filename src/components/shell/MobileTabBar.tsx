@@ -31,7 +31,7 @@ export function MobileTabBar() {
 	const closeMenu = useCallback(() => setMenuOpen(false), []);
 	const { user, openModal } = useAuth();
 	const account = accountUrl(user);
-	const accountActive = ['/subscription', '/admin', '/richieste', '/dashboard', '/leads', '/profile-editor'].some((p) => pathname.startsWith(p));
+	const accountActive = ['/account', '/subscription', '/admin', '/richieste', '/dashboard', '/leads', '/profile-editor'].some((p) => pathname.startsWith(p));
 	const oggi = { href: OGGI_ROOT, label: 'Oggi', icon: Sun, active: pathname === OGGI_ROOT || pathname.startsWith('/errori') };
 	const tabs = [
 		app || user ? oggi : { href: '/', label: 'Home', icon: House, active: pathname === '/' },

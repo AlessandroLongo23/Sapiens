@@ -18,7 +18,7 @@ Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le m
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]

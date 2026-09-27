@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-23
+aggiornato: 2026-09-28
 tag: [legale, privacy]
 ---
 # GDPR e minori
@@ -9,10 +9,10 @@ tag: [legale, privacy]
 - Privacy, termini e cookie scritti per un servizio per consumatori usato da minori. Banner dei cookie con analytics solo dopo il consenso.
 - Sotto i 14 anni l'account lo crea il genitore e lo conferma alla registrazione (in Italia l'età del consenso digitale è 14 anni, art. 2-quinquies del Codice privacy).
 - L'accettazione dei documenti legali è registrata in `user_metadata`.
+- Dal 28 settembre 2026 (nel codice, non ancora pubblicato) lo studente scarica i suoi dati in JSON e cancella l'account da solo, in "Privacy e dati" della pagina account (artt. 15, 17, 20 GDPR). Vedi [[Account e impostazioni]].
 
 ## Aperto (dalla [[ROADMAP]])
 - Consenso del genitore più forte: email con link di conferma prima che l'account sia utilizzabile. Necessario prima di raccogliere dallo studente più di nome ed email.
-- Esportazione dei dati e cancellazione dell'account in autonomia (artt. 15, 17, 20 GDPR): una sezione "I tuoi dati" con due pulsanti.
 - Tabella `legal_acceptances` (utente, documento, versione, data, IP) scritta sul server, e nuova accettazione quando cambiano i termini.
 
 ## Marketplace

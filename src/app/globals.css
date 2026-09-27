@@ -486,6 +486,31 @@
 .marker-hand:nth-of-type(3n + 2)::before { mask-image: var(--hl-b); transform: rotate(0.5deg); inset: 0.06em -0.16em 0 -0.24em; }
 .marker-hand:nth-of-type(3n)::before { mask-image: var(--hl-c); transform: rotate(-0.2deg); inset: 0.16em -0.26em -0.06em -0.14em; }
 
+/* The header's links: the same highlighter, laid faint across the word left
+   to right on hover, and full on the current section or an open menu, so the
+   two never look alike. */
+.nav-mark {
+	position: relative;
+	isolation: isolate;
+}
+.nav-mark::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	inset: 0.1em -0.3em -0.05em -0.25em;
+	background: var(--marker);
+	mask: var(--hl-b) center / 100% 100% no-repeat;
+	transform: rotate(-0.8deg);
+	opacity: 0;
+	clip-path: inset(0 100% 0 0);
+	transition: clip-path 0.35s var(--ease-out-soft), opacity 0.2s ease-out;
+}
+.nav-mark:is(:hover, :focus-visible)::before { opacity: 0.4; clip-path: inset(0 0 0 0); }
+.nav-mark[data-on]::before { opacity: 1; clip-path: inset(0 0 0 0); }
+@media (prefers-reduced-motion: reduce) {
+	.nav-mark::before { transition: opacity 0.2s ease-out; }
+}
+
 /* A heading reached from the search: the highlighter is drawn across it left
    to right, stays a moment, then fades. */
 .search-target { position: relative; isolation: isolate; }

@@ -91,3 +91,34 @@ export function useSystemTheme(): void {
 		return () => media.removeEventListener('change', follow);
 	}, []);
 }
+
+/** What the visitor picked: a theme, or none (`system`, the OS decides). Per device, like the toggle. */
+export type ThemePreference = Theme | 'system';
+
+const storedPreference = (): ThemePreference => {
+	try {
+		const stored = localStorage.getItem('theme');
+		return localStorage.getItem('theme-explicit') && (stored === 'light' || stored === 'dark') ? stored : 'system';
+	} catch {
+		return 'system';
+	}
+};
+
+/** The three-way choice of the account's preferences: light, dark, or back to following the OS. */
+export function useThemePreference(): [ThemePreference, (preference: ThemePreference) => void] {
+	const preference = useSyncExternalStore(
+		(l) => {
+			listeners.add(l);
+			return () => listeners.delete(l);
+		},
+		storedPreference,
+		() => 'system' as ThemePreference
+	);
+	const set = useCallback((next: ThemePreference) => {
+		if (next !== 'system') return applyTheme(next, true);
+		localStorage.removeItem('theme');
+		localStorage.removeItem('theme-explicit');
+		applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+	}, []);
+	return [preference, set];
+}

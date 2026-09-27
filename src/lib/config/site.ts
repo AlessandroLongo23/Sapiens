@@ -42,6 +42,9 @@ export const ZAINO_ROOT = '/zaino';
 /** The student's day: practice, streak, runs to take up, mistakes to redo (vault/Piano/Progressi dello studente.md). */
 export const OGGI_ROOT = '/oggi';
 
+/** The student's account: profile, sign-in, preferences, plan and their data, one section per page. */
+export const ACCOUNT_ROOT = '/account';
+
 /**
  * Where the installed app (PWA or Capacitor) opens, in place of the landing
  * page: Oggi, the student's day (vault/Decisioni/2026-09-25 Oggi è lo schermo
@@ -65,6 +68,7 @@ export const PRIVATE_PATH_PREFIXES = [
 	'/zaino',
 	'/api',
 	'/subscription',
+	'/account',
 	'/errori',
 	'/oggi',
 	'/richieste',
