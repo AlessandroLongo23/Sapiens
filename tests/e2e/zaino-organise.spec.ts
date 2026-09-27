@@ -65,7 +65,7 @@ test('notes reorder from the keyboard and the order sticks', async ({ page }) =>
 	const { analisi } = await backpack(page);
 	await gotoHydrated(page, `/zaino/${analisi.id}`);
 
-	const titles = async () => page.locator('li[data-reorder-id] a span:nth-child(1)').allInnerTexts();
+	const titles = async () => page.locator('li[data-reorder-id] [data-note-title]').allInnerTexts();
 	expect((await titles())[0]).toBe('Le derivate');
 
 	// The grab handle is a button: arrows move the row it belongs to.

@@ -11,12 +11,12 @@ const PAGE = /^[a-z0-9_-]+(\/[a-z0-9_-]+){0,4}$/;
 const isPage = (value: unknown): value is string => typeof value === 'string' && value.length <= 200 && PAGE.test(value);
 
 /**
- * The pages that have a cover: the library and every level, subject and chapter of the material, by
- * the same path CoverStickers saves under. Only these are accepted, so a student has at most one row
+ * The pages that have a cover: the library, the backpack and every level, subject and chapter of the
+ * material, by the same path CoverStickers saves under. Only these are accepted, so a student has at most one row
  * per real page (about 114 in September 2026) and a script cannot fill the table with made-up ones.
  */
 async function coverPages(): Promise<Set<string>> {
-	const pages = new Set(['library']);
+	const pages = new Set(['library', 'zaino']);
 	const walk = (nodes: ContentNode[], chain: ContentNode[]) => {
 		for (const node of nodes) {
 			if (node.type === 'topic') continue;

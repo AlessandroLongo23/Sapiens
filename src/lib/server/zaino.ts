@@ -14,8 +14,11 @@ import {
 	type NoteRow,
 	type NoteHit,
 	type NoteSummary,
-	type Quota
+	type FirstPage,
+	type Quota,
+	type ShelfStats
 } from '@/lib/zaino/config';
+import { splitPages } from '@/lib/zaino/pages';
 import { COVER_BOUNDS, parseStickers, type PlacedSticker } from '@/lib/zaino/stickers';
 import { DEFAULT_PAPER, readPaper, type Paper } from '@/lib/zaino/paper';
 
@@ -197,6 +200,23 @@ export async function countNotes(supabase: SupabaseClient, userId: string, noteb
 		.eq('notebook_id', notebookId);
 	if (error) fail('note count failed', error);
 	return count ?? 0;
+}
+
+/**
+ * Every quaderno's count, notes from lessons and last change, in one read of the
+ * student's notes: the shelf would otherwise ask once per quaderno.
+ */
+export async function shelfStats(supabase: SupabaseClient, userId: string): Promise<Record<string, ShelfStats>> {
+	const { data, error } = await supabase.from('notes').select('notebook_id,lesson_path,updated_at').eq('user_id', userId);
+	if (error) fail('shelf stats failed', error);
+	const stats: Record<string, ShelfStats> = {};
+	for (const row of (data ?? []) as { notebook_id: string; lesson_path: string | null; updated_at: string }[]) {
+		const s = (stats[row.notebook_id] ??= { notes: 0, fromLessons: 0, updated: null });
+		s.notes += 1;
+		if (row.lesson_path) s.fromLessons += 1;
+		if (!s.updated || row.updated_at > s.updated) s.updated = row.updated_at;
+	}
+	return stats;
 }
 
 /**
@@ -382,14 +402,51 @@ export function toPrefixQuery(input: string): string {
 		.join(' & ');
 }
 
-/** The owner's notes matching a query, most recently touched first. */
-export async function searchNotes(supabase: SupabaseClient, userId: string, query: string, limit = 20): Promise<NoteHit[]> {
+/** The most of a first page a card needs: past this the thumbnail is cut off anyway. */
+const FIRST_PAGE_CHARS = 3000;
+
+/**
+ * The first page of every note in a quaderno, for the cards: its text (cut at a line near FIRST_PAGE_CHARS), the
+ * stickers on that page and the paper. Two reads, notes and stickers, whatever the number of notes.
+ */
+export async function firstPages(supabase: SupabaseClient, userId: string, notebookId: string): Promise<Record<string, FirstPage>> {
+	const { data, error } = await supabase.from('notes').select('id,content,paper').eq('user_id', userId).eq('notebook_id', notebookId);
+	if (error) fail('first pages failed', error);
+	const rows = (data ?? []) as { id: string; content: string | null; paper: unknown }[];
+	const stickers = new Map<string, PlacedSticker[]>();
+	if (rows.length > 0) {
+		const { data: stuck, error: stuckError } = await supabase
+			.from('note_stickers')
+			.select('note_id,stickers')
+			.eq('user_id', userId)
+			.in('note_id', rows.map((row) => row.id));
+		// Decoration: without it the cards still show the text.
+		if (stuckError) console.error('first page stickers lookup failed:', stuckError.message);
+		for (const row of (stuck ?? []) as { note_id: string; stickers: unknown }[]) {
+			const parsed = parseStickers(row.stickers ?? []);
+			if (typeof parsed !== 'string') stickers.set(row.note_id, parsed.filter((s) => !s.page));
+		}
+	}
+	const pages: Record<string, FirstPage> = {};
+	for (const row of rows) {
+		const all = splitPages(row.content ?? '');
+		let markdown = all[0] ?? '';
+		if (markdown.length > FIRST_PAGE_CHARS) markdown = markdown.slice(0, markdown.lastIndexOf('\n', FIRST_PAGE_CHARS) + 1 || FIRST_PAGE_CHARS);
+		pages[row.id] = { markdown, stickers: stickers.get(row.id) ?? [], paper: readPaper(row.paper), pages: all.length };
+	}
+	return pages;
+}
+
+/** The owner's notes matching a query, most recently touched first; only one quaderno's with `notebookId`. */
+export async function searchNotes(supabase: SupabaseClient, userId: string, query: string, limit = 20, notebookId?: string): Promise<NoteHit[]> {
 	const tsquery = toPrefixQuery(query);
 	if (!tsquery) return [];
-	const { data, error } = await supabase
+	let request = supabase
 		.from('notes')
 		.select(`${NOTE_LIST_COLUMNS},notebooks!inner(title,color)`)
-		.eq('user_id', userId)
+		.eq('user_id', userId);
+	if (notebookId) request = request.eq('notebook_id', notebookId);
+	const { data, error } = await request
 		.textSearch('search', tsquery, { config: 'simple' })
 		.order('updated_at', { ascending: false })
 		.limit(limit);

@@ -44,12 +44,14 @@ test('a quaderno card answers the pointer and the keyboard', async ({ page }) =>
 	const { notebook } = await withNote(page);
 	await gotoHydrated(page, '/zaino');
 
-	const card = page.getByRole('link', { name: /Analisi/ }).first();
-	// Tailwind v4 puts `translate-y` on the `translate` property, not `transform`.
-	const rest = await card.evaluate((el) => getComputedStyle(el).translate);
+	// The last link: the sheet of the note under "Riprendi da dove eri" names the quaderno too.
+	const card = page.getByRole('link', { name: /Analisi/ }).last();
+	// The quaderno lifts with `transform` (zaino.css); Tailwind v4 would put `translate-y` on `translate`.
+	const lift = (el: Element) => getComputedStyle(el).transform + getComputedStyle(el).translate;
+	const rest = await card.evaluate(lift);
 	await card.hover();
-	await page.waitForTimeout(300);
-	const hovered = await card.evaluate((el) => getComputedStyle(el).translate);
+	await page.waitForTimeout(500);
+	const hovered = await card.evaluate(lift);
 	expect(hovered, 'the card lifts on hover').not.toBe(rest);
 
 	// The options button is always reachable, and named for the quaderno it belongs to.

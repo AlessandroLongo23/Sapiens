@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
-import { Backpack } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import { getSession } from '@/lib/server/auth';
-import { countNotes, getQuota, listNotebooks, recentNotes } from '@/lib/server/zaino';
+import { getQuota, listNotebooks, recentNotes, shelfStats } from '@/lib/server/zaino';
 import { HOME_CRUMB } from '@/components/content/Breadcrumb';
+import { CoverStickers, CoverStickersButton } from '@/components/content/CoverStickers';
 import { Page, PageHeader } from '@/components/content/PageHeader';
+import { Stat } from '@/components/ui/Badge';
 import { NotebookShelf } from '@/components/zaino/NotebookShelf';
 import { RecentNotes } from '@/components/zaino/RecentNotes';
 import { ZainoLanding } from '@/components/zaino/ZainoLanding';
@@ -17,27 +18,35 @@ export const dynamic = 'force-dynamic';
 
 export default async function ZainoPage() {
 	const { supabase, user } = await getSession();
-	const [notebooks, quota, recent] = user
-		? await Promise.all([listNotebooks(supabase, user.id), getQuota(supabase, user), recentNotes(supabase, user.id)])
-		: [[], null, []];
-	// One count per quaderno: the shelf shows them and the delete dialog names them.
-	const counts = Object.fromEntries(
-		await Promise.all(notebooks.map(async (n) => [n.id, user ? await countNotes(supabase, user.id, n.id) : 0] as const))
-	);
+	const [notebooks, quota, recent, stats] = user
+		? await Promise.all([listNotebooks(supabase, user.id), getQuota(supabase, user), recentNotes(supabase, user.id), shelfStats(supabase, user.id)])
+		: [[], null, [], {}];
+	const all = Object.values(stats);
+	const notes = all.reduce((n, s) => n + s.notes, 0);
+	const fromLessons = all.reduce((n, s) => n + s.fromLessons, 0);
 
 	return (
-		<Page width="medium">
+		<Page width="medium" cover={<CoverStickers page="zaino" />}>
 			<PageHeader
 				crumbs={[HOME_CRUMB, { label: 'Zaino' }]}
-				icon={Backpack}
 				eyebrow="Quaderni e note"
 				title="Zaino"
 				lead="I tuoi quaderni e le tue note, scritti da te e visibili solo a te."
+				aside={<CoverStickersButton />}
+				stats={
+					notebooks.length > 0 && (
+						<>
+							<Stat value={String(notebooks.length).padStart(2, '0')}>{notebooks.length === 1 ? 'quaderno' : 'quaderni'}</Stat>
+							<Stat value={String(notes).padStart(2, '0')}>{notes === 1 ? 'nota' : 'note'}</Stat>
+							{fromLessons > 0 && <Stat value={String(fromLessons).padStart(2, '0')}>dalle lezioni</Stat>}
+						</>
+					)
+				}
 			/>
 			{user && quota ? (
-				<div className="space-y-8">
+				<div className="space-y-12">
 					<RecentNotes notes={recent} />
-					<NotebookShelf notebooks={notebooks} counts={counts} quota={quota} />
+					<NotebookShelf notebooks={notebooks} stats={stats} quota={quota} />
 				</div>
 			) : (
 				<ZainoLanding />

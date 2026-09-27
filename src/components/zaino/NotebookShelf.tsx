@@ -2,23 +2,24 @@
 
 import { useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import { ArrowDown, ArrowUp, Backpack, MoreHorizontal, NotebookPen, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Loader2, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import { Features } from '@/lib/stripe/config';
-import { COLOR_LABEL, DEFAULT_NOTEBOOK_TITLE, NOTEBOOK_COLORS, type NotebookColor, type NotebookRow, type Quota } from '@/lib/zaino/config';
+import { COLOR_LABEL, DEFAULT_NOTEBOOK_TITLE, NOTEBOOK_COLORS, type NotebookColor, type NotebookRow, type Quota, type ShelfStats } from '@/lib/zaino/config';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
-import { Sticker } from '@/components/ui/Sticker';
-import { Card } from '@/components/ui/Card';
 import { Input, Label } from '@/components/ui/Field';
 import { Sheet, sheetActions } from '@/components/ui/Sheet';
 import { Paywall } from '@/components/subscription/Paywall';
 import { cn } from '@/lib/utils/cn';
 import { useZainoAction } from './ZainoActions';
 import { QuotaBar } from './QuotaBar';
+import { NotebookCover } from './NotebookCover';
+import './zaino.css';
 
 /** The shelf: every quaderno, with create, rename and delete. */
-export function NotebookShelf({ notebooks, counts, quota }: { notebooks: NotebookRow[]; counts: Record<string, number>; quota: Quota }) {
+export function NotebookShelf({ notebooks, stats, quota }: { notebooks: NotebookRow[]; stats: Record<string, ShelfStats>; quota: Quota }) {
+	const counts = (id: string) => stats[id]?.notes ?? 0;
 	const { busy, error, blocked, clearBlocked, run } = useZainoAction();
 	const [editing, setEditing] = useState<NotebookRow | null>(null);
 	const [confirming, setConfirming] = useState<NotebookRow | null>(null);
@@ -43,7 +44,7 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 				feature={Features.NOTEBOOKS}
 				returnTo={ZAINO_ROOT}
 				benefit={blocked}
-				preview={<Shelf notebooks={notebooks} counts={counts} onEdit={() => {}} />}
+				preview={<Shelf notebooks={notebooks} stats={stats} onEdit={() => {}} />}
 			/>
 		);
 	}
@@ -70,20 +71,35 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 			)}
 
 			{notebooks.length === 0 ? (
-				<Card tone="dashed" className="note-in flex flex-col items-center gap-3 px-6 py-16 text-center">
-					<Sticker icon={Backpack} tone="accent" className="mb-2" />
-					<p className="text-lg font-semibold text-fg-strong">Lo zaino è vuoto</p>
-					<p className="max-w-sm text-sm leading-relaxed text-fg-muted">
-						Crea il primo quaderno: dentro ci metti le note di una materia, di un capitolo o di quello che vuoi.
-					</p>
-					<Button onClick={create} loading={busy === 'new'} className="mt-2">
-						<Plus className="size-4" aria-hidden="true" />
-						Crea il primo quaderno
-					</Button>
-					<QuotaBar quota={quota} />
-				</Card>
+				<div className="note-in grid items-center gap-8 rounded-2xl border border-dashed border-edge-strong bg-surface/60 px-6 py-10 sm:grid-cols-[11rem_1fr] sm:px-10">
+					{/* A quaderno still in its wrapper: the one the student is about to start. */}
+					<span data-notebook="crimson" className="zn-notebook pointer-events-none mx-auto w-36 [--tilt:-3deg] sm:w-40" aria-hidden="true">
+						<span className="zn-block" data-fill="0" />
+						<span className="zn-cover" />
+						<span className="zn-holes" />
+						<span className="zn-spiral" />
+						<span className="relative z-[2] flex h-full flex-col px-3 pl-5 pt-[24%]">
+							<span className="zn-label block px-2.5 pb-2 pt-1.5">
+								<span className="label-mono block text-[0.6rem] text-tint-fg">Nº 01</span>
+								<span className="block h-7" />
+							</span>
+						</span>
+					</span>
+					<div className="flex flex-col items-center gap-3 text-center sm:items-start sm:text-left">
+						<p className="font-display text-3xl font-semibold leading-tight text-fg-strong">Lo zaino è vuoto</p>
+						<p className="max-w-sm leading-relaxed text-fg-muted">
+							Crea il primo quaderno: dentro ci metti le note di una materia, di un capitolo o di quello che vuoi. Il nome lo scrivi tu,
+							sull&apos;etichetta.
+						</p>
+						<Button onClick={create} loading={busy === 'new'} className="mt-1">
+							<Plus className="size-4" aria-hidden="true" />
+							Crea il primo quaderno
+						</Button>
+						<QuotaBar quota={quota} />
+					</div>
+				</div>
 			) : (
-				<Shelf notebooks={notebooks} counts={counts} onEdit={setEditing} />
+				<Shelf notebooks={notebooks} stats={stats} onEdit={setEditing} onCreate={create} creating={busy === 'new'} />
 			)}
 
 			<EditSheet
@@ -107,8 +123,8 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 			<Sheet open={!!confirming} onClose={() => setConfirming(null)} title="Elimina il quaderno" size="auto" width="sm" align="center">
 				<div>
 					<p className="text-sm text-fg-muted">
-						{confirming && counts[confirming.id] > 0
-							? `«${confirming.title}» contiene ${counts[confirming.id]} ${counts[confirming.id] === 1 ? 'nota' : 'note'}. Eliminando il quaderno elimini anche quelle, e non si possono recuperare.`
+						{confirming && counts(confirming.id) > 0
+							? `«${confirming.title}» contiene ${counts(confirming.id)} ${counts(confirming.id) === 1 ? 'nota' : 'note'}. Eliminando il quaderno elimini anche quelle, e non si possono recuperare.`
 							: `Vuoi eliminare «${confirming?.title}»?`}
 					</p>
 					<div className={cn(sheetActions, 'mt-5')}>
@@ -134,39 +150,69 @@ export function NotebookShelf({ notebooks, counts, quota }: { notebooks: Noteboo
 	);
 }
 
-function Shelf({ notebooks, counts, onEdit }: { notebooks: NotebookRow[]; counts: Record<string, number>; onEdit: (n: NotebookRow) => void }) {
+const TILTS = [-1.1, 0.8, -0.4, 1.2, -0.8, 0.5];
+
+/**
+ * The quaderni as spiral notebooks standing on a shelf: the cover in the colour the student chose, the name
+ * written in pen on the label, the pages showing at the edge as it fills up. `onCreate` adds the outline of one
+ * more at the end; the paywall's preview has none.
+ */
+function Shelf({
+	notebooks,
+	stats,
+	onEdit,
+	onCreate,
+	creating = false
+}: {
+	notebooks: NotebookRow[];
+	stats: Record<string, ShelfStats>;
+	onEdit: (n: NotebookRow) => void;
+	onCreate?: () => void;
+	creating?: boolean;
+}) {
 	return (
-		<ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+		<ul className="grid grid-cols-2 gap-x-6 gap-y-8 pr-1 sm:grid-cols-3 sm:gap-x-8 lg:grid-cols-4">
 			{notebooks.map((notebook, i) => {
-				const count = counts[notebook.id] ?? 0;
+				const s = stats[notebook.id];
+				const count = s?.notes ?? 0;
 				return (
 					<li key={notebook.id} className="note-in group/card relative" style={{ '--i': i } as CSSProperties}>
-						{/* The cover of the quaderno, like the subject covers in the library but smaller. */}
 						<Link
 							href={`${ZAINO_ROOT}/${notebook.id}`}
 							data-notebook={notebook.color}
-							className="relative isolate flex h-full min-h-28 flex-col justify-end gap-1.5 overflow-hidden rounded-2xl bg-tint-cover py-5 pl-7 pr-14 text-tint-cover-fg no-underline shadow-paper transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:scale-[0.99] focus-ring-offset"
+							className="zn-notebook text-tint-cover-fg no-underline focus-ring-offset"
+							style={{ '--tilt': `${TILTS[i % TILTS.length]}deg` } as CSSProperties}
 						>
-							<span className="grid-paper absolute inset-0 -z-10 opacity-60 [--grid:color-mix(in_oklab,white_14%,transparent)]" aria-hidden="true" />
-							<span className="absolute inset-y-0 left-0 -z-10 w-3 bg-black/15" aria-hidden="true" />
-							<span className="truncate font-display text-2xl font-semibold leading-tight tracking-tight">{notebook.title}</span>
-							<span className="label-mono inline-flex items-center gap-1.5 text-white/75">
-								<NotebookPen className="size-3.5 shrink-0" aria-hidden="true" />
-								{count === 0 ? 'Nessuna nota' : count === 1 ? '1 nota' : `${count} note`}
-							</span>
+							<NotebookCover title={notebook.title} index={i} notes={count} updated={s?.updated ?? null} />
 						</Link>
 						{/* Always reachable on touch; on a mouse it fades in with the card. */}
 						<button
 							type="button"
 							onClick={() => onEdit(notebook)}
 							aria-label={`Opzioni di ${notebook.title}`}
-							className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full text-white/80 opacity-100 transition duration-150 hover:bg-white/15 hover:text-white active:scale-95 focus-ring md:opacity-0 md:group-hover/card:opacity-100 md:focus-visible:opacity-100"
+							className="absolute right-1 top-1 z-10 flex size-11 items-center justify-center rounded-full text-white/85 opacity-100 transition duration-150 hover:bg-white/15 hover:text-white active:scale-95 focus-ring md:opacity-0 md:group-hover/card:opacity-100 md:focus-visible:opacity-100"
 						>
 							<MoreHorizontal className="size-5" aria-hidden="true" />
 						</button>
 					</li>
 				);
 			})}
+			{onCreate && (
+				<li className="note-in" style={{ '--i': notebooks.length } as CSSProperties}>
+					<button
+						type="button"
+						onClick={onCreate}
+						disabled={creating}
+						aria-label="Aggiungi un quaderno"
+						className="zn-slot group/slot flex w-full flex-col items-center justify-center gap-2 px-4 text-fg-subtle hover:text-accent-fg disabled:opacity-60 focus-ring-offset"
+					>
+						<span className="flex size-11 items-center justify-center rounded-full border border-dashed border-current transition-transform duration-300 ease-out-soft group-hover/slot:rotate-90">
+							{creating ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Plus className="size-5" aria-hidden="true" />}
+						</span>
+						<span className="font-hand text-2xl font-semibold leading-none">Un altro quaderno</span>
+					</button>
+				</li>
+			)}
 		</ul>
 	);
 }

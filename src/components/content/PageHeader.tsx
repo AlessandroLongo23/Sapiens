@@ -29,7 +29,7 @@ export function PenStroke({ className, onHover = false }: { className?: string; 
  * The top of an index page: the trail ending in an eyebrow, the title in the
  * display serif with a pen stroke under it, a lead paragraph and a row of
  * figures. The icon, if any, sits on the right as a tinted tab, like the
- * sticker on a notebook's cover; `aside` goes at the right end of the trail.
+ * sticker on a notebook's cover; `figure` takes its place with any drawing; `aside` goes at the right end of the trail.
  * In the installed app on a phone it is a title bar's large title: no trail
  * (the header has a back arrow), no figures, a smaller title.
  */
@@ -41,7 +41,8 @@ export function PageHeader({
 	lead,
 	stats,
 	extra,
-	aside
+	aside,
+	figure
 }: {
 	crumbs: BreadcrumbItem[];
 	icon?: IconComponent;
@@ -51,6 +52,7 @@ export function PageHeader({
 	stats?: ReactNode;
 	extra?: ReactNode;
 	aside?: ReactNode;
+	figure?: ReactNode;
 }) {
 	return (
 		<header className="mb-10 animate-fade-in sm:mb-16 app:max-md:mb-6">
@@ -67,7 +69,7 @@ export function PageHeader({
 					{stats && <div className="flex flex-wrap gap-x-6 gap-y-4 pt-2 app:max-md:hidden">{stats}</div>}
 					{extra}
 				</div>
-				{Icon && <Sticker icon={Icon} size="lg" className="hidden sm:flex" />}
+				{figure ?? (Icon && <Sticker icon={Icon} size="lg" className="hidden sm:flex" />)}
 			</div>
 		</header>
 	);

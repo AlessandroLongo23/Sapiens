@@ -6,6 +6,9 @@
  * file holds what both sides have to agree on. Mirrors lib/tutoring/config.
  */
 
+import type { Paper } from './paper';
+import type { PlacedSticker } from './stickers';
+
 /** Free-plan ceilings. Paid plans have none: see Features.NOTEBOOKS. */
 export const FREE_NOTEBOOKS = 1;
 export const FREE_NOTES = 5;
@@ -64,6 +67,24 @@ export interface Quota {
 	unlimited: boolean;
 	notebooks: { used: number; max: number | null };
 	notes: { used: number; max: number | null };
+}
+
+/** The first page of a note as its card in the quaderno shows it: the text, the stickers on it and the paper. */
+export interface FirstPage {
+	markdown: string;
+	stickers: PlacedSticker[];
+	paper: Paper;
+	/** How many pages the note has in all. */
+	pages: number;
+}
+
+/** What a quaderno's cover on the shelf says about what is inside. */
+export interface ShelfStats {
+	notes: number;
+	/** Notes taken from a lesson. */
+	fromLessons: number;
+	/** The last time a note in it was written, or null when it is empty. */
+	updated: string | null;
 }
 
 /** A search hit: the note, plus which quaderno it sits in. */

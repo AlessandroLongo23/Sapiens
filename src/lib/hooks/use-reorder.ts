@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * Drag-to-reorder for a vertical list, on a pointer or a keyboard.
+ * Drag-to-reorder for a vertical list or a grid read row by row, on a pointer or a keyboard.
  *
  * The list is re-rendered in the new order as the pointer crosses each row, so
  * what is on screen is always the order that would be committed. Rows animate
@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react';
  * which is the only way to animate a reorder without animating layout itself.
  *
  * Keyboard support is not an afterthought here: a drag handle is a button, and
- * ArrowUp/ArrowDown move the row it belongs to.
+ * the arrows move the row it belongs to one place back (up, left) or forward (down, right).
  */
 export interface Reorder {
 	/** The ids in their current (possibly mid-drag) order. */
@@ -32,7 +32,7 @@ export function useReorder(ids: string[], commit: (ids: string[]) => void, enabl
 	const [order, setOrder] = useState<string[]>(ids);
 	const [dragging, setDragging] = useState<string | null>(null);
 	const rows = useRef(new Map<string, HTMLElement>());
-	const before = useRef(new Map<string, number>());
+	const before = useRef(new Map<string, { x: number; y: number }>());
 
 	// The server is the authority whenever a drag is not in progress. Adjusted
 	// during render, the way Shell tracks the path: an effect would re-render a
@@ -47,7 +47,10 @@ export function useReorder(ids: string[], commit: (ids: string[]) => void, enabl
 	/** Where every row sits right now, to invert against after the re-render. */
 	const measure = () => {
 		before.current.clear();
-		for (const [id, el] of rows.current) before.current.set(id, el.getBoundingClientRect().top);
+		for (const [id, el] of rows.current) {
+			const box = el.getBoundingClientRect();
+			before.current.set(id, { x: box.left, y: box.top });
+		}
 	};
 
 	// FLIP: after the order changes, put each row back where it was and let it go.
@@ -56,10 +59,12 @@ export function useReorder(ids: string[], commit: (ids: string[]) => void, enabl
 		for (const [id, el] of rows.current) {
 			const was = before.current.get(id);
 			if (was === undefined) continue;
-			const delta = was - el.getBoundingClientRect().top;
-			if (!delta) continue;
+			const box = el.getBoundingClientRect();
+			const dx = was.x - box.left;
+			const dy = was.y - box.top;
+			if (!dx && !dy) continue;
 			el.style.transition = 'none';
-			el.style.transform = `translateY(${delta}px)`;
+			el.style.transform = `translate(${dx}px, ${dy}px)`;
 			requestAnimationFrame(() => {
 				el.style.transition = 'transform 200ms cubic-bezier(0.22, 1, 0.36, 1)';
 				el.style.transform = '';
@@ -89,11 +94,17 @@ export function useReorder(ids: string[], commit: (ids: string[]) => void, enabl
 		let current = order;
 
 		const onMove = (move: PointerEvent) => {
-			// The row whose middle the pointer has passed becomes the new index.
+			// The row whose middle the pointer has passed becomes the new index. In a grid (rows side by
+			// side) that is the first card the pointer is above, or beside and left of the middle of.
 			const boxes = current
 				.map((rowId) => ({ rowId, box: rows.current.get(rowId)?.getBoundingClientRect() }))
 				.filter((entry): entry is { rowId: string; box: DOMRect } => !!entry.box);
-			const over = boxes.findIndex(({ box }) => move.clientY < box.top + box.height / 2);
+			const grid = boxes.some(({ box }) => Math.abs(box.left - boxes[0].box.left) > 1);
+			const over = boxes.findIndex(({ box }) =>
+				grid
+					? move.clientY < box.top || (move.clientY < box.bottom && move.clientX < box.left + box.width / 2)
+					: move.clientY < box.top + box.height / 2
+			);
 			const index = over === -1 ? boxes.length - 1 : over;
 			if (current[index] === id) return;
 			measure();
@@ -114,7 +125,7 @@ export function useReorder(ids: string[], commit: (ids: string[]) => void, enabl
 
 	const onKeyDown = (id: string) => (e: React.KeyboardEvent) => {
 		if (!enabled) return;
-		const step = e.key === 'ArrowUp' ? -1 : e.key === 'ArrowDown' ? 1 : 0;
+		const step = e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : 0;
 		if (!step) return;
 		e.preventDefault();
 		const from = order.indexOf(id);

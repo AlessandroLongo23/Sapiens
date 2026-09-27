@@ -1,0 +1,340 @@
+/* The backpack as objects: quaderni with a spiral and a label written in pen on the shelf, the last notes as loose
+   sheets clipped on top, and a quaderno's notes as their first pages. Same language as the textbooks of the library and the
+   diary: squared paper, a blue ballpoint for what the student wrote, the cover in the colour they chose. */
+
+@layer components {
+	:root {
+		/* A blue ballpoint, as in the diary. */
+		--zn-pen: oklch(0.43 0.15 262);
+		--zn-label: var(--color-paper-50);
+		--zn-wire: oklch(0.66 0.012 265);
+		--zn-wire-hi: oklch(0.94 0.004 265);
+		--zn-hole: rgb(20 14 8 / 0.42);
+		--zn-shade: 30 18 8;
+	}
+	.dark {
+		--zn-pen: oklch(0.8 0.1 258);
+		--zn-label: oklch(0.27 0.012 265);
+		--zn-wire: oklch(0.5 0.01 265);
+		--zn-wire-hi: oklch(0.78 0.006 265);
+		--zn-hole: rgb(0 0 0 / 0.55);
+		--zn-shade: 0 0 0;
+	}
+
+	.zn-pen {
+		font-family: var(--font-hand);
+		color: var(--zn-pen);
+		font-weight: 600;
+		letter-spacing: 0.005em;
+	}
+
+	/* --------------------------------------------------------------- the spiral */
+
+	/* Wire rings through the left edge of a cover or a page: each ring an ellipse with a highlight along it, half on the
+	   paper and half off, ending in a punched hole (.zn-holes). `--ring` is the pitch. */
+	.zn-spiral {
+		--ring: 14px;
+		position: absolute;
+		z-index: 3;
+		top: calc(var(--ring) * 0.6);
+		bottom: calc(var(--ring) * 0.6);
+		left: -9px;
+		width: 17px;
+		pointer-events: none;
+		background:
+			radial-gradient(ellipse 7px 1.3px at 50% 42%, var(--zn-wire-hi) 60%, transparent 100%),
+			radial-gradient(ellipse 8.5px 2.8px at 50% 50%, var(--zn-wire) 78%, transparent 84%);
+		background-size: 100% var(--ring);
+		background-repeat: repeat-y;
+		filter: drop-shadow(0.6px 1px 0.6px rgb(var(--zn-shade) / 0.35));
+	}
+	.zn-holes {
+		--ring: 14px;
+		position: absolute;
+		z-index: 1;
+		top: calc(var(--ring) * 0.6);
+		bottom: calc(var(--ring) * 0.6);
+		left: 3px;
+		width: 6px;
+		pointer-events: none;
+		background: radial-gradient(circle 2.1px at 50% 50%, var(--zn-hole) 85%, transparent 100%);
+		background-size: 100% var(--ring);
+		background-repeat: repeat-y;
+	}
+
+	/* --------------------------------------------------------- a quaderno on the shelf */
+
+	.zn-notebook {
+		position: relative;
+		isolation: isolate;
+		display: block;
+		aspect-ratio: 4 / 5;
+		margin-left: 8px;
+		border-radius: 6px 14px 14px 6px;
+		transform: rotate(var(--tilt, 0deg));
+		transition:
+			transform 0.45s var(--ease-out-soft),
+			filter 0.45s var(--ease-out-soft);
+	}
+	.zn-notebook:hover,
+	.zn-notebook:focus-visible {
+		transform: translateY(-5px) rotate(0deg);
+	}
+	.zn-notebook:active {
+		transform: translateY(-2px) scale(0.99);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.zn-notebook,
+		.zn-notebook:hover,
+		.zn-notebook:focus-visible {
+			transition: none;
+			transform: none;
+		}
+	}
+
+	/* The pages under the cover, as many sheets showing at the edge as the quaderno is full (`data-fill`, 0 to 3). */
+	.zn-block {
+		position: absolute;
+		inset: 3px -4px -4px 6px;
+		z-index: -1;
+		border-radius: 4px 10px 10px 4px;
+		background: var(--surface);
+		box-shadow:
+			0 18px 26px -18px rgb(var(--zn-shade) / 0.55),
+			0 4px 10px -6px rgb(var(--zn-shade) / 0.25);
+	}
+	.zn-block[data-fill='1'] {
+		box-shadow:
+			2px 2px 0 -0.5px var(--surface-2),
+			2px 2px 0 0 var(--edge),
+			0 18px 26px -18px rgb(var(--zn-shade) / 0.55);
+	}
+	.zn-block[data-fill='2'] {
+		box-shadow:
+			2px 2px 0 -0.5px var(--surface-2),
+			2px 2px 0 0 var(--edge),
+			4px 4px 0 -0.5px var(--surface),
+			4px 4px 0 0 var(--edge),
+			0 20px 28px -18px rgb(var(--zn-shade) / 0.55);
+	}
+	.zn-block[data-fill='3'] {
+		box-shadow:
+			2px 2px 0 -0.5px var(--surface-2),
+			2px 2px 0 0 var(--edge),
+			4px 4px 0 -0.5px var(--surface),
+			4px 4px 0 0 var(--edge),
+			6px 6px 0 -0.5px var(--surface-2),
+			6px 6px 0 0 var(--edge),
+			0 22px 30px -18px rgb(var(--zn-shade) / 0.6);
+	}
+
+	/* The cover: the chosen colour, faint squares pressed into it and a sheen across, as on a plastic cover. */
+	.zn-cover {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+		border-radius: inherit;
+		background-color: var(--tint-cover);
+		background-image:
+			linear-gradient(118deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.03) 38%, transparent 55%, rgb(0 0 0 / 0.1)),
+			linear-gradient(color-mix(in oklab, white 11%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in oklab, white 11%, transparent) 1px, transparent 1px);
+		background-size:
+			100% 100%,
+			18px 18px,
+			18px 18px;
+		background-position: 0 0, -1px -1px, -1px -1px;
+		box-shadow:
+			inset 0 0 0 1px rgb(255 255 255 / 0.08),
+			inset 0 -2px 0 rgb(0 0 0 / 0.12);
+		transition: box-shadow 0.45s var(--ease-out-soft);
+	}
+	.zn-notebook:hover .zn-cover {
+		box-shadow:
+			inset 0 0 0 1px rgb(255 255 255 / 0.12),
+			inset 0 -2px 0 rgb(0 0 0 / 0.12),
+			0 22px 30px -20px rgb(var(--zn-shade) / 0.6);
+	}
+
+	/* The label on the front, as on every school quaderno: ruled, framed in the cover's colour, the name in pen. */
+	.zn-label {
+		position: relative;
+		transform: rotate(var(--label-tilt, -1.2deg));
+		border-radius: 5px;
+		background-color: var(--zn-label);
+		background-image: repeating-linear-gradient(
+			to bottom,
+			transparent 0 27px,
+			color-mix(in oklab, var(--tint) 30%, transparent) 27px 28px
+		);
+		background-position: 0 6px;
+		box-shadow:
+			inset 0 0 0 1.5px color-mix(in oklab, var(--tint) 55%, transparent),
+			inset 0 0 0 4px var(--zn-label),
+			inset 0 0 0 5px color-mix(in oklab, var(--tint) 30%, transparent),
+			0 1px 1px rgb(var(--zn-shade) / 0.25),
+			0 3px 8px -3px rgb(var(--zn-shade) / 0.35);
+	}
+
+	/* The tile to add one more: the outline of a quaderno, drawn in dashes on the shelf. */
+	.zn-slot {
+		aspect-ratio: 4 / 5;
+		margin-left: 8px;
+		border-radius: 6px 14px 14px 6px;
+		border: 1.5px dashed var(--edge-strong);
+		background-color: color-mix(in oklab, var(--surface) 55%, transparent);
+		transition:
+			border-color 0.2s,
+			background-color 0.2s,
+			transform 0.45s var(--ease-out-soft);
+	}
+	.zn-slot:hover {
+		border-color: var(--accent);
+		background-color: var(--surface);
+		transform: translateY(-3px);
+	}
+
+	/* --------------------------------------------------------------- loose sheets */
+
+	/* A note taken out of its quaderno: a squared sheet with a torn-off spiral edge, a strip of tape in the quaderno's
+	   colour at the top and its corner turned down. Tilted a little each, straight when hovered. */
+	.zn-sheet {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		border-radius: 3px 3px 4px 4px;
+		background-color: var(--surface);
+		background-image:
+			linear-gradient(var(--grid-faint) 1px, transparent 1px),
+			linear-gradient(90deg, var(--grid-faint) 1px, transparent 1px);
+		background-size: 16px 16px;
+		background-position: -1px -1px;
+		transform: rotate(var(--tilt, 0deg));
+		transition: transform 0.4s var(--ease-out-soft);
+		/* The torn edge of a sheet pulled off a spiral: a row of half holes along the top. */
+		-webkit-mask:
+			radial-gradient(circle 3px at 50% 0, transparent 96%, black 100%) 0 0 / 14px 8px repeat-x,
+			linear-gradient(black, black) 0 8px / 100% calc(100% - 8px) no-repeat;
+		mask:
+			radial-gradient(circle 3px at 50% 0, transparent 96%, black 100%) 0 0 / 14px 8px repeat-x,
+			linear-gradient(black, black) 0 8px / 100% calc(100% - 8px) no-repeat;
+	}
+	/* The mask would cut a box-shadow away, so the shadow is the wrapper's, drawn around the torn outline. */
+	.zn-sheet-wrap {
+		position: relative;
+		display: block;
+		height: 100%;
+		filter: drop-shadow(0 0 0.6px rgb(var(--zn-shade) / 0.28)) drop-shadow(0 8px 10px rgb(var(--zn-shade) / 0.12));
+		transition: filter 0.4s var(--ease-out-soft);
+	}
+	.zn-sheet-wrap:hover,
+	.zn-sheet-wrap:focus-visible {
+		filter: drop-shadow(0 0 0.6px rgb(var(--zn-shade) / 0.32)) drop-shadow(0 16px 16px rgb(var(--zn-shade) / 0.18));
+	}
+	.zn-sheet-wrap:hover .zn-sheet,
+	.zn-sheet-wrap:focus-visible .zn-sheet {
+		transform: translateY(-4px) rotate(0deg);
+	}
+	/* The corner folded down at the bottom right. */
+	.zn-sheet::after {
+		content: '';
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		width: 18px;
+		height: 18px;
+		background: linear-gradient(315deg, var(--page-alt) 0 50%, var(--surface-2) 50% 100%);
+		border-top-left-radius: 3px;
+		box-shadow: -1px -1px 2px rgb(var(--zn-shade) / 0.12);
+	}
+	.zn-tape {
+		position: absolute;
+		z-index: 2;
+		top: -7px;
+		left: 50%;
+		width: 58px;
+		height: 18px;
+		transform: translateX(-50%) rotate(var(--tape-tilt, -3deg));
+		background: color-mix(in oklab, var(--tint) 38%, transparent);
+		box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tint) 20%, transparent);
+		/* Torn ends, zig-zag. */
+		-webkit-mask: conic-gradient(from -45deg at left, transparent 90deg, black 0) left / 51% 5px repeat-y,
+			conic-gradient(from 135deg at right, transparent 90deg, black 0) right / 51% 5px repeat-y;
+		mask: conic-gradient(from -45deg at left, transparent 90deg, black 0) left / 51% 5px repeat-y,
+			conic-gradient(from 135deg at right, transparent 90deg, black 0) right / 51% 5px repeat-y;
+		pointer-events: none;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.zn-sheet,
+		.zn-sheet-wrap:hover .zn-sheet {
+			transition: none;
+			transform: none;
+		}
+	}
+
+	/* ------------------------------------------------------------ a note card */
+
+	/* A note in its quaderno: its first page as a sheet of paper, portrait like the page in the editor
+	   (SHEET_WIDTH by SHEET_MIN_HEIGHT), with the sheets under it showing when it has more than one. */
+	.zn-page {
+		position: relative;
+		aspect-ratio: 792 / 1120;
+		overflow: hidden;
+		border-radius: 6px;
+		background-color: var(--surface);
+		box-shadow:
+			0 0 0 1px var(--edge),
+			0 1px 2px rgb(var(--zn-shade) / 0.08),
+			0 10px 20px -14px rgb(var(--zn-shade) / 0.35);
+		transition:
+			transform 0.3s var(--ease-out-soft),
+			box-shadow 0.3s var(--ease-out-soft);
+	}
+	/* More than one page: the next ones show at the edge. */
+	.zn-page[data-more] {
+		box-shadow:
+			0 0 0 1px var(--edge),
+			3px 3px 0 -1px var(--surface-2),
+			3px 3px 0 0 var(--edge),
+			0 10px 20px -14px rgb(var(--zn-shade) / 0.35);
+		overflow: visible;
+	}
+	.group\/note:hover .zn-page {
+		transform: translateY(-4px);
+		box-shadow:
+			0 0 0 1px var(--edge-strong),
+			0 2px 4px rgb(var(--zn-shade) / 0.08),
+			0 22px 30px -18px rgb(var(--zn-shade) / 0.45);
+	}
+	.zn-page[data-dragging] {
+		transform: rotate(-2deg) scale(1.03);
+		box-shadow:
+			0 0 0 1px var(--edge-strong),
+			0 22px 30px -18px rgb(var(--zn-shade) / 0.5);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.zn-page {
+			transition: none;
+		}
+		.group\/note:hover .zn-page {
+			transform: none;
+		}
+	}
+
+	/* The tile to start a new note: a blank sheet drawn in dashes. */
+	.zn-new {
+		aspect-ratio: 792 / 1120;
+		border-radius: 6px;
+		border: 1.5px dashed var(--edge-strong);
+		background-color: color-mix(in oklab, var(--surface) 55%, transparent);
+		transition:
+			border-color 0.2s,
+			background-color 0.2s,
+			color 0.2s;
+	}
+	.zn-new:hover {
+		border-color: var(--accent);
+		background-color: var(--surface);
+	}
+}
