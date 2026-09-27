@@ -5,7 +5,8 @@ import assert from 'node:assert/strict';
 import { createJiti } from 'jiti';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
-const { equivalenza, QUANTITIES, QUANTITY_IDS, formatScaled } = await jiti.import('../../src/lib/tools/equivalenze.ts');
+const { equivalenza, QUANTITIES, QUANTITY_IDS, formatScaled, plural } = await jiti.import('../../src/lib/tools/equivalenze.ts');
+const { assertReadable, rowText, stepText } = await import('./converters-check.mjs');
 
 const conv = (quantity, value, from, to) => equivalenza({ quantity, value, from, to });
 const copy = (...args) => {
@@ -42,15 +43,37 @@ test('known equivalences', () => {
 
 test('the steps count the steps of the scale', () => {
 	const o = conv('lunghezza', '3,5', 'km', 'm');
-	assert.match(o.steps.join(' '), /3 gradini verso destra/);
-	assert.match(o.steps.join(' '), /moltiplica per \$10\^\{3\} = 1000\$/);
+	assert.deepEqual(o.rows, [{ label: '3,5 km in metri', value: '$3500\\ \\text{m}$' }]);
+	assert.match(stepText(o), /3 gradini verso destra/);
+	assert.match(stepText(o), /10 \\cdot 10 \\cdot 10 = 10\^\{3\} = \\hl\{1000\}/);
+	assert.match(stepText(o), /Moltiplica per \$1000\$: sposta la virgola di 3 posti verso destra/);
+	// The scale is a table: the units, the two in play highlighted, and the factors under the steps crossed.
+	const scale = o.steps.find((s) => s.table).table.rows;
+	assert.deepEqual(scale[0].slice(0, 4), ['$\\hl{\\text{km}}$', '$\\text{hm}$', '$\\text{dam}$', '$\\hl{\\text{m}}$']);
+	assert.deepEqual(scale[1], ['', '$\\times 10$', '$\\times 10$', '$\\times 10$', '', '', '']);
 	const d = conv('superficie', '25', 'dm2', 'm2');
-	assert.match(d.steps.join(' '), /1 gradino verso sinistra/);
-	assert.match(d.steps.join(' '), /Dividi per 100/);
-	assert.match(conv('massa', '1', 'q', 'kg').steps.join(' '), /quadratino/);
-	assert.match(conv('superficie', '3', 'ha', 'm2').steps.join(' '), /1\\ \\text\{ha\} = 1\\ \\text\{hm\}\^2/);
-	assert.match(conv('tempo', '100', 's', 'min').steps.join(' '), /1\\ \\text\{min\}\\ 40\\ \\text\{s\}/);
-	assert.match(conv('tempo', '100', 's', 'min').result, /\\approx/);
+	assert.match(stepText(d), /1 gradino verso sinistra/);
+	assert.match(stepText(d), /Dividi per \$100\$/);
+	assert.deepEqual(d.steps.find((s) => s.table).table.rows[1], ['', '', '', '$: 100$', '', '', '']);
+	assert.match(stepText(conv('massa', '1', 'q', 'kg')), /quadratino/);
+	assert.match(stepText(conv('superficie', '3', 'ha', 'm2')), /1\\ \\text\{ha\} = 1\\ \\text\{hm\}\^2/);
+	assert.match(stepText(conv('tempo', '100', 's', 'min')), /1\\ \\text\{min\}\\ 40\\ \\text\{s\}/);
+	assert.match(conv('tempo', '100', 's', 'min').rows[0].value, /\\approx/);
+	assert.equal(conv('tempo', '100', 's', 'min').rows[1].value, '$1\\ \\text{min}\\ 40\\ \\text{s}$');
+	assert.equal(plural('chilometro quadrato'), 'chilometri quadrati');
+	assert.equal(plural('centiara'), 'centiare');
+});
+
+test('every string typesets and every sentence is short', () => {
+	for (const quantity of QUANTITY_IDS) {
+		const { units } = QUANTITIES[quantity];
+		for (const a of units) for (const b of units) for (const v of ['0', '3,5', '0,007', '123456789012345', '100']) assertReadable(conv(quantity, v, a.id, b.id), `${quantity} ${v} ${a.id} → ${b.id}`);
+	}
+	for (const bad of [conv('lunghezza', 'abc', 'km', 'm'), conv('lunghezza', '-3', 'km', 'm'), conv('boh', '3', 'km', 'm')]) {
+		assertReadable(bad);
+		assert.match(bad.error, /per esempio/);
+	}
+	assert.match(rowText(conv('volume', '1', 'km3', 'mm3')), /000/);
 });
 
 test('very large and very small results', () => {
@@ -95,6 +118,6 @@ test('time round trips', () => {
 		for (const a of ['h', 'min', 's'])
 			for (const b of ['h', 'min', 's']) {
 				const there = conv('tempo', v, a, b);
-				if (!there.result.includes('\\approx')) assert.equal(conv('tempo', there.copy.slice(0, there.copy.lastIndexOf(' ')).replace(/ /g, ''), b, a).copy, `${v} ${a}`);
+				if (!there.rows[0].value.includes('\\approx')) assert.equal(conv('tempo', there.copy.slice(0, there.copy.lastIndexOf(' ')).replace(/ /g, ''), b, a).copy, `${v} ${a}`);
 			}
 });

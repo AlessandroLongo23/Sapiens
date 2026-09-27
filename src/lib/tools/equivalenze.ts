@@ -1,5 +1,5 @@
 import { Rational, q } from '@/lib/exercises/v2/rational';
-import { fail, type Outcome } from './types';
+import { fail, type Outcome, type Step } from './types';
 import { decimal, parseDecimal } from './numbers';
 
 /**
@@ -182,20 +182,41 @@ export function formatScaled({ m, e }: Scaled): { text: string; tex: string } {
 	};
 }
 
-/** The scale of a quantity in LaTeX, the two units in play boxed. */
-function scaleTex(qty: Quantity, a: string, b: string): string {
-	return QUANTITIES[qty].scale
-		.map((id) => {
-			if (!id) return '\\square';
-			const t = unitTex(unitOf(qty, id)!);
-			return id === a || id === b ? `\\boxed{${t}}` : t;
-		})
-		.join(' \\quad ');
+/** A unit's name in the plural, word by word: "chilometro quadrato" → "chilometri quadrati", "ara" → "are". */
+export function plural(name: string): string {
+	return name
+		.split(' ')
+		.map((w) => (w.endsWith('a') ? `${w.slice(0, -1)}e` : w.endsWith('o') || w.endsWith('e') ? `${w.slice(0, -1)}i` : w))
+		.join(' ');
+}
+
+/**
+ * The scale of a quantity as a table: the units on the first row, the two in play highlighted; under each unit the
+ * step crosses, the factor it takes (×10 going right, :10 going left). A table scrolls sideways on a phone, where a
+ * line of units would wrap.
+ */
+function scaleTable(qty: Quantity, a: string, b: string): string[][] {
+	const def = QUANTITIES[qty];
+	const factor = def.per === 1 ? '10' : def.per === 2 ? '100' : '1000';
+	const ia = def.scale.indexOf(a);
+	const ib = def.scale.indexOf(b);
+	const units = def.scale.map((id) => {
+		if (!id) return '$\\square$';
+		const t = unitTex(unitOf(qty, id)!);
+		return id === a || id === b ? `$\\hl{${t}}$` : `$${t}$`;
+	});
+	const factors = def.scale.map((_, i) => {
+		if (ia === ib) return '';
+		const crossed = ib > ia ? i > ia && i <= ib : i < ia && i >= ib;
+		return crossed ? `$${ib > ia ? '\\times' : ':'} ${factor}$` : '';
+	});
+	return ia === ib ? [units] : [units, factors];
 }
 
 const steps = (n: number) => (n === 1 ? '1 gradino' : `${n} gradini`);
 const places = (n: number) => (n === 1 ? '1 posto' : `${n} posti`);
-const powerTex = (k: number) => (k === 1 ? '10' : `10^{${k}} = ${group('1' + '0'.repeat(k), '\\,')}`);
+/** 10^k written out when it is short enough to read: "1000", "10\,000"; else "10^{12}". */
+const powerTex = (k: number) => (k <= 9 ? group('1' + '0'.repeat(k), '\\,') : `10^{${k}}`);
 
 export interface EquivalenzaInput {
 	quantity: Quantity;
@@ -206,14 +227,23 @@ export interface EquivalenzaInput {
 
 export function equivalenza({ quantity, value, from, to }: EquivalenzaInput): Outcome {
 	const def = QUANTITIES[quantity];
-	if (!def) return fail('Scegli una grandezza.');
+	if (!def) return fail('Scegli una grandezza, per esempio lunghezza.');
 	const a = unitOf(quantity, from);
 	const b = unitOf(quantity, to);
-	if (!a || !b) return fail('Scegli le due unità di misura.');
+	if (!a || !b) return fail('Scegli le due unità di misura, per esempio km e m.');
 	const r = parseDecimal(value);
-	if (!r) return fail('Scrivi una misura, per esempio 3,5; per i decimali usa la virgola.');
-	if (r.sign() < 0) return fail('Una misura non può essere negativa: scrivi un numero positivo.');
+	if (!r) return fail('Scrivi una misura, per esempio 3,5. Per i decimali usa la virgola.');
+	if (r.sign() < 0) return fail('Una misura non può essere negativa: scrivi un numero positivo, per esempio 3,5.');
 	return quantity === 'tempo' ? time(r, a, b) : decimalScale(quantity, r, a, b);
+}
+
+/** Groups the steps when there are more than five: each name goes on the step with that index. */
+function grouped(list: Step[], names: [number, string][]): Step[] {
+	if (list.length <= 5) return list;
+	return list.map((s, i) => {
+		const name = names.find(([at]) => at === i)?.[1];
+		return name ? { ...s, group: name } : s;
+	});
 }
 
 function decimalScale(qty: Quantity, r: Rational, a: MeasureUnit, b: MeasureUnit): Outcome {
@@ -227,54 +257,73 @@ function decimalScale(qty: Quantity, r: Rational, a: MeasureUnit, b: MeasureUnit
 	const ys = formatScaled(y);
 	const ta = unitTex(a);
 	const tb = unitTex(b);
-	const result = `$${xs.tex}\\ ${ta} = ${ys.tex}\\ ${tb}$`;
+	const rows = [{ label: `${xs.text} ${a.text} in ${plural(b.name)}`, value: `$${ys.tex}\\ ${tb}$` }];
 	const copy = `${ys.text} ${b.text}`;
 
-	const out: string[] = [];
+	const out: Step[] = [];
 	// Units that stand for one of the scale: ha, a, ca, kl, l, ml.
-	const onScale = (x: MeasureUnit) => (x.alias ? unitOf(qty, x.alias)! : x);
-	for (const x of a === b ? [a] : [a, b]) {
-		if (x.alias) {
-			const on = onScale(x);
-			out.push(`Ricorda che $1\\ ${unitTex(x)} = 1\\ ${unitTex(on)}$: sulla scala usa $${unitTex(on)}$ al posto di $${unitTex(x)}$.`);
+	const onScale = (u: MeasureUnit) => (u.alias ? unitOf(qty, u.alias)! : u);
+	for (const u of a === b ? [a] : [a, b]) {
+		if (u.alias) {
+			const on = onScale(u);
+			out.push({ say: `Sulla scala usa $${unitTex(on)}$ al posto di $${unitTex(u)}$: sono uguali.`, math: [`1\\ ${unitTex(u)} = 1\\ ${unitTex(on)}`] });
 		}
 	}
 	const sa = onScale(a);
 	const sb = onScale(b);
 	const factor = def.per === 1 ? '10' : def.per === 2 ? '100' : '1000';
-	out.push(`Scrivi la scala delle unità di ${def.name}, dalla più grande alla più piccola: $${scaleTex(qty, sa.id, sb.id)}$. Ogni unità vale ${factor} volte quella alla sua destra.`);
+	out.push({
+		say: `Scrivi la scala delle unità di ${def.name}, dalla più grande alla più piccola.`,
+		table: { rows: scaleTable(qty, sa.id, sb.id) },
+		then: `Ogni unità vale ${factor} volte quella alla sua destra.`
+	});
 	if (qty === 'massa' && Math.min(a.pos, b.pos) < 4 && Math.max(a.pos, b.pos) > 4) {
-		out.push('Il quadratino tra $\\text{q}$ e $\\text{kg}$ è un gradino senza nome, che vale 10 kg: contalo lo stesso.');
+		out.push({ say: 'Conta anche il quadratino tra $\\text{q}$ e $\\text{kg}$.', then: 'È un gradino senza nome, che vale $10\\ \\text{kg}$.' });
 	}
 	if (gradini === 0) {
-		out.push(`Le due unità stanno allo stesso posto della scala: la misura non cambia, $${xs.tex}\\ ${ta} = ${ys.tex}\\ ${tb}$.`);
-		return { ok: true, result, copy, steps: out };
+		out.push({ say: 'Le due unità stanno allo stesso posto della scala: la misura non cambia.', math: [`${xs.tex}\\ ${ta} = \\hl{${ys.tex}\\ ${tb}}`] });
+		return { ok: true, rows, copy, steps: out };
 	}
 	const n = Math.abs(gradini);
 	const down = gradini > 0;
-	out.push(
-		`Da $${unitTex(sa)}$ a $${unitTex(sb)}$ ci sono ${steps(n)} verso ${down ? 'destra' : 'sinistra'}: passi a un'unità più ${down ? 'piccola' : 'grande'}, quindi il numero diventa più ${down ? 'grande' : 'piccolo'}.`
-	);
 	const k = Math.abs(shift);
-	const per = def.per === 1 ? '' : `, cioè sposta la virgola di ${places(def.per)}`;
-	const verb = down ? 'moltiplica' : 'dividi';
+	const calcAt = out.length;
+	out.push({
+		say: `Conta i gradini da $${unitTex(sa)}$ a $${unitTex(sb)}$.`,
+		then: `Sono ${steps(n)} verso ${down ? 'destra' : 'sinistra'}: l'unità diventa più ${down ? 'piccola' : 'grande'}, quindi il numero diventa più ${down ? 'grande' : 'piccolo'}.`
+	});
 	const Verb = down ? 'Moltiplica' : 'Dividi';
-	out.push(
-		n === 1
-			? `${Verb} per ${factor}: sposta la virgola di ${places(k)} verso ${down ? 'destra' : 'sinistra'}${down ? ', aggiungendo degli zeri se mancano cifre' : ', aggiungendo degli zeri davanti se mancano cifre'}.`
-			: `A ogni gradino ${verb} per ${factor}${per}. In tutto ${verb} per $${powerTex(k)}$: sposta la virgola di ${places(k)} verso ${down ? 'destra' : 'sinistra'}${down ? ', aggiungendo degli zeri se mancano cifre' : ', aggiungendo degli zeri davanti se mancano cifre'}.`
-	);
-	out.push(`Il risultato è $${xs.tex}\\ ${ta} = ${ys.tex}\\ ${tb}$.`);
-	return { ok: true, result, copy, steps: out };
+	if (n > 1) {
+		const product = n <= 4 ? Array(n).fill(factor).join(' \\cdot ') : `${factor}^{${n}}`;
+		out.push({
+			say: `Ogni gradino vale ${factor}: calcola quanto valgono ${n} gradini insieme.`,
+			math: [[...(product === `10^{${k}}` ? [] : [product]), k <= 9 ? `10^{${k}}` : `\\hl{10^{${k}}}`, ...(k <= 9 ? [`\\hl{${powerTex(k)}}`] : [])].join(' = ')]
+		});
+	}
+	// Zeros to add: at the end when the comma moves right past the last digit, in front when it moves left past the first.
+	const fracDigits = Math.max(0, -x.e);
+	const intDigits = x.m === 0n ? 1 : x.m.toString().length + x.e;
+	const zeros = x.m !== 0n && (down ? k > fracDigits : k >= intDigits);
+	out.push({
+		say: `${Verb} per $${powerTex(k)}$: sposta la virgola di ${places(k)} verso ${down ? 'destra' : 'sinistra'}.`,
+		math: [`${xs.tex} ${down ? '\\cdot' : ':'} ${powerTex(k)} = ${ys.tex}`, `${xs.tex}\\ ${ta} = \\hl{${ys.tex}\\ ${tb}}`],
+		then: zeros ? (down ? 'Dove mancano cifre, aggiungi degli zeri in fondo.' : 'Dove mancano cifre, aggiungi degli zeri davanti, con lo 0 prima della virgola.') : undefined
+	});
+	return {
+		ok: true,
+		rows,
+		copy,
+		steps: grouped(out, [
+			[0, 'La scala'],
+			[calcAt, 'Il calcolo']
+		])
+	};
 }
 
 const DIGITS = 6;
 
-/** A rational after "=": "= 2{,}5", or "\approx 0{,}000278" when rounded. */
-function eqTex(r: Rational): string {
-	const d = decimal(r, DIGITS);
-	return d.exact ? `= ${d.tex}` : `\\approx ${d.tex}`;
-}
+/** "=" before an exact value, "\approx" before a rounded one. */
+const eqSign = (exact: boolean) => (exact ? '=' : '\\approx');
 
 function time(r: Rational, a: MeasureUnit, b: MeasureUnit): Outcome {
 	let y: Rational;
@@ -283,39 +332,64 @@ function time(r: Rational, a: MeasureUnit, b: MeasureUnit): Outcome {
 		seconds = r.mul(q(a.pos));
 		y = seconds.div(q(b.pos));
 	} catch {
-		return fail('Il numero ha troppe cifre per questo calcolo.');
+		return fail('Il numero ha troppe cifre per questo calcolo: scrivi una misura più corta, per esempio 2,5.');
 	}
 	const x = decimal(r, DIGITS);
 	const yd = decimal(y, DIGITS);
 	const ta = unitTex(a);
 	const tb = unitTex(b);
-	const result = `$${x.tex}\\ ${ta} ${eqTex(y)}\\ ${tb}$`;
+	const rows = [{ label: `${x.text} ${a.text} in ${plural(b.name)}`, value: `$${yd.exact ? '' : '\\approx '}${yd.tex}\\ ${tb}$` }];
 	const copy = `${yd.text} ${b.text}`;
-	const out = ['Il tempo non si misura in base 10 ma in base 60: $1\\ \\text{h} = 60\\ \\text{min}$ e $1\\ \\text{min} = 60\\ \\text{s}$, quindi $1\\ \\text{h} = 3600\\ \\text{s}$.'];
+	const out: Step[] = [{ say: 'Ricorda che il tempo si conta in base 60, non in base 10.', math: ['1\\ \\text{h} = 60\\ \\text{min}', '1\\ \\text{min} = 60\\ \\text{s}'] }];
 	if (a === b) {
-		out.push(`Le due unità sono uguali: la misura non cambia.`);
-		return { ok: true, result, copy, steps: out };
+		out.push({ say: 'Le due unità sono uguali: la misura non cambia.', math: [`${x.tex}\\ ${ta} = \\hl{${yd.tex}\\ ${tb}}`] });
+		return { ok: true, rows, copy, steps: out };
 	}
 	const down = a.pos > b.pos;
 	const f = down ? a.pos / b.pos : b.pos / a.pos;
-	out.push(
-		`Da $${ta}$ a $${tb}$ passi a un'unità più ${down ? 'piccola' : 'grande'}: ${down ? 'moltiplica' : 'dividi'} per ${f === 60 ? '60' : '$60 \\cdot 60 = 3600$'}.`
-	);
-	out.push(`Il risultato è $${x.tex} ${down ? '\\cdot' : ':'} ${f} ${eqTex(y)}$, cioè $${x.tex}\\ ${ta} ${eqTex(y)}\\ ${tb}$.`);
+	out.push({
+		say: `Passi a un'unità più ${down ? 'piccola' : 'grande'}: ${down ? 'moltiplica' : 'dividi'} per ${f}.`,
+		math: [...(f === 3600 ? ['60 \\cdot 60 = 3600'] : []), `${x.tex} ${down ? '\\cdot' : ':'} ${f} ${eqSign(yd.exact)} ${yd.tex}`, `${x.tex}\\ ${ta} ${eqSign(yd.exact)} \\hl{${yd.tex}\\ ${tb}}`]
+	});
 	if (b.id !== 's' && !y.isInteger()) {
-		// Whole hours, minutes and seconds, the seconds rounded.
-		const total = Math.round(seconds.num / seconds.den);
-		const exact = seconds.isInteger();
-		const h = Math.floor(total / 3600);
-		const min = Math.floor((total % 3600) / 60);
-		const s = total % 60;
-		const parts = [
-			...(b.id === 'h' && h ? [`${h}\\ \\text{h}`] : []),
-			...((b.id === 'h' ? min : min + h * 60) ? [`${b.id === 'h' ? min : min + h * 60}\\ \\text{min}`] : []),
-			...(s ? [`${s}\\ \\text{s}`] : [])
-		];
-		if (parts.length > 1 || (parts.length === 1 && !exact))
-			out.push(`In ${b.id === 'h' ? 'ore, minuti e secondi' : 'minuti e secondi'}: moltiplica la parte decimale per 60 per avere l'unità più piccola, e ottieni $${x.tex}\\ ${ta} ${exact ? '=' : '\\approx'} ${parts.join('\\ ')}$.`);
+		// Whole hours, minutes and seconds: the decimal part times 60, twice at most, the seconds rounded.
+		const whole = (v: Rational) => Math.floor(v.num / v.den);
+		let h = b.id === 'h' ? whole(y) : 0;
+		const minutes = b.id === 'h' ? y.sub(q(h)).mul(q(60)) : y;
+		let min = whole(minutes);
+		const secs = minutes.sub(q(min)).mul(q(60));
+		let s = Math.round(secs.num / secs.den);
+		const exact = secs.isInteger();
+		if (s === 60) {
+			s = 0;
+			min++;
+		}
+		if (b.id === 'h' && min === 60) {
+			min = 0;
+			h++;
+		}
+		const parts = [...(h ? [`${h}\\ \\text{h}`] : []), ...(min ? [`${min}\\ \\text{min}`] : []), ...(s ? [`${s}\\ \\text{s}`] : [])];
+		if (parts.length > 1 || (parts.length === 1 && !exact)) {
+			const hFrac = decimal(y.sub(q(whole(y))), DIGITS);
+			const mFrac = decimal(minutes.sub(q(whole(minutes))), DIGITS);
+			const secsD = decimal(secs, 2);
+			const split: Step[] = [];
+			if (b.id === 'h' && !y.sub(q(whole(y))).isZero()) {
+				const md = decimal(minutes, DIGITS);
+				split.push({ say: 'Tieni le ore intere e moltiplica per 60 la parte decimale: sono i minuti.', math: [`${hFrac.tex} \\cdot 60 ${eqSign(hFrac.exact && md.exact)} \\hl{${md.tex}}`] });
+			}
+			if (!minutes.sub(q(whole(minutes))).isZero()) {
+				split.push({
+					say: `Tieni i minuti interi e moltiplica per 60 la parte decimale: sono i secondi.`,
+					math: [`${mFrac.tex} \\cdot 60 ${eqSign(mFrac.exact && secsD.exact)} \\hl{${secsD.tex}}`],
+					then: exact ? undefined : 'Arrotonda i secondi al numero intero più vicino.'
+				});
+			}
+			const inWords = b.id === 'h' ? 'ore, minuti e secondi' : 'minuti e secondi';
+			split.push({ say: `Scrivi la misura in ${inWords}.`, math: [`${x.tex}\\ ${ta} ${eqSign(exact)} \\hl{${parts.join('\\ ')}}`] });
+			out.push(...split);
+			rows.push({ label: `In ${inWords}`, value: `$${exact ? '' : '\\approx '}${parts.join('\\ ')}$` });
+		}
 	}
-	return { ok: true, result, copy, steps: out };
+	return { ok: true, rows, copy, steps: out };
 }

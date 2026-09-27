@@ -1,5 +1,5 @@
 import { Rational, q } from '@/lib/exercises/v2/rational';
-import { fail, type Outcome } from './types';
+import { fail, type Outcome, type Step } from './types';
 import { decimal, intTex, intText, parseDecimal } from './numbers';
 
 /**
@@ -27,8 +27,12 @@ export interface Val {
 
 /** Radicands above this are not simplified (the search for square factors would take too long). */
 const MAX_RADICAND = 1e10;
-/** Decimals shown for a rounded value. */
+/** Decimals accepted in an input, and kept in an exact decimal result. */
 export const DIGITS = 4;
+/** Decimals of a rounded result, as at school: 31,42. */
+export const ROUND = 2;
+/** An exact decimal is written out when it ends within this many decimals (1,2345² = 1,52399025). */
+const EXACT_DIGITS = 8;
 
 const approxOnly = (x: number): Val => ({ c: null, r: 1, pi: 0, x });
 
@@ -127,16 +131,24 @@ export function cmp(a: Val, b: Val): -1 | 0 | 1 {
 // ---------------------------------------------------------------------------------------------------------------
 // Showing values.
 
-/** A decimal rounded to DIGITS, as TeX and text, without "≈". */
+/**
+ * A decimal rounded to ROUND places, as TeX and text, without "≈". The zeros stay ("5,00"), so a rounded value never
+ * looks exact; a small value keeps two significant digits ("0,0071").
+ */
 function rounded(x: number): { tex: string; text: string } {
-	const n = Math.round(x * 10 ** DIGITS);
+	let digits = ROUND;
+	while (digits < EXACT_DIGITS && x !== 0 && Math.abs(x) < 10 ** (1 - digits)) digits++;
+	const n = Math.round(Math.abs(x) * 10 ** digits);
+	const sign = x < 0 && n !== 0 ? '-' : '';
+	const group = (t: string, sep: string) => (t.length > 4 ? t.replace(/\B(?=(\d{3})+(?!\d))/g, sep) : t);
 	if (Number.isSafeInteger(n)) {
-		const d = decimal(Rational.of(n, 10 ** DIGITS), DIGITS);
-		return { tex: d.tex, text: d.text };
+		const s = String(n).padStart(digits + 1, '0');
+		const [whole, frac] = [s.slice(0, -digits), s.slice(-digits)];
+		return { tex: `${sign}${group(whole, '\\,')}{,}${frac}`, text: `${sign}${group(whole, ' ')},${frac}` };
 	}
 	// Beyond the safe integers (an intermediate product, never an input): the whole part is enough.
 	const whole = BigInt(Math.round(x)).toString();
-	return { tex: whole.replace(/\B(?=(\d{3})+(?!\d))/g, '\\,'), text: whole.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') };
+	return { tex: group(whole, '\\,'), text: group(whole, ' ') };
 }
 
 /** The exact form: "5\sqrt{2}", "\dfrac{5\sqrt{2}}{2}", "12{,}5\pi", "\dfrac{15}{2\pi}", "\dfrac{10}{3}". */
@@ -144,7 +156,7 @@ function exactForm(v: Val & { c: Rational }): { tex: string; text: string; termi
 	const c = v.c;
 	const sign = c.num < 0 ? '-' : '';
 	const p = Math.abs(c.num);
-	const d = decimal(c, DIGITS);
+	const d = decimal(c, EXACT_DIGITS);
 	if (v.r === 1 && v.pi === 0) {
 		if (d.exact) return { tex: d.tex, text: d.text, terminating: true };
 		return { tex: `${sign}\\dfrac{${intTex(p)}}{${intTex(c.den)}}`, text: `${sign}${intText(p)}/${intText(c.den)}`, terminating: false };
@@ -161,7 +173,7 @@ function exactForm(v: Val & { c: Rational }): { tex: string; text: string; termi
 		return { tex: `${one ? '' : d.tex}${upTex}`, text: `${one ? '' : d.text}${upText}`, terminating: false };
 	}
 	// Over π with a decimal coefficient: \dfrac{15{,}7}{\pi}.
-	if (v.r === 1 && v.pi < 0 && d.exact) return { tex: `${sign}\\dfrac{${decimal(c.abs(), DIGITS).tex}}{${piTex(-v.pi)}}`, text: `${sign}${decimal(c.abs(), DIGITS).text}/${piText(-v.pi)}`, terminating: false };
+	if (v.r === 1 && v.pi < 0 && d.exact) return { tex: `${sign}\\dfrac{${decimal(c.abs(), EXACT_DIGITS).tex}}{${piTex(-v.pi)}}`, text: `${sign}${decimal(c.abs(), EXACT_DIGITS).text}/${piText(-v.pi)}`, terminating: false };
 	const bare = p === 1 && (rootTex || upTex);
 	const topTex = `${bare ? '' : intTex(p)}${rootTex}${upTex}`;
 	const topText = `${bare ? '' : intText(p)}${rootText}${upText}`;
@@ -223,11 +235,59 @@ export function valueText(v: Val, u: Unit = '', dim: 1 | 2 = 1): string {
 /** A short label for a drawing: the exact form when short, else the decimal. */
 function labelText(v: Val, u: Unit, dim: 1 | 2 = 1): string {
 	const s = shown(v);
-	const t = s.exact && s.exact.text.length <= 8 ? s.exact.text : s.approx ? `${decimal(Rational.of(Math.round(v.x * 100), 100), 2).text}` : s.exact!.text;
+	const t = s.exact && s.exact.text.length <= 8 ? s.exact.text : rounded(v.x).text;
 	return `${t}${unitText(u, dim)}`;
 }
 
-const andList = (items: string[]) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} e ${items[items.length - 1]}`);
+// ---------------------------------------------------------------------------------------------------------------
+// Writing a calculation: one line per transformation (docs/strumenti.md, "Leggibilità").
+
+/** The last lines of a calculation: "= \hl{5\sqrt{2}\,\text{cm}}", then "\approx 7{,}07\,\text{cm}". */
+export function resultLines(v: Val, u: Unit = '', dim: 1 | 2 = 1): string[] {
+	const s = shown(v);
+	const U = unitTex(u, dim);
+	if (!s.exact) return [`\\approx \\hl{${s.approx!.tex}${U}}`];
+	return [`= \\hl{${s.exact.tex}${U}}`, ...(s.approx ? [`\\approx ${s.approx.tex}${U}`] : [])];
+}
+
+/**
+ * A calculation, a line each: the formula with letters, the substitutions and simplifications (each written after
+ * "="), the result with its unit. A line equal to the one before it, or to the result, is left out.
+ */
+export function calc(formula: string, subs: string[], v: Val, u: Unit = '', dim: 1 | 2 = 1): string[] {
+	const exact = shown(v).exact?.tex;
+	const lines = [formula];
+	let last = '';
+	for (const x of subs) {
+		if (x === last || x === exact) continue;
+		lines.push(`= ${x}`);
+		last = x;
+	}
+	return [...lines, ...resultLines(v, u, dim)];
+}
+
+/** "\sqrt{50}", then "\sqrt{5^2 \cdot 2}" when a square factor comes out: the lines of a root before its result. */
+export function rootSubs(radicand: Val): string[] {
+	const lines = [`\\sqrt{${vt(radicand)}}`];
+	const r = sqrt(radicand);
+	if (radicand.c?.isInteger() && r.c?.isInteger() && r.r > 1 && r.c.num > 1) lines.push(`\\sqrt{${intTex(r.c.num)}^2 \\cdot ${intTex(r.r)}}`);
+	return lines;
+}
+
+/** "c_2 = \\sqrt{50}", "= \\sqrt{5^2 \\cdot 2}", "= 5\\sqrt{2}": a root and its result; "c_2 = \\sqrt{5}" once when it stays a root. */
+export function rootCalc(sym: string, radicand: Val, root: Val, u: Unit = ''): string[] {
+	const subs = rootSubs(radicand);
+	if (shown(root).exact?.tex !== subs[0]) return calc(`${sym} = ${subs[0]}`, subs.slice(1), root, u);
+	const [first, ...rest] = resultLines(root, u);
+	return [`${sym} ${first}`, ...rest];
+}
+
+/** The lines of a square root of a sum or a difference of squares: "\sqrt{8^2 + 6^2}", "\sqrt{64 + 36}", "\sqrt{100}". */
+export function pythagorasSubs(a: Val, b: Val, sign: '+' | '-'): string[] {
+	const [a2, b2] = [square(a), square(b)];
+	const radicand = sign === '+' ? add(a2, b2) : sub(a2, b2);
+	return [`\\sqrt{${sqt(a)} ${sign} ${sqt(b)}}`, `\\sqrt{${vt(a2)} ${sign} ${vt(b2)}}`, ...rootSubs(radicand)];
+}
 
 // ---------------------------------------------------------------------------------------------------------------
 // Figures, their modes and their inputs.
@@ -428,7 +488,7 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 /** One measure, positive; a multiple of π when the field accepts it. Null when optional and empty. */
 export function readMeasure(f: Pick<Field, 'the' | 'optional' | 'pi'>, input: string | undefined): Val | null | string {
 	const t = (input ?? '').trim();
-	if (!t) return f.optional ? null : `Scrivi ${f.the}.`;
+	if (!t) return f.optional ? null : `Scrivi ${f.the}, per esempio 12 o 7,5${f.pi ? ', oppure un multiplo di π come 10π' : ''}.`;
 	let body = t;
 	let withPi = false;
 	if (f.pi) {
@@ -440,9 +500,9 @@ export function readMeasure(f: Pick<Field, 'the' | 'optional' | 'pi'>, input: st
 	}
 	const r = parseDecimal(body);
 	if (!r) return `${cap(f.the)}: scrivi un numero, per esempio 12 o 7,5${f.pi ? ', oppure un multiplo di π come 10π' : ''}.`;
-	if (r.sign() <= 0) return `${cap(f.the)} deve essere maggiore di zero.`;
-	if (r.compare(q(MAX)) > 0) return 'Usa misure fino a 100 000.';
-	if (r.den > 10 ** DIGITS) return 'Usa al massimo quattro cifre decimali.';
+	if (r.sign() <= 0) return `${cap(f.the)} deve essere maggiore di zero: scrivi per esempio 5.`;
+	if (r.compare(q(MAX)) > 0) return 'Usa misure fino a 100 000, cambiando unità: per esempio 250 km invece di 250 000 m.';
+	if (r.den > 10 ** DIGITS) return 'Usa al massimo quattro cifre decimali, per esempio 7,1234.';
 	return withPi ? mul(val(r), PI) : val(r);
 }
 
@@ -458,12 +518,27 @@ function readAll(spec: ModeSpec, values: Partial<Record<FieldKey, string>>): Mea
 	return out;
 }
 
-/** The result line and the copy text from the measures found. */
-function answer(items: [string, Val, 1 | 2][], u: Unit): { result: string; copy: string } {
+
+/** A measure found: its name in words, its symbol, its value, length or area. */
+type Item = [label: string, sym: string, v: Val, dim: 1 | 2];
+
+/**
+ * The value of a row: "$d = 5\\sqrt{2}\\,\\text{cm}$ $\\approx 7{,}07\\,\\text{cm}$". The exact value and the decimal are
+ * two formulas, so on a narrow screen the decimal goes to the next line instead of off the edge.
+ */
+export function rowValue(sym: string, v: Val, u: Unit = '', dim: 1 | 2 = 1): string {
+	const s = shown(v);
+	const U = unitTex(u, dim);
+	if (!s.exact) return `$${sym} \\approx ${s.approx!.tex}${U}$`;
+	return `$${sym} = ${s.exact.tex}${U}$${s.approx ? ` $\\approx ${s.approx.tex}${U}$` : ''}`;
+}
+
+/** One row per measure found, and the copy text: "A = 25 cm²; 2p = 20 cm; d = 5√2 cm ≈ 7,07 cm". */
+function answer(items: Item[], u: Unit): { rows: { label: string; value: string }[]; copy: string } {
 	return {
-		result: andList(items.map(([sym, v, dim]) => `$${sym}${eq(v, u, dim)}$`)),
+		rows: items.map(([label, sym, v, dim]) => ({ label, value: rowValue(sym, v, u, dim) })),
 		copy: items
-			.map(([sym, v, dim]) => {
+			.map(([, sym, v, dim]) => {
 				const t = valueText(v, u, dim);
 				return `${sym.replace(/_(\d)/, '$1')} ${t.startsWith('≈') ? '' : '= '}${t}`;
 			})
@@ -471,7 +546,7 @@ function answer(items: [string, Val, 1 | 2][], u: Unit): { result: string; copy:
 	};
 }
 
-const done = (items: [string, Val, 1 | 2][], u: Unit, steps: string[], sketch: Sketch | null): FigureResult => ({
+const done = (items: Item[], u: Unit, steps: Step[], sketch: Sketch | null): FigureResult => ({
 	outcome: { ok: true, ...answer(items, u), steps },
 	sketch
 });
@@ -494,14 +569,25 @@ const HALF = q(1, 2);
 const half = (v: Val) => mul(v, val(HALF));
 const twice = (v: Val) => mul(v, int(2));
 
-/** "\sqrt{50} = 5\sqrt{2} \approx 7{,}0711": the root of a value, with the simplification when there is one. */
-function rootChain(radicand: Val, u: Unit, dim: 1 | 2 = 1): string {
-	const r = sqrt(radicand);
-	const t = vt(radicand);
-	const s = shown(r);
-	// \sqrt{25} = 5, \sqrt{50} = 5\sqrt{2}: say it only when the root changed shape.
-	if (s.exact && s.exact.tex === `\\sqrt{${t}}`) return `\\sqrt{${t}}${s.approx ? ` \\approx ${s.approx.tex}${unitTex(u, dim)}` : ''}`;
-	return `\\sqrt{${t}}${eq(r, u, dim)}`;
+/** The names of the measures, for the rows. */
+const AREA = 'Area';
+const PERIMETER = 'Perimetro';
+
+/** Adds a conclusion to the last step: "Base e altezza sono uguali: questo rettangolo è un quadrato." */
+function conclude(steps: Step[], then: string) {
+	const last = steps[steps.length - 1];
+	last.then = last.then ? `${last.then} ${then}` : then;
+}
+
+/** The triangle inequality, written out: the two shorter sides added, then compared with the longest. */
+function inequalityStep(sides: Val[]): Step {
+	const [s0, s1, big] = [...sides].sort((x, y) => cmp(x, y));
+	const sum = add(s0, s1);
+	return {
+		say: 'Controlla che i tre lati formino un triangolo.',
+		math: [`${vt(s0)} + ${vt(s1)} = ${vt(sum)}`, `\\hl{${vt(big)} < ${vt(sum)}}`],
+		then: 'Il lato più lungo è minore della somma degli altri due: il triangolo esiste.'
+	};
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -510,7 +596,7 @@ function rootChain(radicand: Val, u: Unit, dim: 1 | 2 = 1): string {
 function quadrato(mode: string, m: Measures, u: Unit): FigureResult {
 	const two = int(2);
 	let l: Val;
-	const steps: string[] = [];
+	const steps: Step[] = [];
 	const given = { l: false, d: false };
 	if (mode === 'diagonale') {
 		const d = m.d!;
@@ -519,20 +605,29 @@ function quadrato(mode: string, m: Measures, u: Unit): FigureResult {
 		const A = div(square(d), two);
 		const p = mul(int(4), l);
 		steps.push(
-			`La diagonale divide il quadrato in due triangoli rettangoli isosceli, quindi $d = l\\sqrt{2}$. Ricava il lato: $l = \\dfrac{d}{\\sqrt{2}} = \\dfrac{d\\sqrt{2}}{2} = \\dfrac{${vt(d)}\\sqrt{2}}{2}${eq(l, u)}$.`,
-			`Calcola l'area: il quadrato è anche un rombo, quindi $A = \\dfrac{d^2}{2} = \\dfrac{${sqt(d)}}{2}${eq(A, u, 2)}$.`,
-			`Calcola il perimetro: $2p = 4l = 4 \\cdot ${vt(l)}${eq(p, u)}$.`
+			{ say: 'Ricava il lato: la diagonale è il lato moltiplicato per $\\sqrt{2}$.', math: calc('l = \\dfrac{d}{\\sqrt{2}}', ['\\dfrac{d\\sqrt{2}}{2}', `\\dfrac{${vt(d)}\\sqrt{2}}{2}`], l, u) },
+			{ say: "Calcola l'area con la diagonale: il quadrato è anche un rombo.", math: calc('A = \\dfrac{d^2}{2}', [`\\dfrac{${sqt(d)}}{2}`, `\\dfrac{${vt(square(d))}}{2}`], A, u, 2) },
+			{ say: 'Calcola il perimetro: i quattro lati sono uguali.', math: calc('2p = 4l', [`4 \\cdot ${vt(l)}`], p, u) }
 		);
-		return done([['l', l, 1], ['A', A, 2], ['2p', p, 1]], u, steps, squareSketch(l, d, given, u));
+		return done(
+			[
+				['Lato', 'l', l, 1],
+				[AREA, 'A', A, 2],
+				[PERIMETER, '2p', p, 1]
+			],
+			u,
+			steps,
+			squareSketch(l, d, given, u)
+		);
 	}
 	if (mode === 'area') {
 		const A = m.A!;
 		l = sqrt(A);
-		steps.push(`L'area del quadrato è $A = l^2$: ricava il lato con la radice quadrata, $l = \\sqrt{A} = ${rootChain(A, u)}$.`);
+		steps.push({ say: "Ricava il lato: l'area è il lato per sé stesso, quindi fai la radice quadrata.", math: calc('l = \\sqrt{A}', rootSubs(A), l, u) });
 	} else if (mode === 'perimetro') {
 		const p = m['2p']!;
 		l = div(p, int(4));
-		steps.push(`I quattro lati sono uguali: dividi il perimetro per 4, $l = \\dfrac{2p}{4} = \\dfrac{${vt(p)}}{4}${eq(l, u)}$.`);
+		steps.push({ say: 'Ricava il lato: dividi il perimetro per 4.', math: calc('l = \\dfrac{2p}{4}', [`\\dfrac{${vt(p)}}{4}`], l, u) });
 	} else {
 		l = m.l!;
 		given.l = true;
@@ -540,11 +635,18 @@ function quadrato(mode: string, m: Measures, u: Unit): FigureResult {
 	const A = square(l);
 	const p = mul(int(4), l);
 	const d = mul(l, sqrt(two));
-	if (mode !== 'perimetro') steps.push(`Calcola il perimetro: i quattro lati sono uguali, quindi $2p = 4l = 4 \\cdot ${vt(l)}${eq(p, u)}$.`);
-	if (mode !== 'area') steps.push(`Calcola l'area moltiplicando il lato per sé stesso: $A = l^2 = ${sqt(l)}${eq(A, u, 2)}$.`);
-	const dSub = isRational(l) ? `${vt(l)}\\sqrt{2}` : `${vt(l)} \\cdot \\sqrt{2}`;
-	steps.push(`Trova la diagonale con il teorema di Pitagora: è l'ipotenusa di un triangolo rettangolo che ha per cateti due lati, quindi $d = \\sqrt{l^2 + l^2} = l\\sqrt{2}${shown(d).exact?.tex === dSub ? '' : ` = ${dSub}`}${eq(d, u)}$.`);
-	const items: [string, Val, 1 | 2][] = mode === 'lato' ? [['A', A, 2], ['2p', p, 1], ['d', d, 1]] : mode === 'area' ? [['l', l, 1], ['2p', p, 1], ['d', d, 1]] : [['l', l, 1], ['A', A, 2], ['d', d, 1]];
+	if (mode !== 'perimetro') steps.push({ say: 'Calcola il perimetro: i quattro lati sono uguali.', math: calc('2p = 4l', [`4 \\cdot ${vt(l)}`], p, u) });
+	if (mode !== 'area') steps.push({ say: "Calcola l'area: moltiplica il lato per sé stesso.", math: calc('A = l^2', [sqt(l)], A, u, 2) });
+	steps.push({
+		say: "Calcola la diagonale con Pitagora: è l'ipotenusa, e i cateti sono due lati.",
+		math: calc('d = \\sqrt{l^2 + l^2}', pythagorasSubs(l, l, '+'), d, u),
+		then: 'In ogni quadrato la diagonale è il lato moltiplicato per $\\sqrt{2}$.'
+	});
+	const items: Item[] = [];
+	if (mode !== 'lato') items.push(['Lato', 'l', l, 1]);
+	if (mode !== 'area') items.push([AREA, 'A', A, 2]);
+	if (mode !== 'perimetro') items.push([PERIMETER, '2p', p, 1]);
+	items.push(['Diagonale', 'd', d, 1]);
 	const sketch = squareSketch(l, d, given, u);
 	if (mode === 'area') sketch.caption = { text: `A = ${labelText(m.A!, u, 2)}`, given: true };
 	if (mode === 'perimetro') sketch.caption = { text: `2p = ${labelText(m['2p']!, u)}`, given: true };
@@ -578,7 +680,7 @@ function squareSketch(l: Val, d: Val, given: { l: boolean; d: boolean }, u: Unit
 }
 
 function rettangolo(mode: string, m: Measures, u: Unit): FigureResult {
-	const steps: string[] = [];
+	const steps: Step[] = [];
 	const b = m.b!;
 	let h: Val;
 	let d: Val | null = null;
@@ -586,33 +688,40 @@ function rettangolo(mode: string, m: Measures, u: Unit): FigureResult {
 	if (mode === 'diagonale') {
 		d = m.d!;
 		given.d = true;
-		if (cmp(d, b) <= 0) return failed('La diagonale è l\'ipotenusa del triangolo che forma con base e altezza: deve essere più lunga della base.');
+		if (cmp(d, b) <= 0) return failed("La diagonale deve essere più lunga della base: è l'ipotenusa del triangolo che forma con base e altezza. Per esempio: base 12, diagonale 13.");
 		h = sqrt(sub(square(d), square(b)));
-		steps.push(`Base, altezza e diagonale formano un triangolo rettangolo in cui la diagonale è l'ipotenusa. Ricava l'altezza con il teorema di Pitagora: $h = \\sqrt{d^2 - b^2} = \\sqrt{${sqt(d)} - ${sqt(b)}} = ${rootChain(sub(square(d), square(b)), u)}$.`);
+		steps.push({ say: "Ricava l'altezza con Pitagora: la diagonale è l'ipotenusa, la base un cateto.", math: calc('h = \\sqrt{d^2 - b^2}', pythagorasSubs(d, b, '-'), h, u) });
 	} else if (mode === 'area') {
 		const A = m.A!;
 		h = div(A, b);
-		steps.push(`L'area è base per altezza, quindi l'altezza è l'area divisa per la base: $h = \\dfrac{A}{b} = \\dfrac{${vt(A)}}{${vt(b)}}${eq(h, u)}$.`);
+		steps.push({ say: "Ricava l'altezza: dividi l'area per la base.", math: calc('h = \\dfrac{A}{b}', [`\\dfrac{${vt(A)}}{${vt(b)}}`], h, u) });
 	} else if (mode === 'perimetro') {
 		const p = m['2p']!;
-		if (cmp(p, twice(b)) <= 0) return failed(`Il perimetro deve essere più del doppio della base (${plain(twice(b))}): altrimenti per l'altezza non resta niente.`);
+		if (cmp(p, twice(b)) <= 0) return failed(`Il perimetro deve essere più del doppio della base (${plain(twice(b))}), altrimenti per l'altezza non resta niente. Per esempio: perimetro 34, base 12.`);
 		const sp = half(p);
 		h = sub(sp, b);
-		steps.push(`Il semiperimetro è la somma di base e altezza: $p = \\dfrac{2p}{2} = \\dfrac{${vt(p)}}{2}${eq(sp, u)}$.`, `Togli la base dal semiperimetro: $h = p - b = ${vt(sp)} - ${vt(b)}${eq(h, u)}$.`);
+		steps.push(
+			{ say: 'Dividi il perimetro per 2: ottieni il semiperimetro, cioè base più altezza.', math: calc('p = \\dfrac{2p}{2}', [`\\dfrac{${vt(p)}}{2}`], sp, u) },
+			{ say: "Togli la base dal semiperimetro: resta l'altezza.", math: calc('h = p - b', [`${vt(sp)} - ${vt(b)}`], h, u) }
+		);
 	} else {
 		h = m.h!;
 		given.h = true;
 	}
 	const A = mul(b, h);
 	const p = twice(add(b, h));
-	if (mode !== 'area') steps.push(`Calcola l'area: $A = b \\cdot h = ${vt(b)} \\cdot ${vt(h)}${eq(A, u, 2)}$.`);
-	if (mode !== 'perimetro') steps.push(`Calcola il perimetro, il doppio della somma di base e altezza: $2p = 2(b + h) = 2(${vt(b)} + ${vt(h)})${eq(p, u)}$.`);
+	if (mode !== 'area') steps.push({ say: "Calcola l'area: moltiplica la base per l'altezza.", math: calc('A = b \\cdot h', [`${vt(b)} \\cdot ${vt(h)}`], A, u, 2) });
+	if (mode !== 'perimetro') steps.push({ say: "Calcola il perimetro: il doppio della somma di base e altezza.", math: calc('2p = 2(b + h)', [`2(${vt(b)} + ${vt(h)})`, `2 \\cdot ${vt(add(b, h))}`], p, u) });
 	if (!d) {
 		d = sqrt(add(square(b), square(h)));
-		steps.push(`Trova la diagonale con il teorema di Pitagora: $d = \\sqrt{b^2 + h^2} = \\sqrt{${sqt(b)} + ${sqt(h)}} = ${rootChain(add(square(b), square(h)), u)}$.`);
+		steps.push({ say: "Calcola la diagonale con Pitagora: è l'ipotenusa, base e altezza sono i cateti.", math: calc('d = \\sqrt{b^2 + h^2}', pythagorasSubs(b, h, '+'), d, u) });
 	}
-	if (cmp(b, h) === 0) steps.push('Base e altezza sono uguali: questo rettangolo è un quadrato.');
-	const items: [string, Val, 1 | 2][] = mode === 'lati' ? [['A', A, 2], ['2p', p, 1], ['d', d, 1]] : mode === 'area' ? [['h', h, 1], ['2p', p, 1], ['d', d, 1]] : mode === 'perimetro' ? [['h', h, 1], ['A', A, 2], ['d', d, 1]] : [['h', h, 1], ['A', A, 2], ['2p', p, 1]];
+	if (cmp(b, h) === 0) conclude(steps, 'Base e altezza sono uguali: questo rettangolo è un quadrato.');
+	const items: Item[] = [];
+	if (mode !== 'lati') items.push(['Altezza', 'h', h, 1]);
+	if (mode !== 'area') items.push([AREA, 'A', A, 2]);
+	if (mode !== 'perimetro') items.push([PERIMETER, '2p', p, 1]);
+	if (mode !== 'diagonale') items.push(['Diagonale', 'd', d, 1]);
 	const [w, t] = [b.x, h.x];
 	const sketch: Sketch = {
 		outline: [
@@ -648,8 +757,9 @@ function triangleCheck(sides: Val[]): string | null {
 	const sum = add(s1, s2);
 	const c = cmp(big, sum);
 	if (c < 0) return null;
-	if (c === 0) return `Queste misure non formano un triangolo: il lato più lungo (${plain(big)}) è uguale alla somma degli altri due, e i tre vertici starebbero su una retta.`;
-	return `Queste misure non formano un triangolo: il lato più lungo (${plain(big)}) deve essere minore della somma degli altri due (${plain(s1)} + ${plain(s2)} = ${plain(sum)}).`;
+	const fix = 'Controlla i dati: per esempio 5, 6 e 7 formano un triangolo.';
+	if (c === 0) return `Queste misure non formano un triangolo: il lato più lungo (${plain(big)}) è uguale alla somma degli altri due, e i tre vertici starebbero su una retta. ${fix}`;
+	return `Queste misure non formano un triangolo: il lato più lungo (${plain(big)}) deve essere minore della somma degli altri due (${plain(s1)} + ${plain(s2)} = ${plain(sum)}). ${fix}`;
 }
 
 /** Apex of a triangle on the base from (0,0) to (a,0), with the other sides b (left) and c (right). */
@@ -659,75 +769,111 @@ function apex(a: number, b: number, c: number): Pt {
 }
 
 function triangolo(mode: string, m: Measures, u: Unit): FigureResult {
-	const steps: string[] = [];
+	const steps: Step[] = [];
 	if (mode === 'equilatero') {
 		const l = m.l!;
 		const h = half(mul(l, root(3)));
 		const A = half(mul(l, h));
 		const p = mul(int(3), l);
 		steps.push(
-			`Calcola il perimetro: i tre lati sono uguali, $2p = 3l = 3 \\cdot ${vt(l)}${eq(p, u)}$.`,
-			`L'altezza divide il triangolo in due triangoli rettangoli con ipotenusa $l$ e cateto $\\dfrac{l}{2}$. Con il teorema di Pitagora: $h = \\sqrt{l^2 - \\left(\\dfrac{l}{2}\\right)^2} = \\dfrac{l\\sqrt{3}}{2} = \\dfrac{${vt(l)}\\sqrt{3}}{2}${eq(h, u)}$.`,
-			`Calcola l'area: $A = \\dfrac{l \\cdot h}{2} = \\dfrac{l^2\\sqrt{3}}{4} = \\dfrac{${sqt(l)}\\sqrt{3}}{4}${eq(A, u, 2)}$.`
+			{ say: 'Calcola il perimetro: i tre lati sono uguali.', math: calc('2p = 3l', [`3 \\cdot ${vt(l)}`], p, u) },
+			{
+				say: "Calcola l'altezza con Pitagora: l'ipotenusa è un lato, un cateto è metà lato.",
+				math: calc('h = \\sqrt{l^2 - \\left(\\dfrac{l}{2}\\right)^2}', ['\\sqrt{\\dfrac{3l^2}{4}}', '\\dfrac{l\\sqrt{3}}{2}', `\\dfrac{${vt(l)}\\sqrt{3}}{2}`], h, u)
+			},
+			{
+				say: "Calcola l'area: base per altezza, diviso 2.",
+				math: calc('A = \\dfrac{l \\cdot h}{2}', ['\\dfrac{l^2\\sqrt{3}}{4}', `\\dfrac{${sqt(l)}\\sqrt{3}}{4}`, `\\dfrac{${vt(square(l))}\\sqrt{3}}{4}`], A, u, 2)
+			}
 		);
 		const s = l.x;
 		const top: Pt = [s / 2, (s * Math.sqrt(3)) / 2];
-		return done([['A', A, 2], ['2p', p, 1], ['h', h, 1]], u, steps, {
-			outline: [[0, 0], [s, 0], top],
-			lines: [[top, [s / 2, 0]]],
-			labels: [lab([0, 0], [s, 0], 'l', l, true, u), lab(top, [s / 2, 0], 'h', h, false, u, true)],
-			right: [[[s / 2, 0], [s, 0], top]]
-		});
+		return done(
+			[
+				[AREA, 'A', A, 2],
+				[PERIMETER, '2p', p, 1],
+				['Altezza', 'h', h, 1]
+			],
+			u,
+			steps,
+			{
+				outline: [[0, 0], [s, 0], top],
+				lines: [[top, [s / 2, 0]]],
+				labels: [lab([0, 0], [s, 0], 'l', l, true, u), lab(top, [s / 2, 0], 'h', h, false, u, true)],
+				right: [[[s / 2, 0], [s, 0], top]]
+			}
+		);
 	}
 	if (mode === 'lati') {
 		const [a, b, c] = [m.a!, m.b!, m.c!];
 		const bad = triangleCheck([a, b, c]);
 		if (bad) return failed(bad);
-		const sorted = [a, b, c].sort((x, y) => cmp(x, y));
 		const p2 = add(add(a, b), c);
 		const p = half(p2);
 		const [pa, pb, pc] = [sub(p, a), sub(p, b), sub(p, c)];
 		const radicand = mul(mul(p, pa), mul(pb, pc));
 		const A = sqrt(radicand);
+		const diffRow = (name: string, side: Val, d: Val) => [`$p - ${name}$`, `$${vt(p)} - ${vt(side)}$`, `$${vt(d)}$`];
 		steps.push(
-			`Controlla che i lati formino un triangolo: il più lungo, $${vt(sorted[2])}$, è minore della somma degli altri due, $${vt(sorted[0])} + ${vt(sorted[1])}${eq(add(sorted[0], sorted[1]))}$.`,
-			`Calcola il perimetro: $2p = a + b + c = ${vt(a)} + ${vt(b)} + ${vt(c)}${eq(p2, u)}$.`,
-			`Dividilo per 2 per avere il semiperimetro: $p${eq(p, u)}$.`,
-			`Calcola le differenze tra il semiperimetro e ciascun lato: $p - a${eq(pa)}$, $p - b${eq(pb)}$, $p - c${eq(pc)}$.`,
-			`Applica la formula di Erone: $A = \\sqrt{p(p - a)(p - b)(p - c)} = \\sqrt{${vt(p)} \\cdot ${vt(pa)} \\cdot ${vt(pb)} \\cdot ${vt(pc)}} = ${rootChain(radicand, u, 2)}$.`
+			{ ...inequalityStep([a, b, c]), group: 'Il controllo dei lati' },
+			{ group: 'Il perimetro', say: 'Somma i tre lati.', math: calc('2p = a + b + c', [`${vt(a)} + ${vt(b)} + ${vt(c)}`], p2, u) },
+			{ say: 'Dividi il perimetro per 2: ottieni il semiperimetro $p$.', math: calc('p = \\dfrac{2p}{2}', [`\\dfrac{${vt(p2)}}{2}`], p, u) },
+			{
+				group: "L'area con la formula di Erone",
+				say: 'Togli ogni lato dal semiperimetro.',
+				table: { head: ['Differenza', 'Calcolo', 'Risultato'], rows: [diffRow('a', a, pa), diffRow('b', b, pb), diffRow('c', c, pc)] }
+			},
+			{
+				say: 'Moltiplica il semiperimetro per le tre differenze, poi fai la radice quadrata.',
+				math: calc('A = \\sqrt{p(p - a)(p - b)(p - c)}', [`\\sqrt{${vt(p)} \\cdot ${vt(pa)} \\cdot ${vt(pb)} \\cdot ${vt(pc)}}`, ...rootSubs(radicand)], A, u, 2)
+			}
 		);
-		const [s0, s1, s2] = sorted;
-		const right = cmp(add(square(s0), square(s1)), square(s2)) === 0;
+		const [s0, s1, s2] = [a, b, c].sort((x, y) => cmp(x, y));
+		const [q0, q1, q2] = [square(s0), square(s1), square(s2)];
+		const legs = add(q0, q1);
+		const angle = cmp(q2, legs);
 		const equal = [cmp(a, b), cmp(b, c), cmp(a, c)].filter((x) => x === 0).length;
-		const kind = equal === 3 ? 'equilatero' : equal === 1 ? 'isoscele' : 'scaleno';
-		if (right) steps.push(`Il triangolo è ${kind === 'isoscele' ? 'rettangolo isoscele' : 'rettangolo'}, perché $${sqt(s0)} + ${sqt(s1)} = ${sqt(s2)}$: l'area è anche metà del prodotto dei cateti, $\\dfrac{${vt(s0)} \\cdot ${vt(s1)}}{2}${eq(half(mul(s0, s1)), u, 2)}$.`);
-		else steps.push(`Il triangolo è ${kind}${kind === 'equilatero' ? '' : `, ${cmp(add(square(s0), square(s1)), square(s2)) < 0 ? 'ottusangolo' : 'acutangolo'}`}.`);
-		const top = apex(a.x, b.x, c.x);
-		return done([['A', A, 2], ['2p', p2, 1]], u, steps, {
-			outline: [[0, 0], [a.x, 0], top],
-			lines: [],
-			labels: [lab([0, 0], [a.x, 0], 'a', a, true, u), lab([0, 0], top, 'b', b, true, u), lab([a.x, 0], top, 'c', c, true, u)],
-			right: []
+		const kind = equal === 3 ? 'I tre lati sono uguali: il triangolo è equilatero.' : equal === 1 ? 'Due lati sono uguali: il triangolo è isoscele.' : 'I tre lati sono diversi: il triangolo è scaleno.';
+		const angleText =
+			angle === 0 ? 'Sono uguali: il triangolo è rettangolo.' : angle < 0 ? `$${vt(q2)} < ${vt(legs)}$: il triangolo è acutangolo.` : `$${vt(q2)} > ${vt(legs)}$: il triangolo è ottusangolo.`;
+		steps.push({
+			group: 'Che triangolo è',
+			say: 'Confronta il quadrato del lato più lungo con la somma dei quadrati degli altri.',
+			math: [`${sqt(s0)} + ${sqt(s1)} = ${vt(q0)} + ${vt(q1)} = ${vt(legs)}`, `${sqt(s2)} = ${vt(q2)}`],
+			then: `${angleText} ${kind}`
 		});
+		if (angle === 0) steps.push({ say: "Controlla l'area con i cateti: è metà del loro prodotto.", math: calc('A = \\dfrac{c_1 \\cdot c_2}{2}', [`\\dfrac{${vt(s0)} \\cdot ${vt(s1)}}{2}`, `\\dfrac{${vt(mul(s0, s1))}}{2}`], half(mul(s0, s1)), u, 2) });
+		const top = apex(a.x, b.x, c.x);
+		return done(
+			[
+				[AREA, 'A', A, 2],
+				[PERIMETER, '2p', p2, 1]
+			],
+			u,
+			steps,
+			{
+				outline: [[0, 0], [a.x, 0], top],
+				lines: [],
+				labels: [lab([0, 0], [a.x, 0], 'a', a, true, u), lab([0, 0], top, 'b', b, true, u), lab([a.x, 0], top, 'c', c, true, u)],
+				right: []
+			}
+		);
 	}
 	// Base and height, and the other two sides when known.
 	const [b, h, l1, l2] = [m.b!, m.h!, m.l_1, m.l_2];
 	const A = half(mul(b, h));
-	steps.push(`Calcola l'area, metà del prodotto della base per l'altezza: $A = \\dfrac{b \\cdot h}{2} = \\dfrac{${vt(b)} \\cdot ${vt(h)}}{2}${eq(A, u, 2)}$.`);
+	steps.push({ say: "Calcola l'area: moltiplica la base per l'altezza e dividi per 2.", math: calc('A = \\dfrac{b \\cdot h}{2}', [`\\dfrac{${vt(b)} \\cdot ${vt(h)}}{2}`, `\\dfrac{${vt(mul(b, h))}}{2}`], A, u, 2) });
 	if (!l1 !== !l2) return failed('Per il perimetro servono tutti e due gli altri lati: scrivili entrambi, oppure lasciali vuoti.');
 	let top: Pt = [b.x * 0.35, h.x];
-	const items: [string, Val, 1 | 2][] = [['A', A, 2]];
+	const items: Item[] = [[AREA, 'A', A, 2]];
 	const labels = [lab([0, 0], [b.x, 0], 'b', b, true, u)];
 	if (l1 && l2) {
 		const bad = triangleCheck([b, l1, l2]);
 		if (bad) return failed(bad);
-		if (cmp(l1, h) < 0 || cmp(l2, h) < 0) return failed("Un lato non può essere più corto dell'altezza: l'altezza è la distanza del vertice dalla base, e ogni lato che parte dal vertice è lungo almeno quanto lei.");
+		if (cmp(l1, h) < 0 || cmp(l2, h) < 0) return failed("Un lato non può essere più corto dell'altezza: l'altezza è la distanza del vertice dalla base, e ogni lato che parte dal vertice è lungo almeno quanto lei. Per esempio: base 14, altezza 12, lati 13 e 15.");
 		const p = add(add(b, l1), l2);
-		steps.push(
-			`Controlla che i tre lati formino un triangolo: ognuno deve essere minore della somma degli altri due, e qui lo è.`,
-			`Calcola il perimetro, la somma dei tre lati: $2p = b + l_1 + l_2 = ${vt(b)} + ${vt(l1)} + ${vt(l2)}${eq(p, u)}$.`
-		);
-		items.push(['2p', p, 1]);
+		steps.push(inequalityStep([b, l1, l2]), { say: 'Calcola il perimetro: somma i tre lati.', math: calc('2p = b + l_1 + l_2', [`${vt(b)} + ${vt(l1)} + ${vt(l2)}`], p, u) });
+		items.push([PERIMETER, '2p', p, 1]);
 		// Draw with the sides; the height drawn is the one they give.
 		const t = apex(b.x, l1.x, l2.x);
 		top = [t[0], t[1]];
@@ -735,9 +881,14 @@ function triangolo(mode: string, m: Measures, u: Unit): FigureResult {
 		// The height the three sides give, to warn about data that do not agree.
 		const s = (b.x + l1.x + l2.x) / 2;
 		const hSides = (2 * Math.sqrt(Math.max(s * (s - b.x) * (s - l1.x) * (s - l2.x), 0))) / b.x;
-		if (Math.abs(hSides - h.x) > 1e-6 * Math.max(1, h.x)) steps.push(`Attenzione: con questi tre lati l'altezza relativa alla base misura circa $${rounded(hSides).tex}${unitTex(u, 1)}$, non $${vt(h)}${unitTex(u, 1)}$. Controlla i dati del problema.`);
+		if (Math.abs(hSides - h.x) > 1e-6 * Math.max(1, h.x))
+			steps.push({
+				say: "Attenzione: con questi tre lati l'altezza viene diversa.",
+				math: [`h \\approx ${rounded(hSides).tex}${unitTex(u, 1)}`],
+				then: `Il problema dà $h = ${vt(h)}${unitTex(u, 1)}$: controlla i dati.`
+			});
 	} else {
-		steps.push('Per il perimetro servono i tre lati: scrivi anche gli altri due, se li conosci.');
+		steps.push({ say: 'Per il perimetro servono anche gli altri due lati.', then: 'Scrivili nei campi $l_1$ e $l_2$, se li conosci.' });
 	}
 	const foot: Pt = [top[0], 0];
 	const lines: [Pt, Pt][] = [[top, foot]];
@@ -754,38 +905,42 @@ function triangolo(mode: string, m: Measures, u: Unit): FigureResult {
 
 function trapezio(mode: string, m: Measures, u: Unit): FigureResult {
 	const [B, b, h] = [m.B!, m.b!, m.h!];
-	if (cmp(B, b) <= 0) return failed(cmp(B, b) === 0 ? 'Con le basi uguali la figura è un parallelogramma, non un trapezio.' : 'La base maggiore deve essere più lunga della base minore: scambiale.');
-	const steps: string[] = [];
-	const A = half(mul(add(B, b), h));
-	const areaStep = `Calcola l'area, la somma delle basi per l'altezza diviso 2: $A = \\dfrac{(B + b) \\cdot h}{2} = \\dfrac{(${vt(B)} + ${vt(b)}) \\cdot ${vt(h)}}{2}${eq(A, u, 2)}$.`;
+	if (cmp(B, b) <= 0) return failed(cmp(B, b) === 0 ? 'Con le basi uguali la figura è un parallelogramma, non un trapezio: usa il calcolatore del parallelogramma.' : 'La base maggiore deve essere più lunga della base minore: scambiale.');
+	const steps: Step[] = [];
+	const sum = add(B, b);
+	const A = half(mul(sum, h));
+	const areaStep: Step = {
+		say: "Calcola l'area: somma le basi, moltiplica per l'altezza e dividi per 2.",
+		math: calc('A = \\dfrac{(B + b) \\cdot h}{2}', [`\\dfrac{(${vt(B)} + ${vt(b)}) \\cdot ${vt(h)}}{2}`, `\\dfrac{${vt(sum)} \\cdot ${vt(h)}}{2}`, `\\dfrac{${vt(mul(sum, h))}}{2}`], A, u, 2)
+	};
 	const diff = sub(B, b);
 	let left: number;
 	const labels = [lab([0, 0], [B.x, 0], 'B', B, true, u)];
-	const items: [string, Val, 1 | 2][] = [['A', A, 2]];
+	const items: Item[] = [[AREA, 'A', A, 2]];
 	const right: [Pt, Pt, Pt][] = [];
 	if (mode === 'isoscele') {
 		const proj = half(diff);
 		const l = sqrt(add(square(h), square(proj)));
-		const p = add(add(B, b), twice(l));
+		const p = add(sum, twice(l));
 		steps.push(
-			`In un trapezio isoscele le due altezze tracciate dagli estremi della base minore staccano sulla base maggiore due segmenti uguali: $\\dfrac{B - b}{2} = \\dfrac{${vt(B)} - ${vt(b)}}{2}${eq(proj, u)}$.`,
-			`Ogni lato obliquo è l'ipotenusa di un triangolo rettangolo che ha per cateti l'altezza e quel segmento. Con il teorema di Pitagora: $l = \\sqrt{${sqt(h)} + ${sqt(proj)}} = ${rootChain(add(square(h), square(proj)), u)}$.`,
+			{ say: 'Calcola $x$, il pezzo che ogni altezza stacca sulla base maggiore.', math: calc('x = \\dfrac{B - b}{2}', [`\\dfrac{${vt(B)} - ${vt(b)}}{2}`, `\\dfrac{${vt(diff)}}{2}`], proj, u) },
+			{ say: 'Calcola il lato obliquo con Pitagora: i cateti sono $h$ e $x$.', math: calc('l = \\sqrt{h^2 + x^2}', pythagorasSubs(h, proj, '+'), l, u) },
 			areaStep,
-			`Calcola il perimetro: $2p = B + b + 2l = ${vt(B)} + ${vt(b)} + 2 \\cdot ${vt(l)}${eq(p, u)}$.`
+			{ say: 'Calcola il perimetro: le due basi e due volte il lato obliquo.', math: calc('2p = B + b + 2l', [`${vt(B)} + ${vt(b)} + 2 \\cdot ${vt(l)}`, `${vt(sum)} + ${vt(twice(l))}`], p, u) }
 		);
-		items.push(['2p', p, 1], ['l', l, 1]);
+		items.push([PERIMETER, '2p', p, 1], ['Lato obliquo', 'l', l, 1]);
 		left = proj.x;
 		labels.push(lab([B.x, 0], [left + b.x, h.x], 'l', l, false, u));
 	} else if (mode === 'rettangolo') {
 		const l = sqrt(add(square(h), square(diff)));
-		const p = add(add(add(B, b), h), l);
+		const p = add(add(sum, h), l);
 		steps.push(
-			`In un trapezio rettangolo un lato è perpendicolare alle basi ed è l'altezza. L'altezza tracciata dall'altro estremo della base minore stacca sulla base maggiore il segmento $B - b = ${vt(B)} - ${vt(b)}${eq(diff, u)}$.`,
-			`Il lato obliquo è l'ipotenusa del triangolo rettangolo che ha per cateti l'altezza e quel segmento: $l = \\sqrt{${sqt(h)} + ${sqt(diff)}} = ${rootChain(add(square(h), square(diff)), u)}$.`,
+			{ say: "Calcola $x$, il pezzo che l'altezza stacca sulla base maggiore.", math: calc('x = B - b', [`${vt(B)} - ${vt(b)}`], diff, u), then: "L'altro lato è perpendicolare alle basi: è l'altezza." },
+			{ say: 'Calcola il lato obliquo con Pitagora: i cateti sono $h$ e $x$.', math: calc('l = \\sqrt{h^2 + x^2}', pythagorasSubs(h, diff, '+'), l, u) },
 			areaStep,
-			`Calcola il perimetro: i lati sono le due basi, l'altezza e il lato obliquo, $2p = B + b + h + l = ${vt(B)} + ${vt(b)} + ${vt(h)} + ${vt(l)}${eq(p, u)}$.`
+			{ say: "Calcola il perimetro: le due basi, l'altezza e il lato obliquo.", math: calc('2p = B + b + h + l', [`${vt(B)} + ${vt(b)} + ${vt(h)} + ${vt(l)}`], p, u) }
 		);
-		items.push(['2p', p, 1], ['l', l, 1]);
+		items.push([PERIMETER, '2p', p, 1], ['Lato obliquo', 'l', l, 1]);
 		left = 0;
 		labels.push(lab([B.x, 0], [b.x, h.x], 'l', l, false, u));
 		right.push([[0, 0], [1, 0], [0, 1]]);
@@ -794,19 +949,30 @@ function trapezio(mode: string, m: Measures, u: Unit): FigureResult {
 		steps.push(areaStep);
 		if (!l1 !== !l2) return failed('Per il perimetro servono tutti e due i lati obliqui: scrivili entrambi, oppure lasciali vuoti.');
 		if (l1 && l2) {
-			if (cmp(l1, h) < 0 || cmp(l2, h) < 0) return failed("Un lato obliquo non può essere più corto dell'altezza: l'altezza è la distanza tra le due basi.");
-			const p = add(add(B, b), add(l1, l2));
-			steps.push(`Calcola il perimetro, la somma dei quattro lati: $2p = B + b + l_1 + l_2 = ${vt(B)} + ${vt(b)} + ${vt(l1)} + ${vt(l2)}${eq(p, u)}$.`);
-			items.push(['2p', p, 1]);
+			if (cmp(l1, h) < 0 || cmp(l2, h) < 0) return failed("Un lato obliquo non può essere più corto dell'altezza: l'altezza è la distanza tra le due basi. Per esempio: altezza 12, lati obliqui 13 e 15.");
+			const p = add(sum, add(l1, l2));
+			steps.push({ say: 'Calcola il perimetro: somma i quattro lati.', math: calc('2p = B + b + l_1 + l_2', [`${vt(B)} + ${vt(b)} + ${vt(l1)} + ${vt(l2)}`], p, u) });
+			items.push([PERIMETER, '2p', p, 1]);
 			const p1 = Math.sqrt(Math.max(l1.x ** 2 - h.x ** 2, 0));
 			const p2 = Math.sqrt(Math.max(l2.x ** 2 - h.x ** 2, 0));
 			// The oblique sides agree with the bases when their projections add up to B - b.
 			if (Math.abs(p1 + p2 - diff.x) > 1e-6 * Math.max(1, diff.x) && Math.abs(Math.abs(p1 - p2) - diff.x) > 1e-6 * Math.max(1, diff.x))
-				steps.push(`Attenzione: le proiezioni dei lati obliqui sulla base maggiore misurano circa $${rounded(p1).tex}$ e $${rounded(p2).tex}$, e la loro somma dovrebbe essere $B - b${eq(diff)}$. Controlla i dati del problema.`);
+				steps.push({
+					say: "Attenzione: i lati obliqui non vanno d'accordo con le basi.",
+					table: {
+						head: ['Proiezione', 'Misura'],
+						rows: [
+							['di $l_1$', `$\\approx ${rounded(p1).tex}$`],
+							['di $l_2$', `$\\approx ${rounded(p2).tex}$`],
+							['somma attesa, $B - b$', `$${vt(diff)}$`]
+						]
+					},
+					then: 'Le due proiezioni dovrebbero sommarsi a $B - b$: controlla i dati.'
+				});
 			left = p1 + p2 > 0 ? (p1 / (p1 + p2)) * diff.x : diff.x / 2;
 			labels.push(lab([0, 0], [left, h.x], 'l_1', l1, true, u), lab([B.x, 0], [left + b.x, h.x], 'l_2', l2, true, u));
 		} else {
-			steps.push('Per il perimetro servono anche i lati obliqui: scrivili, se li conosci, oppure scegli il trapezio isoscele o rettangolo.');
+			steps.push({ say: 'Per il perimetro servono anche i lati obliqui.', then: 'Scrivili, se li conosci, oppure scegli il trapezio isoscele o rettangolo.' });
 			left = diff.x * 0.3;
 		}
 	}
@@ -824,80 +990,94 @@ function trapezio(mode: string, m: Measures, u: Unit): FigureResult {
 }
 
 function rombo(mode: string, m: Measures, u: Unit): FigureResult {
-	const steps: string[] = [];
+	const steps: Step[] = [];
 	const l0 = m.l ?? null;
 	let d1: Val;
 	let d2: Val;
 	let l: Val;
 	const given = { d1: false, d2: false, l: false };
+	const perimeter = (side: Val, p: Val): Step => ({ say: 'Calcola il perimetro: i quattro lati sono uguali.', math: calc('2p = 4l', [`4 \\cdot ${vt(side)}`], p, u) });
 	if (mode === 'lato-altezza') {
 		l = l0!;
 		const h = m.h!;
-		if (cmp(h, l) > 0) return failed("L'altezza non può superare il lato: è la distanza tra due lati paralleli, e il lato è obliquo.");
+		if (cmp(h, l) > 0) return failed("L'altezza non può superare il lato: è la distanza tra due lati paralleli, e il lato è obliquo. Per esempio: lato 10, altezza 8.");
 		const A = mul(l, h);
 		const p = mul(int(4), l);
-		steps.push(
-			`Il rombo è un parallelogramma: l'area è il lato per l'altezza relativa, $A = l \\cdot h = ${vt(l)} \\cdot ${vt(h)}${eq(A, u, 2)}$.`,
-			`Calcola il perimetro: i quattro lati sono uguali, $2p = 4l = 4 \\cdot ${vt(l)}${eq(p, u)}$.`
-		);
-		if (cmp(h, l) === 0) steps.push("L'altezza è uguale al lato: questo rombo è un quadrato.");
+		steps.push({ say: "Calcola l'area: il rombo è un parallelogramma, quindi lato per altezza.", math: calc('A = l \\cdot h', [`${vt(l)} \\cdot ${vt(h)}`], A, u, 2) }, perimeter(l, p));
+		if (cmp(h, l) === 0) conclude(steps, "L'altezza è uguale al lato: questo rombo è un quadrato.");
 		// Diagonals for the drawing: D² + d² = 4l², D·d = 2lh.
 		const s = Math.sqrt(4 * l.x ** 2 + 4 * l.x * h.x);
 		const t = Math.sqrt(Math.max(4 * l.x ** 2 - 4 * l.x * h.x, 0));
 		const [D, d] = [(s + t) / 2, (s - t) / 2];
-		return done([['A', A, 2], ['2p', p, 1]], u, steps, {
-			outline: [[-D / 2, 0], [0, -d / 2], [D / 2, 0], [0, d / 2]],
-			lines: [],
-			labels: [lab([D / 2, 0], [0, d / 2], 'l', l, true, u)],
-			right: [],
-			caption: { text: `h = ${labelText(h, u)}`, given: true }
-		});
+		return done(
+			[
+				[AREA, 'A', A, 2],
+				[PERIMETER, '2p', p, 1]
+			],
+			u,
+			steps,
+			{
+				outline: [[-D / 2, 0], [0, -d / 2], [D / 2, 0], [0, d / 2]],
+				lines: [],
+				labels: [lab([D / 2, 0], [0, d / 2], 'l', l, true, u)],
+				right: [],
+				caption: { text: `h = ${labelText(h, u)}`, given: true }
+			}
+		);
 	}
 	if (mode === 'lato-diagonale') {
 		l = l0!;
 		d1 = m.d_1!;
 		given.l = given.d1 = true;
-		if (cmp(d1, twice(l)) >= 0) return failed(`La diagonale deve essere minore del doppio del lato (${plain(twice(l))}): metà diagonale e lato formano un triangolo rettangolo in cui il lato è l'ipotenusa.`);
+		if (cmp(d1, twice(l)) >= 0) return failed(`La diagonale deve essere minore del doppio del lato (${plain(twice(l))}): metà diagonale e lato formano un triangolo rettangolo in cui il lato è l'ipotenusa. Per esempio: lato 13, diagonale 10.`);
 		const hd = half(d1);
-		const other = sub(square(l), square(hd));
-		const ho = sqrt(other);
+		const ho = sqrt(sub(square(l), square(hd)));
 		d2 = twice(ho);
 		steps.push(
-			`Le diagonali del rombo sono perpendicolari e si tagliano a metà: il lato è l'ipotenusa di un triangolo rettangolo con cateti le due metà delle diagonali. Metà della diagonale nota è $\\dfrac{d_1}{2}${eq(hd, u)}$.`,
-			`Trova l'altra metà con il teorema di Pitagora: $\\dfrac{d_2}{2} = \\sqrt{l^2 - \\left(\\dfrac{d_1}{2}\\right)^2} = \\sqrt{${sqt(l)} - ${sqt(hd)}} = ${rootChain(other, u)}$.`,
-			`Raddoppiala per avere la diagonale: $d_2 = 2 \\cdot ${vt(ho)}${eq(d2, u)}$.`
+			{ say: 'Dividi per 2 la diagonale nota: le diagonali si tagliano a metà.', math: calc('\\dfrac{d_1}{2}', [`\\dfrac{${vt(d1)}}{2}`], hd, u) },
+			{ say: "Trova metà dell'altra diagonale con Pitagora: il lato è l'ipotenusa.", math: calc('\\dfrac{d_2}{2} = \\sqrt{l^2 - \\left(\\dfrac{d_1}{2}\\right)^2}', pythagorasSubs(l, hd, '-'), ho, u) },
+			{ say: 'Raddoppiala: ottieni la seconda diagonale.', math: calc('d_2 = 2 \\cdot \\dfrac{d_2}{2}', [`2 \\cdot ${vt(ho)}`], d2, u) }
 		);
 	} else {
 		d1 = m.d_1!;
 		d2 = m.d_2!;
 		given.d1 = given.d2 = true;
 		const [h1, h2] = [half(d1), half(d2)];
-		const rad = add(square(h1), square(h2));
-		l = sqrt(rad);
+		l = sqrt(add(square(h1), square(h2)));
 		steps.push(
-			`Le diagonali del rombo sono perpendicolari e si tagliano a metà: dividono il rombo in quattro triangoli rettangoli con cateti $\\dfrac{d_1}{2}${eq(h1, u)}$ e $\\dfrac{d_2}{2}${eq(h2, u)}$.`,
-			`Il lato è l'ipotenusa di questi triangoli: $l = \\sqrt{${sqt(h1)} + ${sqt(h2)}} = ${rootChain(rad, u)}$.`
+			{
+				say: 'Dividi per 2 le due diagonali: si tagliano a metà.',
+				math: [`\\dfrac{d_1}{2} = \\dfrac{${vt(d1)}}{2} = \\hl{${vt(h1)}}`, `\\dfrac{d_2}{2} = \\dfrac{${vt(d2)}}{2} = \\hl{${vt(h2)}}`]
+			},
+			{ say: 'Calcola il lato con Pitagora: i cateti sono le metà delle diagonali.', math: calc('l = \\sqrt{\\left(\\dfrac{d_1}{2}\\right)^2 + \\left(\\dfrac{d_2}{2}\\right)^2}', pythagorasSubs(h1, h2, '+'), l, u) }
 		);
 	}
 	const A = half(mul(d1, d2));
 	const p = mul(int(4), l);
-	steps.push(`Calcola l'area, metà del prodotto delle diagonali: $A = \\dfrac{d_1 \\cdot d_2}{2} = \\dfrac{${vt(d1)} \\cdot ${vt(d2)}}{2}${eq(A, u, 2)}$.`, `Calcola il perimetro: i quattro lati sono uguali, $2p = 4l = 4 \\cdot ${vt(l)}${eq(p, u)}$.`);
-	if (cmp(d1, d2) === 0) steps.push('Le diagonali sono uguali: questo rombo è un quadrato.');
-	const items: [string, Val, 1 | 2][] = mode === 'diagonali' ? [['A', A, 2], ['2p', p, 1], ['l', l, 1]] : [['A', A, 2], ['2p', p, 1], ['d_2', d2, 1]];
-	const [X, Y] = [d1.x / 2, d2.x / 2];
+	steps.push({ say: "Calcola l'area: moltiplica le diagonali e dividi per 2.", math: calc('A = \\dfrac{d_1 \\cdot d_2}{2}', [`\\dfrac{${vt(d1)} \\cdot ${vt(d2)}}{2}`, `\\dfrac{${vt(mul(d1, d2))}}{2}`], A, u, 2) }, perimeter(l, p));
+	if (cmp(d1, d2) === 0) conclude(steps, 'Le diagonali sono uguali: questo rombo è un quadrato.');
+	const items: Item[] = [
+		[AREA, 'A', A, 2],
+		[PERIMETER, '2p', p, 1],
+		mode === 'diagonali' ? ['Lato', 'l', l, 1] : ['Seconda diagonale', 'd_2', d2, 1]
+	];
+	// The longer diagonal lies flat, so each label has room along its half.
+	const flat = d1.x >= d2.x;
+	const [X, Y] = flat ? [d1.x / 2, d2.x / 2] : [d2.x / 2, d1.x / 2];
+	const [hName, hVal, hGiven, vName, vVal, vGiven] = flat ? (['d_1', d1, given.d1, 'd_2', d2, given.d2] as const) : (['d_2', d2, given.d2, 'd_1', d1, given.d1] as const);
 	return done(items, u, steps, {
 		outline: [[-X, 0], [0, -Y], [X, 0], [0, Y]],
 		lines: [
 			[[-X, 0], [X, 0]],
 			[[0, -Y], [0, Y]]
 		],
-		labels: [lab([-X, 0], [0, 0], 'd_1', d1, given.d1, u), lab([0, -Y], [0, 0], 'd_2', d2, given.d2, u), lab([X, 0], [0, Y], 'l', l, given.l, u)],
+		labels: [lab([-X, 0], [0, 0], hName, hVal, hGiven, u), lab([0, -Y], [0, 0], vName, vVal, vGiven, u), lab([X, 0], [0, Y], 'l', l, given.l, u)],
 		right: [[[0, 0], [1, 0], [0, 1]]]
 	});
 }
 
 function parallelogramma(mode: string, m: Measures, u: Unit): FigureResult {
-	const steps: string[] = [];
+	const steps: Step[] = [];
 	const b = m.b!;
 	const l = m.l;
 	let h: Val;
@@ -905,29 +1085,29 @@ function parallelogramma(mode: string, m: Measures, u: Unit): FigureResult {
 	if (mode === 'area') {
 		A = m.A!;
 		h = div(A, b);
-		steps.push(`L'area è base per altezza: ricava l'altezza dividendo l'area per la base, $h = \\dfrac{A}{b} = \\dfrac{${vt(A)}}{${vt(b)}}${eq(h, u)}$.`);
+		steps.push({ say: "Ricava l'altezza: dividi l'area per la base.", math: calc('h = \\dfrac{A}{b}', [`\\dfrac{${vt(A)}}{${vt(b)}}`], h, u) });
 	} else {
 		h = m.h!;
 		A = mul(b, h);
-		steps.push(`Calcola l'area, base per altezza come nel rettangolo in cui il parallelogramma si trasforma spostando un triangolo: $A = b \\cdot h = ${vt(b)} \\cdot ${vt(h)}${eq(A, u, 2)}$.`);
+		steps.push({ say: "Calcola l'area: base per altezza, come nel rettangolo.", math: calc('A = b \\cdot h', [`${vt(b)} \\cdot ${vt(h)}`], A, u, 2) });
 	}
-	const items: [string, Val, 1 | 2][] = mode === 'area' ? [['h', h, 1]] : [['A', A, 2]];
+	const items: Item[] = mode === 'area' ? [['Altezza', 'h', h, 1]] : [[AREA, 'A', A, 2]];
 	let shift = h.x * 0.5;
 	const labels = [lab([0, 0], [b.x, 0], 'b', b, true, u)];
 	if (l) {
-		if (cmp(l, h) < 0) return failed("Il lato obliquo non può essere più corto dell'altezza: l'altezza è la distanza tra le due basi.");
+		if (cmp(l, h) < 0) return failed("Il lato obliquo non può essere più corto dell'altezza: l'altezza è la distanza tra le due basi. Per esempio: altezza 4, lato obliquo 5.");
 		const p = twice(add(b, l));
 		const h2 = div(A, l);
 		steps.push(
-			`Calcola il perimetro: i lati opposti sono uguali, quindi $2p = 2(b + l) = 2(${vt(b)} + ${vt(l)})${eq(p, u)}$.`,
-			`L'area non cambia se prendi come base il lato obliquo: l'altezza relativa a quel lato è $h_l = \\dfrac{A}{l} = \\dfrac{${vt(A)}}{${vt(l)}}${eq(h2, u)}$.`
+			{ say: 'Calcola il perimetro: i lati opposti sono uguali.', math: calc('2p = 2(b + l)', [`2(${vt(b)} + ${vt(l)})`, `2 \\cdot ${vt(add(b, l))}`], p, u) },
+			{ say: "Trova l'altezza relativa al lato obliquo: dividi l'area per quel lato.", math: calc('h_l = \\dfrac{A}{l}', [`\\dfrac{${vt(A)}}{${vt(l)}}`], h2, u) }
 		);
-		if (cmp(l, h) === 0) steps.push("Il lato obliquo è uguale all'altezza, quindi è perpendicolare alla base: questo parallelogramma è un rettangolo.");
-		items.push(['2p', p, 1]);
+		if (cmp(l, h) === 0) conclude(steps, "Il lato obliquo è uguale all'altezza, quindi è perpendicolare alla base: questo parallelogramma è un rettangolo.");
+		items.push([PERIMETER, '2p', p, 1]);
 		shift = Math.sqrt(Math.max(l.x ** 2 - h.x ** 2, 0));
 		labels.push(lab([0, 0], [shift, h.x], 'l', l, true, u));
 	} else {
-		steps.push('Per il perimetro serve anche il lato obliquo: scrivilo, se lo conosci.');
+		steps.push({ say: 'Per il perimetro serve anche il lato obliquo.', then: 'Scrivilo nel campo del lato obliquo, se lo conosci.' });
 	}
 	labels.push(lab([shift, h.x], [shift, 0], 'h', h, mode !== 'area', u, shift > 0));
 	return done(items, u, steps, {
@@ -940,41 +1120,38 @@ function parallelogramma(mode: string, m: Measures, u: Unit): FigureResult {
 }
 
 function cerchio(mode: string, m: Measures, u: Unit): FigureResult {
-	const steps: string[] = [];
+	const steps: Step[] = [];
 	let r: Val;
-	let d: Val;
-	let C: Val;
-	let A: Val;
 	if (mode === 'diametro') {
-		d = m.d!;
+		const d = m.d!;
 		r = half(d);
-		steps.push(`Il raggio è metà del diametro: $r = \\dfrac{d}{2} = \\dfrac{${vt(d)}}{2}${eq(r, u)}$.`);
+		steps.push({ say: 'Calcola il raggio: è metà del diametro.', math: calc('r = \\dfrac{d}{2}', [`\\dfrac{${vt(d)}}{2}`], r, u) });
 	} else if (mode === 'circonferenza') {
-		C = m.C!;
+		const C = m.C!;
 		r = div(C, mul(int(2), PI));
-		steps.push(`Dalla formula $C = 2\\pi r$ ricava il raggio: $r = \\dfrac{C}{2\\pi} = \\dfrac{${vt(C)}}{2\\pi}${eq(r, u)}$.`);
+		steps.push({ say: 'Ricava il raggio: dividi la circonferenza per $2\\pi$.', math: calc('r = \\dfrac{C}{2\\pi}', [`\\dfrac{${vt(C)}}{2\\pi}`], r, u) });
 	} else if (mode === 'area') {
-		A = m.A!;
+		const A = m.A!;
 		const ratio = div(A, PI);
 		r = sqrt(ratio);
-		steps.push(`Dalla formula $A = \\pi r^2$ ricava il raggio: $r = \\sqrt{\\dfrac{A}{\\pi}} = \\sqrt{\\dfrac{${vt(A)}}{\\pi}}${isRational(ratio) ? ` = \\sqrt{${vt(ratio)}}` : ''}${eq(r, u)}$.`);
+		steps.push({ say: "Ricava il raggio: dividi l'area per $\\pi$, poi fai la radice quadrata.", math: calc('r = \\sqrt{\\dfrac{A}{\\pi}}', [`\\sqrt{\\dfrac{${vt(A)}}{\\pi}}`, ...(isRational(ratio) ? rootSubs(ratio) : [])], r, u) });
 	} else {
 		r = m.r!;
 	}
-	d = twice(r);
-	C = mul(mul(int(2), PI), r);
-	A = mul(PI, square(r));
+	const d = twice(r);
+	const C = mul(mul(int(2), PI), r);
+	const A = mul(PI, square(r));
 	// A radius known only as a decimal is written as the root it comes from.
 	const rSub = r.c ? vt(r) : `\\sqrt{\\dfrac{${vt(m.A!)}}{\\pi}}`;
-	if (mode !== 'diametro') steps.push(`Il diametro è il doppio del raggio: $d = 2r = 2 \\cdot ${rSub}${eq(d, u)}$.`);
+	if (mode !== 'diametro') steps.push({ say: 'Calcola il diametro: è il doppio del raggio.', math: calc('d = 2r', [`2 \\cdot ${rSub}`], d, u) });
 	if (mode !== 'circonferenza') {
-		if (mode === 'area' && !r.c) steps.push(`Calcola la lunghezza della circonferenza: $C = 2\\pi r = 2\\sqrt{\\pi A} = 2\\sqrt{${vt(A)}\\pi}${eq(C, u)}$.`);
-		else steps.push(`Calcola la lunghezza della circonferenza: $C = 2\\pi r = 2\\pi \\cdot ${vt(r)}${eq(C, u)}$.`);
+		const subs = mode === 'area' && !r.c ? ['2\\sqrt{\\pi A}', `2\\sqrt{${vt(m.A!)}\\pi}`] : [`2\\pi \\cdot ${vt(r)}`];
+		steps.push({ say: 'Calcola la lunghezza della circonferenza.', math: calc('C = 2\\pi r', subs, C, u) });
 	}
-	if (mode !== 'area') steps.push(`Calcola l'area del cerchio: $A = \\pi r^2 = \\pi \\cdot ${sqt(r)}${eq(A, u, 2)}$.`);
-	if (mode === 'raggio' || mode === 'diametro') steps.push(`Per il valore decimale usa $\\pi \\approx 3{,}1416$; a mano, con $\\pi \\approx 3{,}14$, il risultato cambia di poco nelle ultime cifre.`);
-	const items: [string, Val, 1 | 2][] =
-		mode === 'raggio' ? [['C', C, 1], ['A', A, 2], ['d', d, 1]] : mode === 'diametro' ? [['r', r, 1], ['C', C, 1], ['A', A, 2]] : mode === 'circonferenza' ? [['r', r, 1], ['d', d, 1], ['A', A, 2]] : [['r', r, 1], ['d', d, 1], ['C', C, 1]];
+	if (mode !== 'area') steps.push({ say: "Calcola l'area del cerchio.", math: calc('A = \\pi r^2', [`\\pi \\cdot ${sqt(r)}`, `\\pi \\cdot ${vt(square(r))}`], A, u, 2) });
+	if (mode === 'raggio' || mode === 'diametro') conclude(steps, "Per il decimale si usa $\\pi \\approx 3{,}1416$. Con $3{,}14$ l'ultima cifra può cambiare di poco.");
+	const all: Record<string, Item> = { r: ['Raggio', 'r', r, 1], d: ['Diametro', 'd', d, 1], C: ['Circonferenza', 'C', C, 1], A: [AREA, 'A', A, 2] };
+	const order = mode === 'raggio' ? ['C', 'A', 'd'] : mode === 'diametro' ? ['r', 'C', 'A'] : mode === 'circonferenza' ? ['r', 'd', 'A'] : ['r', 'd', 'C'];
 	const R = r.x;
 	const sketch: Sketch = {
 		outline: { circle: R },
@@ -984,7 +1161,12 @@ function cerchio(mode: string, m: Measures, u: Unit): FigureResult {
 	};
 	if (mode === 'circonferenza') sketch.caption = { text: `C = ${labelText(m.C!, u)}`, given: true };
 	if (mode === 'area') sketch.caption = { text: `A = ${labelText(m.A!, u, 2)}`, given: true };
-	return done(items, u, steps, sketch);
+	return done(
+		order.map((k) => all[k]),
+		u,
+		steps,
+		sketch
+	);
 }
 
 const SOLVERS: Record<Figure, (mode: string, m: Measures, u: Unit) => FigureResult> = { quadrato, rettangolo, triangolo, trapezio, rombo, parallelogramma, cerchio };
@@ -997,6 +1179,6 @@ export function figura(figure: Figure, mode: string, values: Partial<Record<Fiel
 	try {
 		return SOLVERS[figure](spec.value, m, unit);
 	} catch {
-		return failed('Questi numeri sono troppo grandi per un calcolo esatto: prova con misure più piccole.');
+		return failed("Questi numeri sono troppo grandi per un calcolo esatto: prova con misure più piccole, per esempio in un'unità più grande.");
 	}
 }

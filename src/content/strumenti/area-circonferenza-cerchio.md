@@ -2,27 +2,54 @@
 
 ## Che cos'è
 
-La circonferenza è la linea formata dai punti che hanno la stessa distanza da un punto, il centro; quella distanza è il raggio $r$. Il cerchio è la parte di piano racchiusa dalla circonferenza. Il diametro $d$ è il doppio del raggio. La circonferenza ha una lunghezza, il cerchio un'area.
+La circonferenza è la linea dei punti che stanno tutti alla stessa distanza da un punto, il centro.
 
-## Le formule
+Quella distanza è il raggio $r$; il diametro $d$ è il doppio del raggio. Il cerchio è la parte di piano dentro la circonferenza. La circonferenza ha una lunghezza $C$, il cerchio un'area $A$.
 
-$$C = 2\pi r = \pi d \qquad A = \pi r^2$$
-
-$\pi$ è il rapporto tra la lunghezza di qualsiasi circonferenza e il suo diametro, sempre lo stesso: $\pi \approx 3{,}14159$. È un numero irrazionale, con infinite cifre decimali che non si ripetono. Per questo nei risultati esatti $\pi$ resta scritto come lettera, per esempio $25\pi$ cm², e il decimale si dà a parte.
-
-## Come si calcola a mano
+## Un esempio svolto
 
 ```ad-example
 Dal raggio
-Con un raggio di 5 cm la circonferenza è $2\pi \cdot 5 = 10\pi \approx 31{,}42$ cm e l'area è $\pi \cdot 5^2 = 25\pi \approx 78{,}54$ cm².
+Un cerchio ha il raggio di 5 cm. La circonferenza è $2\pi$ per il raggio:
+
+$$C = 2\pi \cdot 5 = 10\pi \text{ cm}$$
+
+$$10\pi \approx 31{,}42 \text{ cm}$$
+
+L'area è $\pi$ per il raggio al quadrato:
+
+$$A = \pi \cdot 5^2 = 25\pi \text{ cm}^2$$
+
+$$25\pi \approx 78{,}54 \text{ cm}^2$$
 ```
+
+## Le formule
+
+$$C = 2\pi r = \pi d$$
+
+$$A = \pi r^2$$
+
+$\pi$ è il rapporto tra la lunghezza di una circonferenza e il suo diametro, uguale per tutte: vale circa 3,14159. Ha infinite cifre decimali che non si ripetono, e per questo nel risultato esatto resta scritto come lettera ($25\pi$ cm²), con il decimale accanto.
+
+## Tornare indietro al raggio
 
 ```ad-example
 Dalla circonferenza
-Una circonferenza è lunga $10\pi$ cm. Il raggio è $\dfrac{10\pi}{2\pi} = 5$ cm, e da qui l'area. Se invece è lunga 31,4 cm, il raggio è $\dfrac{31{,}4}{2\pi} \approx 5$ cm.
+Una circonferenza è lunga $10\pi$ cm. Dividi per $2\pi$:
+
+$$r = \frac{10\pi}{2\pi} = 5 \text{ cm}$$
+
+Se invece è lunga 31,4 cm:
+
+$$r = \frac{31{,}4}{2\pi} \approx 5{,}00 \text{ cm}$$
 ```
 
-Dall'area si torna al raggio con la radice: $r = \sqrt{\dfrac{A}{\pi}}$. Un cerchio di $49\pi$ cm² ha raggio 7 cm.
+```ad-example
+Dall'area
+Un cerchio ha l'area di $49\pi$ cm². Dividi per $\pi$ e fai la radice quadrata:
+
+$$r = \sqrt{\frac{49\pi}{\pi}} = \sqrt{49} = 7 \text{ cm}$$
+```
 
 ```ad-error
 Errori frequenti

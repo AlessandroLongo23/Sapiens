@@ -7,6 +7,7 @@ import { createJiti } from 'jiti';
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
 const { temperatura, convertTemperature } = await jiti.import('../../src/lib/tools/temperatura.ts');
 const { parseDecimal } = await jiti.import('../../src/lib/tools/numbers.ts');
+const { assertReadable, stepText } = await import('./converters-check.mjs');
 
 const copy = (v, a, b) => {
 	const o = temperatura(v, a, b);
@@ -28,16 +29,35 @@ test('known values', () => {
 	assert.equal(copy('212', 'F', 'K'), '373,15 K');
 	assert.equal(copy('100', 'F', 'C'), '37,78 °C');
 	assert.equal(copy('25', 'C', 'C'), '25 °C');
-	assert.match(temperatura('100', 'F', 'C').result, /\\approx/);
+	assert.match(temperatura('100', 'F', 'C').rows[0].value, /\\approx/);
 });
 
 test('steps use the formulas', () => {
-	const s = temperatura('100', 'C', 'F').steps.join(' ');
+	const o = temperatura('100', 'C', 'F');
+	const s = stepText(o);
 	assert.match(s, /T_F = T_C \\cdot \\dfrac\{9\}\{5\} \+ 32/);
-	assert.match(s, /180 \+ 32 = 212/);
+	assert.match(s, /T_F = \\hl\{180\} \+ 32/);
+	assert.match(s, /T_F = \\hl\{212\}/);
 	assert.match(s, /373\{,\}15/);
-	const fk = temperatura('212', 'F', 'K').steps.join(' ');
-	assert.match(fk, /passa per i gradi Celsius/);
+	// One row per scale: the one asked for first, then the third.
+	assert.deepEqual(
+		o.rows.map((r) => r.label),
+		['100 °C in gradi Fahrenheit', '100 °C in kelvin']
+	);
+	assert.equal(o.rows[1].value, '$373{,}15\\,\\text{K}$');
+	const fk = temperatura('212', 'F', 'K');
+	assert.match(fk.steps[0].say, /Passa per i gradi Celsius/);
+	assert.deepEqual(
+		fk.steps.filter((x) => x.group).map((x) => x.group),
+		['Da Fahrenheit a Celsius', 'Da Celsius a Kelvin']
+	);
+	assert.equal(temperatura('25', 'C', 'C').rows.length, 1);
+});
+
+test('every string typesets and every sentence is short', () => {
+	for (const v of ['100', '-40', '0', '36,6', '98,6', '-273,15', '1000000', '0,01'])
+		for (const a of ['C', 'F', 'K']) for (const b of ['C', 'F', 'K']) assertReadable(temperatura(v, a, b), `${v} ${a} → ${b}`);
+	for (const bad of [temperatura('abc', 'C', 'F'), temperatura('-300', 'C', 'F'), temperatura('10', 'C', 'X')]) assertReadable(bad);
 });
 
 test('below absolute zero is an error in words', () => {

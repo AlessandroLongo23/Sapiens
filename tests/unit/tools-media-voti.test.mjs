@@ -3,6 +3,36 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createJiti } from 'jiti';
+import katex from 'katex';
+
+/** Every string the page shows: the rows, and each step's sentence, lines, table and conclusion. */
+const texts = (o) => [
+	...o.rows.flatMap((r) => [r.label, r.value]),
+	...o.steps.flatMap((s) => [s.group ?? '', s.say, ...(s.table?.head ?? []), ...(s.table?.rows.flat() ?? []), s.then ?? ''])
+];
+const all = (o) => [...texts(o), ...o.steps.flatMap((s) => s.math ?? [])].join(' ');
+
+/** KaTeX as the tools set it (src/lib/tools/tex.ts), but throwing on any error. */
+const KATEX = { throwOnError: true, strict: 'ignore', macros: { '\\hl': '\\htmlClass{hl}{#1}' }, trust: (c) => c.command === '\\htmlClass' };
+
+/** Everything typesets, and every sentence follows the readability rules: short, no calculation inside. */
+function assertReadable(o) {
+	if (!o.ok) return;
+	for (const text of texts(o))
+		for (const m of text.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+			const src = m[1] ?? m[2];
+			assert.doesNotThrow(() => katex.renderToString(src, { ...KATEX, displayMode: !!m[1] }), src);
+		}
+	for (const s of o.steps) {
+		for (const line of s.math ?? []) assert.doesNotThrow(() => katex.renderToString(`{\\displaystyle ${line}}`, KATEX), line);
+		assert.ok(!s.say.includes('$$'), s.say);
+		assert.ok((s.say.match(/=/g) ?? []).length <= 1, s.say);
+		assert.ok(s.say.split(/\s+/).length <= 15, s.say);
+		assert.ok(s.math || s.table || s.then, `a step with nothing under it: ${s.say}`);
+	}
+	assert.ok(o.steps.length <= 5 || o.steps[0].group, 'more than five steps need groups');
+	assert.ok(o.rows.length > 0);
+}
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
 const { parseGrade, parseGrades, mediaVoti, votoCheServe, quarterGrade } = await jiti.import('../../src/lib/tools/media-voti.ts');
@@ -12,7 +42,6 @@ const value = (s) => {
 	const g = parseGrade(s);
 	return typeof g === 'string' ? g : g.value.toString();
 };
-const all = (o) => o.steps.join(' ');
 
 test('grade notation', () => {
 	assert.equal(value('6'), '6');
@@ -61,11 +90,19 @@ test('lists of grades, with every notation', () => {
 test('simple average', () => {
 	const o = mediaVoti('6+ 7- 5½ 7/8 6 e mezzo 10 e lode');
 	assert.equal(o.copy, '7,08');
-	assert.match(o.result, /\\approx 7\{,\}08/);
-	assert.match(all(o), /\\text\{6\+\} = 6\{,\}25/);
-	assert.match(all(o), /\\text\{7-\} = 6\{,\}75/);
-	assert.match(all(o), /5\\tfrac\{1\}\{2\} = 5\{,\}5/);
-	assert.match(all(o), /= 42\{,\}5/);
+	assert.deepEqual(o.rows, [{ label: 'Media dei voti', value: '$\\approx 7{,}08$' }]);
+	// The grades as written and what they are worth, in a table.
+	assert.deepEqual(o.steps[0].table.head, ['Voto scritto', 'Vale']);
+	assert.deepEqual(o.steps[0].table.rows.slice(0, 3), [
+		['$\\text{6+}$', '$\\hl{6{,}25}$'],
+		['$\\text{7-}$', '$\\hl{6{,}75}$'],
+		['$5\\tfrac{1}{2}$', '$\\hl{5{,}5}$']
+	]);
+	assert.deepEqual(o.steps[1].math, ['6{,}25 + 6{,}75 + 5{,}5 = 18{,}5', '7{,}5 + 6{,}5 + 10 = 24', '18{,}5 + 24 = \\hl{42{,}5}']);
+	assert.deepEqual(o.steps[2].math, ['\\dfrac{42{,}5}{6} \\approx \\hl{7{,}08}']);
+	// The report card note is the last step.
+	assert.match(o.steps[o.steps.length - 1].then, /consiglio di classe/);
+	assert.deepEqual(mediaVoti('6+ 7- 5½ 7/8 8').rows, [{ label: 'Media dei voti', value: '$6{,}8$' }]);
 	assert.match(all(o), /\\dfrac\{42\{,\}5\}\{6\}/);
 	assert.match(all(o), /consiglio di classe/);
 	assert.equal(mediaVoti('6 7 8').copy, '7');
@@ -82,6 +119,13 @@ test('weighted average', () => {
 	const o = mediaVoti('6 7 8', '1 1 2');
 	assert.equal(o.copy, '7,25');
 	assert.match(all(o), /somma dei pesi/);
+	assert.deepEqual(o.steps[0].math, ['6 \\cdot 1 = 6', '7 \\cdot 1 = 7', '8 \\cdot 2 = 16']);
+	assert.deepEqual(o.steps[1].math, ['6 + 7 + 16 = \\hl{29}']);
+	assert.deepEqual(o.steps[3].math, ['\\dfrac{29}{4} = \\hl{7{,}25}']);
+	// With notation and weights, the table has the weights too; six steps or more are grouped.
+	const both = mediaVoti('6+ 7-', '2 2');
+	assert.deepEqual(both.steps[0].table.head, ['Voto scritto', 'Vale', 'Peso']);
+	assert.equal(both.steps[0].group, 'La media ponderata');
 	assert.equal(mediaVoti('6 8', '50% 100%').copy, '7,33');
 	assert.equal(mediaVoti('5 7', '30 70').copy, '6,4');
 	assert.equal(mediaVoti('6+ 7-', '2 2').copy, '6,5');
@@ -93,15 +137,26 @@ test('weighted average', () => {
 test('the grade you need', () => {
 	const one = votoCheServe({ grades: '5 6+ 5½', target: '6', count: '1' });
 	assert.equal(one.copy, 'almeno 7,25');
-	assert.match(one.result, /almeno \$7\{,\}25\$/);
-	assert.match(all(one), /\\text\{7\+\} = 7\{,\}25/);
+	assert.deepEqual(one.rows, [
+		{ label: 'Voto che ti serve', value: 'almeno $7{,}25$' },
+		{ label: 'Scritto sul registro', value: 'almeno $\\text{7+}$' },
+		{ label: 'Media di adesso', value: '$\\approx 5{,}58$' }
+	]);
+	assert.match(all(one), /\\hl\{\\text\{7\+\}\} = 7\{,\}25/);
+	assert.ok(one.steps.some((s) => s.math?.includes('\\dfrac{16{,}75 + x}{4} = 6')));
+	assert.ok(one.steps.some((s) => s.math?.includes('x = \\hl{7{,}25}')));
+	assert.deepEqual(
+		one.steps.map((s) => s.group).filter(Boolean),
+		['La media di adesso', 'Il voto che serve', 'Il voto in pagella']
+	);
 	// Rounded up, never down: 4 5 → 6 needs 9 with one grade.
 	assert.equal(votoCheServe({ grades: '4 5', target: '6', count: '1' }).copy, 'almeno 9');
 	// 5 5 5 → 6 needs 9; 5 5 → 6 with two grades needs a mean of 7.
 	assert.equal(votoCheServe({ grades: '5 5 5', target: '6', count: '1' }).copy, 'almeno 9');
 	const two = votoCheServe({ grades: '5 5', target: '6', count: '2' });
 	assert.equal(two.copy, 'almeno 7');
-	assert.match(two.result, /media di almeno \$7\$ nei prossimi 2 voti/);
+	assert.deepEqual(two.rows[0], { label: 'Media che ti serve nei prossimi 2 voti', value: 'almeno $7$' });
+	assert.match(all(two), /2 voti con media \$x\$ sommano \$2x\$/);
 	// (5 + 6 + x)/3 = 6,5 → x = 8,5; (5 + 5 + 6 + x)/4 = 6,1 → x = 8,4.
 	assert.equal(votoCheServe({ grades: '5 6', target: '6,5', count: '1' }).copy, 'almeno 8,5');
 	assert.equal(votoCheServe({ grades: '5 5 6', target: '6,1', count: '1' }).copy, 'almeno 8,4');
@@ -124,13 +179,14 @@ test('the grade you need', () => {
 test('impossible or already safe', () => {
 	const no = votoCheServe({ grades: '4 4 5', target: '7', count: '1' });
 	assert.equal(no.copy, 'impossibile (servirebbe 15)');
-	assert.match(no.result, /Impossibile/);
+	assert.match(no.rows[0].value, /Impossibile/);
 	assert.match(all(no), /più di 10/);
 	// Exactly 10 is still possible.
 	assert.equal(votoCheServe({ grades: '8', target: '9', count: '1' }).copy, 'almeno 10');
 	assert.match(votoCheServe({ grades: '4 4', target: '6,5', count: '1' }).copy, /impossibile/);
 	const any = votoCheServe({ grades: '9 10', target: '6', count: '1' });
 	assert.equal(any.copy, 'qualsiasi voto');
+	assert.equal(any.rows[0].value, 'Qualsiasi voto');
 	assert.equal(votoCheServe({ grades: '9 10', target: '6', count: '2' }).copy, 'almeno 2,5');
 });
 
@@ -140,6 +196,7 @@ test('the grade found gives the target back', () => {
 			for (const count of [1, 2, 3]) {
 				const o = votoCheServe({ grades, target, count: String(count) });
 				assert.equal(o.ok, true);
+				assertReadable(o);
 				if (!o.copy.startsWith('almeno')) continue;
 				const x = parseDecimal(o.copy.replace('almeno ', ''));
 				const vs = parseGrades(grades).map((g) => g.value);
@@ -152,6 +209,32 @@ test('the grade found gives the target back', () => {
 			}
 		}
 	}
+});
+
+test('every example reads well and typesets', () => {
+	for (const [voti, pesi] of [
+		['6+ 7- 5½ 7/8 8', ''],
+		['6+ 7- 5½', ''],
+		['6 e mezzo 7/8 5-', ''],
+		['4 6 7', '1 1 2'],
+		['6+ 7-', '2 2'],
+		['10 e lode 8', ''],
+		['8', ''],
+		['6 7 8 5 4 9 7 6 5 8 7 6', '']
+	])
+		assertReadable(mediaVoti(voti, pesi));
+	for (const input of [
+		{ grades: '6+ 7- 5½ 7/8 8', target: '7', count: '1' },
+		{ grades: '4 5', target: '6', count: '1' },
+		{ grades: '5 5½ 6-', target: '6', count: '2' },
+		{ grades: '3 4', target: '7', count: '1' },
+		{ grades: '9 10', target: '6', count: '1' },
+		{ grades: '6 5', weights: '1 2', target: '6', count: '1', nextWeight: '2' },
+		{ grades: '6 5', weights: '1 2', target: '6', count: '3', nextWeight: '2' },
+		{ grades: '5 6', target: '6', count: '3', nextWeight: '1,5' },
+		{ grades: '8', target: '9', count: '1' }
+	])
+		assertReadable(votoCheServe(input));
 });
 
 test('wrong inputs for the grade you need', () => {
@@ -169,5 +252,6 @@ test('wrong inputs for the grade you need', () => {
 		const o = votoCheServe(input);
 		assert.equal(o.ok, false, JSON.stringify(input));
 		assert.ok(o.error.length > 10);
+		assert.match(o.error, /per esempio/, o.error);
 	}
 });

@@ -85,6 +85,23 @@ Tecnica: il calcolo gira nel browser con aritmetica esatta. I generatori di eser
 
 Dati strutturati: `WebApplication` e `BreadcrumbList` su ogni strumento. I risultati FAQ e HowTo non compaiono più su Google (FAQ dal 7 maggio 2026, Search Engine Journal, 10 maggio 2026), ma le domande frequenti restano utili ai lettori e alle risposte AI. Il markup `MathSolver` per i risolutori gratuiti: supporto per l'italiano da verificare.
 
+## Leggibilità
+Richiesta di Alessandro del 27 settembre 2026: chi cerca uno strumento spesso non sa fare quel calcolo, e tra questi molti studenti con DSA; come sono scritti e impaginati spiegazione e dati conta moltissimo. Nella prima versione le formule andavano a capo a metà ("6x − 12 + 2 = x +" su una riga, "8" sulla successiva), i risultati con più valori stavano in fila e le liste di valori erano separate da virgole.
+
+Fonti consultate il 27 settembre 2026: British Dyslexia Association, Dyslexia Style Guide (2023); Università di Udine, indicazioni per lezioni, slide e dispense accessibili (23 gennaio 2021); DfES 0512/2001, Guidance to support pupils with dyslexia and dyscalculia (settembre 2001); W3C, Making Content Usable for People with Cognitive and Learning Disabilities (COGA, 29 aprile 2021); Linee guida MIUR per i DSA (12 luglio 2011, lette da una sintesi, da verificare sull'originale); studi sul carico cognitivo (Sweller, van Merriënboer e Paas 1998; Catrambone 1998; Atkinson, Renkl e Merrill 2003); Rello e Baeza-Yates (2013) sui caratteri; meta-analisi di Azzarello e altri (Annals of Dyslexia, luglio 2026) sui font "per dislessici", senza beneficio misurabile.
+
+Regole applicate (dettaglio in `docs/strumenti.md`):
+- Un passaggio è una trasformazione: una frase breve all'imperativo, poi il calcolo su righe proprie, ognuna con il risultato intermedio.
+- Nessuna formula va a capo a metà: se è larga scorre di lato.
+- Le liste di valori stanno in tabella, mai separate da virgole (con la virgola decimale "2, 3" si legge 2,3).
+- Ciò che cambia in un passaggio è evidenziato con tinta e sottolineatura, mai solo con il colore.
+- Il risultato è una riga per valore, con un'etichetta a parole.
+- I passaggi stanno sotto input e risultato, in righe di al massimo 70 caratteri, testo a 17 px con interlinea 1,65; oltre cinque passaggi sono raggruppati sotto un sottotitolo.
+- Si possono aprire i passaggi uno alla volta.
+- Gli articoli hanno la stessa larghezza e i calcoli degli esempi su righe separate.
+
+Non ancora fatto: una versione a parole di ogni formula per la sintesi vocale (KaTeX affida la lettura al MathML nascosto, che alcuni lettori vocali ignorano: da provare con VoiceOver e con i lettori usati nelle scuole, come LeggiXme ed ePico); mostrare accanto al campo il valore letto ("Hai scritto 2,5"); le catene di uguaglianze allineate sul segno "=".
+
 ## Domande aperte
 - Indirizzo della sezione: per ora `/strumenti` (scelta di Claude, reversibile finché il sito non è indicizzato).
 - Quanti strumenti nella prima onda e se entrano prima della beta.

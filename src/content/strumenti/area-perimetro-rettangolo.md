@@ -2,32 +2,73 @@
 
 ## Che cos'è
 
-Il rettangolo è un quadrilatero con i quattro angoli retti. I lati opposti sono uguali: due si chiamano base, gli altri due altezza. È la figura da cui partono quasi tutte le altre formule delle aree, perché il parallelogramma, il triangolo e il trapezio si riportano a un rettangolo tagliando e spostando dei pezzi.
+Il rettangolo è il quadrilatero con i quattro angoli retti.
+
+I lati opposti sono uguali: due si chiamano base $b$, gli altri due altezza $h$. Il perimetro $2p$ è la somma dei quattro lati; l'area $A$ è la superficie dentro il bordo, in unità quadrate come i cm².
+
+## Un esempio svolto
+
+```ad-example
+Base e altezza
+Un rettangolo ha la base di 8 cm e l'altezza di 6 cm. L'area è base per altezza:
+
+$$A = 8 \cdot 6 = 48 \text{ cm}^2$$
+
+Il perimetro è il doppio di base più altezza:
+
+$$2p = 2(8 + 6) = 2 \cdot 14 = 28 \text{ cm}$$
+
+La diagonale è l'ipotenusa del triangolo rettangolo che ha per cateti base e altezza:
+
+$$\begin{aligned}
+d &= \sqrt{8^2 + 6^2} \\[6pt]
+&= \sqrt{64 + 36} \\[6pt]
+&= \sqrt{100} = 10 \text{ cm}
+\end{aligned}$$
+```
 
 ## Le formule
 
-Con $b$ la base e $h$ l'altezza:
+$$A = b \cdot h$$
 
-$$A = b \cdot h \qquad 2p = 2(b + h) \qquad d = \sqrt{b^2 + h^2}$$
+$$2p = 2(b + h)$$
 
-Le formule inverse servono quando il problema dà l'area o il perimetro: $h = \dfrac{A}{b}$ e $h = p - b$, dove $p$ è il semiperimetro.
+$$d = \sqrt{b^2 + h^2}$$
 
-## Come si calcola a mano
+La diagonale viene dal teorema di Pitagora. Dal rettangolo partono quasi tutte le altre aree: parallelogramma, triangolo e trapezio si riportano a un rettangolo tagliando e spostando dei pezzi.
 
-```ad-example
-Da base e diagonale
-Un rettangolo ha la base di 12 cm e la diagonale di 13 cm. Base, altezza e diagonale formano un triangolo rettangolo, quindi $h = \sqrt{13^2 - 12^2} = \sqrt{169 - 144} = \sqrt{25} = 5$ cm. Poi $A = 12 \cdot 5 = 60$ cm² e $2p = 2(12 + 5) = 34$ cm.
-```
+## Tornare indietro all'altezza
+
+Quando il problema dà l'area, dividi l'area per la base: $h = \dfrac{A}{b}$.
+
+Quando dà il perimetro, prima dividilo per 2. Il risultato si chiama semiperimetro $p$ e contiene una base e un'altezza sola.
 
 ```ad-example
 Dal perimetro e dalla base
-Il perimetro è 30 cm e la base 10 cm. Il semiperimetro è 15 cm e contiene una base e un'altezza sola: $h = 15 - 10 = 5$ cm.
+Il perimetro è 30 cm e la base 10 cm. Il semiperimetro è:
+
+$$p = \frac{30}{2} = 15 \text{ cm}$$
+
+Togli la base e resta l'altezza:
+
+$$h = 15 - 10 = 5 \text{ cm}$$
+```
+
+```ad-example
+Dalla base e dalla diagonale
+La base è 12 cm e la diagonale 13 cm. La diagonale è l'ipotenusa, quindi l'altezza è un cateto:
+
+$$\begin{aligned}
+h &= \sqrt{13^2 - 12^2} \\[6pt]
+&= \sqrt{169 - 144} \\[6pt]
+&= \sqrt{25} = 5 \text{ cm}
+\end{aligned}$$
 ```
 
 ```ad-error
 Errori frequenti
 - Togliere la base dal perimetro intero invece che dal semiperimetro: nel perimetro la base compare due volte.
-- Sommare base e altezza per la diagonale: la diagonale si trova con il teorema di Pitagora, non con una somma.
+- Sommare base e altezza per la diagonale: la diagonale si trova con il teorema di Pitagora.
 - Confondere area e perimetro nei problemi con la recinzione (perimetro) e con la piastrellatura (area).
 ```
 

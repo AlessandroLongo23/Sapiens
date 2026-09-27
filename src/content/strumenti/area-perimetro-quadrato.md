@@ -2,27 +2,59 @@
 
 ## Che cos'è
 
-Il quadrato è il quadrilatero con i quattro lati uguali e i quattro angoli retti. Basta una misura sola per conoscerlo tutto: il lato, la diagonale, l'area o il perimetro. Da una qualsiasi di queste si ricavano le altre.
+Il quadrato è il quadrilatero con i quattro lati uguali e i quattro angoli retti.
+
+Il perimetro $2p$ è la lunghezza del bordo, la somma dei lati. L'area $A$ è quanta superficie c'è dentro, e si misura in unità quadrate, come i cm². Del quadrato basta conoscere una misura: da quella si ricavano tutte le altre.
+
+## Un esempio svolto
+
+```ad-example
+Dal lato
+Un quadrato ha il lato di 6 cm. Il perimetro è la somma dei quattro lati:
+
+$$2p = 4 \cdot 6 = 24 \text{ cm}$$
+
+L'area è il lato moltiplicato per sé stesso:
+
+$$A = 6^2 = 36 \text{ cm}^2$$
+
+La diagonale è il lato moltiplicato per $\sqrt{2}$:
+
+$$d = 6\sqrt{2} \approx 8{,}49 \text{ cm}$$
+```
 
 ## Le formule
 
 Con $l$ il lato:
 
-$$2p = 4l \qquad A = l^2 \qquad d = l\sqrt{2}$$
+$$2p = 4l$$
 
-La diagonale viene dal teorema di Pitagora: taglia il quadrato in due triangoli rettangoli con i cateti uguali al lato, quindi $d^2 = l^2 + l^2 = 2l^2$. Il quadrato è anche un rombo, e per questo vale pure $A = \dfrac{d^2}{2}$.
+$$A = l^2$$
 
-## Come si calcola a mano
+$$d = l\sqrt{2}$$
 
-```ad-example
-Dal lato
-Un quadrato ha il lato di 6 cm. Il perimetro è $4 \cdot 6 = 24$ cm, l'area $6^2 = 36$ cm² e la diagonale $6\sqrt{2} \approx 8{,}49$ cm.
-```
+La diagonale viene dal teorema di Pitagora. Taglia il quadrato in due triangoli rettangoli, e in ognuno i cateti sono due lati. Quindi $d^2 = l^2 + l^2 = 2l^2$.
+
+Il quadrato è anche un rombo, e per questo l'area si trova pure dalla diagonale: $A = \dfrac{d^2}{2}$.
+
+## Tornare indietro al lato
 
 ```ad-example
 Dall'area
-Un quadrato ha l'area di 50 cm². Il lato è $\sqrt{50} = \sqrt{25 \cdot 2} = 5\sqrt{2} \approx 7{,}07$ cm, e la diagonale è $5\sqrt{2} \cdot \sqrt{2} = 10$ cm: con l'area, a volte, è la diagonale a venire intera.
+Un quadrato ha l'area di 50 cm². Il lato è la radice quadrata dell'area:
+
+$$\begin{aligned}
+l &= \sqrt{50} \\[6pt]
+&= \sqrt{5^2 \cdot 2} \\[6pt]
+&= 5\sqrt{2} \approx 7{,}07 \text{ cm}
+\end{aligned}$$
+
+La diagonale viene intera:
+
+$$d = 5\sqrt{2} \cdot \sqrt{2} = 10 \text{ cm}$$
 ```
+
+Dal perimetro si torna al lato dividendo per 4: con un perimetro di 28 cm il lato è 7 cm.
 
 ```ad-error
 Errori frequenti
@@ -35,8 +67,10 @@ Errori frequenti
 
 ### Come trovo il lato se conosco solo la diagonale?
 
-Dividi la diagonale per $\sqrt{2}$, oppure moltiplicala per $\dfrac{\sqrt{2}}{2}$: con una diagonale di 8 cm il lato è $4\sqrt{2} \approx 5{,}66$ cm.
+Dividi la diagonale per $\sqrt{2}$. Con una diagonale di 8 cm:
+
+$$l = \frac{8}{\sqrt{2}} = 4\sqrt{2} \approx 5{,}66 \text{ cm}$$
 
 ### Se raddoppio il lato, raddoppia anche l'area?
 
-No, diventa quattro volte più grande: con il lato doppio l'area è $(2l)^2 = 4l^2$. Il perimetro invece raddoppia.
+No, diventa quattro volte più grande, perché $(2l)^2 = 4l^2$. Il perimetro invece raddoppia.

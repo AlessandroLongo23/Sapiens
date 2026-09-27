@@ -9,14 +9,21 @@ const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', im
 const { frazioni } = await jiti.import('../../src/lib/tools/frazioni.ts');
 
 const run = (op, an, ad, bn = '', bd = '') => frazioni({ op, an, ad, bn, bd });
-const steps = (o) => o.steps.join('\n');
+/** Everything a result shows, as one string: the rows, then every field of every step. */
+const steps = (o) => [...o.rows.map((r) => `${r.label}: ${r.value}`), ...o.steps.flatMap(stepTexts)].join('\n');
+const stepTexts = (s) => [s.group ?? '', s.say, ...(s.math ?? []), ...(s.table?.head ?? []), ...(s.table?.rows.flat() ?? []), s.then ?? ''];
 
 test('sums and differences with the mcm of the denominators', () => {
 	const o = run('piu', '3', '4', '1', '6');
 	assert.equal(o.copy, '11/12');
-	assert.match(steps(o), /\\text\{mcm\}\(4, 6\) = 12/);
-	assert.match(steps(o), /\\dfrac\{3 \\cdot 3\}\{12\} = \\dfrac\{9\}\{12\}/);
+	assert.match(steps(o), /2\^2 \\cdot 3 = \\hl\{12\}/);
+	assert.match(steps(o), /\\dfrac\{3 \\cdot 3\}\{4 \\cdot 3\} = \\hl\{\\dfrac\{9\}\{12\}\}/);
 	assert.match(steps(o), /\\dfrac\{9 \+ 2\}\{12\}/);
+	assert.deepEqual(o.rows.map((r) => r.label), ['Risultato', 'In decimali']);
+	assert.equal(o.rows[0].value, '$\\dfrac{11}{12}$');
+	const def = run('piu', '3', '4', '5', '6');
+	assert.deepEqual(def.rows.map((r) => r.value), ['$\\dfrac{19}{12}$', '$1 + \\dfrac{7}{12}$', '$1{,}58\\overline{3}$']);
+	assert.ok(def.steps.length <= 5 && def.steps.every((s) => !s.group));
 	assert.equal(run('meno', '1', '2', '1', '3').copy, '1/6');
 	assert.equal(run('meno', '1', '3', '1', '2').copy, '-1/6');
 	assert.equal(run('piu', '1', '6', '1', '3').copy, '1/2');
@@ -34,9 +41,9 @@ test('products simplified crosswise, quotients by the reciprocal', () => {
 	const p = run('per', '4', '9', '-15', '8');
 	assert.equal(p.copy, '-5/6');
 	assert.match(steps(p), /in croce/);
-	assert.match(steps(p), /più per meno dà meno/);
+	assert.match(steps(p), /Più per meno dà meno/);
 	assert.equal(run('per', '-2', '3', '-3', '4').copy, '1/2');
-	assert.match(steps(run('per', '-2', '3', '-3', '4')), /meno per meno dà più/);
+	assert.match(steps(run('per', '-2', '3', '-3', '4')), /Meno per meno dà più/);
 	assert.equal(run('per', '0', '5', '7', '3').copy, '0');
 	assert.equal(run('per', '2', '3', '5', '7').copy, '10/21');
 	assert.match(steps(run('per', '2', '3', '5', '7')), /Non si può semplificare in croce/);
@@ -51,8 +58,9 @@ test('products simplified crosswise, quotients by the reciprocal', () => {
 test('simplification by the MCD', () => {
 	const s = run('semplifica', '84', '36');
 	assert.equal(s.copy, '7/3');
-	assert.match(steps(s), /84 = 2\^2 \\cdot 3 \\cdot 7/);
-	assert.match(steps(s), /\\text\{MCD\}\(84, 36\) = 12/);
+	assert.deepEqual(s.steps[0].table.rows[0], ['$84$', '$2^2 \\cdot 3 \\cdot 7$']);
+	assert.match(steps(s), /\\text\{MCD\}\(84, 36\) = 2\^2 \\cdot 3\n= \\hl\{12\}/);
+	assert.equal(s.rows[0].label, 'Ridotta ai minimi termini');
 	assert.match(steps(s), /numero misto/);
 	assert.match(steps(s), /2\{,\}\\overline\{3\}/);
 	assert.equal(run('semplifica', '-12', '18').copy, '-2/3');
@@ -75,6 +83,8 @@ test('mistakes in the input, in words', () => {
 	assert.match(run('piu', 'a', '2', '1', '2').error, /interi/);
 	assert.match(run('per', '1', '2', '1000000', '3').error, /999 999/);
 	assert.equal(run('semplifica', '1', '2', 'x', '0').ok, true);
+	// Every message says what to write, with an example.
+	for (const o of [run('piu', '1', '0', '1', '2'), run('diviso', '1', '2', '0', '5'), run('piu', '', '2', '1', '2'), run('piu', 'a', '2', '1', '2'), run('per', '1', '2', '1000000', '3')]) assert.match(o.error, /per esempio|come 3/, o.error);
 	// Large but allowed: exact, or a polite error, never an exception.
 	const big = run('per', '999999', '999998', '999997', '999996');
 	assert.equal(typeof big.ok, 'boolean');
@@ -116,7 +126,6 @@ test('every small fraction, against BigInt arithmetic', () => {
 						assert.equal(o.copy, show(want), `${an}/${ad} ${op} ${bn}/${bd}`);
 						assert.ok(o.steps.length > 0);
 						typesets(o);
-						for (const s of o.steps) assert.equal((s.match(/\$/g) ?? []).length % 2, 0, s);
 						checked++;
 					}
 	for (let n = -60; n <= 60; n++)
@@ -130,8 +139,47 @@ test('every small fraction, against BigInt arithmetic', () => {
 	assert.ok(checked > 5000);
 });
 
-/** Every formula of a result typesets in KaTeX without errors. */
+/**
+ * Every string a result shows typesets in KaTeX without errors, with the `\\hl` of the tools: the rows, and each
+ * step's sentence, lines, table and conclusion. The sentence is a sentence: no display formula, at most one "=".
+ */
+const KATEX = { throwOnError: true, strict: 'ignore', macros: { '\\hl': '\\htmlClass{hl}{#1}' }, trust: (c) => c.command === '\\htmlClass' };
+const inline = (text) => {
+	assert.equal((text.match(/\$/g) ?? []).length % 2, 0, text);
+	for (const m of text.matchAll(/\$([^$]+)\$/g)) assert.doesNotThrow(() => katex.renderToString(m[1], KATEX), m[1]);
+};
 function typesets(o) {
-	for (const text of [o.result, ...o.steps])
-		for (const m of text.matchAll(/\$([^$]+)\$/g)) assert.doesNotThrow(() => katex.renderToString(m[1], { throwOnError: true, strict: 'ignore' }), m[1]);
+	assert.ok(o.rows.length > 0);
+	for (const r of o.rows) {
+		inline(r.label);
+		inline(r.value);
+		assert.match(r.value, /^\$[^$]+\$$/, r.value);
+	}
+	for (const s of o.steps) {
+		assert.ok(!s.say.includes('$$'), s.say);
+		assert.ok((s.say.match(/=/g) ?? []).length <= 1, s.say);
+		inline(s.say);
+		for (const m of s.math ?? []) assert.doesNotThrow(() => katex.renderToString(m, KATEX), m);
+		for (const c of [...(s.table?.head ?? []), ...(s.table?.rows.flat() ?? [])]) inline(c);
+		if (s.then) inline(s.then);
+	}
 }
+
+test('every string typesets, and each sentence stays a sentence', () => {
+	for (const [op, an, ad, bn, bd] of [
+		['piu', '3', '4', '5', '6'],
+		['meno', '4', '6', '-5', '-8'],
+		['per', '4', '9', '-15', '8'],
+		['diviso', '3', '4', '9', '10'],
+		['semplifica', '84', '36'],
+		['semplifica', '1', '128'],
+		['piu', '999999', '999998', '999997', '999996']
+	]) {
+		const o = run(op, an, ad, bn, bd);
+		if (o.ok) typesets(o);
+	}
+	// More than five steps: grouped, the first step opens a group.
+	const long = run('meno', '4', '6', '-5', '-8');
+	assert.ok(long.steps.length > 5);
+	assert.equal(long.steps[0].group, 'Il calcolo');
+});

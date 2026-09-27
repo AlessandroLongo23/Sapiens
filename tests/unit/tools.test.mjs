@@ -44,7 +44,7 @@ test('mcm and MCD', () => {
 	assert.equal(mcd.ok && mcd.copy, '12');
 	const coprime = mcmMcd('8, 15', 'mcd');
 	assert.equal(coprime.ok && coprime.copy, '1');
-	assert.match(coprime.steps.join(' '), /primi tra loro/);
+	assert.match(JSON.stringify(coprime.steps), /primi tra loro/);
 	assert.equal(mcmMcd('8, 15', 'mcm').copy, '120');
 	assert.equal(mcmMcd('1, 7', 'mcm').copy, '7');
 	assert.equal(mcmMcd('12', 'mcm').ok, false);

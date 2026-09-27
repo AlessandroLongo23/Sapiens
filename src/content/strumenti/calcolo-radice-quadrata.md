@@ -2,32 +2,70 @@
 
 ## Che cos'è la radice quadrata
 
-La radice quadrata di un numero è il numero positivo che, elevato al quadrato, dà il numero di partenza: $\sqrt{144} = 12$ perché $12^2 = 144$. Allo stesso modo la radice cubica è il numero che elevato al cubo dà il numero di partenza: $\sqrt[3]{27} = 3$ perché $3^3 = 27$.
+La radice quadrata di un numero è il numero positivo che, elevato al quadrato, dà il numero di partenza.
 
-Solo i quadrati perfetti (1, 4, 9, 16, 25…) hanno una radice quadrata intera. Per gli altri numeri la radice è un numero irrazionale, con infinite cifre decimali non periodiche: si scrive in forma semplificata, come $6\sqrt{2}$, e se serve se ne dà un valore approssimato.
+Per esempio la radice quadrata di 144 è 12, perché 12 al quadrato fa 144:
+
+$$\sqrt{144} = 12$$
+$$12^2 = 144$$
+
+La radice cubica funziona allo stesso modo con il cubo: è il numero che, elevato al cubo, dà il numero di partenza.
+
+$$\sqrt[3]{27} = 3$$
+$$3^3 = 27$$
+
+Solo i quadrati perfetti, come 1, 4, 9, 16 e 25, hanno una radice quadrata intera. Per gli altri numeri la radice ha infinite cifre decimali che non si ripetono: si scrive in forma semplificata, come $6\sqrt{2}$, e se serve se ne dà un valore arrotondato.
 
 ## Come si calcola a mano
 
-Si parte dalla scomposizione in fattori primi:
+Si parte dalla scomposizione in fattori primi, cioè dal numero scritto come prodotto di numeri primi. Ecco due esempi, prima uno che dà un numero intero, poi uno che non lo dà.
+
+```ad-example
+Esempio: radice quadrata di 144
+Scomponi 144 in fattori primi:
+
+$$144 = 2^4 \cdot 3^2$$
+
+Gli esponenti sono tutti pari: dividili per 2.
+
+$$\sqrt{144} = 2^2 \cdot 3$$
+$$= 12$$
+```
+
+```ad-example
+Esempio: radice quadrata di 72
+Scomponi 72 e separa ogni potenza in una parte con esponente pari e in quello che resta:
+
+$$72 = 2^3 \cdot 3^2$$
+$$= 2^2 \cdot 2 \cdot 3^2$$
+
+Porta fuori dalla radice $2^2$ e $3^2$, dividendo l'esponente per 2. Il 2 con esponente 1 resta sotto la radice.
+
+$$\sqrt{72} = 2 \cdot 3\sqrt{2}$$
+$$= 6\sqrt{2}$$
+
+Controllo:
+
+$$(6\sqrt{2})^2 = 36 \cdot 2 = 72$$
+
+Per il valore decimale, cerca prima tra quali numeri interi sta la radice:
+
+$$8^2 = 64$$
+$$9^2 = 81$$
+
+72 sta tra 64 e 81, quindi la radice sta tra 8 e 9. Con la calcolatrice:
+
+$$\sqrt{72} \approx 8{,}4853$$
+```
+
+La regola generale:
 
 1. scomponi il numero in fattori primi;
 2. se tutti gli esponenti sono pari, dividili per 2: il risultato è la radice;
 3. altrimenti separa ogni potenza in una parte con esponente pari e in quello che resta;
 4. porta fuori dalla radice le parti con esponente pari, dimezzando l'esponente; il resto rimane sotto la radice.
 
-Per la radice cubica il ragionamento è lo stesso, con esponenti multipli di 3 al posto degli esponenti pari.
-
-```ad-example
-Esempio: radice quadrata di 144
-$144 = 2^4 \cdot 3^2$. Gli esponenti sono pari, quindi $\sqrt{144} = 2^2 \cdot 3 = 12$.
-```
-
-```ad-example
-Esempio: radice quadrata di 72
-$72 = 2^3 \cdot 3^2 = 2^2 \cdot 3^2 \cdot 2$.
-Porta fuori $2^2$ e $3^2$: $\sqrt{72} = 2 \cdot 3 \sqrt{2} = 6\sqrt{2} \approx 8{,}4853$.
-Controllo: $(6\sqrt{2})^2 = 36 \cdot 2 = 72$.
-```
+Per la radice cubica il ragionamento è lo stesso, con esponenti multipli di 3 al posto degli esponenti pari, e si divide l'esponente per 3.
 
 ```ad-error
 Errori frequenti
@@ -40,7 +78,11 @@ Errori frequenti
 
 ### Esiste la radice quadrata di un numero negativo?
 
-Non tra i numeri reali: ogni numero elevato al quadrato dà un risultato positivo o zero. La radice cubica invece esiste anche per i numeri negativi: $\sqrt[3]{-8} = -2$.
+Non tra i numeri reali, perché ogni numero elevato al quadrato dà un risultato positivo o zero.
+
+La radice cubica invece esiste anche per i numeri negativi, perché un numero negativo al cubo resta negativo:
+
+$$\sqrt[3]{-8} = -2$$
 
 ### Perché si scrive $6\sqrt{2}$ e non $8{,}4853$?
 

@@ -1,6 +1,6 @@
 import { Rational, lcm, q } from '@/lib/exercises/v2/rational';
 import { decimalLatex, toDecimal } from '@/lib/exercises/v2/razionali';
-import { fail, type Outcome } from './types';
+import { fail, type Outcome, type Step } from './types';
 import { decimalTex, intTex } from './numbers';
 
 /**
@@ -12,14 +12,18 @@ import { decimalTex, intTex } from './numbers';
 
 export type Op = '+' | '-' | '*' | ':';
 
-export type Node =
+export type Node = (
 	/** A number. `src` is how it was typed when that differs from its value: "0{,}5", "\dfrac{4}{6}". */
 	| { t: 'n'; v: Rational; src?: string }
 	| { t: 'neg'; x: Node }
 	| { t: 'op'; op: Op; l: Node; r: Node }
 	| { t: 'pow'; b: Node; e: number }
 	/** A bracket as typed: 0 round, 1 square, 2 curly. */
-	| { t: 'g'; k: 0 | 1 | 2; c: Node };
+	| { t: 'g'; k: 0 | 1 | 2; c: Node }
+) & {
+	/** Written inside `\hl{…}`: the part a step works on, or its result. */
+	hl?: boolean;
+};
 
 export const MAX_CHARS = 200;
 export const MAX_OPS = 40;
@@ -73,7 +77,7 @@ function tokenize(s: string): Tok[] {
 		if (num) {
 			const [text, int, frac = ''] = num;
 			if (/^[.,]\d/.test(s.slice(i + text.length))) throw new ExprError(`Il numero "${s.slice(i).match(/^[\d.,]+/)?.[0]}" non è scritto bene: per i decimali usa una virgola sola, come in 12,5.`);
-			if (int.length + frac.length > MAX_DIGITS) throw new ExprError(`Il numero ${text} è troppo lungo: al massimo ${MAX_DIGITS} cifre.`);
+			if (int.length + frac.length > MAX_DIGITS) throw new ExprError(`Il numero ${text} è troppo lungo: usa al massimo ${MAX_DIGITS} cifre, come in 3,14159.`);
 			out.push({ k: 'num', text, int, frac, ch: text });
 			i += text.length;
 			continue;
@@ -89,12 +93,15 @@ function tokenize(s: string): Tok[] {
 		else if (OPENS.includes(c)) out.push({ k: 'open', b: OPENS.indexOf(c) as 0 | 1 | 2, ch: c });
 		else if (CLOSES.includes(c)) out.push({ k: 'close', b: CLOSES.indexOf(c) as 0 | 1 | 2, ch: c });
 		else if (c === ',' || c === '.') throw new ExprError(`C'è una virgola fuori posto: i decimali si scrivono con una cifra prima della virgola, come 0,5.`);
-		else if (/\p{L}/u.test(c)) throw new ExprError(`Le lettere non si possono usare ("${c}"): scrivi solo numeri, operazioni e parentesi. Per moltiplicare usa * oppure x.`);
-		else throw new ExprError(`Il simbolo "${c}" non si può usare: scrivi solo numeri, + - * : / ^ e le parentesi ( ) [ ] { }.`);
+		else if (/\p{L}/u.test(c)) throw new ExprError(`Le lettere non si possono usare ("${c}"): scrivi solo numeri, operazioni e parentesi. Per moltiplicare usa * oppure x, come in 2 x 3.`);
+		else throw new ExprError(`Il simbolo "${c}" non si può usare: scrivi solo numeri, + - * : / ^ e le parentesi ( ) [ ] { }, come in 2 * (3 + 1).`);
 		i++;
 	}
 	return out;
 }
+
+/** A correct use of each kind of bracket, for the error messages. */
+const EXAMPLE = ['(2 + 3) * 4', '[8 - (2 + 3)] : 3', '{[1 + 2] * 3}^2'];
 
 /** Brackets that do not match, said in words before parsing. */
 function checkBrackets(toks: Tok[]) {
@@ -103,13 +110,13 @@ function checkBrackets(toks: Tok[]) {
 		if (t.k === 'open') stack.push(t);
 		else if (t.k === 'close') {
 			const top = stack.pop();
-			if (!top) throw new ExprError(`C'è una parentesi "${t.ch}" chiusa che non era stata aperta.`);
-			if (top.k === 'open' && top.b !== t.b) throw new ExprError(`La parentesi "${top.ch}" è chiusa con "${t.ch}": chiudila con "${CLOSES[top.b]}".`);
+			if (!top) throw new ExprError(`C'è una parentesi "${t.ch}" chiusa che non era stata aperta: toglila, oppure aprila prima, come in ${EXAMPLE[t.b]}.`);
+			if (top.k === 'open' && top.b !== t.b) throw new ExprError(`La parentesi "${top.ch}" è chiusa con "${t.ch}": chiudila con "${CLOSES[top.b]}", come in ${EXAMPLE[top.b]}.`);
 		}
 	}
 	if (stack.length) {
 		const t = stack[stack.length - 1] as Extract<Tok, { k: 'open' }>;
-		throw new ExprError(`Hai aperto una parentesi "${t.ch}" senza chiuderla: manca "${CLOSES[t.b]}".`);
+		throw new ExprError(`Hai aperto una parentesi "${t.ch}" senza chiuderla: manca "${CLOSES[t.b]}", come in ${EXAMPLE[t.b]}.`);
 	}
 }
 
@@ -146,7 +153,7 @@ function parseTokens(toks: Tok[]): Node {
 			} else if (t && t.k === 'num') {
 				const prev = toks[i - 1];
 				if (prev.k === 'close') x = { t: 'op', op: '*', l: x, r: unary() };
-				else throw new ExprError(`Tra ${prev.ch} e ${t.ch} manca un'operazione.`);
+				else throw new ExprError(`Tra ${prev.ch} e ${t.ch} manca un'operazione: scrivi per esempio ${prev.ch} + ${t.ch} oppure ${prev.ch} * ${t.ch}.`);
 			} else return x;
 		}
 	};
@@ -184,7 +191,7 @@ function parseTokens(toks: Tok[]): Node {
 			i++;
 		}
 		const e = sign * Number(n.int);
-		if (Math.abs(e) > MAX_EXP) throw new ExprError(`Usa esponenti tra -${MAX_EXP} e ${MAX_EXP}.`);
+		if (Math.abs(e) > MAX_EXP) throw new ExprError(`Usa esponenti tra -${MAX_EXP} e ${MAX_EXP}, come in 2^10.`);
 		return e;
 	};
 
@@ -199,7 +206,7 @@ function parseTokens(toks: Tok[]): Node {
 
 	const primary = (): Node => {
 		const t = peek();
-		if (!t) throw new ExprError(toks.length ? "L'espressione è incompleta: alla fine manca un numero." : "Scrivi un'espressione.");
+		if (!t) throw new ExprError(toks.length ? "L'espressione è incompleta: alla fine manca un numero, come in 2 + 3." : "Scrivi un'espressione, per esempio 2 + 3 · (4 - 1).");
 		if (t.k === 'num') {
 			i++;
 			// a/b between two whole numbers is a fraction, a number of its own; not when a power follows, as in 2/3^2.
@@ -207,29 +214,29 @@ function parseTokens(toks: Tok[]): Node {
 			if (!t.frac && slash?.k === 'op' && slash.op === '/' && den?.k === 'num' && !den.frac && after?.k !== 'pow') {
 				i += 2;
 				const d = Number(den.int);
-				if (d === 0) throw new ExprError(`La frazione ${t.int}/${den.int} ha denominatore 0: non si può dividere per zero.`);
+				if (d === 0) throw new ExprError(`La frazione ${t.int}/${den.int} ha denominatore 0: non si può dividere per zero. Scrivi un altro denominatore, come in ${t.int}/2.`);
 				return { t: 'n', v: q(Number(t.int), d), src: `\\dfrac{${intTex(Number(t.int))}}{${intTex(d)}}` };
 			}
 			return numValue(t);
 		}
 		if (t.k === 'open') {
 			i++;
-			if (peek()?.k === 'close') throw new ExprError('Ci sono delle parentesi vuote: scrivi qualcosa dentro, o toglile.');
+			if (peek()?.k === 'close') throw new ExprError('Ci sono delle parentesi vuote: scrivi qualcosa dentro, come in (2 + 3), oppure toglile.');
 			const c = expr();
 			const close = peek();
-			if (!close || close.k !== 'close') throw new ExprError(`Dentro le parentesi manca un'operazione prima di "${close?.ch ?? ''}".`);
+			if (!close || close.k !== 'close') throw new ExprError(`Dentro le parentesi manca un'operazione prima di "${close?.ch ?? ''}": scrivila, come in (2 + 3) * 4.`);
 			i++;
 			return { t: 'g', k: t.b, c };
 		}
-		if (t.k === 'close') throw new ExprError(`Manca un numero prima della parentesi "${t.ch}".`);
-		if (t.k === 'pow') throw new ExprError('Manca la base della potenza prima di "^".');
-		throw new ExprError(i === 0 ? `L'espressione non può cominciare con "${OP_NAME[t.op]}".` : `Dopo "${toks[i - 1].ch}" manca un numero.`);
+		if (t.k === 'close') throw new ExprError(`Manca un numero prima della parentesi "${t.ch}": scrivilo, come in (2 + 3).`);
+		if (t.k === 'pow') throw new ExprError('Manca la base della potenza prima di "^": scrivila, come in 2^3.');
+		throw new ExprError(i === 0 ? `L'espressione non può cominciare con "${OP_NAME[t.op]}": comincia con un numero o una parentesi, come in 2 * 3.` : `Dopo "${toks[i - 1].ch}" manca un numero: scrivilo, come in ${toks[i - 1].k === 'op' ? `2 ${toks[i - 1].ch} 3` : '(2 + 3)'}.`);
 	};
 
 	const x = expr();
 	if (i < toks.length) {
 		const t = toks[i];
-		throw new ExprError(t.k === 'pow' ? 'Per una potenza di potenza usa le parentesi, come in (2^3)^2.' : `Non capisco "${t.ch}" in questo punto.`);
+		throw new ExprError(t.k === 'pow' ? 'Per una potenza di potenza usa le parentesi, come in (2^3)^2.' : `Non capisco "${t.ch}" in questo punto: controlla l'espressione, per esempio 2 + 3 * (4 - 1).`);
 	}
 	return x;
 }
@@ -255,12 +262,12 @@ export type Parsed = { ok: true; node: Node } | { ok: false; error: string };
 export function parseExpression(input: string): Parsed {
 	const s = input.trim();
 	if (!s) return { ok: false, error: "Scrivi un'espressione, per esempio 2 + 3 · (4 - 1)." };
-	if (s.length > MAX_CHARS) return { ok: false, error: `L'espressione è troppo lunga: al massimo ${MAX_CHARS} caratteri.` };
+	if (s.length > MAX_CHARS) return { ok: false, error: `L'espressione è troppo lunga: al massimo ${MAX_CHARS} caratteri. Calcolane un pezzo alla volta, per esempio prima le parentesi.` };
 	try {
 		const toks = tokenize(s);
 		checkBrackets(toks);
 		const node = parseTokens(toks);
-		if (countOps(node) > MAX_OPS) return { ok: false, error: `Al massimo ${MAX_OPS} operazioni in un'espressione.` };
+		if (countOps(node) > MAX_OPS) return { ok: false, error: `Al massimo ${MAX_OPS} operazioni in un'espressione: calcolane un pezzo alla volta, per esempio prima le parentesi.` };
 		return { ok: true, node };
 	} catch (e) {
 		if (e instanceof ExprError) return { ok: false, error: e.message };
@@ -288,6 +295,11 @@ const wrap = (s: string) => `\\left(${s}\\right)`;
  * expression or of a bracket. Elsewhere a negative number takes round brackets: 2 \cdot (-3).
  */
 export function latex(x: Node, lead = true): string {
+	const s = body(x, lead);
+	return x.hl ? `\\hl{${s}}` : s;
+}
+
+function body(x: Node, lead: boolean): string {
 	switch (x.t) {
 		case 'n': {
 			const s = x.src ?? numTex(x.v);
@@ -301,7 +313,9 @@ export function latex(x: Node, lead = true): string {
 		case 'op':
 			return `${latex(x.l, lead)} ${OP_TEX[x.op]} ${latex(x.r, false)}`;
 		case 'pow': {
-			const b = x.b.t === 'n' && (x.b.v.sign() < 0 || !x.b.v.isInteger() || x.b.src) ? (x.b.v.isInteger() && !x.b.src ? `(${numTex(x.b.v)})` : wrap(x.b.src ?? numTex(x.b.v))) : latex(x.b, false);
+			const n = x.b;
+			const bare = n.t === 'n' && (n.v.sign() < 0 || !n.v.isInteger() || n.src) ? (n.v.isInteger() && !n.src ? `(${numTex(n.v)})` : wrap(n.src ?? numTex(n.v))) : null;
+			const b = bare === null ? latex(n, false) : n.hl ? `\\hl{${bare}}` : bare;
 			return `${b}^{${x.e}}`;
 		}
 		case 'g':
@@ -319,8 +333,8 @@ export function expressionPreview(input: string): string | null {
 // Evaluation
 
 function power(b: Rational, e: number): Rational {
-	if (b.isZero() && e === 0) throw new ExprError("Nell'espressione compare 0^0, che non ha significato.");
-	if (b.isZero() && e < 0) throw new ExprError("Nell'espressione c'è 0 elevato a un esponente negativo: vorrebbe dire dividere per zero, che non si può fare.");
+	if (b.isZero() && e === 0) throw new ExprError("Nell'espressione compare 0^0, che non ha significato: cambia la base o l'esponente, per esempio 2^0 = 1.");
+	if (b.isZero() && e < 0) throw new ExprError("Nell'espressione c'è 0 elevato a un esponente negativo: vorrebbe dire dividere per zero. Cambia la base, per esempio 2^-1.");
 	const base = e < 0 ? q(1).div(b) : b;
 	let out = q(1);
 	for (let k = 0; k < Math.abs(e); k++) out = out.mul(base);
@@ -347,7 +361,7 @@ export function evaluate(x: Node): Rational {
 				case '*':
 					return a.mul(b);
 				case ':':
-					if (b.isZero()) throw new ExprError("Nell'espressione c'è una divisione per zero: un divisore vale 0, e per zero non si può dividere.");
+					if (b.isZero()) throw new ExprError("Nell'espressione c'è una divisione per zero: un divisore vale 0, e per zero non si può dividere. Controlla i divisori, per esempio 6 : 2.");
 					return a.div(b);
 			}
 		}
@@ -356,11 +370,19 @@ export function evaluate(x: Node): Rational {
 
 // ---------------------------------------------------------------------------
 // Steps
+//
+// Each step is one stage of one part: the powers, the divisions turned into products by the reciprocal, the products
+// and quotients, the sums, first inside the innermost bracket (round before square before curly, left to right),
+// then outside. Its lines are the whole expression, before and after, with the part it works on and its result
+// inside \hl{…}; a long stage has a line for each intermediate result, starting with "=".
+
+/** Tidies the tree the way it is written by hand: a bracket around a single number goes. */
+const unwrap = (x: Node): Node => map(x, (y) => (y.t === 'g' && y.c.t === 'n' ? y.c : y));
 
 /**
  * Tidies the tree after each step, the way it is written by hand: a bracket around a single number goes (it stays
  * visible only as the round brackets of a negative number), a minus in front of a number joins it, and the sign rule
- * turns + (-3) into - 3 and - (-3) into + 3.
+ * turns + (-3) into - 3 and - (-3) into + 3. Highlights stay on the numbers they were on.
  */
 function norm(x: Node): Node {
 	switch (x.t) {
@@ -372,14 +394,14 @@ function norm(x: Node): Node {
 		}
 		case 'neg': {
 			const y = norm(x.x);
-			return y.t === 'n' && !y.src ? leaf(y.v.neg()) : { t: 'neg', x: y };
+			return y.t === 'n' && !y.src ? { ...leaf(y.v.neg()), hl: y.hl || x.hl } : { ...x, x: y };
 		}
 		case 'pow':
 			return { ...x, b: norm(x.b) };
 		case 'op': {
 			const l = norm(x.l), r = norm(x.r);
-			if ((x.op === '+' || x.op === '-') && r.t === 'n' && !r.src && r.v.sign() < 0) return { t: 'op', op: x.op === '+' ? '-' : '+', l, r: leaf(r.v.neg()) };
-			return { t: 'op', op: x.op, l, r };
+			if ((x.op === '+' || x.op === '-') && r.t === 'n' && !r.src && r.v.sign() < 0) return { ...x, op: x.op === '+' ? '-' : '+', l, r: { ...leaf(r.v.neg()), hl: r.hl } };
+			return { ...x, l, r };
 		}
 	}
 }
@@ -406,25 +428,14 @@ function map(x: Node, f: (y: Node) => Node): Node {
 		case 'n':
 			return f(x);
 		case 'neg':
-			return f({ t: 'neg', x: map(x.x, f) });
+			return f({ ...x, x: map(x.x, f) });
 		case 'op':
-			return f({ t: 'op', op: x.op, l: map(x.l, f), r: map(x.r, f) });
+			return f({ ...x, l: map(x.l, f), r: map(x.r, f) });
 		case 'pow':
 			return f({ ...x, b: map(x.b, f) });
 		case 'g':
 			return f({ ...x, c: map(x.c, f) });
 	}
-}
-
-const isMul = (y: Node) => y.t === 'op' && (y.op === '*' || y.op === ':');
-
-/** The items of a chain of products and quotients, left-associated: a : b · c. */
-function mulItems(x: Node): { op: Op | null; x: Node }[] {
-	if (isMul(x)) {
-		const o = x as Extract<Node, { t: 'op' }>;
-		return [...mulItems(o.l), { op: o.op, x: o.r }];
-	}
-	return [{ op: null, x }];
 }
 
 /** Top-down map that stops where `f` returns a node. */
@@ -435,9 +446,9 @@ function replaceTop(x: Node, f: (y: Node) => Node | null): Node {
 		case 'n':
 			return x;
 		case 'neg':
-			return { t: 'neg', x: replaceTop(x.x, f) };
+			return { ...x, x: replaceTop(x.x, f) };
 		case 'op':
-			return { t: 'op', op: x.op, l: replaceTop(x.l, f), r: replaceTop(x.r, f) };
+			return { ...x, l: replaceTop(x.l, f), r: replaceTop(x.r, f) };
 		case 'pow':
 			return { ...x, b: replaceTop(x.b, f) };
 		case 'g':
@@ -445,26 +456,58 @@ function replaceTop(x: Node, f: (y: Node) => Node | null): Node {
 	}
 }
 
-/** Powers of numbers, all at once. */
-const powStage = (x: Node) => norm(map(x, (y) => (y.t === 'pow' && y.b.t === 'n' ? leaf(evaluate(y)) : y)));
+/** The tree without highlights. */
+const strip = (x: Node): Node => map(x, (y) => (y.hl ? { ...y, hl: undefined } : y));
 
-/** In a chain with fractions, every division becomes a product by the reciprocal. */
-function recipStage(x: Node): Node {
+const mark = (x: Node): Node => ({ ...x, hl: true });
+
+const isMul = (y: Node): y is Extract<Node, { t: 'op' }> => y.t === 'op' && (y.op === '*' || y.op === ':');
+const isSum = (y: Node): y is Extract<Node, { t: 'op' }> => y.t === 'op' && (y.op === '+' || y.op === '-');
+
+/** The items of a chain of products and quotients, left-associated: a : b · c. */
+function mulItems(x: Node): { op: Op | null; x: Node }[] {
+	if (isMul(x)) return [...mulItems(x.l), { op: x.op, x: x.r }];
+	return [{ op: null, x }];
+}
+
+/** The operators of every chain of `pred` in the tree. */
+function chainOps(x: Node, pred: (y: Node) => boolean): Op[] {
+	const out: Op[] = [];
+	map(x, (y) => {
+		if (pred(y)) out.push((y as Extract<Node, { t: 'op' }>).op);
+		return y;
+	});
+	return out;
+}
+
+/** The first operation of a left-associated chain, where `f` is applied: the leftmost pair. */
+function firstPair(y: Node, pred: (z: Node) => boolean, f: (z: Node) => Node): Node {
+	if (y.t === 'op' && pred(y.l)) return { ...y, l: firstPair(y.l, pred, f) };
+	return f(y);
+}
+
+/** A chain of products and quotients where fractions are divided: every division becomes a product by the reciprocal. */
+function recipChain(y: Node): boolean {
+	const items = mulItems(y);
+	return items.some((it) => it.op === ':') && items.some((it) => it.x.t === 'n' && !it.x.v.isInteger()) && items.every((it) => it.x.t === 'n');
+}
+
+function recip(x: Node, after: boolean): Node {
 	return replaceTop(x, (y) => {
 		if (!isMul(y)) return null;
+		if (!recipChain(y)) return y;
 		const items = mulItems(y);
-		if (!items.some((it) => it.op === ':') || !items.some((it) => it.x.t === 'n' && !it.x.v.isInteger())) return y;
-		if (!items.every((it) => it.x.t === 'n')) return y;
-		return items.slice(1).reduce<Node>((acc, it) => ({ t: 'op', op: '*', l: acc, r: it.op === ':' ? leaf(q(1).div((it.x as { v: Rational }).v)) : it.x }), items[0].x);
+		return items.slice(1).reduce<Node>((acc, it) => {
+			if (it.op !== ':') return { t: 'op', op: it.op ?? '*', l: acc, r: it.x };
+			const v = (it.x as { v: Rational }).v;
+			return { t: 'op', op: after ? '*' : ':', l: acc, r: after ? mark(leaf(q(1).div(v))) : mark(it.x) };
+		}, items[0].x);
 	});
 }
 
-/** Every chain of products and quotients computed. */
-const mulStage = (x: Node) => norm(replaceTop(x, (y) => (isMul(y) ? leaf(evaluate(y)) : null)));
-
 /** The terms of a sum with their signs, as numbers. */
 function sumValues(x: Node): Rational[] | null {
-	if (x.t === 'op' && (x.op === '+' || x.op === '-')) {
+	if (isSum(x)) {
 		const l = sumValues(x.l);
 		if (!l || x.r.t !== 'n') return null;
 		return [...l, x.op === '-' ? x.r.v.neg() : x.r.v];
@@ -472,48 +515,88 @@ function sumValues(x: Node): Rational[] | null {
 	return x.t === 'n' ? [x.v] : null;
 }
 
-/** "\dfrac{16 - 3 + 12}{12}": a sum of fractions over the common denominator, when the denominators differ. */
-function commonDenominator(x: Node): { tex: string; m: number } | null {
+/** "\dfrac{16 - 3 + 12}{12}": a sum of fractions over the common denominator (the mcm of the denominators). */
+function commonDenominator(x: Node): { tex: string; m: number; differ: boolean } | null {
 	const vals = sumValues(x);
 	if (!vals || vals.length < 2) return null;
 	const m = vals.reduce((acc, v) => lcm(acc, v.den), 1);
-	if (m === 1 || new Set(vals.map((v) => v.den)).size === 1) return null;
+	if (m === 1) return null;
 	const nums = vals.map((v) => v.num * (m / v.den));
 	const top = nums.map((k, i) => (i === 0 ? intTex(k) : k < 0 ? ` - ${intTex(-k)}` : ` + ${intTex(k)}`)).join('');
-	return { tex: `\\dfrac{${top}}{${intTex(m)}}`, m };
+	return { tex: `\\dfrac{${top}}{${intTex(m)}}`, m, differ: new Set(vals.map((v) => v.den)).size > 1 };
 }
 
-/** The stages of a part without brackets, as LaTeX; consecutive equal forms are written once. */
-function stages(x: Node): { label: 'pow' | 'mul' | 'sum'; forms: string[] }[] {
-	const out: { label: 'pow' | 'mul' | 'sum'; forms: string[] }[] = [];
-	let cur = x;
-	if (has(cur, (y) => y.t === 'pow')) {
-		cur = powStage(cur);
-		out.push({ label: 'pow', forms: [latex(cur)] });
-	}
-	if (has(cur, isMul)) {
-		const forms: string[] = [];
-		const r = recipStage(cur);
-		if (latex(r) !== latex(cur)) forms.push(latex(r));
-		cur = mulStage(r);
-		forms.push(latex(cur));
-		out.push({ label: 'mul', forms });
-	}
-	if (cur.t !== 'n') {
-		const forms: string[] = [];
-		const cd = commonDenominator(cur);
-		if (cd) forms.push(cd.tex);
-		cur = leaf(evaluate(cur));
-		forms.push(latex(cur));
-		out.push({ label: 'sum', forms });
-	}
-	return out;
+type Stage = 'pow' | 'recip' | 'mul' | 'sum';
+
+const STAGE_GROUP: Record<Stage, string> = { pow: 'Potenze', recip: 'Moltiplicazioni e divisioni', mul: 'Moltiplicazioni e divisioni', sum: 'Addizioni e sottrazioni' };
+
+/** "la divisione", "le moltiplicazioni e le divisioni": the operations of a stage, in words. */
+function opsWords(ops: Op[], one: [string, string], two: [string, string]): string {
+	const a = ops.filter((o) => o === '+' || o === '*').length, b = ops.length - a;
+	if (!b) return a === 1 ? one[0] : one[1];
+	if (!a) return b === 1 ? two[0] : two[1];
+	return `${one[1]} e ${two[1]}`;
 }
 
-/** "2 + 3 \cdot 4 = 2 + 12 = 14": a part without brackets calculated in one line. */
-function flatChain(x: Node): string {
-	const forms = [latex(x), ...stages(x).flatMap((s) => s.forms)];
-	return forms.filter((f, i) => f !== forms[i - 1]).join(' = ');
+interface Worked {
+	stage: Stage;
+	/** The part, stage by stage: the first with what is worked on highlighted, the others with what changed. */
+	forms: Node[];
+	/** What to do, lower case, without the full stop: "esegui la divisione". */
+	what: string;
+	/** How, when it helps: "usa il denominatore comune $6$". */
+	how?: string;
+	then?: string;
+}
+
+function work(x: Node): Worked {
+	if (has(x, (y) => y.t === 'pow')) {
+		const pows: number[] = [];
+		map(x, (y) => {
+			if (y.t === 'pow') pows.push(y.e);
+			return y;
+		});
+		return {
+			stage: 'pow',
+			forms: [map(x, (y) => (y.t === 'pow' ? mark(y) : y)), map(x, (y) => (y.t === 'pow' ? mark(leaf(evaluate(y))) : y))],
+			what: pows.length === 1 ? 'calcola la potenza' : 'calcola le potenze',
+			then: pows.some((e) => e < 0) ? 'Un esponente negativo vuol dire: il reciproco della base, con l’esponente positivo.' : pows.some((e) => e === 0) ? 'Ogni numero diverso da zero elevato a $0$ dà $1$.' : undefined
+		};
+	}
+	if (has(x, (y) => isMul(y) && recipChain(y))) {
+		const n = chainOps(recip(x, false), isMul).filter((o) => o === ':').length;
+		return {
+			stage: 'recip',
+			forms: [recip(x, false), recip(x, true)],
+			what: n === 1 ? 'trasforma la divisione in una moltiplicazione per il reciproco' : 'trasforma le divisioni in moltiplicazioni per il reciproco',
+			then: 'Il reciproco di una frazione si ottiene scambiando numeratore e denominatore.'
+		};
+	}
+	if (has(x, isMul)) return { stage: 'mul', ...passes(x, isMul), what: `esegui ${opsWords(chainOps(x, isMul), ['la moltiplicazione', 'le moltiplicazioni'], ['la divisione', 'le divisioni'])}` };
+	const words = `esegui ${opsWords(chainOps(x, isSum), ['l’addizione', 'le addizioni'], ['la sottrazione', 'le sottrazioni'])}`;
+	const cd = commonDenominator(x);
+	if (!cd) return { stage: 'sum', ...passes(x, isSum), what: words };
+	const value = evaluate(x);
+	return {
+		stage: 'sum',
+		forms: [mark(x), { t: 'n', v: value, src: cd.tex, hl: true }, mark(leaf(value))],
+		what: words,
+		how: `usa il denominatore comune $${intTex(cd.m)}$`,
+		then: cd.differ ? `$${intTex(cd.m)}$ è il mcm dei denominatori.` : undefined
+	};
+}
+
+/** Chains computed from left to right, one pair of each chain at a time: a line for each round. */
+function passes(x: Node, pred: (y: Node) => boolean): { forms: Node[]; then?: string } {
+	const top = (f: (z: Node) => Node) => (cur: Node) => replaceTop(cur, (y) => (pred(y) ? firstPair(y, pred, f) : null));
+	const forms = [top(mark)(x)];
+	let long = false;
+	for (let cur = x; has(cur, pred); ) {
+		cur = top((z) => mark(leaf(evaluate(z))))(strip(cur));
+		forms.push(cur);
+		if (has(cur, pred)) long = true;
+	}
+	return { forms, then: long ? 'Si va da sinistra a destra, un’operazione alla volta.' : undefined };
 }
 
 const KIND = [
@@ -522,8 +605,8 @@ const KIND = [
 	['graffa', 'graffe']
 ];
 
-/** The brackets with no bracket inside and something to calculate. */
-function innermost(x: Node): Extract<Node, { t: 'g' }>[] {
+/** The bracket to work on: one with no bracket inside, round before square before curly, then from the left. */
+function nextBracket(x: Node): Extract<Node, { t: 'g' }> | null {
 	const out: Extract<Node, { t: 'g' }>[] = [];
 	const rec = (y: Node) => {
 		if (y.t === 'g' && !has(y.c, (z) => z.t === 'g')) out.push(y);
@@ -535,80 +618,115 @@ function innermost(x: Node): Extract<Node, { t: 'g' }>[] {
 		else if (y.t === 'g') rec(y.c);
 	};
 	rec(x);
-	return out;
+	return out.reduce<Extract<Node, { t: 'g' }> | null>((best, g) => (!best || g.k < best.k ? g : best), null);
 }
 
-/** Two forms that differ only in the size of their brackets are the same to the reader. */
-const same = (a: string, b: string) => a.replace(/\\(left|right)/g, '') === b.replace(/\\(left|right)/g, '');
+/** Two forms that differ only in highlights or in the size of their brackets are the same to the reader. */
+const same = (a: Node, b: Node) => latex(strip(a)).replace(/\\(left|right)/g, '') === latex(strip(b)).replace(/\\(left|right)/g, '');
 
-/** "; l'espressione diventa …", with the sign rule shown when it changes something. */
-function becomes(raw: Node): { tree: Node; text: string } {
-	const tree = norm(raw);
-	if (tree.t === 'n' && raw.t === 'n') return { tree, text: '' };
-	const a = latex(raw), b = latex(tree);
-	return { tree, text: ` L'espressione diventa $${same(a, b) ? b : `${a} = ${b}`}$.` };
+const SIGNS = 'Regola dei segni: più per meno dà meno, meno per meno dà più.';
+
+interface Draft {
+	say: string;
+	/** The sentence under a group heading, where the heading already names the bracket. */
+	short: string;
+	math: string[];
+	table?: Step['table'];
+	then?: string;
+	group: string;
 }
 
-function buildSteps(root: Node): string[] {
-	const steps: string[] = [];
-	let tree = root;
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
-	// Decimals and fractions not in lowest terms, rewritten first.
-	const written: string[] = [];
-	const decimals = has(tree, (y) => y.t === 'n' && !!y.src && y.src.includes('{,}'));
-	const fractions = has(tree, (y) => y.t === 'n' && !!y.src && y.src.includes('frac') && numTex(y.v) !== y.src);
-	tree = map(tree, (y) => {
-		if (y.t !== 'n' || !y.src) return y;
-		const plain = numTex(y.v);
-		if (plain !== y.src) written.push(`$${y.src} = ${plain}$`);
-		return leaf(y.v);
-	});
-	if (written.length) {
-		const what = decimals && fractions ? 'Scrivi i decimali come frazioni e riduci le frazioni ai minimi termini' : decimals ? 'Scrivi i decimali come frazioni ridotte ai minimi termini' : 'Riduci le frazioni ai minimi termini';
-		const b = becomes(tree);
-		steps.push(`${what}: ${written.join(', ')}.${b.text}`);
-		tree = b.tree;
-	} else {
-		const b = norm(tree);
-		if (!same(latex(b), latex(tree))) steps.push(`Togli le parentesi attorno ai singoli numeri e applica la regola dei segni: $${latex(tree)} = ${latex(b)}$.`);
-		tree = b;
+/** The first step: decimals and fractions not in lowest terms rewritten, brackets around single numbers taken away. */
+function prepare(root: Node, drafts: Draft[]): Node {
+	const rewritten = (y: Node) => y.t === 'n' && !!y.src && numTex(y.v) !== y.src;
+	const decimals = has(root, (y) => y.t === 'n' && !!y.src && y.src.includes('{,}'));
+	const fractions = has(root, (y) => rewritten(y) && y.t === 'n' && !!y.src?.includes('frac'));
+	if (has(root, rewritten)) {
+		const rows: string[][] = [];
+		map(root, (y) => {
+			if (y.t !== 'n' || !y.src || !rewritten(y)) return y;
+			const m = /^(\d+)\{,\}(\d+)$/.exec(y.src);
+			const tenths = m ? `\\dfrac{${intTex(Number(m[1] + m[2]))}}{${intTex(10 ** m[2].length)}}` : '';
+			rows.push([`$${y.src}$`, `$${tenths && tenths !== numTex(y.v) ? `${tenths} = ` : ''}${numTex(y.v)}$`]);
+			return y;
+		});
+		const before = map(root, (y) => (rewritten(y) ? mark(y) : y));
+		const after = map(root, (y) => (y.t === 'n' && y.src ? (rewritten(y) ? mark(leaf(y.v)) : leaf(y.v)) : y));
+		const math = [latex(before), `= ${latex(after)}`];
+		const tidy = norm(after);
+		if (!same(tidy, after)) math.push(`= ${latex(tidy)}`);
+		const say = decimals && fractions ? 'Scrivi i decimali come frazioni e riduci le frazioni ai minimi termini.' : decimals ? 'Scrivi i decimali come frazioni ridotte ai minimi termini.' : 'Riduci le frazioni ai minimi termini.';
+		drafts.push({ say, short: say, math, table: { head: ['Numero', 'Come frazione'], rows }, group: 'Prima di cominciare' });
+		return strip(tidy);
+	}
+	const plain = map(root, (y) => (y.t === 'n' && y.src ? leaf(y.v) : y));
+	const tidy = norm(plain);
+	if (!same(tidy, plain)) {
+		const say = 'Togli le parentesi attorno ai numeri soli e applica la regola dei segni.';
+		drafts.push({ say, short: say, math: [latex(plain), `= ${latex(tidy)}`], then: SIGNS, group: 'Prima di cominciare' });
+	}
+	return tidy;
+}
+
+function buildSteps(root: Node): Step[] {
+	const drafts: Draft[] = [];
+	let tree = prepare(root, drafts);
+	let started = false;
+
+	for (let guard = 0; guard < 400 && tree.t !== 'n'; guard++) {
+		const g = nextBracket(tree);
+		const w = work(g ? g.c : tree);
+		const last = w.forms[w.forms.length - 1];
+		const completes = !!g && last.t === 'n';
+		// Each form of the part set back into the whole expression. When the stage closes the bracket, the first line
+		// highlights the whole bracket, and the last has the number in its place.
+		const whole = (form: Node, i: number): Node => {
+			if (!g) return i === 0 && form.hl ? { ...form, hl: undefined } : form;
+			const inner = i === 0 && completes ? mark({ ...g, c: strip(form) }) : { ...g, c: form };
+			return unwrap(replaceTop(tree, (y) => (y === g ? inner : null)));
+		};
+		const lines = w.forms.map(whole);
+		const math = lines.map((l, i) => (i === 0 ? latex(l) : `= ${latex(l)}`));
+		const tidy = norm(lines[lines.length - 1]);
+		let then = w.then;
+		const how = w.how ? `: ${w.how}` : '';
+		if (!same(tidy, lines[lines.length - 1])) {
+			math.push(`= ${latex(tidy)}`);
+			then = then ? `${then} ${SIGNS}` : SIGNS;
+		}
+		if (g) {
+			const name = `parentesi ${KIND[g.k][0]}`;
+			const single = completes && !started;
+			drafts.push({
+				say: single ? `Calcola la ${name}${how}.` : `Nella ${name}, ${w.what}${how}.`,
+				short: single ? `Calcola la ${name}${how}.` : `${cap(w.what)}${how}.`,
+				math,
+				then,
+				group: `Parentesi ${KIND[g.k][1]}`
+			});
+			started = !completes;
+		} else {
+			drafts.push({ say: `${cap(w.what)}${how}.`, short: `${cap(w.what)}${how}.`, math, then, group: STAGE_GROUP[w.stage] });
+		}
+		tree = strip(tidy);
 	}
 
-	for (let guard = 0; guard < 100 && tree.t !== 'n'; guard++) {
-		const groups = innermost(tree);
-		if (groups.length) {
-			const kinds = new Set(groups.map((g) => g.k));
-			const k = groups[0].k;
-			const chains = groups.map((g) => `$${flatChain(g.c)}$`);
-			const values = new Map(groups.map((g) => [g, leaf(evaluate(g.c))]));
-			const one = groups.length === 1;
-			const what = kinds.size > 1 ? 'le parentesi più interne' : one ? `la parentesi ${KIND[k][0]}` : `le parentesi ${KIND[k][1]}`;
-			const b = becomes(replaceTop(tree, (y) => (y.t === 'g' ? (values.get(y) ?? null) : null)));
-			steps.push(`Calcola ${what}${one ? '' : ', una alla volta'}: ${chains.join('; ')}.${b.text}`);
-			tree = b.tree;
-			continue;
-		}
-		// No brackets left: powers, then products and quotients, then sums, each a step.
-		let before = latex(tree);
-		for (const s of stages(tree)) {
-			const eq = [before, ...s.forms].filter((f, i, all) => f !== all[i - 1]).join(' = ');
-			if (s.label === 'pow') steps.push(`Calcola le potenze: $${eq}$.`);
-			else if (s.label === 'mul') steps.push(`Esegui le moltiplicazioni e le divisioni, da sinistra a destra${s.forms.length > 1 ? ' (dividere per una frazione vuol dire moltiplicare per il suo reciproco)' : ''}: $${eq}$.`);
-			else {
-				const cd = s.forms.length > 1;
-				steps.push(`Esegui le addizioni e le sottrazioni, da sinistra a destra${cd ? ', portando le frazioni al denominatore comune (il mcm dei denominatori)' : ''}: $${eq}$.`);
-			}
-			before = s.forms[s.forms.length - 1];
-		}
-		tree = leaf(evaluate(tree));
-	}
-	return steps;
+	const grouped = drafts.length > 5;
+	return drafts.map((d, i) => ({
+		say: grouped ? d.short : d.say,
+		math: d.math,
+		...(d.table ? { table: d.table } : {}),
+		...(d.then ? { then: d.then } : {}),
+		...(grouped && (i === 0 || drafts[i - 1].group !== d.group) ? { group: d.group } : {})
+	}));
 }
 
-/** A rational as a decimal after "=": "= 1{,}1\overline{6}", or "\approx …" when the period is too long. */
-function decimalForm(r: Rational): string {
+/** A rational as a decimal: "1{,}1\overline{6}", or "\approx 0{,}1235" when the period is too long. */
+function decimalValue(r: Rational): string {
 	const d = toDecimal(r, 6, 6);
-	return d ? `= ${decimalLatex(d)}` : decimalTex(r, 4);
+	return d ? decimalLatex(d) : decimalTex(r, 4);
 }
 
 export function espressione(input: string): Outcome {
@@ -617,16 +735,12 @@ export function espressione(input: string): Outcome {
 	try {
 		const value = evaluate(p.node);
 		const steps = buildSteps(p.node);
-		if (!steps.length) steps.push("L'espressione è già un numero: non c'è niente da calcolare.");
-		const res = numTex(value);
-		return {
-			ok: true,
-			result: value.isInteger() ? `$${res}$` : `$${res} ${decimalForm(value)}$`,
-			copy: value.toString(),
-			steps
-		};
+		if (!steps.length) steps.push({ say: 'L’espressione è già un numero: non c’è niente da calcolare.' });
+		const rows = [{ label: 'Risultato', value: `$${numTex(value)}$` }];
+		if (!value.isInteger()) rows.push({ label: 'In decimali', value: `$${decimalValue(value)}$` });
+		return { ok: true, rows, copy: value.toString(), steps };
 	} catch (e) {
 		if (e instanceof ExprError) return fail(e.message);
-		return fail('I numeri diventano troppo grandi per questo calcolatore: prova con numeri più piccoli.');
+		return fail('I numeri diventano troppo grandi per questo calcolatore: prova con numeri o esponenti più piccoli, per esempio 2^10.');
 	}
 }

@@ -52,7 +52,7 @@ export function UnitConverter({
 				<label htmlFor={`${id}-value`} className="label-mono text-fg-subtle">
 					{valueLabel}
 				</label>
-				<div className="grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-2">
+				<div className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
 					<input
 						id={`${id}-value`}
 						className={toolInputClass}
@@ -90,7 +90,7 @@ export function UnitConverter({
 				<span id={`${id}-result`} className="label-mono text-fg-subtle">
 					{resultLabel}
 				</span>
-				<div className="grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-2">
+				<div className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
 					<output aria-labelledby={`${id}-result`} className={cn(toolInputClass, 'min-h-[48px] overflow-x-auto whitespace-nowrap bg-surface-2', !result && 'text-fg-faint')}>
 						{result ?? '–'}
 					</output>

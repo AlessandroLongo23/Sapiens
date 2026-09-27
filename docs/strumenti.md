@@ -25,6 +25,37 @@ Per uno strumento con indirizzo `/strumenti/<slug>`:
 6. Uno strumento con più pagine (area e perimetro, una per figura) ha un motore solo e una voce di registro per
    pagina.
 
+## Leggibilità: le regole per i DSA
+
+Gli strumenti li cercano soprattutto studenti che non sanno fare quel calcolo, e tra loro molti con DSA (dislessia,
+discalculia) o disturbi dell'attenzione. Le regole vengono dalle linee guida della British Dyslexia Association
+(Dyslexia Style Guide, 2023), dell'Università di Udine per i materiali didattici (2021), del DfES inglese su dislessia
+e discalculia (2001), del W3C per le disabilità cognitive (COGA, 2021) e dalla teoria del carico cognitivo (Sweller
+1998, Catrambone 1998, Renkl e Atkinson 2003). Dettagli nel vault, nota "Calcolatori e convertitori".
+
+1. **Un passaggio, una trasformazione.** `say` è una frase sola, breve (al massimo 15 parole circa), all'imperativo:
+   "Moltiplica i fattori scelti." Niente calcoli dentro la frase: al massimo un simbolo o un numero ($x$, $12$).
+2. **Il calcolo va in `math`, una riga per voce.** Ogni riga è una formula intera: il componente la mette su una
+   riga sua e non la spezza mai (se è più larga dello schermo scorre di lato). Una catena lunga si divide in più
+   righe che cominciano con "=", ognuna con il suo risultato intermedio:
+   `['\\text{mcm}(12, 18) = 2^2 \\cdot 3^2', '= 4 \\cdot 9', '= 36']`.
+3. **Le liste di valori vanno in `table`**, mai separate da virgole (con la virgola decimale "2, 3" si legge 2,3):
+   i numeri e le loro scomposizioni, i dati ordinati, le cifre con le potenze della base. Intestazioni brevi.
+4. **Evidenzia ciò che cambia** con `\\hl{…}` dentro la formula: il risultato di quel passaggio, il fattore scelto,
+   il termine che si sposta. Il componente lo colora e lo sottolinea (mai solo colore). Uno o due per passaggio.
+5. **`then` per la conclusione** a parole, quando serve ("Il segno è meno: è una diminuzione del 15%.").
+6. **Più di cinque passaggi: raggruppali** con `group` sul primo passaggio di ogni parte ("Il discriminante",
+   "Le soluzioni").
+7. **Il risultato sono righe `rows`**, una per valore, con un'etichetta a parole che dice cos'è ("Area",
+   "Minimo comune multiplo di 12 e 18") e il valore con la sua unità. Il valore è solo il valore ("$36$",
+   "$25\\pi \\text{ cm}^2 \\approx 78{,}54 \\text{ cm}^2$"), senza ripetere il calcolo.
+8. **Numeri** con la virgola decimale e lo spazio sottile per le migliaia da 10 000 in su (`decimalTex`, `intTex`).
+9. **Errori** che dicono cosa fare, con un esempio: "Scrivi un numero intero maggiore di 0, per esempio 12."
+10. **Articolo**: una definizione in una frase all'inizio, un esempio svolto prima della regola generale, paragrafi
+    di al massimo quattro righe, ogni termine tecnico spiegato la prima volta. I calcoli degli esempi fuori dalle
+    frasi: un calcolo di più righe va in un solo blocco `$$\begin{aligned} … \end{aligned}$$` allineato sul segno
+    "=" (righe `$$` separate vengono centrate e lontane, e sembrano formule diverse).
+
 ## Il motore
 
 - Input come stringhe; numeri letti con `parseDecimal`, `parseNatural`, `parseNaturalList`, `parseDecimalList`
@@ -34,9 +65,8 @@ Per uno strumento con indirizzo `/strumenti/<slug>`:
   in `latex.ts`, i radicali in `surd.ts`.
 - Numeri nell'output con `decimalTex` e `decimal` (virgola, spazio sottile per le migliaia, "≈" quando è
   arrotondato), `intTex` e `intText` per gli interi.
-- `result`: la risposta in una riga, prosa con formule `$…$`. `copy`: la stessa in testo semplice. `steps`: i
-  passaggi, uno per voce, frasi italiane all'imperativo di seconda persona ("Scomponi…", "Moltiplica…"), come le
-  soluzioni degli esercizi, con le formule in `$…$`.
+- `rows`, `copy` e `steps` come nelle regole di leggibilità qui sopra (tipi in `src/lib/tools/types.ts`); esempi
+  completi in `mcm-mcd.ts` e `percentuale.ts`.
 - Un input sbagliato dà `fail('…')` con una frase che dice cosa scrivere ("Servono almeno due numeri."), mai
   un'eccezione. Limiti ragionevoli sulla dimensione degli input.
 - Ogni risultato è controllato dai test. Un risultato sbagliato su una pagina che dice "con i passaggi" è peggio di

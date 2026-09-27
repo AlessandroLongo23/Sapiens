@@ -1,23 +1,19 @@
-import { divisionTable, factorize, factorsLatex } from '@/lib/exercises/v2/naturali';
-import { fail, type Outcome } from './types';
+import { factorize, factorsLatex } from '@/lib/exercises/v2/naturali';
+import { fail, type Outcome, type Step } from './types';
 import { q } from '@/lib/exercises/v2/rational';
 import { decimal, intTex, intText, parseNatural } from './numbers';
 
 /**
- * Prime factorisation of one whole number, the way the lesson does it: the division column (the number on the left,
- * its smallest prime divisor on the right, down to 1), then the equal factors gathered into powers.
+ * Prime factorisation of one whole number, the way the lesson does it: divide by the smallest prime that divides the
+ * number, one prime at a time, down to 1; then the division column as a table, and the equal factors gathered into
+ * powers. A prime number gets the trial divisions up to its square root, with their remainders.
  */
 
 const MAX = 1e12;
-
-/** Why each small prime divides the number, with the divisibility rules of the lesson. */
-function criterion(p: number): string {
-	if (p === 2) return 'il numero è pari';
-	if (p === 3) return 'la somma delle cifre è divisibile per 3';
-	if (p === 5) return "l'ultima cifra è 0 o 5";
-	if (p === 11) return 'la differenza tra la somma delle cifre di posto dispari e quella delle cifre di posto pari è divisibile per 11';
-	return '';
-}
+/** Divisions shown in full for one prime; beyond, the first and last ones with a gap between. */
+const MAX_LINES = 6;
+/** Primes tried in the table of a prime number; beyond, a row of dots. */
+const MAX_TRIED = 30;
 
 /** "2^3 · 3^2 · 5", for copying. */
 export function factorsText(fs: [number, number][]): string {
@@ -31,61 +27,115 @@ function primesUpTo(limit: number): number[] {
 	return out;
 }
 
+const digitSum = (n: number) => [...String(n)].reduce((s, d) => s + Number(d), 0);
+
+/** The sentence of the step that divides `m` by `p`: why `p` divides it, with the divisibility rule of the lesson. */
+function divideSay(m: number, p: number): string {
+	const mt = intTex(m);
+	if (m === p) return `$${mt}$ è primo: dividilo per sé stesso.`;
+	if (p === 2) return `$${mt}$ è pari: dividi per $2$ finché puoi.`;
+	if (p === 3) return `La somma delle cifre di $${mt}$ è $${digitSum(m)}$: dividi per $3$.`;
+	if (p === 5) return `$${mt}$ finisce con ${m % 10 === 0 ? '$0$' : '$5$'}: dividi per $5$.`;
+	return `Il più piccolo primo che divide $${mt}$ è $${p}$: dividi per $${p}$.`;
+}
+
 export function scomposizione(input: string): Outcome {
 	if (!input.trim()) return fail('Scrivi un numero intero positivo, per esempio 360.');
 	const n = parseNatural(input, MAX);
-	if (n === null) return fail('Scrivi un numero intero positivo, fino a mille miliardi (10^12), senza virgola.');
-	if (n === 0) return fail('Lo zero non si scompone in fattori primi: è multiplo di ogni numero, quindi non ha una scomposizione. Prova con un numero maggiore di zero.');
+	if (n === null) return fail('Scrivi un numero intero positivo senza virgola, fino a mille miliardi, per esempio 360.');
+	if (n === 0) return fail('Lo zero non si scompone in fattori primi, perché è multiplo di ogni numero. Scrivi un numero maggiore di zero, per esempio 360.');
 	if (n === 1)
 		return {
 			ok: true,
-			result: '$1$ non ha fattori primi',
+			rows: [{ label: 'Fattori primi di 1', value: 'nessuno: $1$ non si scompone' }],
 			copy: '1',
-			steps: ['Ricorda che 1 non è un numero primo: un numero primo ha esattamente due divisori, 1 e sé stesso, mentre 1 ne ha uno solo. Per questo 1 non ha fattori primi e non si scompone.']
-		};
-
-	const fs = factorize(n);
-	const nTex = intTex(n);
-
-	if (fs.length === 1 && fs[0][1] === 1) {
-		const root = Math.floor(Math.sqrt(n));
-		const rootTex = decimal(q(Math.round(Math.sqrt(n) * 10), 10), 1).tex;
-		const tried = primesUpTo(Math.min(root, 30));
-		const list = tried.map(String).join(', ');
-		const tries =
-			root < 2
-				? `Un numero così piccolo ha come divisori solo 1 e sé stesso.`
-				: root <= 30
-					? `Prova a dividere $${nTex}$ per i numeri primi fino a $\\sqrt{${nTex}} \\approx ${rootTex}$, cioè ${list}: nessuno lo divide.`
-					: `Prova a dividere $${nTex}$ per i numeri primi fino a $\\sqrt{${nTex}} \\approx ${rootTex}$ (${list} e così via): nessuno lo divide.`;
-		return {
-			ok: true,
-			result: `$${nTex}$ è un numero primo`,
-			copy: intText(n),
 			steps: [
-				tries,
-				'Basta arrivare alla radice quadrata: se il numero avesse un divisore più grande, avrebbe anche un divisore più piccolo, che avresti già trovato.',
-				`Quindi $${nTex}$ ha come divisori solo 1 e sé stesso: è primo, e la sua scomposizione è $${nTex}$ stesso.`
+				{
+					say: 'Ricorda che $1$ non è un numero primo.',
+					then: 'Un numero primo ha esattamente due divisori, $1$ e sé stesso. Il numero $1$ ne ha uno solo, quindi non ha fattori primi.'
+				}
 			]
 		};
-	}
 
-	const steps = [`Scrivi $${nTex}$ a sinistra di una linea verticale. Dividi per il più piccolo numero primo che lo divide, scrivi il primo a destra e il quoziente sotto; ripeti finché arrivi a 1: $$${divisionTable(n)}$$`];
+	const nTex = intTex(n);
+	const fs = factorize(n);
+	if (fs.length === 1 && fs[0][1] === 1) return prime(n);
+
+	// One step per prime: the divisions, the new quotient marked.
+	const steps: Step[] = [];
+	const column: string[][] = [];
 	let m = n;
 	for (const [p, e] of fs) {
-		const why = criterion(p);
-		const chain: string[] = [];
+		const say = divideSay(m, p);
+		const lines: string[] = [];
 		for (let i = 0; i < e; i++) {
-			chain.push(`${intTex(m)} : ${intTex(p)} = ${intTex(m / p)}`);
+			lines.push(`${intTex(m)} : ${p} = \\hl{${intTex(m / p)}}`);
+			column.push([`$${intTex(m)}$`, `$${p}$`]);
 			m /= p;
 		}
-		const shown = chain.length > 4 ? [...chain.slice(0, 2), '\\ldots', chain[chain.length - 1]] : chain;
-		const times = e === 1 ? 'una volta' : `${e} volte`;
-		steps.push(`Dividi per ${intText(p)}${why ? ` (${why})` : ''}: $${shown.join(',\\ ')}$. Il fattore ${intText(p)} compare ${times}, quindi scrivi $${factorsLatex([[p, e]])}$.`);
+		const shown = lines.length > MAX_LINES ? [...lines.slice(0, 2), '\\vdots', ...lines.slice(-2)] : lines;
+		const count = e === 1 ? 'una volta' : `$${e}$ volte`;
+		steps.push({ say, math: shown, then: `Il fattore $${p}$ compare ${count}${e > 1 ? `: scrivi $${p}^{${e}}$.` : '.'}` });
 	}
-	const powers = fs.map(([p, e]) => intTex(p ** e));
-	steps.push(`Scrivi il numero come prodotto delle potenze: $${nTex} = ${factorsLatex(fs)}$.`);
-	if (fs.length > 1) steps.push(`Controlla moltiplicando le potenze: $${powers.join(' \\cdot ')} = ${nTex}$.`);
+	column.push(['$1$', '']);
+	const factors = factorsLatex(fs);
+	steps.push({ say: 'Metti in colonna tutte le divisioni.', table: { head: ['Numero', 'Divisore primo'], rows: column } });
+	steps.push({ say: 'Scrivi il numero come prodotto di potenze.', math: [`${nTex} = \\hl{${factors}}`] });
+	if (fs.length > 1 || fs[0][1] > 1) {
+		// The powers, then one product per line, left to right.
+		const powers = fs.map(([p, e]) => intTex(p ** e));
+		const chain = [powers.join(' \\cdot ')];
+		let acc = fs[0][0] ** fs[0][1];
+		for (let i = 1; i < fs.length; i++) {
+			acc *= fs[i][0] ** fs[i][1];
+			chain.push([intTex(acc), ...powers.slice(i + 1)].join(' \\cdot '));
+		}
+		if (chain[0] === factors) chain.shift();
+		chain[chain.length - 1] = `\\hl{${chain[chain.length - 1]}}`;
+		const check = [`${factors} = ${chain[0]}`, ...chain.slice(1).map((c) => `= ${c}`)];
+		steps.push({ say: 'Controlla: moltiplica le potenze.', math: check, then: `Ritrovi $${nTex}$: la scomposizione è giusta.` });
+	}
+	if (steps.length > 5) {
+		steps[0].group = 'Le divisioni';
+		steps[fs.length].group = 'La scomposizione';
+	}
 
-	return { ok: true, result: `$${nTex} = ${factorsLatex(fs)}$`, copy: `${intText(n)} = ${factorsText(fs)}`, steps };
+	return { ok: true, rows: [{ label: `Scomposizione di ${intText(n)}`, value: `$${nTex} = ${factors}$` }], copy: `${intText(n)} = ${factorsText(fs)}`, steps };
+}
+
+/** A prime number: try the primes up to its square root, and none leaves remainder 0. */
+function prime(n: number): Outcome {
+	const nTex = intTex(n);
+	const rows = [{ label: `Scomposizione di ${intText(n)}, che è un numero primo`, value: `$${nTex}$` }];
+	const root = Math.floor(Math.sqrt(n));
+	if (root < 2)
+		return {
+			ok: true,
+			rows,
+			copy: intText(n),
+			steps: [{ say: `I divisori di $${nTex}$ sono solo $1$ e $${nTex}$.`, then: `Quindi $${nTex}$ è un numero primo, e la sua scomposizione è $${nTex}$ stesso.` }]
+		};
+	const rootTex = decimal(q(Math.round(Math.sqrt(n) * 10), 10), 1).tex;
+	const tried = primesUpTo(Math.min(root, MAX_TRIED));
+	const more = root > MAX_TRIED;
+	const table = tried.map((p) => [`$${p}$`, `$${n % p}$`]);
+	if (more) table.push(['$\\vdots$', '$\\vdots$']);
+	return {
+		ok: true,
+		rows,
+		copy: intText(n),
+		steps: [
+			{
+				say: 'Calcola fino a dove provare i divisori.',
+				math: [`\\sqrt{${nTex}} \\approx \\hl{${rootTex}}`],
+				then: `Basta provare i numeri primi fino a $${rootTex}$: un divisore più grande ne avrebbe accanto uno più piccolo.`
+			},
+			{
+				say: `Dividi $${nTex}$ per ogni numero primo e guarda il resto.`,
+				table: { head: ['Divisore primo', 'Resto'], rows: table },
+				then: more ? `Continua così fino a $${intTex(root)}$: nessun resto è $0$.` : 'Nessun resto è $0$: nessuno di questi primi divide il numero.'
+			},
+			{ say: `$${nTex}$ ha come divisori solo $1$ e sé stesso.`, then: `Quindi $${nTex}$ è un numero primo, e la sua scomposizione è $${nTex}$ stesso.` }
+		]
+	};
 }

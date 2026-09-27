@@ -28,7 +28,7 @@ const pct = (r: Rational) => `${t(r)}\\%`;
 export function percentuale({ mode, a, b, up = false }: PercentInput): Outcome {
 	const x = parseDecimal(a);
 	const y = parseDecimal(b);
-	if (!x || !y) return fail('Scrivi due numeri; per i decimali puoi usare la virgola.');
+	if (!x || !y) return fail('Scrivi due numeri. Per i decimali puoi usare la virgola, per esempio 12,5.');
 
 	switch (mode) {
 		case 'di': {
@@ -36,11 +36,11 @@ export function percentuale({ mode, a, b, up = false }: PercentInput): Outcome {
 			const r = x.mul(y).div(HUNDRED);
 			return {
 				ok: true,
-				result: `$${pct(x)} \\text{ di } ${t(y)} = ${t(r)}$`,
+				rows: [{ label: `Il ${decimal(x, DIGITS).text}% di ${decimal(y, DIGITS).text}`, value: `$${t(r)}$` }],
 				copy: decimal(r, DIGITS).text,
 				steps: [
-					`La percentuale è una frazione con denominatore 100: $${pct(x)} = \\dfrac{${t(x)}}{100}$.`,
-					`Moltiplica il totale per questa frazione: $${t(y)} \\cdot \\dfrac{${t(x)}}{100} = \\dfrac{${t(y.mul(x))}}{100} = ${t(r)}$.`
+					{ say: 'Scrivi la percentuale come frazione con denominatore 100.', math: [`${pct(x)} = \\frac{${t(x)}}{100}`] },
+					{ say: 'Moltiplica il numero per questa frazione.', math: [`${t(y)} \\cdot \\frac{${t(x)}}{100} = \\frac{${t(y.mul(x))}}{100}`, `= \\hl{${t(r)}}`] }
 				]
 			};
 		}
@@ -50,29 +50,31 @@ export function percentuale({ mode, a, b, up = false }: PercentInput): Outcome {
 			const r = x.div(y).mul(HUNDRED);
 			return {
 				ok: true,
-				result: `$${t(x)} \\text{ è il } ${pct(r)} \\text{ di } ${t(y)}$`,
+				rows: [{ label: `${decimal(x, DIGITS).text} su ${decimal(y, DIGITS).text} è il`, value: `$${pct(r)}$` }],
 				copy: `${decimal(r, DIGITS).text} %`,
 				steps: [
-					`Imposta la proporzione parte : totale = percentuale : 100, cioè $${t(x)} : ${t(y)} = p : 100$.`,
-					`Ricava $p$: $p = \\dfrac{${t(x)} \\cdot 100}{${t(y)}} = ${t(r)}$.`,
-					`Quindi $${t(x)}$ è il $${pct(r)}$ di $${t(y)}$.`
+					{ say: 'Scrivi la proporzione: parte sta a totale come percentuale sta a 100.', math: [`${t(x)} : ${t(y)} = p : 100`] },
+					{ say: 'Ricava $p$: moltiplica la parte per 100 e dividi per il totale.', math: [`p = \\frac{${t(x)} \\cdot 100}{${t(y)}}`, `p = \\hl{${t(r)}}`] }
 				]
 			};
 		}
 		case 'variazione': {
 			// from x to y
-			if (x.isZero()) return fail('Il valore iniziale non può essere zero: una variazione percentuale si calcola rispetto a lui.');
+			if (x.isZero()) return fail('Il valore iniziale non può essere zero: la variazione percentuale si calcola rispetto a lui.');
 			const diff = y.sub(x);
 			const r = diff.div(x).mul(HUNDRED);
-			const word = r.sign() > 0 ? 'aumento' : r.sign() < 0 ? 'diminuzione' : 'nessuna variazione';
+			const sign = r.sign() > 0 ? '+' : '';
 			return {
 				ok: true,
-				result: r.isZero() ? '$0\\%$: nessuna variazione' : `$${r.sign() > 0 ? '+' : ''}${pct(r)}$ (${word})`,
-				copy: `${r.sign() > 0 ? '+' : ''}${decimal(r, DIGITS).text} %`,
+				rows: [{ label: r.sign() > 0 ? 'Aumento' : r.sign() < 0 ? 'Diminuzione' : 'Nessuna variazione', value: `$${sign}${pct(r)}$` }],
+				copy: `${sign}${decimal(r, DIGITS).text} %`,
 				steps: [
-					`Calcola la differenza tra valore finale e iniziale: $${t(y)} - ${t(x)} = ${t(diff)}$.`,
-					`Dividi per il valore iniziale e moltiplica per 100: $\\dfrac{${t(diff)}}{${t(x)}} \\cdot 100 = ${t(r)}$.`,
-					r.isZero() ? 'Il valore non è cambiato.' : `Il segno dice se è un aumento o una diminuzione: qui è ${r.sign() > 0 ? 'un aumento' : 'una diminuzione'} del $${pct(r.abs())}$.`
+					{ say: 'Calcola la differenza: valore finale meno valore iniziale.', math: [`${t(y)} - ${t(x)} = \\hl{${t(diff)}}`] },
+					{ say: 'Dividi la differenza per il valore iniziale e moltiplica per 100.', math: [`\\frac{${t(diff)}}{${t(x)}} \\cdot 100 = \\hl{${t(r)}}`] },
+					{
+						say: 'Guarda il segno.',
+						then: r.isZero() ? 'Il valore non è cambiato.' : r.sign() > 0 ? `Il segno è più: è un aumento del ${decimal(r, DIGITS).text}%.` : `Il segno è meno: è una diminuzione del ${decimal(r.abs(), DIGITS).text}%.`
+					}
 				]
 			};
 		}
@@ -83,12 +85,15 @@ export function percentuale({ mode, a, b, up = false }: PercentInput): Outcome {
 			const factor = up ? HUNDRED.add(y) : HUNDRED.sub(y);
 			return {
 				ok: true,
-				result: `$${t(r)}$`,
+				rows: [
+					{ label: up ? "L'aumento" : 'Lo sconto', value: `$${t(change)}$` },
+					{ label: up ? 'Il valore aumentato' : 'Il prezzo scontato', value: `$${t(r)}$` }
+				],
 				copy: decimal(r, DIGITS).text,
 				steps: [
-					`${up ? "L'aumento" : 'Lo sconto'} è il $${pct(y)}$ di $${t(x)}$: $${t(x)} \\cdot \\dfrac{${t(y)}}{100} = ${t(change)}$.`,
-					`${up ? 'Aggiungilo al' : 'Toglilo dal'} valore di partenza: $${t(x)} ${up ? '+' : '-'} ${t(change)} = ${t(r)}$.`,
-					`In un passaggio solo: $${t(x)} \\cdot \\dfrac{${t(factor)}}{100} = ${t(r)}$.`
+					{ say: `Calcola ${up ? "l'aumento" : 'lo sconto'}: il ${decimal(y, DIGITS).text}% di ${decimal(x, DIGITS).text}.`, math: [`${t(x)} \\cdot \\frac{${t(y)}}{100} = \\hl{${t(change)}}`] },
+					{ say: `${up ? 'Aggiungilo al' : 'Toglilo dal'} valore di partenza.`, math: [`${t(x)} ${up ? '+' : '-'} ${t(change)} = \\hl{${t(r)}}`] },
+					{ say: 'Oppure fai tutto in un passaggio.', math: [`${t(x)} \\cdot \\frac{${t(factor)}}{100} = ${t(r)}`] }
 				]
 			};
 		}

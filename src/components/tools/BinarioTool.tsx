@@ -27,7 +27,7 @@ export function BinarioTool() {
 						onValue={(n) => set({ n })}
 						from={state.da}
 						to={state.a}
-						units={BASES.map((b) => ({ value: String(b.id), label: `${b.name[0].toUpperCase()}${b.name.slice(1)} (base ${b.id})` }))}
+						units={BASES.map((b) => ({ value: String(b.id), label: `${b.name[0].toUpperCase()}${b.name.slice(1)} (${b.id})` }))}
 						onUnits={(da, a) => set({ da, a })}
 						result={outcome.ok ? outcome.copy : null}
 						inputMode={state.da === '16' ? 'text' : 'numeric'}

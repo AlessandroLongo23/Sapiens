@@ -54,7 +54,7 @@ export function EquazioniSecondoGradoTool() {
 							<p className="text-sm text-fg-muted">
 								L&apos;equazione in forma normale <span className="font-mono">ax² + bx + c = 0</span>.
 							</p>
-							<div className="grid grid-cols-3 gap-3">
+							<div className="grid grid-cols-3 items-end gap-3">
 								{COEFFICIENTS.map(({ key, label }) => (
 									<ToolField key={key} label={label}>
 										<input className={toolInputClass} inputMode="text" autoComplete="off" spellCheck={false} value={state[key]} onChange={(e) => set({ [key]: e.target.value })} />

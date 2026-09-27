@@ -1,8 +1,10 @@
 import type { Pt, Sketch } from '@/lib/tools/geometria';
+import { cn } from '@/lib/utils/cn';
 
 /**
  * A figure drawn like a sketch on squared paper: thin ink lines in the text color, dashed heights and diagonals,
- * the given measures in the accent color and the ones to find as a bare symbol. Not to scale when the figure is
+ * the given measures in the accent color and the ones to find as a bare symbol. Each label has a halo in the paper
+ * color, so a line crossing it never hides a digit. Not to scale when the figure is
  * very long and thin: the short side is stretched, as a teacher would draw it on the board.
  */
 
@@ -42,8 +44,9 @@ export function FigureSketch({ sketch, title }: { sketch: Sketch; title: string 
 
 	const shape = outline.map(map);
 	const center: V = circle !== null ? map([0, 0]) : [shape.reduce((t, p) => t + p[0], 0) / shape.length, shape.reduce((t, p) => t + p[1], 0) / shape.length];
-	const captionY = PY * 2 + H + 4;
-	const height = sketch.caption ? captionY + 14 : PY * 2 + H;
+	// Below the label of the bottom side, which sits about 22 units under the figure.
+	const captionY = PY * 2 + H + 18;
+	const height = sketch.caption ? captionY + 8 : PY * 2 + H;
 
 	return (
 		<svg viewBox={`0 0 ${W + 2 * PX} ${height}`} role="img" aria-label={title} className="h-auto w-full max-w-md self-center text-fg">
@@ -70,7 +73,9 @@ export function FigureSketch({ sketch, title }: { sketch: Sketch; title: string 
 			})}
 			{sketch.labels.map((l, i) => {
 				const [p, q] = [map(l.from), map(l.to)];
-				const mid: V = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+				// A height drawn inside is labelled near its foot, where the figure is wider, not at its middle.
+				const t = l.inside ? 0.7 : 0.5;
+				const mid: V = [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
 				const dir = unit(sub(q, p));
 				let n: V = [-dir[1], dir[0]];
 				const away = sub(mid, center);
@@ -81,13 +86,13 @@ export function FigureSketch({ sketch, title }: { sketch: Sketch; title: string 
 				const anchor = n[0] > 0.35 ? 'start' : n[0] < -0.35 ? 'end' : 'middle';
 				const dy = n[1] > 0.35 ? 12 : n[1] < -0.35 ? -3 : 5;
 				return (
-					<text key={i} x={fmt(at[0])} y={fmt(at[1] + dy)} textAnchor={anchor} fontSize={14} className={l.given ? 'fill-accent font-medium' : 'fill-fg-muted italic'}>
+					<text key={i} x={fmt(at[0])} y={fmt(at[1] + dy)} textAnchor={anchor} fontSize={15} paintOrder="stroke" strokeWidth={4} strokeLinejoin="round" className={cn('stroke-surface', l.given ? 'fill-accent font-medium' : 'fill-fg-muted italic')}>
 						{l.text}
 					</text>
 				);
 			})}
 			{sketch.caption && (
-				<text x={(W + 2 * PX) / 2} y={captionY} textAnchor="middle" fontSize={14} className={sketch.caption.given ? 'fill-accent font-medium' : 'fill-fg-muted'}>
+				<text x={(W + 2 * PX) / 2} y={captionY} textAnchor="middle" fontSize={15} className={sketch.caption.given ? 'fill-accent font-medium' : 'fill-fg-muted'}>
 					{sketch.caption.text}
 				</text>
 			)}

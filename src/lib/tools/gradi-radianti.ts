@@ -1,5 +1,5 @@
 import { Rational, q } from '@/lib/exercises/v2/rational';
-import { fail, type Outcome } from './types';
+import { fail, type Outcome, type ResultRow, type Step } from './types';
 import { decimal, parseDecimal } from './numbers';
 
 /**
@@ -141,72 +141,102 @@ function degreesOut(value: Rational | number): { tex: string; text: string; exac
 }
 
 const eq = (exact: boolean) => (exact ? '=' : '\\approx');
+/** A value for a result row, "≈" in front when rounded. */
+const val = (tex: string, exact: boolean) => `$${exact ? '' : '\\approx '}${tex}$`;
+
+const PROPORTION: Step = {
+	say: 'Imposta la proporzione tra gradi e radianti.',
+	math: ['\\alpha^\\circ : 180^\\circ = \\alpha_{\\text{rad}} : \\pi'],
+	then: 'Un angolo piatto misura $180^\\circ$, cioè $\\pi$ radianti.'
+};
 
 export function gradiRadianti(value: string, from: string, to: string): Outcome {
-	if ((from !== 'gradi' && from !== 'rad') || (to !== 'gradi' && to !== 'rad')) return fail('Scegli le due unità di misura degli angoli.');
+	if ((from !== 'gradi' && from !== 'rad') || (to !== 'gradi' && to !== 'rad')) return fail('Scegli le due unità di misura degli angoli, per esempio gradi e radianti.');
 	try {
 		return from === 'gradi' ? fromDegrees(value, to) : fromRadians(value, to);
 	} catch {
-		return fail('Il numero ha troppe cifre per questo calcolo.');
+		return fail('Il numero ha troppe cifre per questo calcolo: scrivi un angolo più corto, per esempio 22,5.');
 	}
 }
 
 /** The step that turns d° m′ s″ into decimal degrees. */
-function dmsStep(deg: Degrees): string | null {
+function dmsStep(deg: Degrees): Step | null {
 	if (!deg.dms) return null;
 	const { sign, d, m, s } = deg.dms;
 	const parts = [`${ratTex(d)}`, ...(m.isZero() ? [] : [`\\dfrac{${ratTex(m)}}{60}`]), ...(s.isZero() ? [] : [`\\dfrac{${ratTex(s)}}{3600}`])];
 	const written = `${ratTex(d)}^\\circ${m.isZero() && !s.isZero() ? "\\, 0'" : m.isZero() ? '' : `\\, ${ratTex(m)}'`}${s.isZero() ? '' : `\\, ${ratTex(s)}''`}`;
-	const abs = deg.value.abs();
-	const dd = decimal(abs, DIGITS);
-	return `Trasforma primi e secondi in gradi: un primo è $\\dfrac{1}{60}$ di grado, un secondo $\\dfrac{1}{3600}$. Quindi $${written} = ${parts.join(' + ')} ${eq(dd.exact)} ${dd.tex}^\\circ$${sign < 0 ? ', con il segno meno davanti' : ''}.`;
+	const dd = decimal(deg.value.abs(), DIGITS);
+	return {
+		say: 'Porta tutto in gradi: dividi i primi per 60 e i secondi per 3600.',
+		math: [`${written} = ${parts.join(' + ')}`, `${written} ${eq(dd.exact)} \\hl{${dd.tex}^\\circ}`],
+		then: sign < 0 ? "Il segno meno resta davanti all'angolo." : undefined
+	};
+}
+
+/** The input in degrees as text, for a label: "45°", "22° 30′ 15″". */
+function degreesText(deg: Degrees): string {
+	if (!deg.dms) return `${decimal(deg.value, 6).text}°`;
+	const { sign, d, m, s } = deg.dms;
+	return `${sign < 0 ? '-' : ''}${decimal(d).text}° ${decimal(m).text}′${s.isZero() ? '' : ` ${decimal(s).text}″`}`;
 }
 
 function fromDegrees(value: string, to: AngleUnit): Outcome {
 	const deg = parseDegrees(value);
 	if (!deg) return fail('Scrivi un angolo in gradi, per esempio 45, 22,5 oppure 22° 30′ 15″.');
-	if (Math.abs(deg.value.num / deg.value.den) > MAX_DEGREES) return fail('L\'angolo è troppo grande: scrivi un numero più piccolo.');
-	const steps: string[] = [];
+	if (Math.abs(deg.value.num / deg.value.den) > MAX_DEGREES) return fail("L'angolo è troppo grande: scrivi un numero più piccolo, per esempio 720.");
+	const steps: Step[] = [];
 	const first = dmsStep(deg);
 	if (first) steps.push(first);
-	const inTex = deg.dms ? degreesInputTex(deg) : `${ratTex(deg.value)}^\\circ`;
+	const inText = degreesText(deg);
 
 	if (to === 'gradi') {
 		const out = degreesOut(deg.value);
 		if (deg.dms) {
-			return { ok: true, result: `$${inTex} ${eq(out.exact)} ${out.tex}$`, copy: out.text, steps };
+			return { ok: true, rows: [{ label: `${inText} in gradi decimali`, value: val(out.tex, out.exact) }], copy: out.text, steps };
 		}
 		if (!out.dms) {
-			return { ok: true, result: `$${out.tex}$`, copy: out.text, steps: ["L'angolo è già un numero intero di gradi: non ci sono primi e secondi."] };
+			return { ok: true, rows: [{ label: 'Angolo in gradi', value: `$${out.tex}$` }], copy: out.text, steps: [{ say: "L'angolo è già un numero intero di gradi: non ci sono primi e secondi." }] };
 		}
-		steps.push(...dmsSteps(deg.value));
-		return { ok: true, result: `$${out.tex} ${eq(out.dms.exact)} ${out.dms.tex}$`, copy: out.dms.text, steps };
+		steps.push(...dmsSteps(deg.value, out.tex));
+		return { ok: true, rows: [{ label: `${inText} in gradi, primi e secondi`, value: val(out.dms.tex, out.dms.exact) }], copy: out.dms.text, steps };
 	}
 
 	const k = deg.value.div(q(180));
 	const rad = (k.num / k.den) * Math.PI;
 	const f = floatText(rad);
-	steps.push('Imposta la proporzione tra gradi e radianti: un angolo piatto misura $180^\\circ$, cioè $\\pi$ radianti, quindi $\\alpha^\\circ : 180^\\circ = \\alpha_{\\text{rad}} : \\pi$.');
+	if (k.isZero()) {
+		steps.push({ say: 'Un angolo di $0^\\circ$ misura $0$ radianti.', math: ['0^\\circ = \\hl{0\\ \\text{rad}}'] });
+		return { ok: true, rows: [{ label: `${inText} in radianti`, value: '$0\\ \\text{rad}$' }], copy: '0 rad', steps };
+	}
 	const d = deg.value;
-	const dTex = d.sign() < 0 ? `(${ratTex(d)})` : ratTex(d);
-	steps.push(
-		k.isZero()
-			? `Ricava i radianti: $\\alpha_{\\text{rad}} = 0 \\cdot \\dfrac{\\pi}{180} = 0$.`
-			: `Ricava i radianti: $\\alpha_{\\text{rad}} = ${dTex} \\cdot \\dfrac{\\pi}{180} = ${piTex(k)}$. Semplifica la frazione e lascia $\\pi$ indicato: il risultato è esatto.`
-	);
-	if (!k.isZero()) steps.push(`Se ti serve il numero, usa $\\pi \\approx 3{,}1416$: $${piTex(k)} \\approx ${f.tex}$.`);
-	const result = k.isZero() ? `$${inTex} = 0\\ \\text{rad}$` : `$${inTex} = ${piTex(k)}\\ \\text{rad} \\approx ${f.tex}\\ \\text{rad}$`;
-	return { ok: true, result, copy: k.isZero() ? '0 rad' : `${piText(k)} rad ≈ ${f.text} rad`, steps };
+	const neg = d.sign() < 0 ? '-' : '';
+	const abs = ratTex(d.abs());
+	steps.push(PROPORTION);
+	const dA = d.abs();
+	// A decimal that does not end (22° 30′ 15″ = 5401/240) goes in as a fraction: 5401π over 240 · 180.
+	const raw = abs.includes('dfrac') ? `${neg}\\dfrac{${dA.num}\\pi}{${dA.den} \\cdot 180}` : `${neg}\\dfrac{${abs === '1' ? '' : abs}\\pi}{180}`;
+	const simplified = piTex(k);
+	steps.push({
+		say: 'Ricava i radianti: moltiplica per $\\pi$ e dividi per $180$.',
+		math: [`\\alpha_{\\text{rad}} = ${d.sign() < 0 ? `\\left(${ratTex(d)}\\right)` : ratTex(d)} \\cdot \\dfrac{\\pi}{180}`, raw === simplified ? `\\alpha_{\\text{rad}} = \\hl{${raw}}` : `\\alpha_{\\text{rad}} = ${raw}`]
+	});
+	if (raw !== simplified) {
+		steps.push({ say: abs.includes('dfrac') ? 'Calcola la frazione e lascia $\\pi$ indicato.' : 'Semplifica la frazione e lascia $\\pi$ indicato.', math: [`${raw} = \\hl{${simplified}}`], then: 'Questo risultato è esatto.' });
+	}
+	steps.push({ say: 'Se ti serve il numero, usa $\\pi \\approx 3{,}1416$.', math: [`${simplified} \\approx \\hl{${f.tex}}`] });
+	return {
+		ok: true,
+		rows: [
+			{ label: `${inText} in radianti`, value: `$${simplified}\\ \\text{rad}$` },
+			{ label: 'Valore approssimato', value: `$\\approx ${f.tex}\\ \\text{rad}$` }
+		],
+		copy: `${piText(k)} rad ≈ ${f.text} rad`,
+		steps
+	};
 }
 
-/** The input d° m′ s″ as LaTeX, as written. */
-function degreesInputTex(deg: Degrees): string {
-	const { sign, d, m, s } = deg.dms!;
-	return `${sign < 0 ? '-' : ''}${ratTex(d)}^\\circ\\, ${ratTex(m)}'${s.isZero() ? '' : `\\, ${ratTex(s)}''`}`;
-}
-
-/** How to turn the decimal part of degrees into minutes and seconds. */
-function dmsSteps(value: Rational | number): string[] {
+/** How to turn the decimal part of degrees into minutes and seconds; `left` is the angle as the last line starts it. */
+function dmsSteps(value: Rational | number, left: string): Step[] {
 	type Shown = { tex: string; exact: boolean };
 	let d: number;
 	let frac: Shown;
@@ -245,11 +275,20 @@ function dmsSteps(value: Rational | number): string[] {
 		exact = t.isInteger();
 	}
 	const out = dms(totalSeconds, neg);
-	const lines = [`Per scriverlo in gradi, primi e secondi tieni i ${d} gradi interi e moltiplica la parte decimale per 60, così hai i primi: $${frac.tex} \\cdot 60 ${eq(frac.exact && minutes.exact)} ${minutes.tex}'$.`];
+	const lines: Step[] = [
+		{
+			say: `Tieni i ${d} gradi interi e moltiplica per 60 la parte decimale: sono i primi.`,
+			math: [`${frac.tex} \\cdot 60 ${eq(frac.exact && minutes.exact)} \\hl{${minutes.tex}'}`]
+		}
+	];
 	if (minFrac) {
-		lines.push(`Moltiplica per 60 la parte decimale dei primi, così hai i secondi: $${minFrac.tex} \\cdot 60 ${eq(minFrac.exact && seconds.exact)} ${seconds.tex}''$${exact ? '' : ', da arrotondare al secondo'}.`);
+		lines.push({
+			say: 'Moltiplica per 60 la parte decimale dei primi: sono i secondi.',
+			math: [`${minFrac.tex} \\cdot 60 ${eq(minFrac.exact && seconds.exact)} \\hl{${seconds.tex}''}`],
+			then: exact ? undefined : 'Arrotonda i secondi al numero intero più vicino.'
+		});
 	}
-	lines.push(`Quindi l'angolo è $${exact ? '' : '\\approx '}${out.tex}$.`);
+	lines.push({ say: "Scrivi l'angolo in gradi, primi e secondi.", math: [`${left} ${eq(exact)} \\hl{${out.tex}}`] });
 	return lines;
 }
 
@@ -258,36 +297,51 @@ function fromRadians(value: string, to: AngleUnit): Outcome {
 	if (!r) return fail('Scrivi un angolo in radianti, per esempio 1,5 oppure 3π/4 (puoi scrivere pi al posto di π).');
 	const inTex = r.pi ? piTex(r.coef) : ratTex(r.coef);
 	const inText = r.pi ? piText(r.coef) : decimal(r.coef, 6).text;
-	const steps: string[] = [];
+	const steps: Step[] = [];
 	if (to === 'rad') {
 		const f = floatText((r.coef.num / r.coef.den) * (r.pi ? Math.PI : 1));
-		if (!r.pi) return { ok: true, result: `$${inTex}\\ \\text{rad}$`, copy: `${inText} rad`, steps: ['Le due unità sono uguali: la misura non cambia.'] };
-		return { ok: true, result: `$${inTex}\\ \\text{rad} \\approx ${f.tex}\\ \\text{rad}$`, copy: `${f.text} rad`, steps: [`Sostituisci $\\pi \\approx 3{,}1416$: $${inTex} \\approx ${f.tex}$.`] };
+		if (!r.pi) return { ok: true, rows: [{ label: 'Angolo in radianti', value: `$${inTex}\\ \\text{rad}$` }], copy: `${inText} rad`, steps: [{ say: 'Le due unità sono uguali: la misura non cambia.' }] };
+		return {
+			ok: true,
+			rows: [{ label: `${inText} rad come numero decimale`, value: `$\\approx ${f.tex}\\ \\text{rad}$` }],
+			copy: `${f.text} rad`,
+			steps: [{ say: 'Sostituisci $\\pi$ con $3{,}1416$.', math: [`${inTex} \\approx \\hl{${f.tex}}`] }]
+		};
 	}
-	steps.push('Imposta la proporzione tra gradi e radianti: un angolo piatto misura $180^\\circ$, cioè $\\pi$ radianti, quindi $\\alpha^\\circ : 180^\\circ = \\alpha_{\\text{rad}} : \\pi$.');
 	let out: ReturnType<typeof degreesOut>;
-	if (r.pi) {
+	if (r.coef.isZero()) {
+		out = degreesOut(q(0));
+		steps.push({ say: 'Un angolo di $0$ radianti misura $0^\\circ$.', math: ['0\\ \\text{rad} = \\hl{0^\\circ}'] });
+	} else if (r.pi) {
 		const d = r.coef.mul(q(180));
-		if (Math.abs(d.num / d.den) > MAX_DEGREES) return fail('L\'angolo è troppo grande: scrivi un numero più piccolo.');
+		if (Math.abs(d.num / d.den) > MAX_DEGREES) return fail("L'angolo è troppo grande: scrivi un numero più piccolo, per esempio 4π.");
 		out = degreesOut(d);
-		steps.push(`Ricava i gradi: $\\alpha^\\circ = \\dfrac{\\alpha_{\\text{rad}} \\cdot 180^\\circ}{\\pi} = ${r.coef.isZero() ? '0' : `${inTex} \\cdot \\dfrac{180^\\circ}{\\pi}`} ${eq(out.exact)} ${out.tex}$${r.coef.isZero() ? '' : ': $\\pi$ si semplifica'}.`);
+		const k = r.coef;
+		const sign = k.sign() < 0 ? '-' : '';
+		const n = Math.abs(k.num);
+		const top = n === 1 ? '180^\\circ' : `${n} \\cdot 180^\\circ`;
+		const cancelled = k.den === 1 ? `${sign}${top}` : `${sign}\\dfrac{${top}}{${k.den}}`;
+		steps.push(PROPORTION);
+		steps.push({
+			say: 'Ricava i gradi: moltiplica per $180^\\circ$ e dividi per $\\pi$.',
+			math: [`\\alpha^\\circ = ${k.sign() < 0 ? `\\left(${inTex}\\right)` : inTex} \\cdot \\dfrac{180^\\circ}{\\pi}`, `\\alpha^\\circ = ${cancelled}`, `\\alpha^\\circ ${eq(out.exact)} \\hl{${out.tex}}`],
+			then: out.exact ? 'Il $\\pi$ si semplifica: il risultato è esatto.' : 'Il $\\pi$ si semplifica; la divisione non finisce, quindi arrotonda.'
+		});
 	} else {
 		const x = r.coef.num / r.coef.den;
 		const d = (x * 180) / Math.PI;
-		if (Math.abs(d) > MAX_DEGREES) return fail('L\'angolo è troppo grande: scrivi un numero più piccolo.');
-		out = r.coef.isZero() ? degreesOut(q(0)) : degreesOut(d);
-		steps.push(
-			r.coef.isZero()
-				? 'Un angolo di 0 radianti misura $0^\\circ$.'
-				: `Ricava i gradi, con $\\pi \\approx 3{,}14159$: $\\alpha^\\circ = \\dfrac{${inTex} \\cdot 180^\\circ}{\\pi} \\approx ${out.tex}$.`
-		);
+		if (Math.abs(d) > MAX_DEGREES) return fail("L'angolo è troppo grande: scrivi un numero più piccolo, per esempio 6,28.");
+		out = degreesOut(d);
+		steps.push(PROPORTION);
+		steps.push({
+			say: 'Ricava i gradi: moltiplica per $180^\\circ$ e dividi per $\\pi \\approx 3{,}14159$.',
+			math: [`\\alpha^\\circ = \\dfrac{${r.coef.sign() < 0 ? `(${inTex})` : inTex} \\cdot 180^\\circ}{\\pi}`, `\\alpha^\\circ \\approx \\hl{${out.tex}}`]
+		});
 	}
-	if (out.dms) steps.push(...dmsSteps(r.pi ? r.coef.mul(q(180)) : (r.coef.num / r.coef.den) * (180 / Math.PI)));
-	const tail = out.dms ? ` ${eq(out.dms.exact && out.exact)} ${out.dms.tex}` : '';
-	return {
-		ok: true,
-		result: `$${inTex}\\ \\text{rad} ${eq(out.exact)} ${out.tex}${tail}$`,
-		copy: out.text,
-		steps
-	};
+	const rows: ResultRow[] = [{ label: `${inText} rad in gradi`, value: val(out.tex, out.exact) }];
+	if (out.dms) {
+		steps.push(...dmsSteps(r.pi ? r.coef.mul(q(180)) : (r.coef.num / r.coef.den) * (180 / Math.PI), out.tex));
+		rows.push({ label: 'In gradi, primi e secondi', value: val(out.dms.tex, out.dms.exact && out.exact) });
+	}
+	return { ok: true, rows, copy: out.text, steps };
 }

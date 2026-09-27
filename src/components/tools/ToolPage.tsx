@@ -70,10 +70,10 @@ export function ToolPage({ tool, lessons, articleHtml, children }: { tool: ToolM
 				</nav>
 			)}
 
-			{articleHtml && <Html html={articleHtml} className="markdown-content mx-auto mt-14 max-w-3xl" />}
+			{articleHtml && <Html html={articleHtml} className="markdown-content mx-auto mt-14 max-w-[70ch]" />}
 
 			{related.length > 0 && (
-				<section aria-labelledby="related-tools" className="mx-auto mt-14 max-w-3xl border-t border-edge pt-6">
+				<section aria-labelledby="related-tools" className="mx-auto mt-14 max-w-[70ch] border-t border-edge pt-6">
 					<h2 id="related-tools" className="label-mono mb-3 text-fg-subtle">
 						Altri strumenti
 					</h2>

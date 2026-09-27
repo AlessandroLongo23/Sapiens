@@ -36,7 +36,7 @@ export function MediaVotiTool() {
 			inputs={
 				<>
 					<ModeSwitch label="Che cosa vuoi calcolare" options={MODES} value={mode} onChange={(m) => set({ modo: m })} />
-					<ToolField label={mode === 'serve' ? 'I voti che hai già' : 'Voti'} hint="Separati da uno spazio: 6+ vale 6,25, 6- vale 5,75, 6½ (o 6 e mezzo) vale 6,5, 7/8 vale 7,5.">
+					<ToolField label={mode === 'serve' ? 'I voti che hai già' : 'Voti'} hint="Separati da uno spazio. 6+ vale 6,25; 6- vale 5,75; 6½ (o 6 e mezzo) vale 6,5; 7/8 vale 7,5.">
 						<input className={toolInputClass} autoComplete="off" spellCheck={false} value={state.voti} onChange={(e) => set({ voti: e.target.value })} />
 					</ToolField>
 					<ToolField label="Pesi (facoltativi)" hint="Uno per ogni voto, nello stesso ordine: 1 1 2, oppure 50% 100%. Lascia vuoto se i voti contano tutti uguale.">

@@ -60,33 +60,72 @@ test('fractions, decimals and the ways to write the operations', () => {
 
 test('steps in the order of the lesson', () => {
 	const o = espressione('{[(2/3 + 1/6) : 5/4 - 1/3]^2 + 1/2} x 3');
-	assert.equal(o.steps.length, 4);
-	assert.match(o.steps[0], /^Calcola la parentesi tonda: \$\\dfrac\{2\}\{3\} \+ \\dfrac\{1\}\{6\} = \\dfrac\{4 \+ 1\}\{6\} = \\dfrac\{5\}\{6\}\$/);
-	assert.match(o.steps[1], /^Calcola la parentesi quadra: .*\\dfrac\{5\}\{6\} \\cdot \\dfrac\{4\}\{5\}/);
-	assert.match(o.steps[2], /^Calcola la parentesi graffa/);
-	assert.match(o.steps[3], /^Esegui le moltiplicazioni/);
-	assert.match(o.result, /\\dfrac\{11\}\{6\} = 1\{,\}8\\overline\{3\}/);
-
-	const flat = espressione('2 + 3 * 2^2 - 1');
 	assert.deepEqual(
-		flat.steps.map((s) => s.split(':')[0]),
-		['Calcola le potenze', 'Esegui le moltiplicazioni e le divisioni, da sinistra a destra', 'Esegui le addizioni e le sottrazioni, da sinistra a destra']
+		o.steps.map((st) => st.group ?? ''),
+		['Parentesi tonde', 'Parentesi quadre', '', '', 'Parentesi graffe', '', 'Moltiplicazioni e divisioni']
 	);
-	assert.match(flat.steps[0], /2 \+ 3 \\cdot 2\^\{2\} - 1 = 2 \+ 3 \\cdot 4 - 1/);
+	assert.deepEqual(
+		o.steps.map((st) => st.say),
+		[
+			'Calcola la parentesi tonda: usa il denominatore comune $6$.',
+			'Trasforma la divisione in una moltiplicazione per il reciproco.',
+			'Esegui la moltiplicazione.',
+			'Esegui la sottrazione: usa il denominatore comune $3$.',
+			'Calcola la potenza.',
+			'Esegui l’addizione: usa il denominatore comune $18$.',
+			'Esegui la moltiplicazione.'
+		]
+	);
+	// The bracket being calculated is highlighted before, its result after, and every line is the whole expression.
+	assert.deepEqual(o.steps[0].math, [
+		'\\left\\{\\left[\\hl{\\left(\\dfrac{2}{3} + \\dfrac{1}{6}\\right)} : \\dfrac{5}{4} - \\dfrac{1}{3}\\right]^{2} + \\dfrac{1}{2}\\right\\} \\cdot 3',
+		'= \\left\\{\\left[\\hl{\\dfrac{4 + 1}{6}} : \\dfrac{5}{4} - \\dfrac{1}{3}\\right]^{2} + \\dfrac{1}{2}\\right\\} \\cdot 3',
+		'= \\left\\{\\left[\\hl{\\dfrac{5}{6}} : \\dfrac{5}{4} - \\dfrac{1}{3}\\right]^{2} + \\dfrac{1}{2}\\right\\} \\cdot 3'
+	]);
+	assert.match(o.steps[1].math[1], /\\dfrac\{5\}\{6\} \\cdot \\hl\{\\dfrac\{4\}\{5\}\}/);
+	assert.equal(o.steps[6].math.at(-1), '= \\hl{\\dfrac{11}{6}}');
+	assert.deepEqual(o.rows, [
+		{ label: 'Risultato', value: '$\\dfrac{11}{6}$' },
+		{ label: 'In decimali', value: '$1{,}8\\overline{3}$' }
+	]);
+	assert.deepEqual(espressione('2 + 3 * 4').rows, [{ label: 'Risultato', value: '$14$' }]);
+
+	// Five steps or fewer: no groups, and the sentence names the bracket.
+	const few = espressione('[20 - (3 + 2) * 2] : 5');
+	assert.ok(few.steps.every((st) => !st.group));
+	assert.deepEqual(few.steps.map((st) => st.say), ['Calcola la parentesi tonda.', 'Nella parentesi quadra, esegui la moltiplicazione.', 'Nella parentesi quadra, esegui la sottrazione.', 'Esegui la divisione.']);
+
+	const powers = espressione('2 + 3 * 2^2 - 1');
+	assert.deepEqual(
+		powers.steps.map((st) => st.say),
+		['Calcola la potenza.', 'Esegui la moltiplicazione.', 'Esegui le addizioni e le sottrazioni.']
+	);
+	assert.deepEqual(powers.steps[0].math, ['2 + 3 \\cdot \\hl{2^{2}} - 1', '= 2 + 3 \\cdot \\hl{4} - 1']);
+
+	// Left to right, one operation at a time: a line for each.
+	const chain = espressione('12 : 4 * 3');
+	assert.deepEqual(chain.steps[0].math, ['\\hl{12 : 4} \\cdot 3', '= \\hl{3} \\cdot 3', '= \\hl{9}']);
+	assert.match(chain.steps[0].then, /da sinistra a destra/);
 
 	const two = espressione('(1 + 2) * (5 - 3)');
-	assert.match(two.steps[0], /^Calcola le parentesi tonde, una alla volta: \$1 \+ 2 = 3\$; \$5 - 3 = 2\$\. L'espressione diventa \$3 \\cdot 2\$/);
+	assert.deepEqual(two.steps[0].math, ['\\hl{\\left(1 + 2\\right)} \\cdot \\left(5 - 3\\right)', '= \\hl{3} \\cdot \\left(5 - 3\\right)']);
+	assert.deepEqual(two.steps[1].math, ['3 \\cdot \\hl{\\left(5 - 3\\right)}', '= 3 \\cdot \\hl{2}']);
 
 	const signs = espressione('2 + (-3) - (-4)');
-	assert.match(signs.steps[0], /regola dei segni: .* = 2 - 3 \+ 4\$/);
+	assert.equal(signs.steps[0].math.at(-1), '= 2 - 3 + 4');
+	assert.match(signs.steps[0].then, /regola dei segni/i);
 
 	const dec = espressione('0,5 + 4/6');
-	assert.match(dec.steps[0], /0\{,\}5 = \\dfrac\{1\}\{2\}.*\\dfrac\{4\}\{6\} = \\dfrac\{2\}\{3\}/);
+	assert.deepEqual(dec.steps[0].table.rows, [
+		['$0{,}5$', '$\\dfrac{5}{10} = \\dfrac{1}{2}$'],
+		['$\\dfrac{4}{6}$', '$\\dfrac{2}{3}$']
+	]);
+	assert.deepEqual(dec.steps[0].math, ['\\hl{0{,}5} + \\hl{\\dfrac{4}{6}}', '= \\hl{\\dfrac{1}{2}} + \\hl{\\dfrac{2}{3}}']);
 
 	const sign = espressione('5 - (2 - 7)');
-	assert.match(sign.steps[0], /diventa \$5 - \(-5\) = 5 \+ 5\$/);
+	assert.deepEqual(sign.steps[0].math, ['5 - \\hl{\\left(2 - 7\\right)}', '= 5 - \\hl{(-5)}', '= 5 + \\hl{5}']);
 
-	assert.match(espressione('7').steps[0], /già un numero/);
+	assert.match(espressione('7').steps[0].say, /già un numero/);
 });
 
 test('the preview of the input', () => {
@@ -100,7 +139,7 @@ test('the preview of the input', () => {
 
 test('mistakes in words', () => {
 	assert.match(error(''), /Scrivi un'espressione/);
-	assert.match(error('(2 + 3'), /senza chiuderla: manca "\)"/);
+	assert.match(error('(2 + 3'), /senza chiuderla: manca "\)", come in \(2 \+ 3\) \* 4/);
 	assert.match(error('2 + 3)'), /chiusa che non era stata aperta/);
 	assert.match(error('[2 + 3)'), /è chiusa con "\)": chiudila con "\]"/);
 	assert.match(error('5 : (3 - 3)'), /divisione per zero/);
@@ -242,10 +281,10 @@ test('random expressions against BigInt fractions', () => {
 		assert.equal(o.copy, show(e.v), e.s);
 		assert.ok(o.steps.length > 0);
 		typesets(o);
-		for (const s of o.steps) {
-			assert.equal((s.match(/\$/g) ?? []).length % 2, 0, s);
-			assert.equal((s.match(/\{/g) ?? []).length, (s.match(/\}/g) ?? []).length, s);
-		}
+		for (const st of o.steps) for (const m of st.math ?? []) assert.equal((m.match(/\{/g) ?? []).length, (m.match(/\}/g) ?? []).length, m);
+		// Each step keeps the whole expression: its last line is the one the next step starts from.
+		for (let i = 1; i < o.steps.length; i++) assert.equal(bare(o.steps[i].math[0]), bare(o.steps[i - 1].math.at(-1)), e.s);
+		assert.equal(bare(o.steps.at(-1).math?.at(-1) ?? o.rows[0].value), bare(o.rows[0].value), e.s);
 		checked++;
 	}
 	assert.ok(checked > 2500, `checked ${checked}`);
@@ -253,8 +292,41 @@ test('random expressions against BigInt fractions', () => {
 	assert.ok(big < 40, `too many overflows: ${big}`);
 });
 
-/** Every formula of a result typesets in KaTeX without errors. */
+/** A line without highlights, leading "=", dollars and bracket sizes: "= \hl{3} \cdot 3" is "3 \cdot 3". */
+const bare = (m) => m.replace(/\\hl\{/g, '{').replace(/[{}$]/g, '').replace(/\\(left|right)/g, '').replace(/^= /, '').replace(/\s+/g, '');
+
+/**
+ * Every string a result shows typesets in KaTeX without errors, with the `\hl` of the tools: the rows, and each
+ * step's sentence, lines, table and conclusion. The sentence is a sentence: no display formula, at most one "=".
+ */
+const KATEX = { throwOnError: true, strict: 'ignore', macros: { '\\hl': '\\htmlClass{hl}{#1}' }, trust: (c) => c.command === '\\htmlClass' };
+const inline = (text) => {
+	assert.equal((text.match(/\$/g) ?? []).length % 2, 0, text);
+	for (const m of text.matchAll(/\$([^$]+)\$/g)) assert.doesNotThrow(() => katex.renderToString(m[1], KATEX), m[1]);
+};
 function typesets(o) {
-	for (const text of [o.result, ...o.steps])
-		for (const m of text.matchAll(/\$([^$]+)\$/g)) assert.doesNotThrow(() => katex.renderToString(m[1], { throwOnError: true, strict: 'ignore' }), m[1]);
+	assert.ok(o.rows.length > 0);
+	for (const r of o.rows) {
+		inline(r.label);
+		inline(r.value);
+		assert.match(r.value, /^\$[^$]+\$$/, r.value);
+	}
+	for (const st of o.steps) {
+		assert.ok(!st.say.includes('$$'), st.say);
+		assert.ok((st.say.match(/=/g) ?? []).length <= 1, st.say);
+		assert.ok(st.say.split(/\s+/).length <= 16, st.say);
+		inline(st.say);
+		for (const m of st.math ?? []) assert.doesNotThrow(() => katex.renderToString(m, KATEX), m);
+		for (const c of [...(st.table?.head ?? []), ...(st.table?.rows.flat() ?? [])]) inline(c);
+		if (st.then) inline(st.then);
+	}
 }
+
+test('every string typesets, and each sentence stays a sentence', () => {
+	for (const s of ['{[(2/3 + 1/6) : 5/4 - 1/3]^2 + 1/2} * 3', '2 + 3 * (4 - 1)^2', '[20 - (3 + 2) * 2] : 5', '1/2 + 2/3 - 0,5', '(-2)^3 - 2^2 : (-4)', '2 * -(1/2)^-3', '-2^2 + (-2)^2 * 0,5', '7', '((7))', '4/6']) typesets(espressione(s));
+	for (const s of ['', '(2 + 3', '2 + 3)', '[2 + 3)', '5 : (3 - 3)', '2 + a', '2 # 3', '2 3', '2 +', '* 2', '(* 2)', '()', '0^0', '0^-1', '2^100', '99^99']) {
+		const o = espressione(s);
+		assert.equal(o.ok, false, s);
+		assert.match(o.error, /per esempio|come in|come 0,5/, `${s}: ${o.error}`);
+	}
+});

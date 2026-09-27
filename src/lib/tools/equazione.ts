@@ -47,7 +47,7 @@ function tokenize(input: string): Token[] {
 		const num = /^(\d+(?:[.,]\d+)*|[.,]\d+)/.exec(s.slice(i));
 		if (num) {
 			const v = parseDecimal(num[1]);
-			if (!v) throw new ParseError(`Il numero ${num[1]} non è scritto bene.`);
+			if (!v) throw new ParseError(`Il numero ${num[1]} non è scritto bene: per i decimali usa una virgola sola, per esempio 1,5.`);
 			out.push({ t: 'num', v, raw: num[1] });
 			i += num[1].length;
 			continue;
@@ -156,7 +156,7 @@ class Parser {
 
 	private atom(): Node {
 		const t = this.peek();
-		if (!t) throw new ParseError("L'equazione è incompleta: manca qualcosa alla fine di un membro.");
+		if (!t) throw new ParseError("L'equazione è incompleta: manca qualcosa alla fine di un membro. Scrivi per esempio 2x + 3 = 7.");
 		if (t.t === 'num') {
 			this.i++;
 			return { k: 'num', v: t.v, raw: t.raw };
@@ -168,13 +168,13 @@ class Parser {
 		if (t.t === 'op' && t.v in CLOSE) {
 			this.i++;
 			const n = this.expr();
-			if (!this.isOp(CLOSE[t.v])) throw new ParseError(`Controlla le parentesi: manca una ${CLOSE[t.v]}.`);
+			if (!this.isOp(CLOSE[t.v])) throw new ParseError(`Controlla le parentesi: manca una ${CLOSE[t.v]}. Chiudi ogni parentesi che apri, per esempio 3(x + 1) = 6.`);
 			this.i++;
 			return { k: 'group', n, open: t.v };
 		}
-		if (t.t === 'op' && (t.v === ')' || t.v === ']' || t.v === '}')) throw new ParseError(`Controlla le parentesi: c'è una ${t.v} di troppo o vuota.`);
+		if (t.t === 'op' && (t.v === ')' || t.v === ']' || t.v === '}')) throw new ParseError(`Controlla le parentesi: c'è una ${t.v} di troppo o vuota. Scrivi per esempio 3(x + 1) = 6.`);
 		if (t.t === 'pow') throw new ParseError("L'esponente va scritto dopo la base: x^2.");
-		throw new ParseError(`Controlla i segni: prima di ${t.v} manca un numero o la x.`);
+		throw new ParseError(`Controlla i segni: prima di ${t.v} manca un numero o la x. Scrivi per esempio 2x + 3 = 7.`);
 	}
 }
 
@@ -232,40 +232,46 @@ function numLatex(raw: string): string {
 /** Nodes that need brackets when they are a factor of a product or a base. */
 const isSumLike = (n: Node) => n.k === 'sum' || n.k === 'neg';
 
-function wrap(n: Node): string {
-	return isSumLike(n) ? `(${nodeLatex(n)})` : nodeLatex(n);
+function wrap(n: Node, sub?: Rational): string {
+	return isSumLike(n) ? `(${nodeLatex(n, sub)})` : nodeLatex(n, sub);
 }
 
 /** A group whose brackets only delimit a fraction's numerator or denominator: drop them in \frac. */
-const unwrap = (n: Node): Node => (n.k === 'group' ? unwrap(n.n) : n);
+export const unwrap = (n: Node): Node => (n.k === 'group' ? unwrap(n.n) : n);
 
-export function nodeLatex(n: Node): string {
+/**
+ * The LaTeX of a node as it was typed. With `sub`, every x is replaced by that number, for the check by substitution:
+ * in brackets when it is negative, or a fraction under an exponent, and always with a dot in a product (3 · 5, not 35).
+ */
+export function nodeLatex(n: Node, sub?: Rational): string {
 	switch (n.k) {
 		case 'num':
 			return numLatex(n.raw);
 		case 'x':
-			return 'x';
+			if (!sub) return 'x';
+			return sub.sign() < 0 ? `\\left(${sub.toLatex()}\\right)` : sub.toLatex();
 		case 'group': {
 			const [o, c] = n.open === '(' ? ['(', ')'] : n.open === '[' ? ['[', ']'] : ['\\{', '\\}'];
-			return `\\left${o} ${nodeLatex(n.n)} \\right${c}`;
+			return `\\left${o} ${nodeLatex(n.n, sub)} \\right${c}`;
 		}
 		case 'neg':
-			return `-${n.n.k === 'sum' ? `(${nodeLatex(n.n)})` : nodeLatex(n.n)}`;
+			return `-${n.n.k === 'sum' ? `(${nodeLatex(n.n, sub)})` : nodeLatex(n.n, sub)}`;
 		case 'sum':
-			return n.terms.map((t, i) => (i === 0 ? (t.neg ? '-' : '') : t.neg ? ' - ' : ' + ') + (t.n.k === 'neg' ? `(${nodeLatex(t.n)})` : nodeLatex(t.n))).join('');
+			return n.terms.map((t, i) => (i === 0 ? (t.neg ? '-' : '') : t.neg ? ' - ' : ' + ') + (t.n.k === 'neg' ? `(${nodeLatex(t.n, sub)})` : nodeLatex(t.n, sub))).join('');
 		case 'mul':
 			return n.f
 				.map((f, i) => {
-					const body = i > 0 && f.k === 'neg' ? `(${nodeLatex(f)})` : wrap(f);
+					const body = i > 0 && f.k === 'neg' ? `(${nodeLatex(f, sub)})` : wrap(f, sub);
 					if (i === 0) return body;
-					const juxtapose = !n.explicit[i] && (f.k === 'x' || f.k === 'group' || (f.k === 'pow' && f.b.k !== 'num'));
+					const juxtapose = !n.explicit[i] && (sub ? f.k === 'group' : f.k === 'x' || f.k === 'group' || (f.k === 'pow' && f.b.k !== 'num'));
 					return juxtapose ? body : ` \\cdot ${body}`;
 				})
 				.join('');
 		case 'div':
-			return `\\dfrac{${nodeLatex(unwrap(n.a))}}{${nodeLatex(unwrap(n.b))}}`;
+			return `\\dfrac{${nodeLatex(unwrap(n.a), sub)}}{${nodeLatex(unwrap(n.b), sub)}}`;
 		case 'pow': {
-			const b = n.b.k === 'x' || n.b.k === 'group' || (n.b.k === 'num' && !/[.,]/.test(n.b.raw)) ? nodeLatex(n.b) : `(${nodeLatex(n.b)})`;
+			if (n.b.k === 'x' && sub) return `${sub.isInteger() && sub.sign() >= 0 ? sub.toLatex() : `\\left(${sub.toLatex()}\\right)`}^{${n.e}}`;
+			const b = n.b.k === 'x' || n.b.k === 'group' || (n.b.k === 'num' && !/[.,]/.test(n.b.raw)) ? nodeLatex(n.b, sub) : `(${nodeLatex(n.b, sub)})`;
 			return `${b}^{${n.e}}`;
 		}
 	}
@@ -331,15 +337,15 @@ export function parseEquation(input: string): Parsed {
 		const tokens = tokenize(text);
 		const eqs = tokens.filter((t) => t.t === 'op' && t.v === '=').length;
 		if (eqs === 0) return { ok: false, error: "Manca il segno =: scrivi un'equazione, per esempio 2x + 3 = 7." };
-		if (eqs > 1) return { ok: false, error: "C'è più di un segno =: un'equazione ha due membri." };
+		if (eqs > 1) return { ok: false, error: "C'è più di un segno =: un'equazione ha due membri. Scrivi un solo =, per esempio 2x + 3 = 7." };
 		const split = tokens.findIndex((t) => t.t === 'op' && t.v === '=');
 		const left = tokens.slice(0, split);
 		const right = tokens.slice(split + 1);
-		if (!left.length || !right.length) return { ok: false, error: 'Scrivi qualcosa prima e dopo il segno =.' };
+		if (!left.length || !right.length) return { ok: false, error: 'Scrivi qualcosa prima e dopo il segno =, per esempio 2x + 3 = 7.' };
 		const sides = [left, right].map((ts) => {
 			const p = new Parser(ts);
 			const n = p.expr();
-			if (!p.done()) throw new ParseError('Controlla le parentesi e i segni: qualcosa è di troppo.');
+			if (!p.done()) throw new ParseError('Controlla le parentesi e i segni: qualcosa è di troppo. Scrivi per esempio 3(x + 1) = 6.');
 			return n;
 		});
 		const [lhs, rhs] = sides;
@@ -351,13 +357,13 @@ export function parseEquation(input: string): Parsed {
 			L = evaluate(lhs);
 			R = evaluate(rhs);
 		} catch (e) {
-			if (e instanceof Fraction) return { ok: false, error: "La x compare in un denominatore: è un'equazione fratta, e questo strumento risolve solo equazioni intere.", latex };
+			if (e instanceof Fraction) return { ok: false, error: "La x compare in un denominatore: è un'equazione fratta, e qui si risolvono solo equazioni intere. Tieni la x fuori dai denominatori, per esempio x/2 + 1 = 3.", latex };
 			throw e;
 		}
 		return { ok: true, eq: { lhs, rhs, L, R, degree: polyDegree(polySub(L, R)), latex, has } };
 	} catch (e) {
 		if (e instanceof ParseError) return { ok: false, error: e.message };
-		return { ok: false, error: 'I numeri sono troppo grandi per fare i calcoli esatti.' };
+		return { ok: false, error: 'I numeri sono troppo grandi per fare i calcoli esatti: prova con numeri più piccoli.' };
 	}
 }
 
@@ -373,31 +379,63 @@ export function previewLatex(input: string): string | null {
 export interface Mono {
 	c: Rational;
 	deg: number;
+	/** Marked with `\hl{…}` in the steps: this term is what changed. */
+	hl?: boolean;
 }
 
-/** A side with the brackets removed and every product done, but like terms not yet added: 3(x - 2) + 5 → 3x - 6 + 5. */
-export function expandSide(n: Node): Mono[] {
-	const terms = n.k === 'sum' ? n.terms : [{ neg: false, n }];
-	return terms.flatMap(({ neg, n: t }) => {
+/** A term that a step has to rewrite: it has brackets, a decimal number or a product to do. */
+function needsWork(n: Node): boolean {
+	const { brackets, decimals, products } = features([n]);
+	return brackets || decimals || products;
+}
+
+/** The top-level terms of a side, with their sign: 3(x - 2) + 5 → +3(x - 2), +5. */
+export const sideTerms = (n: Node): { neg: boolean; n: Node }[] => (n.k === 'sum' ? n.terms : [{ neg: false, n }]);
+
+/**
+ * A side with the brackets removed and every product done, but like terms not yet added: 3(x - 2) + 5 → 3x - 6 + 5.
+ * With `mark`, the terms that came out of a calculation are marked, for the highlight.
+ */
+export function expandSide(n: Node, mark = false): Mono[] {
+	return sideTerms(n).flatMap(({ neg, n: t }) => {
 		const p = evaluate(t);
+		const hl = mark && needsWork(t);
 		const out: Mono[] = [];
-		for (let d = p.length - 1; d >= 0; d--) if (!p[d].isZero()) out.push({ c: neg ? p[d].neg() : p[d], deg: d });
+		for (let d = p.length - 1; d >= 0; d--) if (!p[d].isZero()) out.push({ c: neg ? p[d].neg() : p[d], deg: d, ...(hl ? { hl } : {}) });
 		return out;
 	});
 }
 
+const power = (deg: number) => (deg === 0 ? '' : deg === 1 ? 'x' : deg < 10 ? `x^${deg}` : `x^{${deg}}`);
+
+/** A monomial without its sign: "3x", "x^2", "\frac{1}{2}x", "5". */
+export function monoBody(m: Mono): string {
+	const abs = m.c.abs();
+	return m.deg > 0 && abs.isOne() ? power(m.deg) : `${abs.toLatex()}${power(m.deg)}`;
+}
+
+/**
+ * A sum of monomials, zeros dropped: "3x - 6 + 5". Consecutive marked terms go in one `\hl{…}` with their signs; a
+ * sign inside the highlight keeps its spacing thanks to the empty group before it.
+ */
 export function monoLatex(items: Mono[]): string {
 	const nz = items.filter((m) => !m.c.isZero());
 	if (!nz.length) return '0';
-	return nz
-		.map((m, i) => {
-			const abs = m.c.abs();
-			const v = m.deg === 0 ? '' : m.deg === 1 ? 'x' : m.deg < 10 ? `x^${m.deg}` : `x^{${m.deg}}`;
-			const body = m.deg > 0 && abs.isOne() ? v : `${abs.toLatex()}${v}`;
-			if (i === 0) return (m.c.sign() < 0 ? '-' : '') + body;
-			return (m.c.sign() < 0 ? ' - ' : ' + ') + body;
-		})
-		.join('');
+	let out = '';
+	let open = false;
+	nz.forEach((m, i) => {
+		const sign = i === 0 ? (m.c.sign() < 0 ? '-' : '') : m.c.sign() < 0 ? ' - ' : ' + ';
+		if (m.hl && !open) {
+			out += i === 0 ? `\\hl{${sign}` : ` \\hl{{}${sign}`;
+			open = true;
+		} else if (!m.hl && open) {
+			out += '}';
+			open = false;
+			out += sign;
+		} else out += sign;
+		out += monoBody(m);
+	});
+	return open ? `${out}}` : out;
 }
 
 export const scaleMonos = (items: Mono[], k: Rational): Mono[] => items.map((m) => ({ c: m.c.mul(k), deg: m.deg }));
@@ -409,13 +447,14 @@ export function denominatorsLcm(items: Rational[]): number {
 
 /**
  * The first step, when the equation needs one: remove the brackets, write decimals as fractions, do the products.
- * Returns null when the sides are already sums of monomials.
+ * Its lines are the equation as typed and the equation after, with the rewritten terms highlighted. Null when the
+ * sides are already sums of monomials.
  */
-export function expansionStep(eq: Equation): string | null {
+export function expansionStep(eq: Equation): { say: string; math: string[] } | null {
 	const { brackets, decimals, products } = eq.has;
 	if (!brackets && !decimals && !products) return null;
-	const what = brackets ? (decimals ? 'Togli le parentesi e scrivi i numeri decimali come frazioni' : 'Togli le parentesi') : decimals ? 'Scrivi i numeri decimali come frazioni' : 'Esegui le moltiplicazioni';
-	return `${what}: $${monoLatex(expandSide(eq.lhs))} = ${monoLatex(expandSide(eq.rhs))}$.`;
+	const say = brackets ? (decimals ? 'Togli le parentesi e scrivi i decimali come frazioni.' : 'Togli le parentesi.') : decimals ? 'Scrivi i numeri decimali come frazioni.' : 'Esegui le moltiplicazioni.';
+	return { say, math: [eq.latex, `${monoLatex(expandSide(eq.lhs, true))} = ${monoLatex(expandSide(eq.rhs, true))}`] };
 }
 
 /** Evaluates a polynomial at a rational. */

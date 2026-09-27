@@ -2,7 +2,32 @@
 
 ## Che cos'è un'espressione
 
-Un'espressione numerica è una serie di numeri legati da operazioni e parentesi, come $2 + 3 \cdot (4 - 1)^2$. Perché il risultato sia uno solo, uguale per tutti, le operazioni si eseguono sempre nello stesso ordine.
+Un'espressione numerica è una serie di numeri legati da operazioni e parentesi.
+
+Per esempio:
+
+$$2 + 3 \cdot (4 - 1)^2$$
+
+Perché il risultato sia uno solo, uguale per tutti, le operazioni si eseguono sempre nello stesso ordine.
+
+```ad-example
+Esempio: $2 + 3 \cdot (4 - 1)^2$
+Calcola la parentesi tonda e scrivi il risultato al suo posto:
+
+$$2 + 3 \cdot 3^2$$
+
+Calcola la potenza:
+
+$$2 + 3 \cdot 9$$
+
+Esegui la moltiplicazione:
+
+$$2 + 27$$
+
+Esegui l'addizione:
+
+$$29$$
+```
 
 ## L'ordine delle operazioni
 
@@ -11,28 +36,47 @@ Un'espressione numerica è una serie di numeri legati da operazioni e parentesi,
 3. Le moltiplicazioni e le divisioni, nell'ordine in cui si trovano, da sinistra a destra.
 4. Le addizioni e le sottrazioni, da sinistra a destra.
 
-Quando una parentesi è calcolata sparisce, e al suo posto resta il risultato. Un numero negativo dopo un'operazione si scrive tra parentesi tonde, come in $2 \cdot (-3)$, e con la regola dei segni $5 - (-3)$ diventa $5 + 3$.
+Quando una parentesi è calcolata sparisce, e al suo posto resta il risultato. Conviene riscrivere ogni volta tutta l'espressione: così si vede cosa resta da fare.
+
+Un numero negativo dopo un'operazione si scrive tra parentesi tonde, come in $2 \cdot (-3)$. Per toglierle si usa la regola dei segni: più per meno dà meno, meno per meno dà più.
+
+$$5 - (-3) = 5 + 3$$
 
 ```ad-example
 Esempio con le parentesi
 Calcola $\{[(2 + 3) \cdot 2 - 4] : 3\}^2$.
-Tonde: $2 + 3 = 5$, resta $\{[5 \cdot 2 - 4] : 3\}^2$.
-Quadre: $5 \cdot 2 - 4 = 10 - 4 = 6$, resta $\{6 : 3\}^2$.
-Graffe: $6 : 3 = 2$, resta $2^2 = 4$.
+Le tonde:
+
+$$\{[5 \cdot 2 - 4] : 3\}^2$$
+
+Nelle quadre, prima la moltiplicazione e poi la sottrazione:
+
+$$\{[10 - 4] : 3\}^2$$
+$$\{6 : 3\}^2$$
+
+Le graffe, poi la potenza:
+
+$$2^2 = 4$$
 ```
 
 ```ad-example
 Esempio con le frazioni
 Calcola $\frac{1}{2} + \frac{2}{3} \cdot \frac{3}{4}$.
-Prima la moltiplicazione: $\frac{2}{3} \cdot \frac{3}{4} = \frac{1}{2}$. Poi l'addizione: $\frac{1}{2} + \frac{1}{2} = 1$.
+Prima la moltiplicazione:
+
+$$\frac{1}{2} + \frac{1}{2}$$
+
+Poi l'addizione:
+
+$$\frac{1}{2} + \frac{1}{2} = 1$$
 ```
 
 ```ad-error
 Errori frequenti
-- Eseguire le operazioni da sinistra a destra senza guardare le priorità: $2 + 3 \cdot 4$ fa 14, non 20.
-- Nelle divisioni in fila, partire da destra: $24 : 4 : 2 = 6 : 2 = 3$, non $24 : 2 = 12$.
-- Confondere $-2^2$ con $(-2)^2$: nel primo la potenza riguarda solo il 2, quindi $-2^2 = -4$, mentre $(-2)^2 = 4$.
-- Togliere una parentesi preceduta dal meno senza cambiare i segni dentro: $5 - (2 - 7) = 5 - 2 + 7 = 10$.
+- Eseguire le operazioni da sinistra a destra senza guardare l'ordine: $2 + 3 \cdot 4$ fa 14, non 20.
+- Nelle divisioni in fila, partire da destra: $24 : 4 : 2$ fa 3, non 12.
+- Confondere $-2^2$ con $(-2)^2$: nel primo la potenza riguarda solo il 2, quindi vale $-4$; il secondo vale $4$.
+- Togliere una parentesi preceduta dal meno senza cambiare i segni dentro: $5 - (2 - 7)$ diventa $5 - 2 + 7$, che fa 10.
 ```
 
 ## Domande frequenti
@@ -41,9 +85,13 @@ Errori frequenti
 
 Nessuna delle due: hanno la stessa priorità e si eseguono nell'ordine in cui compaiono, da sinistra a destra. Lo stesso vale per addizione e sottrazione.
 
+$$12 : 4 \cdot 3 = 3 \cdot 3 = 9$$
+
 ### Come si scrive un'espressione nel calcolatore?
 
-Le frazioni come 3/4, i decimali con la virgola (0,5), * o x per moltiplicare, : o / per dividere, ^ per le potenze: $2^3$ si scrive 2^3 e $\left(\frac{2}{3}\right)^{-2}$ si scrive (2/3)^-2. Le parentesi sono ( ), [ ] e { }. Sotto il campo vedi come il calcolatore l'ha letta: se non è quella che volevi, aggiungi delle parentesi.
+Le frazioni come 3/4, i decimali con la virgola (0,5), * o x per moltiplicare, : o / per dividere, ^ per le potenze: 2^3 è $2^3$, (2/3)^-2 è $\left(\frac{2}{3}\right)^{-2}$. Le parentesi sono ( ), [ ] e { }.
+
+Sotto il campo vedi come il calcolatore ha letto l'espressione. Se non è quella che volevi, aggiungi delle parentesi.
 
 ### Perché le parentesi hanno forme diverse?
 

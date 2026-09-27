@@ -3,6 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createJiti } from 'jiti';
+import { checkReadable, stepsText } from './geometry-readability.mjs';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
 const { figura, FIGURES, FIGURE_EXAMPLES, squareFree, shown, valueText, sqrt, int, mul, div, PI } = await jiti.import('../../src/lib/tools/geometria.ts');
@@ -21,7 +22,8 @@ function measures(res) {
 	return out;
 }
 
-const close = (actual, expected, what = '') => assert.ok(Math.abs(actual - expected) <= 1e-4 * Math.max(1, Math.abs(expected)) + 5e-5, `${what}: ${actual} ≠ ${expected}`);
+// Results are rounded to two decimals, as at school; exact forms (5√2, 25π) are checked on their own.
+const close = (actual, expected, what = '') => assert.ok(Math.abs(actual - expected) <= 5e-3 + 1e-9 * Math.abs(expected), `${what}: ${actual} ≠ ${expected}`);
 const it = (n) => String(n).replace('.', ',');
 const bad = (res, pattern) => {
 	assert.equal(res.outcome.ok, false);
@@ -32,9 +34,13 @@ test('exact values: radicals, π and their text', () => {
 	assert.deepEqual(squareFree(50), { k: 5, r: 2 });
 	assert.deepEqual(squareFree(72), { k: 6, r: 2 });
 	assert.deepEqual(squareFree(13), { k: 1, r: 13 });
-	assert.equal(valueText(sqrt(int(50))), '5√2 ≈ 7,0711');
+	assert.equal(valueText(sqrt(int(50))), '5√2 ≈ 7,07');
 	assert.equal(valueText(sqrt(int(49))), '7');
-	assert.equal(valueText(mul(int(25), PI), 'cm', 2), '25π cm² ≈ 78,5398 cm²');
+	assert.equal(valueText(mul(int(25), PI), 'cm', 2), '25π cm² ≈ 78,54 cm²');
+	// A rounded value keeps its zeros, so it never looks exact; a small one keeps two significant digits.
+	assert.equal(valueText(div(int(10), mul(int(2), PI))), '5/π ≈ 1,59');
+	assert.equal(valueText(sqrt(div(int(314), int(10)))), '√785/5 ≈ 5,60');
+	assert.equal(valueText(sqrt(div(int(1), int(20000)))), '√2/200 ≈ 0,0071');
 	assert.equal(shown(div(sqrt(int(3)), int(2))).exact.tex, '\\dfrac{\\sqrt{3}}{2}');
 	assert.equal(shown(div(int(10), mul(int(2), PI))).exact.text, '5/π');
 	assert.equal(shown(div(int(10), int(3))).exact.tex, '\\dfrac{10}{3}');
@@ -47,7 +53,7 @@ test('every mode opens on a correct example, and every clickable example works',
 			const res = figura(figure, mode.value, mode.example, 'cm');
 			assert.ok(res.outcome.ok, `${figure}/${mode.value}: ${res.outcome.error}`);
 			assert.ok(res.sketch, `${figure}/${mode.value} has a drawing`);
-			assert.ok(!res.outcome.steps.some((s) => s.startsWith('Attenzione')), `${figure}/${mode.value}: the example must be consistent`);
+			assert.ok(!res.outcome.steps.some((s) => s.say.startsWith('Attenzione')), `${figure}/${mode.value}: the example must be consistent`);
 		}
 		for (const ex of FIGURE_EXAMPLES[figure]) assert.ok(figura(figure, ex.mode, ex.values, 'cm').outcome.ok, `${figure} ${ex.label}`);
 	}
@@ -67,10 +73,24 @@ test('square: every mode, round trips from the other measures back to the side',
 		close(fromD.A, (l * l) / 2, 'A from d');
 	}
 	const r = figura('quadrato', 'area', { a: '50' }, 'cm').outcome;
-	assert.match(r.result, /l = 5\\sqrt\{2\}/);
-	assert.match(r.result, /d = 10\\,\\text\{cm\}/);
-	assert.equal(figura('quadrato', 'lato', { a: '5' }, 'cm').outcome.copy, 'A = 25 cm²; 2p = 20 cm; d = 5√2 cm ≈ 7,0711 cm');
-	assert.equal(figura('quadrato', 'lato', { a: '5' }).outcome.copy, 'A = 25; 2p = 20; d = 5√2 ≈ 7,0711');
+	assert.deepEqual(
+		r.rows.map((x) => x.label),
+		['Lato', 'Perimetro', 'Diagonale']
+	);
+	assert.match(r.rows[0].value, /^\$l = 5\\sqrt\{2\}/);
+	assert.equal(r.rows[2].value, '$d = 10\\,\\text{cm}$');
+	assert.equal(figura('quadrato', 'lato', { a: '5' }, 'cm').outcome.copy, 'A = 25 cm²; 2p = 20 cm; d = 5√2 cm ≈ 7,07 cm');
+	assert.equal(figura('quadrato', 'lato', { a: '5' }).outcome.copy, 'A = 25; 2p = 20; d = 5√2 ≈ 7,07');
+	// The diagonal from the side: formula, substitution, squares, root, the square factor out, the result.
+	assert.deepEqual(figura('quadrato', 'lato', { a: '5' }, 'cm').outcome.steps[2].math, [
+		'd = \\sqrt{l^2 + l^2}',
+		'= \\sqrt{5^2 + 5^2}',
+		'= \\sqrt{25 + 25}',
+		'= \\sqrt{50}',
+		'= \\sqrt{5^2 \\cdot 2}',
+		'= \\hl{5\\sqrt{2}\\,\\text{cm}}',
+		'\\approx 7{,}07\\,\\text{cm}'
+	]);
 });
 
 test('rectangle: sides, diagonal, area and perimeter back to the height', () => {
@@ -85,7 +105,7 @@ test('rectangle: sides, diagonal, area and perimeter back to the height', () => 
 			const d = Math.hypot(b, h);
 			if (Number.isInteger(d)) close(measures(figura('rettangolo', 'diagonale', { a: it(b), b: it(d) })).h, h, 'h from d');
 		}
-	assert.match(figura('rettangolo', 'lati', { a: '4', b: '4' }).outcome.steps.join(' '), /quadrato/);
+	assert.match(stepsText(figura('rettangolo', 'lati', { a: '4', b: '4' }).outcome), /quadrato/);
 	bad(figura('rettangolo', 'diagonale', { a: '10', b: '10' }), /diagonale/);
 	bad(figura('rettangolo', 'diagonale', { a: '10', b: '6' }));
 	bad(figura('rettangolo', 'perimetro', { a: '20', b: '10' }), /perimetro/);
@@ -105,13 +125,13 @@ test("triangle: Heron's formula against coordinates, the triangle inequality, ba
 				const m = measures(res);
 				close(m['2p'], a + b + c, '2p');
 				close(m.A, Math.sqrt(s * (s - a) * (s - b) * (s - c)), `A ${a},${b},${c}`);
-				const steps = res.outcome.steps.join(' ');
+				const steps = stepsText(res.outcome);
 				if (x * x + y * y === z * z) assert.match(steps, /rettangolo/);
 				else if (x * x + y * y < z * z) assert.match(steps, /ottusangolo/);
 			}
-	assert.match(figura('triangolo', 'lati', { a: '5', b: '6', c: '7' }).outcome.result, /6\\sqrt\{6\}/);
+	assert.match(figura('triangolo', 'lati', { a: '5', b: '6', c: '7' }).outcome.rows[0].value, /6\\sqrt\{6\}/);
 	assert.match(figura('triangolo', 'lati', { a: '1', b: '2', c: '3' }).outcome.error, /uguale alla somma/);
-	assert.match(figura('triangolo', 'lati', { a: '2', b: '2', c: '2' }).outcome.steps.join(' '), /equilatero/);
+	assert.match(stepsText(figura('triangolo', 'lati', { a: '2', b: '2', c: '2' }).outcome), /equilatero/);
 	for (let l = 1; l <= 30; l++) {
 		const m = measures(figura('triangolo', 'equilatero', { a: it(l) }));
 		close(m.A, (l * l * Math.sqrt(3)) / 4, 'A equilatero');
@@ -124,7 +144,7 @@ test("triangle: Heron's formula against coordinates, the triangle inequality, ba
 	bad(figura('triangolo', 'base', { a: '14', b: '12', c: '13', d: '' }), /tutti e due/);
 	bad(figura('triangolo', 'base', { a: '10', b: '12', c: '11', d: '15' }), /più corto/);
 	bad(figura('triangolo', 'base', { a: '10', b: '1', c: '2', d: '3' }), /non formano un triangolo/);
-	assert.match(figura('triangolo', 'base', { a: '10', b: '4', c: '5', d: '7' }).outcome.steps.join(' '), /Attenzione/);
+	assert.match(stepsText(figura('triangolo', 'base', { a: '10', b: '4', c: '5', d: '7' }).outcome), /Attenzione/);
 });
 
 test('trapezoid: generic, isosceles and right', () => {
@@ -164,7 +184,7 @@ test('rhombus: diagonals, side and diagonal, side and height', () => {
 	assert.deepEqual(measures(figura('rombo', 'lato-altezza', { a: '12', b: '9' })), { A: 108, '2p': 48 });
 	bad(figura('rombo', 'lato-diagonale', { a: '5', b: '10' }), /doppio del lato/);
 	bad(figura('rombo', 'lato-altezza', { a: '5', b: '6' }), /altezza/);
-	assert.match(figura('rombo', 'diagonali', { a: '6', b: '6' }).outcome.steps.join(' '), /quadrato/);
+	assert.match(stepsText(figura('rombo', 'diagonali', { a: '6', b: '6' }).outcome), /quadrato/);
 });
 
 test('parallelogram: base and height, area back to the height', () => {
@@ -177,7 +197,7 @@ test('parallelogram: base and height, area back to the height', () => {
 			close(m['2p'], 2 * (b + l), '2p');
 		}
 	bad(figura('parallelogramma', 'base', { a: '10', b: '6', c: '5' }), /più corto/);
-	assert.match(figura('parallelogramma', 'base', { a: '10', b: '4', c: '5' }).outcome.steps.join(' '), /h_l = \\dfrac\{A\}\{l\} = \\dfrac\{40\}\{5\} = 8/);
+	assert.deepEqual(figura('parallelogramma', 'base', { a: '10', b: '4', c: '5' }).outcome.steps[2].math, ['h_l = \\dfrac{A}{l}', '= \\dfrac{40}{5}', '= \\hl{8}']);
 });
 
 test('circle: π kept exact, every mode back to the radius', () => {
@@ -194,15 +214,19 @@ test('circle: π kept exact, every mode back to the radius', () => {
 		close(measures(figura('cerchio', 'area', { a: it(Math.round(Math.PI * r * r * 1e4) / 1e4) })).r, r, 'r from A decimal');
 	}
 	const five = figura('cerchio', 'raggio', { a: '5' }, 'cm').outcome;
-	assert.match(five.result, /C = 10\\pi\\,\\text\{cm\} \\approx 31\{,\}4159/);
-	assert.match(five.result, /A = 25\\pi\\,\\text\{cm\}\^2/);
-	assert.equal(figura('cerchio', 'area', { a: '49π' }).outcome.copy, 'r = 7; d = 14; C = 14π ≈ 43,9823');
-	assert.match(figura('cerchio', 'circonferenza', { a: '31,4' }).outcome.copy, /^r = 15,7\/π ≈ 4,9975/);
-	assert.match(figura('cerchio', 'area', { a: '50' }).outcome.copy, /^r ≈ 3,9894/);
+	assert.deepEqual(five.rows, [
+		{ label: 'Circonferenza', value: '$C = 10\\pi\\,\\text{cm}$ $\\approx 31{,}42\\,\\text{cm}$' },
+		{ label: 'Area', value: '$A = 25\\pi\\,\\text{cm}^2$ $\\approx 78{,}54\\,\\text{cm}^2$' },
+		{ label: 'Diametro', value: '$d = 10\\,\\text{cm}$' }
+	]);
+	assert.equal(figura('cerchio', 'area', { a: '49π' }).outcome.copy, 'r = 7; d = 14; C = 14π ≈ 43,98');
+	// 4,9975 rounds to 5: the zeros stay, so it does not look exact.
+	assert.match(figura('cerchio', 'circonferenza', { a: '31,4' }).outcome.copy, /^r = 15,7\/π ≈ 5,00;/);
+	assert.match(figura('cerchio', 'area', { a: '50' }).outcome.copy, /^r ≈ 3,99/);
 });
 
 test('wrong inputs give a sentence, never an exception', () => {
-	bad(figura('quadrato', 'lato', { a: '' }), /Scrivi il lato/);
+	bad(figura('quadrato', 'lato', { a: '' }), /Scrivi il lato, per esempio 12/);
 	bad(figura('quadrato', 'lato', { a: '0' }), /maggiore di zero/);
 	bad(figura('quadrato', 'lato', { a: '-3' }), /maggiore di zero/);
 	bad(figura('quadrato', 'lato', { a: 'abc' }), /scrivi un numero/);
@@ -217,4 +241,54 @@ test('wrong inputs give a sentence, never an exception', () => {
 	assert.ok(figura('cerchio', 'area', { a: '99999,9999' }).outcome.ok);
 	// An unknown mode falls back to the first one.
 	assert.ok(figura('quadrato', 'boh', { a: '5' }).outcome.ok);
+});
+
+test('readable: every string goes through KaTeX, one calculation per line, short sentences', () => {
+	const cases = [];
+	for (const [figure, spec] of Object.entries(FIGURES)) {
+		for (const mode of spec.modes) for (const u of ['cm', '']) cases.push([`${figure}/${mode.value} ${u}`, figura(figure, mode.value, mode.example, u)]);
+		for (const ex of FIGURE_EXAMPLES[figure]) cases.push([`${figure} ${ex.label}`, figura(figure, ex.mode, ex.values, 'm')]);
+	}
+	// Awkward values: decimals, radicals, π, warnings, rounded results.
+	cases.push(
+		['quadrato 7,5', figura('quadrato', 'lato', { a: '7,5' }, 'cm')],
+		['quadrato A 13', figura('quadrato', 'area', { a: '13' }, 'cm')],
+		['quadrato d 1,2345', figura('quadrato', 'diagonale', { a: '1,2345' }, 'mm')],
+		['rettangolo d 7', figura('rettangolo', 'diagonale', { a: '5', b: '7' }, 'cm')],
+		['triangolo 3 4 5', figura('triangolo', 'lati', { a: '3', b: '4', c: '5' }, 'cm')],
+		['triangolo 2 3 4', figura('triangolo', 'lati', { a: '2', b: '3', c: '4' }, 'cm')],
+		['triangolo 99999', figura('triangolo', 'lati', { a: '99999,9999', b: '99999,9998', c: '99999,9997' }, 'km')],
+		['triangolo warning', figura('triangolo', 'base', { a: '10', b: '4', c: '5', d: '7' }, 'cm')],
+		['trapezio warning', figura('trapezio', 'generico', { a: '24', b: '10', c: '12', d: '13', e: '20' }, 'cm')],
+		['trapezio iso 7', figura('trapezio', 'isoscele', { a: '10', b: '3', c: '2,5' }, 'cm')],
+		['rombo 7 3', figura('rombo', 'diagonali', { a: '7', b: '3' }, 'cm')],
+		['rombo quadrato', figura('rombo', 'lato-altezza', { a: '5', b: '5' }, 'cm')],
+		['parallelogramma rettangolo', figura('parallelogramma', 'base', { a: '5', b: '3', c: '3' }, 'cm')],
+		['cerchio C 31,4', figura('cerchio', 'circonferenza', { a: '31,4' }, 'cm')],
+		['cerchio A 99999', figura('cerchio', 'area', { a: '99999,9999' }, 'cm')],
+		['cerchio r 0,0001', figura('cerchio', 'raggio', { a: '0,0001' }, 'm')]
+	);
+	for (const [where, res] of cases) checkReadable(res.outcome, where);
+});
+
+test('each error says what to write, with an example', () => {
+	const errors = [
+		figura('quadrato', 'lato', { a: '' }),
+		figura('quadrato', 'lato', { a: 'abc' }),
+		figura('quadrato', 'lato', { a: '0' }),
+		figura('quadrato', 'lato', { a: '1000000' }),
+		figura('quadrato', 'lato', { a: '0,123456' }),
+		figura('rettangolo', 'diagonale', { a: '10', b: '6' }),
+		figura('rettangolo', 'perimetro', { a: '20', b: '10' }),
+		figura('triangolo', 'lati', { a: '1', b: '2', c: '5' }),
+		figura('triangolo', 'base', { a: '10', b: '12', c: '11', d: '15' }),
+		figura('trapezio', 'generico', { a: '24', b: '10', c: '12', d: '10', e: '15' }),
+		figura('rombo', 'lato-diagonale', { a: '5', b: '10' }),
+		figura('rombo', 'lato-altezza', { a: '5', b: '6' }),
+		figura('parallelogramma', 'base', { a: '10', b: '6', c: '5' })
+	];
+	for (const res of errors) {
+		assert.equal(res.outcome.ok, false);
+		assert.match(res.outcome.error, /per esempio|Per esempio|scambiale/, res.outcome.error);
+	}
 });

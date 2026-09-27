@@ -6,6 +6,7 @@ import { createJiti } from 'jiti';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
 const { convertiBase, parseInBase } = await jiti.import('../../src/lib/tools/binario.ts');
+const { assertReadable, stepText } = await import('./converters-check.mjs');
 
 const BASES = [2, 8, 10, 16];
 const copy = (v, a, b) => {
@@ -31,16 +32,43 @@ test('known values', () => {
 });
 
 test('steps as in the lessons', () => {
-	const div = convertiBase('25', 10, 2).steps.join(' ');
-	assert.match(div, /\\begin\{array\}\{r\|l\} 25 & 1 \\\\ 12 & 0 \\\\ 6 & 0 \\\\ 3 & 1 \\\\ 1 & 1 \\\\ 0 & \\end\{array\}/);
-	assert.match(div, /dal basso verso l'alto/);
-	assert.match(convertiBase('171', 10, 16).steps.join(' '), /11 \\to \\mathtt\{B\}/);
-	const sum = convertiBase('11001', 2, 10).steps.join(' ');
-	assert.match(sum, /1 \\cdot 2\^\{4\} \+ 1 \\cdot 2\^\{3\} \+ 0 \\cdot 2\^\{2\} \+ 0 \\cdot 2\^\{1\} \+ 1 \\cdot 2\^\{0\}/);
-	assert.match(sum, /16 \+ 8 \+ 1 = 25/);
-	assert.match(convertiBase('11001', 2, 16).steps.join(' '), /\\mathtt\{0001\} & \\mathtt\{1001\}/);
-	assert.match(convertiBase('1FF', 16, 2).steps.join(' '), /\\mathtt\{0001\} & \\mathtt\{1111\} & \\mathtt\{1111\}/);
-	assert.match(convertiBase('BEEF', 16, 10).steps[0], /\\mathtt\{B\} = 11/);
+	const o = convertiBase('25', 10, 2);
+	assert.deepEqual(o.rows, [{ label: '25 in binario', value: '$\\mathtt{11001}_{2}$' }]);
+	const div = o.steps[0].table;
+	assert.deepEqual(div.head, ['Numero', 'Diviso per 2', 'Resto']);
+	assert.deepEqual(div.rows, [
+		['$25$', '$12$', '$\\hl{1}$'],
+		['$12$', '$6$', '$\\hl{0}$'],
+		['$6$', '$3$', '$\\hl{0}$'],
+		['$3$', '$1$', '$\\hl{1}$'],
+		['$1$', '$0$', '$\\hl{1}$']
+	]);
+	assert.match(o.steps[1].say, /dal basso verso l'alto/);
+	assert.match(stepText(convertiBase('171', 10, 16)), /11 = \\hl\{\\mathtt\{B\}\}/);
+	const sum = convertiBase('11001', 2, 10);
+	assert.deepEqual(sum.steps[0].table.head, ['Cifra', 'Potenza di 2', 'Valore']);
+	assert.deepEqual(sum.steps[0].table.rows[0], ['$\\mathtt{1}$', '$2^{4} = 16$', '$1 \\cdot 16 = \\hl{16}$']);
+	assert.equal(sum.steps[0].table.rows.length, 5);
+	assert.match(stepText(sum), /16 \+ 8 \+ 1 = \\hl\{25\}/);
+	assert.match(stepText(convertiBase('11001', 2, 16)), /\$\\mathtt\{0001\}\$ \$\\mathtt\{1001\}\$/);
+	assert.match(stepText(convertiBase('1FF', 16, 2)), /\\mathtt\{0001\}\}\$ \$\\hl\{\\mathtt\{1111\}\}\$ \$\\hl\{\\mathtt\{1111\}\}/);
+	assert.deepEqual(convertiBase('BEEF', 16, 10).steps[0].table.rows[0].slice(0, 3), ['Valore', '$10$', '$11$']);
+	// Long numbers are grouped so they can be read: bits by four, decimals by thousands.
+	assert.equal(convertiBase('156', 10, 2).rows[0].value, '$\\mathtt{1001\\,1100}_{2}$');
+	assert.equal(convertiBase('11111111111111111', 2, 10).rows[0].value, '$131\\,071_{10}$');
+	// A long sum goes on several lines, each with its running total.
+	assert.ok(convertiBase(String(2 ** 53 - 1), 10, 2).steps.length === 2);
+	assert.ok(convertiBase((2 ** 53 - 1).toString(2), 2, 10).steps[1].math.length > 5);
+});
+
+test('every string typesets and every sentence is short', () => {
+	const samples = [0, 1, 5, 25, 156, 171, 255, 256, 48879, 2 ** 31, 2 ** 53 - 1, 2 ** 53];
+	for (const n of samples)
+		for (const a of BASES) for (const b of BASES) assertReadable(convertiBase(n.toString(a), a, b), `${n} (${a}) → ${b}`);
+	for (const bad of [convertiBase('102', 2, 10), convertiBase('', 10, 2), convertiBase('-5', 10, 2), convertiBase('G1', 16, 10)]) {
+		assertReadable(bad);
+		assert.match(bad.error, /per esempio|togli/);
+	}
 });
 
 test('wrong input', () => {
