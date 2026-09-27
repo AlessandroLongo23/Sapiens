@@ -1,5 +1,5 @@
 ---
-stato: bozza
+stato: in sviluppo
 release: da decidere
 aggiornato: 2026-09-27
 tag: [prodotto, studenti, seo, dsa]
@@ -9,7 +9,16 @@ tag: [prodotto, studenti, seo, dsa]
 Strumenti gratuiti, una pagina ciascuno, che risolvono un calcolo o una conversione con i passaggi e portano alla lezione e agli esercizi dello stesso argomento. Servono a tre cose: aiutano lo studente mentre studia, sono strumenti compensativi per chi ha un DSA ([[2026-09-23 Formulari e calcolatrici gratuiti]]), e prendono ricerche che le lezioni non prendono ("mcm online" è la prima fonte di traffico di Theoremz secondo Similarweb, agosto 2026, stima).
 
 ## Stato attuale
-Nessuno strumento nel codice. [[Strumenti DSA]] cita calcolatrice, calcolatrice scientifica e convertitore di unità dalla bozza originale.
+Dal 27 settembre 2026 (nel codice, non ancora pubblicato) c'è la prima onda: 25 pagine sotto `/strumenti`, con l'indice per categorie, collegato dal footer.
+- Numeri: percentuali (quattro modi), mcm, MCD, scomposizione in fattori primi, calcolatrice di frazioni, espressioni con le parentesi, potenze, radici quadrate e cubiche, proporzioni.
+- Algebra: equazioni di primo grado e di secondo grado, scritte per intero o per coefficienti, con i radicali esatti.
+- Geometria: area e perimetro di quadrato, rettangolo, triangolo (anche Erone), trapezio, rombo, parallelogramma e cerchio, una pagina per figura con un disegno delle misure; teorema di Pitagora.
+- Statistica: media, mediana e moda, media ponderata. Scuola: media dei voti scritti all'italiana (6+ vale 6,25, 6- vale 5,75, 6½ vale 6,5, 7/8 vale 7,5) e "che voto mi serve"; il voto in pagella lo decide il consiglio di classe, e lo strumento lo dice.
+- Conversioni: equivalenze (lunghezza, massa, capacità, superficie, volume, tempo), temperatura, gradi e radianti, basi 2, 8, 10 e 16.
+
+Ogni strumento ha il motore in `src/lib/tools/` con i test in `tests/unit/tools-*.test.mjs` (112 test, con controlli a forza bruta dove si può), i controlli in `src/components/tools/`, l'articolo in `src/content/strumenti/`. Come se ne aggiunge uno: `docs/strumenti.md`. Le pagine sono statiche e si aprono su un esempio, quindi risultato e passaggi sono nell'HTML; l'input sta nell'indirizzo e il canonical è la pagina senza parametri. I link "Impara" ed "Esercitati" compaiono solo quando la lezione ha la teoria pubblicata. Commit `9c7bbd6` e `90283e4`. I testi (risultati, passaggi, articoli) sono scritti da Claude e vanno riletti come le lezioni.
+
+[[Strumenti DSA]] cita calcolatrice, calcolatrice scientifica e convertitore di unità dalla bozza originale: la calcolatrice scientifica non c'è ancora.
 
 ## Cosa fanno gli altri
 Ricerca del 27 settembre 2026 (Claude): pagine di Theoremz lette direttamente, YouMath dagli estratti dei motori di ricerca perché blocca le richieste automatiche, gli altri siti letti direttamente.
@@ -77,7 +86,7 @@ Tecnica: il calcolo gira nel browser con aritmetica esatta. I generatori di eser
 Dati strutturati: `WebApplication` e `BreadcrumbList` su ogni strumento. I risultati FAQ e HowTo non compaiono più su Google (FAQ dal 7 maggio 2026, Search Engine Journal, 10 maggio 2026), ma le domande frequenti restano utili ai lettori e alle risposte AI. Il markup `MathSolver` per i risolutori gratuiti: supporto per l'italiano da verificare.
 
 ## Domande aperte
-- Indirizzo della sezione: `/strumenti`, `/calcolatori` o altro.
+- Indirizzo della sezione: per ora `/strumenti` (scelta di Claude, reversibile finché il sito non è indicizzato).
 - Quanti strumenti nella prima onda e se entrano prima della beta.
 - Pagine per singolo valore ("scomposizione in fattori primi di 72", "massa molare di NaOH"): hanno domanda, ma vanno limitate a un insieme curato per non cadere nel contenuto prodotto in serie.
 - Strumenti della vita scolastica: le regole di crediti e maturità cambiano ogni anno (per la maturità 2027 da verificare); chi le aggiorna.

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { CookieManageLink } from './CookieBanner';
 
 const COLUMNS = [
-	{ title: 'Navigazione', links: [['/', 'Home'], ['/pricing', 'Prezzi'], ['/ripetizioni', 'Ripetizioni'], ['/zaino', 'Zaino'], ['/faq', 'FAQ']] },
+	{ title: 'Navigazione', links: [['/', 'Home'], ['/pricing', 'Prezzi'], ['/ripetizioni', 'Ripetizioni'], ['/zaino', 'Zaino'], ['/strumenti', 'Strumenti'], ['/faq', 'FAQ']] },
 	{ title: 'Informazioni', links: [['/contacts', 'Contatti'], ['/faq', 'Domande frequenti']] },
 	{ title: 'Legale', links: [['/terms', 'Termini e condizioni'], ['/privacy', 'Privacy'], ['/cookie', 'Cookie policy']] }
 ];
