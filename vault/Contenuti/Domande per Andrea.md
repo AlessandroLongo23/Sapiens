@@ -74,6 +74,22 @@ Altri dubbi in `docs/lezioni/note/68-79` e nelle specifiche. Vedi [[2026-09-27 S
 - [ ] Il sasso lanciato in alto (79, altezza $20t - 5t^2$) viene dalla fisica: si tiene nel biennio?
 - [ ] Nelle equazioni parametriche, "soluzioni reali" quando per un valore di $k$ l'equazione diventa di primo grado: i libri scrivono "$k \le \frac{3}{2}$" oppure "$k \le \frac{3}{2}$ e $k \ne 1$".
 
+## Ottavo lotto: piano cartesiano, retta e parabola (27 settembre 2026)
+Altre domande nella sezione "Domande per Andrea" di ogni nota (`docs/lezioni/note/80-89`) e nelle specifiche. Vedi [[2026-09-27 Ottavo lotto, piano cartesiano retta e parabola]].
+- [ ] Distanza tra due punti $\overline{AB}$ nella geometria analitica, mentre la 58 scrive la lunghezza $AB$: due notazioni, una per la geometria euclidea e una per l'analitica, o si uniforma?
+- [ ] Coordinate non intere: $M\left(\frac{3}{2}, \frac{1}{2}\right)$ con la virgola e le frazioni, oppure $(1{,}5; 0{,}5)$ con il punto e virgola come in alcuni libri?
+- [ ] $ax + by + c = 0$ chiamata "forma implicita" (alternativa: "forma generale"); la forma segmentaria $\frac{x}{p} + \frac{y}{q} = 1$ non c'è.
+- [ ] Retta per due punti: il metodo principale è "prima $m$, poi $y - y_A = m(x - x_A)$", con la formula $\frac{y - y_A}{y_B - y_A} = \frac{x - x_A}{x_B - x_A}$ in un riquadro; molti libri fanno il contrario.
+- [ ] Rette parallele: le coincidenti contano (come nella 60), così $m_1 = m_2$ vale senza eccezioni; l'alternativa è la definizione stretta con $q_1 \neq q_2$.
+- [ ] Perché $m_1 \cdot m_2 = -1$: giustificato con la rotazione di un triangolo di un angolo retto; molti libri lo dimostrano con Pitagora o con il secondo teorema di Euclide.
+- [ ] Fascio generato scritto $r + k s = 0$ con un parametro solo (la retta $s$ esclusa), oppure $\lambda r + \mu s = 0$ con due parametri.
+- [ ] Vertice della parabola: la 87 insegna $x_V = -\frac{b}{2a}$ e $y_V$ per sostituzione, con $-\frac{\Delta}{4a}$ come controllo; molti libri fanno imparare $V\left(-\frac{b}{2a}, -\frac{\Delta}{4a}\right)$ come formula unica.
+- [ ] Parabola per tre punti (sistema $3 \times 3$) in un riquadro della 87 e in un livello degli esercizi: si tiene al secondo anno o va al terzo?
+- [ ] Disequazioni con $a < 0$: la 88 moltiplica sempre per $-1$ e cambia verso; la 89 legge il segno direttamente e mostra il cambio di verso come alternativa. Quale metodo si insegna come principale?
+- [ ] Nome della regola: "valori esterni / valori interni" (88); alternative "intervalli esterni" o "segno concorde con $a$".
+- [ ] Nella tabella dei segni un trinomio con $\Delta > 0$ sta in una riga sola con i suoi zeri (89), oppure si scompone sempre in due fattori di primo grado?
+- [ ] Soluzioni di $(x - 3)^2 > 0$: $\mathbb{R} \setminus \{3\}$ con "$x \neq 3$", oppure l'unione di due intervalli.
+
 ## Chimica (25 settembre 2026)
 Le lezioni di chimica non sono nella beta; le domande restano per quando entreranno. Vedi [[2026-09-25 Chimica con RDKit]].
 - [ ] La tavola delle masse atomiche, la classificazione degli amminoacidi, la soglia di polarità del legame.

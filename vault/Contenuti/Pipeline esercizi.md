@@ -67,6 +67,9 @@ Cinque generatori (34 livelli) per intersezione, differenza e complementare, pro
 ## Settimo lotto (27 settembre 2026)
 Dodici generatori (83 livelli) per sistemi lineari, radicali ed equazioni di secondo grado, il primo lotto del secondo anno. Le risposte con i radicali sono `expression` con una forma richiesta (`simplified`, `rationalized`, `irreducible`): il controllo Python ricostruisce l'esercizio dal testo, confronta il valore con SymPy e poi guarda la forma, così un radicale giusto ma non ridotto è sbagliato. Le coppie soluzione dei sistemi e le discussioni di un parametro sono a scelta multipla, perché nessun tipo di risposta ha due campi. Due agenti hanno usato `pkill -f verify.py`, che ferma anche le verifiche degli altri agenti: nei brief successivi va vietato. Vedi [[2026-09-27 Settimo lotto, sistemi radicali e secondo grado]].
 
+## Ottavo lotto (27 settembre 2026)
+Dieci generatori (68 livelli) per piano cartesiano, retta, parabola e disequazioni di secondo grado. Le rette in forma esplicita sono `expression` (valore il secondo membro, LaTeX l'equazione intera); punti, rette verticali, forme implicite e soluzioni con gli intervalli sono a scelta multipla. I controlli Python ricostruiscono rette e parabole con SymPy e le confrontano come oggetti, così una retta moltiplicata per 2 non passa da distrattore. È il capitolo in cui la mancanza di figure negli esercizi pesa di più: ogni specifica dice quali livelli ne vorrebbero una. Vedi [[2026-09-27 Ottavo lotto, piano cartesiano retta e parabola]].
+
 ## Chimica
 Gli esercizi di chimica sono generatori Python con RDKit (`scripts/chimica/esercizi/`), stesso contratto dei generatori TypeScript, verificati da un controllo indipendente (OPSIN per i nomi). Sul sito arrivano pregenerati, con immagini nella domanda, nelle risposte e nella soluzione: vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]] e [[2026-09-25 Chimica con RDKit]].
 
