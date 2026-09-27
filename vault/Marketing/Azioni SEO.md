@@ -8,7 +8,7 @@ tag: [marketing, seo, piano]
 La lista delle cose da fare per farsi trovare su Google, nata dalla verifica SEO del 26 settembre 2026 ([[2026-09-26 SEO e scheda degli esercizi]]) e dall'analisi di Theoremz del 27 settembre (`reports/Analisi competitiva di Theoremz.md`). Si affrontano una alla volta, in quest'ordine; lo stato e le decisioni stanno in [[SEO]].
 
 ## Da fare
-1. [ ] **Dominio definitivo.** Scegliere l'indirizzo e comprarlo. In discussione dal 27 settembre 2026.
+1. [ ] **Dominio definitivo, e prima il nome.** In discussione dal 27 settembre 2026. `sapiens.it` è di Sapiens & Sapiens s.n.c. dal 1998 ed è in uso, `sapiens.com` è preso, `sapiens.app` è parcheggiato su Sedo (prezzo da verificare). Le varianti con una seconda parola (`sapiensscuola.it`, `studiasapiens.it`, libere il 27 settembre) non piacciono ad Alessandro: il nome deve funzionare da solo, come Theoremz. In più, nello stesso settore esistono già [Scuola Sapiens](https://scuolasapiens.com/) (diplomi online per le superiori) e [A-Sapiens](https://www.a-sapiens.it/) (formazione e-learning), oltre a Sapienza Università di Roma e al libro "Sapiens" di Harari: sulla ricerca "sapiens" Sapiens non sarebbe mai primo, e c'è un possibile conflitto di marchio nella classe dell'istruzione (da verificare su UIBM ed EUIPO). Da decidere se cambiare nome prima di comprare il dominio.
 2. [ ] Collegare il dominio: Vercel, `PUBLIC_SITE_URL`, redirect 301 da `sapiens-edu.vercel.app`, controllo con `scripts/check-seo.mjs`.
 3. [ ] Search Console come proprietà DNS; inviare la sitemap. Da decidere se subito o dopo la rilettura del primo anno da parte di Andrea.
 4. [ ] Deploy delle modifiche SEO del 26 e 27 settembre (404, nodi vuoti e flashcard in `noindex`, scheda degli esercizi).
