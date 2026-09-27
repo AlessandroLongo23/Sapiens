@@ -48,3 +48,10 @@ vault/.obsidian/workspace.json
 # Sticker proof sheet (npm run stickers)
 stickers/foglio.html
 stickers/foglio.png
+
+# Ricerche e analisi competitive: materiale di lavoro, non del prodotto
+/reports/
+/research_notes/
+
+# Screenshot di prova lasciati nella radice
+/*.png
