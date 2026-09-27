@@ -640,12 +640,25 @@ body {
 		font-size: max(1rem, 16px);
 	}
 }
-/* Disable transitions during the theme toggle to avoid colour fades. */
+/* Disable transitions during the theme toggle to avoid colour fades. Animations
+   are left alone: switching them off and on again would restart every one of
+   them, and the pen underlines would draw themselves a second time. */
 .disable-transitions *:not(.theme-toggle-icon),
 .disable-transitions *:not(.theme-toggle-icon)::before,
 .disable-transitions *:not(.theme-toggle-icon)::after {
 	transition: none !important;
-	animation: none !important;
+}
+/* The theme toggle's reveal (applyTheme): the new theme is laid over the old
+   one with no crossfade and starts fully masked, so no frame of it shows
+   before the sweep begins. Scoped to .theme-swap so page changes keep their
+   own view transitions. */
+.theme-swap::view-transition-old(root),
+.theme-swap::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+.theme-swap::view-transition-new(root) {
+	clip-path: inset(0 0 100% 0);
 }
 @media (prefers-reduced-motion: reduce) {
 	*,
