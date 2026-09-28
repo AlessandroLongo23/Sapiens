@@ -1320,7 +1320,19 @@ body {
 .note-paper[data-paper-color]:not([data-paper-color='tema']) { background-color: var(--paper-bg); }
 
 /* The floating toolbar's labels: on hover after a beat, at once on keyboard
-   focus, on the side of the button that faces the sheet. */
+   focus, on the side of the button that faces the sheet. The beat is waited
+   once per visit to the toolbar: after it `--tip-warm` is 1 on the whole bar,
+   so moving to the next button shows its label straight away. */
+@property --tip-warm {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@keyframes tip-warm {
+	to { --tip-warm: 1; }
+}
+[data-dock]:hover,
+.tb-tip:hover { animation: tip-warm 350ms step-end forwards; }
 .tb-tip { position: relative; }
 .tb-tip::after {
 	content: attr(data-tip);
@@ -1336,10 +1348,11 @@ body {
 	font-weight: 500;
 	line-height: 1rem;
 	opacity: 0;
-	transition: opacity 120ms ease;
+	scale: 0.94;
+	transition: opacity 120ms ease, scale 180ms var(--ease-out-soft);
 }
-.tb-tip:hover::after { opacity: 1; transition-delay: 350ms; }
-.tb-tip:focus-visible::after { opacity: 1; }
+.tb-tip:hover::after { opacity: var(--tip-warm); scale: calc(0.94 + 0.06 * var(--tip-warm)); }
+.tb-tip:focus-visible::after { opacity: 1; scale: 1; }
 [data-dock='bottom'] .tb-tip::after { bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); }
 [data-dock='left'] .tb-tip::after { left: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
 [data-dock='right'] .tb-tip::after { right: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
