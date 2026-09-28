@@ -222,6 +222,13 @@ Per un veicolo che va a velocità costante, lo spazio percorso è la velocità p
 \end{tikzpicture}
 ```
 
+Fai partire i due veicoli, o sposta il tempo $t$: guarda come crescono $80t$ e $60t$, e quanto fa la loro somma quando si incontrano.
+
+```interattivo
+% nome: moto-incontro-tempo
+% alt: Segmento AB lungo 210 km con un'auto che parte da A e un camion che parte da B; un cursore sposta il tempo t in ore, e un bottone avvia il moto. Le frecce 80t e 60t si allungano con il tempo e sotto compaiono i chilometri percorsi e l'ora; per t uguale a 3 mezzi, alle 10:30, i due veicoli si incontrano nel punto P, a 120 km da A, e 120 più 90 fa 210.
+```
+
 $$
 \begin{gathered}
 80t + 60t = 210 \\

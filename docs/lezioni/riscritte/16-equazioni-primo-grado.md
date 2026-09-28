@@ -52,6 +52,13 @@ Perché non si moltiplica per zero
 Moltiplicando entrambi i membri per $0$, qualunque equazione diventa $0 = 0$, che è vera per ogni numero. L'equazione nuova avrebbe soluzioni che quella di partenza non aveva, quindi non sarebbe equivalente. Per la stessa ragione non si divide per $0$: la divisione per zero non è definita.
 ```
 
+Un'equazione si può immaginare come una bilancia in equilibrio: sul primo piatto il primo membro, sul secondo il secondo membro, con scatole che pesano $x$ e pesi da $1$. I due principi sono le mosse che lasciano la bilancia in equilibrio. Prova a risolvere le equazioni qui sotto con la bilancia, e guarda cosa succede se fai una mossa su un piatto solo.
+
+```interattivo
+% nome: bilancia-principi-equivalenza
+% alt: Bilancia a due piatti con scatole x e pesi da 1 che rappresentano un'equazione, per esempio 3x più 5 uguale a 11. Si possono togliere o aggiungere una scatola o un peso, o dividere il contenuto in parti uguali, su un piatto solo o su tutti e due: l'equazione scritta sotto cambia a ogni mossa, e la bilancia resta in equilibrio solo se la mossa è la stessa sui due piatti, fino a quando resta una x sola.
+```
+
 ## Come si risolve
 
 1. Se ci sono denominatori numerici, calcola il loro MCM (lo trovi spiegato in [MCD e MCM in ℕ](/materiale/scuola-superiore/matematica/numeri-naturali/mcd-e-mcm-in-n)) e moltiplica per il MCM tutti i termini di entrambi i membri. Il numeratore di ogni frazione va scritto tra parentesi.

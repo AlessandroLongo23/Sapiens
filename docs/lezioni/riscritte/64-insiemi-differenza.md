@@ -272,6 +272,13 @@ La seconda legge funziona allo stesso modo: un elemento che non sta in $A \cap B
 \end{tikzpicture}
 ```
 
+Prova a verificare tu le due leggi. Colora il primo membro toccando le zone del primo diagramma e premi «Controlla»; nel secondo il secondo membro si costruisce a passi, tratteggiando $\overline{A}$ e $\overline{B}$ uno sopra l'altro. Con lo stesso diagramma puoi controllare anche $A \setminus B = A \cap \overline{B}$ e la differenza simmetrica della nota più avanti.
+
+```interattivo
+% nome: venn-de-morgan-colora
+% alt: Due diagrammi di Eulero-Venn affiancati per le leggi di De Morgan, per la differenza scritta come intersezione e per la differenza simmetrica. Nel primo lo studente colora le zone del primo membro, per esempio il complementare di A ∪ B, e le controlla: le zone sbagliate hanno una croce. Nel secondo il secondo membro si costruisce a passi, tratteggiando il complementare di A e quello di B e poi colorando la zona dove i tratteggi si incrociano, che è la stessa zona del primo
+```
+
 Le stesse leggi le usi quando parli. "Non è vero che il numero è pari o multiplo di 3" vuol dire "il numero non è pari e non è multiplo di 3"; "non è vero che il numero è pari e multiplo di 3" vuol dire "il numero non è pari oppure non è multiplo di 3". La versione con le proposizioni è nella lezione [Proposizioni e connettivi logici](/materiale/scuola-superiore/matematica/insiemi-e-logica/proposizioni-e-connettivi-logici).
 
 ```ad-example

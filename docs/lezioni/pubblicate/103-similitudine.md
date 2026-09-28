@@ -564,6 +564,13 @@ Con $k = 2$ il triangolo grande contiene $4$ copie del piccolo, con $k = 3$ ne c
 \end{tikzpicture}
 ```
 
+Con il cursore cambi $k$: il triangolo grande si riempie di copie di quello piccolo, e sotto ci sono il perimetro e l'area. Guarda quante copie ci sono con $k = 2$ e con $k = 3$, e cosa succede in mezzo.
+
+```interattivo
+% nome: similitudine-aree-copie
+% alt: Un triangolo di lati 13, 14 e 15 centimetri, perimetro 42 e area 84, ingrandito con il rapporto k scelto con un cursore tra 1 e 4. Il triangolo ingrandito è diviso in copie del triangolo di partenza, colorato in arancione nell'angolo: con k intero le copie sono k al quadrato, 4 con k uguale a 2 e 9 con k uguale a 3. Sotto sono calcolati il perimetro, k per 42, e l'area, k al quadrato per 84
+```
+
 ```ad-warning
 Lati doppi, area quadrupla
 Raddoppiando i lati di una figura l'area non raddoppia: diventa $2^2 = 4$ volte. Allo stesso modo, se il rapporto tra le aree è $9$, il rapporto tra i lati è $\sqrt{9} = 3$, non $9$.

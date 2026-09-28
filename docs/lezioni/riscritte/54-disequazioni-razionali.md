@@ -87,6 +87,13 @@ La tabella si legge per colonne. Prima di $-3$ tutti e due i fattori sono negati
 - nullo per $x = -3$ e per $x = 2$;
 - negativo per $-3 < x < 2$.
 
+Sposta il cursore lungo la tabella: in ogni riga compaiono il valore del fattore e il suo segno, nell'ultima quello del prodotto. Il segno di un fattore cambia solo quando il cursore passa per il suo zero. Con la frazione $\dfrac{x - 2}{x + 3}$ la tabella è la stessa, tranne in $x = -3$, dove il denominatore vale zero e la frazione non esiste.
+
+```interattivo
+% nome: tabella-segni-cursore
+% alt: Tabella dei segni di x meno 2 per x più 3 con un cursore che si sposta lungo x: in ogni riga compaiono il valore del fattore e il suo segno, nell'ultima il valore e il segno del prodotto, positivo prima di meno 3 e dopo 2, negativo in mezzo, zero in meno 3 e in 2. Si può passare alla frazione x meno 2 fratto x più 3, che in meno 3 non esiste.
+```
+
 ```ad-tip
 Controllare un intervallo con un numero
 Scegli un numero dentro un intervallo e sostituiscilo nei fattori. Per $x = 0$, che sta tra $-3$ e $2$, si ha $(0 - 2)(0 + 3) = -6$: negativo, come dice la tabella.

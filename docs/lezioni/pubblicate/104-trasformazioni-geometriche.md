@@ -276,6 +276,13 @@ Con $|k| > 1$ la figura si ingrandisce, con $|k| < 1$ si rimpicciolisce. Con $k$
 \end{tikzpicture}
 ```
 
+Muovi il cursore di $k$ da $3$ a $-3$ e trascina il centro $O$: l'immagine si rimpicciolisce, per $k = 0$ si schiaccia in $O$, poi riappare capovolta dall'altra parte.
+
+```interattivo
+% nome: omotetia-rapporto-k
+% alt: Il triangolo ABC, azzurro, e la sua immagine A'B'C', arancione, nell'omotetia di centro O e rapporto k, con k scelto da un cursore tra meno 3 e 3 e il centro O trascinabile. Le rette tratteggiate uniscono ogni vertice alla sua immagine passando per O. Con k maggiore di 1 l'immagine è più grande, tra 0 e 1 più piccola, con k uguale a 0 tutti i punti vanno in O, e con k negativo l'immagine sta dalla parte opposta di O ed è capovolta; sotto sono scritti il fattore dei lati, il valore assoluto di k, e quello delle aree, k al quadrato
+```
+
 L'omotetia non è un'isometria, a meno che $|k| = 1$: con $k = 1$ è l'identità, con $k = -1$ è la simmetria centrale di centro $O$. Manda però ogni figura in una figura simile, con gli angoli congruenti e i lati in proporzione, e il rapporto di similitudine è $|k|$. Per questo è l'esempio più semplice di **similitudine**, una trasformazione che moltiplica tutte le distanze per uno stesso numero positivo: le figure simili sono nella lezione [Similitudine](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/similitudine).
 
 ```ad-warning

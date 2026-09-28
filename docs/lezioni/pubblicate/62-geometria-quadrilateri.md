@@ -657,6 +657,13 @@ Le definizioni mettono le famiglie una dentro l'altra. Ogni quadrato è sia un r
 
 Le proprietà si ereditano dall'alto verso il basso: tutto quello che vale per i parallelogrammi vale per rettangoli, rombi e quadrati, e tutto quello che vale per i rettangoli o per i rombi vale per i quadrati. Per riconoscere una figura dalle diagonali si procede nello stesso ordine: se le diagonali di un quadrilatero si tagliano a metà è un parallelogramma; se sono anche congruenti è un rettangolo, se sono anche perpendicolari è un rombo, se sono congruenti e perpendicolari è un quadrato.
 
+Prova a spostare le figure da una famiglia all'altra: trascina i vertici del quadrilatero, che si agganciano quando due lati diventano paralleli o congruenti o un angolo diventa retto, e guarda quale zona dello schema si accende e cosa fanno le diagonali. Un quadrato sta nella zona dei rettangoli e in quella dei rombi insieme.
+
+```interattivo
+% nome: famiglie-quadrilateri
+% alt: Un quadrilatero ABCD con le diagonali, i quattro vertici da trascinare e bottoni per partire da un quadrato, un rettangolo, un rombo, un parallelogramma, un trapezio isoscele, un trapezio rettangolo o un quadrilatero qualsiasi; accanto lo schema a insiemi delle famiglie, con un punto rosso nella zona della figura e i bordi più spessi per tutte le famiglie che la contengono; sulla figura sono segnati lati congruenti, angoli retti e le proprietà vere delle diagonali (si tagliano a metà, congruenti, perpendicolari), elencate anche sotto la figura
+```
+
 ```ad-warning
 Il quadrato è un rettangolo
 "Un quadrato non è un rettangolo, perché ha i lati uguali" è sbagliato: il rettangolo chiede solo i quattro angoli retti, e il quadrato li ha. Allo stesso modo il quadrato è un rombo e il rettangolo è un parallelogramma. Il contrario non vale: un rettangolo è un quadrato solo se ha anche i lati congruenti.

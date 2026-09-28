@@ -331,6 +331,13 @@ Sommare le percentuali
 Un aumento del $10\%$ seguito da uno sconto del $10\%$ non riporta al prezzo di partenza: $1{,}1 \cdot 0{,}9 = 0{,}99$, cioè una diminuzione dell'$1\%$. Due variazioni successive si combinano moltiplicando i coefficienti.
 ```
 
+Nella figura il prezzo parte da $100$ € e cambia due volte, come nell'esempio 4. Scegli le due variazioni con i cursori: la seconda si applica sempre alla barra lasciata dalla prima, e la linea tratteggiata segna dove porterebbe la somma delle percentuali.
+
+```interattivo
+% nome: sconti-successivi
+% alt: Tre barre del prezzo una sotto l'altra: il prezzo iniziale di 100 euro, il prezzo dopo la prima variazione e quello dopo la seconda, calcolata sul prezzo già cambiato; una linea tratteggiata sull'ultima barra segna il prezzo che darebbe la somma delle due percentuali. Due cursori scelgono le variazioni tra meno 50 e più 50 per cento, e sotto si leggono il coefficiente complessivo e la variazione totale
+```
+
 ```ad-example
 Esempio 5: annullare un aumento
 Un prezzo aumenta del $25\%$. Di quanto deve scendere per tornare al valore iniziale?

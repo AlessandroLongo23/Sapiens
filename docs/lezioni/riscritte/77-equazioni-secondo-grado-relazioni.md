@@ -127,6 +127,13 @@ Il segno meno davanti a s
 Nella forma $x^2 - sx + p = 0$ la somma entra con il segno cambiato. Con $s = 2$ e $p = -15$ l'equazione è $x^2 - 2x - 15 = 0$; l'equazione $x^2 + 2x - 15 = 0$ ha invece le soluzioni $-5$ e $3$.
 ```
 
+Sposta le due soluzioni sulla retta e guarda come cambiano $s$, $p$ e l'equazione. Con le soluzioni frazionarie la figura scrive anche l'equazione con i coefficienti interi, come nell'esempio 5. Sotto trovi i segni dei coefficienti con la regola di Cartesio, che si spiega più avanti, nella sezione sui segni delle soluzioni.
+
+```interattivo
+% nome: equazione-date-le-soluzioni
+% alt: Retta dei numeri da meno 6 a 6 con le due soluzioni x1 e x2 da trascinare, all'inizio meno 3 e 5; sotto si aggiornano la somma s, il prodotto p e l'equazione x al quadrato meno s x più p uguale a 0, anche con coefficienti interi, e i segni dei coefficienti con la regola di Cartesio
+```
+
 ```ad-example
 Esempio 5: soluzioni frazionarie
 Scrivi un'equazione con coefficienti interi che ha le soluzioni $-\dfrac{1}{2}$ e $\dfrac{2}{3}$.
@@ -350,7 +357,7 @@ La stessa informazione si legge in un colpo solo sui segni dei coefficienti, con
 - a ogni variazione corrisponde una soluzione positiva, a ogni permanenza una soluzione negativa;
 - se c'è una variazione e una permanenza, le soluzioni sono discordi: ha valore assoluto maggiore la positiva se viene prima la variazione, la negativa se viene prima la permanenza.
 
-La regola viene dalla tabella: con $a > 0$, due segni come $+\,-\,+$ vogliono dire $b < 0$ e $c > 0$, cioè somma e prodotto positivi. Moltiplicando l'equazione per $-1$ i segni si scambiano tutti, ma le permanenze e le variazioni restano le stesse, quindi la regola vale anche con $a < 0$.
+La regola viene dalla tabella: con $a > 0$, due segni come $+\,-\,+$ vogliono dire $b < 0$ e $c > 0$, cioè somma e prodotto positivi. Moltiplicando l'equazione per $-1$ i segni si scambiano tutti, ma le permanenze e le variazioni restano le stesse, quindi la regola vale anche con $a < 0$. Puoi provarla sulla figura della sezione "Scrivere un'equazione date le soluzioni": sposta le soluzioni e guarda come cambiano i segni dei coefficienti.
 
 ```ad-example
 Esempio 13: due variazioni
