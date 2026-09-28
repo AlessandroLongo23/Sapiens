@@ -40,10 +40,20 @@ const offenders = walk('src')
 	.filter(({ path, source }) => !ALLOWED.has(path) && HEAVY.test(source))
 	.map(({ path, source }) => `${path} → ${source.match(HEAVY)?.[1]}`);
 
+// Same rule for the paper crumple (three.js, ~150 KB compressed): only NoteCrumple loads it, with import().
+const CRUMPLE = /from\s+['"](three|html-to-image|@\/lib\/zaino\/(paper-crumple|page-photo))['"]/;
+const CRUMPLE_ALLOWED = new Set(['src/lib/zaino/paper-crumple.ts', 'src/lib/zaino/page-photo.ts']);
+offenders.push(
+	...walk('src')
+		.map((path) => ({ path: relative('.', path), source: readFileSync(path, 'utf8') }))
+		.filter(({ path, source }) => !CRUMPLE_ALLOWED.has(path) && CRUMPLE.test(source))
+		.map(({ path, source }) => `${path} → ${source.match(CRUMPLE)?.[1]}`)
+);
+
 if (offenders.length > 0) {
-	console.error('check-bundle: the editor is imported outside its dynamic boundary:');
+	console.error('check-bundle: the editor or the paper crumple is imported outside its dynamic boundary:');
 	for (const line of offenders) console.error(`  ${line}`);
-	console.error('These land in the shared bundle. Import them from SimpleEditor.tsx, which NoteEditor loads with next/dynamic.');
+	console.error('These land in the shared bundle. Import the editor from SimpleEditor.tsx (loaded with next/dynamic), and the crumple only with import() as NoteCrumple does.');
 	process.exit(1);
 }
 

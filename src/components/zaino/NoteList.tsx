@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { BookOpen, FolderInput, GripVertical, LayoutGrid, List, Loader2, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
 import { Features } from '@/lib/stripe/config';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import type { FirstPage, NotebookRow, NoteHit, NoteSummary, Quota } from '@/lib/zaino/config';
 import { useReorder } from '@/lib/hooks/use-reorder';
+import { useSlideIntoPlace } from '@/lib/hooks/use-slide-into-place';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Field';
@@ -17,6 +18,7 @@ import { useZainoAction } from './ZainoActions';
 import { QuotaBar } from './QuotaBar';
 import { MoveNoteSheet } from './MoveNoteSheet';
 import { FirstPageThumb } from './FirstPageThumb';
+import { NoteCrumple, warmUpCrumple } from './NoteCrumple';
 import './zaino.css';
 
 const when = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' });
@@ -79,6 +81,22 @@ export function NoteList({
 	const [menu, setMenu] = useState<NoteSummary | null>(null);
 	const [moving, setMoving] = useState<NoteSummary | null>(null);
 	const [confirming, setConfirming] = useState<NoteSummary | null>(null);
+	/** The note whose crumple is being prepared while its deletion is confirmed, and played once it is; `gone` are the
+	 *  notes crumpled and not yet refreshed away. */
+	const [crumple, setCrumple] = useState<{ id: string; play: boolean } | null>(null);
+	const [gone, setGone] = useState<ReadonlySet<string>>(new Set());
+	const list = useRef<HTMLDivElement>(null);
+	const closeGap = useSlideIntoPlace(list, 'data-note-id');
+	const hasNotes = notes.length > 0;
+	useEffect(() => {
+		if (hasNotes) warmUpCrumple(list.current?.querySelector<HTMLElement>('.zn-page') ?? list.current);
+	}, [hasNotes]);
+	const showAgain = (id: string) =>
+		setGone((now) => {
+			const next = new Set(now);
+			next.delete(id);
+			return next;
+		});
 	const [filter, setFilter] = useState('');
 	// The server draws the grid; a student who picked the list gets it right after hydration.
 	const view = useSyncExternalStore(subscribeView, () => memoryView ?? readView(), () => 'griglia' as View);
@@ -117,6 +135,7 @@ export function NoteList({
 	const shown = order
 		.map((id) => byId.get(id))
 		.filter((note): note is NoteSummary => !!note)
+		.filter((note) => !gone.has(note.id))
 		.filter((note) => !needle || inTitle(note) || !!textHits?.has(note.id));
 
 	if (blocked) {
@@ -130,7 +149,7 @@ export function NoteList({
 	const onlyInText = (note: NoteSummary) => !!needle && !inTitle(note);
 
 	return (
-		<div className="space-y-6">
+		<div ref={list} className="space-y-6">
 			{error && <Alert tone="error">{error}</Alert>}
 
 			{notes.length === 0 ? (
@@ -208,7 +227,7 @@ export function NoteList({
 							{shown.map((note, i) => {
 								const page = pages[note.id];
 								return (
-									<li key={note.id} {...rowProps(note.id)} className={cn('note-in group/note relative', dragging === note.id && 'z-10')} style={{ '--i': i + 1 } as CSSProperties}>
+									<li key={note.id} data-note-id={note.id} {...rowProps(note.id)} className={cn('note-in group/note relative', dragging === note.id && 'z-10')} style={{ '--i': i + 1 } as CSSProperties}>
 										{/* The page opens the note too; the title below is the link that keyboards and readers get. */}
 										<Link href={`${ZAINO_ROOT}/nota/${note.id}`} tabIndex={-1} aria-hidden="true" className="block">
 											<div className="zn-page" data-dragging={dragging === note.id ? '' : undefined} data-more={page && page.pages > 1 ? '' : undefined}>
@@ -240,6 +259,7 @@ export function NoteList({
 							{shown.map((note, i) => (
 								<li
 									key={note.id}
+									data-note-id={note.id}
 									{...rowProps(note.id)}
 									className={cn(
 										'note-in group/note relative flex items-stretch border-b border-edge bg-surface last:border-b-0',
@@ -285,6 +305,7 @@ export function NoteList({
 					<button
 						type="button"
 						onClick={() => {
+							if (menu) setCrumple({ id: menu.id, play: false });
 							setConfirming(menu);
 							setMenu(null);
 						}}
@@ -312,19 +333,37 @@ export function NoteList({
 				}}
 			/>
 
-			<Sheet open={!!confirming} onClose={() => setConfirming(null)} title="Elimina la nota" size="auto" width="sm" align="center">
+			<Sheet
+				open={!!confirming}
+				onClose={() => {
+					setConfirming(null);
+					setCrumple(null);
+				}}
+				title="Elimina la nota" size="auto" width="sm" align="center">
 				<p className="text-sm text-fg-muted">Vuoi eliminare «{confirming?.title}»? Non si può recuperare.</p>
 				<div className={cn(sheetActions, 'mt-5')}>
-					<Button variant="ghost" onClick={() => setConfirming(null)}>
+					<Button
+						variant="ghost"
+						onClick={() => {
+							setConfirming(null);
+							setCrumple(null);
+						}}
+					>
 						Annulla
 					</Button>
 					<Button
 						variant="inverse"
-						loading={busy === confirming?.id}
 						onClick={async () => {
 							if (!confirming) return;
-							const done = await run(confirming.id, `/api/zaino/note/${confirming.id}`, 'DELETE');
-							if (done) setConfirming(null);
+							const note = confirming;
+							// The note is crumpled at once, while the sheet goes and the server deletes it.
+							setConfirming(null);
+							setCrumple({ id: note.id, play: true });
+							const done = await run(note.id, `/api/zaino/note/${note.id}`, 'DELETE');
+							if (!done) {
+								setCrumple((now) => (now?.id === note.id ? null : now));
+								showAgain(note.id);
+							}
 						}}
 					>
 						<Trash2 className="size-4" aria-hidden="true" />
@@ -332,6 +371,18 @@ export function NoteList({
 					</Button>
 				</div>
 			</Sheet>
+			{crumple && (
+				<NoteCrumple
+					key={crumple.id}
+					noteId={crumple.id}
+					play={crumple.play}
+					onDone={() => {
+						closeGap();
+						setGone((now) => new Set(now).add(crumple.id));
+						setCrumple(null);
+					}}
+				/>
+			)}
 		</div>
 	);
 }
