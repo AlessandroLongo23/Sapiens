@@ -118,5 +118,10 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
 	'calcolo-assenze-scuola': dynamic(() => import('./AssenzeTool').then((m) => m.AssenzeTool)),
 	'calcolo-voto-esame-terza-media': dynamic(() => import('./EsameTerzaMediaTool').then((m) => m.EsameTerzaMediaTool)),
 	'calcolo-media-ponderata-universitaria': dynamic(() => import('./MediaUniversitariaTool').then((m) => m.MediaPonderataUniversitariaTool)),
-	'calcolo-voto-laurea': dynamic(() => import('./MediaUniversitariaTool').then((m) => m.VotoLaureaTool))
+	'calcolo-voto-laurea': dynamic(() => import('./MediaUniversitariaTool').then((m) => m.VotoLaureaTool)),
+	'temperatura-di-equilibrio': dynamic(() => import('./CalorimetriaTool').then((m) => m.CalorimetriaTool)),
+	'piano-inclinato': dynamic(() => import('./PianoInclinatoTool').then((m) => m.PianoInclinatoTool)),
+	'legge-di-coulomb': dynamic(() => import('./CoulombTool').then((m) => m.CoulombTool)),
+	'convertitore-newton-kg': dynamic(() => import('./NewtonKgTool').then((m) => m.NewtonKgTool)),
+	'grafico-a-torta': dynamic(() => import('./GraficoTortaTool').then((m) => m.GraficoTortaTool))
 };

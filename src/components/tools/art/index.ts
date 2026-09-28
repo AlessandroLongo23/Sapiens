@@ -17,6 +17,8 @@ import { STECHIOMETRIA_ART } from './stechiometria';
 import { LOGARITMI_ART } from './logaritmi';
 import { CERCHIO_PIANO_ART } from './cerchio-piano';
 import { CIRCUITI_GAS_ART } from './circuiti-gas';
+import { FORZE_CALORE_ART } from './forze-calore';
+import { TORTA_ART } from './torta';
 
 /** The drawing on each tool's card in the index, by slug (see primitives.tsx for how they are drawn). */
 export const TOOL_ART: Record<string, ReactNode> = {
@@ -38,5 +40,7 @@ export const TOOL_ART: Record<string, ReactNode> = {
 	...STECHIOMETRIA_ART,
 	...LOGARITMI_ART,
 	...CERCHIO_PIANO_ART,
-	...CIRCUITI_GAS_ART
+	...CIRCUITI_GAS_ART,
+	...FORZE_CALORE_ART,
+	...TORTA_ART
 };

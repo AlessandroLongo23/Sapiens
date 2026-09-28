@@ -1248,6 +1248,61 @@ export const TOOLS: ToolMeta[] = [
 		related: ['calcolo-media-ponderata-universitaria', 'conversione-voti', 'calcolo-media-voti'],
 		sample: '27 \\cdot \\frac{110}{30} = 99',
 		keywords: ['voto di laurea', 'base di laurea', 'centodecimi', 'punti tesi', 'media laurea']
+	},
+	{
+		slug: 'temperatura-di-equilibrio',
+		title: 'Temperatura di equilibrio',
+		lead: 'La temperatura finale di due o più corpi a contatto, con calore ceduto uguale a calore assorbito, i calori specifici delle sostanze comuni e i passaggi.',
+		description: 'Calcola la temperatura di equilibrio di due o più corpi con Q ceduto = Q assorbito: massa, calore specifico e temperatura, con la tabella dei calori.',
+		category: 'fisica',
+		lessons: ['high_school/physics/fis-temperatura-calore/fis-equilibrio-termico', 'high_school/physics/fis-temperatura-calore/calore'],
+		related: ['convertitore-temperatura', 'convertitore-energia', 'leggi-dei-gas'],
+		sample: 'Q_\\text{ced} = Q_\\text{ass}',
+		keywords: ['calorimetro', 'calore specifico', 'calore ceduto', 'equilibrio termico', 'mescolanza']
+	},
+	{
+		slug: 'piano-inclinato',
+		title: 'Piano inclinato',
+		lead: 'Componenti del peso, forza normale, attrito, forza risultante e accelerazione di un corpo su un piano inclinato, e se scivola o resta fermo.',
+		description: 'Calcola le forze su un piano inclinato: componenti del peso, reazione normale, attrito statico e dinamico e accelerazione, con il disegno e i passaggi.',
+		category: 'fisica',
+		lessons: ['high_school/physics/fis-forze-movimento/fis-piano-inclinato', 'high_school/physics/fis-equilibrio-solidi/fis-equilibrio-piano-inclinato', 'high_school/physics/fis-vettori-forze/fis-attrito'],
+		related: ['moto-uniformemente-accelerato', 'seno-coseno-tangente', 'convertitore-newton-kg'],
+		sample: 'a = g \\sin\\alpha',
+		keywords: ['attrito', 'forza peso', 'componente parallela', 'reazione vincolare', 'coefficiente di attrito']
+	},
+	{
+		slug: 'legge-di-coulomb',
+		title: 'Legge di Coulomb',
+		lead: 'La forza tra due cariche elettriche, attrattiva o repulsiva, oppure la distanza o una delle cariche, in μC, nC e C, con la notazione scientifica.',
+		description: 'Calcola la forza di Coulomb tra due cariche in μC, nC o C, o la distanza o una carica, con k = 8,99 · 10⁹ N·m²/C², il verso e i passaggi.',
+		category: 'fisica',
+		lessons: ['high_school/physics/elettrostatica/fis-legge-coulomb', 'high_school/physics/elettrostatica/fis-coulomb-materia'],
+		related: ['notazione-scientifica', 'legge-di-ohm', 'equivalenze'],
+		sample: 'F = k\\frac{q_1 q_2}{r^2}',
+		keywords: ['forza elettrica', 'cariche elettriche', 'forza di coulomb', 'elettrostatica']
+	},
+	{
+		slug: 'convertitore-newton-kg',
+		title: 'Da newton a kg',
+		lead: 'Da newton a chilogrammi-peso (kgp) e viceversa, con 1 kgp = 9,80665 N, e il peso di una massa sulla Terra, sulla Luna e su Marte.',
+		description: 'Converti newton in chilogrammi-peso (kgp, kgf) e viceversa, con 1 kgp = 9,80665 N, e calcola il peso di una massa sulla Terra, sulla Luna e su Marte.',
+		category: 'conversioni',
+		lessons: ['high_school/physics/fis-vettori-forze/fis-forza-peso'],
+		related: ['equivalenze', 'piano-inclinato', 'convertitore-pressione'],
+		sample: '1\\ \\text{kgp} \\approx 9{,}8\\ \\text{N}',
+		keywords: ['chilogrammo peso', 'kgf', 'newton in kg', 'forza peso', 'massa e peso']
+	},
+	{
+		slug: 'grafico-a-torta',
+		title: 'Grafico a torta',
+		lead: 'Da una tabella di voci e valori al grafico a torta con percentuali, angoli e legenda, da scaricare in PNG o SVG per una ricerca o una relazione.',
+		description: 'Crea un grafico a torta online da una tabella: percentuali, angoli al centro e legenda, da scaricare in PNG o SVG. Anche a ciambella, con i passaggi.',
+		category: 'statistica',
+		lessons: ['high_school/math/statistica/statistica-dati'],
+		related: ['tabella-delle-frequenze', 'calcolo-percentuale', 'area-settore-circolare'],
+		sample: '40\\% \\to 144^\\circ',
+		keywords: ['aerogramma', 'areogramma', 'diagramma a torta', 'grafico a ciambella', 'grafico a settori circolari']
 	}
 ];
 
