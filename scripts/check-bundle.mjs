@@ -41,7 +41,8 @@ const offenders = walk('src')
 	.map(({ path, source }) => `${path} → ${source.match(HEAVY)?.[1]}`);
 
 // Same rule for the paper crumple (three.js, ~150 KB compressed): only NoteCrumple loads it, with import().
-const CRUMPLE = /from\s+['"](three|html-to-image|@\/lib\/zaino\/(paper-crumple|page-photo))['"]/;
+// `import type` is erased by the compiler, so it may name them anywhere.
+const CRUMPLE = /^import\s+(?!type\s)[^;]*?from\s+['"](three|html-to-image|@\/lib\/zaino\/(paper-crumple|page-photo))['"]/m;
 const CRUMPLE_ALLOWED = new Set(['src/lib/zaino/paper-crumple.ts', 'src/lib/zaino/page-photo.ts']);
 offenders.push(
 	...walk('src')

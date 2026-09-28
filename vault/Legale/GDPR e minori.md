@@ -9,6 +9,7 @@ tag: [legale, privacy]
 - Privacy, termini e cookie scritti per un servizio per consumatori usato da minori. Banner dei cookie con analytics solo dopo il consenso.
 - Sotto i 14 anni l'account lo crea il genitore e lo conferma alla registrazione (in Italia l'età del consenso digitale è 14 anni, art. 2-quinquies del Codice privacy).
 - L'accettazione dei documenti legali è registrata in `user_metadata`.
+- Dal 28 settembre 2026 lo Zaino ha un cestino di 30 giorni ([[2026-09-28 Le note eliminate restano 30 giorni nel cestino]]). Quello che è nel cestino viene cancellato per sempre dopo 30 giorni da un job notturno, e subito quando si cancella l'account, perché note e quaderni sono legati all'utente con `on delete cascade`. L'esportazione dei dati include anche quello che è nel cestino.
 - Dal 28 settembre 2026 (nel codice, non ancora pubblicato) lo studente scarica i suoi dati in JSON e cancella l'account da solo, in "Privacy e dati" della pagina account (artt. 15, 17, 20 GDPR). Vedi [[Account e impostazioni]].
 
 ## Aperto (dalla [[ROADMAP]])

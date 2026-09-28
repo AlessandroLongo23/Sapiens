@@ -5,7 +5,7 @@ import { pageMetadata } from '@/lib/seo/page-metadata';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import { getSession } from '@/lib/server/auth';
 import { isUuid } from '@/lib/server/http';
-import { firstPages, getNotebook, getQuota, listNotebooks, listNotes } from '@/lib/server/zaino';
+import { firstPages, getNotebook, getQuota, listNotebooks, listNotes, trashCount } from '@/lib/server/zaino';
 import { HOME_CRUMB, ZAINO_CRUMB } from '@/components/content/Breadcrumb';
 import { Page, PageHeader } from '@/components/content/PageHeader';
 import { Stat } from '@/components/ui/Badge';
@@ -30,11 +30,12 @@ export default async function NotebookPage({ params }: { params: Promise<{ quade
 	if (!user) redirect(ZAINO_ROOT);
 	const notebook = await getNotebook(supabase, user.id, quaderno);
 	if (!notebook) notFound();
-	const [notes, notebooks, quota, pages] = await Promise.all([
+	const [notes, notebooks, quota, pages, inTrash] = await Promise.all([
 		listNotes(supabase, user.id, notebook.id),
 		listNotebooks(supabase, user.id),
 		getQuota(supabase, user),
-		firstPages(supabase, user.id, notebook.id)
+		firstPages(supabase, user.id, notebook.id),
+		trashCount(supabase, user.id)
 	]);
 	const latest = notes.reduce<string | null>((a, n) => (!a || n.updated_at > a ? n.updated_at : a), null);
 	const fromLessons = notes.filter((n) => n.lesson_path).length;
@@ -65,7 +66,7 @@ export default async function NotebookPage({ params }: { params: Promise<{ quade
 						</span>
 					}
 				/>
-				<NoteList notebookId={notebook.id} notes={notes} pages={pages} notebooks={notebooks} quota={quota} />
+				<NoteList notebookId={notebook.id} notes={notes} pages={pages} notebooks={notebooks} quota={quota} trashCount={inTrash} />
 			</Page>
 		</div>
 	);

@@ -367,3 +367,65 @@
 		transform 0.38s cubic-bezier(0.55, 0, 0.9, 0.5),
 		opacity 0.38s cubic-bezier(0.7, 0, 1, 0.5);
 }
+
+/* The trash (Trash.tsx). A list scrolled in a rounded box lets the ball fly out of it. */
+ul:has(> [data-crumpled]) {
+	overflow: visible;
+}
+/* The trash that comes up while a note is dragged: out of sight below, up when a drag starts, bigger and in the pen's
+   red when the note is over it. */
+.zn-drop-bin {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	min-height: 3.5rem;
+	padding: 0 1.4rem 0 1.2rem;
+	border: 1.5px dashed var(--edge-strong);
+	border-radius: 999px;
+	background: color-mix(in oklab, var(--surface) 92%, transparent);
+	backdrop-filter: blur(6px);
+	color: var(--fg-muted);
+	font-size: 0.9375rem;
+	font-weight: 500;
+	box-shadow: var(--shadow-lift);
+	opacity: 0;
+	transform: translateY(24px) scale(0.96);
+	transition:
+		opacity 0.2s ease,
+		transform 0.28s var(--ease-out-soft),
+		color 0.15s ease,
+		border-color 0.15s ease,
+		background-color 0.15s ease;
+}
+.zn-drop-bin[data-shown] {
+	opacity: 1;
+	transform: none;
+}
+.zn-drop-bin[data-shown][data-over] {
+	border-style: solid;
+	border-color: var(--accent);
+	background: color-mix(in oklab, var(--accent) 10%, var(--surface));
+	color: var(--accent-fg);
+	transform: scale(1.08);
+}
+.zn-drop-bin-icon {
+	transition: transform 0.2s var(--ease-out-soft);
+	transform-origin: 70% 30%;
+}
+.zn-drop-bin[data-over] .zn-drop-bin-icon {
+	transform: rotate(-14deg);
+}
+/* The trash takes a ball: a little give. */
+@media (prefers-reduced-motion: no-preference) {
+	.zn-bin-bump {
+		animation: zn-bin-bump 0.36s var(--ease-out-soft);
+	}
+}
+@keyframes zn-bin-bump {
+	30% {
+		transform: translateY(2px) scale(1.18, 0.86);
+	}
+	65% {
+		transform: translateY(-1px) scale(0.96, 1.06);
+	}
+}

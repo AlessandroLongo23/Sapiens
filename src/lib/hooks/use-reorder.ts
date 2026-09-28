@@ -28,7 +28,23 @@ export interface Reorder {
 	};
 }
 
-export function useReorder(ids: string[], commit: (ids: string[]) => void, enabled = true): Reorder {
+/**
+ * A place outside the list a row can be dropped on, such as the trash. While `over` says the pointer is on it the
+ * list goes back to the order it had before the drag and stops following the pointer; a drop that `release` takes
+ * commits no order.
+ */
+export interface DropTarget {
+	/** A drag has started on `id`. */
+	start?: (id: string) => void;
+	/** Whether the point is on the target; called on every move. */
+	over: (id: string, x: number, y: number) => boolean;
+	/** The row was let go at the point; true when the target took it. */
+	release: (id: string, x: number, y: number) => boolean;
+	/** The drag is over, whatever happened. */
+	end?: () => void;
+}
+
+export function useReorder(ids: string[], commit: (ids: string[]) => void, enabled = true, drop?: DropTarget): Reorder {
 	const [order, setOrder] = useState<string[]>(ids);
 	const [dragging, setDragging] = useState<string | null>(null);
 	const rows = useRef(new Map<string, HTMLElement>());
@@ -88,12 +104,23 @@ export function useReorder(ids: string[], commit: (ids: string[]) => void, enabl
 		e.preventDefault();
 		(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 		setDragging(id);
+		drop?.start?.(id);
 		// The drag owns the order while it lasts. Keeping it in the closure rather
 		// than a ref means no state is read during render, and every pointermove
 		// sees what the previous one decided even before React has re-rendered.
+		const initial = order;
 		let current = order;
 
 		const onMove = (move: PointerEvent) => {
+			if (drop?.over(id, move.clientX, move.clientY)) {
+				// On the target: the row goes back where it was, and waits there.
+				if (current !== initial) {
+					measure();
+					current = initial;
+					setOrder(initial);
+				}
+				return;
+			}
 			// The row whose middle the pointer has passed becomes the new index. In a grid (rows side by
 			// side) that is the first card the pointer is above, or beside and left of the middle of.
 			const boxes = current
@@ -111,11 +138,20 @@ export function useReorder(ids: string[], commit: (ids: string[]) => void, enabl
 			current = moved(current, id, index);
 			setOrder(current);
 		};
-		const onUp = () => {
+		const onUp = (up: PointerEvent) => {
 			window.removeEventListener('pointermove', onMove);
 			window.removeEventListener('pointerup', onUp);
 			window.removeEventListener('pointercancel', onUp);
 			setDragging(null);
+			const taken = up.type === 'pointerup' && !!drop?.release(id, up.clientX, up.clientY);
+			drop?.end?.();
+			if (taken) {
+				if (current !== initial) {
+					measure();
+					setOrder(initial);
+				}
+				return;
+			}
 			if (current.some((rowId, i) => ids[i] !== rowId)) commit(current);
 		};
 		window.addEventListener('pointermove', onMove);
