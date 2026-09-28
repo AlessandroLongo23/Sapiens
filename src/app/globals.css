@@ -614,6 +614,27 @@
 	from { transform: rotate(-17deg); }
 	to { transform: rotate(17deg); }
 }
+/* A segmented control (ToggleGroup): once measured, one raised piece slides
+   under the chosen option and the buttons stop drawing their own, hover
+   included. The hover is a second piece under the first, gliding between
+   options (see ToggleGroup). */
+.toggle-slide .toggle-thumb,
+.toggle-slide .toggle-hover { opacity: 0; }
+.toggle-slide[data-ready] .toggle-hover {
+	transition:
+		transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+		width 220ms cubic-bezier(0.23, 1, 0.32, 1),
+		opacity 150ms ease;
+}
+.toggle-slide[data-ready] .toggle-hover[data-on] { opacity: 1; }
+.toggle-slide[data-ready] .toggle-thumb {
+	opacity: 1;
+	transition: transform 0.32s var(--ease-out-soft), width 0.32s var(--ease-out-soft);
+}
+.toggle-slide[data-ready] > button {
+	background-color: transparent;
+	box-shadow: none;
+}
 /* The end of an exercise run (SummarySheet). Once the sheet is up the ring fills
    from empty while the score rolls up on its wheels, as on a numbering stamp;
    then the counts come in and, on a passed level, the stamp is pressed on. The
