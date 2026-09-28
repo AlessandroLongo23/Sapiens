@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-26
+aggiornato: 2026-09-28
 tag: [prodotto, studenti]
 ---
 # Diario e calendario
@@ -21,6 +21,7 @@ Scritto il 26 settembre 2026, provato nel browser, non ancora committato né pub
 - Il font a mano (Caveat) ora è caricato dal layout: prima `pencil` ripiegava sul corsivo di sistema.
 - Le pagine hanno un'altezza fissa, su richiesta di Alessandro: il libro è alto quanto lo schermo permette (computer tra 34 e 52 rem, telefono lo spazio fra la settimana e la barra in basso) e ciò che non entra scorre dentro la pagina, con una sfumatura in fondo. Sul telefono la pagina personale è il retro del foglio: l'angolo piegato in basso a destra lo gira in 3D.
 - Due giri di revisione con un agente critico e Playwright (computer da 1280 a 1920 px, Pixel 7, iPhone SE, tema scuro): allineamenti, bersagli da 44 px, caselle alla riga della penna, intestazione del giorno di altezza costante, "Oggi" come icona. Le frecce scritte come caratteri sono diventate icone lucide anche fuori dal diario: suggerimenti della ricerca, scorciatoie delle note, guida della materia.
+- Dal 28 settembre 2026 (committato su master, non ancora pubblicato) una voce spuntata viene barrata a penna dopo che la spunta è disegnata: la riga percorre il testo da sinistra a destra, riga dopo riga se la voce va a capo, e torna indietro togliendo la spunta. È la penna blu del diario, come la voce. La casella si abbassa un poco quando si preme (`.diary-strike` in `diary.css`, `Entries.tsx`).
 - Provato con un account di prova poi cancellato, su computer a 1440 px, su un Pixel 7 simulato e nel tema scuro: voce scritta, spuntata e ritrovata dopo il ricaricamento, voce su un altro giorno con il link per andarci, frecce, swipe, calendario, linguetta di un mese, adesivo e testo salvati.
 
 ## Obiettivo
