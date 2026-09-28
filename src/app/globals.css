@@ -601,6 +601,55 @@
 	from { transform: rotate(-17deg); }
 	to { transform: rotate(17deg); }
 }
+/* The end of an exercise run (SummarySheet). Once the sheet is up the ring fills
+   from empty while the score rolls up on its wheels, as on a numbering stamp;
+   then the counts come in and, on a passed level, the stamp is pressed on. The
+   markup is the finished state, so reduced motion shows it at once. */
+.score-wheel {
+	display: inline-block;
+	height: 1em;
+	overflow: hidden;
+	vertical-align: top;
+}
+.score-strip {
+	display: flex;
+	flex-direction: column;
+	transform: translateY(calc(var(--n) * -1em));
+}
+.score-strip > span { height: 1em; line-height: 1; }
+.score-stamp {
+	position: absolute;
+	right: -2.6rem;
+	top: 0.1rem;
+	padding: 0.2rem 0.55rem;
+	border: 2.5px solid currentColor;
+	outline: 1px solid currentColor;
+	outline-offset: -5px;
+	border-radius: 0.4rem;
+	background: color-mix(in oklab, var(--surface) 75%, transparent);
+	color: var(--accent-fg);
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	transform: rotate(12deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+	.score-ring { animation: score-fill 0.9s cubic-bezier(0.3, 0.9, 0.3, 1) 0.25s backwards; }
+	.score-strip { animation: score-roll 0.9s cubic-bezier(0.3, 0.9, 0.3, 1) 0.25s backwards; }
+	.score-after { animation: fade-in 0.3s ease-out 1.05s backwards; }
+	.score-stamp { animation: score-stamp 0.36s cubic-bezier(0.3, 1.6, 0.5, 1) 1.2s backwards; }
+}
+@keyframes score-fill {
+	from { stroke-dashoffset: var(--full); }
+}
+@keyframes score-roll {
+	from { transform: translateY(0); }
+}
+@keyframes score-stamp {
+	from { opacity: 0; transform: rotate(20deg) scale(1.8); }
+}
 @media (hover: none), (prefers-reduced-motion: reduce) {
 	.cover-ink { stroke-dashoffset: 0; transition: none; }
 	.cover-dot { opacity: 1; transition: none; }
