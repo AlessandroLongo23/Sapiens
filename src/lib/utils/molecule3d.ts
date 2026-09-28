@@ -166,6 +166,71 @@ function turnable(box: HTMLElement, viewer: Viewer, reducedMotion: boolean) {
 	return { pause: stop, resume: start };
 }
 
+type Vec = { x: number; y: number; z: number };
+type Atom = Vec & { index: number; bonds: number[]; bondOrder: number[] };
+/** What showMultipleBond needs from a 3Dmol GLModel: its atoms and where it puts the sticks of a multiple bond. */
+interface SideBonds {
+	selectedAtoms(sel: object): Atom[];
+	getSideBondV(atom: Atom, atom2: Atom, i: number): Vec;
+}
+
+const sub = (a: Vec, b: Vec): Vec => ({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
+const cross = (a: Vec, b: Vec): Vec => ({ x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.y * b.x });
+const unit = (a: Vec): Vec => {
+	const l = Math.hypot(a.x, a.y, a.z);
+	return { x: a.x / l, y: a.y / l, z: a.z / l };
+};
+
+/**
+ * Turns the model so its first double or triple bond lies across the screen with its sticks one above the other.
+ * 3Dmol sets the sticks apart along a side direction of its own choosing: for CO₂ that direction ended up pointing
+ * at the viewer, and the turn around the vertical axis kept it in the horizontal plane, so the two sticks always
+ * covered each other. With the sticks stacked vertically, the idle turn never lines them up.
+ */
+function showMultipleBond(viewer: Viewer, model: SideBonds) {
+	const atoms = model.selectedAtoms({});
+	for (const atom of atoms)
+		for (let i = 0; i < atom.bonds.length; i++) {
+			const other = atoms.find((a) => a.index === atom.bonds[i]);
+			const order = atom.bondOrder[i];
+			// 3Dmol draws each bond from its lower-index atom, and the side direction depends on that order.
+			if (!other || atom.index > other.index || order < 2 || order > 3) continue;
+			const along = unit(sub(other, atom));
+			let side = unit(model.getSideBondV(atom, other, i));
+			// A triple bond's outer sticks are set apart across that direction, not along it.
+			if (order === 3) side = unit(cross(side, along));
+			const normal = cross(along, side);
+			// The rotation taking along, side, normal to the screen's x, y, z, as a quaternion (x, y, z, w).
+			const m = [
+				[along.x, along.y, along.z],
+				[side.x, side.y, side.z],
+				[normal.x, normal.y, normal.z],
+			];
+			const w = Math.sqrt(Math.max(0, 1 + m[0][0] + m[1][1] + m[2][2])) / 2;
+			const q: Quat =
+				w > 1e-3
+					? [(m[2][1] - m[1][2]) / (4 * w), (m[0][2] - m[2][0]) / (4 * w), (m[1][0] - m[0][1]) / (4 * w), w]
+					: quatFromMatrix(m);
+			const view = viewer.getView();
+			viewer.setView([...view.slice(0, 4), ...q, ...view.slice(8)]);
+			return;
+		}
+}
+
+/** The general conversion, for rotations near half a turn where the short one divides by almost zero. */
+function quatFromMatrix(m: number[][]): Quat {
+	if (m[0][0] > m[1][1] && m[0][0] > m[2][2]) {
+		const s = Math.sqrt(1 + m[0][0] - m[1][1] - m[2][2]) * 2;
+		return [s / 4, (m[0][1] + m[1][0]) / s, (m[0][2] + m[2][0]) / s, (m[2][1] - m[1][2]) / s];
+	}
+	if (m[1][1] > m[2][2]) {
+		const s = Math.sqrt(1 + m[1][1] - m[0][0] - m[2][2]) * 2;
+		return [(m[0][1] + m[1][0]) / s, s / 4, (m[1][2] + m[2][1]) / s, (m[0][2] - m[2][0]) / s];
+	}
+	const s = Math.sqrt(1 + m[2][2] - m[0][0] - m[1][1]) * 2;
+	return [(m[0][2] + m[2][0]) / s, (m[1][2] + m[2][1]) / s, s / 4, (m[1][0] - m[0][1]) / s];
+}
+
 /** Starts turning only after the model is built; before that, the figure's box stays empty. */
 async function build(figure: HTMLElement, box: HTMLElement, reducedMotion: boolean) {
 	const $3Dmol = await import('3dmol');
@@ -175,8 +240,8 @@ async function build(figure: HTMLElement, box: HTMLElement, reducedMotion: boole
 	const viewer = $3Dmol.createViewer(box, { backgroundAlpha: 0, nomouse: true, rows: 1, cols: 1, row: 0, col: 0 });
 	viewer.enableFog(false);
 	const { xyz = '', bonds } = figure.dataset;
-	if (bonds) viewer.addModel().addAtoms(bondedAtoms(xyz, bonds));
-	else viewer.addModel(xyzFile(xyz), 'xyz');
+	const model = viewer.addModel(bonds ? undefined : xyzFile(xyz), bonds ? undefined : 'xyz');
+	if (bonds) model.addAtoms(bondedAtoms(xyz, bonds));
 	// 3Dmol draws a double bond as two sticks 0.4 times as thick as a single one, set apart by as much as one is
 	// thick (a third: 0.25, three sticks): at this radius the gap is a few pixels and the pair reads as one stick.
 	// Thicker sticks open the gap, and the pair stays within the atoms.
@@ -184,6 +249,7 @@ async function build(figure: HTMLElement, box: HTMLElement, reducedMotion: boole
 	viewer.zoomTo();
 	// zoomTo leaves a wide margin around a small molecule: bring it closer.
 	viewer.zoom(1.8);
+	showMultipleBond(viewer, model as unknown as SideBonds);
 	viewer.render();
 	return { viewer, motion: turnable(box, viewer, reducedMotion) };
 }
