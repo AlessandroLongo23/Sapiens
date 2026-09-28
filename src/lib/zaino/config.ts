@@ -92,3 +92,31 @@ export interface NoteHit extends NoteSummary {
 	notebook_title: string;
 	notebook_color: NotebookColor;
 }
+
+/** How long something stays in the trash before the nightly job deletes it for good (migration zaino_trash). */
+export const TRASH_DAYS = 30;
+
+/** A note deleted on its own, with the quaderno it was in (which may be in the trash too). */
+export interface TrashedNote {
+	id: string;
+	title: string;
+	excerpt: string;
+	deleted_at: string;
+	notebook_id: string;
+	notebook_title: string;
+	notebook_color: NotebookColor;
+}
+
+/** A quaderno in the trash, with the notes that went with it. */
+export interface TrashedNotebook {
+	id: string;
+	title: string;
+	color: NotebookColor;
+	deleted_at: string;
+	notes: number;
+}
+
+export interface Trash {
+	notebooks: TrashedNotebook[];
+	notes: TrashedNote[];
+}

@@ -10,6 +10,7 @@ import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Input, Label } from '@/components/ui/Field';
 import { Sheet, sheetActions } from '@/components/ui/Sheet';
+import { TRASH_PATH, TrashLink } from './Trash';
 import { Paywall } from '@/components/subscription/Paywall';
 import { cn } from '@/lib/utils/cn';
 import { useZainoAction } from './ZainoActions';
@@ -17,12 +18,13 @@ import { QuotaBar } from './QuotaBar';
 import { NotebookCover } from './NotebookCover';
 import './zaino.css';
 
-/** The shelf: every quaderno, with create, rename and delete. */
-export function NotebookShelf({ notebooks, stats, quota }: { notebooks: NotebookRow[]; stats: Record<string, ShelfStats>; quota: Quota }) {
-	const counts = (id: string) => stats[id]?.notes ?? 0;
+/**
+ * The shelf: every quaderno, with create, rename and delete. Deleting moves the quaderno to the trash with its notes,
+ * so it asks nothing: the trash is next to "Nuovo quaderno", and it can be restored from there for 30 days.
+ */
+export function NotebookShelf({ notebooks, stats, quota, trashCount }: { notebooks: NotebookRow[]; stats: Record<string, ShelfStats>; quota: Quota; trashCount: number }) {
 	const { busy, error, blocked, clearBlocked, run } = useZainoAction();
 	const [editing, setEditing] = useState<NotebookRow | null>(null);
-	const [confirming, setConfirming] = useState<NotebookRow | null>(null);
 
 	/**
 	 * The shelf reflows between one, two and three columns, so "up" and "down"
@@ -63,10 +65,13 @@ export function NotebookShelf({ notebooks, stats, quota }: { notebooks: Notebook
 						</h2>
 						<QuotaBar quota={quota} />
 					</div>
-					<Button onClick={create} loading={busy === 'new'}>
-						<Plus className="size-4" aria-hidden="true" />
-						Nuovo quaderno
-					</Button>
+					<div className="flex items-center gap-3">
+						<TrashLink count={trashCount} />
+						<Button onClick={create} loading={busy === 'new'}>
+							<Plus className="size-4" aria-hidden="true" />
+							Nuovo quaderno
+						</Button>
+					</div>
 				</div>
 			)}
 
@@ -96,6 +101,11 @@ export function NotebookShelf({ notebooks, stats, quota }: { notebooks: Notebook
 							Crea il primo quaderno
 						</Button>
 						<QuotaBar quota={quota} />
+						{trashCount > 0 && (
+							<Link href={TRASH_PATH} className="text-sm font-medium text-fg-muted underline decoration-edge-strong underline-offset-4 hover:text-fg focus-ring">
+								Nel cestino: {trashCount} {trashCount === 1 ? 'elemento' : 'elementi'}
+							</Link>
+						)}
 					</div>
 				</div>
 			) : (
@@ -114,36 +124,12 @@ export function NotebookShelf({ notebooks, stats, quota }: { notebooks: Notebook
 					const ok = await run(editing.id, `/api/zaino/quaderni/${editing.id}`, 'PATCH', input);
 					if (ok) setEditing(null);
 				}}
-				onDelete={() => {
-					setConfirming(editing);
-					setEditing(null);
+				onDelete={async () => {
+					if (!editing) return;
+					const ok = await run(editing.id, `/api/zaino/quaderni/${editing.id}`, 'DELETE');
+					if (ok) setEditing(null);
 				}}
 			/>
-
-			<Sheet open={!!confirming} onClose={() => setConfirming(null)} title="Elimina il quaderno" size="auto" width="sm" align="center">
-				<div>
-					<p className="text-sm text-fg-muted">
-						{confirming && counts(confirming.id) > 0
-							? `«${confirming.title}» contiene ${counts(confirming.id)} ${counts(confirming.id) === 1 ? 'nota' : 'note'}. Eliminando il quaderno elimini anche quelle, e non si possono recuperare.`
-							: `Vuoi eliminare «${confirming?.title}»?`}
-					</p>
-					<div className={cn(sheetActions, 'mt-5')}>
-						<Button variant="ghost" onClick={() => setConfirming(null)}>Annulla</Button>
-						<Button
-							variant="inverse"
-							loading={busy === confirming?.id}
-							onClick={async () => {
-								if (!confirming) return;
-								const ok = await run(confirming.id, `/api/zaino/quaderni/${confirming.id}?confirm=1`, 'DELETE');
-								if (ok) setConfirming(null);
-							}}
-						>
-							<Trash2 className="size-4" aria-hidden="true" />
-							Elimina
-						</Button>
-					</div>
-				</div>
-			</Sheet>
 
 			{blocked && <button type="button" onClick={clearBlocked} className="sr-only">Chiudi</button>}
 		</div>
@@ -290,7 +276,7 @@ function EditSheet({
 					</div>
 				)}
 				<div className={cn(sheetActions, 'pt-1')}>
-					<Button type="button" variant="ghost" onClick={onDelete} className="text-danger-fg hover:text-danger-fg sm:mr-auto">
+					<Button type="button" variant="ghost" onClick={onDelete} loading={!!notebook && busy === notebook.id} className="text-danger-fg hover:text-danger-fg sm:mr-auto">
 						<Trash2 className="size-4" aria-hidden="true" />
 						Elimina
 					</Button>

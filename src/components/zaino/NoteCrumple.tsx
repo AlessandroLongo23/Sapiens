@@ -3,13 +3,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SHEET_WIDTH } from '@/lib/zaino/stickers';
+import type { Crumple } from '@/lib/zaino/paper-crumple';
 
 /** Room around the sheet for the ball to turn and cast its shadow in. */
 const PAD = 40;
-/** How long the ball stays in view once made, then how long it takes to drop out (`.zn-crumple.is-dropping`). */
-const HOLD_MS = 450;
+/** The ball stays still this long once made, before it is thrown. */
+const HOLD_MS = 120;
+/** The throw into the trash, and the drop when the trash is not in view (`.zn-crumple.is-dropping`). */
+const THROW_MS = 460;
 const DROP_MS = 380;
-/** Confirmed before the preparation is done (a quick tap): the card waits this long for it, then goes without it. */
+/** Thrown before the preparation is done (a quick tap): the card waits this long for it, then goes without it. */
 const WAIT_MAX_MS = 4000;
 /** The card is the page shrunk to about a quarter, where the squares' lines are thinner than a pixel. The picture is
  *  taken at the page's own size and a half, so the lines and the text survive on the folds; within what any GPU takes. */
@@ -50,6 +53,8 @@ const findSheet = (noteId: string) => {
 	return { card, sheet: card?.querySelector<HTMLElement>('.zn-page') ?? card };
 };
 
+const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 interface Box {
 	card: HTMLElement;
 	/** Where the sheet is inside the card, and its size. */
@@ -62,26 +67,46 @@ interface Box {
 }
 
 /**
- * A deleted note crumpled into a ball where it lay, then dropped. Mounted when the confirmation opens: while the
- * student reads it, the page is photographed (lib/zaino/page-photo) and laid, flat and hidden, on a WebGL sheet
- * (lib/zaino/paper-crumple) inside the card, so it scrolls with the page. When `play` turns true the card hides and
- * the sheet folds on the next frame. Unmounted before `play` (the student cancelled), it only frees what it prepared.
- * Without WebGL, or with reduced motion, `onDone` comes at once.
+ * What the note is doing: `ready`, prepared and hidden (the menu is open, or the note is being dragged); `held`,
+ * crumpled over the trash and waiting (back to `ready` unfolds it); `thrown`, crumpled and thrown into the trash.
  */
-export function NoteCrumple({ noteId, play, onDone }: { noteId: string; play: boolean; onDone: () => void }) {
+export type CrumpleState = 'ready' | 'held' | 'thrown';
+
+/**
+ * A deleted note crumpled into a ball where it lay and thrown into the trash. The page is photographed
+ * (lib/zaino/page-photo) and laid, flat and hidden, on a WebGL sheet (lib/zaino/paper-crumple) inside the card, so it
+ * scrolls with the page, as soon as a delete is in sight: the note's menu is open, or the note is picked up. Held
+ * over the trash it crumples and flattens again when it leaves; thrown, the ball flies in an arc to `target` (the
+ * trash on screen) and `onLanded` lets the trash take it, or drops out of sight when the trash is not in view.
+ * Without WebGL, or with reduced motion, `onDone` comes at once when thrown.
+ */
+export function NoteCrumple({
+	noteId,
+	state,
+	target,
+	onLanded,
+	onDone
+}: {
+	noteId: string;
+	state: CrumpleState;
+	target?: () => HTMLElement | null;
+	onLanded?: () => void;
+	onDone: () => void;
+}) {
 	const [box, setBox] = useState<Box | null>(null);
 	const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
 	const [shown, setShown] = useState(false);
 	const [dropping, setDropping] = useState(false);
-	const prepared = useRef<{ ready: Promise<void>; play: () => Promise<void> } | null>(null);
+	const flight = useRef<HTMLDivElement>(null);
+	const arc = useRef<HTMLDivElement>(null);
+	const prepared = useRef<Crumple | null>(null);
 	const failed = useRef(false);
-	const done = useRef(onDone);
+	const callbacks = useRef({ target, onLanded, onDone });
 	useEffect(() => {
-		done.current = onDone;
+		callbacks.current = { target, onLanded, onDone };
 	});
 
-	// While the confirmation is read: photograph the page. The confirmation's entrance is a transform the compositor
-	// runs, so the work here does not make it stutter.
+	// As soon as a delete is in sight: photograph the page.
 	useEffect(() => {
 		let cancelled = false;
 		(async () => {
@@ -92,11 +117,14 @@ export function NoteCrumple({ noteId, play, onDone }: { noteId: string; play: bo
 			}
 			try {
 				const { photographPage } = await import('@/lib/zaino/page-photo');
-				const rect = sheet.getBoundingClientRect();
-				const width = Math.min(MAX_TEXTURE, Math.max(rect.width * 2, PHOTO_WIDTH), (MAX_TEXTURE * rect.width) / rect.height);
-				const src = await photographPage(sheet, width);
-				const origin = card.getBoundingClientRect();
-				if (!cancelled) setBox({ card, left: rect.left - origin.left, top: rect.top - origin.top, width: rect.width, height: rect.height, src, back: backgroundHex(sheet) });
+				const width = sheet.offsetWidth;
+				const height = sheet.offsetHeight;
+				const photo = Math.min(MAX_TEXTURE, Math.max(width * 2, PHOTO_WIDTH), (MAX_TEXTURE * width) / height);
+				const src = await photographPage(sheet, photo);
+				// Where the sheet is in the card, by layout: a card being dragged is tilted on screen.
+				const left = sheet === card ? 0 : sheet.offsetLeft;
+				const top = sheet === card ? 0 : sheet.offsetTop;
+				if (!cancelled) setBox({ card, left, top, width, height, src, back: backgroundHex(sheet) });
 			} catch {
 				failed.current = true;
 			}
@@ -115,7 +143,7 @@ export function NoteCrumple({ noteId, play, onDone }: { noteId: string; play: bo
 			try {
 				const { prepareCrumple } = await import('@/lib/zaino/paper-crumple');
 				if (cancelled) return;
-				const run = prepareCrumple(canvas, box.src, { width: box.width, height: box.height, pad: PAD, backColor: box.back });
+				const run = prepareCrumple(canvas, box.src, { width: box.width, height: box.height, pad: PAD, backColor: box.back, duration: 0.45 });
 				dispose = run.dispose;
 				prepared.current = run;
 			} catch {
@@ -129,46 +157,93 @@ export function NoteCrumple({ noteId, play, onDone }: { noteId: string; play: bo
 		};
 	}, [box, canvas]);
 
-	// On confirm: crumple, hold the ball a moment, drop it.
+	// Held, thrown, or back to waiting.
 	useEffect(() => {
-		if (!play) return;
 		let cancelled = false;
 		const { card } = findSheet(noteId);
-		const start = performance.now();
-		(async () => {
-			while (!prepared.current && !failed.current && performance.now() - start < WAIT_MAX_MS) await new Promise((r) => setTimeout(r, 16));
+		const show = (on: boolean) => {
+			setShown(on);
+			if (on) card?.setAttribute('data-crumpled', '');
+			else card?.removeAttribute('data-crumpled');
+		};
+		const waitForPaper = async () => {
+			const start = performance.now();
+			while (!prepared.current && !failed.current && performance.now() - start < WAIT_MAX_MS) await pause(16);
 			const run = prepared.current;
-			if (cancelled) return;
-			if (!run) return done.current();
-			try {
-				await run.ready;
-				if (cancelled) return;
-				setShown(true);
-				card?.setAttribute('data-crumpled', '');
-				await run.play();
-				await new Promise((r) => setTimeout(r, HOLD_MS));
-				if (cancelled) return;
-				setDropping(true);
-				setTimeout(() => !cancelled && done.current(), DROP_MS);
-			} catch {
-				if (!cancelled) done.current();
+			if (run) await run.ready;
+			return run;
+		};
+
+		(async () => {
+			if (state === 'ready') {
+				// Back from over the trash: flat again, then the card itself.
+				const run = prepared.current;
+				if (!run || !card?.hasAttribute('data-crumpled')) return;
+				await run.unfold();
+				if (!cancelled) show(false);
+				return;
 			}
+			const run = await waitForPaper().catch(() => null);
+			if (cancelled) return;
+			if (!run) {
+				if (state === 'thrown') callbacks.current.onDone();
+				return;
+			}
+			show(true);
+			if (state === 'held') {
+				await run.fold();
+				return;
+			}
+			await run.fold();
+			await pause(HOLD_MS);
+			if (cancelled) return;
+			const bin = callbacks.current.target?.();
+			const to = bin?.getBoundingClientRect();
+			const inView = to && to.bottom > 0 && to.top < window.innerHeight && to.width > 0;
+			if (!to || !inView || !flight.current || !arc.current) {
+				setDropping(true);
+				await pause(DROP_MS);
+				if (!cancelled) callbacks.current.onDone();
+				return;
+			}
+			// A throw: sideways at an even pace, up then down as under gravity, shrinking into the trash.
+			const from = flight.current.getBoundingClientRect();
+			const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+			const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+			const rise = Math.min(90, Math.max(40, Math.abs(dx) * 0.25));
+			flight.current.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${dx}px)` }], { duration: THROW_MS, easing: 'linear', fill: 'forwards' });
+			arc.current.animate(
+				[
+					{ transform: 'translateY(0) scale(1)', easing: 'cubic-bezier(0.2, 0.6, 0.4, 1)' },
+					{ transform: `translateY(${Math.min(0, dy) - rise}px) scale(0.55)`, offset: 0.4, easing: 'cubic-bezier(0.55, 0, 0.9, 0.4)' },
+					{ transform: `translateY(${dy}px) scale(0.12)`, opacity: 0.6 }
+				],
+				{ duration: THROW_MS, fill: 'forwards' }
+			);
+			await pause(THROW_MS);
+			if (cancelled) return;
+			callbacks.current.onLanded?.();
+			callbacks.current.onDone();
 		})();
 		return () => {
 			cancelled = true;
-			// Stopped halfway (the delete failed): the card comes back. Finished, it is already out of the list.
-			card?.removeAttribute('data-crumpled');
 		};
-	}, [play, noteId]);
+	}, [state, noteId]);
+
+	// Gone: the card, if it is still there (the delete failed), shows again.
+	useEffect(() => () => findSheet(noteId).card?.removeAttribute('data-crumpled'), [noteId]);
 
 	if (!box) return null;
 	return createPortal(
 		<div
+			ref={flight}
 			className={dropping ? 'zn-crumple is-dropping' : 'zn-crumple'}
 			style={{ left: box.left - PAD, top: box.top - PAD, width: box.width + PAD * 2, height: box.height + PAD * 2, visibility: shown ? 'visible' : 'hidden' }}
 			aria-hidden="true"
 		>
-			<canvas ref={setCanvas} className="size-full" />
+			<div ref={arc} className="size-full">
+				<canvas ref={setCanvas} className="size-full" />
+			</div>
 		</div>,
 		box.card
 	);

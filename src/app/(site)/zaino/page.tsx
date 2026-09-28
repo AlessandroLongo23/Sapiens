@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import { getSession } from '@/lib/server/auth';
-import { getQuota, listNotebooks, recentNotes, shelfStats } from '@/lib/server/zaino';
+import { getQuota, listNotebooks, recentNotes, shelfStats, trashCount } from '@/lib/server/zaino';
 import { HOME_CRUMB } from '@/components/content/Breadcrumb';
 import { CoverStickers, CoverStickersButton } from '@/components/content/CoverStickers';
 import { Page, PageHeader } from '@/components/content/PageHeader';
@@ -18,9 +18,9 @@ export const dynamic = 'force-dynamic';
 
 export default async function ZainoPage() {
 	const { supabase, user } = await getSession();
-	const [notebooks, quota, recent, stats] = user
-		? await Promise.all([listNotebooks(supabase, user.id), getQuota(supabase, user), recentNotes(supabase, user.id), shelfStats(supabase, user.id)])
-		: [[], null, [], {}];
+	const [notebooks, quota, recent, stats, inTrash] = user
+		? await Promise.all([listNotebooks(supabase, user.id), getQuota(supabase, user), recentNotes(supabase, user.id), shelfStats(supabase, user.id), trashCount(supabase, user.id)])
+		: [[], null, [], {}, 0];
 	const all = Object.values(stats);
 	const notes = all.reduce((n, s) => n + s.notes, 0);
 	const fromLessons = all.reduce((n, s) => n + s.fromLessons, 0);
@@ -46,7 +46,7 @@ export default async function ZainoPage() {
 			{user && quota ? (
 				<div className="space-y-12">
 					<RecentNotes notes={recent} />
-					<NotebookShelf notebooks={notebooks} stats={stats} quota={quota} />
+					<NotebookShelf notebooks={notebooks} stats={stats} quota={quota} trashCount={inTrash} />
 				</div>
 			) : (
 				<ZainoLanding />

@@ -16,7 +16,8 @@ import {
 	type NoteSummary,
 	type FirstPage,
 	type Quota,
-	type ShelfStats
+	type ShelfStats,
+	type Trash
 } from '@/lib/zaino/config';
 import { splitPages } from '@/lib/zaino/pages';
 import { COVER_BOUNDS, parseStickers, type PlacedSticker } from '@/lib/zaino/stickers';
@@ -31,6 +32,10 @@ export * from '@/lib/zaino/config';
  * not a second opinion. Nothing here is ever read on behalf of another user,
  * which is why the service role stays out of it (unlike ./tutoring-admin).
  * The free-plan ceiling lives here too, next to hasFeature: see requireQuota.
+ *
+ * Deleting only moves to the trash (cestino): `deleted_at` is set, and a nightly job deletes for good what has been
+ * there 30 days (migration 20260928140000_zaino_trash). A note is on the shelf when neither it nor its quaderno is in
+ * the trash, so every read that is not scoped to a quaderno already checked filters both; see LIVE_NOTE.
  */
 
 export class ZainoError extends Error {
@@ -47,6 +52,9 @@ const NOTE_LIST_COLUMNS = 'id,user_id,notebook_id,title,excerpt,position,version
 const NOTE_COLUMNS = `${NOTE_LIST_COLUMNS},content`;
 
 type Row = Record<string, unknown>;
+
+/** Joined into a note read to filter on the quaderno too, with `.is('notebooks.deleted_at', null)`. */
+const LIVE_NOTE = 'notebooks!inner(deleted_at)';
 
 function toNotebook(row: Row): NotebookRow {
 	return { ...(row as unknown as NotebookRow), position: Number(row.position ?? 0) };
@@ -87,8 +95,14 @@ const MISSING_PARENT = '23503';
 export async function getQuota(supabase: SupabaseClient, user: User): Promise<Quota> {
 	const unlimited = hasFeature(user, Features.NOTEBOOKS);
 	const [books, notes] = await Promise.all([
-		supabase.from('notebooks').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
-		supabase.from('notes').select('id', { count: 'exact', head: true }).eq('user_id', user.id)
+		supabase.from('notebooks').select('id', { count: 'exact', head: true }).eq('user_id', user.id).is('deleted_at', null),
+		// What is in the trash does not count: deleting is how a free account makes room.
+		supabase
+			.from('notes')
+			.select(`id,${LIVE_NOTE}`, { count: 'exact', head: true })
+			.eq('user_id', user.id)
+			.is('deleted_at', null)
+			.is('notebooks.deleted_at', null)
 	]);
 	if (books.error) fail('notebook count failed', books.error);
 	if (notes.error) fail('note count failed', notes.error);
@@ -126,6 +140,7 @@ export async function listNotebooks(supabase: SupabaseClient, userId: string): P
 		.from('notebooks')
 		.select(NOTEBOOK_COLUMNS)
 		.eq('user_id', userId)
+		.is('deleted_at', null)
 		.order('position', { ascending: true })
 		.order('created_at', { ascending: true });
 	if (error) fail('notebook list failed', error);
@@ -133,7 +148,7 @@ export async function listNotebooks(supabase: SupabaseClient, userId: string): P
 }
 
 export async function getNotebook(supabase: SupabaseClient, userId: string, id: string): Promise<NotebookRow | null> {
-	const { data, error } = await supabase.from('notebooks').select(NOTEBOOK_COLUMNS).eq('id', id).eq('user_id', userId).maybeSingle();
+	const { data, error } = await supabase.from('notebooks').select(NOTEBOOK_COLUMNS).eq('id', id).eq('user_id', userId).is('deleted_at', null).maybeSingle();
 	if (error) fail('notebook lookup failed', error);
 	return data ? toNotebook(data as Row) : null;
 }
@@ -191,13 +206,14 @@ export async function renameNotebook(supabase: SupabaseClient, userId: string, i
 	return toNotebook(data as Row);
 }
 
-/** How many note a quaderno holds, for the delete confirmation. */
+/** How many notes a quaderno holds, not counting those deleted one by one. */
 export async function countNotes(supabase: SupabaseClient, userId: string, notebookId: string): Promise<number> {
 	const { count, error } = await supabase
 		.from('notes')
 		.select('id', { count: 'exact', head: true })
 		.eq('user_id', userId)
-		.eq('notebook_id', notebookId);
+		.eq('notebook_id', notebookId)
+		.is('deleted_at', null);
 	if (error) fail('note count failed', error);
 	return count ?? 0;
 }
@@ -207,7 +223,12 @@ export async function countNotes(supabase: SupabaseClient, userId: string, noteb
  * student's notes: the shelf would otherwise ask once per quaderno.
  */
 export async function shelfStats(supabase: SupabaseClient, userId: string): Promise<Record<string, ShelfStats>> {
-	const { data, error } = await supabase.from('notes').select('notebook_id,lesson_path,updated_at').eq('user_id', userId);
+	const { data, error } = await supabase
+		.from('notes')
+		.select(`notebook_id,lesson_path,updated_at,${LIVE_NOTE}`)
+		.eq('user_id', userId)
+		.is('deleted_at', null)
+		.is('notebooks.deleted_at', null);
 	if (error) fail('shelf stats failed', error);
 	const stats: Record<string, ShelfStats> = {};
 	for (const row of (data ?? []) as { notebook_id: string; lesson_path: string | null; updated_at: string }[]) {
@@ -219,20 +240,18 @@ export async function shelfStats(supabase: SupabaseClient, userId: string): Prom
 	return stats;
 }
 
-/**
- * Deletes the quaderno and, by the foreign key, every note in it. `confirm`
- * must be true when it still holds note, so a stray request cannot empty a
- * shelf and the page can name the count first.
- */
-export async function deleteNotebook(supabase: SupabaseClient, userId: string, id: string, confirm: boolean): Promise<{ deleted: number }> {
-	await requireNotebook(supabase, userId, id);
-	const notes = await countNotes(supabase, userId, id);
-	if (notes > 0 && !confirm) {
-		throw new ZainoError(409, notes === 1 ? 'Il quaderno contiene una nota.' : `Il quaderno contiene ${notes} note.`);
-	}
-	const { error } = await supabase.from('notebooks').delete().eq('id', id).eq('user_id', userId);
-	if (error) fail('notebook delete failed', error);
-	return { deleted: notes };
+/** Moves the quaderno to the trash, and its notes with it: they come back when it does. */
+export async function trashNotebook(supabase: SupabaseClient, userId: string, id: string): Promise<void> {
+	const { data, error } = await supabase
+		.from('notebooks')
+		.update({ deleted_at: new Date().toISOString() })
+		.eq('id', id)
+		.eq('user_id', userId)
+		.is('deleted_at', null)
+		.select('id')
+		.maybeSingle();
+	if (error) fail('notebook trash failed', error);
+	if (!data) throw new ZainoError(404, 'Quaderno non trovato.');
 }
 
 /* ------------------------------------------------------------------- note */
@@ -244,16 +263,27 @@ export async function listNotes(supabase: SupabaseClient, userId: string, notebo
 		.select(NOTE_LIST_COLUMNS)
 		.eq('user_id', userId)
 		.eq('notebook_id', notebookId)
+		.is('deleted_at', null)
 		.order('position', { ascending: true })
 		.order('created_at', { ascending: true });
 	if (error) fail('note list failed', error);
 	return (data ?? []).map((row) => toNoteSummary(row as Row));
 }
 
+/** A note on the shelf: a note in the trash, or in a quaderno in the trash, is not found. */
 export async function getNote(supabase: SupabaseClient, userId: string, id: string): Promise<NoteRow | null> {
-	const { data, error } = await supabase.from('notes').select(NOTE_COLUMNS).eq('id', id).eq('user_id', userId).maybeSingle();
+	const { data, error } = await supabase
+		.from('notes')
+		.select(`${NOTE_COLUMNS},${LIVE_NOTE}`)
+		.eq('id', id)
+		.eq('user_id', userId)
+		.is('deleted_at', null)
+		.is('notebooks.deleted_at', null)
+		.maybeSingle();
 	if (error) fail('note lookup failed', error);
-	return data ? toNote(data as Row) : null;
+	if (!data) return null;
+	const { notebooks: _live, ...row } = data as Row;
+	return toNote(row);
 }
 
 /** A new note at the end of its quaderno. Ceiling checked first; see requireQuota. */
@@ -315,6 +345,8 @@ export async function saveNote(supabase: SupabaseClient, userId: string, id: str
 		fields.excerpt = plainExcerpt(patch.content);
 	}
 	if (patch.notebookId !== undefined) {
+		// Not into a quaderno in the trash: the foreign key alone would let it through.
+		await requireNotebook(supabase, userId, patch.notebookId);
 		fields.notebook_id = patch.notebookId;
 		fields.position = await nextPosition(supabase, 'notes', 'notebook_id', patch.notebookId);
 	}
@@ -326,6 +358,7 @@ export async function saveNote(supabase: SupabaseClient, userId: string, id: str
 		.eq('id', id)
 		.eq('user_id', userId)
 		.eq('version', version)
+		.is('deleted_at', null)
 		.select(NOTE_COLUMNS)
 		.maybeSingle();
 	if (error?.code === MISSING_PARENT) throw new ZainoError(404, 'Quaderno non trovato.');
@@ -346,9 +379,162 @@ export class NoteConflict extends ZainoError {
 	}
 }
 
-export async function deleteNote(supabase: SupabaseClient, userId: string, id: string): Promise<void> {
-	const { error } = await supabase.from('notes').delete().eq('id', id).eq('user_id', userId);
+/** Moves the note to the trash. */
+export async function trashNote(supabase: SupabaseClient, userId: string, id: string): Promise<void> {
+	const { data, error } = await supabase
+		.from('notes')
+		.update({ deleted_at: new Date().toISOString() })
+		.eq('id', id)
+		.eq('user_id', userId)
+		.is('deleted_at', null)
+		.select('id')
+		.maybeSingle();
+	if (error) fail('note trash failed', error);
+	if (!data) throw new ZainoError(404, 'Nota non trovata.');
+}
+
+/* ------------------------------------------------------------------ trash */
+
+/** What is in the trash, newest first: quaderni with how many notes went with them, and notes deleted one by one. */
+export async function listTrash(supabase: SupabaseClient, userId: string): Promise<Trash> {
+	const [books, notes] = await Promise.all([
+		supabase.from('notebooks').select('id,title,color,deleted_at').eq('user_id', userId).not('deleted_at', 'is', null).order('deleted_at', { ascending: false }),
+		supabase
+			.from('notes')
+			.select('id,title,excerpt,deleted_at,notebook_id,notebooks!inner(title,color)')
+			.eq('user_id', userId)
+			.not('deleted_at', 'is', null)
+			.order('deleted_at', { ascending: false })
+	]);
+	if (books.error) fail('trash notebooks failed', books.error);
+	if (notes.error) fail('trash notes failed', notes.error);
+	const bookRows = (books.data ?? []) as { id: string; title: string; color: NotebookColor; deleted_at: string }[];
+	const counts = new Map<string, number>();
+	if (bookRows.length > 0) {
+		const { data, error } = await supabase
+			.from('notes')
+			.select('notebook_id')
+			.eq('user_id', userId)
+			.is('deleted_at', null)
+			.in('notebook_id', bookRows.map((b) => b.id));
+		if (error) fail('trash note counts failed', error);
+		for (const row of (data ?? []) as { notebook_id: string }[]) counts.set(row.notebook_id, (counts.get(row.notebook_id) ?? 0) + 1);
+	}
+	return {
+		notebooks: bookRows.map((b) => ({ ...b, notes: counts.get(b.id) ?? 0 })),
+		notes: ((notes.data ?? []) as Row[]).map((row) => {
+			const book = row.notebooks as { title?: string; color?: NotebookColor } | null;
+			return {
+				id: String(row.id),
+				title: String(row.title ?? ''),
+				excerpt: typeof row.excerpt === 'string' ? row.excerpt : '',
+				deleted_at: String(row.deleted_at),
+				notebook_id: String(row.notebook_id),
+				notebook_title: book?.title ?? '',
+				notebook_color: book?.color ?? 'zinc'
+			};
+		})
+	};
+}
+
+/** How many things the trash holds, for its badge: quaderni and notes deleted one by one. */
+export async function trashCount(supabase: SupabaseClient, userId: string): Promise<number> {
+	const [books, notes] = await Promise.all([
+		supabase.from('notebooks').select('id', { count: 'exact', head: true }).eq('user_id', userId).not('deleted_at', 'is', null),
+		supabase.from('notes').select('id', { count: 'exact', head: true }).eq('user_id', userId).not('deleted_at', 'is', null)
+	]);
+	if (books.error) fail('trash count failed', books.error);
+	if (notes.error) fail('trash count failed', notes.error);
+	return (books.count ?? 0) + (notes.count ?? 0);
+}
+
+const OVER_FREE_NOTES = `Con il piano gratuito puoi tenere ${FREE_NOTES} note. Per ripristinare, elimina una nota o passa a un piano a pagamento.`;
+
+/**
+ * Brings a quaderno back to the end of the shelf, with the notes that went with it. On a free account it must fit
+ * the ceiling, notes included. Its name may have been given to another quaderno meanwhile: then it comes back as
+ * "<name> (ripristinato)", numbered if that is taken too.
+ */
+export async function restoreNotebook(supabase: SupabaseClient, user: User, id: string): Promise<NotebookRow> {
+	const { data: book, error: lookup } = await supabase
+		.from('notebooks')
+		.select('id,title')
+		.eq('id', id)
+		.eq('user_id', user.id)
+		.not('deleted_at', 'is', null)
+		.maybeSingle();
+	if (lookup) fail('trashed notebook lookup failed', lookup);
+	if (!book) throw new ZainoError(404, 'Quaderno non trovato nel cestino.');
+	const quota = await getQuota(supabase, user);
+	if (!quota.unlimited) {
+		if (quota.notebooks.max !== null && quota.notebooks.used >= quota.notebooks.max) {
+			throw new ZainoError(402, 'Con il piano gratuito hai un quaderno. Per ripristinare, elimina quello che hai o passa a un piano a pagamento.');
+		}
+		const coming = await countNotes(supabase, user.id, id);
+		if (quota.notes.max !== null && quota.notes.used + coming > quota.notes.max) throw new ZainoError(402, OVER_FREE_NOTES);
+	}
+	const position = await nextPosition(supabase, 'notebooks', 'user_id', user.id);
+	const name = String((book as Row).title);
+	for (let attempt = 0; attempt <= 20; attempt++) {
+		const title = attempt === 0 ? name : `${name} (ripristinato${attempt > 1 ? ` ${attempt}` : ''})`.slice(0, 120);
+		const { data, error } = await supabase
+			.from('notebooks')
+			.update({ deleted_at: null, title, position })
+			.eq('id', id)
+			.eq('user_id', user.id)
+			.select(NOTEBOOK_COLUMNS)
+			.single();
+		if (!error) return toNotebook(data as Row);
+		if (error.code !== DUPLICATE) fail('notebook restore failed', error);
+	}
+	throw new ZainoError(409, 'Hai già un quaderno con questo nome.');
+}
+
+/**
+ * Brings a note back to the end of its quaderno. When the quaderno is in the trash too, it comes back with it (and
+ * with its other notes): a note needs a quaderno, and that one is where the student left it.
+ */
+export async function restoreNote(supabase: SupabaseClient, user: User, id: string): Promise<{ notebookId: string; notebookRestored: boolean }> {
+	const { data: note, error: lookup } = await supabase
+		.from('notes')
+		.select('id,notebook_id,notebooks!inner(deleted_at)')
+		.eq('id', id)
+		.eq('user_id', user.id)
+		.not('deleted_at', 'is', null)
+		.maybeSingle();
+	if (lookup) fail('trashed note lookup failed', lookup);
+	if (!note) throw new ZainoError(404, 'Nota non trovata nel cestino.');
+	const notebookId = String((note as Row).notebook_id);
+	const notebookTrashed = Boolean(((note as Row).notebooks as { deleted_at: string | null } | null)?.deleted_at);
+	if (notebookTrashed) await restoreNotebook(supabase, user, notebookId);
+	const quota = await getQuota(supabase, user);
+	if (!quota.unlimited && quota.notes.max !== null && quota.notes.used >= quota.notes.max) throw new ZainoError(402, OVER_FREE_NOTES);
+	const position = await nextPosition(supabase, 'notes', 'notebook_id', notebookId);
+	const { error } = await supabase.from('notes').update({ deleted_at: null, position }).eq('id', id).eq('user_id', user.id);
+	if (error) fail('note restore failed', error);
+	return { notebookId, notebookRestored: notebookTrashed };
+}
+
+/** Deletes for good a note that is in the trash. Only from the trash: a note on the shelf goes there first. */
+export async function deleteNoteForever(supabase: SupabaseClient, userId: string, id: string): Promise<void> {
+	const { data, error } = await supabase.from('notes').delete().eq('id', id).eq('user_id', userId).not('deleted_at', 'is', null).select('id');
 	if (error) fail('note delete failed', error);
+	if (!data?.length) throw new ZainoError(404, 'Nota non trovata nel cestino.');
+}
+
+/** Deletes for good a quaderno in the trash and, by the foreign key, every note in it. */
+export async function deleteNotebookForever(supabase: SupabaseClient, userId: string, id: string): Promise<void> {
+	const { data, error } = await supabase.from('notebooks').delete().eq('id', id).eq('user_id', userId).not('deleted_at', 'is', null).select('id');
+	if (error) fail('notebook delete failed', error);
+	if (!data?.length) throw new ZainoError(404, 'Quaderno non trovato nel cestino.');
+}
+
+/** Deletes for good everything in the trash. */
+export async function emptyTrash(supabase: SupabaseClient, userId: string): Promise<void> {
+	const notes = await supabase.from('notes').delete().eq('user_id', userId).not('deleted_at', 'is', null);
+	if (notes.error) fail('trash empty failed', notes.error);
+	const books = await supabase.from('notebooks').delete().eq('user_id', userId).not('deleted_at', 'is', null);
+	if (books.error) fail('trash empty failed', books.error);
 }
 
 /* -------------------------------------------------------------- ordering */
@@ -361,7 +547,7 @@ export async function deleteNote(supabase: SupabaseClient, userId: string, id: s
  * a document or an `updated_at`.
  */
 async function reorder(supabase: SupabaseClient, userId: string, table: 'notebooks' | 'notes', scope: { column: 'user_id' | 'notebook_id'; value: string }, ids: string[]): Promise<void> {
-	const { data, error } = await supabase.from(table).select('id').eq('user_id', userId).eq(scope.column, scope.value);
+	const { data, error } = await supabase.from(table).select('id').eq('user_id', userId).eq(scope.column, scope.value).is('deleted_at', null);
 	if (error) fail(`${table} reorder read failed`, error);
 	const owned = new Set((data ?? []).map((row) => String((row as Row).id)));
 	if (owned.size !== ids.length || ids.some((id) => !owned.has(id))) {
@@ -410,7 +596,7 @@ const FIRST_PAGE_CHARS = 3000;
  * stickers on that page and the paper. Two reads, notes and stickers, whatever the number of notes.
  */
 export async function firstPages(supabase: SupabaseClient, userId: string, notebookId: string): Promise<Record<string, FirstPage>> {
-	const { data, error } = await supabase.from('notes').select('id,content,paper').eq('user_id', userId).eq('notebook_id', notebookId);
+	const { data, error } = await supabase.from('notes').select('id,content,paper').eq('user_id', userId).eq('notebook_id', notebookId).is('deleted_at', null);
 	if (error) fail('first pages failed', error);
 	const rows = (data ?? []) as { id: string; content: string | null; paper: unknown }[];
 	const stickers = new Map<string, PlacedSticker[]>();
@@ -443,8 +629,10 @@ export async function searchNotes(supabase: SupabaseClient, userId: string, quer
 	if (!tsquery) return [];
 	let request = supabase
 		.from('notes')
-		.select(`${NOTE_LIST_COLUMNS},notebooks!inner(title,color)`)
-		.eq('user_id', userId);
+		.select(`${NOTE_LIST_COLUMNS},notebooks!inner(title,color,deleted_at)`)
+		.eq('user_id', userId)
+		.is('deleted_at', null)
+		.is('notebooks.deleted_at', null);
 	if (notebookId) request = request.eq('notebook_id', notebookId);
 	const { data, error } = await request
 		.textSearch('search', tsquery, { config: 'simple' })
@@ -465,8 +653,10 @@ export async function searchNotes(supabase: SupabaseClient, userId: string, quer
 export async function recentNotes(supabase: SupabaseClient, userId: string, limit = 4): Promise<NoteHit[]> {
 	const { data, error } = await supabase
 		.from('notes')
-		.select(`${NOTE_LIST_COLUMNS},notebooks!inner(title,color)`)
+		.select(`${NOTE_LIST_COLUMNS},notebooks!inner(title,color,deleted_at)`)
 		.eq('user_id', userId)
+		.is('deleted_at', null)
+		.is('notebooks.deleted_at', null)
 		.order('updated_at', { ascending: false })
 		.limit(limit);
 	if (error) fail('recent notes failed', error);
@@ -482,12 +672,17 @@ export async function recentNotes(supabase: SupabaseClient, userId: string, limi
 export async function notesForLesson(supabase: SupabaseClient, userId: string, lessonPath: string): Promise<NoteSummary[]> {
 	const { data, error } = await supabase
 		.from('notes')
-		.select(NOTE_LIST_COLUMNS)
+		.select(`${NOTE_LIST_COLUMNS},${LIVE_NOTE}`)
 		.eq('user_id', userId)
 		.eq('lesson_path', lessonPath)
+		.is('deleted_at', null)
+		.is('notebooks.deleted_at', null)
 		.order('updated_at', { ascending: false });
 	if (error) fail('lesson notes failed', error);
-	return (data ?? []).map((row) => toNoteSummary(row as Row));
+	return (data ?? []).map((row) => {
+		const { notebooks: _live, ...note } = row as Row;
+		return toNoteSummary(note);
+	});
 }
 
 /**
@@ -641,7 +836,7 @@ export async function getNoteStickers(supabase: SupabaseClient, userId: string, 
 
 /** Replaces the whole set. The note is checked first so a missing one is a 404, not a policy error. */
 export async function saveNoteStickers(supabase: SupabaseClient, userId: string, noteId: string, stickers: PlacedSticker[]): Promise<void> {
-	const { data: note, error: lookup } = await supabase.from('notes').select('id').eq('id', noteId).eq('user_id', userId).maybeSingle();
+	const { data: note, error: lookup } = await supabase.from('notes').select('id').eq('id', noteId).eq('user_id', userId).is('deleted_at', null).maybeSingle();
 	if (lookup) fail('note lookup failed', lookup);
 	if (!note) throw new ZainoError(404, 'Nota non trovata.');
 	const { error } = await supabase
@@ -692,7 +887,7 @@ export async function getNotePaper(supabase: SupabaseClient, userId: string, not
 
 /** Sets the paper without touching `version` or `updated_at`: a change of paper is not an edit of the text. */
 export async function saveNotePaper(supabase: SupabaseClient, userId: string, noteId: string, paper: Paper): Promise<void> {
-	const { data, error } = await supabase.from('notes').update({ paper }).eq('id', noteId).eq('user_id', userId).select('id').maybeSingle();
+	const { data, error } = await supabase.from('notes').update({ paper }).eq('id', noteId).eq('user_id', userId).is('deleted_at', null).select('id').maybeSingle();
 	if (error) fail('note paper save failed', error);
 	if (!data) throw new ZainoError(404, 'Nota non trovata.');
 }
