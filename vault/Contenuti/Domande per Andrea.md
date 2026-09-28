@@ -143,5 +143,19 @@ Lezioni 90-95, vedi [[2026-09-28 Nono lotto, grado superiore e probabilità]]. L
 - [ ] Distrattori non presi dagli avvisi delle lezioni ($x^2 = 4 \Rightarrow x = \pm 4$ nelle biquadratiche, "doppio" e "opposti" nelle irrazionali, $\frac{k_A + k_B}{2n}$ nella somma): sono errori che gli studenti fanno davvero?
 - [ ] Ruffini in un livello solo nelle equazioni scomponibili (scelta fatta), oppure due.
 
+## Decimo lotto: geometria del secondo anno (28 settembre 2026)
+Lezioni 96-104, vedi [[2026-09-28 Decimo lotto, geometria del secondo anno]]. Le domande minori sono nelle note (`docs/lezioni/note/96-104`) e nelle specifiche (`specs/exercises/`). Tra parentesi la scelta fatta.
+- [ ] Misure con il soprassegno, $\overline{AB} = 8$ cm (scelta fatta nelle 59, 80 e 96-104), oppure $AB = 8$ cm come nelle 58, 61 e 62. Il capitolo del primo anno e quello del secondo vanno allineati.
+- [ ] $\sin$ e $\tan$ come sulla calcolatrice (scelta fatta, con un riquadro), oppure $\text{sen}$ e $\text{tg}$.
+- [ ] Triangolo rettangolo in $C$ con altezza $CH$ e Pitagora $c^2 = a^2 + b^2$ (scelta fatta), oppure rettangolo in $A$, o $i^2 = c_1^2 + c_2^2$.
+- [ ] Simbolo di equivalenza tra superfici: $\doteq$ (scelta fatta) o $\equiv$.
+- [ ] Area del poligono regolare $\frac{P \cdot a}{2}$ (scelta fatta) oppure $p \cdot a$ con $2p$ per il perimetro; i numeri fissi dei poligoni regolari restano nella 98?
+- [ ] Unità delle misure composte: $9\pi - 18$ cm² (scelta fatta nella 99 e nel generatore) oppure $(9\pi - 18)$ cm², che è la scrittura corretta se l'unità vale per tutta la misura.
+- [ ] Angoli arrotondati al centesimo di grado (scelta fatta nella 101) o in gradi e primi.
+- [ ] Nomi: "piccolo teorema di Talete" per il fascio di parallele; ordine e nomi dei criteri di similitudine; isometrie "inverse" o "invertenti".
+- [ ] La 96 e la 97 usano Pitagora come noto dalle medie, prima della 100: va bene? E il criterio di congruenza dei triangoli rettangoli va aggiunto alla 59?
+- [ ] La dimostrazione classica del primo teorema di Euclide resta completa (scelta fatta), anche se è lunga?
+- [ ] Generatori con otto livelli (lunghezza della circonferenza, Talete, similitudine): vanno bene, o si fondono?
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]
