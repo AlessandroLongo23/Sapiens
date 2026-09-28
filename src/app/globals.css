@@ -93,6 +93,10 @@
 	--animate-slide-up: slide-up 0.26s cubic-bezier(0.2, 0, 0, 1) both;
 	--animate-drop-in: drop-in 0.25s ease-out both;
 	--animate-shake: shake 0.5s ease-in-out;
+	/* Leaving: quicker than arriving, accelerating away. Sheets and modals (usePresence). */
+	--animate-fade-out: fade-out 0.2s ease-in both;
+	--animate-slide-down: slide-down 0.2s cubic-bezier(0.4, 0, 1, 1) both;
+	--animate-sink-out: sink-out 0.16s ease-in both;
 	/* A wrong answer: a short sideways shake, no growth. */
 	--animate-nudge: nudge 0.4s ease-in-out;
 	/* Arriving: fast out of the gate, long settle. Used by everything in the Zaino. */
@@ -113,6 +117,15 @@
 	}
 	@keyframes slide-up {
 		from { transform: translateY(100%); }
+	}
+	@keyframes fade-out {
+		to { opacity: 0; }
+	}
+	@keyframes slide-down {
+		to { transform: translateY(100%); }
+	}
+	@keyframes sink-out {
+		to { opacity: 0; transform: translateY(8px) scale(0.98); }
 	}
 	@keyframes drop-in {
 		from { opacity: 0; transform: translateY(-24px); }

@@ -94,33 +94,88 @@ export function useFocusTrap(open: boolean, panel: React.RefObject<HTMLElement |
 	}, [open, panel]);
 }
 
+/** How long a sheet or modal takes to leave: the longest of `animate-slide-down` and `animate-fade-out`. */
+const LEAVE_MS = 200;
+
+/**
+ * Keeps a closing panel on screen while it animates away. `shown` stays true for `ms` after `open` turns false, with
+ * `leaving` set, and `content` is what the panel held while it was open: the caller has often cleared the data
+ * behind it (the entry being edited is null again), and the panel should not empty out as it goes.
+ */
+export function usePresence<T>(open: boolean, content: T, ms = LEAVE_MS): { shown: boolean; leaving: boolean; content: T } {
+	const [wasOpen, setWasOpen] = useState(open);
+	const [leaving, setLeaving] = useState(false);
+	const kept = useKept(open, content);
+	if (open !== wasOpen) {
+		setWasOpen(open);
+		setLeaving(!open);
+	}
+	useEffect(() => {
+		if (!leaving) return;
+		const timer = setTimeout(() => setLeaving(false), ms);
+		return () => clearTimeout(timer);
+	}, [leaving, ms]);
+	return { shown: open || leaving, leaving, content: kept };
+}
+
+/** `value` while `open`, and the last value it had while open once it is not. Pass a prop, not an object made in
+ *  the render: a new object each time would store itself again on every render. */
+export function useKept<T>(open: boolean, value: T): T {
+	const [kept, setKept] = useState(value);
+	if (open && kept !== value) setKept(value);
+	return open ? value : kept;
+}
+
 export function Sheet({ open, onClose, title, hideTitle = false, description, size = 'auto', width = 'md', align = 'bottom', flush = false, bodyClass, actions, footer, children }: SheetProps) {
 	const panel = useRef<HTMLDivElement>(null);
 	const titleId = useId();
 	const descriptionId = useId();
 	const [dragY, setDragY] = useState(0);
+	const [dragging, setDragging] = useState(false);
+	// Once dragged, the panel has done its entrance: dropping the inline `animation: none` would play it again, a
+	// bounce up from the bottom edge.
+	const [dragged, setDragged] = useState(false);
 	const drag = useRef<{ start: number; time: number } | null>(null);
 	useFocusTrap(open, panel, onClose);
+	const { shown, leaving, content: body } = usePresence(open, children);
+	const shownFooter = useKept(open, footer);
+	const shownActions = useKept(open, actions);
+	const [wasShown, setWasShown] = useState(shown);
+	if (shown !== wasShown) {
+		setWasShown(shown);
+		if (!shown) {
+			setDragY(0);
+			setDragged(false);
+		}
+	}
 
-	if (!open) return null;
+	if (!shown) return null;
 
 	const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
 		if ((e.pointerType === 'mouse' && e.button !== 0) || (e.target as HTMLElement).closest('button, a, input, select, textarea')) return;
+		if (leaving) return;
 		drag.current = { start: e.clientY, time: performance.now() };
 		e.currentTarget.setPointerCapture(e.pointerId);
 	};
-	const onPointerMove = (e: PointerEvent) => drag.current && setDragY(Math.max(0, e.clientY - drag.current.start));
+	const onPointerMove = (e: PointerEvent) => {
+		if (!drag.current) return;
+		setDragY(Math.max(0, e.clientY - drag.current.start));
+		setDragging(true);
+		setDragged(true);
+	};
 	const onPointerUp = () => {
 		if (!drag.current) return;
 		const speed = dragY / Math.max(performance.now() - drag.current.time, 1);
 		drag.current = null;
-		setDragY(0);
+		setDragging(false);
+		// Closing, the panel goes on down from where the finger left it; otherwise it is back in place at once.
 		if (dragY > 110 || speed > 0.6) onClose();
+		else setDragY(0);
 	};
 
 	return createPortal(
 		<div
-			className={cn('fixed inset-0 z-50 flex flex-col justify-end sm:items-center', align === 'center' && 'sm:justify-center')}
+			className={cn('fixed inset-0 z-50 flex flex-col justify-end sm:items-center', align === 'center' && 'sm:justify-center', leaving && 'pointer-events-none')}
 			onKeyDown={(e) => {
 				if (e.key === 'Escape') {
 					e.stopPropagation();
@@ -128,7 +183,7 @@ export function Sheet({ open, onClose, title, hideTitle = false, description, si
 				}
 			}}
 		>
-			<div className="absolute inset-0 animate-fade-in touch-none bg-black/40 backdrop-blur-[2px]" onClick={onClose} aria-hidden="true" />
+			<div className={cn('absolute inset-0 touch-none bg-black/40 backdrop-blur-[2px]', leaving ? 'animate-fade-out' : 'animate-fade-in')} onClick={onClose} aria-hidden="true" />
 			<div
 				ref={panel}
 				role="dialog"
@@ -137,12 +192,21 @@ export function Sheet({ open, onClose, title, hideTitle = false, description, si
 				aria-describedby={description ? descriptionId : undefined}
 				tabIndex={-1}
 				className={cn(
-					'relative z-10 flex w-full animate-slide-up flex-col rounded-t-3xl bg-surface text-fg shadow-2xl shadow-black/30 outline-none sm:rounded-b-3xl',
+					'relative z-10 flex w-full flex-col rounded-t-3xl bg-surface text-fg shadow-2xl shadow-black/30 outline-none sm:rounded-b-3xl',
 					width === 'sm' ? 'sm:max-w-md' : 'sm:max-w-xl',
 					align === 'center' ? 'sm:my-6' : 'sm:mb-6',
-					size === 'full' ? 'h-[calc(100dvh-var(--safe-t)-1.5rem)] sm:h-[min(92dvh,52rem)]' : 'max-h-[85dvh]'
+					size === 'full' ? 'h-[calc(100dvh-var(--safe-t)-1.5rem)] sm:h-[min(92dvh,52rem)]' : 'max-h-[85dvh]',
+					leaving ? cn('animate-slide-down', align === 'center' && 'sm:animate-sink-out') : 'animate-slide-up'
 				)}
-				style={dragY ? { transform: `translateY(${dragY}px)`, transition: 'none', animation: 'none' } : undefined}
+				style={
+					leaving
+						? { transform: dragY ? `translateY(${dragY}px)` : undefined }
+						: dragging
+							? { transform: `translateY(${dragY}px)`, transition: 'none', animation: 'none' }
+							: dragged
+								? { animation: 'none' }
+								: undefined
+				}
 			>
 				<div className="shrink-0 cursor-grab touch-none select-none active:cursor-grabbing" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
 					{/* The handle only means something where the panel can be dragged down; a centred dialog has none. */}
@@ -166,15 +230,15 @@ export function Sheet({ open, onClose, title, hideTitle = false, description, si
 									</p>
 								)}
 							</div>
-							{actions}
+							{shownActions}
 							<button type="button" onClick={onClose} className="flex size-11 shrink-0 items-center justify-center rounded-full text-fg-subtle transition-colors hover:bg-surface-3 hover:text-fg focus-ring" aria-label="Chiudi">
 								<X className="size-5" aria-hidden="true" />
 							</button>
 						</div>
 					)}
 				</div>
-				<div className={cn('min-h-0 flex-1 overflow-y-auto overscroll-contain', !flush && 'px-5', !flush && (footer ? 'pb-4' : 'pb-[calc(1.25rem+var(--safe-b))]'), flush && !footer && 'pb-safe', bodyClass)}>{children}</div>
-				{footer && <div className="shrink-0 rounded-b-3xl border-t border-edge-soft bg-surface px-5 pt-3 pb-[calc(0.75rem+var(--safe-b))] sm:pb-4">{footer}</div>}
+				<div className={cn('min-h-0 flex-1 overflow-y-auto overscroll-contain', !flush && 'px-5', !flush && (footer ? 'pb-4' : 'pb-[calc(1.25rem+var(--safe-b))]'), flush && !footer && 'pb-safe', bodyClass)}>{body}</div>
+				{shownFooter && <div className="shrink-0 rounded-b-3xl border-t border-edge-soft bg-surface px-5 pt-3 pb-[calc(0.75rem+var(--safe-b))] sm:pb-4">{shownFooter}</div>}
 			</div>
 		</div>,
 		document.body
