@@ -94,6 +94,12 @@ export const generators: Record<string, () => Promise<Generator>> = {
 	'funzioni-quadratiche': () => import('./v2/generators/funzioni-quadratiche').then((m) => m.default),
 	'disequazioni-secondo-grado': () => import('./v2/generators/disequazioni-secondo-grado').then((m) => m.default),
 	'disequazioni-secondo-grado-fratte': () => import('./v2/generators/disequazioni-secondo-grado-fratte').then((m) => m.default),
+	'concetti-probabilita': () => import('./v2/generators/concetti-probabilita').then((m) => m.default),
+	'leggi-probabilita': () => import('./v2/generators/leggi-probabilita').then((m) => m.default),
+	'equazioni-binomie-trinomie': () => import('./v2/generators/equazioni-binomie-trinomie').then((m) => m.default),
+	'valore-assoluto-equazioni': () => import('./v2/generators/valore-assoluto-equazioni').then((m) => m.default),
+	'equazioni-irrazionali': () => import('./v2/generators/equazioni-irrazionali').then((m) => m.default),
+	'sistemi-secondo-grado': () => import('./v2/generators/sistemi-secondo-grado').then((m) => m.default),
 	// Chemistry: pools pregenerated in Python (chimica/pool.ts).
 	'mole-massa-molare': () => import('./chimica/mole-massa-molare').then((m) => m.default),
 	'geometria-molecolare-vsepr': () => import('./chimica/geometria-molecolare-vsepr').then((m) => m.default),

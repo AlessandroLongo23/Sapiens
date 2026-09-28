@@ -128,5 +128,20 @@ Le 33 pagine aggiunte a `/strumenti`. Tra parentesi la scelta fatta.
 - [ ] Interesse composto con i mesi: $M = C(1 + i)^t$ con $t$ frazionario (convenzione esponenziale, scelta fatta) oppure la convenzione mista.
 - [ ] Forza della correlazione: debole sotto $|r| = 0{,}3$, forte sopra $0{,}7$ (scelta fatta; soglie diffuse ma non universali).
 
+## Nono lotto: grado superiore e probabilità (28 settembre 2026)
+Lezioni 90-95, vedi [[2026-09-28 Nono lotto, grado superiore e probabilità]]. Le domande minori sono nelle note (`docs/lezioni/note/90-95`, sezione "Domande per Andrea") e nelle specifiche (`specs/exercises/`, sezione "Domande per la revisione"). Tra parentesi la scelta fatta.
+- [ ] Equazioni reciproche: fuori dalla 90 (scelta fatta), oppure una sezione in più.
+- [ ] Disequazioni di grado superiore: una sezione breve in fondo alla 90 (scelta fatta), oppure una lezione loro.
+- [ ] Equazione in $t$ delle trinomie: senza nome (scelta fatta), "risolvente" o "ausiliaria"; la binomia richiede $n > 2$?
+- [ ] $|A(x)| = B(x)$: metodo principale con la condizione $B(x) \geq 0$ e i due sistemi in un riquadro (scelta fatta nella 91), oppure i due sistemi come nei libri che partono da lì. Lo strumento sulle equazioni con il valore assoluto usa i due casi sul segno dell'argomento: le due pagine vanno allineate.
+- [ ] $|A| < B \Leftrightarrow -B < A < B$ senza condizione su $B$ (scelta fatta), e il simbolo $\Updownarrow$ per "equivale a", che nessun'altra lezione usa.
+- [ ] Equazioni irrazionali: metodo delle condizioni con la verifica in un riquadro (scelta fatta), oppure la verifica come metodo principale; il sistema di $\sqrt{A} = B$ su due righe (scelta fatta) o su tre, con $A \geq 0$ scritta e dichiarata superflua; "soluzioni estranee" (scelta fatta) o "non accettabili"; servono le disequazioni con due radicali?
+- [ ] Sistemi di secondo grado: "equazione risolvente" e retta "esterna" alla parabola sono i termini di classe? Con $\Delta = 0$ "una coppia" (scelta fatta) o "due soluzioni coincidenti"? Servono i simmetrici di quarto grado e quelli con $x - y = s$?
+- [ ] Probabilità: $p(E)$ (scelta fatta) o $P(E)$; $\Omega$ (scelta fatta) o $U$; "legge empirica del caso" o "legge dei grandi numeri"; teniamo il cenno alla probabilità soggettiva?
+- [ ] Incompatibili e indipendenti: la 95 dice solo che sono cose diverse (scelta fatta), oppure un esempio subito, prima della probabilità condizionata.
+- [ ] Generatori con nove livelli, uno per sezione della lezione (valore assoluto, irrazionali): vanno bene, o meglio due generatori, uno per le equazioni e uno per le disequazioni?
+- [ ] Distrattori non presi dagli avvisi delle lezioni ($x^2 = 4 \Rightarrow x = \pm 4$ nelle biquadratiche, "doppio" e "opposti" nelle irrazionali, $\frac{k_A + k_B}{2n}$ nella somma): sono errori che gli studenti fanno davvero?
+- [ ] Ruffini in un livello solo nelle equazioni scomponibili (scelta fatta), oppure due.
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

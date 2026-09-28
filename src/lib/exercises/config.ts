@@ -99,6 +99,12 @@ export const configs: Record<string, LessonExercises> = {
 	'high_school/math/parabola-disequazioni/funzioni-quadratiche': { generator: 'funzioni-quadratiche', levels: [1, 2, 3, 4, 5, 6, 7] },
 	'high_school/math/parabola-disequazioni/disequazioni-secondo-grado': { generator: 'disequazioni-secondo-grado', levels: [1, 2, 3, 4, 5, 6, 7] },
 	'high_school/math/parabola-disequazioni/disequazioni-secondo-grado-fratte': { generator: 'disequazioni-secondo-grado-fratte', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/probabilita/concetti-probabilita': { generator: 'concetti-probabilita', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/probabilita/leggi-probabilita': { generator: 'leggi-probabilita', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/math/grado-superiore/equazioni-binomie-trinomie': { generator: 'equazioni-binomie-trinomie', levels: [1, 2, 3, 4, 5, 6, 7] },
+	'high_school/math/grado-superiore/valore-assoluto-equazioni': { generator: 'valore-assoluto-equazioni', levels: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+	'high_school/math/grado-superiore/equazioni-irrazionali': { generator: 'equazioni-irrazionali', levels: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+	'high_school/math/grado-superiore/sistemi-secondo-grado': { generator: 'sistemi-secondo-grado', levels: [1, 2, 3, 4, 5, 6] },
 	// Chemistry: pools drawn and verified in Python (src/lib/exercises/chimica/pool.ts).
 	'high_school/chemistry/chim-quantita-sostanza/mole-massa-molare': { generator: 'mole-massa-molare', levels: [1, 2, 3, 4, 5] },
 	'high_school/chemistry/chim-forma-molecole/geometria-molecolare-vsepr': { generator: 'geometria-molecolare-vsepr', levels: [1, 2, 3, 4, 5] },
