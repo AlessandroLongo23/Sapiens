@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-26
+aggiornato: 2026-09-28
 tag: [prodotto, studenti, gamificazione]
 ---
 # Adesivi
@@ -18,7 +18,7 @@ MVP sulle note, del 24 settembre 2026, committato ma non ancora in produzione (i
 
 Copertine delle pagine del materiale, del 26 settembre 2026 (richiesta di Alessandro), committate ma non ancora in produzione:
 - Ogni pagina indice del materiale ha la sua copertina, indipendente dalle altre: `/materiale`, ogni livello, ogni materia e ogni capitolo di ogni materia. La fascia a quadretti in alto fa da copertina del quaderno, al posto dell'icona, che su queste pagine non c'è più. Lo studente che ha fatto l'accesso ha un bottone "Adesivi" in fondo alla riga del percorso, sceglie dall'album e attacca con lo stesso gesto delle note, anche sopra il titolo.
-- La copertina parte con due adesivi già attaccati (π e ∞, `COVER_DEFAULTS` in `src/lib/zaino/stickers.ts`), perché si capisca che si possono staccare e cambiare. Li vedono anche i visitatori, fermi, già nell'HTML della pagina. Finché lo studente non cambia la copertina nel database non c'è niente; dopo il primo cambiamento si salva tutto l'elenco, e una copertina svuotata resta vuota.
+- La copertina parte con adesivi già attaccati, perché si capisca che si possono staccare e cambiare. Fino al 28 settembre 2026 erano sempre π e ∞; ora (`coverDefaults` in `src/lib/zaino/stickers.ts`, richiesta di Alessandro) sono da uno a tre, scelti tra quelli sull'argomento della pagina: l'adesivo del capitolo, se c'è, poi per esempio il Venn su insiemi e logica, π su circonferenza e goniometria, ∞ ed e su limiti e integrali. Biblioteca, livelli, materie di matematica e Zaino pescano tra gli adesivi di cultura matematica. Quali, quanti, in che posto (tre posti a destra del titolo) e con che inclinazione dipende da un numero ricavato dal percorso della pagina: cambia da una pagina all'altra ma è lo stesso sul server e in ogni browser, come serve alla pagina in cache. Chimica, fisica, informatica, scienze e tecnologia non hanno ancora adesivi a tema e partono vuote. Li vedono anche i visitatori, fermi, già nell'HTML della pagina. Finché lo studente non cambia la copertina nel database non c'è niente; dopo il primo cambiamento si salva tutto l'elenco, e una copertina svuotata resta vuota.
 - Componente `src/components/content/CoverStickers.tsx`; il motore delle note (`sticker-board.ts`) ha una modalità `fluid`, larga quanto la fascia e senza zoom.
 - Posizione salvata come distanza dal centro della pagina, così su ogni schermo largo l'adesivo resta vicino alla stessa parola del titolo; sotto i 1280 px le distanze si restringono in proporzione.
 - Salvataggio: tabella `cover_stickers`, una riga per studente e pagina (chiave il percorso interno: `library`, `high_school`, `high_school/math`, `high_school/math/insiemi-e-logica`), migrazione `supabase/migrations/20260926160000_cover_stickers.sql`, applicata il 26 settembre 2026 con RLS e 4 regole. La leggono e la scrivono `GET` e `PUT /api/adesivi`.

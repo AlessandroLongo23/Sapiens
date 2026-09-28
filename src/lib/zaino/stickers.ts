@@ -88,23 +88,78 @@ export const COVER_WIDTH = 1280;
 export const COVER_HEIGHT = 480;
 export const COVER_BOUNDS: StickerBounds = { x: [-COVER_WIDTH / 2 - 100, COVER_WIDTH / 2 + 100], y: [-100, COVER_HEIGHT + 100] };
 
-/** Where the stickers a cover comes with are stuck: on the right of the title, where the page's icon used to be. */
+/** Where the stickers a cover comes with can be stuck: on the right of the title, where the page's icon used to be. */
 const COVER_SLOTS = [
 	{ x: 450, y: 118, r: 7 },
-	{ x: 300, y: 212, r: -9 }
+	{ x: 300, y: 212, r: -9 },
+	{ x: 540, y: 250, r: 4 }
 ];
-/** What fills the slots a page's own stickers leave free. */
-const COVER_GENERIC = ['pi', 'infinito'];
+
+/**
+ * Which stickers fit which pages, by a chapter's path: a Venn diagram on logic, π on the circle. A
+ * chapter that matches none, as in chemistry or physics today, comes with an empty cover.
+ */
+const COVER_TOPICS: [RegExp, string[]][] = [
+	[/insiemi|logic/, ['insiemi']],
+	[/numeri-naturali|aritmetica|divisibilita|potenze/, ['naturali']],
+	[/numeri-interi|numeri-relativi/, ['interi']],
+	[/numeri-razionali|frazioni|percentuali|rapporti-proporzioni/, ['razionali']],
+	[/numeri-reali|radice/, ['radice', 'pitagora']],
+	[/math\/funzioni|piano-cartesiano|geometria-analitica$/, ['funzioni']],
+	[/monomi|calcolo-letterale/, ['monomi']],
+	[/scomposizione/, ['scomposizione']],
+	[/frazioni-algebriche/, ['frazioni-algebriche']],
+	[/equazioni-sistemi|sistemi-lineari|mat-equazioni|grado-superiore/, ['equazioni']],
+	[/disequazioni/, ['disequazioni']],
+	[/secondo-grado|parabola|coniche|funzioni-proprieta|studio-funzione/, ['parabola']],
+	[/geometria-piano|geometria-piana|pitagora|poligoni|quadrilateri|aree|angoli|rette|isometrie/, ['pitagora', 'pitagora-scritta']],
+	[/similitudine|proporzionalita/, ['aurea']],
+	[/circonferenza|cerchio|solidi-rotazione|coniche|goniometria|trigonometria/, ['pi', 'pi-sagoma']],
+	[/geometria-solida|spazio|poliedri/, ['pitagora', 'pi']],
+	[/limiti|continuita|successioni|serie|derivate|integrali|Taylor/, ['infinito', 'eulero']],
+	[/esponenziali|complessi|differenziali/, ['eulero']]
+];
+
+/** Pages that are not one chapter: the library, a level, a subject of mathematics, the Zaino. */
+const COVER_MATH = ['pi', 'infinito', 'eulero', 'aurea', 'pitagora', 'radice', 'parabola', 'pi-sagoma', 'pitagora-scritta'];
+const coverPool = (page: string) => {
+	const depth = page.split('/').length;
+	if (depth < 3) return /\/(chemistry|physics|computer-science|science|technology|fisica|fondamenti)/.test(page) ? [] : COVER_MATH;
+	return [...new Set(COVER_TOPICS.filter(([re]) => re.test(page)).flatMap(([, ids]) => ids))];
+};
+
+/** A generator seeded by the page, so a cover comes with the same stickers on the server and in every browser. */
+function seeded(page: string) {
+	let h = 2166136261;
+	for (let i = 0; i < page.length; i++) h = Math.imul(h ^ page.charCodeAt(i), 16777619);
+	return () => {
+		h = Math.imul(h ^ (h >>> 15), 2246822507) + 0x9e3779b9;
+		h = Math.imul(h ^ (h >>> 13), 3266489909);
+		return ((h ^= h >>> 16) >>> 0) / 2 ** 32;
+	};
+}
 
 /**
  * What a cover comes with, until the student changes it: stickers already stuck on show that they can
- * be peeled off and others put on. First the page's own (a chapter's sticker on its chapter), then the
- * generic ones.
+ * be peeled off and others put on. A chapter's own sticker first, then one to three in all picked by
+ * the page from those on its topic, each in a different slot, a little moved and turned.
  */
 export function coverDefaults(page: string): PlacedSticker[] {
+	const random = seeded(page);
+	const shuffle = <T>(list: T[]) => list.map((v) => [random(), v] as const).sort((a, b) => a[0] - b[0]).map(([, v]) => v);
 	const own = STICKERS.filter((s) => s.cover === page).map((s) => s.id);
-	const ids = [...own, ...COVER_GENERIC.filter((id) => !own.includes(id))].slice(0, COVER_SLOTS.length);
-	return ids.map((id, i) => ({ id: `cover-${id}`, sticker: id, ...COVER_SLOTS[i] }));
+	const pool = shuffle(coverPool(page).filter((id) => STICKER_BY_ID.has(id) && !own.includes(id)));
+	const count = Math.min(own.length + pool.length, 1 + Math.floor(random() * COVER_SLOTS.length));
+	const ids = [...own, ...pool].slice(0, count);
+	const slots = shuffle(COVER_SLOTS);
+	const jitter = (span: number) => Math.round((random() * 2 - 1) * span);
+	return ids.map((id, i) => ({
+		id: `cover-${id}`,
+		sticker: id,
+		x: slots[i].x + jitter(24),
+		y: slots[i].y + jitter(16),
+		r: slots[i].r + jitter(4)
+	}));
 }
 
 /** A request body's sticker list, or the reason it was refused. */
