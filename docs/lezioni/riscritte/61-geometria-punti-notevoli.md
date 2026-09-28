@@ -490,6 +490,13 @@ Nel triangolo ottusangolo gli assi si incontrano fuori, dall'altra parte del lat
 \end{tikzpicture}
 ```
 
+La tabella si può percorrere con un solo triangolo: trascina il vertice $C$ e guarda dove vanno i quattro punti. Quando l'angolo in $C$ diventa retto, $H$ si ferma su $C$ e $O$ sul punto medio di $AB$; quando diventa ottuso, escono tutti e due.
+
+```interattivo
+% nome: punti-notevoli-posizione
+% alt: Il triangolo ABC con il lato AB fisso e il vertice C da trascinare; si possono mostrare altezze, assi, mediane e bisettrici, con ortocentro H, circocentro O e circonferenza circoscritta, baricentro G, incentro I e circonferenza inscritta; la didascalia dice se il triangolo è acutangolo, rettangolo o ottusangolo e dove cadono H e O: interni, su vertice dell'angolo retto e punto medio dell'ipotenusa, oppure esterni; G e I restano sempre interni
+```
+
 ```ad-example
 Esempio 4: i punti notevoli di un triangolo rettangolo
 Il triangolo $ABC$ è rettangolo in $C$ e l'ipotenusa $AB$ è lunga $10$ cm. Dove sono l'ortocentro e il circocentro? Quanto è lunga la mediana $CO$ relativa all'ipotenusa, e a che distanza da $C$ si trova il baricentro?

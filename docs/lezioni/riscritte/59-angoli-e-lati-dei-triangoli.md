@@ -563,6 +563,13 @@ Ne segue che ciascun lato è anche maggiore della differenza degli altri due: da
 
 Nella figura il lato $AB$ è lungo $8$; il segmento lungo $3$ che parte da $A$ e quello lungo $4$ che parte da $B$ possono girare, ma i loro estremi restano sui due archi tratteggiati, che non si incontrano, perché $3 + 4 = 7$ è minore di $8$.
 
+Prova tu con altre lunghezze: scegli i tre lati con i cursori e trascina gli estremi dei due lati blu, o fai chiudere il triangolo col bottone. Con $5$, $7$ e $12$ i due lati si chiudono solo distesi sulla base.
+
+```interattivo
+% nome: disuguaglianza-triangolare
+% alt: Il lato AB e due lati blu incernierati in A e in B, che girano sui loro archi tratteggiati; i cursori cambiano le tre lunghezze e il bottone porta gli estremi il più vicino possibile: si chiudono nel triangolo ABC quando ogni lato è minore della somma degli altri due, si distendono sulla retta AB quando il lato più lungo è uguale alla somma, e restano staccati, con la distanza che manca, quando è maggiore; sotto la figura le tre disuguaglianze con i numeri, vere o false
+```
+
 ```ad-tip
 Il controllo veloce
 Per sapere se tre lunghezze sono i lati di un triangolo non servono tre disuguaglianze: si controlla solo che la più lunga sia minore della somma delle altre due, perché le altre due disuguaglianze sono vere di sicuro.

@@ -166,6 +166,13 @@ Si comincia a cancellare dal quadrato perché i multipli più piccoli sono già 
 \end{tikzpicture}
 ```
 
+Fai tu il crivello, un passo alla volta: a ogni passo si cerchia il primo numero non cancellato e se ne cancellano i multipli partendo dal quadrato. Guarda quali multipli erano già cancellati e dove ci si ferma.
+
+```interattivo
+% nome: crivello-di-eratostene
+% alt: La tabella dei numeri da 1 a 100, dieci per riga. A ogni pressione del bottone Passo si cerchia il primo numero non cancellato, che è primo, e si cancellano uno dopo l'altro i suoi multipli a partire dal suo quadrato; dopo il 7 il numero successivo è 11, e poiché 11 per 11 supera 100 tutti i numeri rimasti vengono cerchiati come primi. Il bottone Fino alla fine completa il crivello
+```
+
 I primi minori di $100$ sono $25$:
 
 $$

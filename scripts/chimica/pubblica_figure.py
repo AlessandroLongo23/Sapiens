@@ -5,7 +5,7 @@ Prepara le figure di chimica di lezioni e formulari per il sito.
 
 Per ogni blocco ```molecola, ```molecole, ```reazione e ```molecola3d: compila il disegno con RDKit (figure.py),
 lo salva nei soli colori chiari in `.svg-sito/` con il nome che il sito si aspetta, e riscrive nel file le righe
-`% svg: <file> <larghezza>x<altezza>` e, per il 3D, `% xyz:` con le coordinate. Il nome del file è quello di
+`% svg: <file> <larghezza>x<altezza>` e, per il 3D, `% xyz:` con le coordinate e `% legami:` con i legami. Il nome del file è quello di
 `figureFile(figure, chemCompiler(kind))` in src/lib/content/figures.ts: stesso hash (FNV-1a sui caratteri UTF-16
 di `chem<versione>:<tipo>\\n<codice>`), stessa riduzione del nome. Se il blocco cambia, cambia il file, e il sito
 smette di mostrare il disegno vecchio finché non si ripubblica. `pubblica.mts` carica poi gli SVG nel bucket.
@@ -27,7 +27,7 @@ SVG = HERE / '.svg-sito'
 from figure import KINDS, compile_block, light  # noqa: E402
 
 CHEM_COMPILER = 1  # uguale a CHEM_COMPILER in src/lib/content/figures.ts
-META = re.compile(r'^%\s*(nome|alt|svg|xyz):\s*(.*)$')
+META = re.compile(r'^%\s*(nome|alt|svg|xyz|legami):\s*(.*)$')
 FENCE = re.compile(r'^```(' + '|'.join(sorted(KINDS, key=len, reverse=True)) + r')\n(.*?)^```', re.S | re.M)
 
 
@@ -65,6 +65,16 @@ def xyz(molblock: str) -> str:
 	return '; '.join(f'{a.GetSymbol()} {p[0]:.3f} {p[1]:.3f} {p[2]:.3f}' for a, p in zip(mol.GetAtoms(), conf.GetPositions()))
 
 
+def bonds(molblock: str) -> str:
+	"""`1-2:2; 1-3:1`: gli atomi (da 1, nell'ordine di `% xyz`) e l'ordine di legame. In forma di Kekulé, come il
+	disegno: il benzene ha doppi legami alterni, non sei legami da 1,5."""
+	mol = Chem.MolFromMolBlock(molblock, removeHs=False)
+	Chem.Kekulize(mol, clearAromaticFlags=True)
+	return '; '.join(
+		f'{b.GetBeginAtomIdx() + 1}-{b.GetEndAtomIdx() + 1}:{max(1, round(b.GetBondTypeAsDouble()))}' for b in mol.GetBonds()
+	)
+
+
 def publish_file(path: Path) -> int:
 	text = path.read_text()
 	count = 0
@@ -80,6 +90,7 @@ def publish_file(path: Path) -> int:
 		lines = [f'% nome: {meta["nome"]}', f'% alt: {meta["alt"]}', f'% svg: {file} {fig["width"]}x{fig["height"]}']
 		if kind == 'molecola3d':
 			lines.append(f'% xyz: {xyz(fig["dati"]["molblock"])}')
+			lines.append(f'% legami: {bonds(fig["dati"]["molblock"])}')
 		count += 1
 		return f'```{kind}\n' + '\n'.join(lines) + '\n' + code + '\n```'
 

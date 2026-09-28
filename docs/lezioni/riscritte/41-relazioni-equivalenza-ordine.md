@@ -182,6 +182,13 @@ Antisimmetrica: sì, nessuna freccia tra elementi diversi ha quella di ritorno.
 Transitiva: no, perché $1 \mathrel{\mathcal{R}} 2$ e $2 \mathrel{\mathcal{R}} 3$, ma manca la scorciatoia $(1, 3)$.
 ```
 
+La relazione dell'Esempio 1 è qui sotto, con una spia per ogni proprietà. Tocca un elemento e poi un altro per aggiungere o togliere la freccia tra i due, o lo stesso elemento due volte per il suo cappio: la spia scelta, o la prima spenta, mostra nel diagramma il controesempio, cioè le frecce che mancano (tratteggiate) o le due frecce che rompono l'antisimmetrica.
+
+```interattivo
+% nome: relazione-proprieta-spie
+% alt: Diagramma della relazione dell'Esempio 1 in {1, 2, 3}, con i cappi su ogni elemento e le frecce da 1 a 2 e da 2 a 3, da modificare aggiungendo e togliendo frecce e cappi, anche con quattro elementi. Quattro spie dicono se la relazione è riflessiva, simmetrica, antisimmetrica e transitiva; per una proprietà che non vale il diagramma mostra tratteggiati i cappi, le frecce di ritorno o le scorciatoie mancanti, oppure in rosso le due frecce di andata e ritorno che rompono l'antisimmetrica. Sotto è scritto l'elenco delle coppie
+```
+
 ```ad-example
 Esempio 2: un solo elemento rompe la riflessiva
 In $\mathbb{Z}$ considera la relazione "$a \mathrel{\mathcal{R}} b$ se $a \cdot b > 0$", cioè $a$ e $b$ sono diversi da zero e hanno lo stesso segno.

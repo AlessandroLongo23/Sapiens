@@ -38,6 +38,13 @@ La formula si capisce anche con le aree. Da un quadrato di lato $a$ togli un qua
 \end{tikzpicture}
 ```
 
+Prova a ricomporlo tu: la striscia di sinistra si ribalta e il pezzo sotto il quadrato tolto la raggiunge. Con i cursori cambi $a$ e $b$, e le due aree restano uguali.
+
+```interattivo
+% nome: differenza-di-quadrati
+% alt: Un quadrato di lato a a cui manca un quadrato di lato b, tagliato lungo la linea tratteggiata; un bottone ribalta la striscia di sinistra e sposta il pezzo sotto il quadrato tolto, e la figura a forma di L diventa il rettangolo con i lati a più b e a meno b. I cursori cambiano a e b, e sotto la figura si leggono a al quadrato meno b al quadrato e il prodotto (a più b)(a meno b), sempre uguali
+```
+
 ```ad-example
 Esempio 1: coefficienti e due lettere
 Scomponi $4x^2 - 25y^2$.

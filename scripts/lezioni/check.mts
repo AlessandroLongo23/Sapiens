@@ -70,7 +70,10 @@ for (const file of process.argv.slice(2)) {
 	for (const m of text.matchAll(/```tikz\n([\s\S]*?)```/g)) {
 		if (!/^%\s*nome:\s*\S/m.test(m[1]) || !/^%\s*alt:\s*\S/m.test(m[1])) err('figura TikZ senza "% nome:" o "% alt:" (servono per il file SVG e per Google Immagini)');
 	}
-	const noTikz = text.replace(/```tikz[\s\S]*?```/g, '');
+	for (const m of text.matchAll(/```interattivo\n([\s\S]*?)```/g)) {
+		if (!/^%\s*nome:\s*\S/m.test(m[1]) || !/^%\s*alt:\s*\S/m.test(m[1])) err('figura interattiva senza "% nome:" o "% alt:"');
+	}
+	const noTikz = text.replace(/```(tikz|interattivo)[\s\S]*?```/g, '');
 
 	// Math: display first, then inline, each parsed by KaTeX.
 	let rest = noTikz.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex: string) => {

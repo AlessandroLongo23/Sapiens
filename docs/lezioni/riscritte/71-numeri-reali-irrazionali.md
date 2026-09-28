@@ -236,6 +236,13 @@ Serve un segmento lungo $\sqrt{5}$. Un triangolo rettangolo con i cateti $2$ e $
 ```
 ```
 
+Con altri cateti si costruiscono altre radici. Scegli i due cateti, per esempio $1$ e $1$ per $\sqrt{2}$ oppure $2$ e $1$ per $\sqrt{5}$, e fai girare il compasso. Il punto $\sqrt{n}$ cade tra due interi consecutivi, il primo con il quadrato minore di $n$ e il secondo con il quadrato maggiore; con i cateti $4$ e $3$ cade proprio sul $5$, perché $4^2 + 3^2 = 25$.
+
+```interattivo
+% nome: radice-sulla-retta-compasso
+% alt: Retta reale con un rettangolo costruito sul segmento da 0 alla base scelta, alto quanto l'altezza scelta, e la sua diagonale lunga la radice quadrata della somma dei quadrati dei cateti; un bottone fa girare il compasso puntato in 0 fino alla retta e l'arco segna il punto radice di n, tra i due numeri interi i cui quadrati comprendono n; due cursori scelgono i cateti da 1 a 4 e da 1 a 3
+```
+
 ## Approssimazioni per difetto e per eccesso
 
 Un numero irrazionale non si può scrivere con tutte le sue cifre, e nei conti pratici (una misura, un prezzo, un disegno) lo si sostituisce con un decimale vicino. Un numero minore di $x$ si chiama **approssimazione per difetto** di $x$, uno maggiore **approssimazione per eccesso**. Di solito si prendono due decimali consecutivi con lo stesso numero di cifre dopo la virgola, uno per difetto e uno per eccesso: si parla di approssimazione al decimo, al centesimo, al millesimo, o anche "a meno di $0{,}1$", "a meno di $0{,}01$".

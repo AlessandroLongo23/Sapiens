@@ -143,6 +143,13 @@ Con i dati $3$, $5$, $10$ la media è $18 : 3 = 6$ e gli scarti sono $-3$, $-1$ 
 \end{tikzpicture}
 ```
 
+Sposta i pesi sull'asta. Il sostegno va sempre nella nuova media, e gli scarti cambiano, ma la loro somma resta $0$.
+
+```interattivo
+% nome: media-equilibrio-pesi
+% alt: Tre pesi uguali su un'asta graduata da 2 a 11, all'inizio nei punti 3, 5 e 10, con il sostegno nella media 6; si trascinano i pesi e il sostegno si sposta nella nuova media, le frecce degli scarti partono dalla media e arrivano ai pesi, e la somma degli scarti, scritta sotto, è sempre 0
+```
+
 ```ad-tip
 Il controllo con gli scarti
 Dopo aver calcolato una media, puoi sommare gli scarti: se non viene zero, la media è sbagliata. Nell'esempio 1 gli scarti dalla media $1$ sono $-4$, $0$, $-1$, $-3$, $3$, $4$, $1$, e la somma è $0$.
@@ -290,6 +297,13 @@ I dati sono già in ordine e sono $5$: la mediana è il terzo, $1300$. Anche la 
 ```
 
 Quattro dipendenti su cinque guadagnano meno della metà della media. Qui la mediana, $1300$ euro, descrive lo stipendio tipico molto meglio della media, che è tirata in alto dal solo stipendio del titolare.
+```
+
+Trascina lo stipendio del titolare verso destra o verso sinistra: la media lo segue, la mediana non si muove.
+
+```interattivo
+% nome: valore-anomalo-trascina
+% alt: I cinque stipendi dell'esempio 8 su una retta da 1000 a 8000 euro, con la linea della media e quella della mediana; trascinando lo stipendio del titolare la media si sposta con lui, mentre la mediana resta 1300 euro, il terzo dato in ordine
 ```
 
 Quando nei dati c'è un valore anomalo, o i dati sono molto sbilanciati da una parte (gli stipendi, i prezzi delle case), si preferisce la mediana. Quando i dati sono numeri distribuiti senza valori anomali, si usa la media, che tiene conto di tutti. La moda si usa per i caratteri qualitativi, o quando interessa il valore più frequente, per esempio la taglia di scarpe da ordinare in più copie.

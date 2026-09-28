@@ -362,6 +362,13 @@ p(A \cup B) &= \dfrac{6}{36} + \dfrac{5}{36} - \dfrac{1}{36} \\
 $$
 ```
 
+Nella tabella qui sotto scegli tu i due eventi. Con «quante volte è contata» ogni casella colorata mostra quante volte entra nella somma dei casi di $A$ e di $B$: le caselle con il $2$ sono proprio quelle di $A \cap B$. Con "il primo dado dà $6$" e "il secondo dado dà $6$" ritrovi il conto $6 + 6 - 1 = 11$ dell'Esempio 2.
+
+```interattivo
+% nome: due-dadi-unione-eventi
+% alt: Tabella sei per sei dei lanci di due dadi, con la somma in ogni casella. Si scelgono due eventi, come esce un doppio, la somma è 8, esce almeno un 6, il primo dado dà 6: le caselle di A sono blu, quelle di B rosse e quelle comuni metà blu e metà rosse. Si può scrivere in ogni casella colorata quante volte è contata sommando i casi di A e di B, e sotto la formula p(A ∪ B) = p(A) + p(B) − p(A ∩ B) si compila con i conteggi, per esempio 6/36 + 5/36 − 1/36 = 10/36 = 5/18 per un doppio o somma 8
+```
+
 ```ad-example
 Esempio 8: una tabella a doppia entrata
 In una classe di $25$ studenti ci sono $12$ ragazze e $13$ ragazzi; portano gli occhiali $10$ studenti, di cui $4$ ragazze. Si sceglie a caso uno studente. Qual è la probabilità che sia una ragazza o porti gli occhiali? E che non sia né una ragazza né porti gli occhiali?

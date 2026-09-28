@@ -74,6 +74,13 @@ Per esempio $x > 2$ è l'intervallo $\mathopen{]}2, +\infty\mathclose{[}$: sulla
 
 Il simbolo $\infty$ non è un numero: dice solo che l'intervallo prosegue senza fine. Per questo dalla parte di $+\infty$ e di $-\infty$ la parentesi è sempre rivolta verso l'esterno. Tutta la retta, cioè l'insieme $\mathbb{R}$ dei numeri reali, si può scrivere anche $\mathopen{]}-\infty, +\infty\mathclose{[}$.
 
+Torna alla disequazione $2x + 1 > 7$ dell'inizio. Sposta $x$ sulla retta e prova diversi numeri: ogni numero provato lascia un segno, e i segni disegnano l'insieme delle soluzioni.
+
+```interattivo
+% nome: disequazione-prova-valori
+% alt: Retta dei numeri da meno 1 a 6 con un punto x da trascinare; per ogni posizione si legge 2x più 1 confrontato con 7, e sopra la retta resta un pallino verde per ogni soluzione provata e una crocetta rossa per ogni numero che non lo è; un bottone mostra l'insieme delle soluzioni, la semiretta a destra di 3 con il pallino vuoto in 3
+```
+
 ```ad-note
 Altre notazioni
 Molti libri scrivono l'estremo escluso con la parentesi tonda: $(2, 5]$ è lo stesso intervallo di $\mathopen{]}2, 5]$, e $(2, +\infty)$ è lo stesso di $\mathopen{]}2, +\infty\mathclose{[}$. Si trova anche la scrittura con le parentesi graffe, $S = \{x \in \mathbb{R} \mid x > 2\}$, che si legge "l'insieme degli $x$ reali tali che $x > 2$". Il significato è sempre lo stesso.
@@ -99,7 +106,16 @@ Per il secondo principio conta il segno del numero per cui moltiplichi. Guarda l
 - moltiplicando per $3$ ottieni $6$ e $15$, e $6 < 15$ è ancora vera;
 - moltiplicando per $-1$ ottieni $-2$ e $-5$, e $-2 < -5$ è falsa: vale il contrario, $-2 > -5$.
 
-Cambiare segno scambia l'ordine: sulla retta, $-5$ sta a sinistra di $-2$, mentre $5$ sta a destra di $2$. Per questo il **secondo principio di equivalenza** ha due parti:
+Cambiare segno scambia l'ordine: sulla retta, $-5$ sta a sinistra di $-2$, mentre $5$ sta a destra di $2$.
+
+Nella figura i punti sono $2k$ e $5k$, cioè $2$ e $5$ moltiplicati per lo stesso numero $k$. Muovi $k$ e guarda che cosa succede all'ordine dei due punti quando $k$ passa per lo zero.
+
+```interattivo
+% nome: secondo-principio-retta
+% alt: Retta dei numeri da meno 16 a 16 con i punti 2k e 5k e un cursore per k tra meno 3 e 3: finché k è positivo 2k sta a sinistra di 5k e vale 2k minore di 5k, con k uguale a 0 i due punti coincidono in 0, e con k negativo si scambiano di posto e vale 2k maggiore di 5k
+```
+
+Per questo il **secondo principio di equivalenza** ha due parti:
 
 - se moltiplichi o dividi entrambi i membri per lo stesso numero positivo, ottieni una disequazione equivalente, con lo stesso verso;
 - se moltiplichi o dividi entrambi i membri per lo stesso numero negativo, ottieni una disequazione equivalente solo se cambi il verso della disuguaglianza: $<$ diventa $>$, $\le$ diventa $\ge$, e viceversa.

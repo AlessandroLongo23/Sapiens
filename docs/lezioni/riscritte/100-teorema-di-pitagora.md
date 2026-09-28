@@ -114,6 +114,13 @@ Dimostrazione.
 5. Ora prendi come base del parallelogramma $ACGL$ il lato $AL$. Il parallelogramma e il rettangolo $AHKF$ hanno le basi $AL$ e $AF$ congruenti (passo 3) sulla stessa retta, e i lati opposti $CG$ e $HK$ sulla retta $CK$, parallela a quella: hanno la stessa altezza $AH$, quindi sono equivalenti.
 6. Per la proprietà transitiva, $ACDE \doteq ACGL \doteq AHKF$.
 
+I passi 4 e 5 sono due movimenti che non cambiano l'area: il quadrato scorre fino al parallelogramma, e il parallelogramma scorre fino al rettangolo. Guardali uno alla volta, e sposta $C$ sulla semicirconferenza per cambiare il triangolo.
+
+```interattivo
+% nome: euclide-primo-teorema
+% alt: Il triangolo ABC rettangolo in C con il quadrato ACDE e il rettangolo AHKF. Un bottone fa i due passi della dimostrazione: il quadrato, in arancione, scorre con il lato ED sulla retta DE fino al parallelogramma ACGL, poi il parallelogramma scorre con la base sulla retta FL e il lato opposto sulla retta CK fino al rettangolo AHKF. Il punto C si trascina sulla semicirconferenza di diametro AB, e sotto la figura si leggono il quadrato di AC e il prodotto di AB per AH, sempre uguali
+```
+
 Allo stesso modo il quadrato costruito sul cateto $BC$ è equivalente al rettangolo che ha per lati l'ipotenusa e la proiezione $HB$.
 
 Con le misure il teorema dice che il quadrato di un cateto è uguale al prodotto dell'ipotenusa per la proiezione di quel cateto:
@@ -200,6 +207,13 @@ In un triangolo rettangolo il quadrato costruito sull'ipotenusa è equivalente a
 ```
 
 Il teorema viene subito dal primo teorema di Euclide. Il prolungamento dell'altezza $CH$ divide il quadrato costruito sull'ipotenusa in due rettangoli: uno ha per lati l'ipotenusa e la proiezione $AH$, l'altro l'ipotenusa e la proiezione $HB$. Per il primo teorema di Euclide il primo è equivalente al quadrato costruito su $AC$ e il secondo al quadrato costruito su $BC$. Il quadrato sull'ipotenusa è la somma dei due rettangoli, quindi è equivalente alla somma dei due quadrati.
+
+I triangoli rettangoli con l'ipotenusa $AB$ hanno il vertice $C$ sulla semicirconferenza di diametro $AB$. Trascina $C$: i quadrati sui cateti cambiano, ma la loro somma resta il quadrato sull'ipotenusa.
+
+```interattivo
+% nome: pitagora-quadrati-mobili
+% alt: Il triangolo ABC rettangolo in C con i quadrati sui tre lati; il quadrato sull'ipotenusa è diviso dal prolungamento dell'altezza CH in due rettangoli con i colori dei quadrati sui cateti. Il punto C si trascina sulla semicirconferenza di diametro AB, e sotto la figura si leggono le aree dei quadrati sui cateti, la loro somma e l'area del quadrato sull'ipotenusa, sempre 100 con l'ipotenusa lunga 10
+```
 
 Con le misure, sommando le due uguaglianze del primo teorema di Euclide:
 

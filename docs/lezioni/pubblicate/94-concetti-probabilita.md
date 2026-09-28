@@ -338,6 +338,13 @@ Il grafico mostra la frequenza relativa di testa nei primi $1000$ lanci della st
 
 Nei primi lanci la frequenza relativa sale e scende molto; poi le oscillazioni diventano piccole e restano vicino a $0{,}5$, la probabilità della definizione classica. È quello che dice la **legge empirica del caso**: ripetendo un esperimento molte volte nelle stesse condizioni, la frequenza relativa di un evento si avvicina alla sua probabilità, e di solito l'approssimazione migliora con il numero delle prove. "Di solito" perché non è garantito a ogni passo: nel grafico, anche dopo qualche centinaio di lanci, ci sono tratti in cui la frequenza si allontana da $0{,}5$ prima di tornarci vicino. La versione matematica precisa di questa legge si chiama legge dei grandi numeri.
 
+Prova a lanciare tu la moneta, un lancio alla volta o a centinaia, e poi ricomincia: ogni serie è diversa dalle altre, ma tutte si stringono intorno a $0{,}5$. Con il dado puoi scegliere un evento e confrontare la sua frequenza relativa con la probabilità classica.
+
+```interattivo
+% nome: frequenza-relativa-lanci
+% alt: Grafico della frequenza relativa di testa al crescere del numero di lanci di una moneta, con la retta tratteggiata a 0,5. I bottoni lanciano la moneta 1, 10, 100 o 1000 volte con un generatore casuale, e il grafico cresce a ogni lancio; ricominciando, la serie precedente resta in grigio. Si può passare al dado e scegliere un evento: numero pari, multiplo di 3 o 5.
+```
+
 ```ad-warning
 La moneta non ha memoria
 Dopo cinque croci di fila, al lancio successivo testa ha ancora probabilità $\dfrac{1}{2}$: la moneta non sa cosa è uscito prima. La legge empirica del caso parla della frequenza su molte prove, non dice che le teste "devono recuperare" nei lanci successivi.

@@ -149,6 +149,13 @@ Dimostrazione.
 
 La somma degli angoli di un quadrilatero è $360^\circ$, quindi anche $\hat{B} + \hat{D} = 360^\circ - 180^\circ = 180^\circ$. L'altra metà del teorema, cioè che un quadrilatero con gli angoli opposti supplementari è inscrivibile, non la dimostriamo.
 
+Sposta i vertici lungo la circonferenza: gli angoli cambiano, le due somme no. Poi stacca $D$ dalla circonferenza e portalo dentro o fuori: il quadrilatero non è più inscritto, e le somme smettono di essere $180^\circ$.
+
+```interattivo
+% nome: quadrilatero-inscritto
+% alt: Quadrilatero ABCD inscritto in una circonferenza di centro O, con i quattro vertici trascinabili lungo la circonferenza; sotto sono scritte le somme degli angoli opposti, A più C e B più D, che restano 180 gradi. Un bottone stacca D dalla circonferenza: trascinandolo dentro o fuori, le due somme diventano diverse da 180 gradi, e tornano 180 quando D torna sulla circonferenza
+```
+
 ```ad-example
 Esempio 2: gli angoli di un quadrilatero inscritto
 (a) Il quadrilatero $ABCD$ è inscritto in una circonferenza, con $\hat{A} = 75^\circ$ e $\hat{B} = 100^\circ$. Quanto misurano $\hat{C}$ e $\hat{D}$?

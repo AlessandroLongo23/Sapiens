@@ -143,6 +143,13 @@ $$|A \cup B| = |A| + |B| - |A \cap B|$$
 
 Se $A$ e $B$ sono disgiunti, $A \cap B = \emptyset$ e la formula diventa $|A \cup B| = |A| + |B|$.
 
+Qui gli elementi sono punti: $A$ ne ha $19$ e $B$ ne ha $7$. Trascina il cerchio $B$ verso $A$ e guarda quali punti finiscono nella zona comune: sono quelli che $|A| + |B|$ conta due volte.
+
+```interattivo
+% nome: unione-cerchio-mobile
+% alt: Diagramma di Eulero-Venn in cui gli elementi sono punti: A ha 19 punti e B, che si trascina, ne ha 7. Spostando B verso A alcuni punti cadono nella zona comune, colorata in arancione e con i punti cerchiati; sotto si aggiornano |A|, |B|, |A ∩ B| e la formula |A ∪ B| = |A| + |B| − |A ∩ B|, confrontata con il conteggio diretto dei punti. Con i cerchi separati il termine da togliere vale zero, con B dentro A l'unione ha gli stessi elementi di A
+```
+
 ```ad-example
 Esempio 6: controllare la formula
 Nell'esempio 2, $A = \{2, 4, 6, 8, 10\}$ e $B = \{3, 6, 9\}$, quindi $|A| = 5$ e $|B| = 3$. L'unico elemento comune è il $6$, quindi $|A \cap B| = 1$.

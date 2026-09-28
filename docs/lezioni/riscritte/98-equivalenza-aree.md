@@ -209,6 +209,13 @@ Dimostrazione.
 3. I due triangoli hanno anche un angolo retto, in $H$ e in $K$, quindi hanno congruenti anche i terzi angoli, $\widehat{ADH} \cong \widehat{BCK}$ (la somma degli angoli è $180^\circ$ in tutti e due). Per il secondo criterio, con il lato $AD$ e i suoi due angoli adiacenti, $AHD \cong BKC$.
 4. Il trapezio $AKCD$ meno il triangolo $BKC$ è il parallelogramma $ABCD$; lo stesso trapezio meno il triangolo $AHD$ è il rettangolo $HKCD$. Sono differenze di figure congruenti, quindi $ABCD \doteq HKCD$.
 
+Dal parallelogramma al rettangolo si passa anche con un movimento: il triangolo $AHD$ scorre lungo la base di un tratto lungo quanto $AB$ e va a coprire esattamente $BKC$. Prova a farlo tu, e cambia il parallelogramma con i cursori.
+
+```interattivo
+% nome: parallelogramma-rettangolo
+% alt: Il parallelogramma ABCD con il triangolo AHD in arancione, da trascinare lungo la base fino alla posizione BKC, dove il parallelogramma diventa il rettangolo HKCD; un bottone fa lo stesso nei due versi, e i cursori cambiano la base, l'altezza e l'angolo in A, con l'area calcolata come base per altezza
+```
+
 Il rettangolo $HKCD$ ha la base $HK \cong DC$, perché sono lati opposti del rettangolo, e $DC \cong AB$, perché sono lati opposti del parallelogramma: quindi ha la stessa base del parallelogramma, $HK \cong AB$, e la stessa altezza $DH$. Per questo l'area del parallelogramma è base per altezza:
 
 $$A = b \cdot h$$
@@ -393,6 +400,13 @@ Dimostrazione.
 4. Per il secondo criterio $DMC \cong EMB$; in particolare $DC \cong BE$.
 5. Il trapezio $ABCD$ è la somma del quadrilatero $ABMD$ e del triangolo $DMC$; il triangolo $AED$ è la somma dello stesso quadrilatero e del triangolo $EMB$. Sono somme di figure congruenti, quindi $ABCD \doteq AED$.
 6. La base del triangolo è $AE = AB + BE$, e $BE \cong DC$ per il passo 4.
+
+Il passo 4 dice anche come passare da una figura all'altra: il triangolo $DMC$ ruota di mezzo giro intorno a $M$ e va a coprire esattamente $EMB$. Prova a farlo tu, e cambia la forma del trapezio con i cursori.
+
+```interattivo
+% nome: trapezio-triangolo
+% alt: Il trapezio ABCD con il triangolo DMC in arancione, da trascinare intorno al punto medio M del lato obliquo BC fino alla posizione BME, dove il trapezio diventa il triangolo AED; i cursori cambiano le basi, l'altezza e la posizione della base minore
+```
 
 Il triangolo $AED$ ha la base lunga quanto la somma delle basi del trapezio e la stessa altezza, quindi l'area del trapezio, con $B$ la base maggiore e $b$ la base minore, è
 

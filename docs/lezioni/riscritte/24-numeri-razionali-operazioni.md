@@ -56,6 +56,13 @@ Mezzo e un terzo non si possono sommare così come sono, perché contano parti d
 \end{tikzpicture}
 ```
 
+Finché le parti hanno grandezze diverse, i pezzi colorati non si possono contare insieme. Premi "Denominatore comune" per tagliare le due barre in pezzi uguali, poi metti i pezzi in fila; con i cursori scegli altre due frazioni.
+
+```interattivo
+% nome: somma-di-frazioni
+% alt: Due barre uguali, la prima con a parti colorate su b, la seconda con c parti colorate su d. Il bottone Denominatore comune divide ogni parte di tutte e due in pezzi uguali, tanti quanti dice il MCM dei denominatori; il bottone successivo sposta i pezzi colorati su una sola barra, uno dopo l'altro, dove si contano e danno la somma. I cursori scelgono a, b, c e d
+```
+
 In generale si trasformano le frazioni in frazioni equivalenti con lo stesso denominatore, come si fa nel [confronto tra frazioni](/materiale/scuola-superiore/matematica/numeri-razionali/confronto-tra-frazioni), e il denominatore comune più comodo è il MCM dei denominatori (se non ricordi come si calcola, c'è la lezione [MCD e MCM in ℕ](/materiale/scuola-superiore/matematica/numeri-naturali/mcd-e-mcm-in-n)).
 
 1. Riduci ai minimi termini le frazioni che non lo sono.
@@ -139,6 +146,13 @@ Il prodotto di due frazioni ha per numeratore il prodotto dei numeratori e per d
 $$\dfrac{a}{b} \cdot \dfrac{c}{d} = \dfrac{a \cdot c}{b \cdot d} \qquad (b \neq 0,\ d \neq 0)$$
 
 Qui il denominatore comune non serve. Moltiplicare per $\dfrac{2}{3}$ vuol dire prendere i due terzi: i due terzi di $\dfrac{4}{5}$ sono $\dfrac{2}{3} \cdot \dfrac{4}{5} = \dfrac{8}{15}$. Un numero intero si moltiplica per il numeratore, perché ha denominatore $1$: $4 \cdot \dfrac{2}{7} = \dfrac{8}{7}$.
+
+Nel quadrato qui sotto le strisce orizzontali colorate sono $\dfrac{2}{3}$ del quadrato, quelle verticali $\dfrac{4}{5}$. Conta le caselle colorate due volte e quelle in tutto, poi cambia le frazioni con i cursori.
+
+```interattivo
+% nome: moltiplicazione-frazioni
+% alt: Un quadrato di lato 1 diviso in b strisce orizzontali, a colorate in azzurro, e in d strisce verticali, c colorate in arancione: le caselle colorate due volte, tratteggiate, sono a per c sulle b per d caselle del quadrato, e sono il prodotto delle due frazioni. Quattro cursori scelgono a, b, c e d
+```
 
 Il segno del prodotto segue la regola dei segni degli interi: fattori concordi danno un prodotto positivo, fattori discordi un prodotto negativo. Per esempio $\left(-\dfrac{3}{5}\right) \cdot \left(-\dfrac{10}{9}\right) = +\dfrac{30}{45} = \dfrac{2}{3}$.
 

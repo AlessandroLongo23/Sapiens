@@ -8,6 +8,7 @@ import { textSelection, type SelectionReport } from '@/lib/utils/text-selection'
 import { copyAsTex, formulaTaps, paintFormulas, rangeToText, snapToFormulas } from '@/lib/utils/formulas';
 import { processTikzWhenVisible } from '@/lib/utils/tikzjax';
 import { activate3dModels } from '@/lib/utils/molecule3d';
+import { activateInteractives } from '@/lib/utils/interactive';
 import type { Prompt } from '@/lib/data/prompts';
 import { FloatingMenu, type MenuPosition } from './FloatingMenu';
 
@@ -56,7 +57,8 @@ function lazyGifs(container: HTMLElement): () => void {
  * The lesson text. The HTML arrives typeset from the server; here the tables
  * get their scroll boxes, GIFs load lazily, TikZ compiles when it scrolls
  * into view, the section under the sticky header is tracked for the table
- * of contents, and a text selection offers the assistant's actions.
+ * of contents, interactive figures mount when they come near, and a text
+ * selection offers the assistant's actions.
  */
 export function LessonBody({ html }: { html: string }) {
 	const container = useRef<HTMLDivElement>(null);
@@ -78,7 +80,9 @@ export function LessonBody({ html }: { html: string }) {
 		const stopGifs = lazyGifs(el);
 		const stopTikz = processTikzWhenVisible(el);
 		const stop3d = activate3dModels(el);
+		const stopInteractives = activateInteractives(el);
 		return () => {
+			stopInteractives();
 			stopGifs();
 			stopTikz();
 			stop3d();

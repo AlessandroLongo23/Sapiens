@@ -103,6 +103,16 @@ Le lezioni di chimica non sono nella beta; le domande restano per quando entrera
 - [ ] I nomi: coppia solitaria, propan-2-olo.
 - [ ] Date e dati scritti a memoria, segnati "da verificare" nelle note di ogni lezione (`docs/lezioni/chimica/`).
 
+## Chimica: il benzene e i composti aromatici (28 settembre 2026)
+Lezione `chim-benzene` (`docs/lezioni/chimica/riscritte/07-chim-benzene.md`), non ancora pubblicata. Le domande minori e i dati da verificare sono nella nota `docs/lezioni/chimica/note/07-chim-benzene.md`. Tra parentesi la scelta fatta.
+- [ ] Il benzene disegnato sempre con la formula di Kekulé, anche nei modelli 3D, e il cerchio solo citato nel testo (scelta fatta, perché RDKit non lo disegna); oppure un disegno con il cerchio fatto a parte.
+- [ ] "Formule limite" con "strutture di risonanza" tra parentesi, "ibrido di risonanza", "energia di risonanza" (scelta fatta): sono i termini dei libri di scuola?
+- [ ] Aromaticità in quattro condizioni, con la regola di Hückel $4n + 2$ (scelta fatta), oppure tre come in molti libri.
+- [ ] "Orbitale $p$" senza "ibridazione $sp^2$" (scelta fatta, l'ibridazione è una lezione del terzo anno non ancora scritta), oppure l'ibridazione data per nota.
+- [ ] Due sostituenti diversi: 1-cloro-4-metilbenzene in ordine alfabetico, con 4-clorotoluene come alternativa (scelta fatta); prefissi *o*-, *m*-, *p*- in corsivo.
+- [ ] Caffeina: aromatico solo l'anello a cinque atomi, lo scheletro detto piano (scelta fatta, come nella 05).
+- [ ] Il bromo sul cicloesene e sul benzene anticipa la lezione sulla sostituzione elettrofila aromatica: si tiene qui?
+
 ## Strumenti, seconda onda (28 settembre 2026)
 Le 55 pagine nuove di `/strumenti` (vedi [[Calcolatori e convertitori]]). Tra parentesi la scelta fatta; ogni articolo in `src/content/strumenti/` spiega la sua.
 - [ ] Funzioni goniometriche: $\sin$ e $\cos$ (scelta fatta) oppure "sen" come in molti libri italiani; $\text{tg}$ e $\text{cotg}$.
@@ -156,6 +166,24 @@ Lezioni 96-104, vedi [[2026-09-28 Decimo lotto, geometria del secondo anno]]. Le
 - [ ] La 96 e la 97 usano Pitagora come noto dalle medie, prima della 100: va bene? E il criterio di congruenza dei triangoli rettangoli va aggiunto alla 59?
 - [ ] La dimostrazione classica del primo teorema di Euclide resta completa (scelta fatta), anche se è lunga?
 - [ ] Generatori con otto livelli (lunghezza della circonferenza, Talete, similitudine): vanno bene, o si fondono?
+
+## Figure interattive (28 settembre 2026)
+45 figure interattive in 38 lezioni, vedi [[2026-09-28 Figure interattive nelle lezioni]]. Si provano in locale su `/prova-interattivo`. Tra parentesi la scelta fatta.
+- [ ] Unità nelle figure che mostrano misure: $\overline{AB} = 10$ in Euclide e $c = 10$ in Pitagora (100), centimetri del disegno nel parallelogramma (98), multipli di $r$ nei settori del cerchio (99). Vanno bene numeri senza unità?
+- [ ] 99, settori riordinati: la fila si chiama con "base" e "altezza" (scelta fatta), o con semiperimetro e apotema del poligono inscritto, come nel paragrafo sui poligoni?
+- [ ] 101: nella figura i rapporti sono scritti $a/c$, $b/c$, $a/b$ (scelta fatta, perché sta prima delle definizioni), o già $\sin\alpha$, $\cos\alpha$, $\tan\alpha$?
+- [ ] 103: triangolo di partenza di lati 13, 14 e 15 cm (perimetro 42, area 84; scelta fatta).
+- [ ] 104: con $k = 0$ l'immagine collassa in $O$ e la didascalia dice che non è un'omotetia (scelta fatta). Va mostrato, o il cursore salta lo zero?
+- [ ] 23 e 26: le figure mostrano anche l'errore, cioè "aggiungi $k$ sopra e sotto" nelle frazioni equivalenti e la somma ingenua delle percentuali in rosso. Aiuta, o rischia di fissare l'errore?
+- [ ] 16, bilancia: servono pesi positivi, quindi le equazioni sono $3x + 5 = 11$, $2x + 3 = 11$ e $5x = 2x + 12$ (l'esempio 2 dopo aver aggiunto 3 ai due membri). Va bene, o serve un'altra equazione?
+- [ ] 36, tessere algebriche: il lato $x$ non è un multiplo del quadratino, altrimenti $x^2 + 4$ si chiuderebbe in un rettangolo di quadratini. Quindi è diverso dalla figura TikZ.
+- [ ] 94: sull'asse del dado "1/3" e "1/6", su quello della moneta "0,5". Frazioni ovunque?
+- [ ] 59: nella disuguaglianza triangolare $a = BC$, $b = AC$, $c = AB$ (scelta fatta).
+- [ ] 62: il trapezio rettangolo si classifica solo come rettangolo, non come scaleno (scelta fatta).
+- [ ] 41: le spie dicono già "relazione d'ordine largo/stretto" nella sezione sul controllo delle proprietà, prima della definizione.
+- [ ] 95: bastano gli eventi in elenco (doppio, somma, almeno un $k$, nessun $k$, un dado uguale a $k$, somma pari), o ne servono altri?
+- [ ] 57 e 77: voti a passi interi, soluzioni a passi di mezzo. Nella 77 la regola di Cartesio compare nella figura prima della sezione che la spiega: meglio spostare la figura in "Segni delle soluzioni"?
+- [x] 102, "Perché vale": c'era $A'B' : \overline{B'C'} = 3 : 2$, con le due notazioni mescolate. Corretto in $A'B' : B'C'$ (Claude, 28 settembre 2026).
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]
