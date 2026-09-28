@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { SITE_NAME } from '@/lib/config/site';
 import { LEGAL, LEGAL_VERSIONS } from '@/lib/config/legal';
 import { Features, FeaturesDetails, SCHOOL_YEAR_PASS, SUBSCRIPTION_PLANS, TRIAL_DAYS, formatPrice } from '@/lib/stripe/config';
+import { REFERRAL } from '@/lib/referrals/config';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { Prose } from '@/components/content/Prose';
 import { LegalIdentity, PrivacyEmailLine } from '@/components/content/Legal';
@@ -57,6 +58,7 @@ export default function TermsPage() {
 			</ul>
 			<p>Il dettaglio di cosa include ogni piano è nella pagina <a href="/pricing">Prezzi</a>, che fa parte di queste condizioni.</p>
 			<p><strong>Prova gratuita.</strong> Chi crea un account ha Studio gratis per {TRIAL_DAYS} giorni, senza inserire una carta. Alla fine della prova l&apos;account passa da solo al piano Free: non viene addebitato nulla e non serve disdire.</p>
+			<p><strong>Inviti.</strong> Chi si iscrive con il codice di invito di un altro utente, o con il codice di un creator che collabora con {SITE_NAME}, ha Studio gratis per {REFERRAL.trialDays} giorni invece di {TRIAL_DAYS}. Il codice si può inserire anche dopo l&apos;iscrizione, entro {TRIAL_DAYS} giorni, e ogni account ne usa uno solo. Un codice di invito proprio lo può avere solo chi dichiara di avere almeno {REFERRAL.minAge} anni. Quando un amico iscritto con il tuo codice finisce la sua prima prova di esercizi, hai {REFERRAL.rewardDays} giorni di Studio gratis, che partono dalla fine dello Studio che hai già; se hai un abbonamento mensile attivo hai invece {formatPrice(REFERRAL.creditCents / 100, STUDIO.currency)} di credito, scalato dalla fattura successiva. Valgono {REFERRAL.rewardsPerYear} amici in ogni anno scolastico (dal 1° settembre al 31 agosto); i giorni e il credito non si convertono in denaro e non si cedono, e non spettano per account creati solo per ottenerli. I creator sono pagati da {SITE_NAME} per i contenuti che pubblicano, non per le iscrizioni: il prezzo per chi si iscrive non cambia.</p>
 			<p><strong>Rinnovo.</strong> L&apos;abbonamento mensile si rinnova automaticamente ogni mese allo stesso prezzo, finché non lo disdici. Se il prezzo cambia, te lo comunichiamo via email almeno 30 giorni prima: il nuovo prezzo vale dal rinnovo successivo e puoi disdire prima. Studio fino al {passEnds} non si rinnova.</p>
 
 			<h2>6. Pagamenti</h2>

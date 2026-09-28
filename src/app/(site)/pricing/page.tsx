@@ -14,7 +14,7 @@ export const metadata: Metadata = pageMetadata({ title: `Prezzi | ${SITE_NAME}`,
 
 export default async function Pricing() {
 	const user = await currentUser();
-	const { plan, source, passUntil, trialUntil } = accountPlan(user);
+	const { plan, source, passUntil, bonusUntil, trialUntil } = accountPlan(user);
 	const onSale = passOnSale();
 	const end = passEnd();
 	// Structured data lists what can be bought today: the monthly plan, and the pass while it is on sale.
@@ -28,7 +28,7 @@ export default async function Pricing() {
 	return (
 		<>
 			<JsonLd data={offers} />
-			<PricingPage state={{ signedIn: !!user, planId: plan.id, source, passUntil, trialUntil, passOnSale: onSale, passEnd: end }} />
+			<PricingPage state={{ signedIn: !!user, planId: plan.id, source, passUntil, bonusUntil, trialUntil, passOnSale: onSale, passEnd: end }} />
 		</>
 	);
 }

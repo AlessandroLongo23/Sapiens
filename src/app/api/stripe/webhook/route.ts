@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe/server';
 import { SUBSCRIPTION_PLANS, getPlanByPriceId } from '@/lib/stripe/config';
 import { adminClient } from '@/lib/server/supabase';
 import { fail, json } from '@/lib/server/http';
+import { applyPendingCredits } from '@/lib/server/referrals';
 
 /**
  * Keeps the plan claims in `auth.users.app_metadata` in step with Stripe:
@@ -10,6 +11,8 @@ import { fail, json } from '@/lib/server/http';
  * payment, removed again if it is refunded in full). `app_metadata` can only be
  * written with the service role, so a user cannot grant themselves a plan;
  * every page and API route reads the claims through the entitlements module.
+ * It also puts the credits a subscriber earned with invites on the invoice
+ * being drafted (src/lib/server/referrals.ts).
  */
 
 const isoDate = (unixSeconds: number | null | undefined) => (typeof unixSeconds === 'number' ? new Date(unixSeconds * 1000).toISOString() : undefined);
@@ -28,13 +31,17 @@ function invoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
 
 const customerIdOf = (subscription: Stripe.Subscription) => (typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id);
 
+/** The user id a Stripe customer belongs to, from the customer's metadata. */
+async function userIdForCustomer(customerId: string): Promise<string | null> {
+	const customer = await stripe.customers.retrieve(customerId);
+	return customer.deleted ? null : (customer.metadata?.userId ?? null);
+}
+
 /** The user id a subscription belongs to: from its metadata, else from the customer's. */
 async function userIdFor(subscription: Stripe.Subscription): Promise<string | null> {
 	if (subscription.metadata?.userId) return subscription.metadata.userId;
 	const customerId = customerIdOf(subscription);
-	if (!customerId) return null;
-	const customer = await stripe.customers.retrieve(customerId);
-	return customer.deleted ? null : (customer.metadata?.userId ?? null);
+	return customerId ? userIdForCustomer(customerId) : null;
 }
 
 function planIdFor(subscription: Stripe.Subscription): string {
@@ -95,6 +102,14 @@ async function revokeRefundedPass(charge: Stripe.Charge) {
 	if (data.user?.app_metadata?.pass?.paymentIntentId === paymentIntentId) await writeMeta(userId, () => ({ pass: null }));
 }
 
+/** An invoice of the monthly plan just drafted: the credits earned with invites go on the balance it will use. */
+async function creditsForInvoice(invoice: Stripe.Invoice) {
+	const customerId = idOf(invoice.customer);
+	if (!customerId || !invoiceSubscriptionId(invoice)) return;
+	const userId = await userIdForCustomer(customerId);
+	if (userId) await applyPendingCredits(userId, customerId);
+}
+
 async function applySubscription(subscription: Stripe.Subscription) {
 	const userId = await userIdFor(subscription);
 	if (!userId) return console.error(`webhook: no user for subscription ${subscription.id}`);
@@ -152,6 +167,9 @@ export async function POST(request: Request) {
 				if (id) await applySubscription(await stripe.subscriptions.retrieve(id));
 				break;
 			}
+			case 'invoice.created':
+				await creditsForInvoice(event.data.object);
+				break;
 		}
 		return json({ received: true });
 	} catch (error) {

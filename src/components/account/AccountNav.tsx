@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { CreditCard, KeyRound, ShieldCheck, SlidersHorizontal, UserRound } from 'lucide-react';
+import { CreditCard, Gift, KeyRound, ShieldCheck, SlidersHorizontal, UserRound } from 'lucide-react';
 import { ACCOUNT_ROOT } from '@/lib/config/site';
 import { cn } from '@/lib/utils/cn';
 
@@ -12,6 +12,7 @@ export const ACCOUNT_SECTIONS = [
 	{ href: `${ACCOUNT_ROOT}/accesso`, label: 'Accesso e sicurezza', icon: KeyRound },
 	{ href: `${ACCOUNT_ROOT}/preferenze`, label: 'Preferenze', icon: SlidersHorizontal },
 	{ href: `${ACCOUNT_ROOT}/abbonamento`, label: 'Abbonamento', icon: CreditCard },
+	{ href: `${ACCOUNT_ROOT}/inviti`, label: 'Invita un amico', icon: Gift },
 	{ href: `${ACCOUNT_ROOT}/dati`, label: 'Privacy e dati', icon: ShieldCheck }
 ];
 
