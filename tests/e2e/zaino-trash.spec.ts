@@ -150,3 +150,19 @@ test('thrown away from the menu and from a drag, then restored from the trash pa
 	await gotoHydrated(page, `/zaino/${notebookId}`);
 	await expect(page.locator('[data-note-id]')).toHaveCount(2);
 });
+
+test('throwing away the last note leaves the empty quaderno with its trash', async ({ page }) => {
+	await signIn(page, 'zaino-trash-last', 'studio');
+	const { notebookId } = await notebookWithNotes(page, 'Latino', 1);
+	await gotoHydrated(page, `/zaino/${notebookId}`);
+	await page.getByRole('button', { name: 'Opzioni di Nota 1' }).click();
+	await page.getByRole('button', { name: 'Elimina la nota' }).click();
+	// Empty straight away, not a search with no results, and the trash is still there to get it back.
+	await expect(page.getByText('Qui comincia il quaderno.')).toBeVisible({ timeout: 10_000 });
+	await expect(page.getByText(/Nessuna nota contiene/)).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Cestino, 1 elemento' })).toBeVisible();
+	// And after the list comes back from the server.
+	await page.reload();
+	await expect(page.getByText('Qui comincia il quaderno.')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Cestino, 1 elemento' })).toBeVisible();
+});

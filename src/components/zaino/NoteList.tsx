@@ -249,17 +249,26 @@ export function NoteList({
 		<div ref={list} className="space-y-6">
 			{(error || deleteError) && <Alert tone="error">{error ?? deleteError}</Alert>}
 
-			{notes.length === 0 ? (
-				<div className="note-in flex flex-col items-center gap-4 rounded-2xl border border-dashed border-edge-strong bg-surface/60 px-6 py-16 text-center">
-					<p className="zn-pen text-4xl leading-10">Qui comincia il quaderno.</p>
-					<p className="max-w-md leading-relaxed text-fg-muted">
-						Scrivi la prima nota: puoi formattarla con la barra degli strumenti o scriverla in markdown, come preferisci.
-					</p>
-					<Button onClick={create} loading={busy === 'new'} className="mt-1">
-						<Plus className="size-4" aria-hidden="true" />
-						Scrivi la prima nota
-					</Button>
-					<QuotaBar quota={quota} />
+			{/* Empty as soon as the last note is thrown away, before the list comes back from the server. */}
+			{notes.every((note) => gone.has(note.id)) ? (
+				<div className="space-y-4">
+					{/* The trash stays where it was in the toolbar, so what went in can come back out. */}
+					{landed.base + landed.extra > 0 && (
+						<div className="flex justify-end">
+							<TrashLink ref={trashLink} count={landed.base + landed.extra} bump={bump} />
+						</div>
+					)}
+					<div className="note-in flex flex-col items-center gap-4 rounded-2xl border border-dashed border-edge-strong bg-surface/60 px-6 py-16 text-center">
+						<p className="zn-pen text-4xl leading-10">Qui comincia il quaderno.</p>
+						<p className="max-w-md leading-relaxed text-fg-muted">
+							Scrivi la prima nota: puoi formattarla con la barra degli strumenti o scriverla in markdown, come preferisci.
+						</p>
+						<Button onClick={create} loading={busy === 'new'} className="mt-1">
+							<Plus className="size-4" aria-hidden="true" />
+							Scrivi la prima nota
+						</Button>
+						<QuotaBar quota={quota} />
+					</div>
 				</div>
 			) : (
 				<>
