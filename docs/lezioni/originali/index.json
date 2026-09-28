@@ -800,5 +800,53 @@
     "path": "high_school/math/parabola-disequazioni/disequazioni-secondo-grado-fratte",
     "chapter": "Parabola e disequazioni di secondo grado",
     "new": true
+  },
+  {
+    "id": "ae679cc4-9361-4c37-864e-77bfabcaad98",
+    "title": "Equazioni binomie, trinomie e scomponibili",
+    "slug": "equazioni-binomie-trinomie",
+    "path": "high_school/math/grado-superiore/equazioni-binomie-trinomie",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "7b8b2413-516a-49f5-ad18-7827e9652425",
+    "title": "Equazioni e disequazioni con il valore assoluto",
+    "slug": "valore-assoluto-equazioni",
+    "path": "high_school/math/grado-superiore/valore-assoluto-equazioni",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "7b4c932a-c0a4-4386-9cd6-7c6b2fdedc75",
+    "title": "Equazioni e disequazioni irrazionali",
+    "slug": "equazioni-irrazionali",
+    "path": "high_school/math/grado-superiore/equazioni-irrazionali",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "178fb2fe-9a2d-4868-8f3e-90d6b631fb2f",
+    "title": "Sistemi di secondo grado",
+    "slug": "sistemi-secondo-grado",
+    "path": "high_school/math/grado-superiore/sistemi-secondo-grado",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "50f4300d-a737-43dd-8773-f9b38c80c07b",
+    "title": "Eventi e probabilità",
+    "slug": "concetti-probabilita",
+    "path": "high_school/math/probabilita/concetti-probabilita",
+    "chapter": "Probabilità",
+    "new": true
+  },
+  {
+    "id": "52aa4895-f9ab-4744-a359-0fdd757834eb",
+    "title": "Probabilità della somma e dell'evento contrario",
+    "slug": "leggi-probabilita",
+    "path": "high_school/math/probabilita/leggi-probabilita",
+    "chapter": "Probabilità",
+    "new": true
   }
 ]

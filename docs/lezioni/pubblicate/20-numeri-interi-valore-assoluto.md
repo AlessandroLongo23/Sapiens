@@ -152,7 +152,7 @@ In $-|-5|$ il valore assoluto si calcola per primo, $|-5| = 5$, e poi si prende 
 
 ```ad-note
 Anche per frazioni e decimali
-Opposto e valore assoluto si definiscono allo stesso modo per tutti i numeri che hanno un posto sulla retta: $\left|-\dfrac{3}{4}\right| = \dfrac{3}{4}$ e $|-2{,}5| = 2{,}5$.
+Opposto e valore assoluto si definiscono allo stesso modo per tutti i numeri che hanno un posto sulla retta: $\left|-\dfrac{3}{4}\right| = \dfrac{3}{4}$ e $|-2{,}5| = 2{,}5$. Con le espressioni che contengono un'incognita, come $|x - 2|$, il valore assoluto si usa nelle [equazioni e disequazioni con il valore assoluto](/materiale/scuola-superiore/matematica/equazioni-e-disequazioni-di-grado-superiore/equazioni-e-disequazioni-con-il-valore-assoluto).
 ```
 
 ## Confronto tra numeri interi

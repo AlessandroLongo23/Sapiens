@@ -146,6 +146,16 @@ funzioni-quadratiche <- il-piano-cartesiano, equazioni-secondo-grado
 disequazioni-secondo-grado <- funzioni-quadratiche, disequazioni-razionali
 disequazioni-secondo-grado-fratte <- disequazioni-secondo-grado, sistemi-di-disequazioni
 
+## Equazioni e disequazioni di grado superiore
+equazioni-binomie-trinomie <- scomposizione-ruffini, disequazioni-secondo-grado
+valore-assoluto-equazioni <- disequazioni-secondo-grado-fratte
+equazioni-irrazionali <- disequazioni-secondo-grado-fratte
+sistemi-secondo-grado <- sistemi-di-equazioni, equazioni-secondo-grado-relazioni, funzioni-quadratiche
+
+## Probabilità
+concetti-probabilita <- insiemi-differenza, statistica-dati
+leggi-probabilita <- concetti-probabilita
+
 # Dubbi da sciogliere
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
   frazioni). Per il ripasso dopo una prova conta proprio quel collegamento: il ripasso dovrà cercare
