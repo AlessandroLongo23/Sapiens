@@ -20,6 +20,8 @@ export interface PlanState {
 	source: PlanSource;
 	/** Last day of a paid pass, YYYY-MM-DD. */
 	passUntil: string | null;
+	/** Last day of the Studio earned with invites, YYYY-MM-DD, while it is the plan in force. */
+	bonusUntil: string | null;
 	/** Last day of the reverse trial, YYYY-MM-DD, while it runs. */
 	trialUntil: string | null;
 	/** Whether the "until June" pass can be bought today (decided on the server, in Rome time). */
@@ -149,6 +151,9 @@ export function PlanCards({ state, onSelect }: { state: PlanState; onSelect: (bi
 							<p className="mb-6 text-sm leading-relaxed text-fg-muted">{PLAN_DESCRIPTIONS[plan.id]}</p>
 							{plan.id === SUBSCRIPTION_PLANS.STUDIO.id && state.source === 'trial' && state.trialUntil && (
 								<p className="mb-6 text-sm font-medium text-accent-fg">Stai provando Studio fino al {formatDay(state.trialUntil)}.</p>
+							)}
+							{plan.id === SUBSCRIPTION_PLANS.STUDIO.id && state.source === 'bonus' && state.bonusUntil && (
+								<p className="mb-6 text-sm font-medium text-accent-fg">Hai Studio fino al {formatDay(state.bonusUntil)}, grazie agli amici che hai invitato.</p>
 							)}
 						</div>
 						<div>

@@ -32,7 +32,7 @@ In un'equazione **pura** manca il termine in $x$. Porti $c$ a secondo membro e d
 
 $$ax^2 + c = 0 \quad\Rightarrow\quad x^2 = -\frac{c}{a}$$
 
-Se il numero a secondo membro è positivo, le soluzioni sono due, opposte tra loro: $x = \pm\sqrt{-\dfrac{c}{a}}$. Se è negativo, non ci sono soluzioni reali, perché il quadrato di un numero reale non è mai negativo.
+Se il numero a secondo membro è positivo, le soluzioni sono due, opposte tra loro: $x = \pm\sqrt{-\dfrac{c}{a}}$. Se è negativo, non ci sono soluzioni reali, perché il quadrato di un numero reale non è mai negativo. Lo stesso ragionamento, con esponenti più alti, risolve le [equazioni binomie](/materiale/scuola-superiore/matematica/equazioni-e-disequazioni-di-grado-superiore/equazioni-binomie-trinomie-e-scomponibili).
 
 ```ad-example
 Esempio 1: pura con due soluzioni razionali

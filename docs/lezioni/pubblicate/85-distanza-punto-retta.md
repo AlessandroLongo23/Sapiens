@@ -256,7 +256,7 @@ $$
 \end{aligned}
 $$
 
-quindi $\overline{AB} = \dfrac{|N|\sqrt{a^2 + b^2}}{|a| \cdot |b|}$. Il segmento $PH$ è l'altezza relativa all'ipotenusa $AB$. L'area del triangolo si può calcolare con i due cateti o con l'ipotenusa e l'altezza, $\dfrac{\overline{PA} \cdot \overline{PB}}{2} = \dfrac{\overline{AB} \cdot \overline{PH}}{2}$, e quindi
+quindi $\overline{AB} = \dfrac{|N|\sqrt{a^2 + b^2}}{|a| \cdot |b|}$. Il segmento $PH$ è l'altezza relativa all'ipotenusa $AB$. L'[area del triangolo](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/equivalenza-e-aree) si può calcolare con i due cateti o con l'ipotenusa e l'altezza, $\dfrac{\overline{PA} \cdot \overline{PB}}{2} = \dfrac{\overline{AB} \cdot \overline{PH}}{2}$, e quindi
 
 $$
 \begin{aligned}

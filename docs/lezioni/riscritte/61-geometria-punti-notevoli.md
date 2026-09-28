@@ -167,7 +167,7 @@ Il baricentro divide ogni mediana in due parti, e la parte che contiene il verti
 
 $$AG = 2 \cdot GM$$
 
-Quindi $AG$ è $\dfrac{2}{3}$ della mediana e $GM$ è $\dfrac{1}{3}$. Lo stesso vale per le altre due mediane: $BG = 2 \cdot GN$ e $CG = 2 \cdot GL$. Anche questa proprietà la enunciamo soltanto, perché la dimostrazione usa strumenti che arrivano più avanti.
+Quindi $AG$ è $\dfrac{2}{3}$ della mediana e $GM$ è $\dfrac{1}{3}$. Lo stesso vale per le altre due mediane: $BG = 2 \cdot GN$ e $CG = 2 \cdot GL$. Anche questa proprietà la enunciamo soltanto: la dimostrazione usa il [segmento dei punti medi](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/teorema-di-talete) e la [similitudine](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/similitudine).
 
 ```ad-warning
 La mediana non è né bisettrice né altezza
@@ -323,7 +323,7 @@ Il perché viene dall'asse come luogo. Chiama $O$ il punto in cui si incontrano 
 3. Dai due passi precedenti $OA \cong OC$.
 4. Un punto equidistante da $A$ e da $C$ sta sull'asse di $AC$: anche il terzo asse passa per $O$.
 
-La circonferenza di centro $O$ e raggio $OA$ passa quindi per tutti e tre i vertici. Si chiama **circonferenza circoscritta** al triangolo, e il suo raggio è la distanza del circocentro dai vertici.
+La circonferenza di centro $O$ e raggio $OA$ passa quindi per tutti e tre i vertici. Si chiama **circonferenza circoscritta** al triangolo, e il suo raggio è la distanza del circocentro dai vertici. Quali altri poligoni hanno una circonferenza circoscritta lo dice la lezione [Poligoni inscritti e circoscritti](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/poligoni-inscritti-e-circoscritti).
 
 ```ad-warning
 L'asse non passa per il vertice opposto
@@ -442,7 +442,7 @@ Baricentro e incentro sono sempre interni al triangolo. Ortocentro e circocentro
 | Ortocentro $H$ | interno | nel vertice dell'angolo retto | esterno, dalla parte dell'angolo ottuso |
 | Circocentro $O$ | interno | nel punto medio dell'ipotenusa | esterno, oltre il lato opposto all'angolo ottuso |
 
-Nel triangolo rettangolo il circocentro è il punto medio dell'ipotenusa, e la circonferenza circoscritta ha l'ipotenusa come diametro. Di conseguenza la mediana relativa all'ipotenusa è lunga metà dell'ipotenusa, perché va dal circocentro a un vertice ed è un raggio. La dimostrazione usa le diagonali del rettangolo, nella lezione [Parallelogrammi e trapezi](/materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/parallelogrammi-e-trapezi).
+Nel triangolo rettangolo il circocentro è il punto medio dell'ipotenusa, e la circonferenza circoscritta ha l'ipotenusa come diametro. È l'angolo inscritto in una semicirconferenza della lezione [Circonferenza e cerchio](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/circonferenza-e-cerchio). Di conseguenza la mediana relativa all'ipotenusa è lunga metà dell'ipotenusa, perché va dal circocentro a un vertice ed è un raggio. La dimostrazione usa le diagonali del rettangolo, nella lezione [Parallelogrammi e trapezi](/materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/parallelogrammi-e-trapezi).
 
 ```tikz
 % nome: triangolo-rettangolo-ortocentro-circocentro

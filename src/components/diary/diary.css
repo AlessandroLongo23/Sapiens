@@ -349,6 +349,17 @@
 		color: var(--accent-fg);
 	}
 
+	/* A done entry is struck through in red pen once the tick is in the box. The line is a background on the inline
+	   text, so on an entry that wraps it runs along each line in turn, as a pen would; unticking takes it back. */
+	.diary-strike {
+		background: linear-gradient(var(--pen), var(--pen)) no-repeat 0 58% / 0% 2px;
+		transition: background-size 0.4s cubic-bezier(0.45, 0, 0.3, 1);
+	}
+	.diary-strike[data-done] {
+		background-size: 100% 2px;
+		transition-delay: 0.22s;
+	}
+
 	/* ------------------------------------------------------------------ turning the page */
 
 	@media (prefers-reduced-motion: no-preference) {

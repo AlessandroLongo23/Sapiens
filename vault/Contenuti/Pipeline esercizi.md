@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-26
+aggiornato: 2026-09-28
 tag: [contenuti, ai]
 ---
 # Pipeline esercizi
@@ -69,6 +69,12 @@ Dodici generatori (83 livelli) per sistemi lineari, radicali ed equazioni di sec
 
 ## Ottavo lotto (27 settembre 2026)
 Dieci generatori (68 livelli) per piano cartesiano, retta, parabola e disequazioni di secondo grado. Le rette in forma esplicita sono `expression` (valore il secondo membro, LaTeX l'equazione intera); punti, rette verticali, forme implicite e soluzioni con gli intervalli sono a scelta multipla. I controlli Python ricostruiscono rette e parabole con SymPy e le confrontano come oggetti, così una retta moltiplicata per 2 non passa da distrattore. È il capitolo in cui la mancanza di figure negli esercizi pesa di più: ogni specifica dice quali livelli ne vorrebbero una. Vedi [[2026-09-27 Ottavo lotto, piano cartesiano retta e parabola]].
+
+## Nono lotto (28 settembre 2026)
+Sei generatori (44 livelli) per equazioni binomie, trinomie e scomponibili, valore assoluto, irrazionali, sistemi di secondo grado e i primi due della probabilità. Per la probabilità il controllo Python rilegge l'esperimento dal testo, enumera lo spazio campionario con `itertools` e conta gli esiti con `Fraction`; per le irrazionali scarta a mano i radicandi negativi, perché SymPy con `sqrt` lavora sui complessi e accetterebbe soluzioni che in ℝ non esistono. Valore assoluto e irrazionali hanno nove livelli, uno per sezione della lezione. Alcuni livelli della probabilità hanno pochi esercizi possibili (21 per "almeno uno"), perché gli spazi campionari del biennio sono piccoli. Vedi [[2026-09-28 Nono lotto, grado superiore e probabilità]].
+
+## Decimo lotto (28 settembre 2026)
+Nove generatori (65 livelli) per la geometria del secondo anno: circonferenza, poligoni inscritti, aree, lunghezza della circonferenza, Pitagora ed Euclide, Talete, similitudine, trigonometria nel triangolo rettangolo, trasformazioni. Come nel primo anno, tutto sul testo: i controlli Python costruiscono la figura con le coordinate e controllano che i dati la determinino; la trigonometria ricalcola a 50 cifre e scarta i valori vicini a un arrotondamento. Nel browser la scheda della lunghezza della circonferenza aveva errori di KaTeX che `review.mts` non vedeva, perché `presentStep` spezzava i pedici come $A_{\text{settore}}$: corretto in `present.ts`. Da allora il controllo delle schede nel browser fa parte di ogni lotto. Vedi [[2026-09-28 Decimo lotto, geometria del secondo anno]].
 
 ## Chimica
 Gli esercizi di chimica sono generatori Python con RDKit (`scripts/chimica/esercizi/`), stesso contratto dei generatori TypeScript, verificati da un controllo indipendente (OPSIN per i nomi). Sul sito arrivano pregenerati, con immagini nella domanda, nelle risposte e nella soluzione: vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]] e [[2026-09-25 Chimica con RDKit]].

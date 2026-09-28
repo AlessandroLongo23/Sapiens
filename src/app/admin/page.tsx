@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ArrowRight, ChartColumn, LibraryBig, PenLine, UsersRound } from 'lucide-react';
+import { ArrowRight, ChartColumn, Gift, LibraryBig, PenLine, UsersRound } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { CardLink } from '@/components/ui/Card';
 
@@ -9,7 +9,8 @@ const SECTIONS = [
 	{ href: '/admin/tutors', title: 'Tutor', text: 'Profili in revisione, pubblicazione, verifica.', icon: UsersRound },
 	{ href: '/admin/wiki', title: 'Wiki', text: 'Livelli, materie, capitoli e lezioni.', icon: LibraryBig },
 	{ href: '/admin/desk', title: 'Desk', text: 'Bozze di lezione generate.', icon: PenLine },
-	{ href: '/admin/metriche', title: 'Metriche', text: 'Iscritti, attivazione, ritorno, pagamento.', icon: ChartColumn }
+	{ href: '/admin/metriche', title: 'Metriche', text: 'Iscritti, attivazione, ritorno, pagamento.', icon: ChartColumn },
+	{ href: '/admin/inviti', title: 'Inviti', text: 'Codici dei creator, commissioni, porta un amico.', icon: Gift }
 ];
 
 export default function AdminPage() {

@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-25
+aggiornato: 2026-09-28
 tag: [business]
 ---
 # Piani e prezzi
@@ -14,6 +14,7 @@ Dal 25 settembre 2026, nel codice (non ancora pubblicato con un deploy), in `src
 | Studio | €9,99 al mese, IVA inclusa | Esercizi senza limiti, flashcard, Zaino senza limiti, Sapiens AI |
 | Studio fino a giugno | €49,99 in un solo pagamento | Studio fino al 30 giugno; in vendita solo a gennaio e febbraio, non si rinnova |
 
+- Inviti, dal 28 settembre 2026 (non pubblicato): chi si iscrive con il codice di un amico o di un creator ha 14 giorni di prova (`app_metadata.trialDays`); chi invita guadagna giorni di Studio in `app_metadata.bonus`, una fonte del piano tra il piano fino a giugno e la prova. Vedi [[Inviti e codici]].
 - Prova al contrario: i primi 7 giorni dopo la creazione dell'account valgono come Studio, senza carta e senza Stripe (`planOf` in `src/lib/auth/entitlements.ts`). Il Checkout non ha più una prova.
 - Il piano in vigore viene, in ordine, dall'abbonamento (`app_metadata.subscription`, scritto dal webhook), dal piano fino a giugno (`app_metadata.pass`, scritto dal webhook quando il pagamento è arrivato e tolto se viene rimborsato per intero), dalla prova, altrimenti è Free. I vecchi piani `lite`, `base` e `pro` rimasti su qualche account valgono come Studio.
 - Stripe, sandbox "Sapiens sandbox": prodotto "Sapiens Studio" con due prezzi IVA inclusa, `price_1UJUNcK9L252GFViRe4tpf0D` (mensile) e `price_1UJUNcK9L252GFViUKVdfDl6` (fino a giugno). Su Vercel (Production) `PUBLIC_STRIPE_PRICE_STUDIO` e `PUBLIC_STRIPE_PRICE_STUDIO_JUNE`. Il webhook ascolta anche `checkout.session.async_payment_succeeded` e `charge.refunded`.
@@ -39,6 +40,7 @@ Fatti emersi nella discussione:
 - Anteprima gratuita: Duolingo, completamente gratuito nei contenuti, aveva a fine 2025 il 9,2% degli utenti mensili abbonati (12,2 milioni su 133,1 milioni, bilancio 2025). Per il software in abbonamento, le analisi di settore riportano per il freemium classico conversioni intorno al 2-5% e per la "prova al contrario" (tutto sbloccato per qualche giorno, poi si torna al piano gratuito) intorno all'8-12% (OpenView, riportato da fonti secondarie, da verificare).
 
 ## Domande aperte
+- La scritta "IVA inclusa" su prezzi, termini e Checkout è vera solo se Sapiens addebita l'IVA italiana. Sotto le soglie può addebitare la moms danese o niente: da cambiare dopo la risposta del revisor. Vedi [[Società e IVA]].
 - Limite giornaliero di Sapiens AI in Studio: deciso di rimandarlo il 25 settembre 2026; la pagina non promette "illimitato".
 - Studio si vende anche dentro l'app iOS? Apple trattiene il 15% (programma per le piccole imprese, da verificare).
 - Il prezzo del Pro, una volta tolta l'ora (€59,99 non ha più senso).

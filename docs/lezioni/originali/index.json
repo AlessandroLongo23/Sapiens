@@ -800,5 +800,125 @@
     "path": "high_school/math/parabola-disequazioni/disequazioni-secondo-grado-fratte",
     "chapter": "Parabola e disequazioni di secondo grado",
     "new": true
+  },
+  {
+    "id": "ae679cc4-9361-4c37-864e-77bfabcaad98",
+    "title": "Equazioni binomie, trinomie e scomponibili",
+    "slug": "equazioni-binomie-trinomie",
+    "path": "high_school/math/grado-superiore/equazioni-binomie-trinomie",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "7b8b2413-516a-49f5-ad18-7827e9652425",
+    "title": "Equazioni e disequazioni con il valore assoluto",
+    "slug": "valore-assoluto-equazioni",
+    "path": "high_school/math/grado-superiore/valore-assoluto-equazioni",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "7b4c932a-c0a4-4386-9cd6-7c6b2fdedc75",
+    "title": "Equazioni e disequazioni irrazionali",
+    "slug": "equazioni-irrazionali",
+    "path": "high_school/math/grado-superiore/equazioni-irrazionali",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "178fb2fe-9a2d-4868-8f3e-90d6b631fb2f",
+    "title": "Sistemi di secondo grado",
+    "slug": "sistemi-secondo-grado",
+    "path": "high_school/math/grado-superiore/sistemi-secondo-grado",
+    "chapter": "Equazioni e disequazioni di grado superiore",
+    "new": true
+  },
+  {
+    "id": "50f4300d-a737-43dd-8773-f9b38c80c07b",
+    "title": "Eventi e probabilità",
+    "slug": "concetti-probabilita",
+    "path": "high_school/math/probabilita/concetti-probabilita",
+    "chapter": "Probabilità",
+    "new": true
+  },
+  {
+    "id": "52aa4895-f9ab-4744-a359-0fdd757834eb",
+    "title": "Probabilità della somma e dell'evento contrario",
+    "slug": "leggi-probabilita",
+    "path": "high_school/math/probabilita/leggi-probabilita",
+    "chapter": "Probabilità",
+    "new": true
+  },
+  {
+    "id": "7b496291-4ff4-4b48-b7c9-6efd510b0e54",
+    "title": "Circonferenza e cerchio",
+    "slug": "circonferenza-cerchio",
+    "path": "high_school/math/geometria-piano-circonferenza/circonferenza-cerchio",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "5e994234-9112-41d7-b6eb-77138284df19",
+    "title": "Poligoni inscritti e circoscritti",
+    "slug": "poligoni-inscritti",
+    "path": "high_school/math/geometria-piano-circonferenza/poligoni-inscritti",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "8b9bf04c-a369-4602-94ea-a8a0d53dc428",
+    "title": "Equivalenza e aree",
+    "slug": "equivalenza-aree",
+    "path": "high_school/math/geometria-piano-circonferenza/equivalenza-aree",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "68ae25b0-f986-46cd-ad86-8cf03454bc04",
+    "title": "Lunghezza della circonferenza e area del cerchio",
+    "slug": "circonferenza-lunghezza-area",
+    "path": "high_school/math/geometria-piano-circonferenza/circonferenza-lunghezza-area",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "a7e19e1d-8373-47b2-ad02-d044f6506abd",
+    "title": "Teoremi di Pitagora e di Euclide",
+    "slug": "teorema-di-pitagora",
+    "path": "high_school/math/geometria-piano-circonferenza/teorema-di-pitagora",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "04b6bc08-1666-4d6b-8217-b80c5dc1c8db",
+    "title": "Seno, coseno e tangente nel triangolo rettangolo",
+    "slug": "triangolo-rettangolo-trigonometria",
+    "path": "high_school/math/geometria-piano-circonferenza/triangolo-rettangolo-trigonometria",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "70621633-3ae5-4e93-98bd-4dd1fd1a5f7c",
+    "title": "Teorema di Talete",
+    "slug": "teorema-di-talete",
+    "path": "high_school/math/geometria-piano-circonferenza/teorema-di-talete",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "7d702675-f96f-4dd0-bec4-ad05f27e6530",
+    "title": "Similitudine",
+    "slug": "similitudine",
+    "path": "high_school/math/geometria-piano-circonferenza/similitudine",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "ba22cc64-a4a9-4228-9ffc-35dd0121b99b",
+    "title": "Trasformazioni geometriche",
+    "slug": "trasformazioni-geometriche",
+    "path": "high_school/math/geometria-piano-circonferenza/trasformazioni-geometriche",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
   }
 ]

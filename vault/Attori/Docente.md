@@ -1,6 +1,6 @@
 ---
 stato: idea
-aggiornato: 2026-09-23
+aggiornato: 2026-09-28
 tag: [attore]
 ---
 # Docente
@@ -17,6 +17,9 @@ Dalla bozza originale e dalla conversazione del 23 settembre 2026:
 
 ## Cosa paga, e a chi
 Di norma niente: paga la scuola. Da capire se esiste un piano per il singolo docente prima dell'adozione della scuola.
+
+## Prima della v4
+Dal 28 settembre 2026 si prova in piccolo a far usare ai singoli docenti la scheda giornaliera degli esercizi con la loro classe, gratis, a partire dal liceo dove lavora la madre di Alessandro. Vedi [[2026-09-28 Un test con i singoli docenti già nella beta]].
 
 ## Domande aperte
 - Un piano per docenti singoli può essere il cavallo di Troia per entrare nelle scuole, prima del contratto con il dirigente?

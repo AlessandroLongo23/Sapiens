@@ -163,7 +163,7 @@ L'equazione è $x^2 - 2x - 1 = 0$, con coefficienti interi anche se le soluzioni
 
 ## Due numeri di somma e prodotto dati
 
-Lo stesso ragionamento risolve un problema classico: trovare due numeri conoscendo la loro somma $s$ e il loro prodotto $p$. I due numeri sono le soluzioni dell'equazione $x^2 - sx + p = 0$, quindi esistono se e solo se il discriminante $s^2 - 4p$ non è negativo.
+Lo stesso ragionamento risolve un problema classico: trovare due numeri conoscendo la loro somma $s$ e il loro prodotto $p$. I due numeri sono le soluzioni dell'equazione $x^2 - sx + p = 0$, quindi esistono se e solo se il discriminante $s^2 - 4p$ non è negativo. Con la stessa equazione si risolvono i [sistemi simmetrici](/materiale/scuola-superiore/matematica/equazioni-e-disequazioni-di-grado-superiore/sistemi-di-secondo-grado) $x + y = s$, $xy = p$.
 
 ```ad-example
 Esempio 7: somma 10 e prodotto 21

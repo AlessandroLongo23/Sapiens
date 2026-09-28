@@ -68,6 +68,17 @@ function textGroups(s: string): { from: number; to: number; body: string }[] {
 	return groups;
 }
 
+/** How many braces are open at position `at` of `s` (escaped braces do not count). */
+function braceDepth(s: string, at: number): number {
+	let depth = 0;
+	for (let i = 0; i < at; i++) {
+		if (s[i] === '\\') i++;
+		else if (s[i] === '{') depth++;
+		else if (s[i] === '}') depth--;
+	}
+	return depth;
+}
+
 /** A line made only of `\text{…}` (and punctuation between them) is prose. */
 function proseOf(line: string): string | null {
 	const groups = textGroups(line);
@@ -126,10 +137,11 @@ export function presentProblem(problem: string): ProblemBlock[] {
 
 /**
  * A line of a worked solution as prose with inline formulas, ready for renderMath: the `\text{…}` groups
- * become words that wrap and the maths between them `$…$`. A line with no text is one inline formula.
+ * become words that wrap and the maths between them `$…$`. A line with no text is one inline formula. A
+ * `\text{…}` inside braces, such as the label of a subscript (`A_{\text{settore}}`), is part of its formula.
  */
 export function presentStep(step: string): string {
-	const groups = textGroups(step);
+	const groups = textGroups(step).filter((g) => braceDepth(step, g.from) === 0);
 	if (!groups.length) return `$${step.trim()}$`;
 	let out = '';
 	let at = 0;

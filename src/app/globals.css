@@ -93,6 +93,10 @@
 	--animate-slide-up: slide-up 0.26s cubic-bezier(0.2, 0, 0, 1) both;
 	--animate-drop-in: drop-in 0.25s ease-out both;
 	--animate-shake: shake 0.5s ease-in-out;
+	/* Leaving: quicker than arriving, accelerating away. Sheets and modals (usePresence). */
+	--animate-fade-out: fade-out 0.2s ease-in both;
+	--animate-slide-down: slide-down 0.2s cubic-bezier(0.4, 0, 1, 1) both;
+	--animate-sink-out: sink-out 0.16s ease-in both;
 	/* A wrong answer: a short sideways shake, no growth. */
 	--animate-nudge: nudge 0.4s ease-in-out;
 	/* Arriving: fast out of the gate, long settle. Used by everything in the Zaino. */
@@ -113,6 +117,15 @@
 	}
 	@keyframes slide-up {
 		from { transform: translateY(100%); }
+	}
+	@keyframes fade-out {
+		to { opacity: 0; }
+	}
+	@keyframes slide-down {
+		to { transform: translateY(100%); }
+	}
+	@keyframes sink-out {
+		to { opacity: 0; transform: translateY(8px) scale(0.98); }
 	}
 	@keyframes drop-in {
 		from { opacity: 0; transform: translateY(-24px); }
@@ -600,6 +613,76 @@
 @keyframes cover-swing {
 	from { transform: rotate(-17deg); }
 	to { transform: rotate(17deg); }
+}
+/* A segmented control (ToggleGroup): once measured, one raised piece slides
+   under the chosen option and the buttons stop drawing their own, hover
+   included. The hover is a second piece under the first, gliding between
+   options (see ToggleGroup). */
+.toggle-slide .toggle-thumb,
+.toggle-slide .toggle-hover { opacity: 0; }
+.toggle-slide[data-ready] .toggle-hover {
+	transition:
+		transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+		width 220ms cubic-bezier(0.23, 1, 0.32, 1),
+		opacity 150ms ease;
+}
+.toggle-slide[data-ready] .toggle-hover[data-on] { opacity: 1; }
+.toggle-slide[data-ready] .toggle-thumb {
+	opacity: 1;
+	transition: transform 0.32s var(--ease-out-soft), width 0.32s var(--ease-out-soft);
+}
+.toggle-slide[data-ready] > button {
+	background-color: transparent;
+	box-shadow: none;
+}
+/* The end of an exercise run (SummarySheet). Once the sheet is up the ring fills
+   from empty while the score rolls up on its wheels, as on a numbering stamp;
+   then the counts come in and, on a passed level, the stamp is pressed on. The
+   markup is the finished state, so reduced motion shows it at once. */
+.score-wheel {
+	display: inline-block;
+	height: 1em;
+	overflow: hidden;
+	vertical-align: top;
+}
+.score-strip {
+	display: flex;
+	flex-direction: column;
+	transform: translateY(calc(var(--n) * -1em));
+}
+.score-strip > span { height: 1em; line-height: 1; }
+.score-stamp {
+	position: absolute;
+	right: -2.6rem;
+	top: 0.1rem;
+	padding: 0.2rem 0.55rem;
+	border: 2.5px solid currentColor;
+	outline: 1px solid currentColor;
+	outline-offset: -5px;
+	border-radius: 0.4rem;
+	background: color-mix(in oklab, var(--surface) 75%, transparent);
+	color: var(--accent-fg);
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	transform: rotate(12deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+	.score-ring { animation: score-fill 0.9s cubic-bezier(0.3, 0.9, 0.3, 1) 0.25s backwards; }
+	.score-strip { animation: score-roll 0.9s cubic-bezier(0.3, 0.9, 0.3, 1) 0.25s backwards; }
+	.score-after { animation: fade-in 0.3s ease-out 1.05s backwards; }
+	.score-stamp { animation: score-stamp 0.36s cubic-bezier(0.3, 1.6, 0.5, 1) 1.2s backwards; }
+}
+@keyframes score-fill {
+	from { stroke-dashoffset: var(--full); }
+}
+@keyframes score-roll {
+	from { transform: translateY(0); }
+}
+@keyframes score-stamp {
+	from { opacity: 0; transform: rotate(20deg) scale(1.8); }
 }
 @media (hover: none), (prefers-reduced-motion: reduce) {
 	.cover-ink { stroke-dashoffset: 0; transition: none; }
@@ -1237,7 +1320,19 @@ body {
 .note-paper[data-paper-color]:not([data-paper-color='tema']) { background-color: var(--paper-bg); }
 
 /* The floating toolbar's labels: on hover after a beat, at once on keyboard
-   focus, on the side of the button that faces the sheet. */
+   focus, on the side of the button that faces the sheet. The beat is waited
+   once per visit to the toolbar: after it `--tip-warm` is 1 on the whole bar,
+   so moving to the next button shows its label straight away. */
+@property --tip-warm {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@keyframes tip-warm {
+	to { --tip-warm: 1; }
+}
+[data-dock]:hover,
+.tb-tip:hover { animation: tip-warm 350ms step-end forwards; }
 .tb-tip { position: relative; }
 .tb-tip::after {
 	content: attr(data-tip);
@@ -1253,10 +1348,11 @@ body {
 	font-weight: 500;
 	line-height: 1rem;
 	opacity: 0;
-	transition: opacity 120ms ease;
+	scale: 0.94;
+	transition: opacity 120ms ease, scale 180ms var(--ease-out-soft);
 }
-.tb-tip:hover::after { opacity: 1; transition-delay: 350ms; }
-.tb-tip:focus-visible::after { opacity: 1; }
+.tb-tip:hover::after { opacity: var(--tip-warm); scale: calc(0.94 + 0.06 * var(--tip-warm)); }
+.tb-tip:focus-visible::after { opacity: 1; scale: 1; }
 [data-dock='bottom'] .tb-tip::after { bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); }
 [data-dock='left'] .tb-tip::after { left: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
 [data-dock='right'] .tb-tip::after { right: calc(100% + 12px); top: 50%; transform: translateY(-50%); }

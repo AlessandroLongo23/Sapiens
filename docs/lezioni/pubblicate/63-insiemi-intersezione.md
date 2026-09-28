@@ -257,7 +257,7 @@ Portando $|A \cap B|$ a sinistra e $|A \cup B|$ a destra, la stessa formula cont
 
 $$|A \cap B| = |A| + |B| - |A \cup B|$$
 
-La somma $|A| + |B|$ conta due volte gli elementi comuni, una in $A$ e una in $B$, mentre $|A \cup B|$ li conta una volta sola: la differenza tra le due è proprio il numero degli elementi comuni. Per esempio, con $A = \{1, 2, 3, 4, 5\}$ e $B = \{2, 4, 6, 8\}$ dell'esempio 1 si ha $A \cup B = \{1, 2, 3, 4, 5, 6, 8\}$, con $7$ elementi, e infatti $|A \cap B| = 5 + 4 - 7 = 2$.
+La somma $|A| + |B|$ conta due volte gli elementi comuni, una in $A$ e una in $B$, mentre $|A \cup B|$ li conta una volta sola: la differenza tra le due è proprio il numero degli elementi comuni. Per esempio, con $A = \{1, 2, 3, 4, 5\}$ e $B = \{2, 4, 6, 8\}$ dell'esempio 1 si ha $A \cup B = \{1, 2, 3, 4, 5, 6, 8\}$, con $7$ elementi, e infatti $|A \cap B| = 5 + 4 - 7 = 2$. La stessa idea dà la probabilità dell'unione di due eventi: vedi [Probabilità della somma e dell'evento contrario](/materiale/scuola-superiore/matematica/probabilita/probabilita-della-somma-e-dell-evento-contrario).
 
 ```ad-tip
 Un controllo sul risultato

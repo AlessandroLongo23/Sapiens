@@ -117,7 +117,7 @@ In geometria una **figura** è un qualunque insieme di punti: una retta, un segm
 \end{tikzpicture}
 ```
 
-Due figure sono **congruenti** se si possono sovrapporre punto per punto con un movimento rigido, cioè spostandone una (traslandola, ruotandola, ribaltandola) senza deformarla. La congruenza si scrive con il simbolo $\cong$: $AB \cong CD$ si legge "$AB$ è congruente a $CD$". La congruenza dei triangoli, con i criteri per riconoscerla, è nella lezione [Triangoli e criteri di congruenza](/materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/triangoli-e-criteri-di-congruenza). Nei disegni i segmenti congruenti si segnano con lo stesso numero di trattini.
+Due figure sono **congruenti** se si possono sovrapporre punto per punto con un movimento rigido, cioè spostandone una ([traslandola, ruotandola, ribaltandola](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/trasformazioni-geometriche)) senza deformarla. La congruenza si scrive con il simbolo $\cong$: $AB \cong CD$ si legge "$AB$ è congruente a $CD$". La congruenza dei triangoli, con i criteri per riconoscerla, è nella lezione [Triangoli e criteri di congruenza](/materiale/scuola-superiore/matematica/geometria-del-piano-triangoli-e-quadrilateri/triangoli-e-criteri-di-congruenza). Nei disegni i segmenti congruenti si segnano con lo stesso numero di trattini.
 
 ## Confronto e somma di segmenti
 

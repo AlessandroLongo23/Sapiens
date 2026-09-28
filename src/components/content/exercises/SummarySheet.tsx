@@ -1,11 +1,38 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, type CSSProperties, type ReactNode } from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { Sheet } from '@/components/ui/Sheet';
+import { useReducedMotion } from '@/lib/hooks/use-media';
 
 const RADIUS = 44;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+/** When the stamp lands, in ms after the sheet opens: after the ring has filled (see `.score-stamp`). */
+const STAMP_LANDS = 1450;
+
+/**
+ * A number rolled up from zero, one wheel per digit, as on a numbering stamp. A tens wheel that turns makes the units
+ * wheel go all the way round, so 10 rolls through every digit and does not sit still at 0.
+ */
+function Rolling({ value }: { value: number }) {
+	const tens = Math.floor(value / 10);
+	const units = value % 10;
+	const wheel = (to: number, length: number) => (
+		<span className="score-wheel">
+			<span className="score-strip" style={{ '--n': to } as CSSProperties}>
+				{Array.from({ length }, (_, i) => (
+					<span key={i}>{i % 10}</span>
+				))}
+			</span>
+		</span>
+	);
+	return (
+		<>
+			{tens > 0 && wheel(tens, 10)}
+			{wheel(tens > 0 ? units + 10 : units, tens > 0 ? 20 : 10)}
+		</>
+	);
+}
 
 interface Props {
 	open: boolean;
@@ -29,6 +56,20 @@ export function SummarySheet({ open, correct, total, passed, title, detail, acti
 	const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
 	const wrong = Math.max(0, total - correct);
 	const ring = passed ? 'stroke-ok' : percent >= 50 ? 'stroke-warn' : 'stroke-accent';
+	const still = useReducedMotion();
+
+	// The stamp is felt as well as seen, where the phone can do it.
+	useEffect(() => {
+		if (!open || !passed || still) return;
+		const timer = setTimeout(() => {
+			try {
+				navigator.vibrate?.(12);
+			} catch {
+				// Not every browser lets a page vibrate.
+			}
+		}, STAMP_LANDS);
+		return () => clearTimeout(timer);
+	}, [open, passed, still]);
 
 	return (
 		<Sheet open={open} onClose={onClose} title={title} hideTitle align="center" width="sm" footer={<div className="flex flex-col gap-2">{actions}</div>}>
@@ -37,15 +78,20 @@ export function SummarySheet({ open, correct, total, passed, title, detail, acti
 				<div className="relative size-32" role="img" aria-label={`${correct} risposte corrette su ${total}, ${percent} per cento`}>
 					<svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden="true">
 						<circle cx="50" cy="50" r={RADIUS} className="fill-none stroke-surface-4" strokeWidth="8" />
-						<circle cx="50" cy="50" r={RADIUS} className={`fill-none transition-[stroke-dashoffset] duration-700 ease-out ${ring}`} strokeWidth="8" strokeLinecap="round" strokeDasharray={CIRCUMFERENCE} strokeDashoffset={CIRCUMFERENCE * (1 - percent / 100)} />
+						<circle cx="50" cy="50" r={RADIUS} className={`score-ring fill-none ${ring}`} style={{ '--full': CIRCUMFERENCE } as CSSProperties} strokeWidth="8" strokeLinecap="round" strokeDasharray={CIRCUMFERENCE} strokeDashoffset={CIRCUMFERENCE * (1 - percent / 100)} />
 					</svg>
 					<div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
 						<span className="font-display text-4xl font-medium leading-none tracking-tight text-fg-strong tabular-nums">
-							{correct}
+							<Rolling value={correct} />
 							<span className="text-xl text-fg-subtle">/{total}</span>
 						</span>
 						<span className="label-mono mt-1.5 text-fg-subtle">{percent}%</span>
 					</div>
+					{passed && (
+						<span className="score-stamp" aria-hidden="true">
+							Superato
+						</span>
+					)}
 				</div>
 				<div className="flex flex-col gap-1">
 					<p className="font-display text-2xl font-semibold text-fg-strong" aria-hidden="true">
@@ -53,7 +99,7 @@ export function SummarySheet({ open, correct, total, passed, title, detail, acti
 					</p>
 					<p className="text-balance text-fg-muted">{detail}</p>
 				</div>
-				<dl className="flex items-center justify-center gap-6 pb-2 text-base font-semibold">
+				<dl className="score-after flex items-center justify-center gap-6 pb-2 text-base font-semibold">
 					<div className="flex items-center gap-2 text-ok-fg">
 						<CheckCircle2 className="size-5" aria-hidden="true" />
 						<dd>{correct}</dd>

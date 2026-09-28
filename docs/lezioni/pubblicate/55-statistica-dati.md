@@ -55,7 +55,7 @@ La **frequenza relativa** $f_r$ è la frequenza assoluta divisa per il numero to
 
 $$f_r = \dfrac{f_a}{N}$$
 
-È un numero tra $0$ e $1$, che si scrive come frazione o con la virgola, e la somma delle frequenze relative di tutte le modalità è $1$. Serve a confrontare gruppi di grandezza diversa: $6$ studenti su $20$ sono più di $8$ studenti su $40$, perché $\dfrac{6}{20} = 0{,}3$ e $\dfrac{8}{40} = 0{,}2$.
+È un numero tra $0$ e $1$, che si scrive come frazione o con la virgola, e la somma delle frequenze relative di tutte le modalità è $1$. Ripetendo un esperimento molte volte, la frequenza relativa serve anche a stimare una probabilità: vedi [Eventi e probabilità](/materiale/scuola-superiore/matematica/probabilita/eventi-e-probabilita). Serve a confrontare gruppi di grandezza diversa: $6$ studenti su $20$ sono più di $8$ studenti su $40$, perché $\dfrac{6}{20} = 0{,}3$ e $\dfrac{8}{40} = 0{,}2$.
 
 La **frequenza percentuale** è la frequenza relativa scritta come percentuale, cioè moltiplicata per $100$: una frequenza relativa di $0{,}3$ è il $30\%$. La somma delle frequenze percentuali è $100\%$. I conti con le percentuali sono quelli di [Rapporti, proporzioni e percentuali](/materiale/scuola-superiore/matematica/numeri-razionali/rapporti-proporzioni-e-percentuali).
 

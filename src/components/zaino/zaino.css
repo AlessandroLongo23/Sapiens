@@ -338,3 +338,32 @@
 		background-color: var(--surface);
 	}
 }
+
+/* A deleted note being crumpled (NoteCrumple): the card stays in the grid, hidden under the paper ball, which lives
+   inside it and so scrolls with the page; its title fades, and the card comes over its neighbours for the ball to
+   fall in front of them. The ball drops away before the card leaves. */
+[data-crumpled] {
+	z-index: 20;
+}
+[data-crumpled] .zn-page,
+[data-crumpled]:not(:has(.zn-page)) {
+	visibility: hidden;
+}
+[data-crumpled] > :not(a, .zn-crumple) {
+	opacity: 0;
+	transition: opacity 0.2s ease-out;
+}
+.zn-crumple {
+	position: absolute;
+	z-index: 1;
+	pointer-events: none;
+	filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.16));
+}
+/* The ball falls as a ball would, gathering speed, and is gone before it lands. */
+.zn-crumple.is-dropping {
+	transform: translateY(120px) rotate(40deg);
+	opacity: 0;
+	transition:
+		transform 0.38s cubic-bezier(0.55, 0, 0.9, 0.5),
+		opacity 0.38s cubic-bezier(0.7, 0, 1, 0.5);
+}

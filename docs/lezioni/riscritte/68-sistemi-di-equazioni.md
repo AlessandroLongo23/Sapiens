@@ -64,7 +64,7 @@ $$
 
 I numeri $a$, $b$, $a'$, $b'$ sono i coefficienti delle incognite, $c$ e $c'$ i termini noti. Per portare un'equazione in forma normale si usano i principi di equivalenza, come nelle equazioni di primo grado. Per esempio $2(x - 1) + y = 3x - 4$ diventa $2x - 2 + y = 3x - 4$, poi $-x + y = -2$ e, cambiando segno a tutti i termini, $x - y = 2$.
 
-Il **grado del sistema** è il prodotto dei gradi delle sue equazioni, lette in forma normale. Un sistema di due equazioni di primo grado ha grado $1 \cdot 1 = 1$ e si chiama **sistema lineare**; il sistema formato da $x + y = 5$ e $xy = 6$ ha grado $1 \cdot 2 = 2$ e si risolve con le equazioni di secondo grado, nella lezione sui sistemi di secondo grado. In questa lezione tutti i sistemi sono lineari.
+Il **grado del sistema** è il prodotto dei gradi delle sue equazioni, lette in forma normale. Un sistema di due equazioni di primo grado ha grado $1 \cdot 1 = 1$ e si chiama **sistema lineare**; il sistema formato da $x + y = 5$ e $xy = 6$ ha grado $1 \cdot 2 = 2$ e si risolve con le equazioni di secondo grado, nella lezione [Sistemi di secondo grado](/materiale/scuola-superiore/matematica/equazioni-e-disequazioni-di-grado-superiore/sistemi-di-secondo-grado). In questa lezione tutti i sistemi sono lineari.
 
 ## Metodo di sostituzione
 

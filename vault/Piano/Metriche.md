@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-26
+aggiornato: 2026-09-28
 tag: [piano]
 ---
 # Metriche
@@ -21,7 +21,7 @@ Senza interviste (vedi [[2026-09-23 Niente interviste, il prodotto nasce dall'es
 - Commenti lasciati dentro l'app.
 
 ## Stato attuale
-Dal 26 settembre 2026 la pagina `/admin/metriche` (solo admin) mostra, per settimana di iscrizione in ora di Roma: iscritti, attivati (una prova finita entro 7 giorni), passaggio al pagamento (chi ha pagato almeno una volta, su chi ha finito la settimana gratuita) e ritorno alla quarta settimana (risposte tra il 21° e il 27° giorno, su chi si è iscritto da almeno 28 giorni). Esclude gli account admin e quelli di prova `@example.com`; solo conteggi, nessun dato del singolo studente. I numeri vengono dalla funzione `beta_metrics()` (migrazione `20260926140000_beta_metrics.sql`, applicata), che può chiamare solo il server. Il webhook di Stripe segna `firstPaidAt` in `app_metadata` al primo pagamento, dal 26 settembre 2026: i pagamenti di prima non sono contati. Mancano ancora disdette e motivo, costo dell'AI, commenti dentro l'app. Funzione 7 di [[Progressi dello studente]].
+Dal 26 settembre 2026 la pagina `/admin/metriche` (solo admin) mostra, per settimana di iscrizione in ora di Roma: iscritti, attivati (una prova finita entro 7 giorni), passaggio al pagamento (chi ha pagato almeno una volta, su chi ha finito la settimana gratuita) e ritorno alla quarta settimana (risposte tra il 21° e il 27° giorno, su chi si è iscritto da almeno 28 giorni). Esclude gli account admin e quelli di prova `@example.com`; solo conteggi, nessun dato del singolo studente. I numeri vengono dalla funzione `beta_metrics()` (migrazione `20260926140000_beta_metrics.sql`, applicata), che può chiamare solo il server. Il webhook di Stripe segna `firstPaidAt` in `app_metadata` al primo pagamento, dal 26 settembre 2026: i pagamenti di prima non sono contati. Dal 28 settembre la fine della prova si conta per account (14 giorni per chi è arrivato con un codice), e `/admin/inviti` conta iscritti, attivati e paganti per codice di creator. Mancano ancora disdette e motivo, costo dell'AI, commenti dentro l'app. Funzione 7 di [[Progressi dello studente]].
 
 ## Domande aperte
 - Strumento di analisi del prodotto oltre a Vercel Analytics? Con il consenso, e rispettando i minori.

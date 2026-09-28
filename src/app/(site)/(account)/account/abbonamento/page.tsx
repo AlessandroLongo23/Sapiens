@@ -16,12 +16,12 @@ const usage = (used: number, max: number | null) => (max === null ? `${used}, se
 export default async function PlanPage() {
 	const { supabase, user } = await getSession();
 	if (!user) return null;
-	const { plan, source, subscription, passUntil, trialUntil } = accountPlan(user);
+	const { plan, source, subscription, passUntil, bonusUntil, trialUntil } = accountPlan(user);
 	const quota = await getQuota(supabase, user).catch(() => null);
 	return (
 		<>
 			<SectionHeader title="Abbonamento" lead="Il tuo piano, il metodo di pagamento e le ricevute." />
-			<SubscriptionPanel subscription={subscription} state={{ signedIn: true, planId: plan.id, source, passUntil, trialUntil, passOnSale: passOnSale(), passEnd: passEnd() }} />
+			<SubscriptionPanel subscription={subscription} state={{ signedIn: true, planId: plan.id, source, passUntil, bonusUntil, trialUntil, passOnSale: passOnSale(), passEnd: passEnd() }} />
 			{quota && (
 				<div className="mt-12">
 					<SettingsGroup title="Nello Zaino" description={quota.unlimited ? 'Con il tuo piano quaderni e note non hanno limite.' : 'Il piano Free ha un quaderno e cinque note; Studio non ha limiti.'}>

@@ -21,6 +21,8 @@ function summary(state: PlanState): { badge: { text: string; tone: BadgeTone }; 
 	const studio = SUBSCRIPTION_PLANS.STUDIO;
 	if (state.source === 'pass' && state.passUntil)
 		return { badge: STATUS.active, lines: [`Attivo fino al ${formatDay(state.passUntil)}`, 'Pagamento unico: non si rinnova'], price: null };
+	if (state.source === 'bonus' && state.bonusUntil)
+		return { badge: { text: 'Studio con gli inviti', tone: 'info' }, lines: [`Studio fino al ${formatDay(state.bonusUntil)}`, 'Senza carta: alla fine passi al piano Free, senza addebiti'], price: null };
 	if (state.source === 'trial' && state.trialUntil)
 		return { badge: { text: 'Prova gratuita', tone: 'info' }, lines: [`Prova di Studio fino al ${formatDay(state.trialUntil)}`, 'Senza carta: alla fine passi al piano Free, senza addebiti'], price: null };
 	if (state.source === 'subscription') return { badge: STATUS.active, lines: ['Pagamento automatico mensile'], price: formatPrice(studio.price, studio.currency) };

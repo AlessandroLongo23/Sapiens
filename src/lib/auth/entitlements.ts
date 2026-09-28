@@ -2,10 +2,13 @@ import type { User } from '@supabase/supabase-js';
 import { SUBSCRIPTION_PLANS, TRIAL_DAYS, Features, getPlanById, romeDate, type SubscriptionPlan } from '@/lib/stripe/config';
 
 /**
- * What a user is allowed to use. Three things give Studio, in this order: a
+ * What a user is allowed to use. Four things give Studio, in this order: a
  * subscription the Stripe webhook writes into `app_metadata.subscription`, a
- * paid "until June" pass in `app_metadata.pass`, and the first TRIAL_DAYS days
- * after the account was created (the reverse trial). `app_metadata` can only be
+ * paid "until June" pass in `app_metadata.pass`, days earned by inviting
+ * friends in `app_metadata.bonus` (written by the database, see
+ * src/lib/referrals/config.ts), and the first TRIAL_DAYS days after the
+ * account was created (the reverse trial; `app_metadata.trialDays` when the
+ * account came with an invite code). `app_metadata` can only be
  * edited with the service role, unlike `user_metadata`. Used on the server to
  * gate data and on the client to decide what to show; the server decision is
  * the one that counts.
@@ -34,8 +37,14 @@ export interface PassClaim {
 	purchasedAt?: string;
 }
 
+/** Days of Studio earned with invites: the last one, YYYY-MM-DD, Rome time. */
+export interface BonusClaim {
+	plan: string;
+	until: string;
+}
+
 /** Where the plan in force comes from. */
-export type PlanSource = 'subscription' | 'pass' | 'trial' | 'free';
+export type PlanSource = 'subscription' | 'pass' | 'bonus' | 'trial' | 'free';
 
 const FREE: SubscriptionClaim = { plan: SUBSCRIPTION_PLANS.FREE.id, status: 'active' };
 
@@ -56,10 +65,18 @@ export function passOf(user: MaybeUser, now: Date = new Date()): PassClaim | nul
 	return pass.until >= romeDate(now) ? (pass as PassClaim) : null;
 }
 
-/** When the reverse trial ends: TRIAL_DAYS after the account was created. */
+/** Days earned with invites, while they last: null once the last one is over. */
+export function bonusOf(user: MaybeUser, now: Date = new Date()): BonusClaim | null {
+	const bonus = user?.app_metadata?.bonus as Partial<BonusClaim> | undefined;
+	if (!bonus || typeof bonus.plan !== 'string' || typeof bonus.until !== 'string') return null;
+	return bonus.until >= romeDate(now) ? (bonus as BonusClaim) : null;
+}
+
+/** When the reverse trial ends: TRIAL_DAYS after the account was created, or the longer trial an invite gave. */
 export function trialEnd(user: MaybeUser): Date | null {
 	const created = user?.created_at ? Date.parse(user.created_at) : NaN;
-	return Number.isFinite(created) ? new Date(created + TRIAL_DAYS * 86_400_000) : null;
+	const days = Number(user?.app_metadata?.trialDays);
+	return Number.isFinite(created) ? new Date(created + (Number.isInteger(days) && days > 0 ? days : TRIAL_DAYS) * 86_400_000) : null;
 }
 
 /** The plan in force and what gives it. */
@@ -68,6 +85,8 @@ export function planOf(user: MaybeUser, now: Date = new Date()): { plan: Subscri
 	if (claim.plan !== SUBSCRIPTION_PLANS.FREE.id && ENTITLING_STATUSES.has(claim.status)) return { plan: getPlanById(claim.plan), source: 'subscription' };
 	const pass = passOf(user, now);
 	if (pass) return { plan: getPlanById(pass.plan), source: 'pass' };
+	const bonus = bonusOf(user, now);
+	if (bonus) return { plan: getPlanById(bonus.plan), source: 'bonus' };
 	const end = trialEnd(user);
 	if (end && now < end) return { plan: SUBSCRIPTION_PLANS.STUDIO, source: 'trial' };
 	return { plan: SUBSCRIPTION_PLANS.FREE, source: 'free' };

@@ -15,6 +15,7 @@ export const metadata: Metadata = pageMetadata({
 
 const COOKIES = [
 	{ name: 'sb-…-auth-token', category: 'Necessario', purpose: 'Sessione di accesso (Supabase). Presente solo dopo il login.', duration: 'Fino al logout, rinnovato mentre usi il sito' },
+	{ name: 'sapiens_invito', category: 'Necessario', purpose: "Presente solo se, aperto un link di invito, scegli \"Usa l'invito\": ricorda il codice mentre crei l'account, così hai la prova più lunga. Aprire il link non salva niente. Il codice fa sapere anche a chi l'ha condiviso che ti sei iscritto.", duration: '3 ore' },
 	{ name: CONSENT_COOKIE, category: 'Necessario', purpose: 'Ricorda la tua scelta sui cookie, con data e versione di questa policy.', duration: '6 mesi' },
 	{ name: 'theme, theme-explicit (archiviazione locale)', category: 'Necessario', purpose: "Tema chiaro o scuro scelto con il pulsante nell'intestazione. Non è un cookie e non lascia mai il tuo browser.", duration: 'Finché non cancelli i dati del sito' }
 ];

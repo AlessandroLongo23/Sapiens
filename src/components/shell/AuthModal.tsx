@@ -4,6 +4,8 @@ import { useState, type FormEvent } from 'react';
 import { Lock, Mail, User, X } from 'lucide-react';
 import { useAuth } from '@/lib/state/auth';
 import { LEGAL, LEGAL_VERSIONS } from '@/lib/config/legal';
+import { REFERRAL, normalizeCode } from '@/lib/referrals/config';
+import { TRIAL_DAYS } from '@/lib/stripe/config';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
@@ -33,12 +35,20 @@ function IconInput({ icon: Icon, label, ...rest }: { icon?: IconComponent; label
 	);
 }
 
+/** The code of the invite the visitor chose to use (InviteOffer keeps it in a cookie for a few hours), if any. */
+function inviteCode(): string | null {
+	if (typeof document === 'undefined') return null;
+	const cookie = document.cookie.split('; ').find((c) => c.startsWith(`${REFERRAL.cookie}=`));
+	return cookie ? normalizeCode(decodeURIComponent(cookie.slice(REFERRAL.cookie.length + 1))) : null;
+}
+
 /** Login and registration in one dialog; registration records the accepted document versions with the account. */
 export function AuthModal() {
 	const { modalOpen, modalRegister: register, closeModal, setRegister, completeLogin } = useAuth();
 	const [form, setForm] = useState({ email: '', password: '', name: '', surname: '', terms: false, age: false });
 	const [status, setStatus] = useState<{ error?: string; notice?: string; loading?: boolean }>({});
 	const canSubmit = !register || (form.terms && form.age);
+	const invite = modalOpen && register ? inviteCode() : null;
 	// Typing clears an error; a notice (the confirmation email) stays until the dialog closes.
 	const field = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
 		setForm({ ...form, [key]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
@@ -71,6 +81,8 @@ export function AuthModal() {
 					data: {
 						first_name: form.name.trim(),
 						last_name: form.surname.trim(),
+						// Read by the database when the account is created: a valid code gives the longer trial.
+						...(invite ? { [REFERRAL.param]: invite } : {}),
 						// Record of what was accepted at signup, with the document versions.
 						legal: { terms: LEGAL_VERSIONS.terms, privacy: LEGAL_VERSIONS.privacy, age_declaration: `over_${LEGAL.digitalConsentAge}_or_parent`, accepted_at: new Date().toISOString() }
 					}
@@ -137,6 +149,7 @@ export function AuthModal() {
 							</label>
 						</div>
 					)}
+					{invite && !status.notice && <Alert tone="success">Sei qui con un invito: la prova di Studio dura {REFERRAL.trialDays} giorni invece di {TRIAL_DAYS}, senza carta.</Alert>}
 					{status.error && <Alert tone="error">{status.error}</Alert>}
 					{status.notice && <Alert tone="success">{status.notice}</Alert>}
 					<Button type="submit" size="lg" className="mt-2 w-full" disabled={!canSubmit} loading={status.loading}>

@@ -169,7 +169,7 @@ Con la calcolatrice, quando è permessa, calcola l'espressione di partenza e il 
 
 ## Equazioni e disequazioni con coefficienti irrazionali
 
-Un'equazione di primo grado può avere coefficienti irrazionali, come $\sqrt{3}\,x - 2 = x$. Si risolve con i principi di equivalenza delle [equazioni di primo grado](/materiale/scuola-superiore/matematica/equazioni-di-primo-grado/equazioni-di-primo-grado-intere): porti i termini con $x$ a primo membro, raccogli $x$ e dividi per il coefficiente. Il coefficiente però è un'espressione con i radicali, e la soluzione va scritta come il risultato di un'espressione: semplificata e con il denominatore razionalizzato.
+Un'equazione di primo grado può avere coefficienti irrazionali, come $\sqrt{3}\,x - 2 = x$. Non è un'[equazione irrazionale](/materiale/scuola-superiore/matematica/equazioni-e-disequazioni-di-grado-superiore/equazioni-e-disequazioni-irrazionali), perché l'incognita non sta sotto la radice. Si risolve con i principi di equivalenza delle [equazioni di primo grado](/materiale/scuola-superiore/matematica/equazioni-di-primo-grado/equazioni-di-primo-grado-intere): porti i termini con $x$ a primo membro, raccogli $x$ e dividi per il coefficiente. Il coefficiente però è un'espressione con i radicali, e la soluzione va scritta come il risultato di un'espressione: semplificata e con il denominatore razionalizzato.
 
 Per esempio da $\sqrt{8}\,x - \sqrt{2}\,x = 4$ ottieni $2\sqrt{2}\,x - \sqrt{2}\,x = 4$, cioè $\sqrt{2}\,x = 4$, e dividendo per $\sqrt{2}$:
 
