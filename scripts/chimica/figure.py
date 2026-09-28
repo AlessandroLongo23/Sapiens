@@ -25,6 +25,8 @@ Blocchi:
   CCO | etanolo
   CC(=O)O | acido acetico
 
+  freccia: risonanza                    una freccia a due punte (↔) tra le molecole vicine di una riga
+
   (le opzioni di `molecola` valgono per tutte; una riga può aggiungere `| evidenzia: ...`)
 
   ```reazione        uno schema di reazione
@@ -300,13 +302,26 @@ def figure_molecola(meta: dict, rows: list[str]) -> dict:
 	return {'svg': themable(svg), 'width': w, 'height': h, 'dati': mol_data(mol_from(meta['smiles']))}
 
 
+ARROW_GAP = 56
+
+
+def resonance_arrow(x0: float, x1: float, y: float) -> str:
+	"""La freccia a due punte delle formule limite, in tracciati come il resto del disegno (colore dell'inchiostro)."""
+	head = 7
+	style = "style='fill:none;stroke:#000000;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round'"
+	return (f"<path {style} d='M {x0:.1f},{y:.1f} L {x1:.1f},{y:.1f}' />"
+		f"<path {style} d='M {x0 + head:.1f},{y - head:.1f} L {x0:.1f},{y:.1f} L {x0 + head:.1f},{y + head:.1f}' />"
+		f"<path {style} d='M {x1 - head:.1f},{y - head:.1f} L {x1:.1f},{y:.1f} L {x1 - head:.1f},{y + head:.1f}' />")
+
+
 def figure_molecole(meta: dict, rows: list[str]) -> dict:
 	"""Una tabella: ogni molecola disegnata nella stessa cella, poi affiancate in una griglia SVG."""
 	cols = int(meta.get('colonne') or 3)
+	arrow = meta.get('freccia') == 'risonanza'
 	cells, data = [], []
 	for row in rows:
 		parts = [p.strip() for p in row.split('|')]
-		cell = {k: v for k, v in meta.items() if k not in ('nome', 'alt', 'colonne')}
+		cell = {k: v for k, v in meta.items() if k not in ('nome', 'alt', 'colonne', 'freccia')}
 		cell['smiles'] = parts[0]
 		cell['legenda'] = parts[1] if len(parts) > 1 else ''
 		for extra in parts[2:]:
@@ -317,13 +332,20 @@ def figure_molecole(meta: dict, rows: list[str]) -> dict:
 	drawn = [draw_mol(cell) for cell in cells]
 	cw = max(w for _, w, _ in drawn) + 16
 	ch = max(h for _, _, h in drawn) + 8
+	# Tra due celle vicine, lo spazio per la freccia; la freccia sta a metà del disegno, sopra la legenda.
+	gap = ARROW_GAP if arrow else 0
 	parts = []
 	for i, (svg, w, h) in enumerate(drawn):
 		inner = re.search(r'<!-- END OF HEADER -->(.*)</svg>', svg, re.S).group(1)
-		x, y = (i % cols) * cw + (cw - w) / 2, (i // cols) * ch + (ch - h)
+		x, y = (i % cols) * (cw + gap) + (cw - w) / 2, (i // cols) * ch + (ch - h)
 		parts.append(f"<g transform='translate({x:.1f},{y:.1f})'>{inner}</g>")
+		if arrow and i % cols < cols - 1 and i + 1 < len(cells):
+			ax = (i % cols + 1) * (cw + gap) - gap + 8
+			ay = (i // cols) * ch + (ch - (LEGEND if cells[i]['legenda'] else 0)) / 2 + 4
+			parts.append(resonance_arrow(ax, ax + gap - 16, ay))
 	rows_n = (len(cells) + cols - 1) // cols
-	W, H = cw * min(cols, len(cells)), ch * rows_n
+	n = min(cols, len(cells))
+	W, H = cw * n + gap * (n - 1), ch * rows_n
 	svg = (f"<svg version='1.1' xmlns='http://www.w3.org/2000/svg' width='{W}px' height='{H}px' viewBox='0 0 {W} {H}'>"
 		f"<!-- END OF HEADER -->{''.join(parts)}</svg>")
 	return {'svg': themable(svg), 'width': W, 'height': H, 'dati': data}

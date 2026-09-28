@@ -26,9 +26,10 @@ Per il benzene si possono scrivere due formule di Kekulé, che differiscono solo
 
 ```molecole
 % nome: benzene-formule-limite
-% alt: Le due formule limite del benzene una accanto all'altra: lo stesso esagono con gli idrogeni, ma i tre legami doppi stanno nei lati dove l'altra formula ha i legami semplici
-% svg: benzene-formule-limite-6bacebf8.svg 344x168
+% alt: Le due formule limite del benzene una accanto all'altra, unite da una freccia a due punte: lo stesso esagono con gli idrogeni, ma i tre legami doppi stanno nei lati dove l'altra formula ha i legami semplici
+% svg: benzene-formule-limite-39b91206.svg 400x168
 colonne: 2
+freccia: risonanza
 idrogeni: tutti
 carboni: si
 c1ccccc1 | formula limite 1
