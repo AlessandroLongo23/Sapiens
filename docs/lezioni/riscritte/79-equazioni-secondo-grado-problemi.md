@@ -271,7 +271,7 @@ Chiama $x$ il cateto minore, in centimetri. L'altro cateto è $x + 7$, e un cate
 \end{tikzpicture}
 ```
 
-Per il teorema di Pitagora la somma dei quadrati dei cateti è il quadrato dell'ipotenusa:
+Per il [teorema di Pitagora](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/teoremi-di-pitagora-e-di-euclide) la somma dei quadrati dei cateti è il quadrato dell'ipotenusa:
 
 $$
 \begin{gathered}

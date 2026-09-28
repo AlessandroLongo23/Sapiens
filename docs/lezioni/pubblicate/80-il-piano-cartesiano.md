@@ -129,7 +129,7 @@ Per $A(-3, 2)$ e $B(4, 2)$ si scrive $4 - (-3) = 7$, con le parentesi. Il conto 
 
 ### Segmenti obliqui
 
-Se $A$ e $B$ non stanno sulla stessa retta orizzontale né sulla stessa verticale, il segmento $AB$ è obliquo. Prendi il punto $H(x_B, y_A)$, che ha l'ascissa di $B$ e l'ordinata di $A$: il triangolo $AHB$ è rettangolo in $H$, perché $AH$ è orizzontale e $HB$ è verticale. I cateti si misurano come nella sezione precedente, $\overline{AH} = |x_B - x_A|$ e $\overline{HB} = |y_B - y_A|$, e $AB$ è l'ipotenusa. Per il teorema di Pitagora
+Se $A$ e $B$ non stanno sulla stessa retta orizzontale né sulla stessa verticale, il segmento $AB$ è obliquo. Prendi il punto $H(x_B, y_A)$, che ha l'ascissa di $B$ e l'ordinata di $A$: il triangolo $AHB$ è rettangolo in $H$, perché $AH$ è orizzontale e $HB$ è verticale. I cateti si misurano come nella sezione precedente, $\overline{AH} = |x_B - x_A|$ e $\overline{HB} = |y_B - y_A|$, e $AB$ è l'ipotenusa. Per il [teorema di Pitagora](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/teoremi-di-pitagora-e-di-euclide)
 
 $$\overline{AB}^{\,2} = \overline{AH}^{\,2} + \overline{HB}^{\,2}$$
 
@@ -426,7 +426,7 @@ Con $A(-1, -2)$, $B(5, 0)$ e $C(2, 5)$ si ha $x_G = \dfrac{6}{3} = 2$ e $y_G = \
 
 ## Triangoli e quadrilateri con le coordinate
 
-Con la distanza e il punto medio si riconosce una figura dalle coordinate dei suoi vertici. Per un triangolo si calcolano i tre lati: se due sono uguali il triangolo è isoscele, se lo sono tutti e tre è equilatero. Se il quadrato del lato più lungo è uguale alla somma dei quadrati degli altri due, il triangolo è rettangolo (vale l'inverso del teorema di Pitagora), e l'angolo retto è opposto al lato più lungo. Per confrontare i lati conviene usare i quadrati delle distanze: niente radici e niente approssimazioni.
+Con la distanza e il punto medio si riconosce una figura dalle coordinate dei suoi vertici. Per un triangolo si calcolano i tre lati: se due sono uguali il triangolo è isoscele, se lo sono tutti e tre è equilatero. Se il quadrato del lato più lungo è uguale alla somma dei quadrati degli altri due, il triangolo è rettangolo (vale l'[inverso del teorema di Pitagora](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/teoremi-di-pitagora-e-di-euclide)), e l'angolo retto è opposto al lato più lungo. Per confrontare i lati conviene usare i quadrati delle distanze: niente radici e niente approssimazioni.
 
 ```ad-example
 Esempio 7: perimetro e area di un triangolo isoscele

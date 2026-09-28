@@ -595,7 +595,7 @@ $$S = (n - 2) \cdot 180^\circ$$
 
 Il pentagono della figura ha $5$ lati e si divide in $3$ triangoli: la somma dei suoi angoli è $3 \cdot 180^\circ = 540^\circ$. Per un quadrilatero la somma è $2 \cdot 180^\circ = 360^\circ$, per un esagono $4 \cdot 180^\circ = 720^\circ$.
 
-Un poligono con tutti i lati e tutti gli angoli congruenti si dice regolare, e ciascuno dei suoi $n$ angoli misura $S : n$. Per l'esagono regolare: $720^\circ : 6 = 120^\circ$.
+Un poligono con tutti i lati e tutti gli angoli congruenti si dice [regolare](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/poligoni-inscritti-e-circoscritti), e ciascuno dei suoi $n$ angoli misura $S : n$. Per l'esagono regolare: $720^\circ : 6 = 120^\circ$.
 
 ```ad-note
 Gli angoli esterni

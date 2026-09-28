@@ -848,5 +848,77 @@
     "path": "high_school/math/probabilita/leggi-probabilita",
     "chapter": "Probabilità",
     "new": true
+  },
+  {
+    "id": "7b496291-4ff4-4b48-b7c9-6efd510b0e54",
+    "title": "Circonferenza e cerchio",
+    "slug": "circonferenza-cerchio",
+    "path": "high_school/math/geometria-piano-circonferenza/circonferenza-cerchio",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "5e994234-9112-41d7-b6eb-77138284df19",
+    "title": "Poligoni inscritti e circoscritti",
+    "slug": "poligoni-inscritti",
+    "path": "high_school/math/geometria-piano-circonferenza/poligoni-inscritti",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "8b9bf04c-a369-4602-94ea-a8a0d53dc428",
+    "title": "Equivalenza e aree",
+    "slug": "equivalenza-aree",
+    "path": "high_school/math/geometria-piano-circonferenza/equivalenza-aree",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "68ae25b0-f986-46cd-ad86-8cf03454bc04",
+    "title": "Lunghezza della circonferenza e area del cerchio",
+    "slug": "circonferenza-lunghezza-area",
+    "path": "high_school/math/geometria-piano-circonferenza/circonferenza-lunghezza-area",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "a7e19e1d-8373-47b2-ad02-d044f6506abd",
+    "title": "Teoremi di Pitagora e di Euclide",
+    "slug": "teorema-di-pitagora",
+    "path": "high_school/math/geometria-piano-circonferenza/teorema-di-pitagora",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "04b6bc08-1666-4d6b-8217-b80c5dc1c8db",
+    "title": "Seno, coseno e tangente nel triangolo rettangolo",
+    "slug": "triangolo-rettangolo-trigonometria",
+    "path": "high_school/math/geometria-piano-circonferenza/triangolo-rettangolo-trigonometria",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "70621633-3ae5-4e93-98bd-4dd1fd1a5f7c",
+    "title": "Teorema di Talete",
+    "slug": "teorema-di-talete",
+    "path": "high_school/math/geometria-piano-circonferenza/teorema-di-talete",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "7d702675-f96f-4dd0-bec4-ad05f27e6530",
+    "title": "Similitudine",
+    "slug": "similitudine",
+    "path": "high_school/math/geometria-piano-circonferenza/similitudine",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
+  },
+  {
+    "id": "ba22cc64-a4a9-4228-9ffc-35dd0121b99b",
+    "title": "Trasformazioni geometriche",
+    "slug": "trasformazioni-geometriche",
+    "path": "high_school/math/geometria-piano-circonferenza/trasformazioni-geometriche",
+    "chapter": "Geometria del piano: circonferenza, aree e similitudine",
+    "new": true
   }
 ]

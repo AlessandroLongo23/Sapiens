@@ -166,9 +166,9 @@ dal titolo. Le righe `#` sono solo per chi legge.
 - circonferenza-lunghezza-area | Lunghezza della circonferenza e area del cerchio
 - teorema-di-pitagora | Teoremi di Pitagora e di Euclide
   + teorema-di-euclide
-- triangolo-rettangolo-trigonometria | Seno, coseno e tangente nel triangolo rettangolo
 - teorema-di-talete | Teorema di Talete
 - similitudine | Similitudine
+- triangolo-rettangolo-trigonometria | Seno, coseno e tangente nel triangolo rettangolo
 - trasformazioni-geometriche | Trasformazioni geometriche
 
 # Terzo anno

@@ -156,6 +156,17 @@ sistemi-secondo-grado <- sistemi-di-equazioni, equazioni-secondo-grado-relazioni
 concetti-probabilita <- insiemi-differenza, statistica-dati
 leggi-probabilita <- concetti-probabilita
 
+## Geometria del piano: circonferenza, aree e similitudine
+circonferenza-cerchio <- geometria-punti-notevoli
+poligoni-inscritti <- circonferenza-cerchio, geometria-quadrilateri
+equivalenza-aree <- geometria-quadrilateri
+circonferenza-lunghezza-area <- poligoni-inscritti, equivalenza-aree, numeri-reali-irrazionali
+teorema-di-pitagora <- equivalenza-aree, radicali-operazioni
+teorema-di-talete <- geometria-quadrilateri, numeri-razionali-proporzioni
+similitudine <- teorema-di-talete, teorema-di-pitagora
+triangolo-rettangolo-trigonometria <- similitudine, radicali-razionalizzazione
+trasformazioni-geometriche <- equazione-di-una-retta, funzioni-iniettive-suriettive-biettive, similitudine
+
 # Dubbi da sciogliere
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
   frazioni). Per il ripasso dopo una prova conta proprio quel collegamento: il ripasso dovrà cercare

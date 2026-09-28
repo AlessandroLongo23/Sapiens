@@ -4,7 +4,7 @@ Con le frazioni si misura quasi tutto: un terzo di torta, $2{,}35$ metri di stof
 
 ## Un segmento che nessuna frazione misura
 
-Prendi un quadrato di lato $1$ e chiama $d$ la sua diagonale. La diagonale divide il quadrato in due triangoli rettangoli con i cateti lunghi $1$, e per il teorema di Pitagora
+Prendi un quadrato di lato $1$ e chiama $d$ la sua diagonale. La diagonale divide il quadrato in due triangoli rettangoli con i cateti lunghi $1$, e per il [teorema di Pitagora](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/teoremi-di-pitagora-e-di-euclide)
 
 $$d^2 = 1^2 + 1^2 = 2$$
 
@@ -102,7 +102,7 @@ $$
 \end{gathered}
 $$
 
-Il numero irrazionale più famoso è $\pi = 3{,}14159265\ldots$, il rapporto tra la lunghezza di una circonferenza e il suo diametro, che incontri in geometria. Che sia irrazionale lo dimostrò Johann Heinrich Lambert nel 1761, con una dimostrazione molto più difficile di quella per $\sqrt{2}$.
+Il numero irrazionale più famoso è $\pi = 3{,}14159265\ldots$, il rapporto tra la lunghezza di una circonferenza e il suo diametro, che incontri nella lezione [Lunghezza della circonferenza e area del cerchio](/materiale/scuola-superiore/matematica/geometria-del-piano-circonferenza-aree-e-similitudine/lunghezza-della-circonferenza-e-area-del-cerchio). Che sia irrazionale lo dimostrò Johann Heinrich Lambert nel 1761, con una dimostrazione molto più difficile di quella per $\sqrt{2}$.
 
 Un irrazionale si può anche costruire scegliendo le cifre in modo che non si ripetano mai. Nel numero
 
