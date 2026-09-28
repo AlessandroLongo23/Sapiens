@@ -55,6 +55,7 @@ Nel metano, $\mathrm{CH_4}$, il carbonio ha $4$ elettroni di valenza e li mette 
 % alt: Modello tridimensionale del metano: il carbonio al centro e i quattro idrogeni ai vertici di un tetraedro, con angoli H-C-H di 109,5 gradi
 % svg: vsepr-metano-e2b6292a.svg 77x79
 % xyz: C -0.000 0.000 -0.000; H -0.684 -0.802 -0.286; H -0.394 0.957 -0.349; H 0.100 0.023 1.087; H 0.978 -0.177 -0.452
+% legami: 1-2:1; 1-3:1; 1-4:1; 1-5:1
 carboni: si
 smiles: C
 angoli: 1-0-2 3-0-4
@@ -87,6 +88,7 @@ Il boro ha $3$ elettroni di valenza. Nel trifluoruro di boro, $\mathrm{BF_3}$, l
 % alt: Modello tridimensionale del trifluoruro di boro: il boro al centro e i tre fluori nello stesso piano, ai vertici di un triangolo, con angoli F-B-F di 120 gradi
 % svg: vsepr-trifluoruro-di-boro-6153094b.svg 66x62
 % xyz: F 1.323 -0.579 0.010; B 0.000 0.000 0.003; F -1.163 -0.856 0.025; F -0.160 1.435 -0.038
+% legami: 1-2:1; 2-3:1; 2-4:1
 smiles: FB(F)F
 angoli: 0-1-2 0-1-3 2-1-3
 ```
@@ -110,6 +112,7 @@ Nell'ammoniaca, $\mathrm{NH_3}$, l'azoto ha $5$ elettroni di valenza e ne mette 
 % alt: Modello tridimensionale dell'ammoniaca: l'azoto in cima a una piramide con i tre idrogeni alla base; gli angoli H-N-H misurati sul modello sono di 106 gradi; la coppia solitaria dell'azoto non è disegnata
 % svg: vsepr-ammoniaca-9ea8d879.svg 67x62
 % xyz: N -0.000 -0.005 0.296; H 0.915 -0.213 -0.102; H -0.643 -0.683 -0.110; H -0.272 0.901 -0.084
+% legami: 1-2:1; 1-3:1; 1-4:1
 smiles: N
 angoli: 1-0-2 1-0-3 2-0-3
 ```
@@ -123,6 +126,7 @@ Nell'acqua, $\mathrm{H_2O}$, l'ossigeno ha $6$ elettroni di valenza e ne mette $
 % alt: Modello tridimensionale dell'acqua: l'ossigeno al vertice di una V con i due idrogeni, e un angolo H-O-H di 104 gradi misurato sul modello; le due coppie solitarie dell'ossigeno non sono disegnate
 % svg: vsepr-acqua-394f2897.svg 67x27
 % xyz: O -0.001 0.398 0.000; H -0.763 -0.200 0.000; H 0.764 -0.198 0.000
+% legami: 1-2:1; 1-3:1
 smiles: O
 angoli: 1-0-2
 ```
@@ -204,6 +208,7 @@ Nel diossido di carbonio (anidride carbonica), $\mathrm{CO_2}$, il carbonio form
 % alt: Modello tridimensionale del diossido di carbonio: i due ossigeni legati al carbonio con due doppi legami, sulla stessa retta, con un angolo O-C-O di 180 gradi
 % svg: vsepr-diossido-di-carbonio-40b2c467.svg 78x10
 % xyz: O -1.405 -0.003 0.000; C -0.000 0.000 0.000; O 1.405 0.003 0.000
+% legami: 1-2:2; 2-3:2
 smiles: O=C=O
 angoli: 0-1-2
 ```
@@ -224,6 +229,7 @@ Nel metanale (formaldeide), $\mathrm{CH_2O}$, il carbonio è legato a due idroge
 % alt: Modello tridimensionale della formaldeide: il carbonio al centro, l'ossigeno e i due idrogeni nello stesso piano; sul modello l'angolo H-C-H è di 115,5 gradi e gli angoli H-C-O di 122,2 gradi
 % svg: vsepr-metanale-a08bb15e.svg 68x62
 % xyz: C -0.012 0.002 -0.000; O 1.201 -0.167 0.003; H -0.723 -0.840 -0.004; H -0.466 1.006 0.000
+% legami: 1-2:2; 1-3:1; 1-4:1
 carboni: si
 smiles: C=O
 angoli: 2-0-3 2-0-1 3-0-1
@@ -240,6 +246,7 @@ Nell'etene (etilene), $\mathrm{C_2H_4}$, i due carboni sono uniti da un doppio l
 % alt: Modello tridimensionale dell'etene: i due carboni uniti dal doppio legame e i quattro idrogeni, tutti nello stesso piano; sul modello l'angolo H-C-H è di 117,9 gradi e gli angoli H-C-C di 121,1 gradi
 % svg: vsepr-etene-8acc4d52.svg 77x70
 % xyz: C 0.580 -0.263 -0.203; C -0.580 0.263 0.203; H 1.296 0.327 -0.764; H 0.834 -1.295 0.020; H -1.296 -0.327 0.764; H -0.834 1.295 -0.020
+% legami: 1-2:2; 1-3:1; 1-4:1; 2-5:1; 2-6:1
 carboni: si
 smiles: C=C
 angoli: 2-0-3 2-0-1 3-0-1
