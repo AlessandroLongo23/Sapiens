@@ -211,3 +211,10 @@ Il diagramma che si ottiene:
 Mettere i punti comuni in un solo cerchio
 Nel diagramma di Eulero-Venn un elemento che appartiene a due insiemi va nella zona in cui le linee si sovrappongono. Se lo disegni dentro uno solo dei due cerchi, il diagramma dice che non appartiene all'altro.
 ```
+
+Prova a costruire il diagramma dell'Esempio 9: trascina ogni numero nella sua zona. Sotto il diagramma leggi gli elementi che stanno dentro ciascun cerchio, da confrontare con gli elenchi; con «Altri insiemi» ne trovi di nuovi.
+
+```interattivo
+% nome: venn-elementi-trascina
+% alt: Diagramma di Eulero-Venn con U = {1, 2, 3, 4, 5, 6}, A = {1, 2, 3} e B = {3, 4}: i numeri stanno in fila sotto il rettangolo e si trascinano nelle quattro zone (solo A, zona comune, solo B, fuori dai cerchi). Sotto il diagramma sono scritti gli elementi che stanno dentro ciascun cerchio; quando ogni numero è nella zona giusta il diagramma diventa verde, e se il 3 finisce in un cerchio solo compare l'avviso che va nella zona comune
+```

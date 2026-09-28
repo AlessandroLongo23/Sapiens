@@ -212,6 +212,13 @@ I voti delle due serie hanno la stessa media, ma quelli di Luca sono molto più 
 
 Lo scarto quadratico medio è zero solo quando tutti i dati sono uguali, e quindi tutti gli scarti sono zero; in ogni altro caso è positivo. Più è grande, più i dati sono lontani dalla media.
 
+Nella figura ci sono i voti di Luca, ognuno con la freccia del suo scarto. Sotto la retta i quadrati degli scarti sono disegnati come quadrati veri, e il quadrato tratteggiato ha per area la loro media, cioè la varianza: il suo lato è lo scarto quadratico medio. Sposta i voti e guarda come cambiano; poi prova ad allontanare un solo voto dagli altri.
+
+```interattivo
+% nome: scarti-quadrati-voti
+% alt: I cinque voti di Luca, 4, 6, 7, 9 e 9, su righe diverse sopra una retta dei numeri da 3 a 10, ognuno collegato alla media 7 dalla freccia del suo scarto; sotto la retta i quadrati degli scarti, di area 9, 1, 0, 4 e 4, e un quadrato tratteggiato di area uguale alla loro media, la varianza 3,6, con il lato uguale allo scarto quadratico medio, circa 1,90; i voti si trascinano e tutti i valori si aggiornano
+```
+
 ```ad-warning
 Fermarsi alla varianza
 La varianza dei voti di Luca è $3{,}6$, lo scarto quadratico medio è $\sqrt{3{,}6} \approx 1{,}90$. Se il problema chiede lo scarto quadratico medio, o la deviazione standard, dopo la varianza serve ancora la radice.

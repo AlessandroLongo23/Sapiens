@@ -209,6 +209,13 @@ Contare gli elementi
 Con insiemi finiti, prima di guardare le frecce conta gli elementi. Se $A$ ha più elementi di $B$, la funzione non può essere iniettiva: qualche elemento di $B$ riceve per forza almeno due frecce (è quello che succede con i venticinque studenti e i dodici mesi). Se $A$ ha meno elementi di $B$, non può essere suriettiva. Una funzione biettiva tra insiemi finiti richiede quindi che $A$ e $B$ abbiano lo stesso numero di elementi, ma questo da solo non basta: la funzione $x \mapsto x^2$ da $\{-1,\ 0,\ 1\}$ a $\{-1,\ 0,\ 1\}$ ha tre elementi da entrambe le parti e non è né iniettiva né suriettiva.
 ```
 
+Costruisci tu i controesempi. Tocca un elemento di $A$ e poi uno di $B$ per tracciare la freccia, e ripeti il gesto per toglierla; accanto a ogni elemento c'è il numero di frecce che ne partono o che vi arrivano. Con i cursori cambi il numero di elementi, e puoi verificare il suggerimento qui sopra: con più elementi in $A$ che in $B$ la spia "iniettiva" non si accende mai.
+
+```interattivo
+% nome: frecce-funzione-costruisci
+% alt: Diagramma a frecce da costruire tra A = {1, 2, 3} e B = {a, b, c, d}, con da uno a cinque elementi per parte: toccando un elemento di A e uno di B si aggiunge o si toglie la freccia. Accanto a ogni elemento è scritto quante frecce ne partono o vi arrivano, e gli elementi che rompono una proprietà sono cerchiati in rosso; quattro spie dicono se è una funzione e se è iniettiva, suriettiva, biettiva
+```
+
 ## Come si verifica ciascuna proprietà
 
 Per le funzioni tra insiemi di numeri, come $f: \mathbb{R} \to \mathbb{R}$, le frecce non si possono disegnare tutte. Si ragiona con l'algebra o con il grafico.

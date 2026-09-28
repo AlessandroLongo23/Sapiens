@@ -224,6 +224,13 @@ Lo stesso risultato si vede tagliando il cerchio in tanti settori uguali e mette
 \end{tikzpicture}
 ```
 
+Qui puoi scegliere tu in quanti settori tagliare il cerchio. Con pochi settori la fila ha i lati ondulati; aumentali e guarda la fila diventare un parallelogramma, con la base che si avvicina a $\pi r$ e l'altezza che si avvicina a $r$.
+
+```interattivo
+% nome: cerchio-settori
+% alt: Un cerchio diviso in settori uguali, da 4 a 64 con il cursore; un bottone mette in fila i settori, quelli della metà di sopra con l'arco in alto e quelli della metà di sotto con l'arco in basso, alternati. Sotto la figura si leggono la base e l'altezza della fila in multipli di r, che al crescere dei settori si avvicinano a pi greco per r e a r
+```
+
 ```ad-example
 Esempio 3: aree di cerchi
 (a) Qual è l'area di un cerchio di raggio $4$ cm?

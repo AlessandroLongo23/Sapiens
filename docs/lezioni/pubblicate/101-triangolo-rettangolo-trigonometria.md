@@ -62,6 +62,13 @@ Due triangoli rettangoli con lo stesso angolo acuto $\alpha$ hanno un angolo ret
 
 Nella figura il triangolo piccolo ha i cateti $3$ e $4$ e l'ipotenusa $5$, quello grande i cateti $6$ e $8$ e l'ipotenusa $10$. Il cateto opposto ad $\alpha$ diviso l'ipotenusa fa $\frac{3}{5}$ nel primo e $\frac{6}{10} = \frac{3}{5}$ nel secondo. Il rapporto non dipende da quanto è grande il triangolo, ma solo dall'angolo $\alpha$: per questo gli si può dare un nome.
 
+Prova con un triangolo qualsiasi: con il primo cursore cambi l'angolo $\alpha$, con il secondo la grandezza del triangolo. Guarda quale dei due muove i rapporti.
+
+```interattivo
+% nome: rapporti-stesso-angolo
+% alt: Triangolo ABC rettangolo in C, con l'angolo alfa in A e le misure dei lati a, b e c scritte accanto. Due cursori cambiano l'angolo alfa e l'ipotenusa c; sotto sono scritti i rapporti a su c, b su c e a su b. Cambiando c i lati cambiano ma i tre rapporti restano uguali; cambiano solo quando cambia alfa
+```
+
 ## Seno, coseno e tangente
 
 In un triangolo rettangolo, per un angolo acuto $\alpha$:

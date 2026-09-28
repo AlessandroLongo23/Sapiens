@@ -242,6 +242,13 @@ I nomi non dicono che gli angoli sono congruenti
 Alterni, corrispondenti e coniugati sono nomi di posizioni, e valgono per due rette qualsiasi tagliate da una trasversale. Che gli alterni siano congruenti è vero solo quando $a \parallel b$: se le rette non sono parallele, $\hat{3}$ e $\hat{5}$ sono ancora alterni interni, ma hanno ampiezze diverse.
 ```
 
+Guardalo succedere: ruota la retta $b$ e scegli una coppia di angoli. I nomi restano gli stessi in ogni posizione, mentre le ampiezze diventano congruenti (o supplementari, per i coniugati) solo quando $b$ è parallela ad $a$.
+
+```interattivo
+% nome: trasversale-angoli
+% alt: Le rette a e b tagliate dalla trasversale t, con gli otto angoli numerati come nella figura precedente; b gira intorno al punto in cui la taglia t, trascinandola o con il cursore, e si sceglie una coppia di angoli da colorare (alterni interni o esterni, corrispondenti, coniugati interni o esterni); sotto la figura le due ampiezze in gradi, che sono congruenti, o per i coniugati hanno somma 180 gradi, solo quando b è parallela ad a
+```
+
 ### Criterio di parallelismo
 
 Teorema (criterio di parallelismo): se due rette tagliate da una trasversale formano due angoli alterni interni congruenti, allora sono parallele.
@@ -473,6 +480,13 @@ Ipotesi: $ABC$ è un triangolo. Tesi: $\hat{A} + \hat{B} + \hat{C} = 180^\circ$.
 ```
 
 Nella figura gli angoli dello stesso colore sono congruenti: i tre colori in $C$ sono gli stessi dei tre angoli del triangolo.
+
+I passi 3 e 4 si possono anche vedere come un movimento: l'angolo in $A$ fa mezzo giro intorno al punto medio di $AC$ e finisce in $C$, tra $r$ e $CA$; quello in $B$ fa lo stesso intorno al punto medio di $BC$. Sposta $C$ come vuoi e porta i due angoli in $C$.
+
+```interattivo
+% nome: somma-angoli-triangolo
+% alt: Il triangolo ABC con gli angoli in A, B e C colorati in blu, arancione e verde, e la retta r per C parallela ad AB; il vertice C si trascina e r lo segue; il bottone fa girare di mezzo giro gli angoli in A e in B intorno ai punti medi di AC e di BC, e li porta in C, dove con l'angolo verde formano l'angolo piatto lungo r; sotto la figura le tre ampiezze in gradi e la loro somma, 180
+```
 
 Dal teorema seguono alcune conseguenze che si usano di continuo:
 

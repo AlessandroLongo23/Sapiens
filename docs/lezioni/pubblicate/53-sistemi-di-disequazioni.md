@@ -53,6 +53,13 @@ Per il sistema di prima la prima disequazione dà $x > 2$ e la seconda $x < 5$. 
 
 La soluzione è $S = \, \mathopen{]}2, 5\mathclose{[}$. I libri disegnano il grafico in modi un po' diversi (alcuni tratteggiano le parti in cui la disequazione è falsa, altri mettono la retta con i numeri in alto), ma si legge sempre allo stesso modo.
 
+Qui sotto il sistema lo cambi tu: trascina gli estremi, tocca un pallino per renderlo pieno o vuoto e scegli il verso di ogni disequazione. La parte comune può essere un intervallo, un numero solo o nessun numero, come nei casi che trovi più avanti.
+
+```interattivo
+% nome: sistema-disequazioni-grafico
+% alt: Grafico di un sistema di due disequazioni, all'inizio x maggiore di 2 e x minore di 5: una riga per disequazione sopra la retta, con la linea dove è vera, e colorata la striscia dove ci sono tutte e due le linee; si trascinano i due estremi, si toccano i pallini per renderli pieni o vuoti e si sceglie il verso con i bottoni, e la soluzione scritta sotto diventa un intervallo, un solo numero o l'insieme vuoto
+```
+
 ## Come si risolve
 
 1. Risolvi ogni disequazione per conto suo, fino a una forma come $x > 2$ o $x \le 5$.

@@ -509,6 +509,13 @@ $$\widehat{AVB} = \frac{1}{2}\,\widehat{AOB}$$
 
 Nella figura $\widehat{AOB} = 110^\circ$, e ogni angolo alla circonferenza che insiste sull'arco $AB$ misura $55^\circ$.
 
+Prova a spostare $V$ lungo la circonferenza: l'angolo in $V$ resta lo stesso. Con $A$ e $B$ cambi l'arco, e quando $AB$ diventa un diametro l'angolo in $V$ è retto. Porta anche $V$ tra $A$ e $B$, sull'arco minore, e guarda quale angolo al centro gli corrisponde.
+
+```interattivo
+% nome: angolo-alla-circonferenza
+% alt: Circonferenza di centro O con tre punti trascinabili, A, B e V. L'angolo alla circonferenza AVB insiste sull'arco AB che non contiene V, evidenziato, e le sue misure sono scritte accanto a quelle dell'angolo al centro AOB: l'angolo in V è sempre la metà dell'angolo al centro, non cambia finché V resta sullo stesso arco, è retto quando AB è un diametro, e quando V sta sull'arco minore l'angolo al centro corrispondente è quello concavo
+```
+
 ### La dimostrazione, con un lato che passa per il centro
 
 Il caso più semplice è quello in cui uno dei due lati dell'angolo alla circonferenza passa per il centro.

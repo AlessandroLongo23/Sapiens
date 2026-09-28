@@ -51,6 +51,13 @@ La figura mostra il caso $(x + 2)(x + 3)$ come area di un rettangolo di lati $x 
 \end{tikzpicture}
 ```
 
+Il rettangolo si può anche costruire a pezzi, con le tessere di un trinomio: un quadrato $x^2$, una striscia $x$ per ogni unità del coefficiente di $x$ e un quadratino per ogni unità del termine noto. Prova a comporlo tu. Con $x^2 + 4x + 2$, uno dei trinomi irriducibili che trovi più avanti, il rettangolo non si chiude in nessun modo.
+
+```interattivo
+% nome: trinomio-tessere
+% alt: Tessere algebriche di un trinomio, un quadrato x quadro, strisce x e quadratini di lato 1, da trascinare e agganciare fino a comporre un rettangolo. Per x quadro più 5x più 6 il rettangolo si chiude e i suoi lati si etichettano x più 3 e x più 2; per x quadro più 4x più 2 e per x quadro più 4 non si chiude. Un bottone mostra la soluzione, o un tentativo che lascia buchi.
+```
+
 ### Come trovare i due numeri
 
 I due numeri si cercano tra le coppie di interi che danno per prodotto $p$, controllando per ognuna la somma. Il segno di $p$ e quello di $s$ dicono subito che segni devono avere:

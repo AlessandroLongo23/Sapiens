@@ -207,9 +207,16 @@ $$AB : BC = A'B' : B'C'$$
 
 Nella proporzione compaiono i segmenti. Quando si passa ai numeri si scrive la loro misura: $\overline{AB} = 4$ cm vuol dire che il segmento $AB$ è lungo $4$ cm, e la proporzione vale anche tra le misure, $\overline{AB} : \overline{BC} = \overline{A'B'} : \overline{B'C'}$. Vale per due segmenti qualsiasi di $r$, anche non consecutivi o uno dentro l'altro: per esempio $AB : AC = A'B' : A'C'$.
 
+Sposta la trasversale $s$ trascinando $A'$ e $C'$, e la parallela $b$ trascinando $B$: le quattro misure cambiano, i due rapporti restano uguali tra loro.
+
+```interattivo
+% nome: talete-segmenti-proporzionali
+% alt: Tre rette parallele a, b, c tagliate dalle trasversali r e s, come nella figura del teorema. Si trascinano A' e C' lungo le parallele a e c, e così cambia la trasversale s, e B lungo r, e così si sposta la parallela b. Sotto sono scritte le misure di AB, BC, A'B' e B'C' e i due rapporti AB su BC e A'B' su B'C', che restano uguali in ogni posizione
+```
+
 ### Perché vale
 
-Supponi che $AB$ e $BC$ abbiano una misura comune, un segmento $u$ che sta un numero intero di volte in tutti e due: nella figura $AB$ contiene $u$ tre volte e $BC$ due volte, quindi $AB : BC = 3 : 2$. Dai punti di divisione traccia le parallele al fascio. Su $r$ ci sono cinque segmenti congruenti, e per il teorema del fascio anche i cinque segmenti corrispondenti su $s$ sono congruenti tra loro: $A'B'$ ne contiene tre e $B'C'$ due. Quindi anche $A'B' : \overline{B'C'} = 3 : 2$.
+Supponi che $AB$ e $BC$ abbiano una misura comune, un segmento $u$ che sta un numero intero di volte in tutti e due: nella figura $AB$ contiene $u$ tre volte e $BC$ due volte, quindi $AB : BC = 3 : 2$. Dai punti di divisione traccia le parallele al fascio. Su $r$ ci sono cinque segmenti congruenti, e per il teorema del fascio anche i cinque segmenti corrispondenti su $s$ sono congruenti tra loro: $A'B'$ ne contiene tre e $B'C'$ due. Quindi anche $A'B' : B'C' = 3 : 2$.
 
 ```tikz
 % nome: talete-misura-comune

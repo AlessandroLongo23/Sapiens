@@ -73,6 +73,13 @@ Sulla retta dei numeri, sommare un positivo vuol dire spostarsi verso destra e s
 \end{tikzpicture}
 ```
 
+Prova a spostare il punto di partenza e la punta della freccia. Il bottone "Sottrai b" anticipa la sezione seguente: la freccia si ribalta, perché sottrarre un numero vuol dire sommare il suo opposto.
+
+```interattivo
+% nome: addizione-interi-retta
+% alt: Retta dei numeri da meno 8 a 8 con una freccia che parte dal punto a e fa b passi, verso destra se b è positivo e verso sinistra se è negativo, fino al punto a più b; si trascinano il punto di partenza e la punta della freccia, e il bottone Sottrai b ribalta la freccia, perché a meno b è uguale ad a più l'opposto di b
+```
+
 ```ad-warning
 Sbagliare la somma tra discordi
 $(-7) + (+4)$ fa $-3$. Non fa $+3$, perché il segno è quello di $-7$, che ha il valore assoluto maggiore; e non fa $-11$, perché tra discordi i valori assoluti si sottraggono, non si sommano.

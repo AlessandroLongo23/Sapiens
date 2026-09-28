@@ -137,6 +137,13 @@ Aggiungere lo stesso numero sopra e sotto
 La proprietà invariantiva vale per la moltiplicazione e per la divisione, non per l'addizione e la sottrazione. $\dfrac{2+1}{3+1} = \dfrac{3}{4}$, che non è equivalente a $\dfrac{2}{3}$: $\dfrac{2}{3} = \dfrac{8}{12}$ e $\dfrac{3}{4} = \dfrac{9}{12}$.
 ```
 
+Moltiplicare per $k$ vuol dire tagliare ogni parte in $k$ pezzi: la frazione scritta cambia, la parte colorata no. Scegli la frazione con i cursori e cambia $k$; poi passa ad "Aggiungi k" e guarda che cosa succede alla parte colorata e al punto sulla retta.
+
+```interattivo
+% nome: frazioni-equivalenti
+% alt: Due barre uguali: la prima divisa in b parti con a colorate, la seconda con ogni parte tagliata in k pezzi, così che a k pezzi su b k sono colorati e la parte colorata resta la stessa; sotto, la retta da 0 a 1 con il punto della frazione, che non si sposta. Con il bottone Aggiungi k la seconda barra mostra la frazione con k aggiunto sopra e sotto, e la parte colorata e il punto cambiano. I cursori scelgono a, b e k
+```
+
 ### Il controllo in croce
 
 Per sapere se due frazioni $\dfrac{a}{b}$ e $\dfrac{c}{d}$ sono equivalenti non serve trasformarle: sono equivalenti quando i prodotti in croce sono uguali,

@@ -173,6 +173,13 @@ Unione e intersezione hanno proprietà simili a quelle dell'addizione e della mo
 
 A differenza dei numeri, qui la distributiva vale in tutti e due i sensi: l'intersezione si distribuisce rispetto all'unione e l'unione si distribuisce rispetto all'intersezione. Le leggi di De Morgan dicono che, passando al complementare, l'unione diventa intersezione e l'intersezione diventa unione.
 
+Ogni uguaglianza della tabella si può controllare con il diagramma: i due membri devono essere la stessa zona. Scegli una proprietà, colora il primo membro toccando le zone del primo diagramma e premi «Controlla»; poi costruisci il secondo membro a passi nel secondo diagramma.
+
+```interattivo
+% nome: venn-proprieta-operazioni
+% alt: Due diagrammi di Eulero-Venn affiancati per le proprietà distributive e le leggi di De Morgan. Nel primo lo studente colora le zone del primo membro, per esempio A ∩ (B ∪ C), e le controlla: le zone sbagliate hanno una croce. Nel secondo il secondo membro, per esempio (A ∩ B) ∪ (A ∩ C), si costruisce a passi, tratteggiando i due insiemi che si combinano e poi colorando il risultato, che è la stessa zona del primo
+```
+
 La differenza invece non è né commutativa né associativa: nell'Esempio 3 hai visto che $A \setminus B \neq B \setminus A$, e nell'Esempio 6 qui sotto trovi un caso in cui $(A \setminus B) \setminus C \neq A \setminus (B \setminus C)$. Anche il prodotto cartesiano non è commutativo (lo trovi nella lezione [Prodotto cartesiano](/materiale/scuola-superiore/matematica/insiemi-e-logica/prodotto-cartesiano)).
 
 Tra unione, intersezione e differenza non c'è un ordine di precedenza su cui tutti i libri siano d'accordo: nelle espressioni con più operazioni si usano le parentesi e si calcola partendo da quelle più interne.

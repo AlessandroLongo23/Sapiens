@@ -90,6 +90,13 @@ L'ultima divisione, quella con resto zero, ha divisore $18$, quindi $\text{MCD}(
 Controllo con la scomposizione: $252 = 2^2 \cdot 3^2 \cdot 7$ e $198 = 2 \cdot 3^2 \cdot 11$, e i fattori comuni con l'esponente più piccolo danno $2 \cdot 3^2 = 18$.
 ```
 
+Ogni divisione si può vedere come un taglio. Da un rettangolo $a \times b$ si tolgono quanti più quadrati di lato $b$ ci stanno, cioè $q$, e resta un rettangolo $b \times r$; si ripete finché i quadrati riempiono tutto. Il rettangolo qui sotto misura $84 \times 66$, cioè i numeri dell'esempio 5 divisi per $3$: premi "Passo successivo" e confronta le divisioni con quelle dell'esempio, poi scegli altri lati con i cursori.
+
+```interattivo
+% nome: euclide-rettangolo
+% alt: Un rettangolo di lati a e b: a ogni pressione del bottone Passo successivo se ne tagliano quanti più quadrati di lato uguale al lato minore ci stanno, e sotto compare la divisione a uguale b per q più r; il rettangolo che resta ha lati b e r e si taglia al passo dopo. Gli ultimi quadrati riempiono esattamente ciò che resta e il loro lato è il MCD di a e b. Due cursori scelgono a e b fino a 100
+```
+
 ## Il legame tra MCD e MCM
 
 Per due numeri $a$ e $b$ diversi da zero vale
@@ -144,6 +151,13 @@ Il pavimento coperto dalle piastrelle:
 \path (-1.6,-0.9) rectangle (6.4,4.8);
 \end{tikzpicture}
 ```
+```
+
+Cerca il lato della piastrella per tentativi: con il cursore scegli il lato, e se non divide una delle due misure resta una striscia da coprire con piastrelle tagliate. Il lato più grande che non lascia strisce è il MCD. Puoi cambiare anche le misure del pavimento.
+
+```interattivo
+% nome: piastrelle-mcd
+% alt: Il pavimento di 360 per 264 centimetri coperto da una griglia di piastrelle quadrate del lato scelto con un cursore; quando il lato non divide la lunghezza o la larghezza, ai bordi restano strisce tratteggiate in rosso da coprire con piastrelle tagliate. Il lato più grande senza strisce è il MCD delle due misure; altri due cursori cambiano le misure del pavimento
 ```
 
 ```ad-example
