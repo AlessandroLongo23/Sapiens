@@ -35,6 +35,8 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-28 Le note eliminate restano 30 giorni nel cestino]]
+- [[2026-09-28 Il cestino non conta nel limite del piano gratuito]]
 - [[2026-09-28 Porta un amico solo per i maggiorenni]]
 - [[2026-09-28 I creator si pagano a contenuto, non a provvigione]]
 - [[2026-09-28 L'invito si salva solo dopo Usa l'invito]]
