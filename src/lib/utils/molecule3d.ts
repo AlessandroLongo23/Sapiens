@@ -168,27 +168,97 @@ function turnable(box: HTMLElement, viewer: Viewer, reducedMotion: boolean) {
 
 type Vec = { x: number; y: number; z: number };
 type Atom = Vec & { index: number; bonds: number[]; bondOrder: number[] };
-/** What showMultipleBond needs from a 3Dmol GLModel: its atoms and where it puts the sticks of a multiple bond. */
-interface SideBonds {
+/** What frame needs from a 3Dmol GLModel: its atoms and where it puts the sticks of a multiple bond. */
+interface ModelAtoms {
 	selectedAtoms(sel: object): Atom[];
 	getSideBondV(atom: Atom, atom2: Atom, i: number): Vec;
 }
+interface FramedViewer extends Viewer {
+	modelToScreen(coords: Vec): { x: number; y: number };
+	zoom(factor: number): void;
+}
+/** The screen's x, y and z directions in model coordinates: the rows of the rotation from model to screen. */
+type Frame = [Vec, Vec, Vec];
 
 const sub = (a: Vec, b: Vec): Vec => ({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
+const dot = (a: Vec, b: Vec) => a.x * b.x + a.y * b.y + a.z * b.z;
 const cross = (a: Vec, b: Vec): Vec => ({ x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.y * b.x });
 const unit = (a: Vec): Vec => {
 	const l = Math.hypot(a.x, a.y, a.z);
 	return { x: a.x / l, y: a.y / l, z: a.z / l };
 };
 
+/** How far the model leans back, so a flat molecule shows it is a solid and not a drawing. */
+const TILT = (20 * Math.PI) / 180;
+/** How much of the box the turning model may fill. */
+const FILL = 0.9;
+/** Box widths per ångström at most (48 px in a 220 px box), so a small molecule is not blown up to fill it. */
+const MAX_SCALE = 0.22;
+/** A little more than the drawn radius of the largest atoms, to keep them inside the box. */
+const ATOM_RADIUS = 0.5;
+
 /**
- * Turns the model so its first double or triple bond lies across the screen with its sticks one above the other.
- * 3Dmol sets the sticks apart along a side direction of its own choosing: for CO₂ that direction ended up pointing
- * at the viewer, and the turn around the vertical axis kept it in the horizontal plane, so the two sticks always
- * covered each other. With the sticks stacked vertically, the idle turn never lines them up.
+ * The principal axes of the atoms, largest spread first: a flat molecule then faces the viewer, its long side
+ * across the screen. Null for a linear molecule, whose axes across it are all alike.
  */
-function showMultipleBond(viewer: Viewer, model: SideBonds) {
-	const atoms = model.selectedAtoms({});
+function principalFrame(points: Vec[]): Frame | null {
+	const c = [
+		[0, 0, 0],
+		[0, 0, 0],
+		[0, 0, 0],
+	];
+	for (const p of points) {
+		const v = [p.x, p.y, p.z];
+		for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) c[i][j] += v[i] * v[j];
+	}
+	// Jacobi rotations: the columns of e end up as the eigenvectors of c.
+	const e = [
+		[1, 0, 0],
+		[0, 1, 0],
+		[0, 0, 1],
+	];
+	for (let sweep = 0; sweep < 20; sweep++)
+		for (const [i, j] of [
+			[0, 1],
+			[0, 2],
+			[1, 2],
+		]) {
+			if (Math.abs(c[i][j]) < 1e-12) continue;
+			const t = (c[j][j] - c[i][i]) / (2 * c[i][j]);
+			const tan = Math.sign(t || 1) / (Math.abs(t) + Math.hypot(t, 1));
+			const cos = 1 / Math.hypot(tan, 1);
+			const sin = tan * cos;
+			for (let k = 0; k < 3; k++) {
+				const [a, b] = [c[k][i], c[k][j]];
+				c[k][i] = cos * a - sin * b;
+				c[k][j] = sin * a + cos * b;
+			}
+			for (let k = 0; k < 3; k++) {
+				const [a, b] = [c[i][k], c[j][k]];
+				c[i][k] = cos * a - sin * b;
+				c[j][k] = sin * a + cos * b;
+			}
+			for (let k = 0; k < 3; k++) {
+				const [a, b] = [e[k][i], e[k][j]];
+				e[k][i] = cos * a - sin * b;
+				e[k][j] = sin * a + cos * b;
+			}
+		}
+	const axes = [0, 1, 2]
+		.map((i) => ({ spread: c[i][i], axis: { x: e[0][i], y: e[1][i], z: e[2][i] } }))
+		.sort((a, b) => b.spread - a.spread);
+	if (axes[1].spread < 0.02 * axes[0].spread) return null;
+	const x = unit(axes[0].axis);
+	const y = unit(axes[1].axis);
+	return [x, y, cross(x, y)];
+}
+
+/**
+ * The first double or triple bond across the screen, its sticks one above the other. 3Dmol sets the sticks apart
+ * along a side direction of its own choosing: for CO₂ it pointed at the viewer, and the turn around the vertical
+ * axis kept it in the horizontal plane, so the two sticks always covered each other.
+ */
+function multipleBondFrame(atoms: Atom[], model: ModelAtoms): Frame | null {
 	for (const atom of atoms)
 		for (let i = 0; i < atom.bonds.length; i++) {
 			const other = atoms.find((a) => a.index === atom.bonds[i]);
@@ -199,26 +269,23 @@ function showMultipleBond(viewer: Viewer, model: SideBonds) {
 			let side = unit(model.getSideBondV(atom, other, i));
 			// A triple bond's outer sticks are set apart across that direction, not along it.
 			if (order === 3) side = unit(cross(side, along));
-			const normal = cross(along, side);
-			// The rotation taking along, side, normal to the screen's x, y, z, as a quaternion (x, y, z, w).
-			const m = [
-				[along.x, along.y, along.z],
-				[side.x, side.y, side.z],
-				[normal.x, normal.y, normal.z],
-			];
-			const w = Math.sqrt(Math.max(0, 1 + m[0][0] + m[1][1] + m[2][2])) / 2;
-			const q: Quat =
-				w > 1e-3
-					? [(m[2][1] - m[1][2]) / (4 * w), (m[0][2] - m[2][0]) / (4 * w), (m[1][0] - m[0][1]) / (4 * w), w]
-					: quatFromMatrix(m);
-			const view = viewer.getView();
-			viewer.setView([...view.slice(0, 4), ...q, ...view.slice(8)]);
-			return;
+			return [along, side, cross(along, side)];
 		}
+	return null;
 }
 
-/** The general conversion, for rotations near half a turn where the short one divides by almost zero. */
-function quatFromMatrix(m: number[][]): Quat {
+/** The frame as the quaternion (x, y, z, w) 3Dmol keeps its rotation in. */
+function toQuat([r0, r1, r2]: Frame): Quat {
+	const m = [
+		[r0.x, r0.y, r0.z],
+		[r1.x, r1.y, r1.z],
+		[r2.x, r2.y, r2.z],
+	];
+	const trace = m[0][0] + m[1][1] + m[2][2];
+	if (trace > 0) {
+		const s = Math.sqrt(trace + 1) * 2;
+		return [(m[2][1] - m[1][2]) / s, (m[0][2] - m[2][0]) / s, (m[1][0] - m[0][1]) / s, s / 4];
+	}
 	if (m[0][0] > m[1][1] && m[0][0] > m[2][2]) {
 		const s = Math.sqrt(1 + m[0][0] - m[1][1] - m[2][2]) * 2;
 		return [s / 4, (m[0][1] + m[1][0]) / s, (m[0][2] + m[2][0]) / s, (m[2][1] - m[1][2]) / s];
@@ -229,6 +296,53 @@ function quatFromMatrix(m: number[][]): Quat {
 	}
 	const s = Math.sqrt(1 + m[2][2] - m[0][0] - m[1][1]) * 2;
 	return [(m[0][2] + m[2][0]) / s, (m[1][2] + m[2][1]) / s, s / 4, (m[1][0] - m[0][1]) / s];
+}
+
+/**
+ * Turns the model to a view that shows it and zooms it to fit the box. A molecule that has a plane faces the viewer
+ * with that plane, leaning back a little: a ring is seen whole, and the sticks of its double bonds, which lie in
+ * the ring, side by side. A linear molecule shows its double bonds (multipleBondFrame). The zoom leaves room for
+ * the idle turn around the vertical axis, and a small molecule does not grow past MAX_SCALE.
+ */
+function frame(viewer: FramedViewer, model: ModelAtoms, box: HTMLElement) {
+	const atoms = model.selectedAtoms({});
+	if (!atoms.length) return;
+	const lo = { x: Infinity, y: Infinity, z: Infinity };
+	const hi = { x: -Infinity, y: -Infinity, z: -Infinity };
+	for (const a of atoms)
+		for (const k of ['x', 'y', 'z'] as const) {
+			lo[k] = Math.min(lo[k], a[k]);
+			hi[k] = Math.max(hi[k], a[k]);
+		}
+	const center = { x: (lo.x + hi.x) / 2, y: (lo.y + hi.y) / 2, z: (lo.z + hi.z) / 2 };
+	const points = atoms.map((a) => sub(a, center));
+	let f = principalFrame(points);
+	if (f) {
+		const [x, y, z] = f;
+		const [c, s] = [Math.cos(TILT), Math.sin(TILT)];
+		const lean = (a: Vec, b: Vec, p: number, q: number): Vec => ({ x: p * a.x + q * b.x, y: p * a.y + q * b.y, z: p * a.z + q * b.z });
+		f = [x, lean(y, z, c, s), lean(y, z, -s, c)];
+	} else f = multipleBondFrame(atoms, model);
+	if (!f) return;
+	const view = viewer.getView();
+	viewer.setView([...view.slice(0, 4), ...toQuat(f), ...view.slice(8)]);
+
+	const [sx, sy, sz] = f;
+	let halfWidth = 0;
+	let halfHeight = 0;
+	for (const p of points) {
+		halfWidth = Math.max(halfWidth, Math.hypot(dot(p, sx), dot(p, sz)));
+		halfHeight = Math.max(halfHeight, Math.abs(dot(p, sy)));
+	}
+	const p0 = viewer.modelToScreen(center);
+	const p1 = viewer.modelToScreen({ x: center.x + sx.x, y: center.y + sx.y, z: center.z + sx.z });
+	const scale = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+	if (!scale) return;
+	const fill = Math.max(
+		((halfWidth + ATOM_RADIUS) * scale) / (box.clientWidth / 2),
+		((halfHeight + ATOM_RADIUS) * scale) / (box.clientHeight / 2)
+	);
+	viewer.zoom(Math.min(FILL / fill, (MAX_SCALE * box.clientWidth) / scale));
 }
 
 /** Starts turning only after the model is built; before that, the figure's box stays empty. */
@@ -247,9 +361,7 @@ async function build(figure: HTMLElement, box: HTMLElement, reducedMotion: boole
 	// Thicker sticks open the gap, and the pair stays within the atoms.
 	viewer.setStyle({}, { stick: { radius: 0.14, doubleBondScaling: 0.6, tripleBondScaling: 0.45 }, sphere: { scale: 0.26 } });
 	viewer.zoomTo();
-	// zoomTo leaves a wide margin around a small molecule: bring it closer.
-	viewer.zoom(1.8);
-	showMultipleBond(viewer, model as unknown as SideBonds);
+	frame(viewer as unknown as FramedViewer, model as unknown as ModelAtoms, box);
 	viewer.render();
 	return { viewer, motion: turnable(box, viewer, reducedMotion) };
 }
@@ -287,7 +399,7 @@ export function activate3dModels(root: HTMLElement): () => void {
 					if (!onScreen.has(box)) model.motion.pause();
 				} catch {
 					box.textContent = 'Il modello 3D non si è caricato.';
-					box.className = 'flex size-[220px] items-center justify-center text-center text-sm text-fg-muted';
+					box.className = 'flex aspect-square w-full max-w-[400px] items-center justify-center text-center text-sm text-fg-muted';
 				}
 			}),
 		{ rootMargin: '400px 0px' }

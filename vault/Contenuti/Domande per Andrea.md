@@ -103,6 +103,16 @@ Le lezioni di chimica non sono nella beta; le domande restano per quando entrera
 - [ ] I nomi: coppia solitaria, propan-2-olo.
 - [ ] Date e dati scritti a memoria, segnati "da verificare" nelle note di ogni lezione (`docs/lezioni/chimica/`).
 
+## Chimica: il benzene e i composti aromatici (28 settembre 2026)
+Lezione `chim-benzene` (`docs/lezioni/chimica/riscritte/07-chim-benzene.md`), non ancora pubblicata. Le domande minori e i dati da verificare sono nella nota `docs/lezioni/chimica/note/07-chim-benzene.md`. Tra parentesi la scelta fatta.
+- [ ] Il benzene disegnato sempre con la formula di Kekulé, anche nei modelli 3D, e il cerchio solo citato nel testo (scelta fatta, perché RDKit non lo disegna); oppure un disegno con il cerchio fatto a parte.
+- [ ] "Formule limite" con "strutture di risonanza" tra parentesi, "ibrido di risonanza", "energia di risonanza" (scelta fatta): sono i termini dei libri di scuola?
+- [ ] Aromaticità in quattro condizioni, con la regola di Hückel $4n + 2$ (scelta fatta), oppure tre come in molti libri.
+- [ ] "Orbitale $p$" senza "ibridazione $sp^2$" (scelta fatta, l'ibridazione è una lezione del terzo anno non ancora scritta), oppure l'ibridazione data per nota.
+- [ ] Due sostituenti diversi: 1-cloro-4-metilbenzene in ordine alfabetico, con 4-clorotoluene come alternativa (scelta fatta); prefissi *o*-, *m*-, *p*- in corsivo.
+- [ ] Caffeina: aromatico solo l'anello a cinque atomi, lo scheletro detto piano (scelta fatta, come nella 05).
+- [ ] Il bromo sul cicloesene e sul benzene anticipa la lezione sulla sostituzione elettrofila aromatica: si tiene qui?
+
 ## Strumenti, seconda onda (28 settembre 2026)
 Le 55 pagine nuove di `/strumenti` (vedi [[Calcolatori e convertitori]]). Tra parentesi la scelta fatta; ogni articolo in `src/content/strumenti/` spiega la sua.
 - [ ] Funzioni goniometriche: $\sin$ e $\cos$ (scelta fatta) oppure "sen" come in molti libri italiani; $\text{tg}$ e $\text{cotg}$.
