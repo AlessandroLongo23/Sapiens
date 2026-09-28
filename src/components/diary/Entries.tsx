@@ -96,7 +96,7 @@ function EntryLine({ entry, today, topicTitle, fresh, onToggle, onEdit }: { entr
 				aria-checked={entry.done}
 				aria-label={entry.done ? 'Fatto' : 'Da fare'}
 				onClick={onToggle}
-				className="-ml-2.5 flex size-[44px] shrink-0 items-center justify-center rounded-lg text-fg-muted -my-2 hover:text-fg focus-ring"
+				className="-ml-2.5 flex size-[44px] shrink-0 items-center justify-center rounded-lg text-fg-muted -my-2 transition-transform duration-150 ease-out-soft hover:text-fg active:scale-90 focus-ring"
 			>
 				<HandBox checked={entry.done} />
 			</button>
@@ -109,14 +109,16 @@ function EntryLine({ entry, today, topicTitle, fresh, onToggle, onEdit }: { entr
 				<span className="flex items-start justify-between gap-3">
 					<span
 						className={cn(
-							'min-w-0 break-words',
+							'min-w-0 break-words transition-[color,opacity] duration-300',
 							teacher ? 'font-sans text-base leading-7 text-fg' : 'diary-pen',
-							entry.done && 'text-fg-subtle line-through decoration-[var(--pen)] decoration-2 opacity-70',
+							entry.done && 'text-fg-subtle opacity-70 delay-300',
 							fresh && 'ink-write'
 						)}
 					>
 						{tags}
-						{test && !entry.done ? <span className="marker-hand">{entry.text}</span> : entry.text}
+						<span className="diary-strike" data-done={entry.done || undefined}>
+							{test && !entry.done ? <span className="marker-hand">{entry.text}</span> : entry.text}
+						</span>
 					</span>
 					{test && !entry.done && entry.day >= today && <span className="pencil shrink-0 pt-0.5 text-lg leading-6 text-accent-fg">{relativeDay(entry.day, today)}</span>}
 				</span>
