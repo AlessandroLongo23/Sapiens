@@ -192,8 +192,8 @@ const unit = (a: Vec): Vec => {
 const TILT = (20 * Math.PI) / 180;
 /** How much of the box the turning model may fill. */
 const FILL = 0.9;
-/** Pixels per ångström at most, so a small molecule is not blown up to fill the box. */
-const MAX_SCALE = 48;
+/** Box widths per ångström at most (48 px in a 220 px box), so a small molecule is not blown up to fill it. */
+const MAX_SCALE = 0.22;
 /** A little more than the drawn radius of the largest atoms, to keep them inside the box. */
 const ATOM_RADIUS = 0.5;
 
@@ -302,7 +302,7 @@ function toQuat([r0, r1, r2]: Frame): Quat {
  * Turns the model to a view that shows it and zooms it to fit the box. A molecule that has a plane faces the viewer
  * with that plane, leaning back a little: a ring is seen whole, and the sticks of its double bonds, which lie in
  * the ring, side by side. A linear molecule shows its double bonds (multipleBondFrame). The zoom leaves room for
- * the idle turn around the vertical axis, and a small molecule keeps the scale it had.
+ * the idle turn around the vertical axis, and a small molecule does not grow past MAX_SCALE.
  */
 function frame(viewer: FramedViewer, model: ModelAtoms, box: HTMLElement) {
 	const atoms = model.selectedAtoms({});
@@ -342,7 +342,7 @@ function frame(viewer: FramedViewer, model: ModelAtoms, box: HTMLElement) {
 		((halfWidth + ATOM_RADIUS) * scale) / (box.clientWidth / 2),
 		((halfHeight + ATOM_RADIUS) * scale) / (box.clientHeight / 2)
 	);
-	viewer.zoom(Math.min(FILL / fill, MAX_SCALE / scale));
+	viewer.zoom(Math.min(FILL / fill, (MAX_SCALE * box.clientWidth) / scale));
 }
 
 /** Starts turning only after the model is built; before that, the figure's box stays empty. */
@@ -399,7 +399,7 @@ export function activate3dModels(root: HTMLElement): () => void {
 					if (!onScreen.has(box)) model.motion.pause();
 				} catch {
 					box.textContent = 'Il modello 3D non si è caricato.';
-					box.className = 'flex size-[220px] items-center justify-center text-center text-sm text-fg-muted';
+					box.className = 'flex aspect-square w-full max-w-[400px] items-center justify-center text-center text-sm text-fg-muted';
 				}
 			}),
 		{ rootMargin: '400px 0px' }
