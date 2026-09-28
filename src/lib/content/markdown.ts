@@ -106,7 +106,8 @@ const CHEM_SCALE = 1.3;
 
 /**
  * A chemistry drawing. It sits in a .tikz-container so the dark theme inverts it like the TikZ figures. A 3D
- * molecule carries its coordinates and a button: LessonBody swaps the drawing for a model that turns (3Dmol).
+ * molecule carries its coordinates and an empty box beside the drawing, where LessonBody puts a model that turns
+ * (3Dmol) when the figure scrolls near.
  */
 function chemFigure(kind: ChemBlock, block: string): string {
 	const figure = parseFigure(block);
@@ -118,7 +119,7 @@ function chemFigure(kind: ChemBlock, block: string): string {
 	const height = Math.round(svg.height * CHEM_SCALE);
 	const img = `<img src="${figureUrl(supabase, svg.file)}" alt="${alt}" width="${width}" height="${height}" style="width:${width}px" loading="lazy" decoding="async">`;
 	if (kind === 'molecola3d' && figure.xyz)
-		return `<figure class="tikz-container chem-figure chem-3d my-6 flex flex-col items-center gap-2" data-xyz="${escapeHtml(figure.xyz)}" data-alt="${alt}">${img}<button type="button" class="chem-3d-button rounded-full border border-edge px-3 py-1 font-mono text-xs text-fg-muted transition-colors hover:text-fg focus-ring">Ruota in 3D</button></figure>`;
+		return `<figure class="tikz-container chem-figure chem-3d my-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-2" data-xyz="${escapeHtml(figure.xyz)}"${figure.bonds ? ` data-bonds="${escapeHtml(figure.bonds)}"` : ''}>${img}<div class="flex flex-col items-center gap-1"><div class="chem-3d-box relative size-[220px] cursor-grab touch-none select-none" role="img" aria-label="Modello 3D da ruotare: ${alt}"></div><span class="font-mono text-xs text-fg-muted">Trascina per ruotare</span></div></figure>`;
 	return `<figure class="tikz-container chem-figure my-6 flex justify-center">${img}</figure>`;
 }
 

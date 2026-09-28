@@ -37,15 +37,17 @@ export interface Figure {
 	svg: { file: string; width: number; height: number } | null;
 	/** Chemistry only: a molecule's 3D coordinates, `C 0.000 0.000 0.000; H …`, written by the publish script. */
 	xyz: string | null;
+	/** Chemistry only: the bonds between the `xyz` atoms, counted from 1, with their order: `1-2:2; 1-3:1`. */
+	bonds: string | null;
 	/** The TikZ code without the metadata lines. */
 	code: string;
 }
 
-const META = /^%\s*(nome|alt|svg|xyz):\s*(.*)$/;
+const META = /^%\s*(nome|alt|svg|xyz|legami):\s*(.*)$/;
 
 export function parseFigure(block: string): Figure {
 	const lines = block.replace(/\r\n?/g, '\n').split('\n');
-	const figure: Figure = { name: null, alt: null, svg: null, xyz: null, code: '' };
+	const figure: Figure = { name: null, alt: null, svg: null, xyz: null, bonds: null, code: '' };
 	let i = 0;
 	for (; i < lines.length; i++) {
 		const m = lines[i].trim().match(META);
@@ -54,6 +56,7 @@ export function parseFigure(block: string): Figure {
 		if (m[1] === 'nome') figure.name = value || null;
 		else if (m[1] === 'alt') figure.alt = value || null;
 		else if (m[1] === 'xyz') figure.xyz = value || null;
+		else if (m[1] === 'legami') figure.bonds = value || null;
 		else {
 			const s = value.match(/^(\S+\.svg)\s+(\d+)x(\d+)$/);
 			if (s) figure.svg = { file: s[1], width: Number(s[2]), height: Number(s[3]) };
@@ -113,6 +116,7 @@ export function serializeFigure(figure: Figure): string {
 		figure.alt ? `% alt: ${figure.alt}` : null,
 		figure.svg ? `% svg: ${figure.svg.file} ${figure.svg.width}x${figure.svg.height}` : null,
 		figure.xyz ? `% xyz: ${figure.xyz}` : null,
+		figure.bonds ? `% legami: ${figure.bonds}` : null,
 	].filter(Boolean);
 	return [...meta, figure.code].join('\n') + '\n';
 }

@@ -52,7 +52,7 @@ cd scripts/chimica && .venv/bin/python campioni.py alcani-nomenclatura --n 200
 ## Pubblicare sul sito
 
 ```sh
-# 1. figure delle lezioni: scrive le righe % svg (e % xyz per il 3D) nei file, disegni in scripts/chimica/.svg-sito/
+# 1. figure delle lezioni: scrive le righe % svg (e % xyz e % legami per il 3D) nei file, disegni in scripts/chimica/.svg-sito/
 scripts/chimica/.venv/bin/python scripts/chimica/pubblica_figure.py docs/lezioni/chimica/{riscritte,formulari}/*.md
 # 2. esercizi: 80 per livello, verificati, in src/lib/exercises/chimica/pools/<id>.json
 scripts/chimica/.venv/bin/python scripts/chimica/esporta.py
@@ -61,8 +61,8 @@ node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/chimica/pubblica
 ```
 
 Sul sito i blocchi di chimica diventano `<img>` come i TikZ (`src/lib/content/markdown.ts`), nel tema
-scuro invertiti come quelli; un ` ```molecola3d ` ha il pulsante "Ruota in 3D" (`3dmol`, caricato al
-clic: `src/lib/utils/molecule3d.ts`). Gli esercizi sono generatori che pescano dagli insiemi
+scuro invertiti come quelli; un ` ```molecola3d ` ha accanto al disegno il modello da ruotare (`3dmol`, caricato
+quando la figura si avvicina: `src/lib/utils/molecule3d.ts`). Gli esercizi sono generatori che pescano dagli insiemi
 pregenerati (`src/lib/exercises/chimica/pool.ts`), collegati alle lezioni in
 `src/lib/exercises/config.ts`: una lezione nuova con esercizi vuole anche la sua riga lì e i nomi dei
 livelli in `level-names.ts`.
