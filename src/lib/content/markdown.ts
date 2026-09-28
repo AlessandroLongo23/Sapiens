@@ -44,13 +44,17 @@ type Placeholder = { display: boolean; content: string };
 function protect(markdown: string) {
 	const math: Placeholder[] = [];
 	const tikz: string[] = [];
-	const chem: { kind: ChemBlock; code: string }[] = [];
+	const chem: { kind: ChemBlock | 'interattivo'; code: string }[] = [];
 	let text = markdown.replace(/```tikz\n([\s\S]+?)```/g, (_, code: string) => {
 		tikz.push(code);
 		return `\n\n<div data-tikz="${tikz.length - 1}"></div>\n\n`;
 	});
 	text = text.replace(CHEM_FENCE, (_, kind: ChemBlock, code: string) => {
 		chem.push({ kind, code });
+		return `\n\n<div data-chem="${chem.length - 1}"></div>\n\n`;
+	});
+	text = text.replace(/```interattivo\n([\s\S]+?)```/g, (_, code: string) => {
+		chem.push({ kind: 'interattivo', code });
 		return `\n\n<div data-chem="${chem.length - 1}"></div>\n\n`;
 	});
 	text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, content: string) => {
@@ -82,7 +86,7 @@ function formula(tex: string, display: boolean): string {
 		: `<span class="formula" data-tex="${source}">${renderTex(tex, false)}</span>`;
 }
 
-function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock; code: string }[] = []): string {
+function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock | 'interattivo'; code: string }[] = []): string {
 	return html
 		// A heading with a formula got its anchor from the placeholder; it takes the formula's own text, as the table of contents does.
 		.replace(/ id="([^"]*mathplaceholder\d+end[^"]*)"/g, (_, id: string) => ` id="${id.replace(/mathplaceholder(\d+)end/g, (_m, i: string) => slugifyHeading(math[Number(i)].content))}"`)
@@ -91,7 +95,10 @@ function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind
 			return formula(content, display);
 		})
 		.replace(/<div data-tikz="(\d+)"><\/div>/g, (_, i: string) => tikzFigure(tikz[Number(i)]))
-		.replace(/<div data-chem="(\d+)"><\/div>/g, (_, i: string) => chemFigure(chem[Number(i)].kind, chem[Number(i)].code));
+		.replace(/<div data-chem="(\d+)"><\/div>/g, (_, i: string) => {
+			const { kind, code } = chem[Number(i)];
+			return kind === 'interattivo' ? interactiveFigure(code) : chemFigure(kind, code);
+		});
 }
 
 /** RDKit draws at screen size; a little larger reads better next to the lesson text. */
@@ -113,6 +120,19 @@ function chemFigure(kind: ChemBlock, block: string): string {
 	if (kind === 'molecola3d' && figure.xyz)
 		return `<figure class="tikz-container chem-figure chem-3d my-6 flex flex-col items-center gap-2" data-xyz="${escapeHtml(figure.xyz)}" data-alt="${alt}">${img}<button type="button" class="chem-3d-button rounded-full border border-edge px-3 py-1 font-mono text-xs text-fg-muted transition-colors hover:text-fg focus-ring">Ruota in 3D</button></figure>`;
 	return `<figure class="tikz-container chem-figure my-6 flex justify-center">${img}</figure>`;
+}
+
+/**
+ * An interactive figure (```interattivo, with `% nome` naming the component and `% alt` describing it): an empty
+ * frame that LessonBody fills with its component once it scrolls near (see utils/interactive.ts). Until then, and
+ * for crawlers, it holds the description. Its drawing (.tikz-drawing) is inverted in the dark theme like the TikZ figures;
+ * its controls are not.
+ */
+function interactiveFigure(block: string): string {
+	const figure = parseFigure(block);
+	if (!figure.name) return '';
+	const alt = escapeHtml(figure.alt ?? '');
+	return `<figure class="interactive-figure my-6 flex justify-center" data-interattivo="${escapeHtml(figure.name)}" data-alt="${alt}"><p class="sr-only">${alt}</p></figure>`;
 }
 
 function tikzFigure(block: string): string {
