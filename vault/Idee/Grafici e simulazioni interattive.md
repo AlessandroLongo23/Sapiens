@@ -1,6 +1,6 @@
 ---
 stato: idea
-aggiornato: 2026-09-28
+aggiornato: 2026-09-29
 tag: [idea, strumenti, matematica, fisica]
 ---
 # Grafici e simulazioni interattive
@@ -46,6 +46,9 @@ Nessuna proposta per 1, 4, 6, 8-15, 20, 22, 25, 27-29, 31, 32, 34, 37-40, 43, 46
 Fatto il 28 settembre 2026, su richiesta di Alessandro: tutti i gruppi tranne il 2, lasciando fuori le proposte di valore basso. Sono 45 figure in 38 lezioni, nel codice e non pubblicate; vedi [[2026-09-28 Figure interattive nelle lezioni]]. Restano le figure del gruppo 2 e quelle di valore basso (per esempio le lezioni 30, 33, 58, 65, 80, 90 e 91).
 
 Ordine proposto prima di farle (Claude): prima il gruppo 1, che riusa il codice della 98 (parallelogramma e differenza di quadrati), poi il piano cartesiano del gruppo 2, che è il più ampio. Tra le figure isolate, quelle con più valore sono l'angolo alla circonferenza (96), la moneta (94) e la bilancia (16).
+
+## Fisica
+Il 29 settembre 2026, prima del primo lotto di fisica, si è deciso di non usare un motore fisico e di non aggiungere pacchetti: le figure interattive di fisica usano il kit, allargato con un modulo di fisica (vettori, forze, blocchi, molle, carrucole, fili, poi cariche e linee di campo), e i modelli della scuola si disegnano dalle loro formule chiuse, con un integratore scritto a mano dove non ce ne sono. Negli esercizi la figura è una scena disegnata dagli stessi componenti. I grafici di fisica sono statici in TikZ, disegnati come quelli di matematica, finché non c'è il piano cartesiano del kit, che deve avere la stessa identità visiva del TikZ. Vedi [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]].
 
 ## Dubbi e conflitti
 Il piano cartesiano del gruppo 2 è lo stesso componente che Alessandro il 28 settembre 2026 ha rimandato a una conversazione dedicata: le figure del gruppo 2 aspettano quella.

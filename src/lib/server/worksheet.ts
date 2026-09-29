@@ -97,6 +97,7 @@ function item(number: number, s: Sample): SheetItem {
 					b.kind === 'text' ? { kind: isAsk(b.tex) ? 'ask' : 'text', html: renderMath(b.tex) } : b.kind === 'givens' ? { kind: 'givens', items: b.items.map((t) => renderTex(t, false)) } : { kind: 'math', html: renderTex(`\\displaystyle ${b.tex}`, false) }
 				);
 	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
+	if (s.scene) blocks.push({ kind: 'scene', scene: s.scene });
 	const asks = blocks.some((b) => b.kind === 'ask');
 	const prompt = IMPLIED_PROMPTS.has(s.prompt) || (asks && GENERIC_PROMPTS.has(s.prompt)) ? '' : s.prompt;
 

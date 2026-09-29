@@ -1,7 +1,7 @@
 ---
 stato: in uso
 release: beta
-aggiornato: 2026-09-28
+aggiornato: 2026-09-29
 tag: [contenuti, revisione]
 ---
 # Domande per Andrea
@@ -184,6 +184,29 @@ Lezioni 96-104, vedi [[2026-09-28 Decimo lotto, geometria del secondo anno]]. Le
 - [ ] 95: bastano gli eventi in elenco (doppio, somma, almeno un $k$, nessun $k$, un dado uguale a $k$, somma pari), o ne servono altri?
 - [ ] 57 e 77: voti a passi interi, soluzioni a passi di mezzo. Nella 77 la regola di Cartesio compare nella figura prima della sezione che la spiega: meglio spostare la figura in "Segni delle soluzioni"?
 - [x] 102, "Perché vale": c'era $A'B' : \overline{B'C'} = 3 : 2$, con le due notazioni mescolate. Corretto in $A'B' : B'C'$ (Claude, 28 settembre 2026).
+
+## Fisica, prima del primo lotto (29 settembre 2026)
+Vedi [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]].
+- [ ] Colori per grandezza nelle figure, uguali nel TikZ e nelle figure interattive: un colore per le forze, uno per le velocità, uno per le accelerazioni, uno per i campi? Quale convenzione usano i libri che conosci (per esempio l'Amaldi)?
+
+## Primo lotto di fisica: grandezze, grafici, vettori e forze (29 settembre 2026)
+Le 19 lezioni del primo anno sui primi tre capitoli; vedi [[2026-09-29 Primo lotto di fisica]]. Qui le domande che valgono per tutta la fisica, con la scelta fatta tra parentesi; quelle di ogni lezione (circa 95) sono nella sezione "Domande per Andrea" di `docs/lezioni/fisica/note/NN-slug.md`, e i dubbi sugli esercizi nelle specifiche `specs/exercises/fis-*.md` e `forze.md`. Le convenzioni scelte sono in `docs/lezioni/fisica/README.md`.
+- [ ] Colori delle frecce: forze rosse, vettori generici e spostamenti blu, velocità blu scuro, accelerazioni verdi, risultante arancione, componenti tratteggiate (scelta fatta).
+- [ ] $g = 9{,}8\,	ext{m/s}^2$ (scelta fatta, come l'Amaldi) o $9{,}81$; in m/s² o in N/kg.
+- [ ] Densità $d$ (scelta fatta, come l'Amaldi) o $\rho$.
+- [ ] Incertezza di una misura singola: la sensibilità intera (scelta fatta) o metà.
+- [ ] Incertezza di una serie: la semidispersione (scelta fatta) o già lo scarto quadratico medio in prima.
+- [ ] Incertezza scritta con una cifra significativa (scelta fatta) o due quando la prima è 1; arrotondata con la regola solita (scelta fatta) o sempre per eccesso.
+- [ ] Propagazione nel caso peggiore: si sommano le assolute nelle somme e le relative nei prodotti (scelta fatta).
+- [ ] Simbolo dell'incertezza relativa: $\varepsilon$ (scelta fatta), $e_r$ o $\Delta x / x$.
+- [ ] "Precisione" e "accuratezza" come nella lezione 05, dato che alcuni libri chiamano precisione la sensibilità; "sbaglio" o "errore grossolano".
+- [ ] Vettori con la freccia $\vec v$ (scelta fatta) o in grassetto; "modulo" o "intensità"; versori sì o no al primo anno.
+- [ ] Angolo di un vettore sempre dal semiasse positivo delle $x$ in senso antiorario (scelta fatta), oppure anche da altri riferimenti; $\sin$ o $\text{sen}$ (come in matematica, domanda già aperta).
+- [ ] Forza premente $F_\perp$ (scelta fatta), $F_N$ o $N$; allungamento $\Delta l$ (scelta fatta) o $x$; legge di Hooke con il segno già al primo anno.
+- [ ] Ordine di grandezza: soglia 5, $\sqrt{10}$ o "la potenza più vicina" (gli esercizi usano solo numeri dove le regole coincidono).
+- [ ] La notazione scientifica spiegata nella lezione 02 di fisica, perché la matematica non ha una lezione sua: va bene lì?
+- [ ] Molle in serie e in parallelo lasciate fuori, perché il programma non le cita: confermi?
+- [ ] Coefficienti di attrito presi da Engineering ToolBox (pagina senza data): meglio la tabella dell'Amaldi.
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

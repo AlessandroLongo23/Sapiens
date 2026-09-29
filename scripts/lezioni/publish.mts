@@ -24,6 +24,9 @@
  * to the `figure` bucket and its `% svg:` line written into the lesson file
  * (see src/lib/content/figures.ts). A figure without `% nome` or `% alt` stops
  * the run before any lesson is written.
+ *
+ * `--dir docs/lezioni/fisica` publishes another subject laid out the same way (its originali/index.json is written
+ * by scripts/fisica/indice.mts). Every figure is compiled with the TikZ libraries in TIKZ_LIBRARIES.
  */
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
@@ -32,7 +35,10 @@ import { FIGURE_BUCKET, figureFile, parseFigure, publishedSvg, serializeFigure }
 import { compileFigure } from '../figure/compile.mjs';
 
 const apply = process.argv.includes('--apply');
-const dir = 'docs/lezioni';
+const dirArg = process.argv.indexOf('--dir');
+const dir = dirArg > 0 ? process.argv[dirArg + 1].replace(/\/$/, '') : 'docs/lezioni';
+/** Loaded for every figure: arrows, springs and hatched supports of the physics figures (docs/lezioni/fisica/README.md). */
+const TIKZ_LIBRARIES = 'arrows.meta,decorations.pathmorphing,decorations.markings,patterns,calc';
 const index: { id: string; slug: string; title: string }[] = JSON.parse(readFileSync(`${dir}/originali/index.json`, 'utf8'));
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set');
@@ -61,7 +67,7 @@ async function prepareFigures(): Promise<number> {
 				console.log(`figura ${file}: da compilare`);
 				continue;
 			}
-			const out = await compileFigure(figure.code);
+			const out = await compileFigure(figure.code, { tikzLibraries: TIKZ_LIBRARIES });
 			if (!bucketReady) {
 				const { data: bucket } = await db.storage.getBucket(FIGURE_BUCKET);
 				if (!bucket) {

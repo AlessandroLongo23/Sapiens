@@ -1,13 +1,10 @@
 # Albero delle lezioni di fisica (scuola superiore)
 
 Fonte dell'albero di `content_nodes` per la fisica delle superiori (materia `physics` sotto
-`high_school`), sul programma del liceo scientifico. Proposta del 26 settembre 2026, da approvare;
-motivazioni e fonti in `programma.md`. Niente è stato applicato al database. Si applica con
-`scripts/lezioni/tree.mts --level high_school --subject physics --file docs/lezioni/fisica/albero.md`
-(prima senza scrivere, poi con `--apply`; serve `JITI_ALIAS='{"@/": "<radice del repo>/src/"}'`,
-perché `src/lib/seo/slug.ts` importa con `@/`). Prima di applicarlo va corretto un controllo di
-`tree.mts` (vedi "Cosa cambia in tree.mts" in `programma.md`), altrimenti l'assorbimento di
-`meccanica-razionale` si ferma.
+`high_school`), sul programma del liceo scientifico. Proposta del 26 settembre 2026, approvata e
+applicata al database lo stesso giorno con `scripts/lezioni/tree.mts --level high_school --subject
+physics --file docs/lezioni/fisica/albero.md` (serve `JITI_ALIAS='{"@/": "<radice del repo>/src/"}'`,
+perché `src/lib/seo/slug.ts` importa con `@/`). Motivazioni e fonti in `programma.md`.
 
 Formato: `## slug | Titolo` è un capitolo, `- slug | Titolo` una lezione, `+ vecchio-slug` dopo una
 lezione indica una lezione di oggi che viene assorbita (deve essere vuota), `+ vecchio-slug` subito

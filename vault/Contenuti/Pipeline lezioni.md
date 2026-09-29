@@ -1,7 +1,7 @@
 ---
 stato: bozza
 release: beta
-aggiornato: 2026-09-27
+aggiornato: 2026-09-29
 tag: [contenuti, ai]
 ---
 # Pipeline lezioni
@@ -27,6 +27,6 @@ Flusso proposto:
 
 ## Domande aperte
 - Quanto tempo richiede davvero una lezione con questo flusso? Misurarlo sulle prime 10.
-- Figure e grafici: chi li fa e con quale strumento (TikZ, SVG, manim)? Il vecchio [[TODO]] parlava di convertire TikZ in WebP. Per la chimica è stato provato RDKit il 25 settembre 2026, con sei lezioni di prova: vedi [[2026-09-25 Chimica con RDKit]].
+- Figure e grafici: chi li fa e con quale strumento (TikZ, SVG, manim)? Il vecchio [[TODO]] parlava di convertire TikZ in WebP. Per la chimica è stato provato RDKit il 25 settembre 2026, con sei lezioni di prova: vedi [[2026-09-25 Chimica con RDKit]]. Per la fisica deciso il 29 settembre 2026: TikZ per le statiche, il kit per le interattive, i grafici in TikZ, come quelli di matematica, finché non c'è il piano cartesiano del kit (vedi [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]]).
 - Claude invece di `gpt-4o` per le bozze? La riscrittura del 23 settembre 2026 è un primo termine di paragone. Vedi [[Provider AI]].
 - Come arrivano le lezioni nel database: oggi a mano da `admin/wiki`, domani con uno script che carica i file di `docs/lezioni/`?

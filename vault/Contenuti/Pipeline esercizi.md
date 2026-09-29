@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-28
+aggiornato: 2026-09-29
 tag: [contenuti, ai]
 ---
 # Pipeline esercizi
@@ -78,6 +78,11 @@ Nove generatori (65 livelli) per la geometria del secondo anno: circonferenza, p
 
 ## Chimica
 Gli esercizi di chimica sono generatori Python con RDKit (`scripts/chimica/esercizi/`), stesso contratto dei generatori TypeScript, verificati da un controllo indipendente (OPSIN per i nomi). Sul sito arrivano pregenerati, con immagini nella domanda, nelle risposte e nella soluzione: vedi [[2026-09-26 La chimica si pubblica gratis accanto alla beta]] e [[2026-09-25 Chimica con RDKit]].
+
+## Fisica
+Deciso il 29 settembre 2026: gli esercizi di fisica hanno la figura come scena descritta nei dati dell'esercizio (tipo e dati, per esempio un piano inclinato con il suo angolo), disegnata dalla pagina con i componenti del kit delle lezioni, ferma. Serve un campo nuovo in `src/lib/exercises/v2/types.ts`, accanto a `FigureRef`, che oggi porta solo file precompilati. Lo stesso campo può dare le figure che mancano agli esercizi di geometria e del piano cartesiano. Vedi [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]].
+
+Primo lotto di fisica (29 settembre 2026): 19 generatori, 100 livelli, tutti a scelta multipla con l'unità nell'opzione, costruiti all'indietro perché gli arrotondamenti siano univoci. Undici usano le scene, dieci tipi in tutto (righello, cilindro graduato, calibro, bersaglio, grafico dei dati, vettori sul piano, dinamometro, molla con righello, forze su un punto, blocco con le forze). Verificati come quelli di matematica, con i seed 1, 50001 e 777001. Vedi [[2026-09-29 Primo lotto di fisica]].
 
 ## Domande aperte
 - La pipeline diventa una skill di Claude Code nella repo?

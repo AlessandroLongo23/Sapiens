@@ -76,13 +76,11 @@ export function SubjectTextbook({ level, subject, href }: { level: ContentNode |
 					<Latex content={subject.title} />
 				</h3>
 				{book && <p className="mt-3 max-w-xs text-sm leading-snug text-white/85">{book.inside}</p>}
-				<div className="mt-5 flex items-end justify-between gap-4 border-t border-white/20 pt-3">
+				<div className="mt-5 border-t border-white/20 pt-3">
 					<p className="label-mono flex flex-wrap gap-x-3 gap-y-1 text-white/80">
 						<span>{plural(c.chapter, 'capitolo', 'capitoli')}</span>
 						<span>{plural(c.topic, 'lezione', 'lezioni')}</span>
 					</p>
-					{/* The publisher's mark, at the foot of the cover. */}
-					<span className="font-display text-sm font-semibold italic text-white/60">Sapiens</span>
 				</div>
 			</div>
 		</Link>

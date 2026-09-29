@@ -1079,7 +1079,8 @@ body {
    theme the colours are inverted and the hue turned back, so lines turn light and tints stay tints. */
 .dark .markdown-content .tikz-container svg,
 .dark .markdown-content .tikz-container img,
-.dark .markdown-content .interactive-figure .tikz-drawing {
+.dark .markdown-content .interactive-figure .tikz-drawing,
+.dark .scene-figure .tikz-drawing {
 	filter: invert(1) hue-rotate(180deg);
 }
 .admonition {
