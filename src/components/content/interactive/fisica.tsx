@@ -117,18 +117,20 @@ export function Vector({ f, from, to, color = QTY.vettore, weight = 'thick', nam
 
 /**
  * The components of the vector from `o` to `p` along x and y: dashed arrows on the axes through `o` and dashed
- * projection lines from the tip, as the lessons draw them.
+ * projection lines from the tip, as the lessons draw them. `names` are written `v_x`, `v_y` (letter, underscore,
+ * subscript) and shown as scalars, without the arrow ($v_x$), unless `vectors` asks for $\vec v_x$.
  */
-export function Components({ f, o, p, color = QTY.vettore, names }: { f: Frame; o: V; p: V; color?: string; names?: [string, string] }) {
+export function Components({ f, o, p, color = QTY.vettore, names, vectors = false }: { f: Frame; o: V; p: V; color?: string; names?: [string, string]; vectors?: boolean }) {
 	const px = v(p.x, o.y), py = v(o.x, p.y);
+	const split = (n: string) => { const [name, sub] = n.split('_'); return { name, sub: sub || undefined }; };
 	return (
 		<>
 			<path d={f.path([p, px])} stroke={color} strokeWidth={THIN} strokeDasharray={DASH} fill="none" opacity={0.7} />
 			<path d={f.path([p, py])} stroke={color} strokeWidth={THIN} strokeDasharray={DASH} fill="none" opacity={0.7} />
 			{Math.abs(p.x - o.x) > 0.05 && <Arrow f={f} from={o} to={px} color={color} weight="thick" dashed />}
 			{Math.abs(p.y - o.y) > 0.05 && <Arrow f={f} from={o} to={py} color={color} weight="thick" dashed />}
-			{names && Math.abs(p.x - o.x) > 0.05 && <VecLabel f={f} at={lerp(o, px, 0.5)} dir={v(0, p.y >= o.y ? -1 : 1)} name={names[0].charAt(0)} sub={names[0].slice(1) || undefined} color={color} />}
-			{names && Math.abs(p.y - o.y) > 0.05 && <VecLabel f={f} at={lerp(o, py, 0.5)} dir={v(p.x >= o.x ? -1 : 1, 0)} name={names[1].charAt(0)} sub={names[1].slice(1) || undefined} color={color} />}
+			{names && Math.abs(p.x - o.x) > 0.05 && <VecLabel f={f} at={lerp(o, px, 0.5)} dir={v(0, p.y >= o.y ? -1 : 1)} {...split(names[0])} color={color} bare={!vectors} />}
+			{names && Math.abs(p.y - o.y) > 0.05 && <VecLabel f={f} at={lerp(o, py, 0.5)} dir={v(p.x >= o.x ? -1 : 1, 0)} {...split(names[1])} color={color} bare={!vectors} />}
 		</>
 	);
 }

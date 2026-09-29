@@ -58,10 +58,28 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'moto-incontro-tempo': () => import('@/components/content/interactive/MotoIncontro'),
 	'tabella-segni-cursore': () => import('@/components/content/interactive/TabellaSegniCursore'),
 	'frequenza-relativa-lanci': () => import('@/components/content/interactive/FrequenzaLanci'),
-	// Physics, first year: measurement.
-	// Physics, first year: graphs.
-	// Physics, first year: vectors.
-	// Physics, first year: forces.
+	// Physics, first year: quantities and units (group 1).
+	'pendolo-periodo': () => import('@/components/content/interactive/fisica/PendoloPeriodo'),
+	'densita-massa-volume': () => import('@/components/content/interactive/fisica/DensitaMassaVolume'),
+	'calibro-nonio': () => import('@/components/content/interactive/fisica/CalibroNonio'),
+	// Physics, first year: errors and uncertainty (group 2).
+	'bersaglio-errori': () => import('@/components/content/interactive/fisica/BersaglioErrori'),
+	'misure-ripetute-istogramma': () => import('@/components/content/interactive/fisica/MisureRipetute'),
+	'rettangolo-lati-incerti': () => import('@/components/content/interactive/fisica/RettangoloIncerto'),
+	// Physics, first year: graphs (group 3).
+	'molla-pesetti': () => import('@/components/content/interactive/fisica/MollaPesetti'),
+	'siringa-pressione-volume': () => import('@/components/content/interactive/fisica/SiringaPressione'),
+	// Physics, first year: vectors (group 4).
+	'vettori-confronto-griglia': () => import('@/components/content/interactive/fisica/VettoriConfronto'),
+	'somma-vettori-parallelogramma': () => import('@/components/content/interactive/fisica/SommaVettori'),
+	'differenza-vettori-opposto': () => import('@/components/content/interactive/fisica/DifferenzaVettori'),
+	'vettore-per-scalare': () => import('@/components/content/interactive/fisica/VettorePerScalare'),
+	'componenti-vettore-quadranti': () => import('@/components/content/interactive/fisica/ComponentiVettore'),
+	// Physics, first year: forces (group 5).
+	'dinamometro-pesetti': () => import('@/components/content/interactive/fisica/DinamometroPesetti'),
+	'peso-massa-pianeti': () => import('@/components/content/interactive/fisica/PesoMassaPianeti'),
+	'molla-hooke-righello': () => import('@/components/content/interactive/fisica/MollaHookeRighello'),
+	'attrito-blocco-spinta': () => import('@/components/content/interactive/fisica/AttritoBloccoSpinta'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {
