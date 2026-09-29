@@ -8,6 +8,7 @@ import type { AnsweredView } from '@/lib/server/exercises';
 import { Html } from '@/components/ui/Html';
 import { Button } from '@/components/ui/Button';
 import { Block } from './RunPlayer';
+import { SceneFigure } from './scenes';
 
 interface Props {
 	/** What the run was: "Livello 3 · Sostituenti diversi", "Ripasso degli errori". */
@@ -108,6 +109,7 @@ function MistakeRow({ mistake: { position, exercise, choice, verdict } }: { mist
 						</ol>
 					)}
 					{verdict.figureHtml && <Html html={verdict.figureHtml} className="flex justify-center py-1" />}
+					{verdict.scene && <SceneFigure scene={verdict.scene} className="py-1" />}
 					<p className="flex flex-wrap items-baseline gap-x-2 border-t border-edge pt-2 text-sm font-medium text-fg-strong">
 						<span className="label-mono text-ok-fg">Soluzione</span>
 						<Html as="span" html={verdict.solutionHtml} className="math-content min-w-0 break-words" />

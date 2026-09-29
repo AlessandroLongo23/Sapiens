@@ -30,7 +30,7 @@ const BANNED: [RegExp, string][] = [
 ];
 
 const urls = new Set(
-	[...readFileSync('docs/lezioni/url.md', 'utf8').matchAll(/(\/materiale\/[^\s)]+)/g)].map((m) => m[1]),
+	['docs/lezioni/url.md', 'docs/lezioni/fisica/url.md'].flatMap((f) => [...readFileSync(f, 'utf8').matchAll(/(\/materiale\/[^\s)]+)/g)].map((m) => m[1])),
 );
 
 let errors = 0;

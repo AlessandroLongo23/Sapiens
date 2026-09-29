@@ -7,6 +7,7 @@ import { ChevronDown, X } from 'lucide-react';
 import type { AnsweredView } from '@/lib/server/exercises';
 import { Html } from '@/components/ui/Html';
 import { Block } from './RunPlayer';
+import { SceneFigure } from './scenes';
 
 /**
  * One question answered wrong: the question, the answer picked, the right one, and the steps behind a tap, so a
@@ -63,6 +64,11 @@ export function MistakeCard({ mistake: { exercise, choice, verdict }, heading }:
 						{verdict.figureHtml && (
 							<li>
 								<Html html={verdict.figureHtml} className="flex justify-center" />
+							</li>
+						)}
+						{verdict.scene && (
+							<li>
+								<SceneFigure scene={verdict.scene} />
 							</li>
 						)}
 						<li className="flex flex-wrap items-baseline gap-x-2 border-t border-edge pt-2 text-sm font-medium text-fg-strong">

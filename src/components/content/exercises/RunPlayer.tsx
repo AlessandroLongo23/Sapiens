@@ -7,6 +7,7 @@ import { ArrowRight, Check, X } from 'lucide-react';
 import type { ExerciseView, QuestionBlock, SessionView, Verdict } from '@/lib/server/exercises';
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
+import { SceneFigure } from './scenes';
 
 /** A question of a run: not answered yet, answered right, answered wrong. */
 export type Progress = 'unanswered' | 'correct' | 'incorrect';
@@ -37,6 +38,7 @@ export function Block({ block }: { block: QuestionBlock }) {
 	if (block.kind === 'text') return <Html html={block.html} className="math-content mx-auto max-w-xl text-balance text-base leading-relaxed text-fg sm:text-lg" />;
 	if (block.kind === 'ask') return <Html html={block.html} className="math-content text-balance font-display text-xl font-medium text-fg-strong sm:text-2xl" />;
 	if (block.kind === 'figure') return <Html html={block.html} className="flex justify-center px-2" />;
+	if (block.kind === 'scene') return <SceneFigure scene={block.scene} className="px-2" />;
 	if (block.kind === 'givens')
 		return (
 			<div className="flex flex-wrap items-baseline justify-center gap-x-5 gap-y-2 text-lg sm:text-xl">
@@ -193,6 +195,11 @@ export function Solution({ verdict }: { verdict: Verdict }) {
 					</ol>
 				)}
 				{verdict.figureHtml && <Html html={verdict.figureHtml} className="mb-3 flex animate-step-in justify-center" style={stepDelay(verdict.stepsHtml.length)} />}
+				{verdict.scene && (
+					<div className="mb-3 animate-step-in" style={stepDelay(verdict.stepsHtml.length)}>
+						<SceneFigure scene={verdict.scene} />
+					</div>
+				)}
 				<p className="flex animate-step-in flex-wrap items-baseline gap-x-2 border-t border-edge pt-3 text-base font-medium text-fg-strong" style={stepDelay(verdict.stepsHtml.length)}>
 					<span className="label-mono text-ok-fg">Soluzione</span>
 					<Html as="span" html={verdict.solutionHtml} className="math-content min-w-0 break-words" />

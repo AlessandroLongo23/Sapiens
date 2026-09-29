@@ -10,7 +10,7 @@ import { lessonIndex } from '@/lib/server/lessons';
 import { PRACTICE_LENGTH, practicePlan, practiceSeed, type StartedLesson } from '@/lib/exercises/practice';
 import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/exercises/streak';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
-import type { ChoiceAnswer, FigureRef, Sample } from '@/lib/exercises/v2/types';
+import type { ChoiceAnswer, FigureRef, Sample, SceneRef } from '@/lib/exercises/v2/types';
 import { figureUrl } from '@/lib/content/figures';
 import { escapeHtml } from '@/lib/utils/escape';
 import { renderMath, renderTex } from '@/lib/content/markdown';
@@ -19,7 +19,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { adminClient } from '@/lib/server/supabase';
 
 /** A piece of a question, typeset: a paragraph, the question itself as a sentence, a row of givens, a formula on its own. */
-export type QuestionBlock = { kind: 'text' | 'ask'; html: string } | { kind: 'givens'; items: string[] } | { kind: 'math'; html: string } | { kind: 'figure'; html: string };
+export type QuestionBlock = { kind: 'text' | 'ask'; html: string } | { kind: 'givens'; items: string[] } | { kind: 'math'; html: string } | { kind: 'figure'; html: string } | { kind: 'scene'; scene: SceneRef };
 
 /** One exercise as sent to the browser: typeset, so the client ships no KaTeX, and without the right answer. */
 export interface ExerciseView {
@@ -43,6 +43,8 @@ export interface Verdict {
 	stepsHtml: string[];
 	/** A drawing that goes with the solution, as an `<img>`. */
 	figureHtml?: string;
+	/** A drawing made from the exercise's data that goes with the solution. */
+	scene?: SceneRef;
 }
 
 /** A request the service refuses on purpose, with the status to answer with. */
@@ -90,6 +92,7 @@ interface Sealed {
 	/** The sample's `format` and solution drawing: a reference, never the drawing itself. */
 	format?: 'text';
 	figure?: FigureRef;
+	scene?: SceneRef;
 }
 
 let sealKey: Buffer | null = null;
@@ -148,6 +151,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 					b.kind === 'text' ? { kind: isAsk(b.tex) ? 'ask' : 'text', html: renderMath(b.tex) } : b.kind === 'givens' ? { kind: 'givens', items: b.items.map((t) => renderTex(t, false)) } : { kind: 'math', html: renderTex(b.tex, true) }
 				);
 	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
+	if (s.scene) blocks.push({ kind: 'scene', scene: s.scene });
 	const asks = blocks.some((b) => b.kind === 'ask');
 	const prompt = IMPLIED_PROMPTS.has(s.prompt) || (asks && GENERIC_PROMPTS.has(s.prompt)) ? '' : s.prompt;
 	return {
@@ -162,14 +166,14 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 					? { html: textHtml(o.latex), text: o.text ?? o.latex }
 					: { html: renderMath(`$$${o.latex}$$`), text: o.latex }
 		),
-		key: seal({ id, user: userId, correct: s.choice.correct, options: s.choice.options.length, solution: s.solution, steps: s.steps, format: s.format, figure: s.solutionFigure })
+		key: seal({ id, user: userId, correct: s.choice.correct, options: s.choice.options.length, solution: s.solution, steps: s.steps, format: s.format, figure: s.solutionFigure, scene: s.solutionScene })
 	};
 }
 
 /** Solution and steps typeset, from the sample or from the sealed key. */
-function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef }) {
+function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef; scene?: SceneRef }) {
 	const html = w.format === 'text' ? textHtml : (t: string) => renderMath(presentStep(t));
-	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(w.figure ? { figureHtml: figureHtml(w.figure) } : {}) };
+	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(w.figure ? { figureHtml: figureHtml(w.figure) } : {}), ...(w.scene ? { scene: w.scene } : {}) };
 }
 
 /** An answered attempt as read back from the database. */
@@ -182,7 +186,7 @@ function answered(row: AnsweredRow): AnsweredView {
 		position: row.position,
 		exercise: view(row.id, row.user_id, row.level, s),
 		choice: row.answer.choice,
-		verdict: { correct: row.correct, correctIndex: s.choice.correct, ...worked({ ...s, figure: s.solutionFigure }) }
+		verdict: { correct: row.correct, correctIndex: s.choice.correct, ...worked({ ...s, figure: s.solutionFigure, scene: s.solutionScene }) }
 	};
 }
 

@@ -6,7 +6,7 @@ import type { Root } from 'react-dom/client';
  * (see interactiveFigure in content/markdown.ts). When it scrolls near, its component is loaded and mounted there.
  * Each component is its own chunk, so a lesson pays only for the figures it has.
  */
-const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ alt?: string }> }>> = {
+export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ alt?: string }> }>> = {
 	'trapezio-triangolo': () => import('@/components/content/interactive/TrapezioTriangolo'),
 	// Pieces that move and keep their area.
 	'parallelogramma-rettangolo': () => import('@/components/content/interactive/ParallelogrammaRettangolo'),
@@ -58,6 +58,10 @@ const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ alt?: str
 	'moto-incontro-tempo': () => import('@/components/content/interactive/MotoIncontro'),
 	'tabella-segni-cursore': () => import('@/components/content/interactive/TabellaSegniCursore'),
 	'frequenza-relativa-lanci': () => import('@/components/content/interactive/FrequenzaLanci'),
+	// Physics, first year: measurement.
+	// Physics, first year: graphs.
+	// Physics, first year: vectors.
+	// Physics, first year: forces.
 };
 
 export function activateInteractives(root: HTMLElement): () => void {

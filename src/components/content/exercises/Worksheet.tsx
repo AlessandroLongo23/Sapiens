@@ -5,6 +5,7 @@ import type { QuestionBlock } from '@/lib/server/exercises';
 import type { SheetItem, SheetLevel, Worksheet as Sheet } from '@/lib/server/worksheet';
 import { dayName } from '@/lib/exercises/sheet-day';
 import { Html } from '@/components/ui/Html';
+import { SceneFigure } from './scenes';
 import { cn } from '@/lib/utils/cn';
 import { DayNav, LevelIndex, PrintMenu, RevealAll, SheetAnswer, SheetAnswers } from './WorksheetControls';
 
@@ -160,5 +161,6 @@ function SheetBlock({ block }: { block: QuestionBlock }) {
 		);
 	if (block.kind === 'math') return <Html html={block.html} className="math-content scroll-x py-0.5 text-lg" />;
 	if (block.kind === 'figure') return <Html html={block.html} />;
+	if (block.kind === 'scene') return <SceneFigure scene={block.scene} className="justify-start" />;
 	return <Html html={block.html} className="math-content text-fg" />;
 }

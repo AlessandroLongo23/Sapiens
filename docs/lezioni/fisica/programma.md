@@ -1,8 +1,8 @@
 # Programma di fisica del liceo scientifico: proposta per l'albero delle lezioni
 
-Proposta del 26 settembre 2026, da approvare. L'albero proposto è in `albero.md` (stesso formato
-dell'albero di chimica): 41 capitoli e 219 lezioni sui cinque anni. Niente è stato applicato al
-database.
+Proposta del 26 settembre 2026, approvata lo stesso giorno. L'albero è in `albero.md` (stesso formato
+dell'albero di chimica): 41 capitoli e 219 lezioni sui cinque anni, applicato al database il 26
+settembre 2026 (vault: `Decisioni/2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma.md`).
 
 ## Fonti
 

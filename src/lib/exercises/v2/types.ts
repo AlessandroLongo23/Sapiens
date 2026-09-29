@@ -42,6 +42,18 @@ export interface FigureRef {
 	alt: string;
 }
 
+/**
+ * A drawing described by its data and drawn in the browser by the kit of the interactive figures, without
+ * interaction (src/components/content/exercises/scenes/): the physics exercises, whose figure changes with the
+ * numbers. `type` picks the drawing, `data` is what it needs, JSON-safe; `alt` says what it shows.
+ * vault/Decisioni/2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit.md
+ */
+export interface SceneRef {
+	type: string;
+	data: Record<string, unknown>;
+	alt: string;
+}
+
 export type ChoiceAnswer = {
 	kind: 'choice';
 	options: ChoiceOption[];
@@ -104,6 +116,10 @@ export interface Sample {
 	figure?: FigureRef;
 	/** A drawing with the solution (the main chain numbered, the group coloured). */
 	solutionFigure?: FigureRef;
+	/** A drawing under the problem made from the exercise's own data (a block on an incline at its angle). */
+	scene?: SceneRef;
+	/** The same kind of drawing with the solution (the forces found, the resultant). */
+	solutionScene?: SceneRef;
 }
 
 export interface LevelSpec {

@@ -1,0 +1,1754 @@
+[
+  {
+    "id": "57e9684d-d4eb-4510-a958-5c0fa3eed555",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Il metodo sperimentale",
+    "slug": "fis-metodo-sperimentale",
+    "path": "high_school/physics/fis-grandezze/fis-metodo-sperimentale",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "10c12753-78e1-4ddc-8574-6184783c6f49",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Grandezze fisiche e unità del Sistema Internazionale",
+    "slug": "fis-grandezze-si",
+    "path": "high_school/physics/fis-grandezze/fis-grandezze-si",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "6377f136-611a-418a-b9be-e577b7d63cbf",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Grandezze derivate: area, volume e densità",
+    "slug": "fis-grandezze-derivate",
+    "path": "high_school/physics/fis-grandezze/fis-grandezze-derivate",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "378b4b4a-309f-4967-94d8-f8543881651a",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Gli strumenti di misura",
+    "slug": "fis-strumenti-misura",
+    "path": "high_school/physics/fis-grandezze/fis-strumenti-misura",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "899fcabd-f114-4bba-a3da-52d537e40541",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Errori casuali ed errori sistematici",
+    "slug": "fis-errori-misura",
+    "path": "high_school/physics/fis-grandezze/fis-errori-misura",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "915d3bd4-151f-4e7d-b329-8b34b35907ca",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Valore medio e incertezza di una serie di misure",
+    "slug": "fis-valore-medio",
+    "path": "high_school/physics/fis-grandezze/fis-valore-medio",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "44d4c58d-39e8-46f8-8aa2-91deaf170721",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Incertezza relativa e propagazione delle incertezze",
+    "slug": "fis-incertezza-relativa",
+    "path": "high_school/physics/fis-grandezze/fis-incertezza-relativa",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "5c35bb3e-4488-4685-8735-4ed214cab285",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "Le cifre significative",
+    "slug": "fis-cifre-significative",
+    "path": "high_school/physics/fis-grandezze/fis-cifre-significative",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "3f81f4eb-eb65-44af-bff7-6e5c18a59de6",
+    "parent_id": "f5626527-7944-4bb1-8f7d-b640c46a330b",
+    "title": "La relazione di laboratorio",
+    "slug": "fis-relazione-laboratorio",
+    "path": "high_school/physics/fis-grandezze/fis-relazione-laboratorio",
+    "chapter": "Le grandezze fisiche e la misura"
+  },
+  {
+    "id": "cf407673-8665-486b-82f0-9b8e6de01fd8",
+    "parent_id": "69ff02fb-f4e4-428c-9d01-89dda414c814",
+    "title": "Tabelle e grafici cartesiani",
+    "slug": "fis-tabelle-grafici",
+    "path": "high_school/physics/fis-relazioni-grafici/fis-tabelle-grafici",
+    "chapter": "Relazioni tra grandezze e grafici"
+  },
+  {
+    "id": "6d561f43-d44c-47db-ba61-b81bdf26a568",
+    "parent_id": "69ff02fb-f4e4-428c-9d01-89dda414c814",
+    "title": "Proporzionalità diretta e dipendenza lineare",
+    "slug": "fis-proporzionalita-diretta",
+    "path": "high_school/physics/fis-relazioni-grafici/fis-proporzionalita-diretta",
+    "chapter": "Relazioni tra grandezze e grafici"
+  },
+  {
+    "id": "6a14d79c-9ec2-4d26-a18a-322a1f69db65",
+    "parent_id": "69ff02fb-f4e4-428c-9d01-89dda414c814",
+    "title": "Proporzionalità inversa e quadratica",
+    "slug": "fis-proporzionalita-inversa",
+    "path": "high_school/physics/fis-relazioni-grafici/fis-proporzionalita-inversa",
+    "chapter": "Relazioni tra grandezze e grafici"
+  },
+  {
+    "id": "a0bc9124-5497-4241-a502-3e617cd3ec21",
+    "parent_id": "eaa74131-6589-40ed-acec-6c5bf339e6ae",
+    "title": "Grandezze scalari e grandezze vettoriali",
+    "slug": "fis-scalari-vettori",
+    "path": "high_school/physics/fis-vettori-forze/fis-scalari-vettori",
+    "chapter": "I vettori e le forze"
+  },
+  {
+    "id": "e93c0783-5bb8-4820-918d-543d4d400d9d",
+    "parent_id": "eaa74131-6589-40ed-acec-6c5bf339e6ae",
+    "title": "Somma e differenza di vettori",
+    "slug": "fis-operazioni-vettori",
+    "path": "high_school/physics/fis-vettori-forze/fis-operazioni-vettori",
+    "chapter": "I vettori e le forze"
+  },
+  {
+    "id": "26d3db0a-a8f5-40e8-b3c9-e37452c28374",
+    "parent_id": "eaa74131-6589-40ed-acec-6c5bf339e6ae",
+    "title": "Seno e coseno per scomporre un vettore",
+    "slug": "fis-seno-coseno",
+    "path": "high_school/physics/fis-vettori-forze/fis-seno-coseno",
+    "chapter": "I vettori e le forze"
+  },
+  {
+    "id": "7669415a-6c51-4c5c-998a-ec5af2357d9b",
+    "parent_id": "eaa74131-6589-40ed-acec-6c5bf339e6ae",
+    "title": "Le forze e il dinamometro",
+    "slug": "forze",
+    "path": "high_school/physics/fis-vettori-forze/forze",
+    "chapter": "I vettori e le forze"
+  },
+  {
+    "id": "f5c28aef-8c04-450b-a06f-452dd77f8353",
+    "parent_id": "eaa74131-6589-40ed-acec-6c5bf339e6ae",
+    "title": "La forza-peso e la massa",
+    "slug": "fis-forza-peso",
+    "path": "high_school/physics/fis-vettori-forze/fis-forza-peso",
+    "chapter": "I vettori e le forze"
+  },
+  {
+    "id": "0b228de5-ac4c-4644-9238-15e111e9cae6",
+    "parent_id": "eaa74131-6589-40ed-acec-6c5bf339e6ae",
+    "title": "La forza elastica e la legge di Hooke",
+    "slug": "fis-forza-elastica",
+    "path": "high_school/physics/fis-vettori-forze/fis-forza-elastica",
+    "chapter": "I vettori e le forze"
+  },
+  {
+    "id": "e188fac3-8a86-4b48-8820-5954ed1d70a8",
+    "parent_id": "eaa74131-6589-40ed-acec-6c5bf339e6ae",
+    "title": "Le forze di attrito",
+    "slug": "fis-attrito",
+    "path": "high_school/physics/fis-vettori-forze/fis-attrito",
+    "chapter": "I vettori e le forze"
+  },
+  {
+    "id": "c653a5da-64ed-47a8-ae67-fce0ec337f67",
+    "parent_id": "8eb8e722-d519-4679-b5c4-d7215afb1aeb",
+    "title": "L'equilibrio di un punto materiale e le reazioni vincolari",
+    "slug": "fis-equilibrio-punto",
+    "path": "high_school/physics/fis-equilibrio-solidi/fis-equilibrio-punto",
+    "chapter": "L'equilibrio dei solidi"
+  },
+  {
+    "id": "ec5699b8-5b8f-4b6f-8af1-cf3385e8656a",
+    "parent_id": "8eb8e722-d519-4679-b5c4-d7215afb1aeb",
+    "title": "L'equilibrio sul piano inclinato",
+    "slug": "fis-equilibrio-piano-inclinato",
+    "path": "high_school/physics/fis-equilibrio-solidi/fis-equilibrio-piano-inclinato",
+    "chapter": "L'equilibrio dei solidi"
+  },
+  {
+    "id": "66559135-e6b5-43c5-8944-09a6ab8f0e7e",
+    "parent_id": "8eb8e722-d519-4679-b5c4-d7215afb1aeb",
+    "title": "Il momento di una forza e di una coppia di forze",
+    "slug": "fis-momento-forza",
+    "path": "high_school/physics/fis-equilibrio-solidi/fis-momento-forza",
+    "chapter": "L'equilibrio dei solidi"
+  },
+  {
+    "id": "845a886a-dd54-4842-bba3-d36ad0c1e0b4",
+    "parent_id": "8eb8e722-d519-4679-b5c4-d7215afb1aeb",
+    "title": "L'equilibrio di un corpo rigido",
+    "slug": "fis-equilibrio-corpo-rigido",
+    "path": "high_school/physics/fis-equilibrio-solidi/fis-equilibrio-corpo-rigido",
+    "chapter": "L'equilibrio dei solidi"
+  },
+  {
+    "id": "86c263a2-604d-40a3-aab2-2d4655571173",
+    "parent_id": "8eb8e722-d519-4679-b5c4-d7215afb1aeb",
+    "title": "Le leve e le macchine semplici",
+    "slug": "fis-leve",
+    "path": "high_school/physics/fis-equilibrio-solidi/fis-leve",
+    "chapter": "L'equilibrio dei solidi"
+  },
+  {
+    "id": "a2654649-1a61-4bc7-86b0-923598e57412",
+    "parent_id": "8eb8e722-d519-4679-b5c4-d7215afb1aeb",
+    "title": "Il baricentro e la stabilità dell'equilibrio",
+    "slug": "fis-baricentro",
+    "path": "high_school/physics/fis-equilibrio-solidi/fis-baricentro",
+    "chapter": "L'equilibrio dei solidi"
+  },
+  {
+    "id": "91ddb9f1-060e-43e0-8dfa-d45145ecdced",
+    "parent_id": "7d74f2ea-1834-4a5f-be64-dba0d2129f92",
+    "title": "La pressione",
+    "slug": "fis-pressione",
+    "path": "high_school/physics/fis-equilibrio-fluidi/fis-pressione",
+    "chapter": "L'equilibrio dei fluidi"
+  },
+  {
+    "id": "563ab29d-b1ac-41ed-96ac-9c3b885e7077",
+    "parent_id": "7d74f2ea-1834-4a5f-be64-dba0d2129f92",
+    "title": "La legge di Pascal e il torchio idraulico",
+    "slug": "fis-legge-pascal",
+    "path": "high_school/physics/fis-equilibrio-fluidi/fis-legge-pascal",
+    "chapter": "L'equilibrio dei fluidi"
+  },
+  {
+    "id": "2cafef4a-3e8c-43c7-acad-a85001c4d7ff",
+    "parent_id": "7d74f2ea-1834-4a5f-be64-dba0d2129f92",
+    "title": "La legge di Stevino e i vasi comunicanti",
+    "slug": "fis-legge-stevino",
+    "path": "high_school/physics/fis-equilibrio-fluidi/fis-legge-stevino",
+    "chapter": "L'equilibrio dei fluidi"
+  },
+  {
+    "id": "cea2109d-a388-4f32-ab95-2d6e6372bde5",
+    "parent_id": "7d74f2ea-1834-4a5f-be64-dba0d2129f92",
+    "title": "La pressione atmosferica e la sua misura",
+    "slug": "fis-pressione-atmosferica",
+    "path": "high_school/physics/fis-equilibrio-fluidi/fis-pressione-atmosferica",
+    "chapter": "L'equilibrio dei fluidi"
+  },
+  {
+    "id": "c60de0f9-5998-4caa-8a7c-153012a63958",
+    "parent_id": "7d74f2ea-1834-4a5f-be64-dba0d2129f92",
+    "title": "La spinta di Archimede e il galleggiamento",
+    "slug": "fis-archimede",
+    "path": "high_school/physics/fis-equilibrio-fluidi/fis-archimede",
+    "chapter": "L'equilibrio dei fluidi"
+  },
+  {
+    "id": "21bbe09d-a4b0-41fd-b2f0-bc214c61139d",
+    "parent_id": "8d5288f3-c5a6-420f-9f8c-bbf0c2f8fb0b",
+    "title": "I raggi di luce e la propagazione rettilinea",
+    "slug": "ottica-geometrica",
+    "path": "high_school/physics/ottica/ottica-geometrica",
+    "chapter": "L'ottica geometrica"
+  },
+  {
+    "id": "d47218bd-bbdc-429f-8297-151679863405",
+    "parent_id": "8d5288f3-c5a6-420f-9f8c-bbf0c2f8fb0b",
+    "title": "La riflessione e gli specchi piani",
+    "slug": "riflessione",
+    "path": "high_school/physics/ottica/riflessione",
+    "chapter": "L'ottica geometrica"
+  },
+  {
+    "id": "e37f3a44-40db-4f7b-82fe-f039409f5984",
+    "parent_id": "8d5288f3-c5a6-420f-9f8c-bbf0c2f8fb0b",
+    "title": "Gli specchi sferici",
+    "slug": "fis-specchi-sferici",
+    "path": "high_school/physics/ottica/fis-specchi-sferici",
+    "chapter": "L'ottica geometrica"
+  },
+  {
+    "id": "1e974ae3-f18a-4771-995b-40a6674d4c2b",
+    "parent_id": "8d5288f3-c5a6-420f-9f8c-bbf0c2f8fb0b",
+    "title": "La rifrazione e la riflessione totale",
+    "slug": "fis-rifrazione",
+    "path": "high_school/physics/ottica/fis-rifrazione",
+    "chapter": "L'ottica geometrica"
+  },
+  {
+    "id": "ff583024-163f-4607-80ec-8bbd40135867",
+    "parent_id": "8d5288f3-c5a6-420f-9f8c-bbf0c2f8fb0b",
+    "title": "La dispersione della luce e i colori",
+    "slug": "fis-dispersione",
+    "path": "high_school/physics/ottica/fis-dispersione",
+    "chapter": "L'ottica geometrica"
+  },
+  {
+    "id": "21488aaf-6fa9-46bb-b2e7-707e07566e8e",
+    "parent_id": "8d5288f3-c5a6-420f-9f8c-bbf0c2f8fb0b",
+    "title": "Le lenti sottili",
+    "slug": "fis-lenti",
+    "path": "high_school/physics/ottica/fis-lenti",
+    "chapter": "L'ottica geometrica"
+  },
+  {
+    "id": "e88f981f-ddaa-439b-b4d4-f75b66566efd",
+    "parent_id": "8d5288f3-c5a6-420f-9f8c-bbf0c2f8fb0b",
+    "title": "L'occhio e gli strumenti ottici",
+    "slug": "fis-strumenti-ottici",
+    "path": "high_school/physics/ottica/fis-strumenti-ottici",
+    "chapter": "L'ottica geometrica"
+  },
+  {
+    "id": "a63eeec3-f765-4773-8417-a1aafaaee95d",
+    "parent_id": "32f58a5d-284b-44ab-87e9-162d35dd6313",
+    "title": "Punto materiale, traiettoria e sistema di riferimento",
+    "slug": "fis-punto-materiale",
+    "path": "high_school/physics/cinematica/fis-punto-materiale",
+    "chapter": "Il moto rettilineo"
+  },
+  {
+    "id": "1821af49-291f-45e0-9f6d-786f12b64b4d",
+    "parent_id": "32f58a5d-284b-44ab-87e9-162d35dd6313",
+    "title": "La velocità media e istantanea",
+    "slug": "velocita",
+    "path": "high_school/physics/cinematica/velocita",
+    "chapter": "Il moto rettilineo"
+  },
+  {
+    "id": "742d4592-b70a-4a6a-886d-02538d4aca38",
+    "parent_id": "32f58a5d-284b-44ab-87e9-162d35dd6313",
+    "title": "Il moto rettilineo uniforme e il grafico spazio-tempo",
+    "slug": "fis-moto-rettilineo-uniforme",
+    "path": "high_school/physics/cinematica/fis-moto-rettilineo-uniforme",
+    "chapter": "Il moto rettilineo"
+  },
+  {
+    "id": "236076f7-a22d-4745-992f-5411cbd15402",
+    "parent_id": "32f58a5d-284b-44ab-87e9-162d35dd6313",
+    "title": "L'accelerazione",
+    "slug": "fis-accelerazione",
+    "path": "high_school/physics/cinematica/fis-accelerazione",
+    "chapter": "Il moto rettilineo"
+  },
+  {
+    "id": "d7b70b5a-96b8-4862-842d-87ee27f0e03a",
+    "parent_id": "32f58a5d-284b-44ab-87e9-162d35dd6313",
+    "title": "Il moto uniformemente accelerato",
+    "slug": "moto-uniforme-accelerato",
+    "path": "high_school/physics/cinematica/moto-uniforme-accelerato",
+    "chapter": "Il moto rettilineo"
+  },
+  {
+    "id": "a80d6c5a-1c57-426c-9a6c-c596a081b1de",
+    "parent_id": "32f58a5d-284b-44ab-87e9-162d35dd6313",
+    "title": "Il grafico velocità-tempo",
+    "slug": "fis-grafico-velocita-tempo",
+    "path": "high_school/physics/cinematica/fis-grafico-velocita-tempo",
+    "chapter": "Il moto rettilineo"
+  },
+  {
+    "id": "3b544383-e1c5-4598-8665-155b4ecbf757",
+    "parent_id": "32f58a5d-284b-44ab-87e9-162d35dd6313",
+    "title": "La caduta libera e il lancio verticale",
+    "slug": "fis-caduta-libera",
+    "path": "high_school/physics/cinematica/fis-caduta-libera",
+    "chapter": "Il moto rettilineo"
+  },
+  {
+    "id": "9964fedb-1d0c-4d9d-9560-453844133470",
+    "parent_id": "fb23c940-82e0-4130-9133-25e2cc4a77fb",
+    "title": "Spostamento e velocità nel piano",
+    "slug": "fis-spostamento-velocita-piano",
+    "path": "high_school/physics/fis-moti-piano/fis-spostamento-velocita-piano",
+    "chapter": "I moti nel piano"
+  },
+  {
+    "id": "bf191b3e-ef7d-4e4d-8404-fc8bc62154a8",
+    "parent_id": "fb23c940-82e0-4130-9133-25e2cc4a77fb",
+    "title": "La composizione dei moti",
+    "slug": "fis-composizione-moti",
+    "path": "high_school/physics/fis-moti-piano/fis-composizione-moti",
+    "chapter": "I moti nel piano"
+  },
+  {
+    "id": "6a201cfd-a5d1-43cd-898b-5abbe1ad43b5",
+    "parent_id": "fb23c940-82e0-4130-9133-25e2cc4a77fb",
+    "title": "Il moto circolare uniforme",
+    "slug": "fis-moto-circolare-uniforme",
+    "path": "high_school/physics/fis-moti-piano/fis-moto-circolare-uniforme",
+    "chapter": "I moti nel piano"
+  },
+  {
+    "id": "4ae7b6ab-54e9-41d1-8d51-17c0e1124df0",
+    "parent_id": "fb23c940-82e0-4130-9133-25e2cc4a77fb",
+    "title": "L'accelerazione centripeta",
+    "slug": "fis-accelerazione-centripeta",
+    "path": "high_school/physics/fis-moti-piano/fis-accelerazione-centripeta",
+    "chapter": "I moti nel piano"
+  },
+  {
+    "id": "b92611db-5b94-40ba-8401-558500c89cd2",
+    "parent_id": "fb23c940-82e0-4130-9133-25e2cc4a77fb",
+    "title": "Il moto armonico",
+    "slug": "fis-moto-armonico",
+    "path": "high_school/physics/fis-moti-piano/fis-moto-armonico",
+    "chapter": "I moti nel piano"
+  },
+  {
+    "id": "4855c66d-53f7-499e-af94-4c541cf1dd09",
+    "parent_id": "bd929026-cf7a-4658-9dc0-85214a48f633",
+    "title": "Il primo principio della dinamica e i sistemi inerziali",
+    "slug": "fis-primo-principio",
+    "path": "high_school/physics/dinamica/fis-primo-principio",
+    "chapter": "I principi della dinamica"
+  },
+  {
+    "id": "fdcef231-6879-4e0e-9eee-43f4b14a8c4c",
+    "parent_id": "bd929026-cf7a-4658-9dc0-85214a48f633",
+    "title": "Il secondo principio della dinamica",
+    "slug": "leggi-newton",
+    "path": "high_school/physics/dinamica/leggi-newton",
+    "chapter": "I principi della dinamica"
+  },
+  {
+    "id": "7071c299-c1b2-49fb-ba01-afea94df1afc",
+    "parent_id": "bd929026-cf7a-4658-9dc0-85214a48f633",
+    "title": "Il terzo principio della dinamica",
+    "slug": "fis-terzo-principio",
+    "path": "high_school/physics/dinamica/fis-terzo-principio",
+    "chapter": "I principi della dinamica"
+  },
+  {
+    "id": "d5779699-575e-4f45-8e99-7279abcdf9ee",
+    "parent_id": "bd929026-cf7a-4658-9dc0-85214a48f633",
+    "title": "Il diagramma delle forze",
+    "slug": "fis-diagramma-corpo-libero",
+    "path": "high_school/physics/dinamica/fis-diagramma-corpo-libero",
+    "chapter": "I principi della dinamica"
+  },
+  {
+    "id": "0fefb3f6-5c1f-4b0e-b76b-dc3a23f248c9",
+    "parent_id": "c68eb34b-d60f-4208-80fb-d2bd9ffb20c2",
+    "title": "Il moto lungo un piano inclinato",
+    "slug": "fis-piano-inclinato",
+    "path": "high_school/physics/fis-forze-movimento/fis-piano-inclinato",
+    "chapter": "Le forze e il movimento"
+  },
+  {
+    "id": "c5c18b2c-1e18-43f7-883d-6d5236f45dcc",
+    "parent_id": "c68eb34b-d60f-4208-80fb-d2bd9ffb20c2",
+    "title": "Corpi collegati e tensione dei fili",
+    "slug": "fis-corpi-collegati",
+    "path": "high_school/physics/fis-forze-movimento/fis-corpi-collegati",
+    "chapter": "Le forze e il movimento"
+  },
+  {
+    "id": "7e005606-6715-4346-a00e-79e36310b275",
+    "parent_id": "c68eb34b-d60f-4208-80fb-d2bd9ffb20c2",
+    "title": "Il moto di un proiettile lanciato in orizzontale",
+    "slug": "fis-moto-proiettili",
+    "path": "high_school/physics/fis-forze-movimento/fis-moto-proiettili",
+    "chapter": "Le forze e il movimento"
+  },
+  {
+    "id": "7a134cdc-06cf-4b40-bc09-3c1e746b53aa",
+    "parent_id": "c68eb34b-d60f-4208-80fb-d2bd9ffb20c2",
+    "title": "La forza centripeta",
+    "slug": "fis-forza-centripeta",
+    "path": "high_school/physics/fis-forze-movimento/fis-forza-centripeta",
+    "chapter": "Le forze e il movimento"
+  },
+  {
+    "id": "f820fc4e-c657-484b-aece-fc10d7001400",
+    "parent_id": "c68eb34b-d60f-4208-80fb-d2bd9ffb20c2",
+    "title": "Il pendolo e la molla",
+    "slug": "fis-pendolo-molla",
+    "path": "high_school/physics/fis-forze-movimento/fis-pendolo-molla",
+    "chapter": "Le forze e il movimento"
+  },
+  {
+    "id": "c81a986b-04e0-49ae-965d-3a9c79acdfe8",
+    "parent_id": "f3e29ff1-bfaa-4e7f-bbb2-cc1c20ae0708",
+    "title": "Il lavoro di una forza",
+    "slug": "lavoro",
+    "path": "high_school/physics/lavoro-energia/lavoro",
+    "chapter": "Lavoro ed energia"
+  },
+  {
+    "id": "81beecd8-422a-43af-bcc1-082f06ffd328",
+    "parent_id": "f3e29ff1-bfaa-4e7f-bbb2-cc1c20ae0708",
+    "title": "La potenza",
+    "slug": "fis-potenza",
+    "path": "high_school/physics/lavoro-energia/fis-potenza",
+    "chapter": "Lavoro ed energia"
+  },
+  {
+    "id": "8a3df224-5741-4ed8-861e-c2122d2854cb",
+    "parent_id": "f3e29ff1-bfaa-4e7f-bbb2-cc1c20ae0708",
+    "title": "L'energia cinetica e il teorema dell'energia cinetica",
+    "slug": "fis-energia-cinetica",
+    "path": "high_school/physics/lavoro-energia/fis-energia-cinetica",
+    "chapter": "Lavoro ed energia"
+  },
+  {
+    "id": "82dc54ab-85f3-4441-b372-8bc10ab6c997",
+    "parent_id": "f3e29ff1-bfaa-4e7f-bbb2-cc1c20ae0708",
+    "title": "Energia potenziale gravitazionale ed elastica",
+    "slug": "fis-energia-potenziale",
+    "path": "high_school/physics/lavoro-energia/fis-energia-potenziale",
+    "chapter": "Lavoro ed energia"
+  },
+  {
+    "id": "833078f1-6de0-4cc0-afef-3876d9eb9e55",
+    "parent_id": "f3e29ff1-bfaa-4e7f-bbb2-cc1c20ae0708",
+    "title": "La conservazione dell'energia meccanica",
+    "slug": "energia",
+    "path": "high_school/physics/lavoro-energia/energia",
+    "chapter": "Lavoro ed energia"
+  },
+  {
+    "id": "1dd26d8d-fabc-4557-911d-296ca677618e",
+    "parent_id": "f3e29ff1-bfaa-4e7f-bbb2-cc1c20ae0708",
+    "title": "Forze dissipative e conservazione dell'energia totale",
+    "slug": "fis-energia-totale",
+    "path": "high_school/physics/lavoro-energia/fis-energia-totale",
+    "chapter": "Lavoro ed energia"
+  },
+  {
+    "id": "96c257bd-d0dd-4958-a154-e0d01d85ee3f",
+    "parent_id": "3f355403-ab92-42f3-b005-95edbfea2705",
+    "title": "La temperatura e le scale termometriche",
+    "slug": "fis-temperatura",
+    "path": "high_school/physics/fis-temperatura-calore/fis-temperatura",
+    "chapter": "La temperatura e il calore"
+  },
+  {
+    "id": "95ed4c13-2012-4b47-ae2e-474b2c23f82d",
+    "parent_id": "3f355403-ab92-42f3-b005-95edbfea2705",
+    "title": "La dilatazione termica",
+    "slug": "fis-dilatazione-termica",
+    "path": "high_school/physics/fis-temperatura-calore/fis-dilatazione-termica",
+    "chapter": "La temperatura e il calore"
+  },
+  {
+    "id": "58639c05-da81-43bb-9e2c-28c5009e037a",
+    "parent_id": "3f355403-ab92-42f3-b005-95edbfea2705",
+    "title": "Calore, capacità termica e calore specifico",
+    "slug": "calore",
+    "path": "high_school/physics/fis-temperatura-calore/calore",
+    "chapter": "La temperatura e il calore"
+  },
+  {
+    "id": "99b23489-6d42-4ecd-941e-93da86cdab9e",
+    "parent_id": "3f355403-ab92-42f3-b005-95edbfea2705",
+    "title": "L'equilibrio termico e il calorimetro",
+    "slug": "fis-equilibrio-termico",
+    "path": "high_school/physics/fis-temperatura-calore/fis-equilibrio-termico",
+    "chapter": "La temperatura e il calore"
+  },
+  {
+    "id": "d5f2e1bb-61c1-4f96-8c0c-8800020da56b",
+    "parent_id": "3f355403-ab92-42f3-b005-95edbfea2705",
+    "title": "Conduzione, convezione e irraggiamento",
+    "slug": "fis-propagazione-calore",
+    "path": "high_school/physics/fis-temperatura-calore/fis-propagazione-calore",
+    "chapter": "La temperatura e il calore"
+  },
+  {
+    "id": "97cfa943-3f4b-4b88-8d21-ad4a903d4ecb",
+    "parent_id": "3f355403-ab92-42f3-b005-95edbfea2705",
+    "title": "I passaggi di stato e il calore latente",
+    "slug": "fis-passaggi-stato",
+    "path": "high_school/physics/fis-temperatura-calore/fis-passaggi-stato",
+    "chapter": "La temperatura e il calore"
+  },
+  {
+    "id": "4695c26c-aeea-4d32-a298-2c8c2eb9af11",
+    "parent_id": "7fd1f937-f866-4c84-803b-89ed4f81166a",
+    "title": "Prodotto scalare e prodotto vettoriale",
+    "slug": "fis-prodotto-scalare-vettoriale",
+    "path": "high_school/physics/fis-relativita-galileiana/fis-prodotto-scalare-vettoriale",
+    "chapter": "La dinamica e la relatività galileiana"
+  },
+  {
+    "id": "5f709dc4-dae9-476d-8c09-58e74eaeb2e8",
+    "parent_id": "7fd1f937-f866-4c84-803b-89ed4f81166a",
+    "title": "Sistemi di riferimento inerziali e non inerziali",
+    "slug": "fis-sistemi-non-inerziali",
+    "path": "high_school/physics/fis-relativita-galileiana/fis-sistemi-non-inerziali",
+    "chapter": "La dinamica e la relatività galileiana"
+  },
+  {
+    "id": "cb994ca9-1178-47fe-8a0c-5d48a883b7fb",
+    "parent_id": "7fd1f937-f866-4c84-803b-89ed4f81166a",
+    "title": "Le trasformazioni di Galileo e la composizione delle velocità",
+    "slug": "fis-trasformazioni-galileo",
+    "path": "high_school/physics/fis-relativita-galileiana/fis-trasformazioni-galileo",
+    "chapter": "La dinamica e la relatività galileiana"
+  },
+  {
+    "id": "1c44dc58-83de-433c-9f32-d15653314d9b",
+    "parent_id": "7fd1f937-f866-4c84-803b-89ed4f81166a",
+    "title": "Il principio di relatività galileiana",
+    "slug": "fis-principio-relativita-galileo",
+    "path": "high_school/physics/fis-relativita-galileiana/fis-principio-relativita-galileo",
+    "chapter": "La dinamica e la relatività galileiana"
+  },
+  {
+    "id": "8ea960d4-e000-448d-a8cb-fa6205454f73",
+    "parent_id": "7fd1f937-f866-4c84-803b-89ed4f81166a",
+    "title": "Le forze apparenti: forza centrifuga e forza di Coriolis",
+    "slug": "fis-forze-apparenti",
+    "path": "high_school/physics/fis-relativita-galileiana/fis-forze-apparenti",
+    "chapter": "La dinamica e la relatività galileiana"
+  },
+  {
+    "id": "b9e1d416-a845-48bd-bbb7-2af3f2575be9",
+    "parent_id": "7fd1f937-f866-4c84-803b-89ed4f81166a",
+    "title": "Il lancio obliquo e la gittata",
+    "slug": "fis-lancio-obliquo",
+    "path": "high_school/physics/fis-relativita-galileiana/fis-lancio-obliquo",
+    "chapter": "La dinamica e la relatività galileiana"
+  },
+  {
+    "id": "a4a2d3f7-507d-4a66-bbfb-9d77e576030c",
+    "parent_id": "d5b83298-90cb-414c-be1d-7c9798219a18",
+    "title": "Il lavoro di una forza variabile",
+    "slug": "fis-lavoro-forza-variabile",
+    "path": "high_school/physics/fis-forze-conservative/fis-lavoro-forza-variabile",
+    "chapter": "Il lavoro e le forze conservative"
+  },
+  {
+    "id": "27d77087-930a-4ba5-93d7-ea99865f554d",
+    "parent_id": "d5b83298-90cb-414c-be1d-7c9798219a18",
+    "title": "Forze conservative ed energia potenziale",
+    "slug": "fis-forze-conservative-energia",
+    "path": "high_school/physics/fis-forze-conservative/fis-forze-conservative-energia",
+    "chapter": "Il lavoro e le forze conservative"
+  },
+  {
+    "id": "c4e2d596-fa13-41ae-a5fa-ffefdec3fc4f",
+    "parent_id": "d5b83298-90cb-414c-be1d-7c9798219a18",
+    "title": "Il bilancio dell'energia con le forze non conservative",
+    "slug": "fis-bilancio-energia",
+    "path": "high_school/physics/fis-forze-conservative/fis-bilancio-energia",
+    "chapter": "Il lavoro e le forze conservative"
+  },
+  {
+    "id": "623da392-d5b5-4f26-955d-7eec2cf66da7",
+    "parent_id": "62b0f883-d56f-413f-801a-2468529e8db0",
+    "title": "La quantità di moto",
+    "slug": "fis-quantita-moto-def",
+    "path": "high_school/physics/fis-quantita-moto/fis-quantita-moto-def",
+    "chapter": "La quantità di moto"
+  },
+  {
+    "id": "a2e44b52-ff04-4d7f-bc27-d99a50f3ef77",
+    "parent_id": "62b0f883-d56f-413f-801a-2468529e8db0",
+    "title": "L'impulso e il teorema dell'impulso",
+    "slug": "fis-impulso",
+    "path": "high_school/physics/fis-quantita-moto/fis-impulso",
+    "chapter": "La quantità di moto"
+  },
+  {
+    "id": "aeeb0f5f-ad2f-4a91-896d-7deb143ee0e0",
+    "parent_id": "62b0f883-d56f-413f-801a-2468529e8db0",
+    "title": "La conservazione della quantità di moto",
+    "slug": "fis-conservazione-quantita-moto",
+    "path": "high_school/physics/fis-quantita-moto/fis-conservazione-quantita-moto",
+    "chapter": "La quantità di moto"
+  },
+  {
+    "id": "d93ad7cd-825e-4531-bb63-585a638c8b08",
+    "parent_id": "62b0f883-d56f-413f-801a-2468529e8db0",
+    "title": "Gli urti anelastici",
+    "slug": "fis-urti-anelastici",
+    "path": "high_school/physics/fis-quantita-moto/fis-urti-anelastici",
+    "chapter": "La quantità di moto"
+  },
+  {
+    "id": "c65c08a2-16eb-45ac-83c5-0758ccb2ec39",
+    "parent_id": "62b0f883-d56f-413f-801a-2468529e8db0",
+    "title": "Gli urti elastici in una e in due dimensioni",
+    "slug": "fis-urti-elastici",
+    "path": "high_school/physics/fis-quantita-moto/fis-urti-elastici",
+    "chapter": "La quantità di moto"
+  },
+  {
+    "id": "26b8e54f-a55b-462d-9659-2a3c256309e5",
+    "parent_id": "62b0f883-d56f-413f-801a-2468529e8db0",
+    "title": "Il centro di massa",
+    "slug": "fis-centro-massa",
+    "path": "high_school/physics/fis-quantita-moto/fis-centro-massa",
+    "chapter": "La quantità di moto"
+  },
+  {
+    "id": "a83c40dd-e4bd-4ff8-8319-a1a2edadf9d2",
+    "parent_id": "9c0cc633-d4cc-461b-b141-ec69c8f7cd8a",
+    "title": "Velocità angolare e accelerazione angolare",
+    "slug": "fis-cinematica-rotazionale",
+    "path": "high_school/physics/fis-momento-angolare/fis-cinematica-rotazionale",
+    "chapter": "Il corpo rigido e il momento angolare"
+  },
+  {
+    "id": "261ac2d9-0b8c-4f6a-9d0d-0449731c8626",
+    "parent_id": "9c0cc633-d4cc-461b-b141-ec69c8f7cd8a",
+    "title": "Il momento d'inerzia",
+    "slug": "fis-momento-inerzia",
+    "path": "high_school/physics/fis-momento-angolare/fis-momento-inerzia",
+    "chapter": "Il corpo rigido e il momento angolare"
+  },
+  {
+    "id": "6780b234-3c68-45f0-b2e2-faf07aec2942",
+    "parent_id": "9c0cc633-d4cc-461b-b141-ec69c8f7cd8a",
+    "title": "Momento torcente e dinamica delle rotazioni",
+    "slug": "fis-dinamica-rotazionale",
+    "path": "high_school/physics/fis-momento-angolare/fis-dinamica-rotazionale",
+    "chapter": "Il corpo rigido e il momento angolare"
+  },
+  {
+    "id": "fc7c8512-a1c3-4d34-8bba-374e7a60aa22",
+    "parent_id": "9c0cc633-d4cc-461b-b141-ec69c8f7cd8a",
+    "title": "L'energia cinetica di rotazione e il rotolamento",
+    "slug": "fis-energia-rotazionale",
+    "path": "high_school/physics/fis-momento-angolare/fis-energia-rotazionale",
+    "chapter": "Il corpo rigido e il momento angolare"
+  },
+  {
+    "id": "eecd42dc-b2bf-4e3b-8b7b-2ef414effe28",
+    "parent_id": "9c0cc633-d4cc-461b-b141-ec69c8f7cd8a",
+    "title": "Il momento angolare",
+    "slug": "fis-momento-angolare-def",
+    "path": "high_school/physics/fis-momento-angolare/fis-momento-angolare-def",
+    "chapter": "Il corpo rigido e il momento angolare"
+  },
+  {
+    "id": "6890ecb9-8cb7-44b7-a439-114cbba569fa",
+    "parent_id": "9c0cc633-d4cc-461b-b141-ec69c8f7cd8a",
+    "title": "La conservazione del momento angolare",
+    "slug": "fis-conservazione-momento-angolare",
+    "path": "high_school/physics/fis-momento-angolare/fis-conservazione-momento-angolare",
+    "chapter": "Il corpo rigido e il momento angolare"
+  },
+  {
+    "id": "fd98e5e6-b4ad-4484-a9a5-6cbe7b95ae9c",
+    "parent_id": "904f459c-76d2-45c6-b5cd-22057101a42f",
+    "title": "Dal sistema tolemaico al sistema copernicano",
+    "slug": "fis-sistemi-cosmologici",
+    "path": "high_school/physics/fis-gravitazione/fis-sistemi-cosmologici",
+    "chapter": "La gravitazione"
+  },
+  {
+    "id": "f434d7b3-5fb6-4018-8354-970d95f38b04",
+    "parent_id": "904f459c-76d2-45c6-b5cd-22057101a42f",
+    "title": "Le leggi di Keplero",
+    "slug": "fis-leggi-keplero",
+    "path": "high_school/physics/fis-gravitazione/fis-leggi-keplero",
+    "chapter": "La gravitazione"
+  },
+  {
+    "id": "e87b2f45-8c7d-43aa-ac8f-652fc15957b2",
+    "parent_id": "904f459c-76d2-45c6-b5cd-22057101a42f",
+    "title": "La legge di gravitazione universale",
+    "slug": "fis-gravitazione-universale",
+    "path": "high_school/physics/fis-gravitazione/fis-gravitazione-universale",
+    "chapter": "La gravitazione"
+  },
+  {
+    "id": "609badee-80dc-474a-8c40-5b268658d81d",
+    "parent_id": "904f459c-76d2-45c6-b5cd-22057101a42f",
+    "title": "Il campo gravitazionale",
+    "slug": "fis-campo-gravitazionale",
+    "path": "high_school/physics/fis-gravitazione/fis-campo-gravitazionale",
+    "chapter": "La gravitazione"
+  },
+  {
+    "id": "c6fcb012-e7a7-4fee-9830-14e136369f52",
+    "parent_id": "904f459c-76d2-45c6-b5cd-22057101a42f",
+    "title": "Il moto dei satelliti",
+    "slug": "fis-satelliti",
+    "path": "high_school/physics/fis-gravitazione/fis-satelliti",
+    "chapter": "La gravitazione"
+  },
+  {
+    "id": "8a9ec04a-cba8-40e8-bc02-14b38601e700",
+    "parent_id": "904f459c-76d2-45c6-b5cd-22057101a42f",
+    "title": "L'energia potenziale gravitazionale e la velocità di fuga",
+    "slug": "fis-energia-gravitazionale",
+    "path": "high_school/physics/fis-gravitazione/fis-energia-gravitazionale",
+    "chapter": "La gravitazione"
+  },
+  {
+    "id": "ae448bd8-1f06-414d-85cb-3a19c0a52255",
+    "parent_id": "ec5c9740-17b1-4ebb-b0db-cd632afb1d2c",
+    "title": "La portata e l'equazione di continuità",
+    "slug": "fis-portata-continuita",
+    "path": "high_school/physics/fis-fluidi/fis-portata-continuita",
+    "chapter": "La meccanica dei fluidi"
+  },
+  {
+    "id": "e2424fb4-a2db-470b-a27a-5b20bbfc6714",
+    "parent_id": "ec5c9740-17b1-4ebb-b0db-cd632afb1d2c",
+    "title": "L'equazione di Bernoulli",
+    "slug": "fis-bernoulli",
+    "path": "high_school/physics/fis-fluidi/fis-bernoulli",
+    "chapter": "La meccanica dei fluidi"
+  },
+  {
+    "id": "c8dd58b1-4833-4259-84cf-3b7b9a5ac38d",
+    "parent_id": "ec5c9740-17b1-4ebb-b0db-cd632afb1d2c",
+    "title": "Il teorema di Torricelli e l'effetto Venturi",
+    "slug": "fis-torricelli-venturi",
+    "path": "high_school/physics/fis-fluidi/fis-torricelli-venturi",
+    "chapter": "La meccanica dei fluidi"
+  },
+  {
+    "id": "a127fe3a-ae49-4336-9efe-394cbdde7c9d",
+    "parent_id": "ec5c9740-17b1-4ebb-b0db-cd632afb1d2c",
+    "title": "L'attrito viscoso e la velocità limite",
+    "slug": "fis-viscosita",
+    "path": "high_school/physics/fis-fluidi/fis-viscosita",
+    "chapter": "La meccanica dei fluidi"
+  },
+  {
+    "id": "76320b04-1a0a-4bb5-8387-b4d22b15411c",
+    "parent_id": "608561a5-e2fd-46e7-ae1d-3294cc5d2cfb",
+    "title": "La legge di Boyle",
+    "slug": "fis-legge-boyle",
+    "path": "high_school/physics/fis-gas/fis-legge-boyle",
+    "chapter": "La temperatura e i gas"
+  },
+  {
+    "id": "fa96a60e-c54c-450c-92c2-9206f7673e26",
+    "parent_id": "608561a5-e2fd-46e7-ae1d-3294cc5d2cfb",
+    "title": "Le leggi di Gay-Lussac",
+    "slug": "fis-leggi-gay-lussac",
+    "path": "high_school/physics/fis-gas/fis-leggi-gay-lussac",
+    "chapter": "La temperatura e i gas"
+  },
+  {
+    "id": "3aa05070-e685-4582-a9c9-50b24e64a98d",
+    "parent_id": "608561a5-e2fd-46e7-ae1d-3294cc5d2cfb",
+    "title": "L'equazione di stato del gas perfetto",
+    "slug": "fis-gas-perfetto",
+    "path": "high_school/physics/fis-gas/fis-gas-perfetto",
+    "chapter": "La temperatura e i gas"
+  },
+  {
+    "id": "04a19a1c-cd34-4905-9012-16da0a174317",
+    "parent_id": "608561a5-e2fd-46e7-ae1d-3294cc5d2cfb",
+    "title": "La teoria cinetica dei gas",
+    "slug": "fis-teoria-cinetica",
+    "path": "high_school/physics/fis-gas/fis-teoria-cinetica",
+    "chapter": "La temperatura e i gas"
+  },
+  {
+    "id": "f8d06a3d-df79-434e-8012-ca04825da4dc",
+    "parent_id": "608561a5-e2fd-46e7-ae1d-3294cc5d2cfb",
+    "title": "Temperatura ed energia cinetica delle molecole",
+    "slug": "fis-temperatura-microscopica",
+    "path": "high_school/physics/fis-gas/fis-temperatura-microscopica",
+    "chapter": "La temperatura e i gas"
+  },
+  {
+    "id": "fbbd34dd-99ba-4929-b25e-2561353ea76c",
+    "parent_id": "74a5e2aa-bcca-4bd3-b116-2d885612d361",
+    "title": "Sistemi termodinamici e principio zero",
+    "slug": "fis-sistemi-termodinamici",
+    "path": "high_school/physics/termodinamica/fis-sistemi-termodinamici",
+    "chapter": "Il primo principio della termodinamica"
+  },
+  {
+    "id": "14b6cf53-fd6d-4d1b-8d07-8e64135bdadd",
+    "parent_id": "74a5e2aa-bcca-4bd3-b116-2d885612d361",
+    "title": "L'energia interna",
+    "slug": "fis-energia-interna",
+    "path": "high_school/physics/termodinamica/fis-energia-interna",
+    "chapter": "Il primo principio della termodinamica"
+  },
+  {
+    "id": "6d6c0897-6227-4937-a2e8-62366da48b8d",
+    "parent_id": "74a5e2aa-bcca-4bd3-b116-2d885612d361",
+    "title": "Il lavoro in una trasformazione termodinamica",
+    "slug": "fis-lavoro-termodinamico",
+    "path": "high_school/physics/termodinamica/fis-lavoro-termodinamico",
+    "chapter": "Il primo principio della termodinamica"
+  },
+  {
+    "id": "0a85a8c9-5fd8-4f91-8dd8-374d06706439",
+    "parent_id": "74a5e2aa-bcca-4bd3-b116-2d885612d361",
+    "title": "Il primo principio della termodinamica",
+    "slug": "principi-termo",
+    "path": "high_school/physics/termodinamica/principi-termo",
+    "chapter": "Il primo principio della termodinamica"
+  },
+  {
+    "id": "5a4a8ada-ce92-4ed9-a87b-1ca0dd95bbaf",
+    "parent_id": "74a5e2aa-bcca-4bd3-b116-2d885612d361",
+    "title": "Le trasformazioni isocora, isobara e isoterma",
+    "slug": "fis-trasformazioni-termodinamiche",
+    "path": "high_school/physics/termodinamica/fis-trasformazioni-termodinamiche",
+    "chapter": "Il primo principio della termodinamica"
+  },
+  {
+    "id": "fe95f98f-5ce3-4d07-bb43-d221afe49cec",
+    "parent_id": "74a5e2aa-bcca-4bd3-b116-2d885612d361",
+    "title": "I calori molari dei gas",
+    "slug": "fis-calori-molari",
+    "path": "high_school/physics/termodinamica/fis-calori-molari",
+    "chapter": "Il primo principio della termodinamica"
+  },
+  {
+    "id": "ea5809a7-0063-406e-8dc9-7cbbf72da82e",
+    "parent_id": "74a5e2aa-bcca-4bd3-b116-2d885612d361",
+    "title": "La trasformazione adiabatica",
+    "slug": "fis-trasformazione-adiabatica",
+    "path": "high_school/physics/termodinamica/fis-trasformazione-adiabatica",
+    "chapter": "Il primo principio della termodinamica"
+  },
+  {
+    "id": "656b5a37-a22b-4b0e-b172-7cd06bcb547f",
+    "parent_id": "b3c2fda5-021d-4aca-9001-82fc80ad5ba1",
+    "title": "Le macchine termiche e il rendimento",
+    "slug": "fis-macchine-termiche",
+    "path": "high_school/physics/fis-secondo-principio/fis-macchine-termiche",
+    "chapter": "Il secondo principio della termodinamica"
+  },
+  {
+    "id": "1f38d993-d49e-46e2-96c6-1cc462c7afce",
+    "parent_id": "b3c2fda5-021d-4aca-9001-82fc80ad5ba1",
+    "title": "Gli enunciati di Kelvin e di Clausius",
+    "slug": "fis-enunciati-kelvin-clausius",
+    "path": "high_school/physics/fis-secondo-principio/fis-enunciati-kelvin-clausius",
+    "chapter": "Il secondo principio della termodinamica"
+  },
+  {
+    "id": "a0f281c2-df6e-44c2-8753-c1c838e42514",
+    "parent_id": "b3c2fda5-021d-4aca-9001-82fc80ad5ba1",
+    "title": "Il teorema di Carnot e il ciclo di Carnot",
+    "slug": "fis-ciclo-carnot",
+    "path": "high_school/physics/fis-secondo-principio/fis-ciclo-carnot",
+    "chapter": "Il secondo principio della termodinamica"
+  },
+  {
+    "id": "8ea53e5a-56a6-45cb-af3c-d335254d4bd6",
+    "parent_id": "b3c2fda5-021d-4aca-9001-82fc80ad5ba1",
+    "title": "Frigoriferi e pompe di calore",
+    "slug": "fis-frigoriferi",
+    "path": "high_school/physics/fis-secondo-principio/fis-frigoriferi",
+    "chapter": "Il secondo principio della termodinamica"
+  },
+  {
+    "id": "5ab70a34-a23f-4647-bde6-1cc5a96d1329",
+    "parent_id": "b3c2fda5-021d-4aca-9001-82fc80ad5ba1",
+    "title": "L'entropia",
+    "slug": "fis-entropia",
+    "path": "high_school/physics/fis-secondo-principio/fis-entropia",
+    "chapter": "Il secondo principio della termodinamica"
+  },
+  {
+    "id": "51c24364-79af-468c-b185-5a1888f4892a",
+    "parent_id": "b3c2fda5-021d-4aca-9001-82fc80ad5ba1",
+    "title": "Entropia e disordine",
+    "slug": "fis-entropia-disordine",
+    "path": "high_school/physics/fis-secondo-principio/fis-entropia-disordine",
+    "chapter": "Il secondo principio della termodinamica"
+  },
+  {
+    "id": "6107471a-b0aa-4c9e-a4b5-a0fa6f5c6118",
+    "parent_id": "a078f4b0-b9d0-410b-81d1-0edb6242b922",
+    "title": "Le onde e la loro propagazione",
+    "slug": "propagazione-onde",
+    "path": "high_school/physics/onde-meccaniche/propagazione-onde",
+    "chapter": "Le onde meccaniche"
+  },
+  {
+    "id": "f2831e02-9998-4fa8-b9de-f6535f1aeee9",
+    "parent_id": "a078f4b0-b9d0-410b-81d1-0edb6242b922",
+    "title": "Onde periodiche: lunghezza d'onda, periodo e velocità",
+    "slug": "fis-onde-periodiche",
+    "path": "high_school/physics/onde-meccaniche/fis-onde-periodiche",
+    "chapter": "Le onde meccaniche"
+  },
+  {
+    "id": "ade67934-ad0a-493a-889e-2aa3c02463ef",
+    "parent_id": "a078f4b0-b9d0-410b-81d1-0edb6242b922",
+    "title": "L'equazione dell'onda armonica",
+    "slug": "fis-onda-armonica",
+    "path": "high_school/physics/onde-meccaniche/fis-onda-armonica",
+    "chapter": "Le onde meccaniche"
+  },
+  {
+    "id": "f773090e-1320-4fe9-84b4-e64bd501a75f",
+    "parent_id": "a078f4b0-b9d0-410b-81d1-0edb6242b922",
+    "title": "Sovrapposizione e interferenza",
+    "slug": "fis-interferenza-onde",
+    "path": "high_school/physics/onde-meccaniche/fis-interferenza-onde",
+    "chapter": "Le onde meccaniche"
+  },
+  {
+    "id": "f122bec9-17c9-49ca-b435-aa50a0d4e105",
+    "parent_id": "a078f4b0-b9d0-410b-81d1-0edb6242b922",
+    "title": "Le onde stazionarie e la risonanza",
+    "slug": "fis-onde-stazionarie",
+    "path": "high_school/physics/onde-meccaniche/fis-onde-stazionarie",
+    "chapter": "Le onde meccaniche"
+  },
+  {
+    "id": "46d9edbc-0bb5-4a18-9466-25759e4a83aa",
+    "parent_id": "a078f4b0-b9d0-410b-81d1-0edb6242b922",
+    "title": "Il principio di Huygens, la rifrazione e la diffrazione delle onde",
+    "slug": "fis-huygens-diffrazione",
+    "path": "high_school/physics/onde-meccaniche/fis-huygens-diffrazione",
+    "chapter": "Le onde meccaniche"
+  },
+  {
+    "id": "41c68577-3eca-4ef4-81cc-3fb4cfa3ed8f",
+    "parent_id": "32d02700-1b32-4a81-8206-8f8df4365326",
+    "title": "Le onde sonore",
+    "slug": "acustica",
+    "path": "high_school/physics/fis-suono/acustica",
+    "chapter": "Il suono"
+  },
+  {
+    "id": "b774add7-5c23-489e-9a6a-c04ae71d0be5",
+    "parent_id": "32d02700-1b32-4a81-8206-8f8df4365326",
+    "title": "Altezza, timbro e intensità: il decibel",
+    "slug": "fis-intensita-suono",
+    "path": "high_school/physics/fis-suono/fis-intensita-suono",
+    "chapter": "Il suono"
+  },
+  {
+    "id": "fd4f56f4-5d10-4ade-823f-f83fbc63047a",
+    "parent_id": "32d02700-1b32-4a81-8206-8f8df4365326",
+    "title": "L'effetto Doppler",
+    "slug": "fis-effetto-doppler",
+    "path": "high_school/physics/fis-suono/fis-effetto-doppler",
+    "chapter": "Il suono"
+  },
+  {
+    "id": "a7c9059d-815d-4f4d-b441-07a575a717b2",
+    "parent_id": "32d02700-1b32-4a81-8206-8f8df4365326",
+    "title": "Interferenza sonora e battimenti",
+    "slug": "fis-battimenti",
+    "path": "high_school/physics/fis-suono/fis-battimenti",
+    "chapter": "Il suono"
+  },
+  {
+    "id": "dbb9d6ff-309b-45e0-a6b9-5f8c70d44f5f",
+    "parent_id": "a64b26e9-cc3d-4e9a-a3b6-cb737f37c7c6",
+    "title": "Il modello corpuscolare e il modello ondulatorio della luce",
+    "slug": "fis-modelli-luce",
+    "path": "high_school/physics/fis-luce-onde/fis-modelli-luce",
+    "chapter": "La natura ondulatoria della luce"
+  },
+  {
+    "id": "d7a8cc05-6ea6-43dc-a854-07d87612515a",
+    "parent_id": "a64b26e9-cc3d-4e9a-a3b6-cb737f37c7c6",
+    "title": "L'interferenza della luce: l'esperimento di Young",
+    "slug": "fis-esperimento-young",
+    "path": "high_school/physics/fis-luce-onde/fis-esperimento-young",
+    "chapter": "La natura ondulatoria della luce"
+  },
+  {
+    "id": "6683bf90-e6b3-493e-b630-5dd84268d86b",
+    "parent_id": "a64b26e9-cc3d-4e9a-a3b6-cb737f37c7c6",
+    "title": "L'interferenza nelle lamine sottili",
+    "slug": "fis-lamine-sottili",
+    "path": "high_school/physics/fis-luce-onde/fis-lamine-sottili",
+    "chapter": "La natura ondulatoria della luce"
+  },
+  {
+    "id": "22a4974e-53fe-451d-a877-ddc19aaa31f3",
+    "parent_id": "a64b26e9-cc3d-4e9a-a3b6-cb737f37c7c6",
+    "title": "La diffrazione da una fenditura",
+    "slug": "fis-diffrazione-fenditura",
+    "path": "high_school/physics/fis-luce-onde/fis-diffrazione-fenditura",
+    "chapter": "La natura ondulatoria della luce"
+  },
+  {
+    "id": "a31f03c4-849c-4b35-9bce-d0de64110e49",
+    "parent_id": "a64b26e9-cc3d-4e9a-a3b6-cb737f37c7c6",
+    "title": "Il reticolo di diffrazione",
+    "slug": "fis-reticolo-diffrazione",
+    "path": "high_school/physics/fis-luce-onde/fis-reticolo-diffrazione",
+    "chapter": "La natura ondulatoria della luce"
+  },
+  {
+    "id": "f38928d8-58ed-4400-8e83-5e85da7e61b1",
+    "parent_id": "b7b16291-60dc-427c-8556-3e52a1957e95",
+    "title": "La carica elettrica e la sua conservazione",
+    "slug": "fis-carica-elettrica",
+    "path": "high_school/physics/elettrostatica/fis-carica-elettrica",
+    "chapter": "La carica elettrica e la legge di Coulomb"
+  },
+  {
+    "id": "d6f57e09-ab57-4dd4-9559-9cfaa47e72e2",
+    "parent_id": "b7b16291-60dc-427c-8556-3e52a1957e95",
+    "title": "Conduttori, isolanti e modi di elettrizzazione",
+    "slug": "fis-elettrizzazione",
+    "path": "high_school/physics/elettrostatica/fis-elettrizzazione",
+    "chapter": "La carica elettrica e la legge di Coulomb"
+  },
+  {
+    "id": "40a0d5af-54fd-4b96-be48-5566a6ffb4f5",
+    "parent_id": "b7b16291-60dc-427c-8556-3e52a1957e95",
+    "title": "La legge di Coulomb",
+    "slug": "fis-legge-coulomb",
+    "path": "high_school/physics/elettrostatica/fis-legge-coulomb",
+    "chapter": "La carica elettrica e la legge di Coulomb"
+  },
+  {
+    "id": "20ee3d3e-1a26-401a-a27f-1b91b5e527ed",
+    "parent_id": "b7b16291-60dc-427c-8556-3e52a1957e95",
+    "title": "La forza di Coulomb nella materia e la polarizzazione",
+    "slug": "fis-coulomb-materia",
+    "path": "high_school/physics/elettrostatica/fis-coulomb-materia",
+    "chapter": "La carica elettrica e la legge di Coulomb"
+  },
+  {
+    "id": "b1b4e835-4d29-4861-98dd-30dec84c7c67",
+    "parent_id": "56b6f465-88d6-454b-b05c-c18dd679edfd",
+    "title": "Il vettore campo elettrico",
+    "slug": "carica-campo",
+    "path": "high_school/physics/fis-campo-elettrico/carica-campo",
+    "chapter": "Il campo elettrico"
+  },
+  {
+    "id": "fd62b256-297e-4aff-8cfe-7d98a77376d2",
+    "parent_id": "56b6f465-88d6-454b-b05c-c18dd679edfd",
+    "title": "Il campo di una o più cariche puntiformi",
+    "slug": "fis-campo-cariche-puntiformi",
+    "path": "high_school/physics/fis-campo-elettrico/fis-campo-cariche-puntiformi",
+    "chapter": "Il campo elettrico"
+  },
+  {
+    "id": "5a07531a-7c42-4f8e-af1c-33f6e0f0d4f1",
+    "parent_id": "56b6f465-88d6-454b-b05c-c18dd679edfd",
+    "title": "Le linee del campo elettrico",
+    "slug": "fis-linee-campo",
+    "path": "high_school/physics/fis-campo-elettrico/fis-linee-campo",
+    "chapter": "Il campo elettrico"
+  },
+  {
+    "id": "cafc5ade-1b19-469e-bd5c-9aaf2ae7b7f8",
+    "parent_id": "56b6f465-88d6-454b-b05c-c18dd679edfd",
+    "title": "Il flusso del campo elettrico",
+    "slug": "fis-flusso-elettrico",
+    "path": "high_school/physics/fis-campo-elettrico/fis-flusso-elettrico",
+    "chapter": "Il campo elettrico"
+  },
+  {
+    "id": "ad731e8e-9229-4c60-a1ab-4e6f83197bbc",
+    "parent_id": "56b6f465-88d6-454b-b05c-c18dd679edfd",
+    "title": "Il teorema di Gauss per il campo elettrico",
+    "slug": "fis-teorema-gauss",
+    "path": "high_school/physics/fis-campo-elettrico/fis-teorema-gauss",
+    "chapter": "Il campo elettrico"
+  },
+  {
+    "id": "da6453f2-843d-4795-adc8-83e71b0ab7e5",
+    "parent_id": "56b6f465-88d6-454b-b05c-c18dd679edfd",
+    "title": "Il campo di distribuzioni di carica simmetriche",
+    "slug": "fis-campi-simmetrici",
+    "path": "high_school/physics/fis-campo-elettrico/fis-campi-simmetrici",
+    "chapter": "Il campo elettrico"
+  },
+  {
+    "id": "6c8b831d-af57-4b11-b153-0056c75ab9f5",
+    "parent_id": "55370d6b-4ca2-4208-bb7b-83670cc6f2c4",
+    "title": "L'energia potenziale elettrica",
+    "slug": "fis-energia-potenziale-elettrica",
+    "path": "high_school/physics/fis-potenziale-elettrico/fis-energia-potenziale-elettrica",
+    "chapter": "Il potenziale elettrico"
+  },
+  {
+    "id": "c08fc5f2-4ba9-4326-b566-ea4a9babf03e",
+    "parent_id": "55370d6b-4ca2-4208-bb7b-83670cc6f2c4",
+    "title": "Il potenziale elettrico e la differenza di potenziale",
+    "slug": "potenziale",
+    "path": "high_school/physics/fis-potenziale-elettrico/potenziale",
+    "chapter": "Il potenziale elettrico"
+  },
+  {
+    "id": "a1e963a9-49cc-4ebd-bf84-f834e05e9433",
+    "parent_id": "55370d6b-4ca2-4208-bb7b-83670cc6f2c4",
+    "title": "Le superfici equipotenziali",
+    "slug": "fis-superfici-equipotenziali",
+    "path": "high_school/physics/fis-potenziale-elettrico/fis-superfici-equipotenziali",
+    "chapter": "Il potenziale elettrico"
+  },
+  {
+    "id": "4e11ad80-0a7d-402f-8725-08bf542c5dc9",
+    "parent_id": "55370d6b-4ca2-4208-bb7b-83670cc6f2c4",
+    "title": "La circuitazione del campo elettrostatico",
+    "slug": "fis-circuitazione-elettrica",
+    "path": "high_school/physics/fis-potenziale-elettrico/fis-circuitazione-elettrica",
+    "chapter": "Il potenziale elettrico"
+  },
+  {
+    "id": "2b239fea-6646-40c7-a00e-71b9ae5371e4",
+    "parent_id": "55370d6b-4ca2-4208-bb7b-83670cc6f2c4",
+    "title": "Il moto di una carica in un campo elettrico uniforme",
+    "slug": "fis-carica-campo-uniforme",
+    "path": "high_school/physics/fis-potenziale-elettrico/fis-carica-campo-uniforme",
+    "chapter": "Il potenziale elettrico"
+  },
+  {
+    "id": "34217e30-942d-4dd9-be3a-d7d539d2591f",
+    "parent_id": "b4985f48-900a-4305-be38-32d059b14600",
+    "title": "Conduttori in equilibrio elettrostatico e capacità",
+    "slug": "fis-conduttori-equilibrio",
+    "path": "high_school/physics/fis-condensatori/fis-conduttori-equilibrio",
+    "chapter": "Conduttori in equilibrio e condensatori"
+  },
+  {
+    "id": "9ca43a02-4218-408a-94ec-838c031b7f32",
+    "parent_id": "b4985f48-900a-4305-be38-32d059b14600",
+    "title": "Il condensatore piano",
+    "slug": "fis-condensatore-piano",
+    "path": "high_school/physics/fis-condensatori/fis-condensatore-piano",
+    "chapter": "Conduttori in equilibrio e condensatori"
+  },
+  {
+    "id": "d0759a82-f787-4953-bbf7-7a59eecc0b08",
+    "parent_id": "b4985f48-900a-4305-be38-32d059b14600",
+    "title": "Condensatori in serie e in parallelo",
+    "slug": "fis-condensatori-serie-parallelo",
+    "path": "high_school/physics/fis-condensatori/fis-condensatori-serie-parallelo",
+    "chapter": "Conduttori in equilibrio e condensatori"
+  },
+  {
+    "id": "83de4e9a-f084-4206-86f0-7946920947cb",
+    "parent_id": "b4985f48-900a-4305-be38-32d059b14600",
+    "title": "L'energia di un condensatore carico",
+    "slug": "fis-energia-condensatore",
+    "path": "high_school/physics/fis-condensatori/fis-energia-condensatore",
+    "chapter": "Conduttori in equilibrio e condensatori"
+  },
+  {
+    "id": "9f1cebe2-fa00-400d-8cc3-76a54bf26445",
+    "parent_id": "e3369ade-0037-48c2-9d4b-8bd7ee9a0370",
+    "title": "L'intensità di corrente e i generatori",
+    "slug": "fis-corrente-elettrica",
+    "path": "high_school/physics/fis-corrente-continua/fis-corrente-elettrica",
+    "chapter": "La corrente elettrica continua"
+  },
+  {
+    "id": "d41abe7f-2207-40a3-aba2-178e1cbfed39",
+    "parent_id": "e3369ade-0037-48c2-9d4b-8bd7ee9a0370",
+    "title": "Le leggi di Ohm e la resistività",
+    "slug": "fis-leggi-ohm",
+    "path": "high_school/physics/fis-corrente-continua/fis-leggi-ohm",
+    "chapter": "La corrente elettrica continua"
+  },
+  {
+    "id": "b0b9e9d3-0d07-4886-b528-d80956dee003",
+    "parent_id": "e3369ade-0037-48c2-9d4b-8bd7ee9a0370",
+    "title": "Resistori in serie e in parallelo",
+    "slug": "fis-resistori-serie-parallelo",
+    "path": "high_school/physics/fis-corrente-continua/fis-resistori-serie-parallelo",
+    "chapter": "La corrente elettrica continua"
+  },
+  {
+    "id": "a22b2243-6614-4912-ae8e-9c60a62d7d33",
+    "parent_id": "e3369ade-0037-48c2-9d4b-8bd7ee9a0370",
+    "title": "Le leggi di Kirchhoff",
+    "slug": "fis-leggi-kirchhoff",
+    "path": "high_school/physics/fis-corrente-continua/fis-leggi-kirchhoff",
+    "chapter": "La corrente elettrica continua"
+  },
+  {
+    "id": "a6dff8fb-27bb-49cd-b5c5-8b615f0287c3",
+    "parent_id": "e3369ade-0037-48c2-9d4b-8bd7ee9a0370",
+    "title": "L'effetto Joule e la potenza elettrica",
+    "slug": "fis-effetto-joule",
+    "path": "high_school/physics/fis-corrente-continua/fis-effetto-joule",
+    "chapter": "La corrente elettrica continua"
+  },
+  {
+    "id": "ccc30e4d-ce84-46ab-9879-c5e49691d7a4",
+    "parent_id": "e3369ade-0037-48c2-9d4b-8bd7ee9a0370",
+    "title": "Forza elettromotrice e resistenza interna",
+    "slug": "fis-forza-elettromotrice",
+    "path": "high_school/physics/fis-corrente-continua/fis-forza-elettromotrice",
+    "chapter": "La corrente elettrica continua"
+  },
+  {
+    "id": "3b4966f0-4c8e-47c9-8739-20d0a4189e2e",
+    "parent_id": "e3369ade-0037-48c2-9d4b-8bd7ee9a0370",
+    "title": "La carica e la scarica di un condensatore",
+    "slug": "fis-circuito-rc",
+    "path": "high_school/physics/fis-corrente-continua/fis-circuito-rc",
+    "chapter": "La corrente elettrica continua"
+  },
+  {
+    "id": "9d7e47ac-4207-4cae-beca-3128342dc5c2",
+    "parent_id": "804a4e8f-1307-49d7-bc33-51a066382943",
+    "title": "Magneti e linee del campo magnetico",
+    "slug": "fis-magneti",
+    "path": "high_school/physics/elettromagnetismo/fis-magneti",
+    "chapter": "Fenomeni magnetici fondamentali"
+  },
+  {
+    "id": "a0fe0770-8cc8-45de-a32c-72a464adc973",
+    "parent_id": "804a4e8f-1307-49d7-bc33-51a066382943",
+    "title": "Correnti e magneti: Oersted, Faraday e Ampère",
+    "slug": "fis-correnti-magneti",
+    "path": "high_school/physics/elettromagnetismo/fis-correnti-magneti",
+    "chapter": "Fenomeni magnetici fondamentali"
+  },
+  {
+    "id": "3201e0a2-2a64-42b5-bc6f-2c97062e4039",
+    "parent_id": "804a4e8f-1307-49d7-bc33-51a066382943",
+    "title": "Il campo magnetico e la forza su un filo percorso da corrente",
+    "slug": "campi-magnetici",
+    "path": "high_school/physics/elettromagnetismo/campi-magnetici",
+    "chapter": "Fenomeni magnetici fondamentali"
+  },
+  {
+    "id": "676a97f7-5f16-4d0f-8417-2d1437d7de28",
+    "parent_id": "804a4e8f-1307-49d7-bc33-51a066382943",
+    "title": "Il campo di un filo: la legge di Biot-Savart",
+    "slug": "fis-biot-savart",
+    "path": "high_school/physics/elettromagnetismo/fis-biot-savart",
+    "chapter": "Fenomeni magnetici fondamentali"
+  },
+  {
+    "id": "5cad2bdc-6526-4250-908e-7c531416f618",
+    "parent_id": "804a4e8f-1307-49d7-bc33-51a066382943",
+    "title": "Il campo di una spira e di un solenoide",
+    "slug": "fis-spira-solenoide",
+    "path": "high_school/physics/elettromagnetismo/fis-spira-solenoide",
+    "chapter": "Fenomeni magnetici fondamentali"
+  },
+  {
+    "id": "2aebb93c-44d7-442b-9498-e374752cd3eb",
+    "parent_id": "804a4e8f-1307-49d7-bc33-51a066382943",
+    "title": "Il momento su una spira e il motore elettrico",
+    "slug": "fis-motore-elettrico",
+    "path": "high_school/physics/elettromagnetismo/fis-motore-elettrico",
+    "chapter": "Fenomeni magnetici fondamentali"
+  },
+  {
+    "id": "9cc6ba98-456d-4fb2-af2c-f8d6830ec348",
+    "parent_id": "a96ee7d0-5688-498a-ba4d-bfbf751d239c",
+    "title": "La forza di Lorentz",
+    "slug": "fis-forza-lorentz",
+    "path": "high_school/physics/fis-campo-magnetico/fis-forza-lorentz",
+    "chapter": "Il campo magnetico"
+  },
+  {
+    "id": "fbf83484-6f51-49af-9283-0921c48707d3",
+    "parent_id": "a96ee7d0-5688-498a-ba4d-bfbf751d239c",
+    "title": "Il moto di una carica in un campo magnetico",
+    "slug": "fis-carica-campo-magnetico",
+    "path": "high_school/physics/fis-campo-magnetico/fis-carica-campo-magnetico",
+    "chapter": "Il campo magnetico"
+  },
+  {
+    "id": "9ed384ca-ba5a-4849-bd45-7f70e48d774e",
+    "parent_id": "a96ee7d0-5688-498a-ba4d-bfbf751d239c",
+    "title": "Il flusso del campo magnetico e il teorema di Gauss",
+    "slug": "fis-flusso-magnetico",
+    "path": "high_school/physics/fis-campo-magnetico/fis-flusso-magnetico",
+    "chapter": "Il campo magnetico"
+  },
+  {
+    "id": "a5a99950-7856-4b08-a7a3-9b9a158ef29f",
+    "parent_id": "a96ee7d0-5688-498a-ba4d-bfbf751d239c",
+    "title": "La circuitazione del campo magnetico e il teorema di Ampère",
+    "slug": "fis-teorema-ampere",
+    "path": "high_school/physics/fis-campo-magnetico/fis-teorema-ampere",
+    "chapter": "Il campo magnetico"
+  },
+  {
+    "id": "dfe2ce63-d853-4742-8db2-b6807003e4f1",
+    "parent_id": "a96ee7d0-5688-498a-ba4d-bfbf751d239c",
+    "title": "Le proprietà magnetiche dei materiali",
+    "slug": "fis-magnetismo-materia",
+    "path": "high_school/physics/fis-campo-magnetico/fis-magnetismo-materia",
+    "chapter": "Il campo magnetico"
+  },
+  {
+    "id": "58c34bb9-c7ac-4167-a6e1-c674665b0c41",
+    "parent_id": "009daa8e-1c73-4c32-bb66-7a7fedbb7911",
+    "title": "La corrente indotta",
+    "slug": "fis-corrente-indotta",
+    "path": "high_school/physics/fis-induzione/fis-corrente-indotta",
+    "chapter": "L'induzione elettromagnetica"
+  },
+  {
+    "id": "27b945ce-1207-4645-bd22-249f0070cea0",
+    "parent_id": "009daa8e-1c73-4c32-bb66-7a7fedbb7911",
+    "title": "La legge di Faraday-Neumann",
+    "slug": "indu-faraday",
+    "path": "high_school/physics/fis-induzione/indu-faraday",
+    "chapter": "L'induzione elettromagnetica"
+  },
+  {
+    "id": "f4035538-c185-4c2a-af19-64df0068ff02",
+    "parent_id": "009daa8e-1c73-4c32-bb66-7a7fedbb7911",
+    "title": "La legge di Lenz",
+    "slug": "fis-legge-lenz",
+    "path": "high_school/physics/fis-induzione/fis-legge-lenz",
+    "chapter": "L'induzione elettromagnetica"
+  },
+  {
+    "id": "18387ab4-c01e-4034-958a-263de610abad",
+    "parent_id": "009daa8e-1c73-4c32-bb66-7a7fedbb7911",
+    "title": "La forza elettromotrice indotta in un conduttore in moto",
+    "slug": "fis-fem-movimento",
+    "path": "high_school/physics/fis-induzione/fis-fem-movimento",
+    "chapter": "L'induzione elettromagnetica"
+  },
+  {
+    "id": "13b0da63-53d3-45a8-bf09-d5ad5e7d920c",
+    "parent_id": "009daa8e-1c73-4c32-bb66-7a7fedbb7911",
+    "title": "Autoinduzione, mutua induzione e induttanza",
+    "slug": "fis-autoinduzione",
+    "path": "high_school/physics/fis-induzione/fis-autoinduzione",
+    "chapter": "L'induzione elettromagnetica"
+  },
+  {
+    "id": "8ad658b9-d06b-417f-b45e-bbc3bd71c77f",
+    "parent_id": "009daa8e-1c73-4c32-bb66-7a7fedbb7911",
+    "title": "Il circuito RL e l'energia del campo magnetico",
+    "slug": "fis-circuito-rl",
+    "path": "high_school/physics/fis-induzione/fis-circuito-rl",
+    "chapter": "L'induzione elettromagnetica"
+  },
+  {
+    "id": "e9295224-f378-448b-997e-6035af5dfed7",
+    "parent_id": "18f17b0a-940f-4b62-8696-cc0a2ff9172e",
+    "title": "L'alternatore e i valori efficaci",
+    "slug": "fis-alternatore",
+    "path": "high_school/physics/fis-corrente-alternata/fis-alternatore",
+    "chapter": "La corrente alternata"
+  },
+  {
+    "id": "e4d624c5-49da-48c2-94f9-dbf6f746780e",
+    "parent_id": "18f17b0a-940f-4b62-8696-cc0a2ff9172e",
+    "title": "Resistori, condensatori e induttori in corrente alternata",
+    "slug": "fis-circuiti-alternata",
+    "path": "high_school/physics/fis-corrente-alternata/fis-circuiti-alternata",
+    "chapter": "La corrente alternata"
+  },
+  {
+    "id": "8369cfa9-f51e-4972-a605-a20192db1a57",
+    "parent_id": "18f17b0a-940f-4b62-8696-cc0a2ff9172e",
+    "title": "Il circuito RLC e la risonanza",
+    "slug": "fis-circuito-rlc",
+    "path": "high_school/physics/fis-corrente-alternata/fis-circuito-rlc",
+    "chapter": "La corrente alternata"
+  },
+  {
+    "id": "77bd98e3-8eb6-4e5e-ab91-2e4a53d04bf7",
+    "parent_id": "18f17b0a-940f-4b62-8696-cc0a2ff9172e",
+    "title": "Il trasformatore",
+    "slug": "fis-trasformatore",
+    "path": "high_school/physics/fis-corrente-alternata/fis-trasformatore",
+    "chapter": "La corrente alternata"
+  },
+  {
+    "id": "02e540dc-0262-4e66-9d12-f70336c3d4aa",
+    "parent_id": "5ff157cd-2f22-4d51-ac5f-37525ef3e18b",
+    "title": "Il campo elettrico indotto",
+    "slug": "fis-campo-elettrico-indotto",
+    "path": "high_school/physics/fis-maxwell/fis-campo-elettrico-indotto",
+    "chapter": "Le equazioni di Maxwell e le onde elettromagnetiche"
+  },
+  {
+    "id": "08d7c0ba-1c72-45f6-a90f-b66fe5c53884",
+    "parent_id": "5ff157cd-2f22-4d51-ac5f-37525ef3e18b",
+    "title": "La corrente di spostamento",
+    "slug": "fis-corrente-spostamento",
+    "path": "high_school/physics/fis-maxwell/fis-corrente-spostamento",
+    "chapter": "Le equazioni di Maxwell e le onde elettromagnetiche"
+  },
+  {
+    "id": "f723fa13-cb81-438f-a4f6-2eca705bf0a5",
+    "parent_id": "5ff157cd-2f22-4d51-ac5f-37525ef3e18b",
+    "title": "Le equazioni di Maxwell",
+    "slug": "fis-equazioni-maxwell",
+    "path": "high_school/physics/fis-maxwell/fis-equazioni-maxwell",
+    "chapter": "Le equazioni di Maxwell e le onde elettromagnetiche"
+  },
+  {
+    "id": "9263c231-b140-4d33-8466-12d6b6662ab0",
+    "parent_id": "5ff157cd-2f22-4d51-ac5f-37525ef3e18b",
+    "title": "Le onde elettromagnetiche e la velocità della luce",
+    "slug": "fis-onde-elettromagnetiche",
+    "path": "high_school/physics/fis-maxwell/fis-onde-elettromagnetiche",
+    "chapter": "Le equazioni di Maxwell e le onde elettromagnetiche"
+  },
+  {
+    "id": "f12ee7a5-46ae-47b1-add0-b294d4fee479",
+    "parent_id": "5ff157cd-2f22-4d51-ac5f-37525ef3e18b",
+    "title": "Energia e intensità delle onde elettromagnetiche",
+    "slug": "fis-energia-onde-em",
+    "path": "high_school/physics/fis-maxwell/fis-energia-onde-em",
+    "chapter": "Le equazioni di Maxwell e le onde elettromagnetiche"
+  },
+  {
+    "id": "91199733-9bd5-4838-a9c8-737a07cf5e9d",
+    "parent_id": "5ff157cd-2f22-4d51-ac5f-37525ef3e18b",
+    "title": "La polarizzazione",
+    "slug": "fis-polarizzazione",
+    "path": "high_school/physics/fis-maxwell/fis-polarizzazione",
+    "chapter": "Le equazioni di Maxwell e le onde elettromagnetiche"
+  },
+  {
+    "id": "55f1891a-6983-4fa1-9cd7-45fd5e28ea68",
+    "parent_id": "5ff157cd-2f22-4d51-ac5f-37525ef3e18b",
+    "title": "Lo spettro elettromagnetico e le sue applicazioni",
+    "slug": "fis-spettro-em",
+    "path": "high_school/physics/fis-maxwell/fis-spettro-em",
+    "chapter": "Le equazioni di Maxwell e le onde elettromagnetiche"
+  },
+  {
+    "id": "4a846ebe-adc5-4f02-9682-e40351d4721b",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "La velocità della luce e l'esperimento di Michelson e Morley",
+    "slug": "fis-michelson-morley",
+    "path": "high_school/physics/relativita/fis-michelson-morley",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "c51a45eb-e420-4093-a984-1d7fd2559b89",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "I postulati della relatività ristretta",
+    "slug": "relativita-ristretta",
+    "path": "high_school/physics/relativita/relativita-ristretta",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "f8ec6d34-33fb-40cf-b2d5-a79b15a728ce",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "La relatività della simultaneità",
+    "slug": "fis-simultaneita",
+    "path": "high_school/physics/relativita/fis-simultaneita",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "e50a1ec8-d44e-4521-91d1-895897b06948",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "La dilatazione dei tempi",
+    "slug": "fis-dilatazione-tempi",
+    "path": "high_school/physics/relativita/fis-dilatazione-tempi",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "39f2915d-260f-48d1-a970-a6008f375011",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "La contrazione delle lunghezze",
+    "slug": "fis-contrazione-lunghezze",
+    "path": "high_school/physics/relativita/fis-contrazione-lunghezze",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "e9db8ba3-071d-4b3e-aa2b-368c63715195",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "Le trasformazioni di Lorentz",
+    "slug": "fis-trasformazioni-lorentz",
+    "path": "high_school/physics/relativita/fis-trasformazioni-lorentz",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "f5b623ba-228d-4a59-8c2b-38b301f5b9b5",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "La composizione relativistica delle velocità",
+    "slug": "fis-velocita-relativistiche",
+    "path": "high_school/physics/relativita/fis-velocita-relativistiche",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "a2eb0094-d2b2-4860-bc7b-19f407ed46e2",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "Quantità di moto ed energia relativistiche",
+    "slug": "fis-dinamica-relativistica",
+    "path": "high_school/physics/relativita/fis-dinamica-relativistica",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "d7f0d353-b25c-476d-97ec-c25ea8043efb",
+    "parent_id": "71f8e2b1-da5f-47bd-b9e2-f8d065638406",
+    "title": "L'equivalenza tra massa ed energia",
+    "slug": "fis-massa-energia",
+    "path": "high_school/physics/relativita/fis-massa-energia",
+    "chapter": "La relatività ristretta"
+  },
+  {
+    "id": "d6ceca9d-b229-425b-a4f3-a555398b3c0c",
+    "parent_id": "c019f61b-a11c-4553-b862-83aed89df17d",
+    "title": "La radiazione di corpo nero",
+    "slug": "fis-corpo-nero",
+    "path": "high_school/physics/fisica-moderna/fis-corpo-nero",
+    "chapter": "I quanti di luce"
+  },
+  {
+    "id": "8aaa79a3-f706-4f14-b3f5-37670d6d5376",
+    "parent_id": "c019f61b-a11c-4553-b862-83aed89df17d",
+    "title": "L'ipotesi di Planck",
+    "slug": "quantizzazione-energia",
+    "path": "high_school/physics/fisica-moderna/quantizzazione-energia",
+    "chapter": "I quanti di luce"
+  },
+  {
+    "id": "8afd8280-62a4-4c4b-8262-73fa06e27371",
+    "parent_id": "c019f61b-a11c-4553-b862-83aed89df17d",
+    "title": "L'effetto fotoelettrico",
+    "slug": "fis-effetto-fotoelettrico",
+    "path": "high_school/physics/fisica-moderna/fis-effetto-fotoelettrico",
+    "chapter": "I quanti di luce"
+  },
+  {
+    "id": "ed5ad8b9-8562-4ca5-9b3b-d33bbd1e1d67",
+    "parent_id": "c019f61b-a11c-4553-b862-83aed89df17d",
+    "title": "L'effetto Compton",
+    "slug": "fis-effetto-compton",
+    "path": "high_school/physics/fisica-moderna/fis-effetto-compton",
+    "chapter": "I quanti di luce"
+  },
+  {
+    "id": "774ceea9-cc6e-4e35-b929-453f9f82b98e",
+    "parent_id": "c885bac0-b398-4d69-8149-ff6d1fa72a4f",
+    "title": "La scoperta dell'elettrone e l'esperimento di Millikan",
+    "slug": "fis-elettrone",
+    "path": "high_school/physics/fis-atomo/fis-elettrone",
+    "chapter": "I modelli atomici"
+  },
+  {
+    "id": "9cd7ea1e-2a25-401d-851e-7154a94225fb",
+    "parent_id": "c885bac0-b398-4d69-8149-ff6d1fa72a4f",
+    "title": "I modelli atomici di Thomson e di Rutherford",
+    "slug": "modello-atomico",
+    "path": "high_school/physics/fis-atomo/modello-atomico",
+    "chapter": "I modelli atomici"
+  },
+  {
+    "id": "095f7f2f-934c-4ed4-bf63-aeebfe9636c4",
+    "parent_id": "c885bac0-b398-4d69-8149-ff6d1fa72a4f",
+    "title": "Gli spettri a righe",
+    "slug": "fis-spettri-atomici",
+    "path": "high_school/physics/fis-atomo/fis-spettri-atomici",
+    "chapter": "I modelli atomici"
+  },
+  {
+    "id": "f724d950-0ded-420d-94ce-f5167c3cce89",
+    "parent_id": "c885bac0-b398-4d69-8149-ff6d1fa72a4f",
+    "title": "Il modello di Bohr e l'esperimento di Franck e Hertz",
+    "slug": "fis-modello-bohr",
+    "path": "high_school/physics/fis-atomo/fis-modello-bohr",
+    "chapter": "I modelli atomici"
+  },
+  {
+    "id": "e92027fa-7aa8-4e53-81f8-b7ba8bf2fe37",
+    "parent_id": "48929b87-4ef8-471a-99bf-a4ad748cdad4",
+    "title": "Le onde di materia di de Broglie",
+    "slug": "fis-de-broglie",
+    "path": "high_school/physics/meccanica-quantistica/fis-de-broglie",
+    "chapter": "Onde di materia e indeterminazione"
+  },
+  {
+    "id": "971e06ef-c6c2-4a44-a428-5d31e150e6e3",
+    "parent_id": "48929b87-4ef8-471a-99bf-a4ad748cdad4",
+    "title": "Il dualismo onda-particella e la doppia fenditura",
+    "slug": "fis-dualismo",
+    "path": "high_school/physics/meccanica-quantistica/fis-dualismo",
+    "chapter": "Onde di materia e indeterminazione"
+  },
+  {
+    "id": "8d7a34aa-becb-4c7b-83d4-e6b119148117",
+    "parent_id": "48929b87-4ef8-471a-99bf-a4ad748cdad4",
+    "title": "Il principio di indeterminazione di Heisenberg",
+    "slug": "fis-indeterminazione",
+    "path": "high_school/physics/meccanica-quantistica/fis-indeterminazione",
+    "chapter": "Onde di materia e indeterminazione"
+  },
+  {
+    "id": "3f717a0e-b8a9-4cc0-ad8c-170d0bbfeb80",
+    "parent_id": "48929b87-4ef8-471a-99bf-a4ad748cdad4",
+    "title": "L'atomo quantistico: numeri quantici e principio di Pauli",
+    "slug": "fis-atomo-quantistico",
+    "path": "high_school/physics/meccanica-quantistica/fis-atomo-quantistico",
+    "chapter": "Onde di materia e indeterminazione"
+  },
+  {
+    "id": "08a92fb5-f5d8-4841-ab7f-be22bad84c81",
+    "parent_id": "d23a5c6a-88cd-400b-b3c0-11885c83b286",
+    "title": "Il nucleo e la forza nucleare",
+    "slug": "fis-nucleo",
+    "path": "high_school/physics/fisica-nucleare/fis-nucleo",
+    "chapter": "Il nucleo e la radioattività"
+  },
+  {
+    "id": "fa373592-7216-4927-8513-979b08779f5e",
+    "parent_id": "d23a5c6a-88cd-400b-b3c0-11885c83b286",
+    "title": "Difetto di massa ed energia di legame",
+    "slug": "fis-energia-legame",
+    "path": "high_school/physics/fisica-nucleare/fis-energia-legame",
+    "chapter": "Il nucleo e la radioattività"
+  },
+  {
+    "id": "a56c405b-1bc3-4171-b969-7955a452fbea",
+    "parent_id": "d23a5c6a-88cd-400b-b3c0-11885c83b286",
+    "title": "I decadimenti alfa, beta e gamma",
+    "slug": "radioattivita",
+    "path": "high_school/physics/fisica-nucleare/radioattivita",
+    "chapter": "Il nucleo e la radioattività"
+  },
+  {
+    "id": "c0384222-f9ff-4281-bd24-5388cf49f97f",
+    "parent_id": "d23a5c6a-88cd-400b-b3c0-11885c83b286",
+    "title": "La legge del decadimento radioattivo",
+    "slug": "fis-legge-decadimento",
+    "path": "high_school/physics/fisica-nucleare/fis-legge-decadimento",
+    "chapter": "Il nucleo e la radioattività"
+  },
+  {
+    "id": "37ff6c92-e74d-433b-a0c4-1d704f082e08",
+    "parent_id": "37b81b41-af01-4286-9403-48234f6523ca",
+    "title": "La fissione nucleare e i reattori",
+    "slug": "fis-fissione",
+    "path": "high_school/physics/fis-energia-nucleare/fis-fissione",
+    "chapter": "Energia nucleare e particelle elementari"
+  },
+  {
+    "id": "959fb9c6-6ff5-47f4-9a85-f977179c9509",
+    "parent_id": "37b81b41-af01-4286-9403-48234f6523ca",
+    "title": "La fusione nucleare",
+    "slug": "fis-fusione",
+    "path": "high_school/physics/fis-energia-nucleare/fis-fusione",
+    "chapter": "Energia nucleare e particelle elementari"
+  },
+  {
+    "id": "c642c2bc-6ff0-43d0-8486-e914a7059cc2",
+    "parent_id": "37b81b41-af01-4286-9403-48234f6523ca",
+    "title": "Le particelle elementari e il modello standard",
+    "slug": "fis-particelle-elementari",
+    "path": "high_school/physics/fis-energia-nucleare/fis-particelle-elementari",
+    "chapter": "Energia nucleare e particelle elementari"
+  },
+  {
+    "id": "f61eb687-1e37-4e00-804e-65e160631301",
+    "parent_id": "e4ff6620-0b67-41ec-adbe-11a9ecb19a50",
+    "title": "Cenni di relatività generale",
+    "slug": "fis-relativita-generale",
+    "path": "high_school/physics/astrofisica/fis-relativita-generale",
+    "chapter": "Approfondimenti: astrofisica e cosmologia"
+  },
+  {
+    "id": "d772ff23-1efa-4e27-8b2f-425c9020dfe5",
+    "parent_id": "e4ff6620-0b67-41ec-adbe-11a9ecb19a50",
+    "title": "La vita delle stelle",
+    "slug": "evoluzione-stelle",
+    "path": "high_school/physics/astrofisica/evoluzione-stelle",
+    "chapter": "Approfondimenti: astrofisica e cosmologia"
+  },
+  {
+    "id": "92b09b61-971e-4eb1-b4df-a2443be79972",
+    "parent_id": "e4ff6620-0b67-41ec-adbe-11a9ecb19a50",
+    "title": "L'universo in espansione e il Big Bang",
+    "slug": "fis-universo-espansione",
+    "path": "high_school/physics/astrofisica/fis-universo-espansione",
+    "chapter": "Approfondimenti: astrofisica e cosmologia"
+  }
+]
