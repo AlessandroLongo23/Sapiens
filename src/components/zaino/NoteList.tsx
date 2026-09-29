@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { BookOpen, FolderInput, GripVertical, LayoutGrid, List, Loader2, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
 import { Features } from '@/lib/stripe/config';
 import { ZAINO_ROOT } from '@/lib/config/site';
@@ -11,14 +12,15 @@ import { useSlideIntoPlace } from '@/lib/hooks/use-slide-into-place';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Field';
-import { Sheet, sheetActions } from '@/components/ui/Sheet';
+import { Sheet } from '@/components/ui/Sheet';
 import { Paywall } from '@/components/subscription/Paywall';
 import { cn } from '@/lib/utils/cn';
 import { useZainoAction } from './ZainoActions';
 import { QuotaBar } from './QuotaBar';
 import { MoveNoteSheet } from './MoveNoteSheet';
 import { FirstPageThumb } from './FirstPageThumb';
-import { NoteCrumple, warmUpCrumple } from './NoteCrumple';
+import { NoteCrumple, warmUpCrumple, type CrumpleState } from './NoteCrumple';
+import { DropBin, TrashLink } from './Trash';
 import './zaino.css';
 
 const when = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' });
@@ -62,13 +64,18 @@ const SEARCH_DELAY_MS = 250;
  * One quaderno's notes, under the page header: a toolbar (search, grid or list, a new note), then the notes as
  * cards of squared paper or as rows. The search matches titles and excerpts at once and the whole text from the
  * server a moment later. Open, reorder (drag the handle, or its arrows), move and delete.
+ *
+ * Deleting moves to the trash, so nothing asks to confirm: from the ⋯ menu the note is crumpled and thrown into the
+ * trash in the toolbar; dragged, a trash appears at the bottom of the screen, the note crumples while it is held over
+ * it and flattens again when it leaves, and letting go there throws it in.
  */
 export function NoteList({
 	notebookId,
 	notes,
 	pages,
 	notebooks,
-	quota
+	quota,
+	trashCount
 }: {
 	notebookId: string;
 	notes: NoteSummary[];
@@ -76,15 +83,29 @@ export function NoteList({
 	pages: Record<string, FirstPage>;
 	notebooks: NotebookRow[];
 	quota: Quota;
+	/** What is in the trash, for the count on its link. */
+	trashCount: number;
 }) {
+	const router = useRouter();
 	const { busy, error, blocked, run } = useZainoAction();
 	const [menu, setMenu] = useState<NoteSummary | null>(null);
 	const [moving, setMoving] = useState<NoteSummary | null>(null);
-	const [confirming, setConfirming] = useState<NoteSummary | null>(null);
-	/** The note whose crumple is being prepared while its deletion is confirmed, and played once it is; `gone` are the
-	 *  notes crumpled and not yet refreshed away. */
-	const [crumple, setCrumple] = useState<{ id: string; play: boolean } | null>(null);
+	/** The note whose crumple is prepared (its menu is open, or it is being dragged), held over the trash or thrown;
+	 *  `gone` are the notes thrown away and not yet refreshed out of the list. */
+	const [crumple, setCrumple] = useState<{ id: string; state: CrumpleState; via: 'menu' | 'drag' } | null>(null);
 	const [gone, setGone] = useState<ReadonlySet<string>>(new Set());
+	const [deleteError, setDeleteError] = useState<string | null>(null);
+	/** The trash requests in flight, by note: the list refreshes once the ball has landed and the server has answered. */
+	const requests = useRef(new Map<string, Promise<boolean>>());
+	/** The count on the trash link: the server's, plus what landed since. */
+	const [landed, setLanded] = useState({ base: trashCount, extra: 0 });
+	if (landed.base !== trashCount) setLanded({ base: trashCount, extra: 0 });
+	const [bump, setBump] = useState(0);
+	const trashLink = useRef<HTMLAnchorElement>(null);
+	const dropBin = useRef<HTMLDivElement>(null);
+	const [overBin, setOverBin] = useState(false);
+	/** The trash in the toolbar is out of view: a note thrown from its menu goes to the one that comes up instead. */
+	const [binForMenu, setBinForMenu] = useState(false);
 	const list = useRef<HTMLDivElement>(null);
 	const closeGap = useSlideIntoPlace(list, 'data-note-id');
 	const hasNotes = notes.length > 0;
@@ -105,8 +126,84 @@ export function NoteList({
 
 	const byId = useMemo(() => new Map(notes.map((note) => [note.id, note])), [notes]);
 	const ids = useMemo(() => notes.map((note) => note.id), [notes]);
-	const { order, dragging, rowProps, handleProps } = useReorder(ids, (next) =>
-		run('reorder', `/api/zaino/quaderni/${notebookId}/note/reorder`, 'POST', { ids: next })
+	/** Sends the note to the trash; the answer is awaited once the ball has landed. */
+	const throwAway = (note: NoteSummary, via: 'menu' | 'drag') => {
+		setDeleteError(null);
+		if (via === 'menu') {
+			const link = trashLink.current?.getBoundingClientRect();
+			// The bin comes up while the note crumples, so it is in place when the ball flies.
+			setBinForMenu(!link || link.bottom < 0 || link.top > window.innerHeight);
+		}
+		setCrumple({ id: note.id, state: 'thrown', via });
+		requests.current.set(
+			note.id,
+			fetch(`/api/zaino/note/${note.id}`, { method: 'DELETE' })
+				.then((response) => response.ok)
+				.catch(() => false)
+		);
+	};
+	const landedIn = () => {
+		setLanded((now) => ({ ...now, extra: now.extra + 1 }));
+		setBump((n) => n + 1);
+	};
+	const thrown = async (id: string) => {
+		setBinForMenu(false);
+		closeGap();
+		setGone((now) => new Set(now).add(id));
+		setCrumple(null);
+		const ok = await (requests.current.get(id) ?? Promise.resolve(false));
+		requests.current.delete(id);
+		if (ok) return router.refresh();
+		showAgain(id);
+		setLanded((now) => ({ ...now, extra: Math.max(0, now.extra - 1) }));
+		setDeleteError('Non sono riuscito a spostare la nota nel cestino. Riprova.');
+	};
+	const openMenu = (note: NoteSummary) => {
+		setMenu(note);
+		// A delete is in sight: the page is photographed and the paper laid while the menu is read.
+		if (!crumple || crumple.state === 'ready') setCrumple({ id: note.id, state: 'ready', via: 'menu' });
+	};
+	const closeMenu = () => {
+		setMenu(null);
+		setCrumple((now) => (now?.via === 'menu' && now.state === 'ready' ? null : now));
+	};
+
+	/** Is the point on the trash that appears while a note is dragged? A little margin makes it easy to hit. */
+	const onBin = (x: number, y: number) => {
+		const box = dropBin.current?.getBoundingClientRect();
+		return !!box && x > box.left - 24 && x < box.right + 24 && y > box.top - 24 && y < box.bottom + 24;
+	};
+	const binRef = useRef(false);
+	const { order, dragging, rowProps, handleProps } = useReorder(
+		ids,
+		(next) => run('reorder', `/api/zaino/quaderni/${notebookId}/note/reorder`, 'POST', { ids: next }),
+		true,
+		{
+			start: (id) => {
+				binRef.current = false;
+				setCrumple((now) => (now?.state === 'thrown' ? now : { id, state: 'ready', via: 'drag' }));
+			},
+			over: (id, x, y) => {
+				const over = onBin(x, y);
+				if (over !== binRef.current) {
+					binRef.current = over;
+					setOverBin(over);
+					setCrumple((now) => (now?.id === id && now.state !== 'thrown' ? { ...now, state: over ? 'held' : 'ready' } : now));
+				}
+				return over;
+			},
+			release: (id, x, y) => {
+				const note = byId.get(id);
+				if (!note || !onBin(x, y)) return false;
+				throwAway(note, 'drag');
+				return true;
+			},
+			end: () => {
+				binRef.current = false;
+				setOverBin(false);
+				setCrumple((now) => (now?.via === 'drag' && now.state !== 'thrown' ? null : now));
+			}
+		}
 	);
 
 	const needle = filter.trim().toLowerCase();
@@ -150,19 +247,28 @@ export function NoteList({
 
 	return (
 		<div ref={list} className="space-y-6">
-			{error && <Alert tone="error">{error}</Alert>}
+			{(error || deleteError) && <Alert tone="error">{error ?? deleteError}</Alert>}
 
-			{notes.length === 0 ? (
-				<div className="note-in flex flex-col items-center gap-4 rounded-2xl border border-dashed border-edge-strong bg-surface/60 px-6 py-16 text-center">
-					<p className="zn-pen text-4xl leading-10">Qui comincia il quaderno.</p>
-					<p className="max-w-md leading-relaxed text-fg-muted">
-						Scrivi la prima nota: puoi formattarla con la barra degli strumenti o scriverla in markdown, come preferisci.
-					</p>
-					<Button onClick={create} loading={busy === 'new'} className="mt-1">
-						<Plus className="size-4" aria-hidden="true" />
-						Scrivi la prima nota
-					</Button>
-					<QuotaBar quota={quota} />
+			{/* Empty as soon as the last note is thrown away, before the list comes back from the server. */}
+			{notes.every((note) => gone.has(note.id)) ? (
+				<div className="space-y-4">
+					{/* The trash stays where it was in the toolbar, so what went in can come back out. */}
+					{landed.base + landed.extra > 0 && (
+						<div className="flex justify-end">
+							<TrashLink ref={trashLink} count={landed.base + landed.extra} bump={bump} />
+						</div>
+					)}
+					<div className="note-in flex flex-col items-center gap-4 rounded-2xl border border-dashed border-edge-strong bg-surface/60 px-6 py-16 text-center">
+						<p className="zn-pen text-4xl leading-10">Qui comincia il quaderno.</p>
+						<p className="max-w-md leading-relaxed text-fg-muted">
+							Scrivi la prima nota: puoi formattarla con la barra degli strumenti o scriverla in markdown, come preferisci.
+						</p>
+						<Button onClick={create} loading={busy === 'new'} className="mt-1">
+							<Plus className="size-4" aria-hidden="true" />
+							Scrivi la prima nota
+						</Button>
+						<QuotaBar quota={quota} />
+					</div>
 				</div>
 			) : (
 				<>
@@ -180,6 +286,7 @@ export function NoteList({
 							{searchingText && <Loader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-fg-faint" aria-hidden="true" />}
 						</div>
 						<div className="flex items-center gap-3 sm:ml-auto">
+							<TrashLink ref={trashLink} count={landed.base + landed.extra} bump={bump} />
 							<ViewSwitch value={view} onChange={saveView} />
 							<Button onClick={create} loading={busy === 'new'}>
 								<Plus className="size-4" aria-hidden="true" />
@@ -248,7 +355,7 @@ export function NoteList({
 												</span>
 												<Meta note={note} pages={page?.pages ?? 1} onlyInText={onlyInText(note)} />
 											</Link>
-											<Options title={note.title} onClick={() => setMenu(note)} className="-mr-2 -mt-1.5 size-9 shrink-0" />
+											<Options title={note.title} onClick={() => openMenu(note)} className="-mr-2 -mt-1.5 size-9 shrink-0" />
 										</div>
 									</li>
 								);
@@ -281,7 +388,7 @@ export function NoteList({
 											{onlyInText(note) ? 'Trovata nel testo della nota' : note.excerpt || 'Nota vuota'}
 										</span>
 									</Link>
-									<Options title={note.title} onClick={() => setMenu(note)} className="absolute right-2 top-1/2 -translate-y-1/2" />
+									<Options title={note.title} onClick={() => openMenu(note)} className="absolute right-2 top-1/2 -translate-y-1/2" />
 								</li>
 							))}
 						</ul>
@@ -289,13 +396,13 @@ export function NoteList({
 				</>
 			)}
 
-			<Sheet open={!!menu} onClose={() => setMenu(null)} title={menu?.title ?? 'Nota'} size="auto">
+			<Sheet open={!!menu} onClose={closeMenu} title={menu?.title ?? 'Nota'} size="auto">
 				<div className="-mx-3 flex flex-col">
 					<button
 						type="button"
 						onClick={() => {
 							setMoving(menu);
-							setMenu(null);
+							closeMenu();
 						}}
 						className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-left font-medium text-fg transition-colors hover:bg-surface-3 focus-ring"
 					>
@@ -305,8 +412,8 @@ export function NoteList({
 					<button
 						type="button"
 						onClick={() => {
-							if (menu) setCrumple({ id: menu.id, play: false });
-							setConfirming(menu);
+							if (!menu) return;
+							throwAway(menu, 'menu');
 							setMenu(null);
 						}}
 						className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-left font-medium text-danger-fg transition-colors hover:bg-danger-soft focus-ring"
@@ -333,56 +440,20 @@ export function NoteList({
 				}}
 			/>
 
-			<Sheet
-				open={!!confirming}
-				onClose={() => {
-					setConfirming(null);
-					setCrumple(null);
-				}}
-				title="Elimina la nota" size="auto" width="sm" align="center">
-				<p className="text-sm text-fg-muted">Vuoi eliminare «{confirming?.title}»? Non si può recuperare.</p>
-				<div className={cn(sheetActions, 'mt-5')}>
-					<Button
-						variant="ghost"
-						onClick={() => {
-							setConfirming(null);
-							setCrumple(null);
-						}}
-					>
-						Annulla
-					</Button>
-					<Button
-						variant="inverse"
-						onClick={async () => {
-							if (!confirming) return;
-							const note = confirming;
-							// The note is crumpled at once, while the sheet goes and the server deletes it.
-							setConfirming(null);
-							setCrumple({ id: note.id, play: true });
-							const done = await run(note.id, `/api/zaino/note/${note.id}`, 'DELETE');
-							if (!done) {
-								setCrumple((now) => (now?.id === note.id ? null : now));
-								showAgain(note.id);
-							}
-						}}
-					>
-						<Trash2 className="size-4" aria-hidden="true" />
-						Elimina
-					</Button>
-				</div>
-			</Sheet>
 			{crumple && (
 				<NoteCrumple
 					key={crumple.id}
 					noteId={crumple.id}
-					play={crumple.play}
-					onDone={() => {
-						closeGap();
-						setGone((now) => new Set(now).add(crumple.id));
-						setCrumple(null);
-					}}
+					state={crumple.state}
+					target={() => (crumple.via === 'drag' || binForMenu ? dropBin.current : trashLink.current)}
+					onLanded={landedIn}
+					onDone={() => thrown(crumple.id)}
 				/>
 			)}
+			<DropBin ref={dropBin} shown={!!dragging || binForMenu || (crumple?.via === 'drag' && crumple.state === 'thrown')} over={overBin} bump={bump} label={(binForMenu || crumple?.state === 'thrown') && !dragging ? 'Nel cestino' : undefined} />
+			<p className="sr-only" aria-live="polite">
+				{landed.extra > 0 ? (landed.extra === 1 ? 'Nota spostata nel cestino.' : `${landed.extra} note spostate nel cestino.`) : ''}
+			</p>
 		</div>
 	);
 }

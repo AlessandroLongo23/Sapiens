@@ -10,7 +10,7 @@ Dal 25 settembre 2026, nel codice (non ancora pubblicato con un deploy), in `src
 
 | Piano | Prezzo | Cosa include |
 |---|---|---|
-| Free | €0 | Teoria e formulari; una sessione di esercizi al giorno (10 domande, contate sul server in ora di Roma su tutte le lezioni); Zaino con 1 quaderno e 5 note |
+| Free | €0 | Teoria e formulari; una sessione di esercizi al giorno (10 domande, contate sul server in ora di Roma su tutte le lezioni); Zaino con 1 quaderno e 5 note (il cestino non conta, vedi [[2026-09-28 Il cestino non conta nel limite del piano gratuito]]) |
 | Studio | €9,99 al mese, IVA inclusa | Esercizi senza limiti, flashcard, Zaino senza limiti, Sapiens AI |
 | Studio fino a giugno | €49,99 in un solo pagamento | Studio fino al 30 giugno; in vendita solo a gennaio e febbraio, non si rinnova |
 

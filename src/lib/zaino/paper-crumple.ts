@@ -271,6 +271,8 @@ export interface CrumpleOptions {
 	amount?: number;
 	/** Seconds to crumple. */
 	duration?: number;
+	/** Seconds to flatten again. */
+	releaseDuration?: number;
 	seed?: number;
 	/** The colour of the back of the sheet, as `#rrggbb`: the page's own paper, so a dark page is dark on both sides. */
 	backColor?: string;
@@ -278,11 +280,21 @@ export interface CrumpleOptions {
 
 /**
  * Lays the picture `src` (the sheet as it looked) on `canvas`, flat and unlit so the first frame is the page itself;
- * `play` then crumples it, the light coming on with the folds. Everything slow (the folding simulation, the texture,
- * the shaders) happens here, before `ready`, so `play` starts on the next frame. `dispose` frees the GPU.
+ * `fold` then crumples it, the light coming on with the folds. Everything slow (the folding simulation, the texture,
+ * the shaders) happens here, before `ready`, so `fold` starts on the next frame. `dispose` frees the GPU.
  * Throws when there is no WebGL: the caller deletes without the animation.
  */
-export function prepareCrumple(canvas: HTMLCanvasElement, src: string, options: CrumpleOptions): { ready: Promise<void>; play: () => Promise<void>; dispose: () => void } {
+export interface Crumple {
+	/** The picture is on the sheet and the first frame, flat, is drawn. */
+	ready: Promise<void>;
+	/** Crumples it into a ball; settles when the ball is made. */
+	fold: () => Promise<void>;
+	/** Flattens it again; settles when it is flat. */
+	unfold: () => Promise<void>;
+	dispose: () => void;
+}
+
+export function prepareCrumple(canvas: HTMLCanvasElement, src: string, options: CrumpleOptions): Crumple {
 	const { width: paperWidth, height: paperHeight, pad } = options;
 	const target = clamp(options.amount ?? 0.85, 0, 1);
 	const duration = options.duration ?? 0.55;
@@ -526,24 +538,41 @@ export function prepareCrumple(canvas: HTMLCanvasElement, src: string, options: 
 		);
 	});
 
-	// Play: fold it into a ball; settles once the ball is made.
-	const play = () =>
+	// Folding goes to a point and can turn back on the way, as the original does while the sheet is held: `fold()`
+	// crumples, `unfold()` flattens it again. One frame loop serves both; each call settles when the sheet stops,
+	// or when another call takes over.
+	let settle: (() => void) | null = null;
+	let running = false;
+	let speed = duration;
+	const step = (time: number, last: number) => {
+		if (disposed) return settle?.();
+		const dt = last ? Math.min(0.04, (time - last) / 1000) : 1 / 60;
+		const moving = advance(amount, dt, speed, false);
+		deform();
+		placeFloor();
+		renderer.render(scene, camera);
+		if (moving) {
+			frame = requestAnimationFrame((next) => step(next, time));
+			return;
+		}
+		running = false;
+		const done = settle;
+		settle = null;
+		done?.();
+	};
+	const goTo = (value: number, seconds: number) =>
 		new Promise<void>((resolve) => {
-			amount.target = target;
-			let last = 0;
-			const step = (time: number) => {
-				if (disposed) return resolve();
-				const dt = last ? Math.min(0.04, (time - last) / 1000) : 1 / 60;
-				last = time;
-				const moving = advance(amount, dt, duration, false);
-				deform();
-				placeFloor();
-				renderer.render(scene, camera);
-				if (moving) frame = requestAnimationFrame(step);
-				else resolve();
-			};
-			frame = requestAnimationFrame(step);
+			settle?.();
+			settle = resolve;
+			amount.target = value;
+			speed = seconds;
+			if (!running) {
+				running = true;
+				frame = requestAnimationFrame((time) => step(time, 0));
+			}
 		});
+	const fold = () => goTo(target, duration);
+	const unfold = () => goTo(0, options.releaseDuration ?? 0.4);
 
 	const dispose = () => {
 		disposed = true;
@@ -559,5 +588,5 @@ export function prepareCrumple(canvas: HTMLCanvasElement, src: string, options: 
 		texture?.dispose();
 		renderer.dispose();
 	};
-	return { ready, play, dispose };
+	return { ready, fold, unfold, dispose };
 }

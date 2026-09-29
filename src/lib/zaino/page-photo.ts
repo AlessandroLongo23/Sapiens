@@ -10,7 +10,8 @@ import { getFontEmbedCSS } from 'html-to-image';
  * (the dark theme) and <body>.
  */
 export async function photographPage(page: HTMLElement, width: number): Promise<string> {
-	const rect = page.getBoundingClientRect();
+	// The layout size, not the box on screen: a card being dragged is tilted and scaled up (`data-dragging`).
+	const rect = { width: page.offsetWidth, height: page.offsetHeight };
 	const scale = width / rect.width;
 
 	// The site's @font-face rules point at files an SVG image may not load; later in the sheet than the embedded ones,
@@ -27,7 +28,9 @@ export async function photographPage(page: HTMLElement, width: number): Promise<
 		for (const rule of Array.from(rules)) if (!(rule instanceof CSSFontFaceRule)) css += rule.cssText + '\n';
 	}
 
-	const markup = new XMLSerializer().serializeToString(page.cloneNode(true));
+	const clone = page.cloneNode(true) as HTMLElement;
+	clone.removeAttribute('data-dragging');
+	const markup = new XMLSerializer().serializeToString(clone);
 	const svg =
 		`<svg xmlns="http://www.w3.org/2000/svg" width="${rect.width * scale}" height="${rect.height * scale}" viewBox="0 0 ${rect.width} ${rect.height}">` +
 		`<style><![CDATA[${(fonts + css).replaceAll(']]>', '')}]]></style>` +

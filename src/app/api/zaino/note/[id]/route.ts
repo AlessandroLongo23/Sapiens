@@ -1,5 +1,5 @@
 import { getSession } from '@/lib/server/auth';
-import { NoteConflict, deleteNote, getNote, parseNotePatch, parseVersion, saveNote } from '@/lib/server/zaino';
+import { NoteConflict, getNote, parseNotePatch, parseVersion, saveNote, trashNote } from '@/lib/server/zaino';
 import { fail, guarded, isUuid, json, readJson } from '@/lib/server/http';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -38,13 +38,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 	});
 }
 
+/** Moves the note to the trash; see /api/zaino/cestino for what can be done there. */
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	const { supabase, user } = await getSession();
 	if (!user) return fail('Accedi per continuare.', 401);
 	const { id } = await params;
 	if (!isUuid(id)) return fail('Nota non trovata.', 404);
-	return guarded('note delete', async () => {
-		await deleteNote(supabase, user.id, id);
-		return json({ status: 'deleted' });
+	return guarded('note trash', async () => {
+		await trashNote(supabase, user.id, id);
+		return json({ status: 'trashed' });
 	});
 }

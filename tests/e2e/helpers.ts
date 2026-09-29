@@ -68,7 +68,8 @@ export async function loginViaModal(page: Page, user: TestUser) {
 	await dialog.getByPlaceholder('Email').fill(user.email);
 	await dialog.getByPlaceholder('Password').fill(user.password);
 	await dialog.getByRole('button', { name: 'Accedi', exact: true }).click();
-	await page.getByRole('link', { name: /Account|Dashboard/ }).waitFor();
+	// Signed in: the header's account menu (a button since the account menu), or a tutor's dashboard link.
+	await page.getByRole('button', { name: /^Account/ }).or(page.getByRole('link', { name: /Account|Dashboard/ })).first().waitFor();
 	await page.waitForLoadState('networkidle');
 }
 
