@@ -53,6 +53,31 @@ Scelte del 29 settembre 2026, da confermare con Andrea (vault: `Contenuti/Domand
   scientifica) con gli indirizzi di `../url.md`; alle altre lezioni di fisica con quelli di `url.md`. Solo lezioni
   che esistono in quei file.
 
+## Notazioni del secondo anno
+
+Scelte del 30 settembre 2026 prima del terzo lotto (il secondo anno), da confermare con Andrea; valgono per tutti i
+gruppi, perché le lezioni si richiamano a vicenda.
+
+- Moto: posizione $s$ (e $s_0$ all'istante iniziale), spostamento $\Delta s$, tempo $t$ e intervallo $\Delta t$,
+  velocità $v$ e $v_0$, accelerazione $a$. Leggi orarie $s = s_0 + v\,t$ e $s = s_0 + v_0\,t + \tfrac{1}{2}a\,t^2$,
+  $v = v_0 + a\,t$. Nel piano le coordinate $x$ e $y$. Conversione $1\,\text{m/s} = 3{,}6\,\text{km/h}$.
+- Moto circolare: periodo $T$, frequenza $f$ in Hz, velocità angolare $\omega$ in rad/s, raggio $r$,
+  accelerazione centripeta $a_c = v^2/r = \omega^2 r$.
+- Dinamica: $\vec F = m\,\vec a$ con la forza totale $\vec F_{tot}$; tensione $T$ solo dove non si confonde con il
+  periodo, altrimenti $\vec T$ con la freccia; forza normale come nel primo anno ($\vec F_v$ per la reazione
+  vincolare, $F_\perp$ per la forza premente).
+- Lavoro $W$ (joule), potenza $P$ (watt), energia cinetica $K = \tfrac{1}{2}m v^2$, energia potenziale
+  gravitazionale $U = m g h$ ed elastica $U = \tfrac{1}{2}k\,x^2$, energia meccanica $E = K + U$. Il peso resta
+  $P$ come nel primo anno: dove potenza e peso compaiono insieme si scrive "il peso $m g$".
+- Termologia: temperatura in gradi Celsius $t$ quando non c'è il tempo nella stessa formula, altrimenti $T$;
+  temperatura assoluta $T$ in kelvin; calore $Q$, calore specifico $c$, capacità termica $C$, calore latente $L$
+  (con $L_f$ e $L_v$), coefficiente di dilatazione lineare $\lambda$ e cubica $\alpha$ come l'Amaldi (da
+  verificare).
+- Grafici spazio-tempo e velocità-tempo: statici in TikZ come in matematica, con la riga `% poi-interattivo:`.
+  Una figura interattiva può contenere un grafico disegnato per sé (un moto animato con il suo grafico che si
+  traccia), ma non un piano cartesiano generico: quello arriverà nel kit. Negli esercizi i grafici si disegnano
+  con la scena `grafico-dati` (`exercises/scenes/GraficoDati.tsx`), che ha assi con le tacche numerate.
+
 ## Incertezze e cifre significative
 
 Fissate nelle lezioni 04-08 (primo lotto, 29 settembre 2026) e valide per tutta la fisica:

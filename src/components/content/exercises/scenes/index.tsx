@@ -65,6 +65,15 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	// Physics, first year: refraction and lenses (group 11).
 	'raggio-due-mezzi': RaggioDueMezzi,
 	'lente-oggetto': LenteOggetto,
+	// Physics, second year: kinematics 1 (group 12).
+	// Physics, second year: kinematics 2 (group 13).
+	// Physics, second year: motion in a plane (group 14).
+	// Physics, second year: laws of motion (group 15).
+	// Physics, second year: forces and motion (group 16).
+	// Physics, second year: work and power (group 17).
+	// Physics, second year: energy (group 18).
+	// Physics, second year: temperature (group 19).
+	// Physics, second year: heat (group 20).
 };
 
 export function SceneFigure({ scene, className }: { scene: SceneRef; className?: string }) {

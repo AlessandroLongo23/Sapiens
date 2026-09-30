@@ -50,7 +50,9 @@ Sessione del 30 settembre 2026, seguito di [[2026-09-29 Primo lotto di fisica]].
 - Il valore di $p_0$: la lezione 29 usa $1{,}013 \cdot 10^5$ Pa, la 28 lo arrotonda a $1{,}01 \cdot 10^5$ negli esempi e lo dice.
 
 ## Stato
-Lezioni pubblicate nel database. Il codice è sul branch `fisica-secondo-lotto`, nel worktree `Sapiens-fisica`, da mettere in produzione con una PR.
+In produzione dal 30 settembre 2026: il branch `fisica-secondo-lotto` è entrato in master con la PR #15, dopo aver unito master (che aveva la PR #14 degli adesivi, senza file in comune). Controllate su `sapiens-edu.vercel.app` a 390 px le lezioni 22, 28 e 33 con le loro schede: figure caricate, interattive montate, scene disegnate, nessun errore di KaTeX. Ogni pagina di lezione, anche di matematica, registra un 404 sul prefetch della pagina del capitolo (`?_rsc=`), che invece risponde 200: c'era già prima, da capire.
+
+Stato dei branch al momento del merge: il branch locale `fisica-primo-lotto` nella cartella principale è su un commit degli adesivi (`bded598`) diverso da quello pushato e unito (`3e090b5`); `pigreko` ha 3 commit non uniti (la rinomina, in attesa della decisione sul nome); `zaino-cestino` è unito e il suo worktree si può togliere.
 
 ## Prossimo argomento
-Il deploy del lotto. Poi il secondo anno di fisica (cinematica, moti nel piano, dinamica, forze e movimento, lavoro ed energia, temperatura e calore), oppure il terzo anno di matematica.
+Il secondo anno di fisica (cinematica, moti nel piano, dinamica, forze e movimento, lavoro ed energia, temperatura e calore), oppure il terzo anno di matematica.

@@ -106,6 +106,15 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'prisma-dispersione-colori': () => import('@/components/content/interactive/fisica/PrismaDispersione'),
 	'sintesi-additiva-sottrattiva': () => import('@/components/content/interactive/fisica/SintesiColori'),
 	'lente-oggetto-immagine': () => import('@/components/content/interactive/fisica/LenteOggettoImmagine'),
+	// Physics, second year: kinematics 1 (group 12).
+	// Physics, second year: kinematics 2 (group 13).
+	// Physics, second year: motion in a plane (group 14).
+	// Physics, second year: laws of motion (group 15).
+	// Physics, second year: forces and motion (group 16).
+	// Physics, second year: work and power (group 17).
+	// Physics, second year: energy (group 18).
+	// Physics, second year: temperature (group 19).
+	// Physics, second year: heat (group 20).
 };
 
 export function activateInteractives(root: HTMLElement): () => void {
