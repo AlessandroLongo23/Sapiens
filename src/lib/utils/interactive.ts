@@ -80,6 +80,32 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'peso-massa-pianeti': () => import('@/components/content/interactive/fisica/PesoMassaPianeti'),
 	'molla-hooke-righello': () => import('@/components/content/interactive/fisica/MollaHookeRighello'),
 	'attrito-blocco-spinta': () => import('@/components/content/interactive/fisica/AttritoBloccoSpinta'),
+	// Physics, first year: equilibrium of a point (group 6).
+	'corpo-due-fili-tensioni': () => import('@/components/content/interactive/fisica/CorpoDueFili'),
+	'piano-inclinato-scomposizione-peso': () => import('@/components/content/interactive/fisica/PianoInclinatoPeso'),
+	// Physics, first year: rigid bodies and levers (group 7).
+	'chiave-inglese-momento': () => import('@/components/content/interactive/fisica/ChiaveInglese'),
+	'altalena-momenti': () => import('@/components/content/interactive/fisica/Altalena'),
+	'leva-tre-generi': () => import('@/components/content/interactive/fisica/LevaGeneri'),
+	'blocco-ribaltamento': () => import('@/components/content/interactive/fisica/BloccoRibaltamento'),
+	// Physics, first year: pressure, Pascal and Stevin (group 8).
+	'torchio-idraulico': () => import('@/components/content/interactive/fisica/TorchioIdraulico'),
+	'pressione-profondita': () => import('@/components/content/interactive/fisica/PressioneProfondita'),
+	'tubo-a-u-liquidi': () => import('@/components/content/interactive/fisica/TuboAU'),
+	// Physics, first year: atmosphere and Archimedes (group 9).
+	'torricelli-tubo-inclinato': () => import('@/components/content/interactive/fisica/TorricelliTubo'),
+	'dinamometro-corpo-immerso': () => import('@/components/content/interactive/fisica/DinamometroImmersione'),
+	'galleggiamento-densita': () => import('@/components/content/interactive/fisica/CorpoGalleggiante'),
+	// Physics, first year: rays and mirrors (group 10).
+	'ombra-penombra-sorgente': () => import('@/components/content/interactive/fisica/OmbraPenombra'),
+	'riflessione-angolo-specchio': () => import('@/components/content/interactive/fisica/RiflessioneSpecchio'),
+	'immagine-specchio-piano': () => import('@/components/content/interactive/fisica/ImmagineSpecchioPiano'),
+	'specchio-sferico-immagine': () => import('@/components/content/interactive/fisica/SpecchioSferico'),
+	// Physics, first year: refraction and lenses (group 11).
+	'rifrazione-due-mezzi': () => import('@/components/content/interactive/fisica/RifrazioneDueMezzi'),
+	'prisma-dispersione-colori': () => import('@/components/content/interactive/fisica/PrismaDispersione'),
+	'sintesi-additiva-sottrattiva': () => import('@/components/content/interactive/fisica/SintesiColori'),
+	'lente-oggetto-immagine': () => import('@/components/content/interactive/fisica/LenteOggettoImmagine'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {
