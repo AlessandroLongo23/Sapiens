@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-26
+aggiornato: 2026-09-30
 tag: [piano, studenti, tecnica]
 ---
 # Progressi dello studente
@@ -122,7 +122,7 @@ Stima: 3-4 settimane di lavoro con gli LLM, cioè entro fine ottobre 2026 se si 
 ## Dopo la beta, dove si agganciano
 - **[[Adesivi]] come premi:** una tabella dei premi alimentata dallo stesso trigger (livello superato, capitolo completato, soglie della serie). Gli adesivi non si comprano e non scadono.
 - **[[Area genitori]], resoconto settimanale:** serve un collegamento genitore-figlio con il consenso, poi legge `exercise_days` e le prove.
-- **Ripasso a intervalli (FSRS):** una tabella della memoria per studente, generatore e livello, aggiornata dal trigger; alimenta il piano della pratica. Vedi [[Ripasso pianificato prima di una verifica]].
+- **Ripasso a intervalli (FSRS):** una tabella della memoria per studente, generatore e livello, aggiornata dal trigger; alimenta il piano della pratica. Vedi [[Ripasso pianificato prima di una verifica]]. Dal 30 settembre 2026 entra nella beta, con il ripasso implicito sui prerequisiti: vedi [[2026-09-30 La memoria degli esercizi è per livello, con FSRS, e la risposta aperta pesa di più]] e [[2026-09-30 Il ripasso spaziato e quello implicito sui prerequisiti entrano nella beta]].
 - **Ripasso prima di una verifica:** le verifiche del [[Diario e calendario]], con lezioni e data, alimentano il piano del ripasso.
 - **Mappa dei prerequisiti:** una torre di blocchi per capitolo o per anno, colorata dai progressi di ogni lezione. Vedi [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]] e [[Mappa dei prerequisiti]].
 - **[[Flashcard]]:** i progressi delle carte oggi non si salvano; quando si salveranno, entrano nella serie e in "Oggi".

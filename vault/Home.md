@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-28
+aggiornato: 2026-09-30
 tag: [indice]
 ---
 # Sapiens
@@ -14,6 +14,8 @@ Il 23 settembre 2026 sono stati decisi piani e prezzi della beta (Free e Studio,
 Il 25 settembre gli esercizi sono diventati un percorso di livelli per lezione: lo studente sceglie il livello prima della prova, supera un livello con 8 risposte giuste su 10 e può saltare avanti con una prova di salto. Nel codice, non ancora pubblicato. Vedi [[2026-09-25 Gli esercizi sono un percorso di livelli]]. Lo stesso giorno si è deciso che ogni lezione dichiara i suoi prerequisiti: il grafo che ne esce serve a suggerire un ripasso dopo una prova andata male, e dopo la beta diventerà una torre di blocchi (vedi [[2026-09-25 I prerequisiti si scrivono per lezione, con un solo tipo di arco]]).
 
 Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le materie, i capitoli) ha una copertina a quadretti dove lo studente attacca adesivi, salvati per pagina; è deciso anche il sistema degli adesivi: li fa Sapiens in SVG, a pacchetti per capitolo, materia, studio e stagione, tutti liberi nella beta. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Sistema degli adesivi]]. Lo stesso giorno fisica e informatica delle superiori e le medie (matematica, Scienze e Tecnologia) hanno avuto l'albero per anno dal programma ministeriale: 856 lezioni ancora vuote. Vedi [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]. Sempre il 26 settembre è fatto il terzo lotto, monomi, polinomi e scomposizione: 12 lezioni con esercizi, formulario e flashcard, 38 lezioni complete in tutto. Vedi [[2026-09-26 Terzo lotto, monomi polinomi e scomposizione]]. Lo stesso giorno il quarto lotto, 13 lezioni su prodotto cartesiano, relazioni e funzioni, frazioni algebriche ed equazioni: 51 lezioni complete. Vedi [[2026-09-26 Quarto lotto, relazioni funzioni e frazioni algebriche]]. Poi il quinto lotto, 11 lezioni su disequazioni, statistica e geometria del piano, e il sesto, le 5 lezioni che mancavano di insiemi e logica: il primo anno di matematica è completo, 67 lezioni con esercizi, formulario e flashcard. Vedi [[2026-09-26 Quinto lotto, disequazioni statistica e geometria]] e [[2026-09-26 Sesto lotto, intersezione differenza e logica]]. Il 27 settembre il settimo lotto apre il secondo anno: sistemi lineari, radicali ed equazioni di secondo grado, 12 lezioni, 79 complete in tutto. Vedi [[2026-09-27 Settimo lotto, sistemi radicali e secondo grado]]. Lo stesso giorno l'ottavo lotto, piano cartesiano, retta e parabola, 10 lezioni: 89 complete. Vedi [[2026-09-27 Ottavo lotto, piano cartesiano retta e parabola]]. Il 28 settembre il nono lotto, equazioni e disequazioni di grado superiore e probabilità, 6 lezioni: 95 complete. Vedi [[2026-09-28 Nono lotto, grado superiore e probabilità]]. Lo stesso giorno il decimo lotto, la geometria del secondo anno, 9 lezioni: 104 complete, e il biennio di matematica è finito. Vedi [[2026-09-28 Decimo lotto, geometria del secondo anno]]. Lo schermo "Oggi" è diventato il Diario: pagina del giorno con le voci della scuola scritte in una riga, i consigli di Sapiens come post-it, il ripasso prima delle verifiche, il registro dei giorni passati e una pagina personale con gli adesivi. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 Diario]]. Sempre il 26 settembre una verifica SEO ha trovato il sito non indicizzato e circa 250 pagine vuote nella sitemap: ora sono fuori dalla ricerca (restano sul sito), e ogni pagina esercizi ha una scheda gratuita e indicizzata da fare sul quaderno. Resta da scegliere il dominio. Nel codice, non ancora pubblicato. Vedi [[2026-09-26 SEO e scheda degli esercizi]]. Il 28 settembre si è deciso che il marketing parte a ottobre, con Lorena: video brevi su TikTok e Instagram, un test con i singoli docenti, un piano per ogni fascia di budget (ancora da scegliere). Vedi [[Piano di acquisizione]] e [[2026-09-28 Marketing e acquisizione clienti]]. Lo stesso giorno sono scritti gli inviti: il link di uno studente o il codice di un creator danno 14 giorni di prova; l'amico che finisce la prima prova fa guadagnare 30 giorni di Studio a chi l'ha invitato, fino a 3 l'anno. Dopo una ricerca sulle regole danesi e italiane, lo stesso giorno: un codice proprio solo per chi ha almeno 18 anni, i creator pagati a contenuto e non a provvigione (rischio Enasarco), il codice salvato solo dopo "Usa l'invito". Migrazione applicata, codice non ancora pubblicato. Vedi [[Inviti e codici]]. Sempre il 28 settembre le lezioni hanno avuto le prime figure interattive: 45 in 38 lezioni, nello stile delle figure TikZ, con pezzi da trascinare, cursori e costruzioni animate. Nel codice, non ancora pubblicate. Vedi [[2026-09-28 Figure interattive nelle lezioni]].
+
+Il 30 settembre si è deciso come arriva la risposta aperta negli esercizi, che la beta promette e oggi manca: ogni livello è una tappa con più tipi di esercizio, 4 ripetizioni da 8 domande con la risposta aperta che cresce (8/0, 6/2, 4/4, 2/6) portano a superato; si scrive con MathLive, con la tastiera di Sapiens o quella del dispositivo; la forma conta solo dove è l'esercizio, e ogni livello dichiara cosa si valuta. Con la risposta aperta arriva la memoria degli esercizi: FSRS per livello, con la risposta aperta che pesa più della multipla, ripassi aperti nella pratica quotidiana fino a padroneggiato, quando la memoria regge per settimane, superato che non si perde mai, e il ripasso implicito lungo il grafo dei prerequisiti, tutto nella beta. Nessun codice ancora. Vedi [[2026-09-30 Risposta aperta e memoria degli esercizi]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
@@ -31,10 +33,16 @@ Il 26 settembre ogni pagina indice del materiale (la biblioteca, i livelli, le m
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-28 Figure interattive nelle lezioni]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-30 Risposta aperta e memoria degli esercizi]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-30 Il ripasso spaziato e quello implicito sui prerequisiti entrano nella beta]]
+- [[2026-09-30 Superato non si perde, padroneggiato torna da ripassare come invito]]
+- [[2026-09-30 La memoria degli esercizi è per livello, con FSRS, e la risposta aperta pesa di più]]
+- [[2026-09-30 Nella risposta aperta la forma conta solo dove è l'esercizio]]
+- [[2026-09-30 La risposta aperta si scrive con MathLive, con la tastiera di Sapiens o quella del dispositivo]]
+- [[2026-09-30 Ogni livello è una tappa con più tipi di esercizio, e si supera a risposta aperta]]
 - [[2026-09-28 Le note eliminate restano 30 giorni nel cestino]]
 - [[2026-09-28 Il cestino non conta nel limite del piano gratuito]]
 - [[2026-09-28 Porta un amico solo per i maggiorenni]]
@@ -64,7 +72,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-25 Oggi è lo schermo iniziale dell'app]] (superata in parte)
 - [[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]
 - [[2026-09-25 La pratica quotidiana entra nella beta]]
-- [[2026-09-25 Gli esercizi sono un percorso di livelli]]
+- [[2026-09-25 Gli esercizi sono un percorso di livelli]] (superata in parte)
 - [[2026-09-25 Studio costa 9,99 euro al mese o 49,99 fino a giugno]]
 - [[2026-09-24 Il livello degli esercizi lo sceglie la pagina]] (superata)
 - [[2026-09-24 Ogni tentativo salva l'esercizio intero]]
@@ -104,7 +112,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]]
 
 ## Idee
-Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Tavola periodica interattiva]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]].
+Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Tavola periodica interattiva]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]].
 
 ## Decisioni aperte più importanti
 Ognuna ha il dettaglio nella nota collegata.
