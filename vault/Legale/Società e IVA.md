@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-28
+aggiornato: 2026-09-29
 tag: [legale, fiscale]
 ---
 # Società e IVA
@@ -30,7 +30,7 @@ Pagare i creator (vedi [[2026-09-28 I creator si pagano a contenuto, non a provv
 - Senza partita IVA: prestazione occasionale; un committente estero non applica la ritenuta del 20%, il creator dichiara il compenso come reddito diverso (art. 67 lett. l TUIR). Collaborazioni ripetute possono diventare abituali e richiedere la partita IVA (ATECO 73.11.03, influencer, dal 2025).
 - In Danimarca è una spesa deducibile con fattura o ricevuta e bonifico; nessuna ritenuta danese. DAC7 non riguarda Sapiens, che non intermedia vendite di terzi.
 
-Domande per il revisor danese:
+Domande per il revisor danese (dal 29 settembre 2026 si portano alle consulenze gratuite di IDA, con le schede in [[Consulenze IDA]]):
 1. La registrazione moms obbligatoria per gli acquisti dall'estero rende tassabili anche le vendite, anche sotto 50.000 DKK?
 2. Sotto 10.000 € di vendite nell'UE, moms danese o niente IVA? Da quando conviene l'OSS o il numero EX?
 3. L'esenzione danese per l'insegnamento (momsloven §13, stk. 1, nr. 3) può valere per una piattaforma automatica?
@@ -43,7 +43,10 @@ Dettagli su IVA del contatto (B2C con IVA italiana, B2B in reverse charge con ve
 ## Deciso
 Sapiens resta un'impresa individuale danese almeno fino alla [[Release v1.0]]. Una società si apre quando i ricavi lo giustificano. Vedi [[2026-09-23 Impresa individuale finché i ricavi non giustificano una società]].
 
+Dal 29 settembre 2026 nessun creator e nessuna campagna si pagano prima della registrazione moms. Vedi [[2026-09-29 Niente pagamenti per il marketing prima della registrazione moms]].
+
 ## Domande aperte
-- L'impresa individuale ha responsabilità illimitata: un errore con i dati di minori o una lite con un cliente tocca il patrimonio personale di Alessandro. Un'assicurazione di responsabilità civile professionale e cyber costa poco e riduce il rischio mentre la società non c'è: da valutare prima della [[Release Beta]].
+- Alessandro ha già un CVR? Una ricerca per nome su cvrapi.dk il 29 settembre 2026 non ha trovato niente: da verificare su virk.dk.
+- L'impresa individuale ha responsabilità illimitata: un errore con i dati di minori o una lite con un cliente tocca il patrimonio personale di Alessandro. Un'assicurazione di responsabilità civile professionale e cyber costa poco e riduce il rischio mentre la società non c'è: da valutare prima della [[Release Beta]]. Il 29 settembre 2026 si è deciso di chiedere un preventivo a IDA Forsikring, e di decidere prima del primo incasso (vedi [[Consulenze IDA]]).
 - Con quale soggetto si vende alle scuole italiane? Vedi [[Contratti con le scuole]].
 - Se Andrea, Dario e Lorena diventano soci serve comunque una società. Vedi [[Accordi del team]].
