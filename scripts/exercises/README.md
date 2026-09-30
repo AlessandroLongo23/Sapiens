@@ -24,6 +24,12 @@ node node_modules/jiti/lib/jiti-cli.mjs scripts/exercises/sample.mts equazioni-s
 # pagina di revisione (10 esempi, formule in MathML, pubblicabile come Artifact); il percorso di uscita è opzionale
 node node_modules/jiti/lib/jiti-cli.mjs scripts/exercises/review.mts equazioni-secondo-grado /percorso/review.html
 
+# risposta aperta: la tabella dei livelli contro i generatori, il correttore su tutti i livelli
+# (riferimento, altre scritture, distrattori bocciati, testo copiato bocciato) e i casi scritti a mano
+node node_modules/jiti/lib/jiti-cli.mjs scripts/exercises/open-answers.mts
+node node_modules/jiti/lib/jiti-cli.mjs scripts/exercises/grade-check.mts 100
+node node_modules/jiti/lib/jiti-cli.mjs scripts/exercises/grade-cases.mts
+
 # controllo dei tipi (sull'intero progetto: compilati da soli, i file che importano abstract.ts
 # danno falsi errori perché mancano i prototipi globali)
 npx tsc --noEmit -p .

@@ -1,7 +1,7 @@
 ---
 stato: in uso
 release: beta
-aggiornato: 2026-09-29
+aggiornato: 2026-09-30
 tag: [contenuti, revisione]
 ---
 # Domande per Andrea
@@ -245,6 +245,24 @@ Le 38 lezioni nuove del primo e del secondo anno di chimica. Vedi [[2026-09-30 B
 - [ ] La composizione percentuale è sia nella 01 sia nella 35: da quale si toglie?
 - [ ] Rame e zolfo: Cu₂S (rapporto 3,96) o CuS negli esempi di Proust.
 - [ ] Argomenti forse fuori dal biennio: fattore di ritenzione, sopraffusione, manometro a tubo aperto, frazione molare, gas raccolto sopra l'acqua, legge di Graham, abbondanze isotopiche.
+
+## Risposta aperta negli esercizi (30 settembre 2026)
+Dove la forma non conta, la risposta aperta accetta tutte le scritture equivalenti (vedi [[2026-09-30 Nella risposta aperta la forma conta solo dove è l'esercizio]]). Qui i casi dubbi, con la scelta proposta tra parentesi.
+- [ ] Un'equazione nell'incognita $y$ risolta scrivendo $x = 3$: giusta (proposta: sì, con una riga che lo fa notare) o sbagliata?
+- [ ] Soluzioni irrazionali scritte con il $\pm$, come $x = \frac{3 \pm \sqrt 5}{2}$: valgono (proposta: sì) o si chiedono le due soluzioni separate?
+- [ ] Una frazione scritta come decimale esatto ($1{,}2$ per $\frac{6}{5}$): giusta (proposta: sì); e un periodico scritto con la linea, $0{,}\overline{3}$?
+- [ ] Una risposta giusta ma non ridotta ($\frac{3}{6}$) dove l'esercizio non chiede di ridurre: giusta con una riga che dice che si può semplificare (proposta)?
+- [ ] Equazione impossibile: valgono "impossibile", $S = \emptyset$, "nessuna soluzione"; indeterminata: "indeterminata", $S = \mathbb{R}$, "per ogni $x$". Manca qualche scrittura che si usa in classe?
+- [ ] Quali livelli chiedono una forma: la tabella è in `src/lib/exercises/v2/open-answers.ts` (449 livelli classificati il 30 settembre, sul branch `risposta-aperta`); `scripts/exercises/open-answers.mts` stampa il riepilogo. I casi dubbi sono qui sotto.
+- [ ] Monomi e polinomi calcolati ("Calcola il prodotto", "Riduci il monomio", "MCD dei monomi"): il risultato va sempre in forma normale, con i termini simili sommati (scelta fatta, altrimenti il testo copiato passerebbe). Va bene anche un ordine diverso dei termini, come $-y^2 + 9$ per $9 - y^2$?
+- [ ] "Calcola e semplifica" sulle frazioni algebriche: è giusta la frazione ridotta anche con il denominatore sviluppato, come $\frac{x - 16}{x^2 - 7x + 6}$ (scelta fatta), o il denominatore va lasciato scomposto?
+- [ ] Rette: dove la consegna chiede la forma esplicita si accetta solo $y = mx + q$, con qualunque scrittura equivalente del secondo membro (scelta fatta). Dove non la chiede, vale anche la forma implicita?
+- [ ] Percentuali di variazione ("Di quale percentuale è cambiato il prezzo?", risposta $-25$): il segno è obbligatorio, o vale anche $25$ quando lo studente scrive che è una diminuzione? E il simbolo % si può omettere (scelta fatta: sì)?
+- [ ] Unità di misura e gradi nella risposta ($25$ cm, $149°$): si accettano con e senza (scelta fatta). Una unità diversa da quella della consegna ($0{,}25$ m per $25$ cm) si converte o è un errore?
+- [ ] Domini e condizioni di esistenza: valgono $x \neq 4$, $D = \mathbb{R} \setminus \{4\}$ e $x \neq \pm \frac{2}{3}$ (scelta fatta); servono altre scritture, come gli intervalli?
+- [ ] Funzione inversa: scritta in $x$ o in $y$ vale lo stesso (scelta fatta)?
+- [ ] Un trinomio che non si scompone: vale sia la parola "irriducibile" sia il trinomio riscritto uguale (scelta fatta). Va bene anche dove la consegna chiede i fattori di primo grado?
+- [ ] Con la virgola decimale, "$x = 0,2$" può voler dire $0$ e $2$ oppure $0{,}2$: il correttore prova le due letture e accetta la risposta se una è giusta (scelta fatta). Ti sembra giusto, o in classe si usa sempre il punto e virgola tra due soluzioni?
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

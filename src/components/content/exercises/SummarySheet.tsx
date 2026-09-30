@@ -38,8 +38,10 @@ interface Props {
 	open: boolean;
 	correct: number;
 	total: number;
-	/** Whether the run passed its level or opened the one it was jumping to. */
+	/** Whether the run passed its level, counted as a repetition, or opened the level it was jumping to. */
 	passed: boolean;
+	/** The word on the stamp when it passed: "Superato", or "Fatta" for a repetition that is not the last. */
+	stamp?: string;
 	/** What the run means on the path: "Livello 3 superato", "Ti servivano 8 risposte giuste". */
 	title: string;
 	detail: string;
@@ -52,7 +54,7 @@ interface Props {
  * End of a run: the score ring, what it means for the path, and what to do next. A sheet on phones, a centred card
  * on wider screens. The mistakes are not here: a button in `actions` opens them on the whole page (RunReview).
  */
-export function SummarySheet({ open, correct, total, passed, title, detail, actions, onClose }: Props) {
+export function SummarySheet({ open, correct, total, passed, stamp = 'Superato', title, detail, actions, onClose }: Props) {
 	const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
 	const wrong = Math.max(0, total - correct);
 	const ring = passed ? 'stroke-ok' : percent >= 50 ? 'stroke-warn' : 'stroke-accent';
@@ -89,7 +91,7 @@ export function SummarySheet({ open, correct, total, passed, title, detail, acti
 					</div>
 					{passed && (
 						<span className="score-stamp" aria-hidden="true">
-							Superato
+							{stamp}
 						</span>
 					)}
 				</div>

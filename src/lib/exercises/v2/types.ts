@@ -127,6 +127,27 @@ export interface LevelSpec {
 	constraints: string[];
 }
 
+/**
+ * A form an open answer must be in, where the form is the exercise (vault/Decisioni/2026-09-30 Nella risposta aperta la
+ * forma conta solo dove è l'esercizio.md). `expanded`: a sum of monomials in normal form, like terms collected;
+ * `factored`: a product of irreducible factors; `irreducible`: a fraction, numeric or algebraic, in lowest terms;
+ * `simplified`: radicals reduced, nothing left to carry out; `rationalized`: simplified, with no radical in a
+ * denominator; `explicit`: a line or curve as y = f(x); `power` and `radical`: the notation asked for; `decimal`: a
+ * decimal number, periodic with the bar. The generators' `irriducibile` is `irreducible`.
+ */
+export type AnswerForm = 'expanded' | 'factored' | 'irreducible' | 'simplified' | 'rationalized' | 'explicit' | 'power' | 'radical' | 'decimal';
+
+/**
+ * What an open answer of a level is graded on.
+ * - `value`: any writing with the right value. A number is still written as a number, not as the expression it
+ *   comes from; a set of solutions in any of the usual notations. `set: 'excluded'` when the set lists the values
+ *   left out (a domain, the conditions of existence: x ≠ 4, ℝ ∖ {4}).
+ * - `form`: the value and the form: `form` here, or the sample's `answer.form` when this leaves it out. In a level
+ *   whose samples mix numbers and expressions, a number is graded on its value: written as a number, it is already
+ *   in its simplest form.
+ */
+export type OpenGrading = { grade: 'value'; set?: 'excluded' } | { grade: 'form'; form?: AnswerForm };
+
 export interface Generator {
 	id: string;
 	title: string;

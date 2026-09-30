@@ -8,6 +8,7 @@ import type { ExerciseView, QuestionBlock, SessionView, Verdict } from '@/lib/se
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
 import { SceneFigure } from './scenes';
+import { OpenAnswer, type OpenState } from './OpenAnswer';
 
 /** A question of a run: not answered yet, answered right, answered wrong. */
 export type Progress = 'unanswered' | 'correct' | 'incorrect';
@@ -333,13 +334,15 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		}
 	};
 
-	const answer = async (i: number) => {
+	/** Sends an answer: the option `i`, or with `latex` an open answer (then `i` is -1). */
+	const answer = async (i: number, latex?: string) => {
 		if (selected !== null || busy || finished) return;
 		setSelected(i);
 		setBusy(true);
 		setError(null);
 		try {
-			const res = await post<{ verdict: Verdict }>(`/api/esercizi/${exercise.id}`, { key: exercise.key, choice: i, activeMs: clock.read() });
+			const body = latex !== undefined ? { key: exercise.key, latex, activeMs: clock.read() } : { key: exercise.key, choice: i, activeMs: clock.read() };
+			const res = await post<{ verdict: Verdict }>(`/api/esercizi/${exercise.id}`, body);
 			results.current = [...results.current.filter((r) => r.position !== index), { position: index, exercise, choice: i, verdict: res.verdict }];
 			setVerdict(res.verdict);
 			setProgress((p) => p.map((s, k) => (k === index ? (res.verdict.correct ? 'correct' : 'incorrect') : s)));
@@ -360,7 +363,8 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 			requestAnimationFrame(() => after.current?.scrollIntoView({ block: 'nearest', behavior: smooth ? 'smooth' : 'auto' }));
 			return;
 		}
-		advanceTimer.current = setTimeout(advance, 1000);
+		// a right answer with a note ("si può ridurre") stays long enough to read it
+	advanceTimer.current = setTimeout(advance, verdict.message ? 2600 : 1000);
 		return () => {
 			if (advanceTimer.current) clearTimeout(advanceTimer.current);
 		};
@@ -375,7 +379,7 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		const onKey = (e: KeyboardEvent) => {
 			if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
 			const target = e.target as HTMLElement | null;
-			if (target?.closest('input, textarea, select, button, [contenteditable=""], [contenteditable="true"], [role="dialog"]')) return;
+			if (target?.closest('input, textarea, select, button, math-field, [contenteditable=""], [contenteditable="true"], [role="dialog"]')) return;
 			if (verdict && !verdict.correct && e.key === 'Enter') {
 				e.preventDefault();
 				advance();
@@ -420,7 +424,15 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		};
 	}, [short, exercise]);
 
-	const announced = !verdict ? '' : verdict.correct ? 'Risposta corretta.' : `Risposta sbagliata. Quella giusta era: ${speakable(exercise.options[verdict.correctIndex]?.text ?? '')}. Sotto c'è come si risolve.`;
+	const open = exercise.mode === 'open';
+	const openState: OpenState = !verdict ? (selected !== null ? 'pending' : 'idle') : verdict.correct ? 'correct' : 'incorrect';
+	const announced = !verdict
+		? ''
+		: verdict.correct
+			? `Risposta corretta.${verdict.message ? ` ${verdict.message}` : ''}`
+			: open
+				? `Risposta sbagliata.${verdict.message ? ` ${verdict.message}` : ''} Sotto ci sono la risposta giusta e come si risolve.`
+				: `Risposta sbagliata. Quella giusta era: ${speakable(exercise.options[verdict.correctIndex]?.text ?? '')}. Sotto c'è come si risolve.`;
 
 	return (
 		<div id="esercizi" className="flex h-full w-full flex-col items-center gap-6 px-4 pb-6 pt-3 sm:gap-10 sm:px-8 sm:pb-10 sm:pt-6 md:px-10">
@@ -459,7 +471,17 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 					)}
 				</div>
 				<div className="flex w-full flex-col gap-3">
-					<div ref={grid} className={cn('grid w-full auto-rows-fr gap-3', columns === 2 ? 'grid-cols-2' : 'grid-cols-1')} role="group" aria-label="Risposte" aria-busy={busy || undefined}>
+					{open && <OpenAnswer state={openState} locked={selected !== null || busy || !!verdict} onSubmit={(latex) => answer(-1, latex)} />}
+					{open && verdict?.message && (
+						<p className={cn('animate-step-in text-center text-sm', verdict.correct ? 'text-ok-fg' : 'text-fg-muted')}>{verdict.message}</p>
+					)}
+					{open && verdict && !verdict.correct && verdict.expectedHtml && (
+						<p className="flex animate-step-in flex-wrap items-baseline justify-center gap-x-2 text-base">
+							<span className="label-mono text-ok-fg">Risposta giusta</span>
+							<Html as="span" html={verdict.expectedHtml} className="math-content min-w-0 scroll-x [&_.katex-display]:my-0 [&_.katex-display]:inline-block" />
+						</p>
+					)}
+					<div ref={grid} hidden={open} className={cn('grid w-full auto-rows-fr gap-3', columns === 2 ? 'grid-cols-2' : 'grid-cols-1')} role="group" aria-label="Risposte" aria-busy={busy || undefined}>
 						{exercise.options.map((option, i) => {
 							const state: AnswerState = !verdict ? (selected === i ? 'pending' : 'idle') : i === verdict.correctIndex ? 'correct' : selected === i ? 'incorrect' : 'muted';
 							return (
