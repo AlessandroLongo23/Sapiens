@@ -144,7 +144,7 @@ blocco, con le forze che partono dal centro. Le lunghezze delle frecce sono in s
 moduli.
 
 Dentro i nodi di TikZ le unità si scrivono fuori dalla formula, `node {$76$ cm}`: `\text{cm}` in un nodo fa fallire
-node-tikzjax. I colori dello spettro nel tema scuro si invertono (il giallo diventa marrone, il violetto rosa): le
+node-tikzjax, e anche `\tfrac` (si usa `\frac`). I colori dello spettro nel tema scuro si invertono (il giallo diventa marrone, il violetto rosa): le
 figure con i colori della luce li disegnano fuori dall'inversione, come `PrismaDispersione.tsx`, e nel TikZ si
 evitano, o si dice nel testo che i colori sono indicativi.
 
@@ -192,6 +192,10 @@ node scripts/figure/anteprima-interattivo.mjs /percorso/scena.png scena=blocco-f
 La scena non deve dare la risposta: disegna i dati, non quello che lo studente deve trovare.
 
 ## Esercizi
+
+I risultati non finiscono con uno zero ambiguo (40 N, 90 m): i generatori li scartano, oppure li scrivono in
+notazione scientifica. Le unità con un esponente si scrivono con l'esponente fuori dal testo, `\text{m/s}^2`: KaTeX
+rifiuta `\text{m/s^2}`.
 
 Generatori in TypeScript come quelli di matematica (`scripts/exercises/README.md`): specifica in
 `specs/exercises/<slug>.md`, generatore in `src/lib/exercises/v2/generators/<slug>.ts`, controllo indipendente in

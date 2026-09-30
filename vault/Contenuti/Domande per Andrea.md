@@ -220,5 +220,18 @@ Le 18 lezioni che chiudono il primo anno: equilibrio dei solidi, dei fluidi, ott
 - [ ] Argomenti che forse l'Amaldi del primo anno non fa: gli spostamenti dei pistoni nel torchio, la profondità apparente, i due specchi ad angolo, i due fili con angoli diversi (un sistema di due equazioni). Il verricello è stato lasciato fuori.
 - [ ] Velocità della luce e anno luce messi nella lezione 31: è il posto giusto?
 
+## Terzo lotto di fisica: il secondo anno (30 settembre 2026)
+Le 33 lezioni del secondo anno: cinematica, moti nel piano, dinamica, forze e movimento, lavoro ed energia, temperatura e calore. Vedi [[2026-09-30 Terzo lotto di fisica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione "Domande per Andrea" di `docs/lezioni/fisica/note/38-70`.
+- [ ] Coefficienti di dilatazione $\lambda$ (lineare) e $\alpha$ (volumica) (scelta fatta, dal README, da verificare sull'Amaldi) oppure $\alpha$ e $\beta$; conducibilità termica $\lambda$ (scelta fatta) o $k$. Se l'Amaldi usa altre lettere cambiano le lezioni 66 e 69.
+- [ ] Posizione $s$ (scelta fatta) o $x$; il grafico si chiama "spazio-tempo" (scelta fatta), "posizione-tempo" o "orario"; "velocità scalare media" e il simbolo della velocità media.
+- [ ] Caduta libera con l'asse verso l'alto e $a = -g$ (scelta fatta) o con l'asse verso il basso e $h = \tfrac12 g t^2$.
+- [ ] Frenata con $a$ negativa (scelta fatta) o "decelerazione" positiva.
+- [ ] Deformazione della molla $x$ (secondo anno) o $\Delta l$ (legge di Hooke, primo anno): le due lezioni oggi usano lettere diverse.
+- [ ] $g$ in m/s² dal secondo anno o ancora in N/kg.
+- [ ] "Diagramma delle forze" (scelta fatta) o "diagramma di corpo libero"; $\vec F_{AB}$ per "forza di A su B".
+- [ ] Energia dissipata che "diventa energia interna" o "diventa calore"; bilancio $\Delta E = W_{attrito}$ o $W_{nc}$; rendimento $\eta$ in percentuale o numero puro.
+- [ ] Calore scambiato con le differenze positive ("ceduto uguale ad assorbito") o $Q_1 + Q_2 = 0$ con i segni; unità $\text{J/(kg}\cdot{}^\circ\text{C)}$ o $\text{J/(kg}\cdot\text{K)}$; 273 o 273,15.
+- [ ] Argomenti forse fuori dal secondo anno dell'Amaldi: la legge della conduzione con i conti, l'equivalente in acqua, la macchina di Atwood, il peso apparente, i radianti e $\omega$, la dimostrazione di $a_c = v^2/r$ con i triangoli simili, il pendolo ad ampiezza grande.
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

@@ -107,14 +107,48 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'sintesi-additiva-sottrattiva': () => import('@/components/content/interactive/fisica/SintesiColori'),
 	'lente-oggetto-immagine': () => import('@/components/content/interactive/fisica/LenteOggettoImmagine'),
 	// Physics, second year: kinematics 1 (group 12).
+	'andata-ritorno-distanza-spostamento': () => import('@/components/content/interactive/fisica/AndataRitorno'),
+	'moto-uniforme-grafico-spazio-tempo': () => import('@/components/content/interactive/fisica/MotoUniformeGrafico'),
+	'incontro-rette-spazio-tempo': () => import('@/components/content/interactive/fisica/IncontroRette'),
 	// Physics, second year: kinematics 2 (group 13).
+	'auto-accelerata-grafici': () => import('@/components/content/interactive/fisica/AutoAccelerataGrafici'),
+	'grafico-velocita-tempo-tratti': () => import('@/components/content/interactive/fisica/GraficoVTratti'),
+	'lancio-verticale-velocita': () => import('@/components/content/interactive/fisica/LancioVerticale'),
 	// Physics, second year: motion in a plane (group 14).
+	'velocita-media-tangente': () => import('@/components/content/interactive/fisica/VelocitaMediaTangente'),
+	'barca-fiume-correnti': () => import('@/components/content/interactive/fisica/BarcaFiume'),
+	'moto-circolare-radianti': () => import('@/components/content/interactive/fisica/MotoCircolareRadianti'),
+	'moto-circolare-accelerazione': () => import('@/components/content/interactive/fisica/MotoCircolare'),
+	'moto-armonico-ombra': () => import('@/components/content/interactive/fisica/MotoArmonicoOmbra'),
 	// Physics, second year: laws of motion (group 15).
+	'carrello-forza-accelerazione': () => import('@/components/content/interactive/fisica/CarrelloForza'),
+	'piano-doppio-galileo': () => import('@/components/content/interactive/fisica/PianoDoppioGalileo'),
+	'ascensore-bilancia': () => import('@/components/content/interactive/fisica/AscensoreBilancia'),
+	'diagramma-forze-costruisci': () => import('@/components/content/interactive/fisica/DiagrammaForzeCostruisci'),
+	'pattinatori-spinta': () => import('@/components/content/interactive/fisica/PattinatoriSpinta'),
 	// Physics, second year: forces and motion (group 16).
+	'piano-inclinato-moto-attrito': () => import('@/components/content/interactive/fisica/PianoInclinatoMoto'),
+	'macchina-atwood-masse': () => import('@/components/content/interactive/fisica/MacchinaAtwood'),
+	'proiettile-tavolo-gittata': () => import('@/components/content/interactive/fisica/ProiettileTavolo'),
+	'forza-centripeta-filo-spezzato': () => import('@/components/content/interactive/fisica/FiloSpezzato'),
+	'pendolo-periodo-ampiezza': () => import('@/components/content/interactive/fisica/PendoloAmpiezza'),
 	// Physics, second year: work and power (group 17).
+	'cassa-fune-lavoro': () => import('@/components/content/interactive/fisica/CassaFuneLavoro'),
+	'molla-area-lavoro': () => import('@/components/content/interactive/fisica/MollaAreaLavoro'),
+	'frenata-spazio-velocita': () => import('@/components/content/interactive/fisica/FrenataSpazio'),
 	// Physics, second year: energy (group 18).
+	'montagne-russe-energia': () => import('@/components/content/interactive/fisica/MontagneRusseEnergia'),
+	'montagne-russe-attrito': () => import('@/components/content/interactive/fisica/MontagneRusseAttrito'),
+	'pendolo-energia-barre': () => import('@/components/content/interactive/fisica/PendoloEnergia'),
+	'molla-lancio-rampa-energia': () => import('@/components/content/interactive/fisica/MollaLancioRampa'),
 	// Physics, second year: temperature (group 19).
+	'termometro-tre-scale': () => import('@/components/content/interactive/fisica/TermometroScale'),
+	'dilatazione-sbarra': () => import('@/components/content/interactive/fisica/DilatazioneSbarra'),
+	'riscaldamento-acqua-olio': () => import('@/components/content/interactive/fisica/RiscaldamentoAcquaOlio'),
 	// Physics, second year: heat (group 20).
+	'equilibrio-termico-due-corpi': () => import('@/components/content/interactive/fisica/EquilibrioTermicoDueCorpi'),
+	'conduzione-sbarra-materiali': () => import('@/components/content/interactive/fisica/ConduzioneSbarra'),
+	'curva-riscaldamento-acqua': () => import('@/components/content/interactive/fisica/CurvaRiscaldamentoAcqua'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {
