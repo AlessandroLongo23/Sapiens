@@ -1,0 +1,1258 @@
+[
+  {
+    "id": "f1aa1386-61d0-4fa0-87a1-2d123336fabc",
+    "parent_id": "b433a7fa-e59b-4ec2-b371-b1ecd5e1d217",
+    "title": "Grandezze e unità del Sistema Internazionale",
+    "slug": "chim-grandezze-si",
+    "path": "high_school/chemistry/chim-misure/chim-grandezze-si",
+    "chapter": "Misure e grandezze"
+  },
+  {
+    "id": "b1a1f3f0-2167-4912-a4a3-7f1488e7a635",
+    "parent_id": "b433a7fa-e59b-4ec2-b371-b1ecd5e1d217",
+    "title": "Massa, volume e densità",
+    "slug": "chim-massa-volume-densita",
+    "path": "high_school/chemistry/chim-misure/chim-massa-volume-densita",
+    "chapter": "Misure e grandezze"
+  },
+  {
+    "id": "1a6d7419-5a58-44a6-8bbe-eb795f34ee35",
+    "parent_id": "b433a7fa-e59b-4ec2-b371-b1ecd5e1d217",
+    "title": "Temperatura e calore",
+    "slug": "chim-temperatura-calore",
+    "path": "high_school/chemistry/chim-misure/chim-temperatura-calore",
+    "chapter": "Misure e grandezze"
+  },
+  {
+    "id": "49b1aeea-2b1c-4e1f-9199-0e3eee0f374a",
+    "parent_id": "b433a7fa-e59b-4ec2-b371-b1ecd5e1d217",
+    "title": "Errori di misura e cifre significative",
+    "slug": "chim-errori-cifre-significative",
+    "path": "high_school/chemistry/chim-misure/chim-errori-cifre-significative",
+    "chapter": "Misure e grandezze"
+  },
+  {
+    "id": "ae079fb2-cc90-4f4c-8e81-5771da431121",
+    "parent_id": "860ac3df-5172-481d-9ade-8ff993cee84d",
+    "title": "Gli stati di aggregazione",
+    "slug": "chim-stati-aggregazione",
+    "path": "high_school/chemistry/chim-materia/chim-stati-aggregazione",
+    "chapter": "La materia e le sue trasformazioni fisiche"
+  },
+  {
+    "id": "72438734-a5a3-4034-b6c3-cad157d071c9",
+    "parent_id": "860ac3df-5172-481d-9ade-8ff993cee84d",
+    "title": "Il modello particellare della materia",
+    "slug": "chim-modello-particellare",
+    "path": "high_school/chemistry/chim-materia/chim-modello-particellare",
+    "chapter": "La materia e le sue trasformazioni fisiche"
+  },
+  {
+    "id": "b672a426-aa07-4007-827f-229d6d875c5b",
+    "parent_id": "860ac3df-5172-481d-9ade-8ff993cee84d",
+    "title": "Sostanze pure, miscugli omogenei ed eterogenei",
+    "slug": "chim-sostanze-miscugli",
+    "path": "high_school/chemistry/chim-materia/chim-sostanze-miscugli",
+    "chapter": "La materia e le sue trasformazioni fisiche"
+  },
+  {
+    "id": "0a5f30bd-9c83-43cd-bbca-c00c9b596664",
+    "parent_id": "860ac3df-5172-481d-9ade-8ff993cee84d",
+    "title": "Le soluzioni e la concentrazione percentuale",
+    "slug": "chim-soluzioni-percentuale",
+    "path": "high_school/chemistry/chim-materia/chim-soluzioni-percentuale",
+    "chapter": "La materia e le sue trasformazioni fisiche"
+  },
+  {
+    "id": "dc9609cb-783e-49bf-abe7-29ed222df479",
+    "parent_id": "860ac3df-5172-481d-9ade-8ff993cee84d",
+    "title": "Metodi di separazione dei miscugli",
+    "slug": "chim-separazione-miscugli",
+    "path": "high_school/chemistry/chim-materia/chim-separazione-miscugli",
+    "chapter": "La materia e le sue trasformazioni fisiche"
+  },
+  {
+    "id": "cc27850c-9bfb-4a99-a431-2e6e4446ad26",
+    "parent_id": "860ac3df-5172-481d-9ade-8ff993cee84d",
+    "title": "I passaggi di stato",
+    "slug": "chim-passaggi-stato",
+    "path": "high_school/chemistry/chim-materia/chim-passaggi-stato",
+    "chapter": "La materia e le sue trasformazioni fisiche"
+  },
+  {
+    "id": "e5cef202-f966-4651-98ea-30111b900a81",
+    "parent_id": "860ac3df-5172-481d-9ade-8ff993cee84d",
+    "title": "Curve di riscaldamento e di raffreddamento",
+    "slug": "chim-curve-riscaldamento",
+    "path": "high_school/chemistry/chim-materia/chim-curve-riscaldamento",
+    "chapter": "La materia e le sue trasformazioni fisiche"
+  },
+  {
+    "id": "5d37ab24-67f7-4c12-a337-cd7208731df2",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "Trasformazioni fisiche e trasformazioni chimiche",
+    "slug": "chim-trasformazioni-fisiche-chimiche",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-trasformazioni-fisiche-chimiche",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "256de1e2-a2fa-4bd9-96e3-0303f4f41624",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "Elementi, composti e simboli chimici",
+    "slug": "chim-elementi-composti",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-elementi-composti",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "1a528cee-e9a5-4ffd-849e-ef299223c547",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "La legge di Lavoisier",
+    "slug": "chim-legge-lavoisier",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-legge-lavoisier",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "8d34ccc3-8922-4303-997a-0fed3430de5b",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "La legge di Proust",
+    "slug": "chim-legge-proust",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-legge-proust",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "c9eae890-27f2-40f6-8ac6-e7f4234d6c67",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "La legge di Dalton delle proporzioni multiple",
+    "slug": "chim-legge-proporzioni-multiple",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-legge-proporzioni-multiple",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "711d1a3a-f405-4159-aca3-d6cfda21b176",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "La teoria atomica di Dalton",
+    "slug": "chim-teoria-atomica-dalton",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-teoria-atomica-dalton",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "95cb1985-6f85-4711-96fa-743756adbc10",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "Atomi, molecole e ioni",
+    "slug": "chim-atomi-molecole-ioni",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-atomi-molecole-ioni",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "9f7dc422-880c-4df8-acef-5057977d35c4",
+    "parent_id": "b01f12e6-6357-43f0-b446-3dfaf7d084ca",
+    "title": "La formula chimica e il suo significato",
+    "slug": "chim-formula-chimica",
+    "path": "high_school/chemistry/chim-trasformazioni-chimiche/chim-formula-chimica",
+    "chapter": "Dalle trasformazioni chimiche alla teoria atomica"
+  },
+  {
+    "id": "98123421-3f7b-4560-91ed-12f6b3398024",
+    "parent_id": "d3a060c2-1695-4f75-b510-2153599c3fc4",
+    "title": "La teoria cinetico-molecolare",
+    "slug": "chim-teoria-cinetica",
+    "path": "high_school/chemistry/chim-gas/chim-teoria-cinetica",
+    "chapter": "Le leggi dei gas"
+  },
+  {
+    "id": "85ac1995-29ac-4999-bb0d-2c22a15ba9cf",
+    "parent_id": "d3a060c2-1695-4f75-b510-2153599c3fc4",
+    "title": "La pressione dei gas",
+    "slug": "chim-pressione-gas",
+    "path": "high_school/chemistry/chim-gas/chim-pressione-gas",
+    "chapter": "Le leggi dei gas"
+  },
+  {
+    "id": "6e725292-42d0-4db2-aa75-c58aa291c726",
+    "parent_id": "d3a060c2-1695-4f75-b510-2153599c3fc4",
+    "title": "La legge di Boyle",
+    "slug": "chim-legge-boyle",
+    "path": "high_school/chemistry/chim-gas/chim-legge-boyle",
+    "chapter": "Le leggi dei gas"
+  },
+  {
+    "id": "e8057d8b-cd70-4663-ad87-2ca7cbdc0777",
+    "parent_id": "d3a060c2-1695-4f75-b510-2153599c3fc4",
+    "title": "Le leggi di Charles e di Gay-Lussac",
+    "slug": "chim-legge-charles-gay-lussac",
+    "path": "high_school/chemistry/chim-gas/chim-legge-charles-gay-lussac",
+    "chapter": "Le leggi dei gas"
+  },
+  {
+    "id": "6a08e9ca-b569-41a3-a490-8688814ab6a3",
+    "parent_id": "d3a060c2-1695-4f75-b510-2153599c3fc4",
+    "title": "L'equazione generale dei gas",
+    "slug": "chim-equazione-generale-gas",
+    "path": "high_school/chemistry/chim-gas/chim-equazione-generale-gas",
+    "chapter": "Le leggi dei gas"
+  },
+  {
+    "id": "a883a81f-55f2-4999-8e70-0366249e5498",
+    "parent_id": "d3a060c2-1695-4f75-b510-2153599c3fc4",
+    "title": "Il principio di Avogadro",
+    "slug": "chim-principio-avogadro",
+    "path": "high_school/chemistry/chim-gas/chim-principio-avogadro",
+    "chapter": "Le leggi dei gas"
+  },
+  {
+    "id": "39ec64bb-713e-4cbd-b9a1-cd8acc980079",
+    "parent_id": "07f6611c-bc06-4e3d-b5c6-cc17b604bdc4",
+    "title": "La mole e la massa molare",
+    "slug": "mole-massa-molare",
+    "path": "high_school/chemistry/chim-quantita-sostanza/mole-massa-molare",
+    "chapter": "La quantità di sostanza: la mole"
+  },
+  {
+    "id": "b3320afe-1e17-44a7-b904-83985c9f7d20",
+    "parent_id": "07f6611c-bc06-4e3d-b5c6-cc17b604bdc4",
+    "title": "Composizione percentuale, formula minima e formula molecolare",
+    "slug": "chim-formula-minima",
+    "path": "high_school/chemistry/chim-quantita-sostanza/chim-formula-minima",
+    "chapter": "La quantità di sostanza: la mole"
+  },
+  {
+    "id": "7a89b15e-91eb-429b-8032-ebbc43b4a694",
+    "parent_id": "07f6611c-bc06-4e3d-b5c6-cc17b604bdc4",
+    "title": "Il volume molare",
+    "slug": "chim-volume-molare",
+    "path": "high_school/chemistry/chim-quantita-sostanza/chim-volume-molare",
+    "chapter": "La quantità di sostanza: la mole"
+  },
+  {
+    "id": "c3685b97-428c-426f-91d3-827d4244321c",
+    "parent_id": "07f6611c-bc06-4e3d-b5c6-cc17b604bdc4",
+    "title": "L'equazione di stato dei gas ideali",
+    "slug": "gas-ideali",
+    "path": "high_school/chemistry/chim-quantita-sostanza/gas-ideali",
+    "chapter": "La quantità di sostanza: la mole"
+  },
+  {
+    "id": "a811be6b-cd4a-44ac-a1a7-5d9fc458dfef",
+    "parent_id": "07f6611c-bc06-4e3d-b5c6-cc17b604bdc4",
+    "title": "Miscele di gas e pressioni parziali",
+    "slug": "chim-pressioni-parziali",
+    "path": "high_school/chemistry/chim-quantita-sostanza/chim-pressioni-parziali",
+    "chapter": "La quantità di sostanza: la mole"
+  },
+  {
+    "id": "fc70d802-7d29-410f-9db0-4291cd9684df",
+    "parent_id": "535748ab-f883-4736-aee8-af60389a421b",
+    "title": "La natura elettrica della materia",
+    "slug": "chim-natura-elettrica",
+    "path": "high_school/chemistry/atomo-struttura/chim-natura-elettrica",
+    "chapter": "Le particelle dell'atomo"
+  },
+  {
+    "id": "7e743310-c018-41f0-aed6-9f03316bd519",
+    "parent_id": "535748ab-f883-4736-aee8-af60389a421b",
+    "title": "Elettroni, protoni e neutroni",
+    "slug": "particelle-fondamentali",
+    "path": "high_school/chemistry/atomo-struttura/particelle-fondamentali",
+    "chapter": "Le particelle dell'atomo"
+  },
+  {
+    "id": "585b4528-188f-432d-b549-c837a48d7ba3",
+    "parent_id": "535748ab-f883-4736-aee8-af60389a421b",
+    "title": "I modelli atomici di Thomson e di Rutherford",
+    "slug": "chim-thomson-rutherford",
+    "path": "high_school/chemistry/atomo-struttura/chim-thomson-rutherford",
+    "chapter": "Le particelle dell'atomo"
+  },
+  {
+    "id": "6efa4d41-50a8-40cd-bcd9-166ff0f6210d",
+    "parent_id": "535748ab-f883-4736-aee8-af60389a421b",
+    "title": "Numero atomico, numero di massa e isotopi",
+    "slug": "numero-massa",
+    "path": "high_school/chemistry/atomo-struttura/numero-massa",
+    "chapter": "Le particelle dell'atomo"
+  },
+  {
+    "id": "15440d48-eff8-42f8-96ba-89685fdd01b8",
+    "parent_id": "535748ab-f883-4736-aee8-af60389a421b",
+    "title": "La tavola periodica di Mendeleev",
+    "slug": "chim-tavola-mendeleev",
+    "path": "high_school/chemistry/atomo-struttura/chim-tavola-mendeleev",
+    "chapter": "Le particelle dell'atomo"
+  },
+  {
+    "id": "20395726-e150-4491-b4d8-0eec9f3259da",
+    "parent_id": "9120a299-45e4-4947-9abf-fc430ec9da4f",
+    "title": "La molecola d'acqua e il legame a idrogeno",
+    "slug": "chim-acqua-molecola",
+    "path": "high_school/chemistry/chim-acqua/chim-acqua-molecola",
+    "chapter": "La chimica dell'acqua"
+  },
+  {
+    "id": "8817bf8b-d584-4293-b2d3-00df30d2683f",
+    "parent_id": "9120a299-45e4-4947-9abf-fc430ec9da4f",
+    "title": "Le proprietà fisiche dell'acqua",
+    "slug": "chim-acqua-proprieta",
+    "path": "high_school/chemistry/chim-acqua/chim-acqua-proprieta",
+    "chapter": "La chimica dell'acqua"
+  },
+  {
+    "id": "ac087502-e76f-45de-bbeb-049c2eec939b",
+    "parent_id": "9120a299-45e4-4947-9abf-fc430ec9da4f",
+    "title": "L'acqua come solvente",
+    "slug": "chim-acqua-solvente",
+    "path": "high_school/chemistry/chim-acqua/chim-acqua-solvente",
+    "chapter": "La chimica dell'acqua"
+  },
+  {
+    "id": "21eb5e9f-c5b3-4101-b181-8f5bbdd3c26e",
+    "parent_id": "9120a299-45e4-4947-9abf-fc430ec9da4f",
+    "title": "Soluzioni acide e basiche: una prima idea del pH",
+    "slug": "chim-acqua-acidi-basi",
+    "path": "high_school/chemistry/chim-acqua/chim-acqua-acidi-basi",
+    "chapter": "La chimica dell'acqua"
+  },
+  {
+    "id": "b53bbac7-7f3f-4ce6-8882-0ae59f871d40",
+    "parent_id": "26fd7423-ea73-4c07-a123-28c305a7187d",
+    "title": "La luce e gli spettri atomici",
+    "slug": "chim-luce-spettri",
+    "path": "high_school/chemistry/chim-struttura-elettronica/chim-luce-spettri",
+    "chapter": "La struttura elettronica dell'atomo"
+  },
+  {
+    "id": "3517a576-3dbe-40ad-be5b-31f5ee25c363",
+    "parent_id": "26fd7423-ea73-4c07-a123-28c305a7187d",
+    "title": "Il modello atomico di Bohr",
+    "slug": "chim-modello-bohr",
+    "path": "high_school/chemistry/chim-struttura-elettronica/chim-modello-bohr",
+    "chapter": "La struttura elettronica dell'atomo"
+  },
+  {
+    "id": "d3df9b14-80ad-479c-9862-37d9ccdff4a9",
+    "parent_id": "26fd7423-ea73-4c07-a123-28c305a7187d",
+    "title": "Livelli e sottolivelli di energia",
+    "slug": "chim-livelli-energia",
+    "path": "high_school/chemistry/chim-struttura-elettronica/chim-livelli-energia",
+    "chapter": "La struttura elettronica dell'atomo"
+  },
+  {
+    "id": "cfb90a99-5b75-4d82-970a-998471a74740",
+    "parent_id": "26fd7423-ea73-4c07-a123-28c305a7187d",
+    "title": "Dualismo onda-particella e principio di indeterminazione",
+    "slug": "chim-onda-particella",
+    "path": "high_school/chemistry/chim-struttura-elettronica/chim-onda-particella",
+    "chapter": "La struttura elettronica dell'atomo"
+  },
+  {
+    "id": "3fd898bb-e4e2-4177-b74b-0ad33df8ca1c",
+    "parent_id": "26fd7423-ea73-4c07-a123-28c305a7187d",
+    "title": "Orbitali e numeri quantici",
+    "slug": "chim-orbitali-numeri-quantici",
+    "path": "high_school/chemistry/chim-struttura-elettronica/chim-orbitali-numeri-quantici",
+    "chapter": "La struttura elettronica dell'atomo"
+  },
+  {
+    "id": "0c6a38c6-4f61-4d57-9833-bbd07afbab25",
+    "parent_id": "26fd7423-ea73-4c07-a123-28c305a7187d",
+    "title": "La configurazione elettronica",
+    "slug": "chim-configurazione-elettronica",
+    "path": "high_school/chemistry/chim-struttura-elettronica/chim-configurazione-elettronica",
+    "chapter": "La struttura elettronica dell'atomo"
+  },
+  {
+    "id": "621d3051-1055-4ff5-8da0-2f61a8792666",
+    "parent_id": "82c97b87-b0e4-4bb1-aa62-bf4aec114e5d",
+    "title": "Radioattività e decadimenti",
+    "slug": "chim-radioattivita",
+    "path": "high_school/chemistry/chim-nucleo/chim-radioattivita",
+    "chapter": "Il nucleo e la radioattività"
+  },
+  {
+    "id": "efef7d8a-463e-4573-917e-9410c2d7fad2",
+    "parent_id": "82c97b87-b0e4-4bb1-aa62-bf4aec114e5d",
+    "title": "Il tempo di dimezzamento",
+    "slug": "chim-tempo-dimezzamento",
+    "path": "high_school/chemistry/chim-nucleo/chim-tempo-dimezzamento",
+    "chapter": "Il nucleo e la radioattività"
+  },
+  {
+    "id": "6109ce52-b36f-4c5e-9658-90d16149f651",
+    "parent_id": "82c97b87-b0e4-4bb1-aa62-bf4aec114e5d",
+    "title": "Fissione e fusione nucleare",
+    "slug": "chim-fissione-fusione",
+    "path": "high_school/chemistry/chim-nucleo/chim-fissione-fusione",
+    "chapter": "Il nucleo e la radioattività"
+  },
+  {
+    "id": "bcab84e9-6c39-473f-a9de-76e98e61d1cc",
+    "parent_id": "25a31dce-467b-4757-8977-b357d9a81766",
+    "title": "Gruppi, periodi e blocchi",
+    "slug": "gruppi-periodi",
+    "path": "high_school/chemistry/tavola-periodica/gruppi-periodi",
+    "chapter": "Il sistema periodico"
+  },
+  {
+    "id": "43d59a43-9241-4714-b9f8-758982fe7237",
+    "parent_id": "25a31dce-467b-4757-8977-b357d9a81766",
+    "title": "Elettroni di valenza e simboli di Lewis",
+    "slug": "chim-simboli-lewis",
+    "path": "high_school/chemistry/tavola-periodica/chim-simboli-lewis",
+    "chapter": "Il sistema periodico"
+  },
+  {
+    "id": "c0812949-e742-4e6b-bd3c-f43e23be0dc3",
+    "parent_id": "25a31dce-467b-4757-8977-b357d9a81766",
+    "title": "Raggio atomico ed energia di ionizzazione",
+    "slug": "proprieta-periodiche",
+    "path": "high_school/chemistry/tavola-periodica/proprieta-periodiche",
+    "chapter": "Il sistema periodico"
+  },
+  {
+    "id": "01f14735-4510-4cac-b5c6-cca101a6cc05",
+    "parent_id": "25a31dce-467b-4757-8977-b357d9a81766",
+    "title": "Affinità elettronica ed elettronegatività",
+    "slug": "chim-affinita-elettronegativita",
+    "path": "high_school/chemistry/tavola-periodica/chim-affinita-elettronegativita",
+    "chapter": "Il sistema periodico"
+  },
+  {
+    "id": "9fd85fda-a489-46fb-8375-599b1c7a807d",
+    "parent_id": "25a31dce-467b-4757-8977-b357d9a81766",
+    "title": "Metalli, non metalli e semimetalli",
+    "slug": "chim-metalli-non-metalli",
+    "path": "high_school/chemistry/tavola-periodica/chim-metalli-non-metalli",
+    "chapter": "Il sistema periodico"
+  },
+  {
+    "id": "4f4d51f9-91b5-4dac-9d3b-3a9ed0b89daf",
+    "parent_id": "aff38a86-63d5-4ee4-a5d0-cfab1afc55e3",
+    "title": "Energia di legame e regola dell'ottetto",
+    "slug": "chim-regola-ottetto",
+    "path": "high_school/chemistry/legami-chimici/chim-regola-ottetto",
+    "chapter": "I legami chimici"
+  },
+  {
+    "id": "111a7d61-3cf6-4695-8b94-7434c252e792",
+    "parent_id": "aff38a86-63d5-4ee4-a5d0-cfab1afc55e3",
+    "title": "Il legame covalente",
+    "slug": "legame-covalente",
+    "path": "high_school/chemistry/legami-chimici/legame-covalente",
+    "chapter": "I legami chimici"
+  },
+  {
+    "id": "33232d9d-ac38-4ee3-9ac9-880315e7b562",
+    "parent_id": "aff38a86-63d5-4ee4-a5d0-cfab1afc55e3",
+    "title": "Legame covalente polare e legame dativo",
+    "slug": "chim-legame-covalente-polare",
+    "path": "high_school/chemistry/legami-chimici/chim-legame-covalente-polare",
+    "chapter": "I legami chimici"
+  },
+  {
+    "id": "82af5496-5ed1-44fe-836c-a3d77ed782a2",
+    "parent_id": "aff38a86-63d5-4ee4-a5d0-cfab1afc55e3",
+    "title": "Il legame ionico",
+    "slug": "legame-ionico",
+    "path": "high_school/chemistry/legami-chimici/legame-ionico",
+    "chapter": "I legami chimici"
+  },
+  {
+    "id": "54b461d4-1347-48c2-ad8f-ab028f566306",
+    "parent_id": "aff38a86-63d5-4ee4-a5d0-cfab1afc55e3",
+    "title": "Il legame metallico",
+    "slug": "chim-legame-metallico",
+    "path": "high_school/chemistry/legami-chimici/chim-legame-metallico",
+    "chapter": "I legami chimici"
+  },
+  {
+    "id": "ed2250bc-061e-47d1-ac76-d6f0f717b605",
+    "parent_id": "aff38a86-63d5-4ee4-a5d0-cfab1afc55e3",
+    "title": "Le formule di Lewis delle molecole",
+    "slug": "chim-formule-lewis",
+    "path": "high_school/chemistry/legami-chimici/chim-formule-lewis",
+    "chapter": "I legami chimici"
+  },
+  {
+    "id": "0de21d30-f4d8-45f1-8ec5-b01a4049b1e2",
+    "parent_id": "8410ad3c-6c10-44e8-81f5-dd85d9784403",
+    "title": "La geometria delle molecole (teoria VSEPR)",
+    "slug": "geometria-molecolare-vsepr",
+    "path": "high_school/chemistry/chim-forma-molecole/geometria-molecolare-vsepr",
+    "chapter": "La forma delle molecole e le teorie del legame"
+  },
+  {
+    "id": "b1af0fdd-fb6b-4ce8-ba7c-3cf3c940d61b",
+    "parent_id": "8410ad3c-6c10-44e8-81f5-dd85d9784403",
+    "title": "Molecole polari e apolari",
+    "slug": "chim-polarita-molecole",
+    "path": "high_school/chemistry/chim-forma-molecole/chim-polarita-molecole",
+    "chapter": "La forma delle molecole e le teorie del legame"
+  },
+  {
+    "id": "74528d1a-a030-4d15-9e9b-01121df4e626",
+    "parent_id": "8410ad3c-6c10-44e8-81f5-dd85d9784403",
+    "title": "Teoria del legame di valenza: legami sigma e pi greco",
+    "slug": "chim-legame-valenza",
+    "path": "high_school/chemistry/chim-forma-molecole/chim-legame-valenza",
+    "chapter": "La forma delle molecole e le teorie del legame"
+  },
+  {
+    "id": "f40cd665-864c-4658-9b63-34dbf959b58c",
+    "parent_id": "8410ad3c-6c10-44e8-81f5-dd85d9784403",
+    "title": "L'ibridazione degli orbitali",
+    "slug": "chim-ibridazione",
+    "path": "high_school/chemistry/chim-forma-molecole/chim-ibridazione",
+    "chapter": "La forma delle molecole e le teorie del legame"
+  },
+  {
+    "id": "c1eaa6ad-0033-42cf-9ab1-c1c318f8b892",
+    "parent_id": "6b96b40d-daa4-49ce-a2b3-de97175b003b",
+    "title": "Forze dipolo-dipolo e forze di London",
+    "slug": "chim-forze-dipolo-london",
+    "path": "high_school/chemistry/chim-forze-intermolecolari/chim-forze-dipolo-london",
+    "chapter": "Forze intermolecolari e stati condensati"
+  },
+  {
+    "id": "56e53170-cd14-4ab4-80e4-c694880833da",
+    "parent_id": "6b96b40d-daa4-49ce-a2b3-de97175b003b",
+    "title": "Il legame a idrogeno",
+    "slug": "chim-legame-idrogeno",
+    "path": "high_school/chemistry/chim-forze-intermolecolari/chim-legame-idrogeno",
+    "chapter": "Forze intermolecolari e stati condensati"
+  },
+  {
+    "id": "d5489b63-9779-4bac-98d6-57ee44b6b952",
+    "parent_id": "6b96b40d-daa4-49ce-a2b3-de97175b003b",
+    "title": "Lo stato liquido e la tensione di vapore",
+    "slug": "chim-stato-liquido",
+    "path": "high_school/chemistry/chim-forze-intermolecolari/chim-stato-liquido",
+    "chapter": "Forze intermolecolari e stati condensati"
+  },
+  {
+    "id": "97600237-c659-4d72-9578-0c7cd52d7753",
+    "parent_id": "6b96b40d-daa4-49ce-a2b3-de97175b003b",
+    "title": "I solidi: ionici, molecolari, covalenti e metallici",
+    "slug": "chim-stato-solido",
+    "path": "high_school/chemistry/chim-forze-intermolecolari/chim-stato-solido",
+    "chapter": "Forze intermolecolari e stati condensati"
+  },
+  {
+    "id": "f41d1612-8749-442d-9fee-c64abbfc872a",
+    "parent_id": "9a97d43a-f6bd-4610-99e2-5ef684c41af1",
+    "title": "Valenza e numero di ossidazione",
+    "slug": "numero-ossidazione",
+    "path": "high_school/chemistry/chim-nomenclatura/numero-ossidazione",
+    "chapter": "Classificazione e nomenclatura dei composti"
+  },
+  {
+    "id": "988d2028-16c2-4ff2-9e5a-142ccad934af",
+    "parent_id": "9a97d43a-f6bd-4610-99e2-5ef684c41af1",
+    "title": "Ossidi basici e ossidi acidi",
+    "slug": "chim-ossidi",
+    "path": "high_school/chemistry/chim-nomenclatura/chim-ossidi",
+    "chapter": "Classificazione e nomenclatura dei composti"
+  },
+  {
+    "id": "e28baa64-369a-4e21-9f7c-588a52952839",
+    "parent_id": "9a97d43a-f6bd-4610-99e2-5ef684c41af1",
+    "title": "Idruri e idracidi",
+    "slug": "chim-idruri-idracidi",
+    "path": "high_school/chemistry/chim-nomenclatura/chim-idruri-idracidi",
+    "chapter": "Classificazione e nomenclatura dei composti"
+  },
+  {
+    "id": "bc970370-9fb5-4735-9efe-3985e2288ca7",
+    "parent_id": "9a97d43a-f6bd-4610-99e2-5ef684c41af1",
+    "title": "Gli idrossidi",
+    "slug": "chim-idrossidi",
+    "path": "high_school/chemistry/chim-nomenclatura/chim-idrossidi",
+    "chapter": "Classificazione e nomenclatura dei composti"
+  },
+  {
+    "id": "b754194d-5a4a-4969-8ae9-5c846f74249c",
+    "parent_id": "9a97d43a-f6bd-4610-99e2-5ef684c41af1",
+    "title": "Gli ossiacidi",
+    "slug": "chim-ossiacidi",
+    "path": "high_school/chemistry/chim-nomenclatura/chim-ossiacidi",
+    "chapter": "Classificazione e nomenclatura dei composti"
+  },
+  {
+    "id": "1ec3cf68-97ae-40b5-b840-28442d497ccc",
+    "parent_id": "9a97d43a-f6bd-4610-99e2-5ef684c41af1",
+    "title": "I sali binari",
+    "slug": "chim-sali-binari",
+    "path": "high_school/chemistry/chim-nomenclatura/chim-sali-binari",
+    "chapter": "Classificazione e nomenclatura dei composti"
+  },
+  {
+    "id": "0eb9096d-a097-4e9b-aac8-8184f313dae6",
+    "parent_id": "9a97d43a-f6bd-4610-99e2-5ef684c41af1",
+    "title": "I sali ternari",
+    "slug": "chim-sali-ternari",
+    "path": "high_school/chemistry/chim-nomenclatura/chim-sali-ternari",
+    "chapter": "Classificazione e nomenclatura dei composti"
+  },
+  {
+    "id": "22ab7d9b-bc3a-48dc-9f03-643ca6dcb8ca",
+    "parent_id": "06b40131-019f-47e8-b56a-c573a387ba01",
+    "title": "La dissoluzione e la solubilità",
+    "slug": "chim-solubilita",
+    "path": "high_school/chemistry/chim-soluzioni/chim-solubilita",
+    "chapter": "Le proprietà delle soluzioni"
+  },
+  {
+    "id": "8b0ceb45-4c95-4781-a7be-7aab90f1fa90",
+    "parent_id": "06b40131-019f-47e8-b56a-c573a387ba01",
+    "title": "Elettroliti e non elettroliti",
+    "slug": "chim-elettroliti",
+    "path": "high_school/chemistry/chim-soluzioni/chim-elettroliti",
+    "chapter": "Le proprietà delle soluzioni"
+  },
+  {
+    "id": "d8bdf4a8-965c-4196-8c29-81c5c7c60d6d",
+    "parent_id": "06b40131-019f-47e8-b56a-c573a387ba01",
+    "title": "La molarità",
+    "slug": "chim-molarita",
+    "path": "high_school/chemistry/chim-soluzioni/chim-molarita",
+    "chapter": "Le proprietà delle soluzioni"
+  },
+  {
+    "id": "58db4bc5-02ec-4fce-95b8-5b6ed378633f",
+    "parent_id": "06b40131-019f-47e8-b56a-c573a387ba01",
+    "title": "Molalità e frazione molare",
+    "slug": "chim-molalita-frazione-molare",
+    "path": "high_school/chemistry/chim-soluzioni/chim-molalita-frazione-molare",
+    "chapter": "Le proprietà delle soluzioni"
+  },
+  {
+    "id": "ea5ee4da-73aa-4642-bab8-ad77e05f8bfc",
+    "parent_id": "06b40131-019f-47e8-b56a-c573a387ba01",
+    "title": "Diluizione e mescolamento di soluzioni",
+    "slug": "chim-diluizione",
+    "path": "high_school/chemistry/chim-soluzioni/chim-diluizione",
+    "chapter": "Le proprietà delle soluzioni"
+  },
+  {
+    "id": "09fcaf52-c0b1-450b-a7bd-5401af6401a3",
+    "parent_id": "06b40131-019f-47e8-b56a-c573a387ba01",
+    "title": "Le proprietà colligative",
+    "slug": "chim-proprieta-colligative",
+    "path": "high_school/chemistry/chim-soluzioni/chim-proprieta-colligative",
+    "chapter": "Le proprietà delle soluzioni"
+  },
+  {
+    "id": "dec79a96-0370-486a-9ba6-ebb4830e1ff9",
+    "parent_id": "257a6416-b896-4345-ad9a-befda82e3787",
+    "title": "Le equazioni chimiche e il bilanciamento",
+    "slug": "equazioni-bilanciate",
+    "path": "high_school/chemistry/stechiometria/equazioni-bilanciate",
+    "chapter": "Le reazioni chimiche e la stechiometria"
+  },
+  {
+    "id": "5bf06064-d6e6-47c1-82bc-7585c1f2bf95",
+    "parent_id": "257a6416-b896-4345-ad9a-befda82e3787",
+    "title": "Sintesi, decomposizione, scambio e doppio scambio",
+    "slug": "chim-tipi-reazioni",
+    "path": "high_school/chemistry/stechiometria/chim-tipi-reazioni",
+    "chapter": "Le reazioni chimiche e la stechiometria"
+  },
+  {
+    "id": "d94979ae-5c33-4443-b5e1-c2bbb85f4e60",
+    "parent_id": "257a6416-b896-4345-ad9a-befda82e3787",
+    "title": "Equazioni ioniche nette e reazioni di precipitazione",
+    "slug": "chim-equazioni-ioniche",
+    "path": "high_school/chemistry/stechiometria/chim-equazioni-ioniche",
+    "chapter": "Le reazioni chimiche e la stechiometria"
+  },
+  {
+    "id": "cb9ae619-302b-4637-bba0-c4b98bbf6cd5",
+    "parent_id": "257a6416-b896-4345-ad9a-befda82e3787",
+    "title": "I calcoli stechiometrici",
+    "slug": "chim-calcoli-stechiometrici",
+    "path": "high_school/chemistry/stechiometria/chim-calcoli-stechiometrici",
+    "chapter": "Le reazioni chimiche e la stechiometria"
+  },
+  {
+    "id": "eb2b2605-69c2-4294-9de9-877f912da697",
+    "parent_id": "257a6416-b896-4345-ad9a-befda82e3787",
+    "title": "Reagente limitante e reagente in eccesso",
+    "slug": "chim-reagente-limitante",
+    "path": "high_school/chemistry/stechiometria/chim-reagente-limitante",
+    "chapter": "Le reazioni chimiche e la stechiometria"
+  },
+  {
+    "id": "20a1128b-ea31-4d7e-929e-03204c36c693",
+    "parent_id": "257a6416-b896-4345-ad9a-befda82e3787",
+    "title": "La resa di una reazione",
+    "slug": "chim-resa",
+    "path": "high_school/chemistry/stechiometria/chim-resa",
+    "chapter": "Le reazioni chimiche e la stechiometria"
+  },
+  {
+    "id": "6be55734-7a1d-4b2a-8aab-fbf8a1bda27f",
+    "parent_id": "21adb93e-45b3-40c5-baad-9e62c46a8473",
+    "title": "Sistema, ambiente e primo principio",
+    "slug": "chim-sistema-energia-interna",
+    "path": "high_school/chemistry/chimica-fisica/chim-sistema-energia-interna",
+    "chapter": "L'energia delle reazioni"
+  },
+  {
+    "id": "259c2375-c9a2-4b9e-b1ce-ebc6d16813e2",
+    "parent_id": "21adb93e-45b3-40c5-baad-9e62c46a8473",
+    "title": "Reazioni esotermiche ed endotermiche: l'entalpia",
+    "slug": "chim-entalpia",
+    "path": "high_school/chemistry/chimica-fisica/chim-entalpia",
+    "chapter": "L'energia delle reazioni"
+  },
+  {
+    "id": "d2bcff24-08bf-4265-9e4a-c195aaf2f8be",
+    "parent_id": "21adb93e-45b3-40c5-baad-9e62c46a8473",
+    "title": "Entalpie di formazione e legge di Hess",
+    "slug": "chim-legge-hess",
+    "path": "high_school/chemistry/chimica-fisica/chim-legge-hess",
+    "chapter": "L'energia delle reazioni"
+  },
+  {
+    "id": "7f4835ef-dd97-43f6-8985-ac6d5a55c2d8",
+    "parent_id": "21adb93e-45b3-40c5-baad-9e62c46a8473",
+    "title": "L'entropia",
+    "slug": "chim-entropia",
+    "path": "high_school/chemistry/chimica-fisica/chim-entropia",
+    "chapter": "L'energia delle reazioni"
+  },
+  {
+    "id": "b117d602-74bb-4b6a-977b-b8a67e08fe11",
+    "parent_id": "21adb93e-45b3-40c5-baad-9e62c46a8473",
+    "title": "Energia libera e spontaneità delle reazioni",
+    "slug": "chim-energia-libera",
+    "path": "high_school/chemistry/chimica-fisica/chim-energia-libera",
+    "chapter": "L'energia delle reazioni"
+  },
+  {
+    "id": "6d283105-4552-43f7-8b97-1a7a98e94c62",
+    "parent_id": "990a621f-1129-46ba-a097-137a12d1ae94",
+    "title": "La velocità di reazione",
+    "slug": "velocita-reattiva",
+    "path": "high_school/chemistry/cinetica-chimica/velocita-reattiva",
+    "chapter": "La velocità di reazione"
+  },
+  {
+    "id": "c7f223e4-3222-4d60-aadb-601f40295a9c",
+    "parent_id": "990a621f-1129-46ba-a097-137a12d1ae94",
+    "title": "Equazione cinetica e ordine di reazione",
+    "slug": "chim-equazione-cinetica",
+    "path": "high_school/chemistry/cinetica-chimica/chim-equazione-cinetica",
+    "chapter": "La velocità di reazione"
+  },
+  {
+    "id": "f68848f5-7b7d-42e7-a4b0-d251924f0b9c",
+    "parent_id": "990a621f-1129-46ba-a097-137a12d1ae94",
+    "title": "Teoria degli urti ed energia di attivazione",
+    "slug": "chim-teoria-urti",
+    "path": "high_school/chemistry/cinetica-chimica/chim-teoria-urti",
+    "chapter": "La velocità di reazione"
+  },
+  {
+    "id": "d1fc58d8-c7e9-4c56-b194-3c6b56b58adf",
+    "parent_id": "990a621f-1129-46ba-a097-137a12d1ae94",
+    "title": "I fattori che influenzano la velocità e i catalizzatori",
+    "slug": "chim-fattori-velocita",
+    "path": "high_school/chemistry/cinetica-chimica/chim-fattori-velocita",
+    "chapter": "La velocità di reazione"
+  },
+  {
+    "id": "1623053e-549e-47a3-bfe2-54f6edee9ce2",
+    "parent_id": "d18d8f82-a806-4c78-acc7-ccd97fb7ebb4",
+    "title": "L'equilibrio dinamico",
+    "slug": "chim-equilibrio-dinamico",
+    "path": "high_school/chemistry/equilibrio-chimico/chim-equilibrio-dinamico",
+    "chapter": "L'equilibrio chimico"
+  },
+  {
+    "id": "b0c6fa27-3932-4e6d-9b22-cbee874c0c06",
+    "parent_id": "d18d8f82-a806-4c78-acc7-ccd97fb7ebb4",
+    "title": "La costante di equilibrio",
+    "slug": "costante-equilibrio",
+    "path": "high_school/chemistry/equilibrio-chimico/costante-equilibrio",
+    "chapter": "L'equilibrio chimico"
+  },
+  {
+    "id": "4004f063-d0e1-48ec-8c6f-1027db9866dc",
+    "parent_id": "d18d8f82-a806-4c78-acc7-ccd97fb7ebb4",
+    "title": "Quoziente di reazione e calcoli all'equilibrio",
+    "slug": "chim-calcoli-equilibrio",
+    "path": "high_school/chemistry/equilibrio-chimico/chim-calcoli-equilibrio",
+    "chapter": "L'equilibrio chimico"
+  },
+  {
+    "id": "94b2bbc2-01f9-42d4-a4dd-090678aed81f",
+    "parent_id": "d18d8f82-a806-4c78-acc7-ccd97fb7ebb4",
+    "title": "Il principio di Le Châtelier",
+    "slug": "chim-le-chatelier",
+    "path": "high_school/chemistry/equilibrio-chimico/chim-le-chatelier",
+    "chapter": "L'equilibrio chimico"
+  },
+  {
+    "id": "593e815b-ed99-45ae-bdf4-ba37402e5c18",
+    "parent_id": "d18d8f82-a806-4c78-acc7-ccd97fb7ebb4",
+    "title": "Equilibri di solubilità e prodotto di solubilità",
+    "slug": "chim-prodotto-solubilita",
+    "path": "high_school/chemistry/equilibrio-chimico/chim-prodotto-solubilita",
+    "chapter": "L'equilibrio chimico"
+  },
+  {
+    "id": "ef8de701-06fd-4f95-be1b-b83a537866b9",
+    "parent_id": "ead480bb-8a1a-42a8-9ea3-fd10e1debdbe",
+    "title": "Le teorie di Arrhenius, Brønsted e Lowry, Lewis",
+    "slug": "chim-teorie-acidi-basi",
+    "path": "high_school/chemistry/chim-acidi-basi/chim-teorie-acidi-basi",
+    "chapter": "Acidi e basi"
+  },
+  {
+    "id": "eda56d26-2ea6-437b-b59e-608b8cd24f6c",
+    "parent_id": "ead480bb-8a1a-42a8-9ea3-fd10e1debdbe",
+    "title": "La ionizzazione dell'acqua, il pH e il pOH",
+    "slug": "chim-ph",
+    "path": "high_school/chemistry/chim-acidi-basi/chim-ph",
+    "chapter": "Acidi e basi"
+  },
+  {
+    "id": "ae90763e-de74-407d-b1f7-654419a165e8",
+    "parent_id": "ead480bb-8a1a-42a8-9ea3-fd10e1debdbe",
+    "title": "La forza di acidi e basi: Ka e Kb",
+    "slug": "chim-forza-acidi-basi",
+    "path": "high_school/chemistry/chim-acidi-basi/chim-forza-acidi-basi",
+    "chapter": "Acidi e basi"
+  },
+  {
+    "id": "da73ff58-d355-41b2-93a3-ca84e360c8e0",
+    "parent_id": "ead480bb-8a1a-42a8-9ea3-fd10e1debdbe",
+    "title": "Il pH di acidi e basi forti",
+    "slug": "chim-ph-forti",
+    "path": "high_school/chemistry/chim-acidi-basi/chim-ph-forti",
+    "chapter": "Acidi e basi"
+  },
+  {
+    "id": "44740711-b3bb-41b1-b111-3995cd62646d",
+    "parent_id": "ead480bb-8a1a-42a8-9ea3-fd10e1debdbe",
+    "title": "Il pH di acidi e basi deboli",
+    "slug": "chim-ph-deboli",
+    "path": "high_school/chemistry/chim-acidi-basi/chim-ph-deboli",
+    "chapter": "Acidi e basi"
+  },
+  {
+    "id": "b159c23b-23d9-4fe2-93be-d6111e48c07f",
+    "parent_id": "808c3ba8-690d-49db-9ebd-3db31a517ff2",
+    "title": "Neutralizzazione e idrolisi salina",
+    "slug": "chim-idrolisi",
+    "path": "high_school/chemistry/chimica-analitica/chim-idrolisi",
+    "chapter": "Idrolisi, tamponi e titolazioni"
+  },
+  {
+    "id": "bf35b48e-1264-4897-9866-2a606ed6a267",
+    "parent_id": "808c3ba8-690d-49db-9ebd-3db31a517ff2",
+    "title": "Le soluzioni tampone",
+    "slug": "chim-soluzioni-tampone",
+    "path": "high_school/chemistry/chimica-analitica/chim-soluzioni-tampone",
+    "chapter": "Idrolisi, tamponi e titolazioni"
+  },
+  {
+    "id": "fb045035-cf4f-4561-b376-6e10866af40d",
+    "parent_id": "808c3ba8-690d-49db-9ebd-3db31a517ff2",
+    "title": "Gli indicatori acido-base",
+    "slug": "chim-indicatori",
+    "path": "high_school/chemistry/chimica-analitica/chim-indicatori",
+    "chapter": "Idrolisi, tamponi e titolazioni"
+  },
+  {
+    "id": "6a31d377-b6ff-42ce-99e5-8b9780d3e5cb",
+    "parent_id": "808c3ba8-690d-49db-9ebd-3db31a517ff2",
+    "title": "La titolazione acido-base",
+    "slug": "titolazioni",
+    "path": "high_school/chemistry/chimica-analitica/titolazioni",
+    "chapter": "Idrolisi, tamponi e titolazioni"
+  },
+  {
+    "id": "f33f4fb1-afdb-427d-be4a-914a439e3272",
+    "parent_id": "13b2df20-2e7e-4491-996b-cf08777509fa",
+    "title": "Ossidazione e riduzione",
+    "slug": "chim-ossidazione-riduzione",
+    "path": "high_school/chemistry/reazioni-redox/chim-ossidazione-riduzione",
+    "chapter": "Le ossidoriduzioni"
+  },
+  {
+    "id": "5b9dac65-7f54-4665-82b8-53ebf2f410e7",
+    "parent_id": "13b2df20-2e7e-4491-996b-cf08777509fa",
+    "title": "Bilanciare le redox con il numero di ossidazione",
+    "slug": "reazioni-redox",
+    "path": "high_school/chemistry/reazioni-redox/reazioni-redox",
+    "chapter": "Le ossidoriduzioni"
+  },
+  {
+    "id": "3ee95094-8fb6-447c-9ee1-7ddd6b75d620",
+    "parent_id": "13b2df20-2e7e-4491-996b-cf08777509fa",
+    "title": "Bilanciare le redox con il metodo delle semireazioni",
+    "slug": "chim-redox-semireazioni",
+    "path": "high_school/chemistry/reazioni-redox/chim-redox-semireazioni",
+    "chapter": "Le ossidoriduzioni"
+  },
+  {
+    "id": "939af718-09d3-4694-8111-53becca96113",
+    "parent_id": "ebacee57-ad5f-4470-9f9f-0a8fc8e62760",
+    "title": "Le pile",
+    "slug": "pile",
+    "path": "high_school/chemistry/elettrochimica/pile",
+    "chapter": "L'elettrochimica"
+  },
+  {
+    "id": "c57e1412-e1bf-45bb-8213-d8fb52912556",
+    "parent_id": "ebacee57-ad5f-4470-9f9f-0a8fc8e62760",
+    "title": "I potenziali standard di riduzione",
+    "slug": "chim-potenziali-standard",
+    "path": "high_school/chemistry/elettrochimica/chim-potenziali-standard",
+    "chapter": "L'elettrochimica"
+  },
+  {
+    "id": "4a1c277c-1c58-4d41-af05-72b2cd3a378d",
+    "parent_id": "ebacee57-ad5f-4470-9f9f-0a8fc8e62760",
+    "title": "Forza elettromotrice e spontaneità delle redox",
+    "slug": "chim-forza-elettromotrice",
+    "path": "high_school/chemistry/elettrochimica/chim-forza-elettromotrice",
+    "chapter": "L'elettrochimica"
+  },
+  {
+    "id": "e6ee68b5-0cf7-472e-a832-c57370fd8efa",
+    "parent_id": "ebacee57-ad5f-4470-9f9f-0a8fc8e62760",
+    "title": "Pile e accumulatori di uso comune",
+    "slug": "chim-pile-accumulatori",
+    "path": "high_school/chemistry/elettrochimica/chim-pile-accumulatori",
+    "chapter": "L'elettrochimica"
+  },
+  {
+    "id": "87e2b6eb-dfdf-481a-8300-4fe9f256be06",
+    "parent_id": "ebacee57-ad5f-4470-9f9f-0a8fc8e62760",
+    "title": "L'elettrolisi e le leggi di Faraday",
+    "slug": "chim-elettrolisi",
+    "path": "high_school/chemistry/elettrochimica/chim-elettrolisi",
+    "chapter": "L'elettrochimica"
+  },
+  {
+    "id": "c040bf8e-d890-4c57-9a2f-74c1a8ebaccc",
+    "parent_id": "5622c454-0ffd-4151-ab22-dcf3696c6758",
+    "title": "L'atomo di carbonio nei composti organici",
+    "slug": "chim-carbonio-organico",
+    "path": "high_school/chemistry/chimica-organica/chim-carbonio-organico",
+    "chapter": "I composti del carbonio"
+  },
+  {
+    "id": "34c38b6e-dfef-44ea-aa7b-e85896a0272f",
+    "parent_id": "5622c454-0ffd-4151-ab22-dcf3696c6758",
+    "title": "Rappresentare le molecole organiche",
+    "slug": "chim-formule-organiche",
+    "path": "high_school/chemistry/chimica-organica/chim-formule-organiche",
+    "chapter": "I composti del carbonio"
+  },
+  {
+    "id": "402beca4-6045-4b8e-84c3-bc073d69b67c",
+    "parent_id": "5622c454-0ffd-4151-ab22-dcf3696c6758",
+    "title": "Isomeria",
+    "slug": "isomeria",
+    "path": "high_school/chemistry/chimica-organica/isomeria",
+    "chapter": "I composti del carbonio"
+  },
+  {
+    "id": "9e1dbbbb-258f-4fed-8d20-f1444096e179",
+    "parent_id": "5622c454-0ffd-4151-ab22-dcf3696c6758",
+    "title": "Reagenti elettrofili e nucleofili, effetto induttivo",
+    "slug": "chim-reattivita-organica",
+    "path": "high_school/chemistry/chimica-organica/chim-reattivita-organica",
+    "chapter": "I composti del carbonio"
+  },
+  {
+    "id": "61334d2f-de7e-4ca9-8c42-537f0c2e0a4c",
+    "parent_id": "5622c454-0ffd-4151-ab22-dcf3696c6758",
+    "title": "I gruppi funzionali",
+    "slug": "gruppi-funzionali",
+    "path": "high_school/chemistry/chimica-organica/gruppi-funzionali",
+    "chapter": "I composti del carbonio"
+  },
+  {
+    "id": "bafa5a0d-2795-42ac-8d24-519eef07de3e",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "Gli alcani",
+    "slug": "idrocarburi",
+    "path": "high_school/chemistry/chim-idrocarburi/idrocarburi",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "91e98763-9e60-4514-b08b-c17f44e71f82",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "Nomenclatura degli alcani",
+    "slug": "alcani-nomenclatura",
+    "path": "high_school/chemistry/chim-idrocarburi/alcani-nomenclatura",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "a1e10f79-be1c-416e-92e5-51a9e5e211d0",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "Le reazioni degli alcani",
+    "slug": "chim-reazioni-alcani",
+    "path": "high_school/chemistry/chim-idrocarburi/chim-reazioni-alcani",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "5e8c6a25-afd6-49be-935b-e9710738fb4b",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "I cicloalcani",
+    "slug": "chim-cicloalcani",
+    "path": "high_school/chemistry/chim-idrocarburi/chim-cicloalcani",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "4b41b5c0-957b-441f-adff-ffa1e8ecf051",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "Gli alcheni",
+    "slug": "chim-alcheni",
+    "path": "high_school/chemistry/chim-idrocarburi/chim-alcheni",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "61d68292-306a-4759-85d7-7a5fd25280e1",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "L'addizione elettrofila agli alcheni",
+    "slug": "chim-addizione-elettrofila",
+    "path": "high_school/chemistry/chim-idrocarburi/chim-addizione-elettrofila",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "8a17f44e-7d6c-4335-be09-59fa83589e2a",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "Gli alchini",
+    "slug": "chim-alchini",
+    "path": "high_school/chemistry/chim-idrocarburi/chim-alchini",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "fd5d1fe9-adb2-4b02-a9ff-a73c17a8b5e7",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "Il benzene e i composti aromatici",
+    "slug": "chim-benzene",
+    "path": "high_school/chemistry/chim-idrocarburi/chim-benzene",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "14e46e1e-04af-4546-8652-999c2a5ab84d",
+    "parent_id": "47cfd777-96af-4ac6-9c80-ce59cc0b1809",
+    "title": "La sostituzione elettrofila aromatica",
+    "slug": "chim-sostituzione-aromatica",
+    "path": "high_school/chemistry/chim-idrocarburi/chim-sostituzione-aromatica",
+    "chapter": "Gli idrocarburi"
+  },
+  {
+    "id": "bf40b2d1-d469-4fb4-a21e-05706073e68e",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Gli alogenuri alchilici",
+    "slug": "chim-alogenuri-alchilici",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-alogenuri-alchilici",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "7f454c0d-b050-431e-be2e-c764561ecf79",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Sostituzione nucleofila ed eliminazione",
+    "slug": "chim-sostituzione-eliminazione",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-sostituzione-eliminazione",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "22ec8038-76aa-4f95-a53e-3b5a26454254",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Gli alcoli",
+    "slug": "chim-alcoli",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-alcoli",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "2b01bf3e-3669-494d-b06f-a70c2ce00181",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Fenoli ed eteri",
+    "slug": "chim-fenoli-eteri",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-fenoli-eteri",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "cf5f492a-0d98-4f00-b904-cc30272d797f",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Aldeidi e chetoni",
+    "slug": "chim-aldeidi-chetoni",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-aldeidi-chetoni",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "afe03746-e566-47a0-ad7d-6bc7cff384a6",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Gli acidi carbossilici",
+    "slug": "chim-acidi-carbossilici",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-acidi-carbossilici",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "ac32c337-547a-4d0f-909c-ee767fcfb8d1",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Esteri e saponi",
+    "slug": "chim-esteri-saponi",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-esteri-saponi",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "90699888-6857-40e5-ad4b-53f9190601a1",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "Ammine e ammidi",
+    "slug": "chim-ammine-ammidi",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-ammine-ammidi",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "35f1996f-7713-480e-9019-6cb4a4fef386",
+    "parent_id": "a344a431-32d5-4cb9-98a9-dee307b0bba1",
+    "title": "I polimeri",
+    "slug": "chim-polimeri",
+    "path": "high_school/chemistry/chim-derivati-idrocarburi/chim-polimeri",
+    "chapter": "I derivati degli idrocarburi"
+  },
+  {
+    "id": "5c20662c-6d01-4361-b695-2ce92579f333",
+    "parent_id": "b107c28c-fb60-481e-8e57-f1dd00067a39",
+    "title": "I monosaccaridi",
+    "slug": "chim-monosaccaridi",
+    "path": "high_school/chemistry/biochimica/chim-monosaccaridi",
+    "chapter": "Le biomolecole"
+  },
+  {
+    "id": "307a4928-8698-4038-91db-5c1344c755a6",
+    "parent_id": "b107c28c-fb60-481e-8e57-f1dd00067a39",
+    "title": "Disaccaridi e polisaccaridi",
+    "slug": "chim-disaccaridi-polisaccaridi",
+    "path": "high_school/chemistry/biochimica/chim-disaccaridi-polisaccaridi",
+    "chapter": "Le biomolecole"
+  },
+  {
+    "id": "942038b7-f9c2-4a2c-83ed-1d73b929da3f",
+    "parent_id": "b107c28c-fb60-481e-8e57-f1dd00067a39",
+    "title": "Acidi grassi e trigliceridi",
+    "slug": "chim-trigliceridi",
+    "path": "high_school/chemistry/biochimica/chim-trigliceridi",
+    "chapter": "Le biomolecole"
+  },
+  {
+    "id": "524ab4f9-4a78-4cd0-a87f-9d5a6a302f02",
+    "parent_id": "b107c28c-fb60-481e-8e57-f1dd00067a39",
+    "title": "Fosfolipidi e steroidi",
+    "slug": "chim-fosfolipidi-steroidi",
+    "path": "high_school/chemistry/biochimica/chim-fosfolipidi-steroidi",
+    "chapter": "Le biomolecole"
+  },
+  {
+    "id": "2f863070-cf19-4674-a14b-3147c0d9510d",
+    "parent_id": "b107c28c-fb60-481e-8e57-f1dd00067a39",
+    "title": "Amminoacidi e legame peptidico",
+    "slug": "amminoacidi-legame-peptidico",
+    "path": "high_school/chemistry/biochimica/amminoacidi-legame-peptidico",
+    "chapter": "Le biomolecole"
+  },
+  {
+    "id": "679dedcb-d187-490e-92af-de20b09aaa57",
+    "parent_id": "b107c28c-fb60-481e-8e57-f1dd00067a39",
+    "title": "Gli enzimi",
+    "slug": "chim-enzimi",
+    "path": "high_school/chemistry/biochimica/chim-enzimi",
+    "chapter": "Le biomolecole"
+  },
+  {
+    "id": "e0111e68-3645-4c15-a22c-22aa894c9443",
+    "parent_id": "b107c28c-fb60-481e-8e57-f1dd00067a39",
+    "title": "Nucleotidi e acidi nucleici",
+    "slug": "chim-acidi-nucleici",
+    "path": "high_school/chemistry/biochimica/chim-acidi-nucleici",
+    "chapter": "Le biomolecole"
+  },
+  {
+    "id": "ce88b2d9-ed09-471c-92d6-221d04f97180",
+    "parent_id": "f91544fc-021b-4d19-9873-a1b487f92b5d",
+    "title": "ATP e coenzimi",
+    "slug": "chim-atp-coenzimi",
+    "path": "high_school/chemistry/chim-metabolismo/chim-atp-coenzimi",
+    "chapter": "Il metabolismo energetico"
+  },
+  {
+    "id": "eb0d1842-56ab-4a1c-8e76-fc3afb2c7118",
+    "parent_id": "f91544fc-021b-4d19-9873-a1b487f92b5d",
+    "title": "La glicolisi",
+    "slug": "chim-glicolisi",
+    "path": "high_school/chemistry/chim-metabolismo/chim-glicolisi",
+    "chapter": "Il metabolismo energetico"
+  },
+  {
+    "id": "b9707c29-5c0a-440a-b862-0bee92b17429",
+    "parent_id": "f91544fc-021b-4d19-9873-a1b487f92b5d",
+    "title": "Le fermentazioni",
+    "slug": "chim-fermentazioni",
+    "path": "high_school/chemistry/chim-metabolismo/chim-fermentazioni",
+    "chapter": "Il metabolismo energetico"
+  },
+  {
+    "id": "a6df5754-dc2d-4699-b5b4-0a91ef390713",
+    "parent_id": "f91544fc-021b-4d19-9873-a1b487f92b5d",
+    "title": "Ciclo di Krebs e fosforilazione ossidativa",
+    "slug": "chim-respirazione-cellulare",
+    "path": "high_school/chemistry/chim-metabolismo/chim-respirazione-cellulare",
+    "chapter": "Il metabolismo energetico"
+  },
+  {
+    "id": "a953fcbd-c510-4618-a89d-2917b3f91ff0",
+    "parent_id": "f91544fc-021b-4d19-9873-a1b487f92b5d",
+    "title": "La fotosintesi",
+    "slug": "chim-fotosintesi",
+    "path": "high_school/chemistry/chim-metabolismo/chim-fotosintesi",
+    "chapter": "Il metabolismo energetico"
+  },
+  {
+    "id": "2d14d25d-691e-4bcb-b209-4dae919013f0",
+    "parent_id": "ce0d5a5c-ed04-428d-8172-2ef02bd9f0ff",
+    "title": "Petrolio e combustibili fossili",
+    "slug": "chim-combustibili-fossili",
+    "path": "high_school/chemistry/chimica-ambientale/chim-combustibili-fossili",
+    "chapter": "Approfondimenti: chimica, energia e ambiente"
+  },
+  {
+    "id": "53edfa7d-8416-464a-9465-49028f1ca7e5",
+    "parent_id": "ce0d5a5c-ed04-428d-8172-2ef02bd9f0ff",
+    "title": "Anidride carbonica ed effetto serra",
+    "slug": "chim-effetto-serra",
+    "path": "high_school/chemistry/chimica-ambientale/chim-effetto-serra",
+    "chapter": "Approfondimenti: chimica, energia e ambiente"
+  },
+  {
+    "id": "8f768e30-f8ae-4331-8a24-09b33cbefcd4",
+    "parent_id": "ce0d5a5c-ed04-428d-8172-2ef02bd9f0ff",
+    "title": "Piogge acide e inquinamento dell'aria",
+    "slug": "inquinanti-ambientali",
+    "path": "high_school/chemistry/chimica-ambientale/inquinanti-ambientali",
+    "chapter": "Approfondimenti: chimica, energia e ambiente"
+  },
+  {
+    "id": "c91b5a0d-0191-4909-b020-4af3def79cdf",
+    "parent_id": "ce0d5a5c-ed04-428d-8172-2ef02bd9f0ff",
+    "title": "La sintesi industriale dell'ammoniaca",
+    "slug": "processi-industriali",
+    "path": "high_school/chemistry/chimica-ambientale/processi-industriali",
+    "chapter": "Approfondimenti: chimica, energia e ambiente"
+  },
+  {
+    "id": "2ee6ec0c-7e56-43b8-8a95-6e1227f4a835",
+    "parent_id": "ce0d5a5c-ed04-428d-8172-2ef02bd9f0ff",
+    "title": "Plastiche e riciclo",
+    "slug": "chim-plastiche-riciclo",
+    "path": "high_school/chemistry/chimica-ambientale/chim-plastiche-riciclo",
+    "chapter": "Approfondimenti: chimica, energia e ambiente"
+  }
+]

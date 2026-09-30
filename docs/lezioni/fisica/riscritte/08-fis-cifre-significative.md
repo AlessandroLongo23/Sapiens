@@ -126,7 +126,7 @@ Il volume è un prodotto, $V = A \cdot h = 3{,}14 \cdot 5{,}0 = 15{,}7\ \text{cm
 
 La densità è un quoziente:
 
-$$\rho = \frac{m}{V} = \frac{133{,}6\,\text{g}}{15{,}7\ \text{cm}^3} = 8{,}509\ldots\ \text{g/cm}^3 \approx 8{,}5\ \text{g/cm}^3$$
+$$d = \frac{m}{V} = \frac{133{,}6\,\text{g}}{15{,}7\ \text{cm}^3} = 8{,}509\ldots\ \text{g/cm}^3 \approx 8{,}5\ \text{g/cm}^3$$
 
 con due cifre significative, quelle di $h$. Se si fosse usato il volume già arrotondato, $\dfrac{133{,}6}{16} = 8{,}35$, si sarebbe scritto $8{,}4\ \text{g/cm}^3$: un arrotondamento fatto troppo presto sposta l'ultima cifra.
 ```
