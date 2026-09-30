@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Diploma" data-tags="maturità, diploma, pergamena, fiocco, esame di stato" data-radius="18" data-accent="#2f7a57">
+  <rect width="128" height="88" fill="#2f7a57"/>
+  <text x="10" y="15" font-family="mono" font-size="7" letter-spacing="1.1" fill="#fbfaf6" fill-opacity=".6">DIPLOMA</text>
+  <g transform="rotate(-16 64 48)">
+  <rect x="18" y="38" width="92" height="20" rx="3" fill="#fbfaf6"/>
+  <ellipse cx="110" cy="48" rx="4.5" ry="10" fill="#fbfaf6" stroke="#1b1e27" stroke-opacity=".5" stroke-width="1"/>
+  <path d="M110 48a1.6 3.4 0 1 1 1.6 2.6" fill="none" stroke="#1b1e27" stroke-opacity=".5" stroke-width="1"/>
+  <path d="M22 44H104M22 52H104" stroke="#1b1e27" stroke-opacity=".12" stroke-width="1"/>
+  <rect x="58" y="37" width="8" height="22" fill="#b3302f"/>
+  <path d="M62 58L55 74L59 72L60 76L63 60M62 58L70 73L66 72L66 76L62 60" fill="#b3302f" stroke="#b3302f" stroke-width="1" stroke-linejoin="round"/>
+  <circle cx="62" cy="58" r="4" fill="#e8b53e"/>
+  </g>
+</svg>

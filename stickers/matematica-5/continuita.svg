@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 60" data-name="Continuità" data-tags="funzione continua, matita, curva, senza salti, grafico" data-radius="12" data-accent="#b3302f" data-cover="high_school/math/continuita">
+  <rect width="150" height="60" fill="#b3302f"/>
+  <path d="M12 34C28 12 42 12 56 26S86 44 110 31" fill="none" stroke="#fbfaf6" stroke-width="2.6" stroke-linecap="round"/>
+  <g transform="translate(111 30) rotate(-40)">
+    <path d="M0 0L8 -3.5V3.5Z" fill="#fbfaf6"/>
+    <path d="M0 0L3 -1.3V1.3Z" fill="#1b1e27"/>
+    <rect x="8" y="-3.5" width="18" height="7" fill="#e8b53e"/>
+    <path d="M8 0H26" stroke="#1b1e27" stroke-opacity=".25" stroke-width=".8"/>
+    <rect x="26" y="-3.5" width="4" height="7" rx="1.2" fill="#fbfaf6"/>
+  </g>
+  <text x="75" y="51" text-anchor="middle" font-family="serif" font-style="italic" font-size="12" fill="#fbfaf6">senza staccare la matita</text>
+</svg>

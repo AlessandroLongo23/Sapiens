@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 56" data-name="Si ricomincia" data-tags="inizio anno, settembre, primo giorno, scuola, nastro" data-radius="12" data-accent="#2b64a8">
+  <rect width="150" height="56" fill="#2b64a8"/>
+  <path d="M33.5 21.5A10 10 0 1 0 34.5 34" fill="none" stroke="#fbfaf6" stroke-width="3" stroke-linecap="round"/>
+  <path d="M28.6 20.4L35.6 21.6L34.2 14.5" fill="none" stroke="#fbfaf6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="46" y="22" font-family="mono" font-size="7" letter-spacing="1.1" fill="#fbfaf6" fill-opacity=".7">ANNO = ANNO + 1</text>
+  <text x="46" y="41" font-family="serif" font-style="italic" font-size="16.5" fill="#fbfaf6">si ricomincia</text>
+</svg>

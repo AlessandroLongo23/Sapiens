@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 96" data-name="Verifica venerdì" data-tags="calendario, verifica, compito in classe, data, scadenza, fustellato" data-cut="6" data-accent="#b3302f">
+  <rect x="8" y="12" width="72" height="76" rx="8" fill="#fbfaf6" stroke="#1b1e27" stroke-width="2"/>
+  <path d="M8 34V20Q8 12 16 12H72Q80 12 80 20V34Z" fill="#b3302f" stroke="#1b1e27" stroke-width="2"/>
+  <rect x="24" y="5" width="6" height="14" rx="3" fill="#1b1e27"/>
+  <rect x="58" y="5" width="6" height="14" rx="3" fill="#1b1e27"/>
+  <text x="44" y="29" text-anchor="middle" font-family="mono" font-weight="500" font-size="8" letter-spacing="1.2" fill="#fbfaf6">VENERDÌ</text>
+  <ellipse cx="44" cy="57" rx="31" ry="11" fill="none" stroke="#c0352f" stroke-width="2.2" transform="rotate(-6 44 57)"/>
+  <text x="44" y="62" text-anchor="middle" font-family="serif" font-style="italic" font-size="14" fill="#1b1e27">verifica</text>
+  <text x="44" y="80" text-anchor="middle" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".55">PRIMA ORA</text>
+</svg>

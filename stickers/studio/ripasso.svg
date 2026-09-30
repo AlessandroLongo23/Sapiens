@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Ripasso" data-tags="evidenziatore, appunti, quaderno, ripassare, studio" data-radius="14" data-accent="#e8b53e">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M0 22H128M0 44H128M0 66H128" stroke="#4f7fc0" stroke-opacity=".3"/>
+  <path d="M14 15H58M66 15H102M14 81H44M52 81H90" stroke="#1b1e27" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M18 51L112 47L111 63L19 66Z" fill="#e8b53e" fill-opacity=".85"/>
+  <text x="64" y="61" text-anchor="middle" font-family="serif" font-style="italic" font-size="25" fill="#1b1e27">ripasso</text>
+  <text x="14" y="36" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".55">PRIMA DELLA VERIFICA</text>
+</svg>

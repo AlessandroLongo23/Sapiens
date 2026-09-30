@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146 56" data-name="Ho capito!" data-tags="lampadina, idea, capire, finalmente, nastro" data-radius="12" data-accent="#2f7a57">
+  <rect width="146" height="56" fill="#2f7a57"/>
+  <circle cx="25" cy="25" r="9" fill="#e8b53e" stroke="#fbfaf6" stroke-width="2.2"/>
+  <path d="M21 38H29M22 42H28" stroke="#fbfaf6" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M25 8V11M12 13L14 15M38 13L36 15M9 25H12M41 25H38" stroke="#e8b53e" stroke-width="2" stroke-linecap="round"/>
+  <text x="50" y="22" font-family="mono" font-size="7.5" letter-spacing="1.2" fill="#fbfaf6" fill-opacity=".75">FINALMENTE</text>
+  <text x="50" y="41" font-family="serif" font-style="italic" font-size="19" fill="#fbfaf6">ho capito!</text>
+</svg>

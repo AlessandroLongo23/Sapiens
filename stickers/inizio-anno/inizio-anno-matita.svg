@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 70" data-name="Matita temperata" data-tags="inizio anno, matita, temperata, astuccio, punta" data-cut="7" data-accent="#e8b53e">
+  <g transform="translate(60 37) rotate(-24) translate(-53 0)">
+  <rect x="0" y="-8" width="13" height="16" rx="4" fill="#c0352f" stroke="#1b1e27" stroke-width="1.8"/>
+  <rect x="11" y="-8.5" width="10" height="17" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.8"/>
+  <path d="M14.5 -8.5V8.5M17.5 -8.5V8.5" stroke="#1b1e27" stroke-opacity=".45" stroke-width="1"/>
+  <rect x="21" y="-8" width="63" height="16" fill="#e8b53e" stroke="#1b1e27" stroke-width="1.8"/>
+  <path d="M21 -2.6H84M21 2.6H84" stroke="#1b1e27" stroke-opacity=".2" stroke-width="1"/>
+  <path d="M84 -8L106 0L84 8Q81 4 84 0Q81 -4 84 -8Z" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M98.5 -2.7L106 0L98.5 2.7Z" fill="#1b1e27" stroke="#1b1e27" stroke-width="1.6" stroke-linejoin="round"/>
+  </g>
+</svg>

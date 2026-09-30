@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Segno sbagliato" data-tags="errore, meno, parentesi, correzione, penna rossa, segni" data-radius="16" data-accent="#c0352f">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M12 0V88M24 0V88M36 0V88M48 0V88M60 0V88M72 0V88M84 0V88M96 0V88M108 0V88M120 0V88M0 12H128M0 24H128M0 36H128M0 48H128M0 60H128M0 72H128M0 84H128" stroke="#4f7fc0" stroke-opacity=".25"/>
+  <text x="12" y="20" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".55">IL SOLITO SEGNO</text>
+  <text x="12" y="52" font-family="serif" font-style="italic" font-size="22" fill="#1b1e27">−(−3) = −3</text>
+  <path d="M88 55L114 36" stroke="#c0352f" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="102" y="78" text-anchor="middle" font-family="serif" font-style="italic" font-weight="600" font-size="18" fill="#c0352f">+3</text>
+</svg>

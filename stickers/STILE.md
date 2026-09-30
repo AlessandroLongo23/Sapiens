@@ -95,6 +95,10 @@ trattini, unico in tutto il catalogo, e non cambia mai: il database salva gli ad
 - `data-radius`: raggio degli angoli dell'adesivo finito, da 8 a 30; oppure `data-cut` per un
   adesivo fustellato (vedi sopra).
 - `data-accent`: il colore delle particelle quando si attacca; di solito il colore dominante.
+- `data-tags`: parole con cui lo studente lo trova nella ricerca dell'album, separate da virgole,
+  in minuscolo: l'argomento, gli oggetti disegnati, il nome del simbolo, il personaggio della
+  formula (`venn, insiemi, intersezione, unione`). Da tre a otto; il nome e il pacchetto si cercano
+  già da soli.
 - `data-cover` (facoltativo): la pagina su cui l'adesivo è attaccato di serie, con il percorso
   interno (`high_school/math/insiemi-e-logica`). Un adesivo di capitolo ha quello del suo capitolo.
 
@@ -105,7 +109,11 @@ Elementi ammessi: `g`, `path`, `rect`, `circle`, `ellipse`, `line`, `polyline`, 
 ## Pacchetti
 
 I pacchetti sono in `stickers/packs.json`, nell'ordine in cui compaiono nell'album. La cartella di
-un adesivo è il suo pacchetto. Tipi (vault/Decisioni/2026-09-26 Pacchetti di adesivi per capitolo,
+un adesivo è il suo pacchetto. `group` è la voce dell'album sotto cui il pacchetto compare
+(Matematica, Scienze, Informatica, Studio, Stagioni); `subject` la materia, con il percorso interno;
+`order`, facoltativo, l'ordine degli adesivi (quello del libro, per i capitoli), altrimenti per nome.
+Spostare un adesivo da un pacchetto all'altro non tocca gli adesivi già attaccati: il database
+conosce solo l'`id`. Tipi (vault/Decisioni/2026-09-26 Pacchetti di adesivi per capitolo,
 materia, studio e stagione.md): uno per capitolo di matematica, uno per materia, uno sullo studio, e
 gli stagionali, che escono nel loro periodo e restano per sempre.
 
@@ -118,3 +126,7 @@ gli stagionali, che escono nel loro periodo e restano per sempre.
 
 I file generati si committano insieme ai sorgenti. `npm run stickers -- --check` fallisce se non
 sono aggiornati.
+
+`npm run stickers -- --preview <pacchetto>` controlla un pacchetto solo e ne scrive il foglio di
+prova in `stickers/anteprima-<pacchetto>.html` e `.png`, senza toccare nient'altro: così più
+pacchetti si disegnano insieme.

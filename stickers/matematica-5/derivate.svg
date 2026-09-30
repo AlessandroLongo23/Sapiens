@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Derivate" data-tags="tangente, pendenza, retta tangente, f primo, rapporto incrementale" data-radius="22" data-accent="#e8b53e" data-cover="high_school/math/derivate">
+  <rect width="96" height="96" fill="#2b64a8"/>
+  <path d="M12 78C30 76 44 62 54 46S72 20 86 16" fill="none" stroke="#fbfaf6" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M34 78L74 14" stroke="#e8b53e" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M44 62H54V46" fill="none" stroke="#fbfaf6" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="2 1.8"/>
+  <circle cx="54" cy="46" r="3.8" fill="#e8b53e" stroke="#fbfaf6" stroke-width="1.6"/>
+  <text x="12" y="25" font-family="serif" font-style="italic" font-size="15" fill="#fbfaf6">f′(x)</text>
+  <text x="86" y="86" text-anchor="end" font-family="mono" font-size="7" letter-spacing="1" fill="#fbfaf6" fill-opacity=".7">TANGENTE</text>
+</svg>

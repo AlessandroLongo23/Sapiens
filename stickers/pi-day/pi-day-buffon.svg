@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Ago di Buffon" data-tags="pi day, buffon, probabilità, aghi, pi greco, esperimento" data-radius="14" data-accent="#c0352f">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M0 12H128M0 30H128M0 48H128M0 66H128" stroke="#4f7fc0" stroke-opacity=".55" stroke-width="1.2"/>
+  <path d="M75.92 49.76L93.66 52.8M38.09 12.14L34.47 29.77M24.54 48.43L13.93 62.97M69.33 33.57L87.24 35.45" stroke="#1b1e27" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M35.98 44.27L34.13 62.17M72.01 42.25L64.56 58.63M92.21 14.7L99.14 31.31M110.24 42.59L102.39 58.78M59.07 24.39L43.38 33.2M21.57 16.12L18.16 33.79M62.86 9.66L68.12 26.87M43.01 60.17L59.78 66.72M100.01 65.61L117.72 68.78" stroke="#c0352f" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="10" y="82" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".6">BUFFON</text>
+  <text x="118" y="82" text-anchor="end" font-family="serif" font-style="italic" font-size="12" fill="#c0352f">P = 2/π</text>
+</svg>

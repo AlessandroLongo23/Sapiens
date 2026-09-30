@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="La retta" data-tags="piano cartesiano, coefficiente angolare, pendenza, assi, y = mx + q" data-radius="14" data-accent="#c0352f" data-cover="high_school/math/geometria-analitica">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M11 0V88M22 0V88M33 0V88M44 0V88M55 0V88M66 0V88M77 0V88M88 0V88M99 0V88M110 0V88M121 0V88M0 11H128M0 22H128M0 33H128M0 44H128M0 55H128M0 66H128M0 77H128" stroke="#4f7fc0" stroke-opacity=".28"/>
+  <path d="M8 66H120M33 80V8" stroke="#1b1e27" stroke-opacity=".55" stroke-width="1.2"/>
+  <path d="M14 76L114 16" stroke="#c0352f" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M44 58H77V38.2" fill="none" stroke="#1b1e27" stroke-width="1.4" stroke-dasharray="3 2.5" stroke-linecap="round"/>
+  <circle cx="44" cy="58" r="3" fill="#c0352f"/>
+  <circle cx="77" cy="38.2" r="3" fill="#c0352f"/>
+  <text x="80" y="52" font-family="serif" font-style="italic" font-size="9" fill="#1b1e27">Δy</text>
+  <text x="120" y="82" text-anchor="end" font-family="serif" font-style="italic" font-size="12" fill="#1b1e27">y = mx + q</text>
+</svg>

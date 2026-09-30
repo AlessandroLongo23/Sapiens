@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Goniometria" data-tags="circonferenza goniometrica, seno, coseno, angolo, radianti" data-radius="22" data-accent="#e8b53e" data-cover="high_school/math/goniometria">
+  <rect width="96" height="96" fill="#1f2a44"/>
+  <path d="M8 48H88M48 8V88" stroke="#fbfaf6" stroke-opacity=".55" stroke-width="1.2"/>
+  <circle cx="48" cy="48" r="32" fill="none" stroke="#fbfaf6" stroke-width="2.4"/>
+  <path d="M48 48L68.57 23.49" stroke="#fbfaf6" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M63 48A15 15 0 0 0 57.64 36.51" fill="none" stroke="#fbfaf6" stroke-width="1.2"/>
+  <path d="M48 48H68.57" stroke="#c0352f" stroke-width="3" stroke-linecap="round"/>
+  <path d="M68.57 48V23.49" stroke="#e8b53e" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="68.57" cy="23.49" r="3.4" fill="#e8b53e"/>
+  <text x="57.5" y="46" text-anchor="middle" font-family="math" font-size="9" fill="#fbfaf6">α</text>
+</svg>

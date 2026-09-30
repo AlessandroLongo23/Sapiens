@@ -1,9 +1,47 @@
 [
-	{ "id": "base", "name": "Primi adesivi" },
+	{ "id": "base", "name": "Formule celebri", "group": "Matematica" },
 	{
-		"id": "matematica-capitoli",
-		"name": "Capitoli di matematica",
+		"id": "matematica-1",
+		"name": "Primo anno",
+		"group": "Matematica",
 		"subject": "high_school/math",
-		"order": ["insiemi", "naturali", "interi", "razionali", "funzioni", "monomi", "scomposizione", "frazioni-algebriche", "equazioni", "disequazioni"]
-	}
+		"order": ["insiemi", "naturali", "interi", "razionali", "funzioni", "monomi", "scomposizione", "frazioni-algebriche", "equazioni", "disequazioni", "statistica", "triangoli"]
+	},
+	{
+		"id": "matematica-2",
+		"name": "Secondo anno",
+		"group": "Matematica",
+		"subject": "high_school/math",
+		"order": ["sistemi", "radicali", "retta", "secondo-grado", "disequazioni-secondo-grado", "grado-superiore", "probabilita", "circonferenza"]
+	},
+	{
+		"id": "matematica-3",
+		"name": "Terzo anno",
+		"group": "Matematica",
+		"subject": "high_school/math",
+		"order": ["funzioni-proprieta", "successioni", "coniche", "logaritmi", "regressione"]
+	},
+	{
+		"id": "matematica-4",
+		"name": "Quarto anno",
+		"group": "Matematica",
+		"subject": "high_school/math",
+		"order": ["goniometria", "trigonometria", "complessi", "combinatoria", "probabilita-condizionata", "solidi"]
+	},
+	{
+		"id": "matematica-5",
+		"name": "Quinto anno",
+		"group": "Matematica",
+		"subject": "high_school/math",
+		"order": ["limiti", "continuita", "derivate", "studio-funzione", "integrali", "equazioni-differenziali", "distribuzioni", "spazio"]
+	},
+	{ "id": "fisica", "name": "Fisica", "group": "Scienze", "subject": "high_school/physics" },
+	{ "id": "chimica", "name": "Chimica", "group": "Scienze", "subject": "high_school/chemistry" },
+	{ "id": "informatica", "name": "Informatica", "group": "Informatica", "subject": "high_school/computer-science" },
+	{ "id": "studio", "name": "Studio e compiti", "group": "Studio" },
+	{ "id": "inizio-anno", "name": "Inizio della scuola", "group": "Stagioni" },
+	{ "id": "verifiche", "name": "Periodo delle verifiche", "group": "Stagioni" },
+	{ "id": "natale", "name": "Natale", "group": "Stagioni" },
+	{ "id": "pi-day", "name": "Pi Day", "group": "Stagioni" },
+	{ "id": "maturita", "name": "Maturità", "group": "Stagioni" }
 ]

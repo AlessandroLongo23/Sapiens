@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Onda" data-tags="lunghezza d'onda, lambda, ampiezza, periodo, oscillazione, suono" data-radius="16" data-accent="#e8b53e">
+  <rect width="128" height="88" fill="#2b64a8"/>
+  <path d="M8 52H120" stroke="#fbfaf6" stroke-width="1.2" stroke-opacity=".5"/>
+  <path d="M22 34V22M70 34V22" stroke="#fbfaf6" stroke-width="1" stroke-opacity=".55" stroke-dasharray="2 2"/>
+  <path d="M46 24L27 24" fill="none" stroke="#fbfaf6" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M23 24L28 21.5L28 26.5Z" fill="#fbfaf6"/>
+  <path d="M46 24L65 24" fill="none" stroke="#fbfaf6" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M69 24L64 26.5L64 21.5Z" fill="#fbfaf6"/>
+  <text x="46" y="18" text-anchor="middle" font-family="serif" font-style="italic" font-size="12" fill="#fbfaf6">λ</text>
+  <path d="M10 52L11 49.7L12 47.3L13 45.1L14 43L15 41L16 39.3L17 37.7L18 36.4L19 35.4L20 34.6L21 34.2L22 34L23 34.2L24 34.6L25 35.4L26 36.4L27 37.7L28 39.3L29 41L30 43L31 45.1L32 47.3L33 49.7L34 52L35 54.3L36 56.7L37 58.9L38 61L39 63L40 64.7L41 66.3L42 67.6L43 68.6L44 69.4L45 69.8L46 70L47 69.8L48 69.4L49 68.6L50 67.6L51 66.3L52 64.7L53 63L54 61L55 58.9L56 56.7L57 54.3L58 52L59 49.7L60 47.3L61 45.1L62 43L63 41L64 39.3L65 37.7L66 36.4L67 35.4L68 34.6L69 34.2L70 34L71 34.2L72 34.6L73 35.4L74 36.4L75 37.7L76 39.3L77 41L78 43L79 45.1L80 47.3L81 49.7L82 52L83 54.3L84 56.7L85 58.9L86 61L87 63L88 64.7L89 66.3L90 67.6L91 68.6L92 69.4L93 69.8L94 70L95 69.8L96 69.4L97 68.6L98 67.6L99 66.3L100 64.7L101 63L102 61L103 58.9L104 56.7L105 54.3L106 52L107 49.7L108 47.3L109 45.1L110 43L111 41L112 39.3L113 37.7L114 36.4L115 35.4L116 34.6L117 34.2L118 34" fill="none" stroke="#e8b53e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M96 70H112" stroke="#fbfaf6" stroke-width="1" stroke-opacity=".55" stroke-dasharray="2 2"/>
+  <path d="M108 61L108 67" fill="none" stroke="#fbfaf6" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M108 70L106 66L110 66Z" fill="#fbfaf6"/>
+  <path d="M108 61L108 55" fill="none" stroke="#fbfaf6" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M108 52L110 56L106 56Z" fill="#fbfaf6"/>
+  <text x="113" y="66" font-family="serif" font-style="italic" font-size="11" fill="#fbfaf6">A</text>
+</svg>

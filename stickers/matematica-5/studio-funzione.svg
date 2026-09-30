@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Studio di funzione" data-tags="massimo, minimo, flesso, grafico, derivata prima, segno" data-radius="14" data-accent="#e8b53e" data-cover="high_school/math/studio-funzione">
+  <rect width="128" height="88" fill="#2f7a57"/>
+  <path d="M24 80V8M8 44H120" stroke="#fbfaf6" stroke-opacity=".5" stroke-width="1.2"/>
+  <path d="M12 70C24 36 32 26 42 26C54 26 62 62 80 62C94 62 104 40 114 14" fill="none" stroke="#fbfaf6" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="42" cy="26" r="3.6" fill="#e8b53e"/>
+  <circle cx="80" cy="62" r="3.6" fill="#e8b53e"/>
+  <circle cx="58.8" cy="44" r="3" fill="#2f7a57" stroke="#e8b53e" stroke-width="1.8"/>
+  <text x="42" y="17" text-anchor="middle" font-family="mono" font-weight="500" font-size="7" letter-spacing="1" fill="#e8b53e">MAX</text>
+  <text x="80" y="76" text-anchor="middle" font-family="mono" font-weight="500" font-size="7" letter-spacing="1" fill="#e8b53e">MIN</text>
+  <text x="66" y="38" font-family="mono" font-weight="500" font-size="7" letter-spacing="1" fill="#e8b53e">FLESSO</text>
+</svg>

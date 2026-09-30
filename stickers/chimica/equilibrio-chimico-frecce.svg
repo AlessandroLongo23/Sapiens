@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Equilibrio chimico" data-tags="equilibrio, reazione reversibile, frecce, costante di equilibrio, kc" data-radius="20" data-accent="#e8b53e">
+  <rect width="96" height="96" fill="#e8b53e"/>
+  <text x="48" y="20" text-anchor="middle" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".65">EQUILIBRIO</text>
+  <path d="M18 41H76L64 31" fill="none" stroke="#1b1e27" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M78 53H20L32 63" fill="none" stroke="#c0352f" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="48" y="84" text-anchor="middle" font-family="serif" font-style="italic" font-size="15" fill="#1b1e27">K<tspan dy="4" font-size="10">c</tspan></text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Portaprovette" data-tags="provette, laboratorio, vetreria, soluzioni, esperimento" data-radius="16" data-accent="#c0352f">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M12 0V88M24 0V88M36 0V88M48 0V88M60 0V88M72 0V88M84 0V88M96 0V88M108 0V88M120 0V88M0 12H128M0 24H128M0 36H128M0 48H128M0 60H128M0 72H128M0 84H128" stroke="#4f7fc0" stroke-opacity=".22"/>
+  <path d="M17 44V78M111 44V78" stroke="#1b1e27" stroke-width="2.8" stroke-linecap="round"/>
+  <g fill="#fbfaf6"><path d="M29 14V65A5 5 0 0 0 39 65V14Z"/><path d="M49 14V65A5 5 0 0 0 59 65V14Z"/><path d="M69 14V65A5 5 0 0 0 79 65V14Z"/><path d="M89 14V65A5 5 0 0 0 99 65V14Z"/></g>
+  <path d="M29 50V65A5 5 0 0 0 39 65V50Z" fill="#c0352f"/>
+  <path d="M49 42V65A5 5 0 0 0 59 65V42Z" fill="#2b64a8"/>
+  <path d="M69 56V65A5 5 0 0 0 79 65V56Z" fill="#c0352f" fill-opacity=".55"/>
+  <path d="M89 46V65A5 5 0 0 0 99 65V46Z" fill="#2b64a8" fill-opacity=".55"/>
+  <circle cx="53" cy="34" r="1.6" fill="#2b64a8"/><circle cx="55.5" cy="26" r="1.2" fill="#2b64a8"/>
+  <g fill="none" stroke="#1b1e27" stroke-width="1.8" stroke-linecap="round"><path d="M29 14V65A5 5 0 0 0 39 65V14M27 14H41"/><path d="M49 14V65A5 5 0 0 0 59 65V14M47 14H61"/><path d="M69 14V65A5 5 0 0 0 79 65V14M67 14H81"/><path d="M89 14V65A5 5 0 0 0 99 65V14M87 14H101"/></g>
+  <rect x="12" y="38" width="104" height="7" rx="2" fill="#1b1e27"/>
+  <rect x="12" y="74" width="104" height="6" rx="2" fill="#1b1e27"/>
+</svg>

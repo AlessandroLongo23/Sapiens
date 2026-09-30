@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Trigonometria" data-tags="triangoli, altezza, angolo, teorema dei seni, teorema del coseno, torre" data-radius="16" data-accent="#e8b53e" data-cover="high_school/math/trigonometria">
+  <rect width="128" height="88" fill="#2b64a8"/>
+  <path d="M8 68H120" stroke="#fbfaf6" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M92 68V24H104V68M90 24L98 12L106 24Z" fill="none" stroke="#fbfaf6" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M96 38V34A2 2 0 0 1 100 34V38Z" fill="#fbfaf6"/>
+  <path d="M18 68L98 12" stroke="#e8b53e" stroke-width="1.8" stroke-dasharray="3.5 2.5" stroke-linecap="round"/>
+  <path d="M34 68A16 16 0 0 0 31.1 58.8" fill="none" stroke="#e8b53e" stroke-width="1.6"/>
+  <circle cx="18" cy="68" r="3" fill="#e8b53e"/>
+  <text x="38" y="63" font-family="mono" font-size="8" fill="#e8b53e">35°</text>
+  <text x="58" y="80" text-anchor="middle" font-family="mono" font-size="8" fill="#fbfaf6" fill-opacity=".8">80 m</text>
+  <text x="84" y="50" text-anchor="end" font-family="math" font-size="14" fill="#e8b53e">h</text>
+  <text x="10" y="22" font-family="math" font-size="14" fill="#fbfaf6">h<tspan font-family="serif" font-style="normal"> = ?</tspan></text>
+</svg>

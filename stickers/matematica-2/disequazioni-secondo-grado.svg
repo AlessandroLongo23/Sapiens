@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 96" data-name="Segno della parabola" data-tags="studio del segno, parabola, disequazioni, intervalli, radici, asse x" data-radius="16" data-accent="#c0352f" data-cover="high_school/math/parabola-disequazioni">
+  <rect width="120" height="96" fill="#fbfaf6"/>
+  <path d="M8 58H112" stroke="#1b1e27" stroke-opacity=".55" stroke-width="1.2"/>
+  <path d="M40 58Q60 98 80 58" fill="none" stroke="#1b1e27" stroke-width="2" stroke-linecap="round"/>
+  <path d="M22 10Q31 42 40 58M80 58Q89 42 98 10" fill="none" stroke="#c0352f" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M8 58H38M82 58H112" stroke="#c0352f" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="40" cy="58" r="3.4" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.6"/>
+  <circle cx="80" cy="58" r="3.4" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.6"/>
+  <text x="14" y="46" font-family="serif" font-weight="600" font-size="16" fill="#c0352f">+</text>
+  <text x="96" y="46" font-family="serif" font-weight="600" font-size="16" fill="#c0352f">+</text>
+  <text x="60" y="54" text-anchor="middle" font-family="serif" font-weight="600" font-size="16" fill="#1b1e27">−</text>
+  <text x="60" y="22" text-anchor="middle" font-family="serif" font-style="italic" font-size="12" fill="#1b1e27">y &gt; 0</text>
+</svg>
