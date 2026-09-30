@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Grado superiore" data-tags="cubica, terzo grado, radici, scomposizione, x al cubo" data-radius="22" data-accent="#e8b53e" data-cover="high_school/math/grado-superiore">
+  <rect width="96" height="96" fill="#e8b53e"/>
+  <path d="M8 56H88M48 30V88" stroke="#1b1e27" stroke-opacity=".55" stroke-width="1.2"/>
+  <path d="M16 88C24 40 34 38 48 56S72 72 80 26" fill="none" stroke="#1b1e27" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="23.3" cy="56" r="3.4" fill="#c0352f"/>
+  <circle cx="48" cy="56" r="3.4" fill="#c0352f"/>
+  <circle cx="72.7" cy="56" r="3.4" fill="#c0352f"/>
+  <text x="48" y="22" text-anchor="middle" font-family="serif" font-style="italic" font-size="13" fill="#1b1e27">x<tspan dy="-5" font-size="9">3</tspan><tspan dy="5"> − 4x = 0</tspan></text>
+</svg>

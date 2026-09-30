@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Funzioni e proprietà" data-tags="dispari, pari, simmetria, grafico, crescente, dominio" data-radius="16" data-accent="#e8b53e" data-cover="high_school/math/funzioni-proprieta">
+  <rect width="128" height="88" fill="#2b64a8"/>
+  <path d="M10 50H118M64 26V80" stroke="#fbfaf6" stroke-opacity=".55" stroke-width="1.2"/>
+  <path d="M26 60.1L102 39.9" stroke="#fbfaf6" stroke-width="1.4" stroke-dasharray="3 2.5" stroke-linecap="round"/>
+  <path d="M22 69.3L25 62.2L28 56.4L31 51.8L34 48.2L37 45.6L40 43.9L43 43.0L46 42.7L49 43.0L52 43.8L55 45.0L58 46.5L61 48.2L64 50.0L67 51.8L70 53.5L73 55.0L76 56.2L79 57.0L82 57.3L85 57.0L88 56.1L91 54.4L94 51.8L97 48.2L100 43.6L103 37.8L106 30.7" fill="none" stroke="#e8b53e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="102" cy="39.9" r="3.4" fill="#fbfaf6"/>
+  <circle cx="26" cy="60.1" r="3.4" fill="#fbfaf6"/>
+  <circle cx="64" cy="50" r="2" fill="#fbfaf6"/>
+  <text x="64" y="18" text-anchor="middle" font-family="serif" font-style="italic" font-size="13" fill="#fbfaf6">f(−x) = −f(x)</text>
+</svg>

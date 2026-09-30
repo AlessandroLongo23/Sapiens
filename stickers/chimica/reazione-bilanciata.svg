@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 60" data-name="Reazione bilanciata" data-tags="equazione chimica, coefficienti, stechiometria, idrogeno, ossigeno, acqua" data-radius="12" data-accent="#e8b53e">
+  <rect width="150" height="60" fill="#1f2a44"/>
+  <text x="12" y="16" font-family="mono" font-size="7" letter-spacing="1" fill="#fbfaf6" fill-opacity=".55">BILANCIATA</text>
+  <text x="75" y="42" text-anchor="middle" font-family="serif" font-size="17" fill="#fbfaf6"><tspan fill="#e8b53e">2</tspan>H<tspan dy="4" font-size="11">2</tspan><tspan dy="-4"> + O</tspan><tspan dy="4" font-size="11">2</tspan><tspan dy="-4"> → </tspan><tspan fill="#e8b53e">2</tspan>H<tspan dy="4" font-size="11">2</tspan><tspan dy="-4">O</tspan></text>
+</svg>

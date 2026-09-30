@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Probabilità condizionata" data-tags="albero, diagramma ad albero, bayes, eventi, probabilità composta" data-radius="16" data-accent="#c0352f" data-cover="high_school/math/probabilita-avanzata">
+  <rect width="128" height="88" fill="#e8b53e"/>
+  <path d="M14 44L54 64M54 24L100 34M54 64L100 54M54 64L100 74" stroke="#1b1e27" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M14 44L54 24L100 14" fill="none" stroke="#c0352f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="14" cy="44" r="3" fill="#1b1e27"/>
+  <circle cx="54" cy="24" r="3" fill="#c0352f"/>
+  <circle cx="54" cy="64" r="3" fill="#1b1e27"/>
+  <circle cx="100" cy="14" r="3" fill="#c0352f"/>
+  <circle cx="100" cy="34" r="2.4" fill="#1b1e27"/>
+  <circle cx="100" cy="54" r="2.4" fill="#1b1e27"/>
+  <circle cx="100" cy="74" r="2.4" fill="#1b1e27"/>
+  <text x="54" y="39" text-anchor="middle" font-family="serif" font-style="italic" font-size="11" fill="#c0352f">A</text>
+  <text x="54" y="80" text-anchor="middle" font-family="serif" font-style="italic" font-size="11" fill="#1b1e27">A</text>
+  <path d="M50.5 70.5H57.5" stroke="#1b1e27" stroke-width="1"/>
+  <text x="106" y="18" font-family="serif" font-style="italic" font-size="11" fill="#c0352f">B</text>
+  <text x="106" y="38" font-family="serif" font-style="italic" font-size="11" fill="#1b1e27">B</text>
+  <text x="106" y="58" font-family="serif" font-style="italic" font-size="11" fill="#1b1e27">B</text>
+  <text x="106" y="78" font-family="serif" font-style="italic" font-size="11" fill="#1b1e27">B</text>
+  <path d="M106 29.5H113M106 69.5H113" stroke="#1b1e27" stroke-width="1"/>
+  <text x="9" y="19" font-family="serif" font-style="italic" font-size="12" fill="#1b1e27">P(B|A)</text>
+</svg>

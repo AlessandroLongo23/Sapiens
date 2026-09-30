@@ -8,7 +8,8 @@ import { clearCovers, coversStore } from '@/lib/state/covers';
 import { useCoarsePointer } from '@/lib/hooks/use-media';
 import type { BoardState } from '@/lib/zaino/sticker-board';
 import { COVER_HEIGHT, COVER_WIDTH, MAX_STICKERS, STICKER_BY_ID, coverDefaults, stickerArt, type PlacedSticker } from '@/lib/zaino/stickers';
-import { HoldingHint, NoteStickers, StickerAlbum, type StickerControls } from '@/components/zaino/NoteStickers';
+import { HoldingHint, NoteStickers, type StickerControls } from '@/components/zaino/NoteStickers';
+import { StickerAlbum } from '@/components/zaino/StickerAlbum';
 import { Button } from '@/components/ui/Button';
 import '@/components/zaino/stickers.css';
 
@@ -243,6 +244,7 @@ export function CoverStickers({ page }: { page: string }) {
 			<StickerAlbum
 				open={album}
 				onClose={() => setAlbum(false)}
+				page={page}
 				description="Scegli un adesivo, poi attaccalo dove vuoi sulla copertina."
 				onPick={(id) => {
 					setAlbum(false);

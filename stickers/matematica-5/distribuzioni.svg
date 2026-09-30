@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Distribuzioni di probabilità" data-tags="gauss, campana, normale, istogramma, media, binomiale" data-radius="16" data-accent="#c0352f" data-cover="high_school/math/distribuzioni-probabilita">
+  <rect width="128" height="88" fill="#e8b53e"/>
+  <path d="M24 70V65.8H34V70M34 70V56.4H44V70M44 70V40.4H54V70M54 70V26.2H64V70M64 70V26.2H74V70M74 70V40.4H84V70M84 70V56.4H94V70M94 70V65.8H104V70" fill="#fbfaf6" stroke="#1b1e27" stroke-opacity=".45" stroke-width="1"/>
+  <path d="M10 70H118" stroke="#1b1e27" stroke-width="1.6" stroke-linecap="round"/>
+  <polyline points="12 69.8 16 69.5 20 69.0 24 68.0 28 66.3 32 63.8 36 60.1 40 55.1 44 48.9 48 42.1 52 35.3 56 29.4 60 25.4 64 24.0 68 25.4 72 29.4 76 35.3 80 42.1 84 48.9 88 55.1 92 60.1 96 63.8 100 66.3 104 68.0 108 69.0 112 69.5 116 69.8" fill="none" stroke="#c0352f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="64" y="82" text-anchor="middle" font-family="serif" font-style="italic" font-size="12" fill="#1b1e27">μ</text>
+  <text x="10" y="16" font-family="mono" font-weight="500" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".75">CAMPANA DI GAUSS</text>
+</svg>

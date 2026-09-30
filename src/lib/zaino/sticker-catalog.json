@@ -2,12 +2,86 @@
 	"packs": [
 		{
 			"id": "base",
-			"name": "Primi adesivi"
+			"name": "Formule celebri",
+			"group": "Matematica"
 		},
 		{
-			"id": "matematica-capitoli",
-			"name": "Capitoli di matematica",
+			"id": "matematica-1",
+			"name": "Primo anno",
+			"group": "Matematica",
 			"subject": "high_school/math"
+		},
+		{
+			"id": "matematica-2",
+			"name": "Secondo anno",
+			"group": "Matematica",
+			"subject": "high_school/math"
+		},
+		{
+			"id": "matematica-3",
+			"name": "Terzo anno",
+			"group": "Matematica",
+			"subject": "high_school/math"
+		},
+		{
+			"id": "matematica-4",
+			"name": "Quarto anno",
+			"group": "Matematica",
+			"subject": "high_school/math"
+		},
+		{
+			"id": "matematica-5",
+			"name": "Quinto anno",
+			"group": "Matematica",
+			"subject": "high_school/math"
+		},
+		{
+			"id": "fisica",
+			"name": "Fisica",
+			"group": "Scienze",
+			"subject": "high_school/physics"
+		},
+		{
+			"id": "chimica",
+			"name": "Chimica",
+			"group": "Scienze",
+			"subject": "high_school/chemistry"
+		},
+		{
+			"id": "informatica",
+			"name": "Informatica",
+			"group": "Informatica",
+			"subject": "high_school/computer-science"
+		},
+		{
+			"id": "studio",
+			"name": "Studio e compiti",
+			"group": "Studio"
+		},
+		{
+			"id": "inizio-anno",
+			"name": "Inizio della scuola",
+			"group": "Stagioni"
+		},
+		{
+			"id": "verifiche",
+			"name": "Periodo delle verifiche",
+			"group": "Stagioni"
+		},
+		{
+			"id": "natale",
+			"name": "Natale",
+			"group": "Stagioni"
+		},
+		{
+			"id": "pi-day",
+			"name": "Pi Day",
+			"group": "Stagioni"
+		},
+		{
+			"id": "maturita",
+			"name": "Maturità",
+			"group": "Stagioni"
 		}
 	],
 	"stickers": [
@@ -19,17 +93,14 @@
 			"h": 92,
 			"r": 12,
 			"accent": "#c0352f",
+			"tags": [
+				"phi",
+				"rapporto aureo",
+				"fibonacci",
+				"proporzione",
+				"spirale"
+			],
 			"v": "8e2cfc47"
-		},
-		{
-			"id": "completato",
-			"name": "Completato",
-			"pack": "base",
-			"w": 150,
-			"h": 64,
-			"r": 12,
-			"accent": "#b3302f",
-			"v": "1475c42c"
 		},
 		{
 			"id": "eulero",
@@ -39,6 +110,13 @@
 			"h": 72,
 			"r": 14,
 			"accent": "#4f7fc0",
+			"tags": [
+				"identità di eulero",
+				"e",
+				"pi greco",
+				"numeri complessi",
+				"formula"
+			],
 			"v": "b8c41786"
 		},
 		{
@@ -49,6 +127,11 @@
 			"h": 70,
 			"r": 30,
 			"accent": "#2b64a8",
+			"tags": [
+				"lemniscata",
+				"limite",
+				"simbolo"
+			],
 			"v": "7e744c2b"
 		},
 		{
@@ -59,6 +142,13 @@
 			"h": 100,
 			"r": 14,
 			"accent": "#c0352f",
+			"tags": [
+				"curva",
+				"grafico",
+				"secondo grado",
+				"vertice",
+				"piano cartesiano"
+			],
 			"v": "a8ad8974"
 		},
 		{
@@ -70,6 +160,12 @@
 			"r": 0,
 			"accent": "#c0352f",
 			"cut": true,
+			"tags": [
+				"pi greco",
+				"fustellato",
+				"simbolo",
+				"circonferenza"
+			],
 			"v": "d2f33134"
 		},
 		{
@@ -80,6 +176,12 @@
 			"h": 104,
 			"r": 22,
 			"accent": "#e8b53e",
+			"tags": [
+				"pi greco",
+				"3.14",
+				"circonferenza",
+				"simbolo"
+			],
 			"v": "4980e85a"
 		},
 		{
@@ -91,6 +193,12 @@
 			"r": 0,
 			"accent": "#c0352f",
 			"cut": true,
+			"tags": [
+				"teorema di pitagora",
+				"formula",
+				"triangolo rettangolo",
+				"ipotenusa"
+			],
 			"v": "057f0d8a"
 		},
 		{
@@ -101,6 +209,14 @@
 			"h": 112,
 			"r": 16,
 			"accent": "#2f7a57",
+			"tags": [
+				"teorema",
+				"triangolo rettangolo",
+				"quadrati",
+				"ipotenusa",
+				"cateti",
+				"geometria"
+			],
 			"v": "192d7b85"
 		},
 		{
@@ -111,118 +227,2066 @@
 			"h": 80,
 			"r": 12,
 			"accent": "#c0352f",
+			"tags": [
+				"radice quadrata",
+				"irrazionale",
+				"numeri reali",
+				"diagonale"
+			],
 			"v": "1151fa53"
 		},
 		{
 			"id": "insiemi",
 			"name": "Insiemi",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 130,
 			"h": 90,
 			"r": 0,
 			"accent": "#c0352f",
 			"cut": true,
 			"cover": "high_school/math/insiemi-e-logica",
+			"tags": [
+				"venn",
+				"intersezione",
+				"unione",
+				"logica",
+				"fustellato"
+			],
 			"v": "59a60be6"
 		},
 		{
 			"id": "naturali",
 			"name": "Numeri naturali",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 104,
 			"h": 104,
 			"r": 22,
 			"accent": "#e8b53e",
 			"cover": "high_school/math/numeri-naturali",
+			"tags": [
+				"n",
+				"contare",
+				"numeri primi",
+				"divisibilità"
+			],
 			"v": "cd01d291"
 		},
 		{
 			"id": "interi",
 			"name": "Numeri interi",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 140,
 			"h": 72,
 			"r": 14,
 			"accent": "#2b64a8",
 			"cover": "high_school/math/numeri-interi",
+			"tags": [
+				"z",
+				"negativi",
+				"retta dei numeri",
+				"segno",
+				"valore assoluto"
+			],
 			"v": "daeb7637"
 		},
 		{
 			"id": "razionali",
 			"name": "Numeri razionali",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 104,
 			"h": 104,
 			"r": 22,
 			"accent": "#e8b53e",
 			"cover": "high_school/math/numeri-razionali",
+			"tags": [
+				"q",
+				"frazioni",
+				"decimali",
+				"torta",
+				"percentuali"
+			],
 			"v": "9a6221e5"
 		},
 		{
 			"id": "funzioni",
 			"name": "Funzioni",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 136,
 			"h": 96,
 			"r": 16,
 			"accent": "#c0352f",
 			"cover": "high_school/math/funzioni",
+			"tags": [
+				"frecce",
+				"dominio",
+				"codominio",
+				"relazione",
+				"f(x)"
+			],
 			"v": "2835d10f"
 		},
 		{
 			"id": "monomi",
 			"name": "Monomi",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 120,
 			"h": 84,
 			"r": 14,
 			"accent": "#e8b53e",
 			"cover": "high_school/math/monomi-polinomi",
+			"tags": [
+				"polinomi",
+				"lettere",
+				"coefficiente",
+				"grado",
+				"algebra"
+			],
 			"v": "3c391187"
 		},
 		{
 			"id": "scomposizione",
 			"name": "Scomposizione",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 150,
 			"h": 72,
 			"r": 14,
 			"accent": "#2f7a57",
 			"cover": "high_school/math/scomposizione",
+			"tags": [
+				"fattori",
+				"raccoglimento",
+				"prodotti notevoli",
+				"polinomi"
+			],
 			"v": "3ebdc7ef"
 		},
 		{
 			"id": "frazioni-algebriche",
 			"name": "Frazioni algebriche",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 104,
 			"h": 104,
 			"r": 20,
 			"accent": "#c0352f",
 			"cover": "high_school/math/frazioni-algebriche",
+			"tags": [
+				"frazione",
+				"polinomi",
+				"denominatore",
+				"semplificazione"
+			],
 			"v": "05c5d734"
 		},
 		{
 			"id": "equazioni",
 			"name": "Equazioni",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 136,
 			"h": 96,
 			"r": 16,
 			"accent": "#2b64a8",
 			"cover": "high_school/math/equazioni-sistemi",
+			"tags": [
+				"bilancia",
+				"incognita",
+				"x",
+				"uguale",
+				"soluzione"
+			],
 			"v": "3af68987"
 		},
 		{
 			"id": "disequazioni",
 			"name": "Disequazioni",
-			"pack": "matematica-capitoli",
+			"pack": "matematica-1",
 			"w": 140,
 			"h": 72,
 			"r": 14,
 			"accent": "#c0352f",
 			"cover": "high_school/math/disequazioni-lineari",
+			"tags": [
+				"minore",
+				"maggiore",
+				"retta dei numeri",
+				"soluzioni",
+				"intervallo"
+			],
 			"v": "bbde7578"
+		},
+		{
+			"id": "statistica",
+			"name": "Statistica",
+			"pack": "matematica-1",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#2b64a8",
+			"cover": "high_school/math/statistica",
+			"tags": [
+				"istogramma",
+				"media",
+				"dati",
+				"frequenze",
+				"grafico a barre"
+			],
+			"v": "c02a1b4a"
+		},
+		{
+			"id": "triangoli",
+			"name": "Triangoli",
+			"pack": "matematica-1",
+			"w": 128,
+			"h": 104,
+			"r": 0,
+			"accent": "#2f7a57",
+			"cut": true,
+			"cover": "high_school/math/geometria-piano-triangoli",
+			"tags": [
+				"triangolo",
+				"angoli",
+				"somma degli angoli",
+				"quadrilateri",
+				"congruenza",
+				"fustellato"
+			],
+			"v": "2b54d567"
+		},
+		{
+			"id": "sistemi",
+			"name": "Sistemi lineari",
+			"pack": "matematica-2",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#2b64a8",
+			"cover": "high_school/math/sistemi-lineari",
+			"tags": [
+				"graffa",
+				"due incognite",
+				"equazioni",
+				"sostituzione",
+				"cramer"
+			],
+			"v": "9a211ec7"
+		},
+		{
+			"id": "radicali",
+			"name": "Radicali",
+			"pack": "matematica-2",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/numeri-reali",
+			"tags": [
+				"spirale di teodoro",
+				"radice quadrata",
+				"numeri reali",
+				"irrazionali",
+				"ipotenusa"
+			],
+			"v": "447f77ad"
+		},
+		{
+			"id": "retta",
+			"name": "La retta",
+			"pack": "matematica-2",
+			"w": 136,
+			"h": 96,
+			"r": 14,
+			"accent": "#c0352f",
+			"cover": "high_school/math/geometria-analitica",
+			"tags": [
+				"piano cartesiano",
+				"coefficiente angolare",
+				"pendenza",
+				"assi",
+				"y = mx + q"
+			],
+			"v": "c3a824ed"
+		},
+		{
+			"id": "secondo-grado",
+			"name": "Formula risolutiva",
+			"pack": "matematica-2",
+			"w": 158,
+			"h": 68,
+			"r": 10,
+			"accent": "#b3302f",
+			"cover": "high_school/math/equazioni-di-secondo-grado",
+			"tags": [
+				"delta",
+				"discriminante",
+				"formula",
+				"secondo grado",
+				"soluzioni",
+				"nastro"
+			],
+			"v": "9cf1807c"
+		},
+		{
+			"id": "disequazioni-secondo-grado",
+			"name": "Segno della parabola",
+			"pack": "matematica-2",
+			"w": 128,
+			"h": 104,
+			"r": 16,
+			"accent": "#c0352f",
+			"cover": "high_school/math/parabola-disequazioni",
+			"tags": [
+				"studio del segno",
+				"parabola",
+				"disequazioni",
+				"intervalli",
+				"radici",
+				"asse x"
+			],
+			"v": "0a6dc53c"
+		},
+		{
+			"id": "grado-superiore",
+			"name": "Grado superiore",
+			"pack": "matematica-2",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/grado-superiore",
+			"tags": [
+				"cubica",
+				"terzo grado",
+				"radici",
+				"scomposizione",
+				"x al cubo"
+			],
+			"v": "a0c13f29"
+		},
+		{
+			"id": "probabilita",
+			"name": "Probabilità",
+			"pack": "matematica-2",
+			"w": 128,
+			"h": 104,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"cover": "high_school/math/probabilita",
+			"tags": [
+				"dadi",
+				"caso",
+				"eventi",
+				"lancio",
+				"un sesto",
+				"fustellato"
+			],
+			"v": "efe89c54"
+		},
+		{
+			"id": "circonferenza",
+			"name": "Circonferenza",
+			"pack": "matematica-2",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#2f7a57",
+			"cover": "high_school/math/geometria-piano-circonferenza",
+			"tags": [
+				"compasso",
+				"cerchio",
+				"raggio",
+				"area",
+				"similitudine"
+			],
+			"v": "4fc069b2"
+		},
+		{
+			"id": "funzioni-proprieta",
+			"name": "Funzioni e proprietà",
+			"pack": "matematica-3",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/funzioni-proprieta",
+			"tags": [
+				"dispari",
+				"pari",
+				"simmetria",
+				"grafico",
+				"crescente",
+				"dominio"
+			],
+			"v": "9b5d0ad7"
+		},
+		{
+			"id": "successioni",
+			"name": "Successioni",
+			"pack": "matematica-3",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/successioni",
+			"tags": [
+				"progressione geometrica",
+				"progressione aritmetica",
+				"ragione",
+				"termini",
+				"induzione"
+			],
+			"v": "e468a637"
+		},
+		{
+			"id": "coniche",
+			"name": "Coniche",
+			"pack": "matematica-3",
+			"w": 96,
+			"h": 112,
+			"r": 0,
+			"accent": "#2b64a8",
+			"cut": true,
+			"cover": "high_school/math/coniche",
+			"tags": [
+				"cono",
+				"ellisse",
+				"parabola",
+				"iperbole",
+				"circonferenza",
+				"sezione conica",
+				"fustellato"
+			],
+			"v": "0a7b6ba0"
+		},
+		{
+			"id": "logaritmi",
+			"name": "Logaritmi",
+			"pack": "matematica-3",
+			"w": 158,
+			"h": 68,
+			"r": 10,
+			"accent": "#b3302f",
+			"cover": "high_school/math/esponenziali-logaritmi",
+			"tags": [
+				"log",
+				"esponente",
+				"base",
+				"potenza",
+				"esponenziale"
+			],
+			"v": "a9eb16f1"
+		},
+		{
+			"id": "regressione",
+			"name": "Statistica bivariata",
+			"pack": "matematica-3",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"cover": "high_school/math/statistica-bivariata",
+			"tags": [
+				"regressione",
+				"correlazione",
+				"retta",
+				"dispersione",
+				"dati"
+			],
+			"v": "8369ede4"
+		},
+		{
+			"id": "goniometria",
+			"name": "Goniometria",
+			"pack": "matematica-4",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/goniometria",
+			"tags": [
+				"circonferenza goniometrica",
+				"seno",
+				"coseno",
+				"angolo",
+				"radianti"
+			],
+			"v": "47e75f59"
+		},
+		{
+			"id": "trigonometria",
+			"name": "Trigonometria",
+			"pack": "matematica-4",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/trigonometria",
+			"tags": [
+				"triangoli",
+				"altezza",
+				"angolo",
+				"teorema dei seni",
+				"teorema del coseno",
+				"torre"
+			],
+			"v": "d0a5d73a"
+		},
+		{
+			"id": "complessi",
+			"name": "Numeri complessi",
+			"pack": "matematica-4",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#c0352f",
+			"cover": "high_school/math/numeri-complessi",
+			"tags": [
+				"piano di gauss",
+				"argand",
+				"unità immaginaria",
+				"modulo",
+				"vettore"
+			],
+			"v": "0c95e3d4"
+		},
+		{
+			"id": "combinatoria",
+			"name": "Calcolo combinatorio",
+			"pack": "matematica-4",
+			"w": 112,
+			"h": 100,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"cover": "high_school/math/calcolo-combinatorio",
+			"tags": [
+				"triangolo di tartaglia",
+				"combinazioni",
+				"coefficienti binomiali",
+				"binomio di newton",
+				"fustellato"
+			],
+			"v": "daa734eb"
+		},
+		{
+			"id": "probabilita-condizionata",
+			"name": "Probabilità condizionata",
+			"pack": "matematica-4",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"cover": "high_school/math/probabilita-avanzata",
+			"tags": [
+				"albero",
+				"diagramma ad albero",
+				"bayes",
+				"eventi",
+				"probabilità composta"
+			],
+			"v": "95c8b656"
+		},
+		{
+			"id": "solidi",
+			"name": "Geometria dello spazio",
+			"pack": "matematica-4",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#2f7a57",
+			"cover": "high_school/math/geometria-solida",
+			"tags": [
+				"cubo",
+				"solidi",
+				"diagonale",
+				"volume",
+				"poliedri",
+				"spigoli"
+			],
+			"v": "a35c0ae4"
+		},
+		{
+			"id": "limiti",
+			"name": "Limiti",
+			"pack": "matematica-5",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"cover": "high_school/math/limiti",
+			"tags": [
+				"avvicinarsi",
+				"tendere",
+				"punto escluso",
+				"grafico",
+				"lim",
+				"intorno"
+			],
+			"v": "edd13861"
+		},
+		{
+			"id": "continuita",
+			"name": "Continuità",
+			"pack": "matematica-5",
+			"w": 158,
+			"h": 68,
+			"r": 12,
+			"accent": "#b3302f",
+			"cover": "high_school/math/continuita",
+			"tags": [
+				"funzione continua",
+				"matita",
+				"curva",
+				"senza salti",
+				"grafico"
+			],
+			"v": "0d399db0"
+		},
+		{
+			"id": "derivate",
+			"name": "Derivate",
+			"pack": "matematica-5",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/derivate",
+			"tags": [
+				"tangente",
+				"pendenza",
+				"retta tangente",
+				"f primo",
+				"rapporto incrementale"
+			],
+			"v": "613f4804"
+		},
+		{
+			"id": "studio-funzione",
+			"name": "Studio di funzione",
+			"pack": "matematica-5",
+			"w": 136,
+			"h": 96,
+			"r": 14,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/studio-funzione",
+			"tags": [
+				"massimo",
+				"minimo",
+				"flesso",
+				"grafico",
+				"derivata prima",
+				"segno"
+			],
+			"v": "cf52946b"
+		},
+		{
+			"id": "integrali",
+			"name": "Integrali",
+			"pack": "matematica-5",
+			"w": 132,
+			"h": 104,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"cover": "high_school/math/integrali",
+			"tags": [
+				"area",
+				"sottografico",
+				"integrale definito",
+				"rettangoli",
+				"primitiva",
+				"fustellato"
+			],
+			"v": "7c6eb894"
+		},
+		{
+			"id": "equazioni-differenziali",
+			"name": "Equazioni differenziali",
+			"pack": "matematica-5",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#e8b53e",
+			"cover": "high_school/math/equazioni-differenziali-superiori",
+			"tags": [
+				"campo di direzioni",
+				"soluzione",
+				"esponenziale",
+				"y primo",
+				"cauchy"
+			],
+			"v": "78bfeac4"
+		},
+		{
+			"id": "distribuzioni",
+			"name": "Distribuzioni di probabilità",
+			"pack": "matematica-5",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"cover": "high_school/math/distribuzioni-probabilita",
+			"tags": [
+				"gauss",
+				"campana",
+				"normale",
+				"istogramma",
+				"media",
+				"binomiale"
+			],
+			"v": "407fb83c"
+		},
+		{
+			"id": "spazio",
+			"name": "Geometria analitica nello spazio",
+			"pack": "matematica-5",
+			"w": 122,
+			"h": 114,
+			"r": 0,
+			"accent": "#2b64a8",
+			"cut": true,
+			"cover": "high_school/math/geometria-analitica-spazio",
+			"tags": [
+				"assi cartesiani",
+				"piano",
+				"x y z",
+				"tre dimensioni",
+				"coordinate",
+				"fustellato"
+			],
+			"v": "6ee9e1c9"
+		},
+		{
+			"id": "atomo-rutherford",
+			"name": "Atomo",
+			"pack": "fisica",
+			"w": 114,
+			"h": 114,
+			"r": 0,
+			"accent": "#2b64a8",
+			"cut": true,
+			"tags": [
+				"nucleo",
+				"elettroni",
+				"orbite",
+				"rutherford",
+				"modello atomico",
+				"fustellato"
+			],
+			"v": "479c9e75"
+		},
+		{
+			"id": "caduta-libera-galileo",
+			"name": "Caduta libera",
+			"pack": "fisica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#e8b53e",
+			"tags": [
+				"galileo",
+				"gravità",
+				"accelerazione",
+				"torre di pisa",
+				"massa",
+				"moto"
+			],
+			"v": "ec56d35c"
+		},
+		{
+			"id": "campo-magnetico",
+			"name": "Campo magnetico",
+			"pack": "fisica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"calamita",
+				"linee di campo",
+				"magnete",
+				"polo nord",
+				"polo sud",
+				"magnetismo"
+			],
+			"v": "7ec4f40d"
+		},
+		{
+			"id": "legge-ohm",
+			"name": "Legge di Ohm",
+			"pack": "fisica",
+			"w": 158,
+			"h": 68,
+			"r": 12,
+			"accent": "#b3302f",
+			"tags": [
+				"resistenza",
+				"tensione",
+				"corrente",
+				"circuito",
+				"elettricità",
+				"formula"
+			],
+			"v": "6e1f7d91"
+		},
+		{
+			"id": "lente-convergente",
+			"name": "Lente convergente",
+			"pack": "fisica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"ottica",
+				"raggi",
+				"fuoco",
+				"immagine",
+				"rifrazione",
+				"lenti"
+			],
+			"v": "6e30583a"
+		},
+		{
+			"id": "massa-energia",
+			"name": "E = mc²",
+			"pack": "fisica",
+			"w": 142,
+			"h": 64,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"cover": "high_school/physics",
+			"tags": [
+				"einstein",
+				"relatività",
+				"energia",
+				"massa",
+				"velocità della luce",
+				"fustellato"
+			],
+			"v": "d8323b44"
+		},
+		{
+			"id": "molla-hooke",
+			"name": "Legge di Hooke",
+			"pack": "fisica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#c0352f",
+			"tags": [
+				"molla",
+				"forza elastica",
+				"allungamento",
+				"costante elastica",
+				"dinamometro"
+			],
+			"v": "be3171e1"
+		},
+		{
+			"id": "onda-lunghezza",
+			"name": "Onda",
+			"pack": "fisica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#e8b53e",
+			"tags": [
+				"lunghezza d'onda",
+				"lambda",
+				"ampiezza",
+				"periodo",
+				"oscillazione",
+				"suono"
+			],
+			"v": "b1171b24"
+		},
+		{
+			"id": "pendolo-semplice",
+			"name": "Pendolo",
+			"pack": "fisica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#e8b53e",
+			"tags": [
+				"oscillazione",
+				"periodo",
+				"galileo",
+				"filo",
+				"isocronismo",
+				"gravità"
+			],
+			"v": "07e88571"
+		},
+		{
+			"id": "piano-inclinato",
+			"name": "Piano inclinato",
+			"pack": "fisica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#e8b53e",
+			"cover": "high_school/physics",
+			"tags": [
+				"forze",
+				"forza peso",
+				"reazione vincolare",
+				"equilibrio",
+				"blocco",
+				"vettori"
+			],
+			"v": "151553da"
+		},
+		{
+			"id": "seconda-legge-newton",
+			"name": "F = ma",
+			"pack": "fisica",
+			"w": 136,
+			"h": 80,
+			"r": 14,
+			"accent": "#e8b53e",
+			"tags": [
+				"newton",
+				"forza",
+				"massa",
+				"accelerazione",
+				"dinamica",
+				"formula"
+			],
+			"v": "b82ac6ef"
+		},
+		{
+			"id": "somma-vettori",
+			"name": "Somma di vettori",
+			"pack": "fisica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#c0352f",
+			"tags": [
+				"vettori",
+				"regola del parallelogramma",
+				"risultante",
+				"freccia",
+				"forze"
+			],
+			"v": "c7b8c119"
+		},
+		{
+			"id": "termometro-celsius",
+			"name": "Termometro",
+			"pack": "fisica",
+			"w": 70,
+			"h": 118,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"tags": [
+				"temperatura",
+				"calore",
+				"gradi celsius",
+				"termologia",
+				"misura",
+				"fustellato"
+			],
+			"v": "e6d8b5b7"
+		},
+		{
+			"id": "acqua-h2o",
+			"name": "H₂O",
+			"pack": "chimica",
+			"w": 114,
+			"h": 74,
+			"r": 0,
+			"accent": "#2b64a8",
+			"cut": true,
+			"tags": [
+				"acqua",
+				"molecola",
+				"formula",
+				"idrogeno",
+				"ossigeno",
+				"fustellato"
+			],
+			"v": "4412916a"
+		},
+		{
+			"id": "anello-benzene",
+			"name": "Benzene",
+			"pack": "chimica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#e8b53e",
+			"tags": [
+				"anello benzenico",
+				"kekulé",
+				"aromatico",
+				"esagono",
+				"chimica organica",
+				"idrocarburi"
+			],
+			"v": "6558eb9e"
+		},
+		{
+			"id": "atomo-bohr",
+			"name": "Atomo di Bohr",
+			"pack": "chimica",
+			"w": 104,
+			"h": 104,
+			"r": 24,
+			"accent": "#2b64a8",
+			"tags": [
+				"atomo",
+				"bohr",
+				"elettroni",
+				"nucleo",
+				"orbite",
+				"protoni",
+				"neutroni"
+			],
+			"v": "bb00cd0a"
+		},
+		{
+			"id": "beuta-bolle",
+			"name": "Beuta",
+			"pack": "chimica",
+			"w": 96,
+			"h": 116,
+			"r": 0,
+			"accent": "#2b64a8",
+			"cut": true,
+			"cover": "high_school/chemistry",
+			"tags": [
+				"laboratorio",
+				"vetreria",
+				"erlenmeyer",
+				"bolle",
+				"reazione",
+				"fustellato"
+			],
+			"v": "af413c9e"
+		},
+		{
+			"id": "equilibrio-chimico-frecce",
+			"name": "Equilibrio chimico",
+			"pack": "chimica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#e8b53e",
+			"tags": [
+				"equilibrio",
+				"reazione reversibile",
+				"frecce",
+				"costante di equilibrio",
+				"kc"
+			],
+			"v": "1861a6aa"
+		},
+		{
+			"id": "legame-covalente-lewis",
+			"name": "Legame covalente",
+			"pack": "chimica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"lewis",
+				"doppietto",
+				"ottetto",
+				"cloro",
+				"elettroni",
+				"legame"
+			],
+			"v": "e713bf5e"
+		},
+		{
+			"id": "numero-avogadro",
+			"name": "Numero di Avogadro",
+			"pack": "chimica",
+			"w": 158,
+			"h": 68,
+			"r": 12,
+			"accent": "#b3302f",
+			"tags": [
+				"mole",
+				"avogadro",
+				"costante",
+				"particelle",
+				"quantità di sostanza"
+			],
+			"v": "ca4e675d"
+		},
+		{
+			"id": "portaprovette",
+			"name": "Portaprovette",
+			"pack": "chimica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"provette",
+				"laboratorio",
+				"vetreria",
+				"soluzioni",
+				"esperimento"
+			],
+			"v": "f23a3859"
+		},
+		{
+			"id": "reazione-bilanciata",
+			"name": "Reazione bilanciata",
+			"pack": "chimica",
+			"w": 158,
+			"h": 68,
+			"r": 12,
+			"accent": "#e8b53e",
+			"tags": [
+				"equazione chimica",
+				"coefficienti",
+				"stechiometria",
+				"idrogeno",
+				"ossigeno",
+				"acqua"
+			],
+			"v": "c3428b52"
+		},
+		{
+			"id": "scala-ph",
+			"name": "Scala del pH",
+			"pack": "chimica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"ph",
+				"acido",
+				"basico",
+				"neutro",
+				"acidi e basi",
+				"indicatore"
+			],
+			"v": "e0bfb82e"
+		},
+		{
+			"id": "tavola-mendeleev",
+			"name": "Mendeleev",
+			"pack": "chimica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#e8b53e",
+			"tags": [
+				"tavola periodica",
+				"mendeleev",
+				"1869",
+				"elementi",
+				"eka-silicio",
+				"germanio"
+			],
+			"v": "de304f02"
+		},
+		{
+			"id": "tessera-carbonio",
+			"name": "Carbonio",
+			"pack": "chimica",
+			"w": 104,
+			"h": 104,
+			"r": 18,
+			"accent": "#e8b53e",
+			"cover": "high_school/chemistry",
+			"tags": [
+				"tavola periodica",
+				"elemento",
+				"c",
+				"numero atomico",
+				"massa atomica",
+				"tessera"
+			],
+			"v": "c56d5e4e"
+		},
+		{
+			"id": "albero-binario",
+			"name": "Albero binario",
+			"pack": "informatica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#2f7a57",
+			"tags": [
+				"albero",
+				"nodi",
+				"radice",
+				"foglie",
+				"ricerca",
+				"struttura dati"
+			],
+			"v": "6f33c6f6"
+		},
+		{
+			"id": "binario-1010",
+			"name": "Binario",
+			"pack": "informatica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#e8b53e",
+			"cover": "high_school/computer-science",
+			"tags": [
+				"bit",
+				"1010",
+				"numeri binari",
+				"base due",
+				"zero e uno",
+				"codifica"
+			],
+			"v": "716606d7"
+		},
+		{
+			"id": "bug-trovato",
+			"name": "Bug",
+			"pack": "informatica",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#c0352f",
+			"tags": [
+				"errore",
+				"debug",
+				"insetto",
+				"correzione",
+				"programma"
+			],
+			"v": "8af8c672"
+		},
+		{
+			"id": "ciclo-for",
+			"name": "Ciclo for",
+			"pack": "informatica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#2b64a8",
+			"tags": [
+				"ciclo",
+				"for",
+				"iterazione",
+				"ripetizione",
+				"contatore",
+				"codice"
+			],
+			"v": "5621d76d"
+		},
+		{
+			"id": "diagramma-di-flusso",
+			"name": "Diagramma di flusso",
+			"pack": "informatica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"flowchart",
+				"algoritmo",
+				"rombo",
+				"decisione",
+				"condizione",
+				"blocchi"
+			],
+			"v": "f5064466"
+		},
+		{
+			"id": "graffe-codice",
+			"name": "{ }",
+			"pack": "informatica",
+			"w": 126,
+			"h": 78,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"tags": [
+				"parentesi graffe",
+				"blocco",
+				"codice",
+				"programmazione",
+				"fustellato"
+			],
+			"v": "11eff9d9"
+		},
+		{
+			"id": "hello-world",
+			"name": "Hello, world!",
+			"pack": "informatica",
+			"w": 158,
+			"h": 60,
+			"r": 12,
+			"accent": "#b3302f",
+			"cover": "high_school/computer-science",
+			"tags": [
+				"primo programma",
+				"stampa",
+				"print",
+				"codice",
+				"saluto",
+				"nastro"
+			],
+			"v": "3bfc8bc3"
+		},
+		{
+			"id": "porta-and",
+			"name": "Porta AND",
+			"pack": "informatica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#e8b53e",
+			"tags": [
+				"porta logica",
+				"and",
+				"tabella di verità",
+				"booleano",
+				"vero",
+				"falso",
+				"circuiti"
+			],
+			"v": "14f43943"
+		},
+		{
+			"id": "prompt-terminale",
+			"name": "Terminale",
+			"pack": "informatica",
+			"w": 104,
+			"h": 104,
+			"r": 16,
+			"accent": "#1f2a44",
+			"tags": [
+				"prompt",
+				"cursore",
+				"riga di comando",
+				"console",
+				"shell"
+			],
+			"v": "a60c60fe"
+		},
+		{
+			"id": "pseudocodice",
+			"name": "Pseudocodice",
+			"pack": "informatica",
+			"w": 120,
+			"h": 104,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"algoritmo",
+				"istruzioni",
+				"se allora",
+				"quaderno",
+				"programma"
+			],
+			"v": "7a8b3712"
+		},
+		{
+			"id": "ricorsione-vedi",
+			"name": "Ricorsione",
+			"pack": "informatica",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"ricorsione",
+				"funzione",
+				"dizionario",
+				"definizione",
+				"chiamata"
+			],
+			"v": "f1c05e19"
+		},
+		{
+			"id": "brutta-copia",
+			"name": "Brutta copia",
+			"pack": "studio",
+			"w": 138,
+			"h": 72,
+			"r": 10,
+			"accent": "#2b64a8",
+			"tags": [
+				"bozza",
+				"timbro",
+				"tema",
+				"prova",
+				"cancellature"
+			],
+			"v": "0e54395e"
+		},
+		{
+			"id": "chiedi",
+			"name": "Dubbio? Chiedi",
+			"pack": "studio",
+			"w": 104,
+			"h": 104,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"tags": [
+				"domanda",
+				"punto interrogativo",
+				"dubbio",
+				"aiuto",
+				"chiedere",
+				"fustellato"
+			],
+			"v": "2f2ac9af"
+		},
+		{
+			"id": "compiti-fatti",
+			"name": "Compiti fatti",
+			"pack": "studio",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#2b64a8",
+			"tags": [
+				"lista",
+				"spunta",
+				"compiti per casa",
+				"fatto",
+				"diario"
+			],
+			"v": "d4b4ef66"
+		},
+		{
+			"id": "completato",
+			"name": "Completato",
+			"pack": "studio",
+			"w": 150,
+			"h": 64,
+			"r": 12,
+			"accent": "#b3302f",
+			"tags": [
+				"timbro",
+				"fatto",
+				"finito",
+				"compito",
+				"nastro"
+			],
+			"v": "1475c42c"
+		},
+		{
+			"id": "da-rifare",
+			"name": "Da rifare dopo",
+			"pack": "studio",
+			"w": 108,
+			"h": 108,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"tags": [
+				"post-it",
+				"promemoria",
+				"nota",
+				"esercizio",
+				"rimandare",
+				"fustellato"
+			],
+			"v": "5fa33581"
+		},
+		{
+			"id": "ho-capito",
+			"name": "Ho capito!",
+			"pack": "studio",
+			"w": 154,
+			"h": 64,
+			"r": 12,
+			"accent": "#2f7a57",
+			"tags": [
+				"lampadina",
+				"idea",
+				"capire",
+				"finalmente",
+				"nastro"
+			],
+			"v": "0df0003e"
+		},
+		{
+			"id": "matita",
+			"name": "Prima a matita",
+			"pack": "studio",
+			"w": 162,
+			"h": 64,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"tags": [
+				"matita",
+				"bozza",
+				"strumenti",
+				"disegno",
+				"gomma",
+				"fustellato"
+			],
+			"v": "ccc2c19d"
+		},
+		{
+			"id": "mezzo-punto",
+			"name": "Mezzo punto",
+			"pack": "studio",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#c0352f",
+			"tags": [
+				"voto",
+				"penna rossa",
+				"correzione",
+				"verifica",
+				"mezzo",
+				"bonus"
+			],
+			"v": "53f32ec6"
+		},
+		{
+			"id": "pausa",
+			"name": "Pausa",
+			"pack": "studio",
+			"w": 120,
+			"h": 116,
+			"r": 0,
+			"accent": "#1f2a44",
+			"cut": true,
+			"tags": [
+				"caffè",
+				"tazza",
+				"riposo",
+				"intervallo",
+				"fustellato"
+			],
+			"v": "b13c088d"
+		},
+		{
+			"id": "pomodoro",
+			"name": "25 minuti",
+			"pack": "studio",
+			"w": 110,
+			"h": 110,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"tags": [
+				"pomodoro",
+				"timer",
+				"concentrazione",
+				"studio",
+				"tempo",
+				"fustellato"
+			],
+			"v": "b96efb47"
+		},
+		{
+			"id": "rifallo",
+			"name": "Rifallo",
+			"pack": "studio",
+			"w": 132,
+			"h": 80,
+			"r": 10,
+			"accent": "#b3302f",
+			"tags": [
+				"timbro",
+				"correzione",
+				"errore",
+				"compito",
+				"da rifare"
+			],
+			"v": "cda18125"
+		},
+		{
+			"id": "ripasso",
+			"name": "Ripasso",
+			"pack": "studio",
+			"w": 136,
+			"h": 96,
+			"r": 14,
+			"accent": "#e8b53e",
+			"tags": [
+				"evidenziatore",
+				"appunti",
+				"quaderno",
+				"ripassare",
+				"studio"
+			],
+			"v": "3b45dcb3"
+		},
+		{
+			"id": "segno-sbagliato",
+			"name": "Segno sbagliato",
+			"pack": "studio",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#c0352f",
+			"tags": [
+				"errore",
+				"meno",
+				"parentesi",
+				"correzione",
+				"penna rossa",
+				"segni"
+			],
+			"v": "ba915df5"
+		},
+		{
+			"id": "senza-calcolatrice",
+			"name": "Senza calcolatrice",
+			"pack": "studio",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#1f2a44",
+			"tags": [
+				"calcolatrice",
+				"calcolo a mano",
+				"conti",
+				"verifica",
+				"vietato"
+			],
+			"v": "01ef56f3"
+		},
+		{
+			"id": "serie",
+			"name": "+1 giorno",
+			"pack": "studio",
+			"w": 94,
+			"h": 114,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"tags": [
+				"serie",
+				"fiamma",
+				"costanza",
+				"giorni di fila",
+				"abitudine",
+				"fustellato"
+			],
+			"v": "b4f09099"
+		},
+		{
+			"id": "un-giorno-alla-volta",
+			"name": "Un giorno alla volta",
+			"pack": "studio",
+			"w": 158,
+			"h": 64,
+			"r": 12,
+			"accent": "#e8b53e",
+			"tags": [
+				"costanza",
+				"calma",
+				"tacche",
+				"giorni",
+				"abitudine",
+				"nastro"
+			],
+			"v": "87e76479"
+		},
+		{
+			"id": "verifica-venerdi",
+			"name": "Verifica venerdì",
+			"pack": "studio",
+			"w": 100,
+			"h": 108,
+			"r": 0,
+			"accent": "#b3302f",
+			"cut": true,
+			"tags": [
+				"calendario",
+				"verifica",
+				"compito in classe",
+				"data",
+				"scadenza",
+				"fustellato"
+			],
+			"v": "c1ed97e9"
+		},
+		{
+			"id": "visto",
+			"name": "Visto",
+			"pack": "studio",
+			"w": 128,
+			"h": 98,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"tags": [
+				"spunta",
+				"correzione",
+				"professore",
+				"penna rossa",
+				"controllato",
+				"fustellato"
+			],
+			"v": "dfc264b7"
+		},
+		{
+			"id": "inizio-anno-matita",
+			"name": "Matita temperata",
+			"pack": "inizio-anno",
+			"w": 134,
+			"h": 84,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"tags": [
+				"inizio anno",
+				"matita",
+				"temperata",
+				"astuccio",
+				"punta"
+			],
+			"v": "55c888b1"
+		},
+		{
+			"id": "inizio-anno-orario",
+			"name": "Orario",
+			"pack": "inizio-anno",
+			"w": 136,
+			"h": 96,
+			"r": 14,
+			"accent": "#c0352f",
+			"tags": [
+				"inizio anno",
+				"orario",
+				"settimana",
+				"lezioni",
+				"materie"
+			],
+			"v": "22bd2de6"
+		},
+		{
+			"id": "inizio-anno-quaderno",
+			"name": "Quaderno nuovo",
+			"pack": "inizio-anno",
+			"w": 104,
+			"h": 104,
+			"r": 20,
+			"accent": "#2b64a8",
+			"tags": [
+				"inizio anno",
+				"quaderno",
+				"quadretti",
+				"spirale",
+				"settembre"
+			],
+			"v": "ef164024"
+		},
+		{
+			"id": "inizio-anno-si-ricomincia",
+			"name": "Si ricomincia",
+			"pack": "inizio-anno",
+			"w": 158,
+			"h": 64,
+			"r": 12,
+			"accent": "#2b64a8",
+			"tags": [
+				"inizio anno",
+				"settembre",
+				"primo giorno",
+				"scuola",
+				"nastro"
+			],
+			"v": "2556963f"
+		},
+		{
+			"id": "verifiche-conto-alla-rovescia",
+			"name": "Meno tre",
+			"pack": "verifiche",
+			"w": 104,
+			"h": 104,
+			"r": 22,
+			"accent": "#e8b53e",
+			"tags": [
+				"verifiche",
+				"conto alla rovescia",
+				"giorni",
+				"calendario",
+				"ansia"
+			],
+			"v": "aac310a8"
+		},
+		{
+			"id": "verifiche-in-bocca-al-lupo",
+			"name": "In bocca al lupo",
+			"pack": "verifiche",
+			"w": 158,
+			"h": 66,
+			"r": 14,
+			"accent": "#b3302f",
+			"tags": [
+				"verifiche",
+				"verifica",
+				"compito in classe",
+				"auguri",
+				"fortuna",
+				"nastro"
+			],
+			"v": "a7e1e29c"
+		},
+		{
+			"id": "verifiche-interrogato",
+			"name": "Interrogato",
+			"pack": "verifiche",
+			"w": 136,
+			"h": 72,
+			"r": 10,
+			"accent": "#b3302f",
+			"tags": [
+				"verifiche",
+				"interrogazione",
+				"orale",
+				"registro",
+				"timbro"
+			],
+			"v": "35bb3ca5"
+		},
+		{
+			"id": "verifiche-otto-piu",
+			"name": "8+",
+			"pack": "verifiche",
+			"w": 104,
+			"h": 104,
+			"r": 18,
+			"accent": "#c0352f",
+			"tags": [
+				"verifiche",
+				"voto",
+				"otto",
+				"correzione",
+				"penna rossa"
+			],
+			"v": "2326efd1"
+		},
+		{
+			"id": "natale-buone-vacanze",
+			"name": "Buone vacanze",
+			"pack": "natale",
+			"w": 158,
+			"h": 64,
+			"r": 12,
+			"accent": "#b3302f",
+			"tags": [
+				"natale",
+				"vacanze",
+				"feste",
+				"compiti",
+				"neve",
+				"nastro"
+			],
+			"v": "a60cba8e"
+		},
+		{
+			"id": "natale-koch",
+			"name": "Fiocco di Koch",
+			"pack": "natale",
+			"w": 108,
+			"h": 108,
+			"r": 0,
+			"accent": "#2b64a8",
+			"cut": true,
+			"tags": [
+				"natale",
+				"neve",
+				"fiocco di neve",
+				"koch",
+				"frattale",
+				"simmetria",
+				"esagono"
+			],
+			"v": "1252a579"
+		},
+		{
+			"id": "natale-sierpinski",
+			"name": "Albero di Sierpinski",
+			"pack": "natale",
+			"w": 110,
+			"h": 120,
+			"r": 0,
+			"accent": "#2f7a57",
+			"cut": true,
+			"tags": [
+				"natale",
+				"albero",
+				"frattale",
+				"sierpinski",
+				"triangolo"
+			],
+			"v": "710bf76f"
+		},
+		{
+			"id": "natale-stella",
+			"name": "Stella aurea",
+			"pack": "natale",
+			"w": 110,
+			"h": 110,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"tags": [
+				"natale",
+				"stella",
+				"pentagramma",
+				"sezione aurea",
+				"phi"
+			],
+			"v": "c66180ad"
+		},
+		{
+			"id": "pi-day-buffon",
+			"name": "Ago di Buffon",
+			"pack": "pi-day",
+			"w": 136,
+			"h": 96,
+			"r": 14,
+			"accent": "#c0352f",
+			"tags": [
+				"pi day",
+				"buffon",
+				"probabilità",
+				"aghi",
+				"pi greco",
+				"esperimento"
+			],
+			"v": "de75fce6"
+		},
+		{
+			"id": "pi-day-calendario",
+			"name": "14 marzo",
+			"pack": "pi-day",
+			"w": 104,
+			"h": 104,
+			"r": 16,
+			"accent": "#b3302f",
+			"tags": [
+				"pi day",
+				"pi greco",
+				"marzo",
+				"calendario",
+				"data",
+				"3.14"
+			],
+			"v": "761d6011"
+		},
+		{
+			"id": "pi-day-spirale",
+			"name": "Spirale di π",
+			"pack": "pi-day",
+			"w": 104,
+			"h": 104,
+			"r": 24,
+			"accent": "#1f2a44",
+			"tags": [
+				"pi day",
+				"pi greco",
+				"cifre",
+				"decimali",
+				"spirale",
+				"irrazionale"
+			],
+			"v": "c89757c5"
+		},
+		{
+			"id": "pi-day-torta",
+			"name": "Pie di π",
+			"pack": "pi-day",
+			"w": 108,
+			"h": 108,
+			"r": 0,
+			"accent": "#e8b53e",
+			"cut": true,
+			"tags": [
+				"pi day",
+				"torta",
+				"pie",
+				"pi greco",
+				"cerchio",
+				"crostata"
+			],
+			"v": "f965f580"
+		},
+		{
+			"id": "maturita-2027",
+			"name": "Maturità 2027",
+			"pack": "maturita",
+			"w": 134,
+			"h": 96,
+			"r": 0,
+			"accent": "#c0352f",
+			"cut": true,
+			"tags": [
+				"maturità",
+				"esame di stato",
+				"2027",
+				"quinto anno",
+				"fustellato"
+			],
+			"v": "b046a78c"
+		},
+		{
+			"id": "maturita-cento-e-lode",
+			"name": "100 e lode",
+			"pack": "maturita",
+			"w": 108,
+			"h": 122,
+			"r": 0,
+			"accent": "#b3302f",
+			"cut": true,
+			"tags": [
+				"maturità",
+				"voto",
+				"cento",
+				"lode",
+				"medaglia",
+				"coccarda"
+			],
+			"v": "0cba348d"
+		},
+		{
+			"id": "maturita-diploma",
+			"name": "Diploma",
+			"pack": "maturita",
+			"w": 136,
+			"h": 96,
+			"r": 18,
+			"accent": "#2f7a57",
+			"tags": [
+				"maturità",
+				"diploma",
+				"pergamena",
+				"fiocco",
+				"esame di stato"
+			],
+			"v": "6b154ccb"
+		},
+		{
+			"id": "maturita-notte-prima",
+			"name": "Notte prima degli esami",
+			"pack": "maturita",
+			"w": 136,
+			"h": 96,
+			"r": 16,
+			"accent": "#e8b53e",
+			"tags": [
+				"maturità",
+				"esami",
+				"notte",
+				"luna",
+				"stelle",
+				"ansia"
+			],
+			"v": "20a14046"
 		}
 	]
 }

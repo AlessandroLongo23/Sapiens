@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" data-name="Coniche" data-tags="cono, ellisse, parabola, iperbole, circonferenza, sezione conica, fustellato" data-cut="8" data-accent="#2b64a8" data-cover="high_school/math/coniche">
+  <path d="M40 8L10 80A30 8 0 0 0 70 80Z" fill="#2b64a8"/>
+  <path d="M70 80A30 8 0 0 0 10 80" fill="none" stroke="#fbfaf6" stroke-opacity=".55" stroke-width="1.2" stroke-dasharray="3 2.5"/>
+  <ellipse cx="35" cy="52" rx="21.9" ry="7" transform="rotate(-33.3 35 52)" fill="#e8b53e" stroke="#1b1e27" stroke-width="1.6"/>
+  <path d="M40 8L10 80A30 8 0 0 0 70 80Z" fill="none" stroke="#1b1e27" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M36 20L20 58" stroke="#fbfaf6" stroke-opacity=".4" stroke-width="3" stroke-linecap="round"/>
+</svg>

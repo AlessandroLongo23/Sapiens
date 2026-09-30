@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Statistica bivariata" data-tags="regressione, correlazione, retta, dispersione, dati" data-radius="16" data-accent="#c0352f" data-cover="high_school/math/statistica-bivariata">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M11 0V88M22 0V88M33 0V88M44 0V88M55 0V88M66 0V88M77 0V88M88 0V88M99 0V88M110 0V88M121 0V88M0 11H128M0 22H128M0 33H128M0 44H128M0 55H128M0 66H128M0 77H128" stroke="#4f7fc0" stroke-opacity=".22"/>
+  <path d="M14 78H120M16 80V10" stroke="#1b1e27" stroke-opacity=".55" stroke-width="1.2"/>
+  <circle cx="26" cy="63" r="2.6" fill="#1b1e27"/><circle cx="33" cy="66" r="2.6" fill="#1b1e27"/><circle cx="40" cy="58" r="2.6" fill="#1b1e27"/><circle cx="47" cy="61" r="2.6" fill="#1b1e27"/><circle cx="55" cy="50" r="2.6" fill="#1b1e27"/><circle cx="62" cy="54" r="2.6" fill="#1b1e27"/><circle cx="69" cy="43" r="2.6" fill="#1b1e27"/><circle cx="77" cy="49" r="2.6" fill="#1b1e27"/><circle cx="84" cy="37" r="2.6" fill="#1b1e27"/><circle cx="91" cy="42" r="2.6" fill="#1b1e27"/><circle cx="99" cy="29" r="2.6" fill="#1b1e27"/><circle cx="106" cy="32" r="2.6" fill="#1b1e27"/>
+  <path d="M20 70L116 22" stroke="#c0352f" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="22" y="26" font-family="serif" font-style="italic" font-size="13" fill="#1b1e27">r = 0,9</text>
+</svg>

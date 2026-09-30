@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 104 96" data-name="Geometria analitica nello spazio" data-tags="assi cartesiani, piano, x y z, tre dimensioni, coordinate, fustellato" data-cut="9" data-accent="#2b64a8" data-cover="high_school/math/geometria-analitica-spazio">
+  <path d="M44 24L82 58L24 76Z" fill="#2b64a8" stroke="#1b1e27" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M44 58V14M44 58H90M44 58L18 82" stroke="#1b1e27" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M44 8L40 16H48ZM96 58L88 54V62ZM14 86L16 77L22 83Z" fill="#1b1e27"/>
+  <circle cx="50" cy="52.7" r="3.6" fill="#c0352f" stroke="#fbfaf6" stroke-width="1.4"/>
+  <text x="54" y="16" font-family="serif" font-style="italic" font-weight="600" font-size="13" fill="#1b1e27">z</text>
+  <text x="94" y="75" text-anchor="middle" font-family="serif" font-style="italic" font-weight="600" font-size="13" fill="#1b1e27">y</text>
+  <text x="10" y="72" text-anchor="middle" font-family="serif" font-style="italic" font-weight="600" font-size="13" fill="#1b1e27">x</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 88" data-name="Probabilità" data-tags="dadi, caso, eventi, lancio, un sesto, fustellato" data-cut="8" data-accent="#c0352f" data-cover="high_school/math/probabilita">
+  <g transform="rotate(-12 34 46)">
+    <rect x="10" y="22" width="48" height="48" rx="10" fill="#c0352f"/>
+    <circle cx="23" cy="35" r="4.2" fill="#fbfaf6"/>
+    <circle cx="34" cy="46" r="4.2" fill="#fbfaf6"/>
+    <circle cx="45" cy="57" r="4.2" fill="#fbfaf6"/>
+  </g>
+  <g transform="rotate(14 76 42)">
+    <rect x="54" y="20" width="44" height="44" rx="9" fill="#2b64a8"/>
+    <circle cx="66" cy="32" r="3.8" fill="#fbfaf6"/>
+    <circle cx="86" cy="32" r="3.8" fill="#fbfaf6"/>
+    <circle cx="66" cy="52" r="3.8" fill="#fbfaf6"/>
+    <circle cx="86" cy="52" r="3.8" fill="#fbfaf6"/>
+    <circle cx="66" cy="42" r="3.8" fill="#fbfaf6"/>
+    <circle cx="86" cy="42" r="3.8" fill="#fbfaf6"/>
+  </g>
+</svg>

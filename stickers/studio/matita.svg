@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 52" data-name="Prima a matita" data-tags="matita, bozza, strumenti, disegno, gomma, fustellato" data-cut="6" data-accent="#e8b53e">
+  <g transform="rotate(-8 75 26)">
+    <path d="M34 15H122V37H34Z" fill="#e8b53e"/>
+    <path d="M34 26H122" stroke="#1b1e27" stroke-opacity=".12" stroke-width="1"/>
+    <path d="M34 16L10 26L34 36Z" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M10 26L18 22.7V29.3Z" fill="#1b1e27"/>
+    <rect x="122" y="15" width="8" height="22" fill="#1b1e27" fill-opacity=".55"/>
+    <path d="M130 16H136Q142 16 142 22V30Q142 36 136 36H130Z" fill="#c0352f"/>
+    <text x="78" y="30.5" text-anchor="middle" font-family="serif" font-style="italic" font-size="12" fill="#1b1e27">prima a matita</text>
+  </g>
+</svg>

@@ -22,8 +22,8 @@ export interface SheetProps {
 	description?: ReactNode;
 	/** 'auto' fits the content (up to 85% of the screen); 'full' is a tall panel. */
 	size?: 'auto' | 'full';
-	/** From `sm` up: 'md' for forms and lists, 'sm' for a question with two or three buttons. */
-	width?: 'sm' | 'md';
+	/** From `sm` up: 'md' for forms and lists, 'sm' for a question with two or three buttons, 'lg' for a wide grid. */
+	width?: 'sm' | 'md' | 'lg';
 	align?: 'bottom' | 'center';
 	/** Drops the body's padding, for content that runs to the edges (the chat). */
 	flush?: boolean;
@@ -193,7 +193,7 @@ export function Sheet({ open, onClose, title, hideTitle = false, description, si
 				tabIndex={-1}
 				className={cn(
 					'relative z-10 flex w-full flex-col rounded-t-3xl bg-surface text-fg shadow-2xl shadow-black/30 outline-none sm:rounded-b-3xl',
-					width === 'sm' ? 'sm:max-w-md' : 'sm:max-w-xl',
+					width === 'sm' ? 'sm:max-w-md' : width === 'lg' ? 'sm:max-w-3xl' : 'sm:max-w-xl',
 					align === 'center' ? 'sm:my-6' : 'sm:mb-6',
 					size === 'full' ? 'h-[calc(100dvh-var(--safe-t)-1.5rem)] sm:h-[min(92dvh,52rem)]' : 'max-h-[85dvh]',
 					leaving ? cn('animate-slide-down', align === 'center' && 'sm:animate-sink-out') : 'animate-slide-up'

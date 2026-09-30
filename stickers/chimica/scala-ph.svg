@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Scala del pH" data-tags="ph, acido, basico, neutro, acidi e basi, indicatore" data-radius="16" data-accent="#c0352f">
+  <defs><linearGradient id="ph"><stop offset="0" stop-color="#c0352f"/><stop offset=".5" stop-color="#fbfaf6"/><stop offset="1" stop-color="#2b64a8"/></linearGradient></defs>
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M12 0V88M24 0V88M36 0V88M48 0V88M60 0V88M72 0V88M84 0V88M96 0V88M108 0V88M120 0V88M0 12H128M0 24H128M0 36H128M0 48H128M0 60H128M0 72H128M0 84H128" stroke="#4f7fc0" stroke-opacity=".22"/>
+  <text x="10" y="28" font-family="serif" font-style="italic" font-size="22" fill="#1b1e27">pH</text>
+  <text x="118" y="27" text-anchor="end" font-family="serif" font-style="italic" font-size="10" fill="#1b1e27" fill-opacity=".7">7 = neutro</text>
+  <rect x="10" y="40" width="108" height="14" rx="3" fill="url(#ph)" stroke="#1b1e27" stroke-width="1.4"/>
+  <path d="M17.7 51V54M25.4 51V54M33.1 51V54M40.9 51V54M48.6 51V54M56.3 51V54M71.7 51V54M79.4 51V54M87.1 51V54M94.9 51V54M102.6 51V54M110.3 51V54" stroke="#1b1e27" stroke-width="1" stroke-opacity=".55"/>
+  <path d="M64 40V54" stroke="#1b1e27" stroke-width="1.4"/>
+  <path d="M60 34H68L64 39Z" fill="#1b1e27"/>
+  <text x="12" y="65" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">0</text>
+  <text x="64" y="65" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">7</text>
+  <text x="116" y="65" text-anchor="middle" font-family="mono" font-size="8" fill="#1b1e27">14</text>
+  <text x="10" y="79" font-family="mono" font-weight="500" font-size="7" letter-spacing="1" fill="#c0352f">ACIDO</text>
+  <text x="118" y="79" text-anchor="end" font-family="mono" font-weight="500" font-size="7" letter-spacing="1" fill="#2b64a8">BASICO</text>
+</svg>

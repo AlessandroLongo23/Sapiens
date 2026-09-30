@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Compiti fatti" data-tags="lista, spunta, compiti per casa, fatto, diario" data-radius="20" data-accent="#2b64a8">
+  <rect width="96" height="96" fill="#2b64a8"/>
+  <text x="14" y="21" font-family="mono" font-size="7.5" letter-spacing="1.2" fill="#fbfaf6" fill-opacity=".7">COMPITI</text>
+  <g fill="none" stroke="#fbfaf6" stroke-width="1.6">
+    <rect x="14" y="31" width="11" height="11" rx="2"/>
+    <rect x="14" y="50" width="11" height="11" rx="2"/>
+    <rect x="14" y="69" width="11" height="11" rx="2"/>
+  </g>
+  <path d="M34 37H76M34 56H68M34 75H80" stroke="#fbfaf6" stroke-opacity=".5" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M16 36L20 40L28 29M16 55L20 59L28 48" fill="none" stroke="#fbfaf6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16 74L20 78L28 67" fill="none" stroke="#e8b53e" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

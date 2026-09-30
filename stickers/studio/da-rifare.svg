@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Da rifare dopo" data-tags="post-it, promemoria, nota, esercizio, rimandare, fustellato" data-cut="6" data-accent="#e8b53e">
+  <g transform="rotate(-5 48 50)">
+    <path d="M14 18H82V66L66 82H14Z" fill="#e8b53e"/>
+    <path d="M82 66H70Q66 66 66 70V82Z" fill="#1b1e27" fill-opacity=".2"/>
+    <rect x="34" y="12" width="28" height="11" fill="#fbfaf6" fill-opacity=".8" transform="rotate(4 48 17)"/>
+    <text x="22" y="46" font-family="serif" font-style="italic" font-size="15" fill="#1b1e27">da rifare</text>
+    <text x="22" y="64" font-family="serif" font-style="italic" font-size="15" fill="#1b1e27">dopo</text>
+    <path d="M58 60L64 60M60 56L64 60L60 64" fill="none" stroke="#c0352f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

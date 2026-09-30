@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Pendolo" data-tags="oscillazione, periodo, galileo, filo, isocronismo, gravità" data-radius="20" data-accent="#e8b53e">
+  <rect width="96" height="96" fill="#2b64a8"/>
+  <path d="M24 14H60" stroke="#fbfaf6" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M42 14V66" stroke="#fbfaf6" stroke-width="1.1" stroke-opacity=".5" stroke-dasharray="2.5 2"/>
+  <path d="M21.7 59.7A50 50 0 0 0 62.3 59.7" fill="none" stroke="#fbfaf6" stroke-width="1.2" stroke-opacity=".5" stroke-dasharray="1 3" stroke-linecap="round"/>
+  <circle cx="21.7" cy="59.7" r="6" fill="#fbfaf6" fill-opacity=".2"/>
+  <path d="M42 14L62.3 59.7" stroke="#fbfaf6" stroke-width="1.6"/>
+  <path d="M42 30A16 16 0 0 0 48.5 28.6" fill="none" stroke="#e8b53e" stroke-width="1.2"/>
+  <text x="47" y="41" font-family="serif" font-style="italic" font-size="9" fill="#e8b53e">θ</text>
+  <text x="34" y="42" text-anchor="end" font-family="serif" font-style="italic" font-size="10" fill="#fbfaf6" fill-opacity=".7">l</text>
+  <circle cx="62.3" cy="59.7" r="6.5" fill="#e8b53e"/>
+  <text x="48" y="87" text-anchor="middle" font-family="serif" font-style="italic" font-size="12" fill="#fbfaf6">T = 2π√<tspan>l/g</tspan></text>
+</svg>

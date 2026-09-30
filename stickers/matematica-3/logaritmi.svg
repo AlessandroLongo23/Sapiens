@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 60" data-name="Logaritmi" data-tags="log, esponente, base, potenza, esponenziale" data-radius="10" data-accent="#b3302f" data-cover="high_school/math/esponenziali-logaritmi">
+  <rect width="150" height="60" fill="#b3302f"/>
+  <rect x="5" y="5" width="140" height="50" rx="5" fill="none" stroke="#fbfaf6" stroke-opacity=".5" stroke-width="1.2" stroke-dasharray="3 2.5"/>
+  <text x="75" y="33" text-anchor="middle" font-family="serif" font-size="24" fill="#fbfaf6">log<tspan dy="6" font-size="14" fill="#e8b53e">2</tspan><tspan dy="-6"> 8 = 3</tspan></text>
+  <text x="75" y="48" text-anchor="middle" font-family="serif" font-style="italic" font-size="10" fill="#fbfaf6" fill-opacity=".8">perché 2<tspan dy="-4" font-size="7">3</tspan><tspan dy="4"> = 8</tspan></text>
+</svg>

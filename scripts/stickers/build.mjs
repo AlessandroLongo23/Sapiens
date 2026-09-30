@@ -9,6 +9,9 @@
  *   npm run stickers              build
  *   npm run stickers -- --png     build, and take a picture of the proof sheet (stickers/foglio.png)
  *   npm run stickers -- --check   fail if the committed output is not what the sources give
+ *   npm run stickers -- --preview <pack>
+ *                                 check one pack and draw its proof sheet (stickers/anteprima-<pack>.html
+ *                                 and .png), writing nothing else: packs can be drawn side by side
  */
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -23,6 +26,7 @@ const OUT = join(ROOT, 'public/stickers');
 const CATALOG = join(ROOT, 'src/lib/zaino/sticker-catalog.json');
 const SHEET = join(SRC, 'foglio.html');
 const CHECK = process.argv.includes('--check');
+const PREVIEW = process.argv.includes('--preview') ? process.argv[process.argv.indexOf('--preview') + 1] : null;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /* ------------------------------------------------------------------ fonts */
@@ -327,7 +331,9 @@ async function cutOutline(art, w, h, margin, file) {
 
 /* ------------------------------------------------------------------ build */
 
-const packs = JSON.parse(readFileSync(join(SRC, 'packs.json'), 'utf8'));
+const allPacks = JSON.parse(readFileSync(join(SRC, 'packs.json'), 'utf8'));
+if (PREVIEW && !allPacks.some((p) => p.id === PREVIEW)) throw new Error(`--preview: il pacchetto "${PREVIEW}" non è in packs.json`);
+const packs = PREVIEW ? allPacks.filter((p) => p.id === PREVIEW) : allPacks;
 const stickers = [];
 const files = new Map();
 const seen = new Set();
@@ -351,6 +357,8 @@ for (const pack of packs) {
 		if (vx !== 0 || vy !== 0 || !(w >= 56 && w <= 150 && h >= 40 && h <= 150)) throw new Error(`${file}: viewBox deve essere "0 0 L A" con lati tra 56 e 150 (altezza da 40)`);
 		const cut = svg.hasAttribute('data-cut') ? Number(svg.getAttribute('data-cut')) : null;
 		const meta = { name: svg.getAttribute('data-name'), radius: cut === null ? Number(svg.getAttribute('data-radius')) : 0, accent: svg.getAttribute('data-accent'), cover: svg.getAttribute('data-cover') || undefined };
+		const tags = (svg.getAttribute('data-tags') || '').split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
+		if (tags.some((t) => t.length > 30)) throw new Error(`${file}: data-tags sono parole brevi separate da virgole`);
 		if (!meta.name) throw new Error(`${file}: manca data-name`);
 		if (cut !== null && !(cut >= 4 && cut <= 14)) throw new Error(`${file}: data-cut tra 4 e 14`);
 		if (cut === null && !(meta.radius >= 8 && meta.radius <= 30)) throw new Error(`${file}: data-radius tra 8 e 30`);
@@ -358,7 +366,7 @@ for (const pack of packs) {
 		if (meta.cover && !/^[a-z0-9_-]+(\/[a-z0-9_-]+){0,4}$/.test(meta.cover)) throw new Error(`${file}: data-cover non valido`);
 
 		for (const t of Array.from(svg.getElementsByTagName('text'))) outline(t, file);
-		for (const a of ['data-name', 'data-radius', 'data-accent', 'data-cover', 'data-cut']) svg.removeAttribute(a);
+		for (const a of ['data-name', 'data-radius', 'data-accent', 'data-cover', 'data-cut', 'data-tags']) svg.removeAttribute(a);
 		let body, ow = w, oh = h;
 		if (cut === null) {
 			svg.setAttribute('width', String(w));
@@ -375,11 +383,51 @@ for (const pack of packs) {
 		if (body.includes('NaN')) throw new Error(`${file}: il file generato contiene NaN`);
 		const v = createHash('sha1').update(body).digest('hex').slice(0, 8);
 		files.set(`${id}.svg`, body);
-		stickers.push({ id, name: meta.name, pack: pack.id, w: ow + 8, h: oh + 8, r: meta.radius, accent: meta.accent.toLowerCase(), ...(cut !== null ? { cut: true } : {}), ...(meta.cover ? { cover: meta.cover } : {}), v });
+		stickers.push({ id, name: meta.name, pack: pack.id, w: ow + 8, h: oh + 8, r: meta.radius, accent: meta.accent.toLowerCase(), ...(cut !== null ? { cut: true } : {}), ...(meta.cover ? { cover: meta.cover } : {}), ...(tags.length ? { tags } : {}), v });
 	}
 }
 
 for (const pack of packs) for (const id of pack.order ?? []) if (!stickers.some((s) => s.id === id && s.pack === pack.id)) throw new Error(`packs.json: "${id}" nell'ordine di ${pack.id} non esiste`);
+
+const card = (s, scale, src) =>
+	`<figure><div class="st${s.cut ? ' cut' : ''}" style="width:${s.w * scale}px;height:${s.h * scale}px;border-radius:${s.r * scale}px;padding:${s.cut ? 0 : 4 * scale}px"><img src="${src(s)}" style="border-radius:${Math.max(0, s.r - 4) * scale}px"></div>${scale === 1 ? `<figcaption>${s.name}<br><code>${s.id}</code>${s.cover ? `<br><small>${s.cover}</small>` : ''}${s.tags ? `<br><i>${s.tags.join(', ')}</i>` : ''}</figcaption>` : ''}</figure>`;
+/** The proof sheet: every sticker, pack by pack, on squared paper, at full size and at 60 px. */
+const proofSheet = (src) => `<!doctype html><meta charset="utf-8"><title>Foglio degli adesivi</title>
+<style>
+body{margin:0;padding:32px;font:13px/1.4 system-ui,sans-serif;color:#1b1e27;background:#fbfaf6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M22 0V22H0' fill='none' stroke='%234f7fc0' stroke-opacity='.18'/%3E%3C/svg%3E")}
+h1{font:600 28px Georgia,serif;margin:0 0 4px}h2{font:600 20px Georgia,serif;margin:36px 0 12px}
+.row{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end}.small{gap:16px;margin-top:16px}
+figure{margin:0;text-align:center;max-width:170px}figcaption{margin-top:8px;color:#555}code{font-size:11px;color:#888}small{color:#b3302f}i{font-size:11px;color:#888}
+.st{background:#fff;box-sizing:border-box;filter:drop-shadow(0 .6px .5px rgb(30 18 8/.38)) drop-shadow(0 1px 2px rgb(30 18 8/.12));transform:rotate(-2deg)}
+.st img{display:block;width:100%;height:100%}.st.cut{background:none}
+</style>
+<h1>Foglio degli adesivi</h1><p>${stickers.length} adesivi, generati da stickers/ il ${new Date().toLocaleDateString('it-IT')}.</p>
+${packs
+	.map((p) => {
+		const own = stickers.filter((s) => s.pack === p.id);
+		return `<h2>${p.name} (${own.length})</h2><div class="row">${own.map((s) => card(s, 1, src)).join('')}</div><div class="row small">${own.map((s) => card(s, 60 / Math.max(s.w, s.h), src)).join('')}</div>`;
+	})
+	.join('\n')}`;
+
+/** --png: a picture of a sheet too, for a look without a browser. */
+async function photograph(html, png) {
+	const { chromium } = await import('playwright');
+	const browser = await chromium.launch();
+	const page = await browser.newPage({ viewport: { width: 1100, height: 800 }, deviceScaleFactor: 2 });
+	await page.goto(`file://${html}`);
+	await page.waitForLoadState('load');
+	await page.screenshot({ path: png, fullPage: true });
+	await browser.close();
+}
+
+if (PREVIEW) {
+	const html = join(SRC, `anteprima-${PREVIEW}.html`);
+	writeFileSync(html, proofSheet((s) => `data:image/svg+xml;base64,${Buffer.from(files.get(`${s.id}.svg`)).toString('base64')}`));
+	await photograph(html, join(SRC, `anteprima-${PREVIEW}.png`));
+	console.log(`${stickers.length} adesivi in ${PREVIEW}. Anteprima: stickers/anteprima-${PREVIEW}.html e .png`);
+	process.exit(0);
+}
+
 const catalog = JSON.stringify({ packs: packs.map(({ order: _order, ...p }) => p), stickers }, null, '\t') + '\n';
 
 if (CHECK) {
@@ -400,36 +448,11 @@ for (const name of readdirSync(OUT)) if (!files.has(name)) rmSync(join(OUT, name
 for (const [name, body] of files) writeFileSync(join(OUT, name), body);
 writeFileSync(CATALOG, catalog);
 
-// The proof sheet: every sticker, pack by pack, die-cut on squared paper, at full size and at 60 px.
-const card = (s, scale) =>
-	`<figure><div class="st${s.cut ? ' cut' : ''}" style="width:${s.w * scale}px;height:${s.h * scale}px;border-radius:${s.r * scale}px;padding:${s.cut ? 0 : 4 * scale}px"><img src="../public/stickers/${s.id}.svg?v=${s.v}" style="border-radius:${Math.max(0, s.r - 4) * scale}px"></div>${scale === 1 ? `<figcaption>${s.name}<br><code>${s.id}</code>${s.cover ? `<br><small>${s.cover}</small>` : ''}</figcaption>` : ''}</figure>`;
-const sheet = `<!doctype html><meta charset="utf-8"><title>Foglio degli adesivi</title>
-<style>
-body{margin:0;padding:32px;font:13px/1.4 system-ui,sans-serif;color:#1b1e27;background:#fbfaf6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M22 0V22H0' fill='none' stroke='%234f7fc0' stroke-opacity='.18'/%3E%3C/svg%3E")}
-h1{font:600 28px Georgia,serif;margin:0 0 4px}h2{font:600 20px Georgia,serif;margin:36px 0 12px}
-.row{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end}.small{gap:16px;margin-top:16px}
-figure{margin:0;text-align:center}figcaption{margin-top:8px;color:#555}code{font-size:11px;color:#888}small{color:#b3302f}
-.st{background:#fff;box-sizing:border-box;filter:drop-shadow(0 .6px .5px rgb(30 18 8/.38)) drop-shadow(0 1px 2px rgb(30 18 8/.12));transform:rotate(-2deg)}
-.st img{display:block;width:100%;height:100%}.st.cut{background:none}
-</style>
-<h1>Foglio degli adesivi</h1><p>${stickers.length} adesivi, generati da stickers/ il ${new Date().toLocaleDateString('it-IT')}.</p>
-${packs
-	.map((p) => {
-		const own = stickers.filter((s) => s.pack === p.id);
-		return `<h2>${p.name} (${own.length})</h2><div class="row">${own.map((s) => card(s, 1)).join('')}</div><div class="row small">${own.map((s) => card(s, 60 / Math.max(s.w, s.h))).join('')}</div>`;
-	})
-	.join('\n')}`;
+const sheet = proofSheet((s) => `../public/stickers/${s.id}.svg?v=${s.v}`);
 writeFileSync(SHEET, sheet);
 console.log(`${stickers.length} adesivi in ${packs.length} pacchetti. Foglio di prova: stickers/foglio.html`);
 
-// --png: a picture of the sheet too, for a look without a browser.
 if (process.argv.includes('--png')) {
-	const { chromium } = await import('playwright');
-	const browser = await chromium.launch();
-	const page = await browser.newPage({ viewport: { width: 1100, height: 800 }, deviceScaleFactor: 2 });
-	await page.goto(`file://${SHEET}`);
-	await page.waitForLoadState('load');
-	await page.screenshot({ path: join(SRC, 'foglio.png'), fullPage: true });
-	await browser.close();
+	await photograph(SHEET, join(SRC, 'foglio.png'));
 	console.log('Foto del foglio: stickers/foglio.png');
 }

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Diagramma di flusso" data-tags="flowchart, algoritmo, rombo, decisione, condizione, blocchi" data-radius="16" data-accent="#c0352f">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M0 12H128M0 24H128M0 36H128M0 48H128M0 60H128M0 72H128M0 84H128M12 0V88M24 0V88M36 0V88M48 0V88M60 0V88M72 0V88M84 0V88M96 0V88M108 0V88M120 0V88" stroke="#4f7fc0" stroke-opacity=".25" stroke-width="1"/>
+  <ellipse cx="46" cy="14" rx="21" ry="6.5" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.8"/>
+  <text x="46" y="16.6" text-anchor="middle" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27">INIZIO</text>
+  <path d="M46 20.5V25M67 42H81M46 56V61" fill="none" stroke="#1b1e27" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M46 28L43 24H49ZM85 42L81 39V45ZM46 64L43 60H49Z" fill="#1b1e27"/>
+  <path d="M46 28L66 42L46 56L26 42Z" fill="#c0352f" stroke="#1b1e27" stroke-width="1.8" stroke-linejoin="round"/>
+  <text x="46" y="47" text-anchor="middle" font-family="serif" font-weight="600" font-size="15" fill="#fbfaf6">?</text>
+  <text x="75" y="37" text-anchor="middle" font-family="mono" font-size="7" fill="#1b1e27">sì</text>
+  <text x="41" y="62" text-anchor="end" font-family="mono" font-size="7" fill="#1b1e27">no</text>
+  <rect x="86" y="33" width="32" height="18" rx="2" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.8"/>
+  <rect x="30" y="64" width="32" height="16" rx="2" fill="#fbfaf6" stroke="#1b1e27" stroke-width="1.8"/>
+  <path d="M92 40H111M92 45H104M36 70H55M36 75H48" stroke="#1b1e27" stroke-opacity=".55" stroke-width="1.4" stroke-linecap="round"/>
+</svg>

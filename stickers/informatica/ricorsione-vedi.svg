@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Ricorsione" data-tags="ricorsione, funzione, dizionario, definizione, chiamata" data-radius="16" data-accent="#c0352f">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <text x="12" y="28" font-family="serif" font-weight="600" font-size="15" fill="#1b1e27">ricorsione</text>
+  <text x="12" y="41" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".55">s.f. INFORMATICA</text>
+  <text x="12" y="62" font-family="serif" font-style="italic" font-size="12" fill="#1b1e27">vedi <tspan fill="#c0352f">ricorsione</tspan>.</text>
+  <path d="M42 66H99" stroke="#c0352f" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M104 60Q120 46 114 32Q110 24 102 23" fill="none" stroke="#c0352f" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M97 23L103 19.5V26.5Z" fill="#c0352f"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Terminale" data-tags="prompt, cursore, riga di comando, console, shell" data-radius="16" data-accent="#1f2a44">
+  <rect width="96" height="96" fill="#1f2a44"/>
+  <circle cx="14" cy="12" r="3" fill="#c0352f"/>
+  <circle cx="23" cy="12" r="3" fill="#e8b53e"/>
+  <circle cx="32" cy="12" r="3" fill="#fbfaf6" fill-opacity=".45"/>
+  <path d="M0 21H96" stroke="#fbfaf6" stroke-opacity=".2" stroke-width="1"/>
+  <text x="12" y="40" font-family="mono" font-size="9" fill="#fbfaf6" fill-opacity=".45">&gt; ciao</text>
+  <text x="12" y="74" font-family="mono" font-weight="600" font-size="28" fill="#e8b53e">&gt;</text>
+  <rect x="36" y="70" width="18" height="4.5" fill="#fbfaf6"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Lente convergente" data-tags="ottica, raggi, fuoco, immagine, rifrazione, lenti" data-radius="16" data-accent="#c0352f">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M11 0V88M22 0V88M33 0V88M44 0V88M55 0V88M66 0V88M77 0V88M88 0V88M99 0V88M110 0V88M121 0V88M0 11H128M0 22H128M0 33H128M0 44H128M0 55H128M0 66H128M0 77H128" stroke="#4f7fc0" stroke-opacity="0.25"/>
+  <path d="M8 48H120" stroke="#1b1e27" stroke-width="1.2" stroke-opacity=".55"/>
+  <path d="M64 14Q73 48 64 82Q55 48 64 14Z" fill="#2b64a8" fill-opacity=".22" stroke="#2b64a8" stroke-width="1.6"/>
+  <path d="M24 30H64L116 76.8M24 30L116 71.4M24 30L64 66H116" fill="none" stroke="#c0352f" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24 48L24 35" fill="none" stroke="#1b1e27" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M24 29L27.5 36L20.5 36Z" fill="#1b1e27"/>
+  <path d="M104 48L104 61" fill="none" stroke="#c0352f" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M104 67L100.5 60L107.5 60Z" fill="#c0352f"/>
+  <circle cx="44" cy="48" r="2" fill="#1b1e27"/>
+  <circle cx="84" cy="48" r="2" fill="#1b1e27"/>
+  <text x="44" y="59" text-anchor="middle" font-family="serif" font-style="italic" font-size="9" fill="#1b1e27">F</text>
+  <text x="84" y="43" text-anchor="middle" font-family="serif" font-style="italic" font-size="9" fill="#1b1e27">F</text>
+</svg>
