@@ -12,6 +12,17 @@ import GraficoDati from './GraficoDati';
 import Dinamometro from './Dinamometro';
 import MollaRighello from './MollaRighello';
 import PuntoForze from './PuntoForze';
+import RaggioDueMezzi from './RaggioDueMezzi';
+import LenteOggetto from './LenteOggetto';
+import AstaForze from './AstaForze';
+import TorchioIdraulico from './TorchioIdraulico';
+import RecipienteLiquido from './RecipienteLiquido';
+import TuboAU from './TuboAU';
+import FiliCorpo from './FiliCorpo';
+import PianoInclinato from './PianoInclinato';
+import DinamometriArchimede from './DinamometriArchimede';
+import GalleggianteQuote from './GalleggianteQuote';
+import RaggiSpecchi from './RaggiSpecchi';
 
 /**
  * The drawings of the exercises that change with the numbers (a block on an incline at the exercise's angle): each
@@ -38,11 +49,22 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	'molla-righello': MollaRighello,
 	'punto-forze': PuntoForze,
 	// Physics, first year: equilibrium of a point (group 6).
+	'fili-corpo': FiliCorpo,
+	'piano-inclinato': PianoInclinato,
 	// Physics, first year: rigid bodies and levers (group 7).
+	'asta-forze': AstaForze,
 	// Physics, first year: pressure, Pascal and Stevin (group 8).
+	'torchio-idraulico': TorchioIdraulico,
+	'recipiente-liquido': RecipienteLiquido,
+	'tubo-a-u': TuboAU,
 	// Physics, first year: atmosphere and Archimedes (group 9).
+	'dinamometri-archimede': DinamometriArchimede,
+	'galleggiante-quote': GalleggianteQuote,
 	// Physics, first year: rays and mirrors (group 10).
+	'raggi-specchi': RaggiSpecchi,
 	// Physics, first year: refraction and lenses (group 11).
+	'raggio-due-mezzi': RaggioDueMezzi,
+	'lente-oggetto': LenteOggetto,
 };
 
 export function SceneFigure({ scene, className }: { scene: SceneRef; className?: string }) {

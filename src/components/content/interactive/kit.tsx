@@ -89,7 +89,10 @@ export type Frame = ReturnType<typeof frame>;
 export function frame(x0: number, x1: number, y0: number, y1: number) {
 	const W = (x1 - x0) * K;
 	const H = (y1 - y0) * K;
-	const px = (p: V) => v((p.x - x0) * K, (y1 - p.y) * K);
+	// Rounded to a hundredth of a pixel: the server and the browser can disagree on the last digits of a sine, and
+	// an SVG attribute that differs by 1e-15 breaks the hydration of a figure rendered on the server (the scenes).
+	const r2 = (x: number) => Math.round(x * 100) / 100;
+	const px = (p: V) => v(r2((p.x - x0) * K), r2((y1 - p.y) * K));
 	const n = (x: number) => x.toFixed(2);
 	/** Points for <polyline>/<polygon>. */
 	const pts = (...ps: V[]) => ps.map((p) => { const q = px(p); return `${n(q.x)},${n(q.y)}`; }).join(' ');

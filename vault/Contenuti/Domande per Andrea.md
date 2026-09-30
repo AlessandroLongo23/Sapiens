@@ -208,5 +208,17 @@ Le 19 lezioni del primo anno sui primi tre capitoli; vedi [[2026-09-29 Primo lot
 - [ ] Molle in serie e in parallelo lasciate fuori, perché il programma non le cita: confermi?
 - [ ] Coefficienti di attrito presi da Engineering ToolBox (pagina senza data): meglio la tabella dell'Amaldi.
 
+## Secondo lotto di fisica: equilibrio e ottica (30 settembre 2026)
+Le 18 lezioni che chiudono il primo anno: equilibrio dei solidi, dei fluidi, ottica geometrica. Vedi [[2026-09-30 Secondo lotto di fisica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione "Domande per Andrea" di `docs/lezioni/fisica/note/20-37`.
+- [ ] Reazione vincolare $\vec F_v$ (scelta fatta), $\vec N$ o $\vec R$; componenti del peso $P_\parallel$ e $P_\perp$ (scelta fatta) o $P_x$ e $P_y$.
+- [ ] Momento $M$ (scelta fatta) o $\tau$, positivo in senso antiorario, braccio come distanza dalla retta d'azione, unità N·m.
+- [ ] Leve: "forza motrice e resistente" (scelta fatta) o "potenza e resistenza"; "base d'appoggio" o "poligono d'appoggio".
+- [ ] Specchi e lenti: $1/p + 1/q = 1/f$, $G = -q/p$, $q < 0$ per l'immagine virtuale e $f < 0$ per lo specchio convesso e la lente divergente (scelta fatta), oppure solo valori positivi con la natura dell'immagine detta a parole; simboli $p$, $q$, $f$ o $d_o$, $d_i$.
+- [ ] Angoli di rifrazione $\theta_1$, $\theta_2$ (scelta fatta) o $\hat\imath$, $\hat r$; angoli al grado (scelta fatta) o al decimo.
+- [ ] $p_0 = 1{,}013 \cdot 10^5\,\text{Pa}$ (lezione 29), arrotondato a $1{,}01 \cdot 10^5$ negli esempi della 28: va bene, o sempre lo stesso valore?
+- [ ] Acqua di mare a 1030 kg/m³ (scelta fatta) o 1025; $g$ in N/kg nella legge di Stevino.
+- [ ] Argomenti che forse l'Amaldi del primo anno non fa: gli spostamenti dei pistoni nel torchio, la profondità apparente, i due specchi ad angolo, i due fili con angoli diversi (un sistema di due equazioni). Il verricello è stato lasciato fuori.
+- [ ] Velocità della luce e anno luce messi nella lezione 31: è il posto giusto?
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

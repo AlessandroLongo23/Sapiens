@@ -103,7 +103,8 @@ li disegnano uguali:
 | Punto materiale | `\fill (P) circle (1.5pt);` |
 | Assi | `\draw[->] (-0.3,0) -- (4,0) node[right] {$x$};` come in matematica, griglia `\draw[gray!25, very thin] ... grid ...` |
 | Fulcro, perno | un triangolo `\draw[thick, fill=gray!20] (x,0) -- ++(-0.2,-0.35) -- ++(0.4,0) -- cycle;` sopra un suolo; perno `\draw[thick, fill=white] (P) circle (2pt);` |
-| Liquido | `\fill[cyan!20] ...;` con la superficie libera `\draw[thin] ...;`; recipiente `\draw[thick]` aperto in alto |
+| Liquido | acqua `\fill[cyan!20] ...;`, olio `yellow!20`, mercurio `gray!60`, con la superficie libera `\draw[thin] ...;`; recipiente `\draw[thick]` aperto in alto (nel kit: `interactive/fisica/liquidi.tsx`) |
+| Asta, trave | `\draw[thick, fill=blue!10] (x0,0) rectangle (x1,0.12);` (nel kit: `interactive/fisica/leve.tsx`, con fulcro, perno, verso di rotazione e quote) |
 | Raggio di luce | `\draw[thick, orange!90!black, postaction={decorate}, decoration={markings, mark=at position 0.5 with {\arrow{Stealth}}}] (A) -- (B);`; un secondo raggio in `blue!70!black`; il prolungamento virtuale `\draw[thin, dashed, orange!90!black]` senza freccia |
 | Asse ottico | `\draw[thin, dash dot] (x0,0) -- (x1,0);` |
 | Normale | `\draw[thin, dashed] ...;` |
@@ -116,6 +117,11 @@ li disegnano uguali:
 Le frecce delle forze partono dal punto di applicazione; in un diagramma delle forze il corpo è un punto o un
 blocco, con le forze che partono dal centro. Le lunghezze delle frecce sono in scala quando la figura dà i
 moduli.
+
+Dentro i nodi di TikZ le unità si scrivono fuori dalla formula, `node {$76$ cm}`: `\text{cm}` in un nodo fa fallire
+node-tikzjax. I colori dello spettro nel tema scuro si invertono (il giallo diventa marrone, il violetto rosa): le
+figure con i colori della luce li disegnano fuori dall'inversione, come `PrismaDispersione.tsx`, e nel TikZ si
+evitano, o si dice nel testo che i colori sono indicativi.
 
 I grafici (spazio-tempo, allungamento-forza, massa-volume) si disegnano come quelli delle lezioni di matematica:
 TikZ con assi, griglia e `plot`, niente pgfplots. Un grafico che andrà reso interattivo quando esisterà il piano

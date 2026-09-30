@@ -60,6 +60,18 @@ export const magnification = (p: number, q: number) => -q / p;
 
 // ---------------------------------------------------------------- drawing
 
+/** A thick Stealth tip (the same size as fisica.tsx's arrows) with its point at `at`, pointing along `d`. */
+const TIP_LEN = 4.169 / 28.4528;
+function tip(f: Frame, at: V, d: V) {
+	const u = unit(d);
+	const n = v(-u.y, u.x);
+	const back = sub(at, scale(u, TIP_LEN));
+	const notch = sub(at, scale(u, TIP_LEN * 0.668));
+	const half = 1.576 / 28.4528;
+	return f.path([at, add(back, scale(n, half)), notch, sub(back, scale(n, half))], true);
+}
+
+
 /**
  * A ray from `from` to `to` with an arrow in the middle, as
  * `\draw[thick, orange!90!black, postaction={decorate}, decoration={markings, mark=at position 0.5 with {\arrow{Stealth}}}] (from) -- (to);`.
@@ -69,11 +81,12 @@ export function Ray({ f, from, to, color = RAY, virtual = false, arrowAt = 0.5 }
 	if (len(sub(to, from)) < 1e-6) return null;
 	if (virtual) return <path d={f.path([from, to])} stroke={color} strokeWidth={THIN} strokeDasharray={DASH} fill="none" pointerEvents="none" />;
 	const u = unit(sub(to, from));
-	const m = lerp(from, to, arrowAt);
+	// TikZ's `mark=at position 0.5 with {\arrow{Stealth}}` puts the tip's point a little past the middle.
+	const m = add(lerp(from, to, arrowAt), scale(u, TIP_LEN / 2));
 	return (
 		<g pointerEvents="none">
 			<path d={f.path([from, to])} stroke={color} strokeWidth={THICK} fill="none" />
-			<Arrow f={f} from={sub(m, scale(u, 0.12))} to={add(m, scale(u, 0.06))} color={color} weight="thick" />
+			<path d={tip(f, m, u)} fill={color} />
 		</g>
 	);
 }
@@ -135,17 +148,6 @@ export function SphericalMirror({ f, vertex, R, half = 1.4, concave = true }: { 
 			<path d={f.path(pts)} stroke="#000" strokeWidth={THICK} fill="none" />
 		</g>
 	);
-}
-
-/** A thick Stealth tip (the same size as fisica.tsx's arrows) with its point at `at`, pointing along `d`. */
-const TIP_LEN = 4.169 / 28.4528;
-function tip(f: Frame, at: V, d: V) {
-	const u = unit(d);
-	const n = v(-u.y, u.x);
-	const back = sub(at, scale(u, TIP_LEN));
-	const notch = sub(at, scale(u, TIP_LEN * 0.668));
-	const half = 1.576 / 28.4528;
-	return f.path([at, add(back, scale(n, half)), notch, sub(back, scale(n, half))], true);
 }
 
 /**
