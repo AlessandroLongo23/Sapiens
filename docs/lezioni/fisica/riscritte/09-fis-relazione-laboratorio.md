@@ -25,7 +25,7 @@ Le **conclusioni** rispondono allo scopo con il risultato e la sua incertezza, l
 
 ```ad-warning
 Scopo e conclusioni devono parlarsi
-Se lo scopo è misurare la densità del cilindretto, la conclusione comincia con la densità misurata, $\rho = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$, e dice se il cilindretto può essere di alluminio. Una conclusione che non risponde allo scopo ("l'esperienza è stata utile e interessante") è una conclusione mancata.
+Se lo scopo è misurare la densità del cilindretto, la conclusione comincia con la densità misurata, $d = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$, e dice se il cilindretto può essere di alluminio. Una conclusione che non risponde allo scopo ("l'esperienza è stata utile e interessante") è una conclusione mancata.
 ```
 
 ## Le tabelle dei dati
@@ -93,7 +93,7 @@ Gruppo: Anna, Luca, Sara. Data: 14 ottobre.
 
 Scopo. Misurare la densità di un cilindretto metallico e riconoscere di che metallo è fatto.
 
-Cenni teorici. La densità è il rapporto tra la massa e il volume, $\rho = \dfrac{m}{V}$ ([Grandezze derivate: area, volume e densità](/materiale/scuola-superiore/fisica/le-grandezze-fisiche-e-la-misura/grandezze-derivate-area-volume-e-densita)). Il volume di un oggetto che affonda nell'acqua è uguale all'aumento del volume letto sul cilindro graduato quando lo si immerge: $V = V_2 - V_1$. Poiché $1\ \text{mL} = 1\ \text{cm}^3$, la densità in $\text{g/cm}^3$ si calcola con il volume in mL.
+Cenni teorici. La densità è il rapporto tra la massa e il volume, $d = \dfrac{m}{V}$ ([Grandezze derivate: area, volume e densità](/materiale/scuola-superiore/fisica/le-grandezze-fisiche-e-la-misura/grandezze-derivate-area-volume-e-densita)). Il volume di un oggetto che affonda nell'acqua è uguale all'aumento del volume letto sul cilindro graduato quando lo si immerge: $V = V_2 - V_1$. Poiché $1\ \text{mL} = 1\ \text{cm}^3$, la densità in $\text{g/cm}^3$ si calcola con il volume in mL.
 
 Materiali e strumenti. Bilancia elettronica (portata $500$ g, sensibilità $0{,}1$ g); cilindro graduato da $100$ mL (sensibilità $1$ mL); acqua; il cilindretto; un filo per calarlo nel cilindro.
 
@@ -132,13 +132,13 @@ Elaborazione dei dati. Massa: $\bar{m} = \dfrac{67{,}5 + 67{,}5 + 67{,}6}{3} = 6
 
 Volume: ogni $V$ è la differenza di due letture con l'incertezza di $1$ mL, quindi ha l'incertezza di $1 + 1 = 2$ mL, più grande della semidispersione ($0{,}5$ mL). Con $\bar{V} = \dfrac{25 + 25 + 26}{3} = 25{,}33$ mL si ha $V = (25 \pm 2)\,\text{mL}$.
 
-Densità: $\rho = \dfrac{67{,}53}{25{,}33} = 2{,}666\ \text{g/cm}^3$, con incertezza relativa
+Densità: $d = \dfrac{67{,}53}{25{,}33} = 2{,}666\ \text{g/cm}^3$, con incertezza relativa
 
-$$\varepsilon_\rho = \frac{0{,}1}{67{,}53} + \frac{2}{25{,}33} = 0{,}0015 + 0{,}0790 = 0{,}0805$$
+$$\varepsilon_d = \frac{0{,}1}{67{,}53} + \frac{2}{25{,}33} = 0{,}0015 + 0{,}0790 = 0{,}0805$$
 
-cioè circa l'$8\%$. Quindi $\Delta\rho = 0{,}0805 \cdot 2{,}666 = 0{,}21\ \text{g/cm}^3$, che con una cifra significativa è $0{,}2\ \text{g/cm}^3$, e $\rho = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$.
+cioè circa l'$8\%$. Quindi $\Delta d = 0{,}0805 \cdot 2{,}666 = 0{,}21\ \text{g/cm}^3$, che con una cifra significativa è $0{,}2\ \text{g/cm}^3$, e $d = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$.
 
-Conclusioni. La densità del cilindretto è $\rho = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$, cioè un valore tra $2{,}5$ e $2{,}9\ \text{g/cm}^3$. La densità dell'alluminio, $2{,}70\ \text{g/cm}^3$, sta in questo intervallo, mentre quelle del ferro ($7{,}87\ \text{g/cm}^3$) e del rame ($8{,}96\ \text{g/cm}^3$) sono molto lontane: il cilindretto può essere di alluminio. L'incertezza, circa l'$8\%$, viene quasi tutta dal volume ($7{,}9\%$ contro lo $0{,}15\%$ della massa): un cilindro graduato con la sensibilità di $0{,}5$ mL la dimezzerebbe.
+Conclusioni. La densità del cilindretto è $d = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$, cioè un valore tra $2{,}5$ e $2{,}9\ \text{g/cm}^3$. La densità dell'alluminio, $2{,}70\ \text{g/cm}^3$, sta in questo intervallo, mentre quelle del ferro ($7{,}87\ \text{g/cm}^3$) e del rame ($8{,}96\ \text{g/cm}^3$) sono molto lontane: il cilindretto può essere di alluminio. L'incertezza, circa l'$8\%$, viene quasi tutta dal volume ($7{,}9\%$ contro lo $0{,}15\%$ della massa): un cilindro graduato con la sensibilità di $0{,}5$ mL la dimezzerebbe.
 ```
 
 ```ad-note
@@ -150,7 +150,7 @@ Alcuni insegnanti chiedono il procedimento in forma impersonale ("si è misurato
 
 ```ad-warning
 Il risultato con tutte le cifre della calcolatrice
-$\rho = 2{,}66579\ \text{g/cm}^3$ senza incertezza non è un risultato: non si sa quali cifre sono vere. Si scrive sempre $(\bar{x} \pm \Delta x)$ unità, arrotondato.
+$d = 2{,}66579\ \text{g/cm}^3$ senza incertezza non è un risultato: non si sa quali cifre sono vere. Si scrive sempre $(\bar{x} \pm \Delta x)$ unità, arrotondato.
 ```
 
 ```ad-warning
