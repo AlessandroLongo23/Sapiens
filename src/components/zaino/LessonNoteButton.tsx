@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, NotebookPen } from 'lucide-react';
+import { NotebookPen } from 'lucide-react';
 import { Features } from '@/lib/stripe/config';
 import { hasFeature } from '@/lib/auth/entitlements';
 import { useAuth } from '@/lib/state/auth';
 import { cn } from '@/lib/utils/cn';
+import { Spinner } from '@/components/ui/Spinner';
 
 /**
  * "Prendi appunti" on a lesson: opens the note already started on this lesson,
@@ -75,7 +76,7 @@ export function LessonNoteButton({ path, title, className }: { path: string; tit
 			)}
 		>
 			{busy ? (
-				<Loader2 className="size-6 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+				<Spinner className="size-6" />
 			) : (
 				<NotebookPen className="size-6" aria-hidden="true" />
 			)}

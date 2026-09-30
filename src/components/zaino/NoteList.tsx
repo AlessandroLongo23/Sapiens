@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BookOpen, FolderInput, GripVertical, LayoutGrid, List, Loader2, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
+import { BookOpen, FolderInput, GripVertical, LayoutGrid, List, MoreHorizontal, Plus, Search, Trash2 } from 'lucide-react';
 import { Features } from '@/lib/stripe/config';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import type { FirstPage, NotebookRow, NoteHit, NoteSummary, Quota } from '@/lib/zaino/config';
@@ -22,6 +22,7 @@ import { FirstPageThumb } from './FirstPageThumb';
 import { NoteCrumple, warmUpCrumple, type CrumpleState } from './NoteCrumple';
 import { DropBin, TrashLink } from './Trash';
 import './zaino.css';
+import { Spinner } from '@/components/ui/Spinner';
 
 const when = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' });
 
@@ -283,7 +284,7 @@ export function NoteList({
 								aria-label="Filtra le note di questo quaderno"
 								className="pl-9 pr-9"
 							/>
-							{searchingText && <Loader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-fg-faint" aria-hidden="true" />}
+							{searchingText && <Spinner className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-fg-faint" />}
 						</div>
 						<div className="flex items-center gap-3 sm:ml-auto">
 							<TrashLink ref={trashLink} count={landed.base + landed.extra} bump={bump} />
@@ -325,7 +326,7 @@ export function NoteList({
 										className="zn-new group/new flex w-full flex-col items-center justify-center gap-2 text-fg-subtle hover:text-accent-fg disabled:opacity-60 focus-ring-offset"
 									>
 										<span className="flex size-11 items-center justify-center rounded-full border border-dashed border-current transition-transform duration-300 ease-out-soft group-hover/new:rotate-90">
-											{busy === 'new' ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Plus className="size-5" aria-hidden="true" />}
+											{busy === 'new' ? <Spinner className="size-5" /> : <Plus className="size-5" aria-hidden="true" />}
 										</span>
 										<span className="font-hand text-2xl font-semibold leading-none">Nuova nota</span>
 									</button>

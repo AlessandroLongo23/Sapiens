@@ -523,6 +523,37 @@
 @keyframes pen-draw {
 	to { stroke-dashoffset: 0; }
 }
+/* Spinner: the pen stroke turns, growing and shrinking as it goes, never gone
+   and never closed. Loading (a whole route) shows up only after 300ms. */
+.spinner {
+	animation: spinner-turn 1.1s linear infinite;
+}
+.spinner path {
+	stroke-dasharray: 10 100;
+	animation: spinner-draw 1.6s ease-in-out infinite;
+}
+@keyframes spinner-turn {
+	to { transform: rotate(360deg); }
+}
+@keyframes spinner-draw {
+	0% { stroke-dasharray: 10 100; stroke-dashoffset: 0; }
+	50% { stroke-dasharray: 62 100; stroke-dashoffset: -18; }
+	100% { stroke-dasharray: 10 100; stroke-dashoffset: -100; }
+}
+.loading-late {
+	animation: loading-late 0.2s 0.3s ease-out both;
+}
+@keyframes loading-late {
+	from { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.spinner { animation: spinner-breathe 1.6s ease-in-out infinite; }
+	.spinner path { animation: none; stroke-dasharray: none; }
+	.loading-late { animation-delay: 0.3s; }
+}
+@keyframes spinner-breathe {
+	50% { opacity: 0.45; }
+}
 /* The site search opens as a sheet laid on the page and lifts off when it
    closes. Reduced motion keeps only the fade. */
 .search-in { animation: search-in 0.38s var(--ease-out-soft) both; }

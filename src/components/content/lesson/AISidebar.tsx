@@ -2,7 +2,7 @@
 
 import { useEffect, useEffectEvent, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { usePathname } from 'next/navigation';
-import { Bot, Layers, Lightbulb, Loader2, MessageSquare, Send, Sparkles, Trash2, Wand2, X } from 'lucide-react';
+import { Bot, Layers, Lightbulb, MessageSquare, Send, Sparkles, Trash2, Wand2, X } from 'lucide-react';
 import { useAISidebar } from '@/lib/state/ai-sidebar';
 import { useLessonLayout } from '@/lib/state/lesson-layout';
 import { plainTitle } from '@/lib/seo/slug';
@@ -15,6 +15,7 @@ import { Paywall } from '@/components/subscription/Paywall';
 import { Sticker } from '@/components/ui/Sticker';
 import { Html } from '@/components/ui/Html';
 import { ChatMessage } from './ChatMessage';
+import { Spinner } from '@/components/ui/Spinner';
 
 const SUGGESTIONS = [
 	{ label: 'Semplifica', text: 'Puoi spiegarmi questo concetto in modo più semplice?', icon: Wand2 },
@@ -288,7 +289,7 @@ export function AISidebar({ onClose, lesson }: { onClose?: () => void; lesson?: 
 								className={cn('max-h-[140px] min-h-[44px] flex-1 resize-none rounded-xl border bg-surface-2 px-3.5 py-2.5 text-sm text-fg focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50', inSheet ? 'border-edge placeholder:text-fg-faint' : 'border-edge-strong placeholder:text-fg-subtle')}
 							/>
 							<button type="button" onClick={() => send()} disabled={!inputValue.trim() || isLoading} className="flex size-[44px] shrink-0 items-center justify-center rounded-xl bg-accent text-white shadow-key transition-colors hover:bg-accent-hover active:translate-y-px disabled:cursor-not-allowed disabled:bg-surface-4 disabled:text-fg-faint disabled:shadow-none focus-ring-offset" aria-label="Invia">
-								{isLoading ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Send className="size-5" aria-hidden="true" />}
+								{isLoading ? <Spinner className="size-5" /> : <Send className="size-5" aria-hidden="true" />}
 							</button>
 						</div>
 					</div>

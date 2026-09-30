@@ -2,7 +2,7 @@
 
 import { useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import { ArrowDown, ArrowUp, Loader2, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import { Features } from '@/lib/stripe/config';
 import { COLOR_LABEL, DEFAULT_NOTEBOOK_TITLE, NOTEBOOK_COLORS, type NotebookColor, type NotebookRow, type Quota, type ShelfStats } from '@/lib/zaino/config';
 import { ZAINO_ROOT } from '@/lib/config/site';
@@ -17,6 +17,7 @@ import { useZainoAction } from './ZainoActions';
 import { QuotaBar } from './QuotaBar';
 import { NotebookCover } from './NotebookCover';
 import './zaino.css';
+import { Spinner } from '@/components/ui/Spinner';
 
 /**
  * The shelf: every quaderno, with create, rename and delete. Deleting moves the quaderno to the trash with its notes,
@@ -193,7 +194,7 @@ function Shelf({
 						className="zn-slot group/slot flex w-full flex-col items-center justify-center gap-2 px-4 text-fg-subtle hover:text-accent-fg disabled:opacity-60 focus-ring-offset"
 					>
 						<span className="flex size-11 items-center justify-center rounded-full border border-dashed border-current transition-transform duration-300 ease-out-soft group-hover/slot:rotate-90">
-							{creating ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Plus className="size-5" aria-hidden="true" />}
+							{creating ? <Spinner className="size-5" /> : <Plus className="size-5" aria-hidden="true" />}
 						</span>
 						<span className="font-hand text-2xl font-semibold leading-none">Un altro quaderno</span>
 					</button>

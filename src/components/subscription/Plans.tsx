@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle, Loader2, Sparkles, XCircle } from 'lucide-react';
+import { CheckCircle, Sparkles, XCircle } from 'lucide-react';
 import { Features, FeaturesDetails, PLAN_DESCRIPTIONS, SCHOOL_YEAR_PASS, SUBSCRIPTION_PLANS, TRIAL_DAYS, formatDay, formatPrice, type SubscriptionPlan } from '@/lib/stripe/config';
 import type { PlanSource } from '@/lib/auth/entitlements';
 import { FREE_NOTEBOOKS, FREE_NOTES } from '@/lib/zaino/config';
@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/state/auth';
 import { requestCheckout, type BillingOption } from '@/lib/subscription/checkout';
 import { cn } from '@/lib/utils/cn';
 import { Alert } from '@/components/ui/Alert';
+import { Spinner } from '@/components/ui/Spinner';
 
 const PLANS = [SUBSCRIPTION_PLANS.FREE, SUBSCRIPTION_PLANS.STUDIO];
 const FEATURES = Object.values(Features) as Features[];
@@ -64,7 +65,7 @@ export function CheckoutOverlay({ error, loading }: { error: string | null; load
 			{loading && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="status">
 					<div className="flex flex-col items-center gap-4 rounded-lg bg-surface p-8">
-						<Loader2 className="size-12 animate-spin text-accent-fg" aria-hidden="true" />
+						<Spinner className="size-12 text-accent-fg" />
 						<p className="text-lg font-medium text-fg">Reindirizzamento in corso...</p>
 					</div>
 				</div>
