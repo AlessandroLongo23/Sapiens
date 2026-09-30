@@ -7,11 +7,17 @@
  *   lessons (scripts/lezioni/check.mts reads it next to docs/lezioni/url.md);
  * - docs/lezioni/fisica/originali/index.json: the lessons in the order of the tree, for
  *   `scripts/lezioni/publish.mts --dir docs/lezioni/fisica`. The files of lesson i are NN-slug.md with NN = i + 1.
+ *
+ * `--materia chemistry --dir docs/lezioni/chimica` writes the same two files for another subject of the high school
+ * (the chemistry lessons are published with `publish.mts --per-slug`, so their numbers need not follow the index).
  */
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
 import { nodePath } from '../../src/lib/seo/slug';
 
+const arg = (name: string, fallback: string) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : fallback);
+const subjectSlug = arg('--materia', 'physics');
+const dir = arg('--dir', 'docs/lezioni/fisica').replace(/\/$/, '');
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set');
 const db = createClient(process.env.PUBLIC_SUPABASE_URL!, key, { auth: { persistSession: false } });
@@ -24,11 +30,11 @@ const one = async (q: PromiseLike<{ data: Row[] | null; error: { message: string
 };
 const cols = 'id,parent_id,slug,title,type,position,school_year';
 const [level] = await one(db.from('content_nodes').select(cols).eq('slug', 'high_school').is('parent_id', null));
-const [subject] = await one(db.from('content_nodes').select(cols).eq('slug', 'physics').eq('parent_id', level.id));
+const [subject] = await one(db.from('content_nodes').select(cols).eq('slug', subjectSlug).eq('parent_id', level.id));
 const chapters = (await one(db.from('content_nodes').select(cols).eq('parent_id', subject.id))).sort((a, b) => (a.school_year ?? 9) - (b.school_year ?? 9) || a.position - b.position);
 const lessons = await one(db.from('content_nodes').select(cols).in('parent_id', chapters.map((c) => c.id)));
 
-const url: string[] = ['# Lezioni di fisica e il loro indirizzo', '', 'Generato da `scripts/fisica/indice.mts`: non modificarlo a mano.', ''];
+const url: string[] = [`# Lezioni di ${subject.title.toLowerCase()} e il loro indirizzo`, '', 'Generato da `scripts/fisica/indice.mts`: non modificarlo a mano.', ''];
 const index: { id: string; parent_id: string; title: string; slug: string; path: string; chapter: string }[] = [];
 let year = 0;
 for (const c of chapters) {
@@ -39,10 +45,11 @@ for (const c of chapters) {
 	url.push(`## ${c.title}  ${nodePath([level, subject, c] as never)}`);
 	for (const l of lessons.filter((x) => x.parent_id === c.id).sort((a, b) => a.position - b.position)) {
 		url.push(`- ${l.title}: ${nodePath([level, subject, c, l] as never)}`);
-		index.push({ id: l.id, parent_id: c.id, title: l.title, slug: l.slug, path: `high_school/physics/${c.slug}/${l.slug}`, chapter: c.title });
+		index.push({ id: l.id, parent_id: c.id, title: l.title, slug: l.slug, path: `high_school/${subjectSlug}/${c.slug}/${l.slug}`, chapter: c.title });
 	}
 	url.push('');
 }
-writeFileSync('docs/lezioni/fisica/url.md', url.join('\n'));
-writeFileSync('docs/lezioni/fisica/originali/index.json', JSON.stringify(index, null, 2) + '\n');
+mkdirSync(`${dir}/originali`, { recursive: true });
+writeFileSync(`${dir}/url.md`, url.join('\n'));
+writeFileSync(`${dir}/originali/index.json`, JSON.stringify(index, null, 2) + '\n');
 console.log(`${chapters.length} capitoli, ${index.length} lezioni`);

@@ -3,14 +3,15 @@ import { createCipheriv, createDecipheriv, hkdfSync, randomBytes } from 'node:cr
 import { configs, SESSION_LENGTH } from '@/lib/exercises/config';
 import { romeDate } from '@/lib/stripe/config';
 import { generators } from '@/lib/exercises';
-import { JUMP_LENGTH, jumpPlan, pathState, runPassed, skippedBy, type LevelStatus, type Run, type RunKind } from '@/lib/exercises/levels';
+import { JUMP_LENGTH, REPETITION_LENGTH, jumpPlan, nextStep, pathState, repetitionModes, runPassed, skippedBy, type LevelStatus, type QuestionMode, type Run, type RunKind } from '@/lib/exercises/levels';
 import { levelName } from '@/lib/exercises/level-names';
 import { REVIEW_LENGTH, REVIEW_WINDOW_DAYS, isOpen, openMistakes, reviewPlan, type AnswerRecord, type ReviewItem } from '@/lib/exercises/review';
 import { lessonIndex } from '@/lib/server/lessons';
 import { PRACTICE_LENGTH, practicePlan, practiceSeed, type StartedLesson } from '@/lib/exercises/practice';
 import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/exercises/streak';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
-import type { ChoiceAnswer, FigureRef, Sample, SceneRef } from '@/lib/exercises/v2/types';
+import type { Answer, ChoiceAnswer, FigureRef, OpenGrading, Sample, SceneRef } from '@/lib/exercises/v2/types';
+import { openGrading } from '@/lib/exercises/v2/open-answers';
 import { figureUrl } from '@/lib/content/figures';
 import { escapeHtml } from '@/lib/utils/escape';
 import { renderMath, renderTex } from '@/lib/content/markdown';
@@ -29,6 +30,8 @@ export interface ExerciseView {
 	/** The instruction ("Scrivi l'unione per elencazione."), plain HTML; empty when the problem speaks for itself. */
 	promptHtml: string;
 	blocks: QuestionBlock[];
+	/** Multiple choice, or an open answer written in a formula field: `options` is then empty. */
+	mode: QuestionMode;
 	/** `text` is the LaTeX (or the plain label), for the column-count guess and the screen reader; `figure` marks a drawing. */
 	options: { html: string; text: string; figure?: true }[];
 	/** The verdict, sealed: the page sends it back with the answer and cannot read it. */
@@ -38,7 +41,13 @@ export interface ExerciseView {
 /** What the server says about an answer: whether it was right, which option was, and how to solve the exercise. */
 export interface Verdict {
 	correct: boolean;
+	/** The right option; -1 for an open answer. */
 	correctIndex: number;
+	/** An open answer: the right one, and the one the student wrote, typeset. */
+	expectedHtml?: string;
+	answerHtml?: string;
+	/** An open answer: what the student reads about the form, or that a fraction could be reduced. */
+	message?: string;
 	solutionHtml: string;
 	stepsHtml: string[];
 	/** A drawing that goes with the solution, as an `<img>`. */
@@ -56,8 +65,11 @@ export class ExerciseError extends Error {
 	}
 }
 
-/** The exercise as stored in `exercise_attempts.exercise`: the generator's sample and the multiple choice shown. */
-type Stored = Sample & { choice: ChoiceAnswer };
+/**
+ * The exercise as stored in `exercise_attempts.exercise`: the generator's sample, the multiple choice, and how it
+ * was asked. An open question keeps its multiple choice too, unused.
+ */
+type Stored = Sample & { choice: ChoiceAnswer; mode?: QuestionMode };
 
 /** The service-role client: attempts are written only by the server, so a student cannot mark an answer right. */
 const db = (): SupabaseClient => adminClient() as unknown as SupabaseClient;
@@ -93,6 +105,8 @@ interface Sealed {
 	format?: 'text';
 	figure?: FigureRef;
 	scene?: SceneRef;
+	/** An open question: what the grader needs, and the right answer to show. */
+	open?: { answer: Answer; grading: OpenGrading; prompt: string; problem: string; expected: string };
 }
 
 let sealKey: Buffer | null = null;
@@ -154,20 +168,42 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 	if (s.scene) blocks.push({ kind: 'scene', scene: s.scene });
 	const asks = blocks.some((b) => b.kind === 'ask');
 	const prompt = IMPLIED_PROMPTS.has(s.prompt) || (asks && GENERIC_PROMPTS.has(s.prompt)) ? '' : s.prompt;
+	const open = s.mode === 'open' ? openGrading(s.generatorId, s.level) : null;
 	return {
 		id,
 		level,
+		mode: open ? 'open' : 'choice',
 		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
-		options: s.choice.options.map((o) =>
+		options: open
+			? []
+			: s.choice.options.map((o) =>
 			o.figure
 				? { html: figureHtml(o.figure), text: o.text ?? o.figure.alt, figure: true as const }
 				: text
 					? { html: textHtml(o.latex), text: o.text ?? o.latex }
 					: { html: renderMath(`$$${o.latex}$$`), text: o.latex }
 		),
-		key: seal({ id, user: userId, correct: s.choice.correct, options: s.choice.options.length, solution: s.solution, steps: s.steps, format: s.format, figure: s.solutionFigure, scene: s.solutionScene })
+		key: seal({
+			id,
+			user: userId,
+			correct: s.choice.correct,
+			options: s.choice.options.length,
+			solution: s.solution,
+			steps: s.steps,
+			format: s.format,
+			figure: s.solutionFigure,
+			scene: s.solutionScene,
+			...(open ? { open: { answer: s.answer, grading: open, prompt: s.prompt, problem: s.problem, expected: expectedLatex(s) } } : {})
+		})
 	};
+}
+
+/** The right answer of an open question as LaTeX: numbers carry only their value. */
+function expectedLatex(s: Sample): string {
+	if (s.answer.kind !== 'number') return s.answer.kind === 'choice' ? '' : s.answer.latex;
+	const [p, q = '1'] = s.answer.value.split('/');
+	return q === '1' ? p : `${p.startsWith('-') ? '-' : ''}\\frac{${p.replace('-', '')}}{${q}}`;
 }
 
 /** Solution and steps typeset, from the sample or from the sealed key. */
@@ -177,7 +213,7 @@ function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?
 }
 
 /** An answered attempt as read back from the database. */
-type AnsweredRow = { id: string; user_id: string; position: number; level: number; correct: boolean; answer: { choice: number }; exercise: Stored };
+type AnsweredRow = { id: string; user_id: string; position: number; level: number; correct: boolean; answer: { choice?: number; latex?: string; message?: string }; exercise: Stored };
 
 /** An answered attempt as the page shows it again: the exercise as it was asked, the answer, the verdict. */
 function answered(row: AnsweredRow): AnsweredView {
@@ -185,12 +221,25 @@ function answered(row: AnsweredRow): AnsweredView {
 	return {
 		position: row.position,
 		exercise: view(row.id, row.user_id, row.level, s),
-		choice: row.answer.choice,
-		verdict: { correct: row.correct, correctIndex: s.choice.correct, ...worked({ ...s, figure: s.solutionFigure, scene: s.solutionScene }) }
+		choice: row.answer.choice ?? -1,
+		verdict: {
+			correct: row.correct,
+			correctIndex: s.mode === 'open' ? -1 : s.choice.correct,
+			...(s.mode === 'open'
+				? { expectedHtml: renderTex(expectedLatex(s), true), answerHtml: renderTex(row.answer.latex ?? '', true), ...(row.answer.message ? { message: row.answer.message } : {}) }
+				: {}),
+			...worked({ ...s, figure: s.solutionFigure, scene: s.solutionScene })
+		}
 	};
 }
 
-const verdict = (s: Sealed, correct: boolean): Verdict => ({ correct, correctIndex: s.correct, ...worked(s) });
+const verdict = (s: Sealed, correct: boolean, message?: string, latex?: string): Verdict => ({
+	correct,
+	correctIndex: s.open ? -1 : s.correct,
+	...(s.open ? { expectedHtml: renderTex(s.open.expected, true), answerHtml: renderTex(latex ?? '', true) } : {}),
+	...(message ? { message } : {}),
+	...worked(s)
+});
 
 /**
  * Questions left in today's free session: a Free account answers up to SESSION_LENGTH exercises a day, on any
@@ -220,6 +269,8 @@ export interface SessionView {
 	kind: SessionKind;
 	level: number;
 	length: number;
+	/** A run at a level: which repetition of it, from 1; past the level's last, practice on a passed level. */
+	step?: number | null;
 	/** For practice and reviews: the lesson and level of each question. */
 	items?: ItemView[];
 }
@@ -230,6 +281,11 @@ export interface PathLevel {
 	name: string | null;
 	status: LevelStatus;
 	skipped: boolean;
+	/** Repetitions that counted, and how many pass the level. */
+	repetitions: number;
+	steps: number;
+	/** Open questions in the next run at this level, out of REPETITION_LENGTH. */
+	openNext: number;
 	/** The last finished runs, newest first: right answers, questions, when. */
 	runs: { correct: number; total: number; at: string }[];
 	best: { correct: number; total: number } | null;
@@ -249,6 +305,7 @@ export interface UnfinishedRun {
 export interface AnsweredView {
 	position: number;
 	exercise: ExerciseView;
+	/** The option picked; -1 for an open answer, which the verdict carries typeset. */
 	choice: number;
 	verdict: Verdict;
 }
@@ -280,7 +337,7 @@ async function unfinishedRun(latest: RunRow | undefined): Promise<UnfinishedRun 
 	const next = progress.indexOf('unanswered');
 	if (next < 0) return null;
 	return {
-		session: { id: latest.id, kind: latest.kind, level: latest.level, length: latest.plan.length },
+		session: { id: latest.id, kind: latest.kind, level: latest.level, step: latest.step ?? null, length: latest.plan.length },
 		progress,
 		next,
 		mistakes: rows.filter((a) => !a.correct).map(answered)
@@ -290,10 +347,10 @@ async function unfinishedRun(latest: RunRow | undefined): Promise<UnfinishedRun 
 /** Runs shown under a level. */
 const RUNS_SHOWN = 5;
 
-type RunRow = { id: string; kind: RunKind; level: number; plan: number[]; answered: number; correct: number; started_at: string };
+type RunRow = { id: string; kind: RunKind; level: number; step: number | null; plan: number[]; answered: number; correct: number; started_at: string };
 
 /** A run's row as the path reads it. */
-const toRun = (r: RunRow): Run => ({ kind: r.kind, level: r.level, total: r.plan.length, answered: r.answered, correct: r.correct, at: r.started_at });
+const toRun = (r: RunRow): Run => ({ kind: r.kind, level: r.level, step: r.step ?? null, total: r.plan.length, answered: r.answered, correct: r.correct, at: r.started_at });
 
 /**
  * The student's runs on a generator's path, with the counts the database keeps as answers come in. Only runs at a
@@ -302,7 +359,7 @@ const toRun = (r: RunRow): Run => ({ kind: r.kind, level: r.level, total: r.plan
 async function runRows(userId: string, generatorId: string): Promise<RunRow[]> {
 	const { data, error } = await db()
 		.from('exercise_sessions')
-		.select('id, kind, level, plan, answered, correct, started_at')
+		.select('id, kind, level, step, plan, answered, correct, started_at')
 		.eq('user_id', userId)
 		.eq('generator_id', generatorId)
 		.in('kind', ['level', 'jump'])
@@ -319,7 +376,7 @@ export async function lessonPath(userId: string | null, dbPath: string): Promise
 	const config = configs[dbPath];
 	if (!config) throw new ExerciseError(404, 'Esercizi non trovati.');
 	const rows = userId ? await runRows(userId, config.generator) : [];
-	const { states, current } = pathState(config.levels, rows.map(toRun));
+	const { states, current } = pathState(config.generator, config.levels, rows.map(toRun));
 	return {
 		current,
 		unfinished: await unfinishedRun(rows[0]),
@@ -328,6 +385,9 @@ export async function lessonPath(userId: string | null, dbPath: string): Promise
 			name: levelName(config.generator, s.level),
 			status: s.status,
 			skipped: s.skipped,
+			repetitions: s.repetitions,
+			steps: s.steps,
+			openNext: repetitionModes(config.generator, s.level, nextStep(s)).filter((m) => m === 'open').length,
 			runs: s.runs.slice(0, RUNS_SHOWN).map((r) => ({ correct: r.correct, total: r.total, at: r.at })),
 			best: s.best && { correct: s.best.correct, total: s.best.total }
 		}))
@@ -347,17 +407,17 @@ export interface FinishedRun {
  */
 export async function finishedRun(userId: string, dbPath: string, sessionId: string): Promise<FinishedRun | null> {
 	if (!/^[0-9a-f-]{36}$/i.test(sessionId)) return null;
-	const { data: run, error } = await db().from('exercise_sessions').select('id, user_id, lesson_path, kind, level, plan, answered').eq('id', sessionId).maybeSingle();
+	const { data: run, error } = await db().from('exercise_sessions').select('id, user_id, lesson_path, kind, level, step, plan, answered').eq('id', sessionId).maybeSingle();
 	if (error) throw error;
 	const row = run as (RunRow & { user_id: string; lesson_path: string }) | null;
 	if (!row || row.user_id !== userId || row.lesson_path !== dbPath || !['level', 'jump'].includes(row.kind) || row.answered < row.plan.length) return null;
 	const { data, error: attemptsError } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise').eq('session_id', sessionId).not('answered_at', 'is', null).order('position');
 	if (attemptsError) throw attemptsError;
-	return { session: { id: row.id, kind: row.kind, level: row.level, length: row.plan.length }, results: ((data ?? []) as AnsweredRow[]).map(answered) };
+	return { session: { id: row.id, kind: row.kind, level: row.level, step: row.step ?? null, length: row.plan.length }, results: ((data ?? []) as AnsweredRow[]).map(answered) };
 }
 
 /** Writes the exercise at `position` of a run; the same place asked twice returns the row written first. */
-async function issueAt(userId: string, dbPath: string, generatorId: string, sessionId: string, position: number, level: number): Promise<ExerciseView> {
+async function issueAt(userId: string, dbPath: string, generatorId: string, sessionId: string, position: number, level: number, asked: QuestionMode = 'choice'): Promise<ExerciseView> {
 	const load = generators[generatorId];
 	if (!load) throw new ExerciseError(404, 'Esercizi non trovati.');
 	const generator = await load();
@@ -366,11 +426,13 @@ async function issueAt(userId: string, dbPath: string, generatorId: string, sess
 	// Exercises born as multiple choice (true or false, pick the right set) are their own choice.
 	const choice = sample.answer.kind === 'choice' ? sample.answer : generator.toChoice?.(sample, createRng(deriveSeed(seed, level)));
 	if (!choice) throw new Error(`${generatorId}: level ${level} has no multiple-choice form`);
-	const exercise: Stored = { ...sample, choice };
+	// open where the run asks for it and the level grades it; a sample born as multiple choice stays one
+	const mode: QuestionMode = asked === 'open' && sample.answer.kind !== 'choice' && openGrading(generatorId, level) ? 'open' : 'choice';
+	const exercise: Stored = { ...sample, choice, mode };
 
 	const { data, error } = await db()
 		.from('exercise_attempts')
-		.insert({ user_id: userId, lesson_path: dbPath, generator_id: generatorId, level, seed, mode: 'choice', exercise, session_id: sessionId, position, build: process.env.VERCEL_GIT_COMMIT_SHA ?? null })
+		.insert({ user_id: userId, lesson_path: dbPath, generator_id: generatorId, level, seed, mode, exercise, session_id: sessionId, position, build: process.env.VERCEL_GIT_COMMIT_SHA ?? null })
 		.select('id')
 		.single();
 	if (!error) return view((data as { id: string }).id, userId, level, exercise);
@@ -394,11 +456,15 @@ export async function startSession(userId: string, dbPath: string, kind: RunKind
 	const [past, left] = await Promise.all([runs(userId, config.generator), limited ? freeQuestionsLeft(userId) : Promise.resolve(SESSION_LENGTH)]);
 	if (left === 0) throw new ExerciseError(403, FREE_SESSION_USED);
 
-	const { states } = pathState(config.levels, past);
+	const { states } = pathState(config.generator, config.levels, past);
 	let plan: number[];
+	let step: number | null = null;
 	if (kind === 'level') {
-		if (states.find((s) => s.level === level)?.status === 'locked') throw new ExerciseError(403, 'Questo livello si apre superando quello prima, o con la prova di salto.');
-		plan = Array(Math.min(SESSION_LENGTH, left)).fill(level);
+		const state = states.find((s) => s.level === level);
+		if (!state || state.status === 'locked') throw new ExerciseError(403, 'Questo livello si apre superando quello prima, o con la prova di salto.');
+		// the next repetition; a Free run cut short by the day's session trains but does not count
+		step = nextStep(state);
+		plan = Array(Math.min(REPETITION_LENGTH, left)).fill(level);
 	} else {
 		const skipped = skippedBy(states, level);
 		if (skipped.length === 0) throw new ExerciseError(400, 'Questo livello è già aperto.');
@@ -406,11 +472,11 @@ export async function startSession(userId: string, dbPath: string, kind: RunKind
 		plan = jumpPlan(skipped);
 	}
 
-	const { data, error } = await db().from('exercise_sessions').insert({ user_id: userId, lesson_path: dbPath, generator_id: config.generator, kind, level, plan }).select('id').single();
+	const { data, error } = await db().from('exercise_sessions').insert({ user_id: userId, lesson_path: dbPath, generator_id: config.generator, kind, level, step, plan }).select('id').single();
 	if (error) throw error;
 	const id = (data as { id: string }).id;
-	const exercise = await issueAt(userId, dbPath, config.generator, id, 0, plan[0]);
-	return { session: { id, kind, level, length: plan.length }, exercise };
+	const exercise = await issueAt(userId, dbPath, config.generator, id, 0, plan[0], step ? repetitionModes(config.generator, level, step)[0] : 'choice');
+	return { session: { id, kind, level, step, length: plan.length }, exercise };
 }
 
 /**
@@ -419,7 +485,7 @@ export async function startSession(userId: string, dbPath: string, kind: RunKind
  */
 export async function sessionExercise(userId: string, sessionId: string, position: number, limited = false): Promise<ExerciseView> {
 	const [{ data, error }, left] = await Promise.all([
-		db().from('exercise_sessions').select('lesson_path, generator_id, plan, plan_lessons, plan_generators').eq('id', sessionId).eq('user_id', userId).maybeSingle(),
+		db().from('exercise_sessions').select('lesson_path, generator_id, kind, level, step, plan, plan_lessons, plan_generators').eq('id', sessionId).eq('user_id', userId).maybeSingle(),
 		limited ? freeQuestionsLeft(userId) : Promise.resolve(SESSION_LENGTH)
 	]);
 	if (error) throw error;
@@ -428,11 +494,12 @@ export async function sessionExercise(userId: string, sessionId: string, positio
 	if (position >= run.plan.length) throw new ExerciseError(400, 'La prova è finita.');
 	if (left === 0) throw new ExerciseError(403, FREE_SESSION_USED);
 	const item = itemAt(run, position);
-	return issueAt(userId, item.lesson, item.generator, sessionId, position, item.level);
+	const mode = run.kind === 'level' && run.step ? repetitionModes(item.generator, item.level, run.step)[position] : 'choice';
+	return issueAt(userId, item.lesson, item.generator, sessionId, position, item.level, mode);
 }
 
 /** The plan of a run as stored: one lesson and generator for a run on a path, one per question for the others. */
-type PlanRow = { lesson_path: string | null; generator_id: string | null; plan: number[]; plan_lessons: string[] | null; plan_generators: string[] | null };
+type PlanRow = { lesson_path: string | null; generator_id: string | null; kind?: SessionKind; level?: number; step?: number | null; plan: number[]; plan_lessons: string[] | null; plan_generators: string[] | null };
 
 /** The lesson, generator and level of the question at `position`. */
 function itemAt(run: PlanRow, position: number): ReviewItem {
@@ -557,22 +624,39 @@ export async function openMistakeCount(userId: string): Promise<number> {
 }
 
 /**
- * Checks a multiple-choice answer from the sealed verdict the page sent back: no session lookup and no database
- * read, so the verdict is back in the time of one request. `save` records the answer on the attempt; the route
- * runs it after responding. The attempt must belong to the user it was issued to and be unanswered, so a retried
- * request keeps the first answer.
+ * Checks an answer from the sealed verdict the page sent back: no session lookup and no database read, so the
+ * verdict is back in the time of one request. A multiple-choice answer is the option picked; an open answer is the
+ * LaTeX the student wrote, graded as its level asks (src/lib/exercises/v2/grade/), with the grader loaded only
+ * when the first open answer comes in. `save` records the answer on the attempt; the route runs it after
+ * responding. The attempt must belong to the user it was issued to and be unanswered, so a retried request keeps
+ * the first answer.
  */
-export function answerExercise(id: string, sealed: string, choice: number, activeMs: number | null): { verdict: Verdict; save: () => Promise<void> } {
+export async function answerExercise(id: string, sealed: string, response: { choice?: number; latex?: string }, activeMs: number | null): Promise<{ verdict: Verdict; save: () => Promise<void> }> {
 	const s = unseal(sealed);
 	if (!s || s.id !== id) throw new ExerciseError(404, 'Esercizio non trovato.');
-	if (choice >= s.options) throw new ExerciseError(400, 'Risposta non valida.');
-	const correct = choice === s.correct;
+	let correct: boolean;
+	let answer: { choice: number } | { latex: string; message?: string };
+	let message: string | undefined;
+	if (s.open) {
+		if (typeof response.latex !== 'string') throw new ExerciseError(400, 'Risposta non valida.');
+		const { gradeOpen } = await import('@/lib/exercises/v2/grade/grade');
+		const sample = { answer: s.open.answer, prompt: s.open.prompt, problem: s.open.problem } as Sample;
+		const graded = gradeOpen(sample, s.open.grading, response.latex);
+		correct = graded.correct;
+		message = graded.message;
+		answer = { latex: response.latex, ...(message ? { message } : {}) };
+	} else {
+		const choice = response.choice;
+		if (choice === undefined || choice >= s.options) throw new ExerciseError(400, 'Risposta non valida.');
+		correct = choice === s.correct;
+		answer = { choice };
+	}
 	return {
-		verdict: verdict(s, correct),
+		verdict: verdict(s, correct, message, response.latex),
 		save: async () => {
 			const { error } = await db()
 				.from('exercise_attempts')
-				.update({ answer: { choice }, correct, answered_at: new Date().toISOString(), active_ms: activeMs })
+				.update({ answer, correct, answered_at: new Date().toISOString(), active_ms: activeMs })
 				.eq('id', id)
 				.eq('user_id', s.user)
 				.is('answered_at', null);
@@ -595,7 +679,7 @@ export interface LessonProgress {
 export async function lessonProgress(userId: string): Promise<Record<string, LessonProgress>> {
 	const { data, error } = await db()
 		.from('exercise_sessions')
-		.select('generator_id, kind, level, plan, answered, correct, started_at')
+		.select('generator_id, kind, level, step, plan, answered, correct, started_at')
 		.eq('user_id', userId)
 		.in('kind', ['level', 'jump'])
 		.order('started_at', { ascending: false })
@@ -609,7 +693,7 @@ export async function lessonProgress(userId: string): Promise<Record<string, Les
 	for (const [path, config] of Object.entries(configs)) {
 		const past = byGenerator.get(config.generator);
 		if (!past) continue;
-		const { states } = pathState(config.levels, past);
+		const { states } = pathState(config.generator, config.levels, past);
 		progress[path] = { passed: states.filter((st) => st.status === 'passed').length, total: config.levels.length };
 	}
 	return progress;
@@ -619,7 +703,7 @@ export async function lessonProgress(userId: string): Promise<Record<string, Les
 async function allPathRuns(userId: string): Promise<(RunRow & { generator_id: string; lesson_path: string })[]> {
 	const { data, error } = await db()
 		.from('exercise_sessions')
-		.select('id, generator_id, lesson_path, kind, level, plan, answered, correct, started_at')
+		.select('id, generator_id, lesson_path, kind, level, step, plan, answered, correct, started_at')
 		.eq('user_id', userId)
 		.in('kind', ['level', 'jump'])
 		.order('started_at', { ascending: false })
@@ -636,7 +720,7 @@ function startedLessons(rows: (RunRow & { generator_id: string })[]): StartedLes
 	for (const [path, config] of Object.entries(configs)) {
 		const past = byGenerator.get(config.generator);
 		if (!past) continue;
-		const { states, current } = pathState(config.levels, past.map(toRun));
+		const { states, current } = pathState(config.generator, config.levels, past.map(toRun));
 		lessons.push({ lesson: path, generator: config.generator, passed: states.filter((st) => st.status === 'passed').map((st) => st.level), current, lastAt: past[0].started_at });
 	}
 	return lessons;
@@ -764,7 +848,7 @@ export async function todayView(userId: string, limited = false): Promise<TodayV
 	let next: TodayView['next'] = null;
 	if (latest) {
 		const config = configs[latest.lesson_path];
-		const { states, current } = pathState(config.levels, rows.filter((r) => r.generator_id === config.generator).map(toRun));
+		const { states, current } = pathState(config.generator, config.levels, rows.filter((r) => r.generator_id === config.generator).map(toRun));
 		const lesson = lessonOf(latest.lesson_path);
 		if (lesson) next = { ...lesson, level: current, levelName: levelName(config.generator, current), done: states.every((st) => st.status === 'passed') };
 	}
@@ -834,7 +918,7 @@ export async function dayLog(userId: string, day: string): Promise<DayLog> {
 				answered: r.answered,
 				length: r.plan.length,
 				correct: r.correct,
-				passed: onPath && runPassed({ total: r.plan.length, answered: r.answered, correct: r.correct })
+				passed: onPath && runPassed({ kind: r.kind as RunKind, total: r.plan.length, answered: r.answered, correct: r.correct })
 			};
 		})
 	};

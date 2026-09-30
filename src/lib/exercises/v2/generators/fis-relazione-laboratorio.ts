@@ -122,7 +122,7 @@ const SENTENCES: Record<PartKey, ((r: Rng) => string)[]> = {
 		(r) => `Misurare la velocità media di un carrello su un tratto di $${nt(r.int(10, 40) * 10, 2)}$ m.`,
 	],
 	teoria: [
-		(r) => `La densità è il rapporto tra massa e volume, $\\rho = m / V$${r.pick(['', ', e si misura in $\\text{g/cm}^3$'])}.`,
+		(r) => `La densità è il rapporto tra massa e volume, $d = m / V$${r.pick(['', ', e si misura in $\\text{g/cm}^3$'])}.`,
 		(r) => {
 			const N = r.pick([5, 10, 20]);
 			return `Il periodo si ricava dal tempo di $${N}$ oscillazioni, $T = t / ${N}$.`;
@@ -131,7 +131,7 @@ const SENTENCES: Record<PartKey, ((r: Rng) => string)[]> = {
 		() => "L'allungamento della molla è la differenza tra la sua lunghezza con la massa appesa e quella a riposo, $\\Delta l = l - l_0$.",
 		() => "Il volume del cilindretto è l'aumento del livello dell'acqua nel cilindro graduato quando lo si immerge, $V = V_2 - V_1$.",
 		() => 'Il valore medio di $n$ misure è la loro somma divisa per $n$, $\\bar{x} = \\dfrac{x_1 + x_2 + \\dots + x_n}{n}$.',
-		() => 'Il volume di un cubetto di spigolo $l$ è $V = l^3$, quindi la sua densità è $\\rho = m / l^3$.',
+		() => 'Il volume di un cubetto di spigolo $l$ è $V = l^3$, quindi la sua densità è $d = m / l^3$.',
 	],
 	strumenti: [
 		(r) => {
@@ -208,7 +208,7 @@ const SENTENCES: Record<PartKey, ((r: Rng) => string)[]> = {
 		},
 		(r) => {
 			const [what, sym, a, b] = r.pick([
-				['della densità', '\\rho', 'della massa', 'del volume'],
+				['della densità', 'd', 'della massa', 'del volume'],
 				['della velocità', 'v', 'della distanza', 'del tempo'],
 			] as const);
 			const x = r.int(1, 9);
@@ -219,7 +219,7 @@ const SENTENCES: Record<PartKey, ((r: Rng) => string)[]> = {
 			if (r.next() < 0.5) {
 				const rho = r.int(150, 1200);
 				const V = r.int(10, 40);
-				return `$\\rho = \\dfrac{${nt(rho * V, 2)}}{${V}} = ${nt(rho, 2)}\\ \\text{g/cm}^3$.`;
+				return `$d = \\dfrac{${nt(rho * V, 2)}}{${V}} = ${nt(rho, 2)}\\ \\text{g/cm}^3$.`;
 			}
 			const v = r.int(20, 90);
 			const tt = r.int(15, 99);
@@ -597,7 +597,7 @@ interface Formula {
 }
 const MASS: Datum = { name: 'La massa', key: 'massa', sym: 'm', unit: 'g', lo: 5, hi: 300, deltas: [[1, 1], [2, 1], [5, 1], [1, 0], [1, 2]] };
 export const FORMULAS: Formula[] = [
-	{ key: 'densita', intro: 'Per misurare la densità di un cilindretto un gruppo', formula: '\\rho = m / V', pow: 1, a: MASS, b: { name: 'Il volume', key: 'volume', sym: 'V', unit: 'mL', lo: 5, hi: 100, deltas: [[1, 0], [2, 0], [5, 1], [2, 1]] } },
+	{ key: 'densita', intro: 'Per misurare la densità di un cilindretto un gruppo', formula: 'd = m / V', pow: 1, a: MASS, b: { name: 'Il volume', key: 'volume', sym: 'V', unit: 'mL', lo: 5, hi: 100, deltas: [[1, 0], [2, 0], [5, 1], [2, 1]] } },
 	{
 		key: 'velocita',
 		intro: 'Per misurare la velocità media di un carrello un gruppo',
@@ -617,7 +617,7 @@ export const FORMULAS: Formula[] = [
 	{
 		key: 'cubetto',
 		intro: 'Per misurare la densità di un cubetto un gruppo',
-		formula: '\\rho = m / l^3',
+		formula: 'd = m / l^3',
 		pow: 3,
 		a: MASS,
 		b: { name: 'Lo spigolo', key: 'spigolo', sym: 'l', unit: 'cm', lo: 1, hi: 6, deltas: [[1, 1], [5, 2], [1, 2], [2, 2], [2, 1]] },

@@ -4,7 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { Check, ChevronRight, ChevronsUp, Clock, Lock, PenLine, Play } from 'lucide-react';
 import type { PathLevel, PathView, UnfinishedRun } from '@/lib/server/exercises';
 import { estimatedTime } from '@/lib/exercises/config';
-import { JUMP_LENGTH, MIN_PASS_LENGTH, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
+import { JUMP_LENGTH, REPETITION_LENGTH, REPETITION_PASS, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
 import { Sticker } from '@/components/ui/Sticker';
@@ -29,6 +29,25 @@ function Squares({ correct, total, passed }: { correct: number; total: number; p
 	);
 }
 
+/** Where a level's repetitions stand: one mark per repetition, filled once it counted. */
+function Repetitions({ level }: { level: PathLevel }) {
+	return (
+		<span className="flex gap-1" aria-hidden="true">
+			{Array.from({ length: level.steps }, (_, i) => (
+				<span key={i} className={cn('h-1.5 w-5 rounded-full', i < level.repetitions ? 'bg-ok' : 'bg-surface-4')} />
+			))}
+		</span>
+	);
+}
+
+/** What the next run at a level asks: how many answers to choose and how many to write. */
+function mix(open: number): string {
+	const choice = REPETITION_LENGTH - open;
+	if (open === 0) return `${choice} domande a scelta multipla`;
+	if (choice === 0) return `${open} risposte da scrivere`;
+	return `${choice} a scelta multipla, ${open} da scrivere`;
+}
+
 /** The node of a level on the rail: a stamp that is the number, the tick once passed, a lock until it opens. */
 function Stamp({ level, current, index }: { level: PathLevel; current: boolean; index: number }) {
 	const tilt = index % 2 === 0 ? '-rotate-3' : 'rotate-2';
@@ -51,7 +70,7 @@ function Stamp({ level, current, index }: { level: PathLevel; current: boolean; 
 interface Props {
 	titleHtml: string;
 	path: PathView;
-	/** Questions in a run at one level: 10, or what is left of today's free session. */
+	/** Questions in a run at one level: a repetition, or what is left of today's free session. */
 	questionCount: number;
 	/** Starts a run; absent on the preview behind the paywall. */
 	onStart?: (kind: RunKind, level: number) => void;
@@ -101,8 +120,20 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 					{locked && <div className="mt-5 border-t border-edge-soft pt-5">{locked}</div>}
 				</>
 			);
+		const step = level.status === 'passed' ? null : level.repetitions + 1;
 		return (
 			<>
+				<div className="mb-4 flex flex-col gap-2">
+					<div className="flex items-center justify-between gap-3">
+						<span className="label-mono text-fg-subtle">{step ? `Ripetizione ${step} di ${level.steps}` : 'Livello superato'}</span>
+						<Repetitions level={level} />
+					</div>
+					<p className="text-sm leading-relaxed text-fg-muted">
+						{step
+							? `${mix(level.openNext)}. Conta con ${REPETITION_PASS} giuste su ${REPETITION_LENGTH}${step === level.steps ? ', e supera il livello' : ''}.`
+							: `Per ripassare: ${mix(level.openNext)}.`}
+					</p>
+				</div>
 				{level.runs.length > 0 ? (
 					<>
 						<h3 className="label-mono mb-2 text-fg-subtle">Le ultime prove</h3>
@@ -122,7 +153,7 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 						</ul>
 					</>
 				) : (
-					<p className="mb-4 text-sm text-fg-muted sm:text-base">{level.skipped ? 'Superato con la prova di salto. Puoi comunque esercitarti qui.' : 'Non hai ancora fatto prove a questo livello.'}</p>
+					<p className="mb-4 text-sm text-fg-muted sm:text-base">{level.skipped ? 'Superato con la prova di salto. Puoi comunque esercitarti qui.' : 'Non hai ancora fatto ripetizioni a questo livello.'}</p>
 				)}
 				<div className="mb-4 flex items-center gap-4 text-sm text-fg-subtle">
 					<span className="font-mono tabular-nums">{questionCount} domande</span>
@@ -134,7 +165,7 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 				{onStart && (
 					<button type="button" onClick={() => onStart('level', level.level)} disabled={starting !== null} className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-inverse px-6 py-4 font-semibold text-inverse-fg shadow-key transition-transform duration-150 hover:opacity-90 active:translate-y-px disabled:opacity-60 focus-ring-offset">
 						<Play className="size-5 fill-current" aria-hidden="true" />
-						{starting === level.level ? 'Preparo gli esercizi…' : level.status === 'passed' ? `Rifai il livello ${level.level}` : `Inizia il livello ${level.level}`}
+						{starting === level.level ? 'Preparo gli esercizi…' : level.status === 'passed' ? `Ripassa il livello ${level.level}` : level.repetitions > 0 ? `Continua il livello ${level.level}` : `Inizia il livello ${level.level}`}
 					</button>
 				)}
 				{locked && <div className="border-t border-edge-soft pt-5">{locked}</div>}
@@ -154,8 +185,8 @@ export function ExercisePath({ titleHtml, path, questionCount, onStart, starting
 						</h2>
 						<p className="max-w-xl text-pretty text-sm leading-relaxed text-fg-muted sm:text-base">
 							{canPass(questionCount)
-								? `Scegli un livello e fai una prova: con ${passMark(questionCount)} risposte giuste su ${questionCount} lo superi e si apre quello dopo.`
-								: `Oggi ti ${questionCount === 1 ? 'resta una domanda gratuita' : `restano ${questionCount} domande gratuite`}: puoi allenarti, ma per superare un livello servono almeno ${MIN_PASS_LENGTH} domande.`}
+								? `Ogni livello si supera con alcune ripetizioni da ${REPETITION_LENGTH} domande, ${passMark(REPETITION_LENGTH)} giuste ciascuna: a ogni ripetizione le risposte da scrivere aumentano.`
+								: `Oggi ti ${questionCount === 1 ? 'resta una domanda gratuita' : `restano ${questionCount} domande gratuite`}: puoi allenarti, ma una ripetizione conta solo intera, ${REPETITION_LENGTH} domande.`}
 						</p>
 					</div>
 					<div className="flex shrink-0 flex-col gap-2 sm:w-56 @3xl:w-72">

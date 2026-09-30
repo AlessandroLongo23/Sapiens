@@ -1037,7 +1037,8 @@ export function tupleOption(level: number, labels: string[], unit: string, vals:
 const impossibleOpt: ChoiceOption = { latex: '\\text{Il problema è impossibile}', values: [IMPOSSIBLE] };
 const numOpt = (r: Rational): ChoiceOption => ({ latex: valTex(r), values: [r.toString()] });
 
-function buildChoice(rng: Rng, p: Problem, level: number): ChoiceAnswer {
+/** The four options, or null when the problem has too few distinct distractors: the caller draws another problem. */
+function buildChoice(rng: Rng, p: Problem, level: number): ChoiceAnswer | null {
 	const extra = WITH_IMPOSSIBLE.has(level) ? [impossibleOpt] : [];
 	let ch: ChoiceAnswer | null;
 	if (p.answer.kind === 'number') {
@@ -1061,7 +1062,6 @@ function buildChoice(rng: Rng, p: Problem, level: number): ChoiceAnswer {
 		const pool = p.ok ? [...extra, ...ds] : ds;
 		ch = assembleChoice(rng, correct, level === 1 ? dedupeSets(ds) : pool, 4);
 	}
-	if (!ch) throw new Error(`${ID}: not enough options`);
 	return ch;
 }
 
@@ -1088,6 +1088,7 @@ function generateLevel(rng: Rng, level: number): Sample {
 		const story = rng.pick(STORIES[level]);
 		const p = build(rng, level, story);
 		const choice = buildChoice(rng, p, level);
+		if (!choice) continue;
 		const tuple = p.answer.kind === 'tuple';
 		const sample: Sample = {
 			generatorId: ID,

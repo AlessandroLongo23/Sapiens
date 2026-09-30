@@ -31,7 +31,7 @@ Formula, numeri, risultato con l'unità. Ogni risultato finale si scrive $(\bar{
 2. Il confronto: il valore atteso sta nell'intervallo da $\bar{x} - \Delta x$ a $\bar{x} + \Delta x$? Allora la misura è compatibile.
 3. Le cause degli errori, concrete e con il loro verso, e come ridurle (di solito misurando meglio la grandezza con l'incertezza relativa più grande).
 
-Esempio: $\rho = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$ è compatibile con l'alluminio, $2{,}70\ \text{g/cm}^3$.
+Esempio: $d = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$ è compatibile con l'alluminio, $2{,}70\ \text{g/cm}^3$.
 
 ```ad-warning
 L'errore umano
@@ -45,5 +45,5 @@ Se il valore atteso sta nell'intervallo, la misura è in accordo, anche se i num
 
 ```ad-warning
 Il risultato senza incertezza
-$\rho = 2{,}66579$ non è un risultato; $(2{,}7 \pm 0{,}2)\ \text{g/cm}^3$ sì.
+$d = 2{,}66579$ non è un risultato; $(2{,}7 \pm 0{,}2)\ \text{g/cm}^3$ sì.
 ```

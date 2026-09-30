@@ -609,7 +609,7 @@ const PRODS: ProdCtx[] = [
 	{ id: 'terreno', op: 'mul', a: { unit: 'm', I: [2, 3] }, b: { unit: 'm', I: [1, 3] }, res: 'm2', sym: 'A', range: [10, 1e6], text: (a, b) => `Un terreno rettangolare ha i lati di ${a} e di ${b}. Quanto vale l'area?` },
 	{ id: 'corridore', op: 'div', a: { unit: 'm', I: [2, 3] }, b: { unit: 's', I: [1, 2] }, res: 'm/s', sym: 'v', range: [2, 12], text: (a, b) => `Un corridore percorre ${a} in ${b}. Quanto vale la velocità?` },
 	{ id: 'carrello', op: 'div', a: { unit: 'cm', I: [1, 3] }, b: { unit: 's', I: [0, 1] }, res: 'cm/s', sym: 'v', range: [1, 300], text: (a, b) => `Un carrello percorre ${a} in ${b}. Quanto vale la velocità?` },
-	{ id: 'densita', op: 'div', a: { unit: 'g', I: [1, 3] }, b: { unit: 'cm3', I: [1, 2] }, res: 'g/cm3', sym: '\\rho', range: [0.5, 20], text: (a, b) => `Un oggetto ha la massa di ${a} e il volume di ${b}. Quanto vale la densità?` },
+	{ id: 'densita', op: 'div', a: { unit: 'g', I: [1, 3] }, b: { unit: 'cm3', I: [1, 2] }, res: 'g/cm3', sym: 'd', range: [0.5, 20], text: (a, b) => `Un oggetto ha la massa di ${a} e il volume di ${b}. Quanto vale la densità?` },
 ];
 
 type L4Case = 'normale' | 'zeri' | 'scientifica';

@@ -701,12 +701,12 @@ function level4(rng: Rng): Built {
 			const [em, ev] = [eps(M0), eps(V)];
 			const e = em.add(ev);
 			const vUnit: UnitKey = ml ? 'mL' : 'cm3';
-			const valueStep = [`\\rho = \\dfrac{m}{V} = \\dfrac{${d0(M0)}}{${d0(V)}} ${valueShown(X, result(X, e.mul(X)))}${UNITS.gcm3.tex}`];
+			const valueStep = [`d = \\dfrac{m}{V} = \\dfrac{${d0(M0)}}{${d0(V)}} ${valueShown(X, result(X, e.mul(X)))}${UNITS.gcm3.tex}`];
 			if (ml) valueStep.unshift(`${t('Il volume in centimetri cubi: ')} 1\\,\\text{mL} = 1\\ \\text{cm}^3`);
 			b = {
 				name,
 				unit: 'gcm3',
-				sym: '\\rho',
+				sym: 'd',
 				X,
 				parts: [
 					{ sym: 'm', m: M0, k: 1 },
@@ -863,7 +863,7 @@ function level6(rng: Rng): Built {
 			b = {
 				name,
 				unit: 'gcm3',
-				sym: '\\rho',
+				sym: 'd',
 				X,
 				parts: [
 					{ sym: 'm', m: M0, k: 1 },
@@ -872,7 +872,7 @@ function level6(rng: Rng): Built {
 				problem: `Un cubetto ${material(X)} ha lo spigolo ${mProse(L, 'cm')} e la massa ${mProse(M0, 'g')}. Quanto vale la densità?`,
 				valueStep: [
 					`V = \\ell^3 = ${d0(L)}^3 ${volShown(V).sym} ${volShown(V).tex}\\ \\text{cm}^3`,
-					`\\rho = \\dfrac{m}{\\ell^3} ${volShown(V).sym} \\dfrac{${d0(M0)}}{${volShown(V).tex}} ${valueShown(X, result(X, e.mul(X)))}${UNITS.gcm3.tex}`,
+					`d = \\dfrac{m}{\\ell^3} ${volShown(V).sym} \\dfrac{${d0(M0)}}{${volShown(V).tex}} ${valueShown(X, result(X, e.mul(X)))}${UNITS.gcm3.tex}`,
 				],
 				sumTex: `${epsName('m')} + 3\\,${epsName('\\ell')}`,
 				wrong: extra,
@@ -896,7 +896,7 @@ function level6(rng: Rng): Built {
 			b = {
 				name,
 				unit: 'gcm3',
-				sym: '\\rho',
+				sym: 'd',
 				X,
 				parts: [
 					{ sym: 'm', m: M0, k: 1 },
@@ -907,7 +907,7 @@ function level6(rng: Rng): Built {
 				problem: `Un blocchetto ${material(X)} a forma di parallelepipedo ha gli spigoli ${mProse(A, 'cm')}, ${mProse(B, 'cm')} e ${mProse(C, 'cm')} e la massa ${mProse(M0, 'g')}. Quanto vale la densità?`,
 				valueStep: [
 					`V = a \\cdot b \\cdot c = ${d0(A)} \\cdot ${d0(B)} \\cdot ${d0(C)} ${volShown(V).sym} ${volShown(V).tex}\\ \\text{cm}^3`,
-					`\\rho = \\dfrac{m}{V} ${volShown(V).sym} \\dfrac{${d0(M0)}}{${volShown(V).tex}} ${valueShown(X, result(X, e.mul(X)))}${UNITS.gcm3.tex}`,
+					`d = \\dfrac{m}{V} ${volShown(V).sym} \\dfrac{${d0(M0)}}{${volShown(V).tex}} ${valueShown(X, result(X, e.mul(X)))}${UNITS.gcm3.tex}`,
 				],
 				sumTex: `${epsName('m')} + ${epsName('a')} + ${epsName('b')} + ${epsName('c')}`,
 				wrong: extra,

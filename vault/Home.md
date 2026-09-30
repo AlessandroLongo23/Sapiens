@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-29
+aggiornato: 2026-09-30
 tag: [indice]
 ---
 # Sapiens
@@ -19,6 +19,8 @@ Il 29 settembre, prima del primo lotto di fisica, si è deciso come si disegna l
 
 Sempre il 29 settembre è nata l'idea dei [[Laboratori]]: ambienti 3D da esplorare in prima persona, come in un videogioco, per chimica e poi per le altre aree. Il prototipo `/laboratorio` (i cristalli di solfato di rame, modellato in Blender e animato con three.js) è nel codice locale. Si parte subito, in parallelo ai lotti, da computer, con un motore modulare per la chimica su un catalogo di sostanze ricavato dal programma; il primo traguardo è il motore in un laboratorio libero insieme a una stanza condivisa fino a 32 persone, docente compreso, senza chat ([[Laboratorio condiviso]]), su Cloudflare Durable Objects perché Supabase Realtime non regge i messaggi di una stanza; il prototipo, che ha ora un corpo con due mani che prendono, mescolano e versano, va online fuori dall'indice e senza link. Il 30 settembre si è deciso lo stile: un videogioco in prima persona, pittorico e morbido, senza interfaccia da pagina web e con asset gratuiti a licenza libera; la prova è la fetta verticale `/laboratorio/banco`. Vedi [[2026-09-29 Laboratori]] e [[2026-09-30 Laboratori, la fetta verticale]]. Lo stesso giorno gli avatar (un kit di forme semplici, opachi nel laboratorio e adesivi nel sito) e un'aula intera, `/laboratorio/aula`, con dodici postazioni, i compagni e il docente; nell'aula l'unità è la postazione, per gruppi da 1 a 3, e la misura dell'aula si sceglie all'avvio dai presenti. Vedi [[2026-09-30 Aula e avatar del laboratorio]].
 
+Il 30 settembre si è deciso come arriva la risposta aperta negli esercizi, che la beta promette e oggi manca: ogni livello è una tappa con più tipi di esercizio, 4 ripetizioni da 8 domande con la risposta aperta che cresce (8/0, 6/2, 4/4, 2/6) portano a superato; si scrive con MathLive, con la tastiera di Sapiens o quella del dispositivo; la forma conta solo dove è l'esercizio, e ogni livello dichiara cosa si valuta. Con la risposta aperta arriva la memoria degli esercizi: FSRS per livello, con la risposta aperta che pesa più della multipla, ripassi aperti nella pratica quotidiana fino a padroneggiato, quando la memoria regge per settimane, superato che non si perde mai, e il ripasso implicito lungo il grafo dei prerequisiti, tutto nella beta. Nessun codice ancora. Vedi [[2026-09-30 Risposta aperta e memoria degli esercizi]].
+
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
@@ -35,10 +37,16 @@ Sempre il 29 settembre è nata l'idea dei [[Laboratori]]: ambienti 3D da esplora
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-30 Terzo lotto di fisica]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-30 Risposta aperta e memoria degli esercizi]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-09-30 Il ripasso spaziato e quello implicito sui prerequisiti entrano nella beta]]
+- [[2026-09-30 Superato non si perde, padroneggiato torna da ripassare come invito]]
+- [[2026-09-30 La memoria degli esercizi è per livello, con FSRS, e la risposta aperta pesa di più]]
+- [[2026-09-30 Nella risposta aperta la forma conta solo dove è l'esercizio]]
+- [[2026-09-30 La risposta aperta si scrive con MathLive, con la tastiera di Sapiens o quella del dispositivo]]
+- [[2026-09-30 Ogni livello è una tappa con più tipi di esercizio, e si supera a risposta aperta]]
 - [[2026-09-30 I laboratori devono sembrare un videogioco, in uno stile pittorico e morbido]]
 - [[2026-09-30 Il prototipo dei laboratori usa solo asset con licenza libera]]
 - [[2026-09-30 Gli avatar sono un kit di forme semplici, opachi nel laboratorio e adesivi nel sito]]
@@ -87,7 +95,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-25 Oggi è lo schermo iniziale dell'app]] (superata in parte)
 - [[2026-09-25 Rifare gli errori vuol dire esercizi nuovi sugli stessi livelli]]
 - [[2026-09-25 La pratica quotidiana entra nella beta]]
-- [[2026-09-25 Gli esercizi sono un percorso di livelli]]
+- [[2026-09-25 Gli esercizi sono un percorso di livelli]] (superata in parte)
 - [[2026-09-25 Studio costa 9,99 euro al mese o 49,99 fino a giugno]]
 - [[2026-09-24 Il livello degli esercizi lo sceglie la pagina]] (superata)
 - [[2026-09-24 Ogni tentativo salva l'esercizio intero]]
@@ -127,7 +135,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]]
 
 ## Idee
-Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Tavola periodica interattiva]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]].
+Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Tavola periodica interattiva]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]].
 
 ## Decisioni aperte più importanti
 Ognuna ha il dettaglio nella nota collegata.

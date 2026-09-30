@@ -1,9 +1,11 @@
 ---
-stato: decisa
-aggiornato: 2026-09-25
+stato: superata in parte
+aggiornato: 2026-09-30
 tag: [decisione, studenti, prodotto]
 ---
 # Gli esercizi sono un percorso di livelli
+
+Superata in parte il 30 settembre 2026 da [[2026-09-30 Ogni livello è una tappa con più tipi di esercizio, e si supera a risposta aperta]]: al posto di una prova da 10 domande ci sono 4 ripetizioni da 8 con la risposta aperta che cresce.
 
 ## Decisione
 Gli esercizi di una lezione sono un percorso: un nodo per livello, dal più facile, ognuno con un nome che dice cosa aggiunge quel livello. Lo studente sceglie il livello prima di cominciare e fa una prova di 10 domande tutte di quel livello. Con almeno 8 risposte giuste su 10 il livello è superato e si apre quello dopo. Un livello chiuso si apre anche con la prova di salto: 5 domande sui livelli che salta, e con 4 giuste quei livelli contano come superati. Sotto ogni livello si vedono le ultime prove, con il punteggio e la data.
