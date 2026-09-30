@@ -37,6 +37,12 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	'dinamometro': Dinamometro,
 	'molla-righello': MollaRighello,
 	'punto-forze': PuntoForze,
+	// Physics, first year: equilibrium of a point (group 6).
+	// Physics, first year: rigid bodies and levers (group 7).
+	// Physics, first year: pressure, Pascal and Stevin (group 8).
+	// Physics, first year: atmosphere and Archimedes (group 9).
+	// Physics, first year: rays and mirrors (group 10).
+	// Physics, first year: refraction and lenses (group 11).
 };
 
 export function SceneFigure({ scene, className }: { scene: SceneRef; className?: string }) {

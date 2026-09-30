@@ -53,6 +53,23 @@ Scelte del 29 settembre 2026, da confermare con Andrea (vault: `Contenuti/Domand
   scientifica) con gli indirizzi di `../url.md`; alle altre lezioni di fisica con quelli di `url.md`. Solo lezioni
   che esistono in quei file.
 
+## Incertezze e cifre significative
+
+Fissate nelle lezioni 04-08 (primo lotto, 29 settembre 2026) e valide per tutta la fisica:
+
+- Incertezza di una serie di misure: la semidispersione $(x_{max} - x_{min})/2$. Per una misura sola, per misure
+  tutte uguali o quando la semidispersione è più piccola della sensibilità, la sensibilità intera.
+- Risultato: $(\bar x \pm \Delta x)\,\text{unità}$, con le parentesi; $\Delta x$ con una cifra significativa e il
+  valore arrotondato alla stessa posizione, zeri finali compresi ($12{,}50$).
+- Arrotondamento: si guarda la prima cifra tolta, da 5 in su si aumenta; nei passaggi una o due cifre in più.
+- Incertezza relativa $\varepsilon = \Delta x / \bar x$, numero puro, o in percentuale.
+- Propagazione nel caso peggiore: somme e differenze sommano le incertezze assolute, prodotti e quozienti le
+  relative, una potenza $a^n$ ha $n\,\varepsilon_a$, un numero esatto $k$ dà $k\,\Delta a$.
+- Compatibilità: due misure sono compatibili se gli intervalli si sovrappongono.
+- Cifre significative: nelle somme e differenze il risultato ha i decimali del dato che ne ha meno, nei prodotti e
+  quozienti le cifre significative del dato che ne ha meno; i numeri esatti non contano; gli zeri finali di un
+  intero sono ambigui e si evitano con la notazione scientifica.
+
 ## Figure
 
 ### Statiche, in TikZ
@@ -85,6 +102,16 @@ li disegnano uguali:
 | Carrucola | `\draw[thick, fill=gray!20] (C) circle (0.3); \fill (C) circle (1pt);` |
 | Punto materiale | `\fill (P) circle (1.5pt);` |
 | Assi | `\draw[->] (-0.3,0) -- (4,0) node[right] {$x$};` come in matematica, griglia `\draw[gray!25, very thin] ... grid ...` |
+| Fulcro, perno | un triangolo `\draw[thick, fill=gray!20] (x,0) -- ++(-0.2,-0.35) -- ++(0.4,0) -- cycle;` sopra un suolo; perno `\draw[thick, fill=white] (P) circle (2pt);` |
+| Liquido | `\fill[cyan!20] ...;` con la superficie libera `\draw[thin] ...;`; recipiente `\draw[thick]` aperto in alto |
+| Raggio di luce | `\draw[thick, orange!90!black, postaction={decorate}, decoration={markings, mark=at position 0.5 with {\arrow{Stealth}}}] (A) -- (B);`; un secondo raggio in `blue!70!black`; il prolungamento virtuale `\draw[thin, dashed, orange!90!black]` senza freccia |
+| Asse ottico | `\draw[thin, dash dot] (x0,0) -- (x1,0);` |
+| Normale | `\draw[thin, dashed] ...;` |
+| Specchio piano | come una parete: linea `thick` e trattini ogni 0,12 sul retro |
+| Specchio sferico | arco `thick` con i trattini sul retro; la luce arriva da sinistra |
+| Lente sottile | convergente `\draw[{Stealth}-{Stealth}, thick, blue!60!black] (x,-h) -- (x,h);`, divergente `\draw[{Stealth[reversed]}-{Stealth[reversed]}, thick, blue!60!black] ...` |
+| Fuoco, centro | `\fill (x,0) circle (1.5pt) node[below] {$F$};` |
+| Oggetto, immagine | oggetto `\draw[-{Stealth}, very thick] (x,0) -- (x,h);`; immagine in `blue!70!black`, tratteggiata se virtuale |
 
 Le frecce delle forze partono dal punto di applicazione; in un diagramma delle forze il corpo è un punto o un
 blocco, con le forze che partono dal centro. Le lunghezze delle frecce sono in scala quando la figura dà i
@@ -101,12 +128,18 @@ Un blocco ` ```interattivo ` con `% nome:` e `% alt:` (vedi le lezioni di matema
 sul sito il componente con quel nome. I componenti di fisica stanno in `src/components/content/interactive/fisica/`,
 un file per figura, e usano `kit.tsx` (cornice, etichette, punti da trascinare, animazioni, cursori) e `fisica.tsx`
 (frecce, vettori, componenti, suolo, blocchi, molle, fili, piano inclinato, carrucole, assi): mai disegni fatti a
-mano di pezzi che quei file hanno già. Si registrano in `FIGURES` di `src/lib/utils/interactive.ts`, sotto il
+mano di pezzi che quei file hanno già. Altri pezzi pronti, in `interactive/fisica/`: `ottica.tsx` (raggi, cammini
+riflessi e rifratti, asse ottico, normale, specchi piani e sferici, lenti sottili, fuochi, oggetto e immagine, più
+`reflect`, `refract`, `criticalAngle`, `imageDistance`, `magnification`), `Dinamometro.tsx` (il dinamometro con la
+sua scala), `griglia.tsx` (griglia con punti che scattano, nome di un vettore con il meno davanti) e `nomi.ts`
+(nomi delle frecce messi senza sovrapposizioni); le tacche numerate sugli assi sono in
+`exercises/scenes/GraficoDati.tsx`. Si registrano in `FIGURES` di `src/lib/utils/interactive.ts`, sotto il
 commento del proprio gruppo. Esempio da seguire: `MotoIncontro.tsx` (cursore, bottone che avvia, lettura dei
 valori sotto la figura). Niente motore fisico: i moti hanno la loro formula, e dove non ce l'hanno basta un passo
 di integrazione scritto a mano.
 
-Per guardarle serve il sito in sviluppo (`npm run dev`, già acceso sulla porta 3000 durante i lotti):
+Per guardarle serve il sito in sviluppo, acceso durante i lotti (il secondo lotto usa la porta 3001: aggiungi
+`--porta 3001`):
 
 ```sh
 node scripts/figure/anteprima-interattivo.mjs /percorso/figura.png figura=<nome> [--scuro] [--telefono] [--clic "button:has-text('Avvia')" --attendi 1500]
