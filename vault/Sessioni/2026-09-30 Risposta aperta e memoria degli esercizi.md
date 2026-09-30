@@ -11,7 +11,7 @@ Si è partiti dalla risposta aperta. Claude ha fatto girare tutti i generatori: 
 
 Claude ha corretto due punti, accettati: la memoria è per livello e non per tipo (il procedimento si dimentica, non il formato, e una curva per tipo porterebbe da circa 3 a 6-9 ripassi al giorno), e la tappa si supera a risposta aperta, perché la verifica a scuola è aperta. Sul ripasso implicito sui prerequisiti Claude consigliava di rimandarlo; Alessandro lo vuole nella beta.
 
-Poi Alessandro ha rifiutato l'allenamento a scelta multipla facoltativo e ha proposto una rampa: cinque ripetizioni per livello, dalla sola scelta multipla alla sola risposta aperta, superato alla quarta e padroneggiato alla quinta. Claude ha notato che la quinta, fatta subito, non misura la memoria; Alessandro ha aggiunto che nemmeno una prova dopo due giorni basta, perché serve la curva dell'oblio vera su giorni e settimane. Il modello finale: 4 ripetizioni da 8 domande a rampa fino a superato, poi ripassi aperti decisi da FSRS, padroneggiato quando la stabilità supera una soglia (proposta 30 giorni). Alessandro ha precisato che padroneggiato è un valore dinamico dell'algoritmo, calcolato su tutti gli esercizi fatti, prerequisiti compresi, e non un numero di ripassi. Claude ha proposto che i successi sulle lezioni successive rinfreschino i prerequisiti, mentre gli errori li abbassino solo dopo il ripasso suggerito.
+Poi Alessandro ha rifiutato l'allenamento a scelta multipla facoltativo e ha proposto una rampa: cinque ripetizioni per livello, dalla sola scelta multipla alla sola risposta aperta, superato alla quarta e padroneggiato alla quinta. Claude ha notato che la quinta, fatta subito, non misura la memoria; Alessandro ha aggiunto che nemmeno una prova dopo due giorni basta, perché serve la curva dell'oblio vera su giorni e settimane. Il modello finale: 4 ripetizioni da 8 domande a rampa fino a superato, poi ripassi aperti decisi da FSRS, padroneggiato quando la stabilità supera una soglia (proposta 30 giorni). Alessandro ha precisato che padroneggiato è un valore dinamico dell'algoritmo, calcolato su tutti gli esercizi fatti, prerequisiti compresi, e non un numero di ripassi. Claude ha proposto che i successi sulle lezioni successive rinfreschino i prerequisiti, mentre gli errori li abbassino solo dopo il ripasso suggerito. Più tardi Alessandro ha deciso la soglia di una ripetizione, 7 giuste su 8, e 4 passi invece di 5 per i livelli senza risposta aperta (3 ripetizioni a scelta multipla, poi il ripasso).
 
 ## Decisioni
 - [[2026-09-30 Ogni livello è una tappa con più tipi di esercizio, e si supera a risposta aperta]]
@@ -28,7 +28,7 @@ Poi Alessandro ha rifiutato l'allenamento a scelta multipla facoltativo e ha pro
 - Nuova idea: [[Tipi di esercizio sui passaggi]].
 
 ## Rimasto aperto
-- La soglia di una ripetizione (proposta 6 su 8); la rampa dei 250 livelli senza risposta aperta (da valutare); quante domande ha un ripasso nella pratica quotidiana; il tipo della prova di salto; la soglia di padronanza; la ritenzione desiderata; come entra la velocità di risposta; quanto un successo rinfresca un prerequisito.
+- Quante domande ha un ripasso nella pratica quotidiana; il tipo della prova di salto; la soglia di padronanza; la ritenzione desiderata; come entra la velocità di risposta; quanto un successo rinfresca un prerequisito.
 - Le scritture dubbie della risposta aperta, in [[Domande per Andrea]].
 - Da verificare: la virgola decimale e il peso di MathLive; la fonte sulle abilità "crepate" tolte da Duolingo; i dettagli di Math Academy.
 

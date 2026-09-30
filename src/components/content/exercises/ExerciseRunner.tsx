@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, BookOpen, ListChecks, Repeat, RotateCcw, Route } from 'lucide-react';
 import type { ExerciseView, FinishedRun, PathView, SessionView } from '@/lib/server/exercises';
 import { SESSION_LENGTH } from '@/lib/exercises/config';
-import { JUMP_LENGTH, MIN_PASS_LENGTH, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
+import { JUMP_LENGTH, RAMP, REPETITION_LENGTH, canPass, passMark, runPassed, type RunKind } from '@/lib/exercises/levels';
 import { cn } from '@/lib/utils/cn';
 import { progressStore } from '@/lib/state/progress';
 import { Button, LinkButton } from '@/components/ui/Button';
@@ -72,7 +72,7 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 	const [reviewing, setReviewing] = useState(false);
 	const [left, setLeft] = useState(questionsLeft);
 	const [error, setError] = useState<string | null>(null);
-	const questionCount = free ? Math.min(SESSION_LENGTH, left) : SESSION_LENGTH;
+	const questionCount = free ? Math.min(REPETITION_LENGTH, left) : REPETITION_LENGTH;
 
 	// Back and forward move between the summary and the mistakes page, as the address says.
 	useEffect(() => {
@@ -185,8 +185,12 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 	const levelIndex = path.levels.findIndex((l) => l.level === session.level);
 	const levelName = path.levels[levelIndex]?.name;
 	const following = path.levels[levelIndex + 1]?.level ?? null;
-	const passed = runPassed({ total: length, answered: length, correct });
+	const passed = runPassed({ kind, total: length, answered: length, correct });
 	const mark = passMark(length);
+	// Which repetition the run was, and how many pass the level; past the last, practice on a passed level.
+	const step = session.step ?? null;
+	const steps = path.levels[levelIndex]?.steps ?? 1;
+	const toGo = step === null ? 0 : steps - step;
 	// A Free account may have used its whole day on this run.
 	const canGo = (kind: RunKind) => !free || left >= (kind === 'jump' ? JUMP_LENGTH : 1);
 	const heading = session.kind === 'jump' ? `Prova di salto al livello ${session.level}` : `Livello ${session.level}`;
@@ -195,12 +199,26 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 			? passed
 				? { title: `Si apre il livello ${session.level}`, detail: 'I livelli prima contano come superati.' }
 				: { title: 'Non ancora', detail: `Per il salto servivano ${mark} risposte giuste. Puoi riprovarlo o passare dai livelli prima.` }
-			: passed
-				? { title: `Livello ${session.level} superato`, detail: following ? `Si apre il livello ${following}.` : 'Hai superato tutti i livelli di questa lezione.' }
-				: !canPass(length)
-					? { title: 'Allenamento fatto', detail: `Una prova di ${length} ${length === 1 ? 'domanda' : 'domande'} allena, ma per superare il livello ne servono almeno ${MIN_PASS_LENGTH}.` }
-					: { title: correct >= mark - 2 ? 'Ci sei quasi' : 'Continua ad allenarti', detail: `Per superare il livello servono ${mark} risposte giuste su ${length}.` };
-	const retry = passed && kind === 'level' && following !== null ? { kind: 'level' as const, level: following, label: `Vai al livello ${following}` } : passed && kind === 'jump' ? { kind: 'level' as const, level: session.level, label: `Inizia il livello ${session.level}` } : passed ? null : { kind, level: session.level, label: kind === 'jump' ? 'Riprova il salto' : 'Riprova il livello' };
+			: passed && step !== null && step > steps
+				? { title: 'Ripasso fatto', detail: 'Il livello resta superato.' }
+				: passed && toGo > 0
+					? { title: `Ripetizione ${step} di ${steps} fatta`, detail: `${toGo === 1 ? 'Ne manca una' : `Ne mancano ${toGo}`} per superare il livello${steps === RAMP.length ? ', con più risposte da scrivere' : ''}.` }
+					: passed
+						? { title: `Livello ${session.level} superato`, detail: following ? `Si apre il livello ${following}.` : 'Hai superato tutti i livelli di questa lezione.' }
+						: !canPass(length)
+							? { title: 'Allenamento fatto', detail: `Una prova di ${length} ${length === 1 ? 'domanda' : 'domande'} allena, ma una ripetizione conta solo intera, ${REPETITION_LENGTH} domande.` }
+							: { title: correct >= mark - 1 ? 'Ci sei quasi' : 'Continua ad allenarti', detail: `Una ripetizione conta con ${mark} risposte giuste su ${length}.` };
+	const stamp = kind === 'level' && passed && toGo > 0 ? 'Fatta' : kind === 'level' && passed && step !== null && step > steps ? 'Fatto' : 'Superato';
+	const retry =
+		passed && kind === 'level' && toGo > 0
+			? { kind: 'level' as const, level: session.level, label: `Continua: ripetizione ${(step ?? 0) + 1}` }
+			: passed && kind === 'level' && following !== null
+				? { kind: 'level' as const, level: following, label: `Vai al livello ${following}` }
+				: passed && kind === 'jump'
+					? { kind: 'level' as const, level: session.level, label: `Inizia il livello ${session.level}` }
+					: passed
+						? null
+						: { kind, level: session.level, label: kind === 'jump' ? 'Riprova il salto' : 'Riprova la ripetizione' };
 	// After a run that did not pass, looking at the mistakes comes first: in the summary, the button to them; on
 	// their page, doing them again. After a run that passed, the way on comes first.
 	const mistakesFirst = wrong > 0 && !passed;
@@ -307,6 +325,7 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 				correct={correct}
 				total={length}
 				passed={passed}
+				stamp={stamp}
 				title={outcome.title}
 				detail={outcome.detail}
 				onClose={leave}

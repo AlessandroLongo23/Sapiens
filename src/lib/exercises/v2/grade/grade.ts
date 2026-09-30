@@ -38,7 +38,7 @@ const FORM_MESSAGES: Record<AnswerForm, string> = {
 };
 const UNREADABLE = 'Non riesco a leggere la risposta: controlla parentesi e simboli.';
 const NOT_A_NUMBER = 'Scrivi il risultato come un numero: qui ci sono ancora operazioni da fare.';
-const REDUCIBLE = 'Giusto. La frazione si può ancora ridurre.';
+const REDUCIBLE = 'La frazione si può ancora ridurre.';
 const AN_EQUATION = "Scrivi le soluzioni, non l'equazione.";
 
 /** An equation between two expressions, not a label and its value: x² − 2x = 0, 5x − 2y + 23 = 0. */

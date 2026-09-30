@@ -1572,3 +1572,44 @@ html:not(.app)::view-transition-old(.page) {
 		transform: translateY(8px);
 	}
 }
+
+/*
+ * The formula field of the open answers (src/components/content/exercises/OpenAnswer.tsx) and its keyboard on
+ * screen, in the colours of the page: MathLive's own keyboard and menu buttons give way to the one beside the field.
+ */
+/* Room under a run while the keyboard on screen is open (--math-keyboard, set by OpenAnswer.tsx only then). */
+html[style*='--math-keyboard'] #esercizi {
+	padding-bottom: calc(var(--math-keyboard) + 1rem);
+}
+math-field::part(virtual-keyboard-toggle),
+math-field::part(menu-toggle) {
+	display: none;
+}
+math-field {
+	--caret-color: var(--fg-strong);
+	--selection-background-color: var(--accent-soft);
+	--selection-color: var(--fg-strong);
+	--contains-highlight-background-color: transparent;
+	--smart-fence-color: var(--fg-subtle);
+	color: var(--fg-strong);
+}
+body {
+	--keyboard-background: var(--surface-2);
+	--keyboard-border: var(--surface-4);
+	--keyboard-accent-color: var(--accent);
+	--keycap-background: var(--surface);
+	--keycap-background-hover: var(--surface-3);
+	--keycap-background-active: var(--surface-4);
+	--keycap-border: var(--surface-4);
+	--keycap-border-bottom: var(--surface-4);
+	--keycap-text: var(--fg-strong);
+	--keycap-secondary-background: var(--surface-3);
+	--keycap-secondary-background-hover: var(--surface-4);
+	--keycap-secondary-text: var(--fg-strong);
+	--keycap-primary-background: var(--fg-strong);
+	--keycap-primary-background-hover: var(--fg);
+	--keycap-primary-text: var(--surface);
+	--keyboard-toolbar-text: var(--fg-muted);
+	--keyboard-toolbar-text-active: var(--fg-strong);
+	--keyboard-toolbar-background-selected: var(--surface-3);
+}
