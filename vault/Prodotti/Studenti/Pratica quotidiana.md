@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-25
+aggiornato: 2026-09-30
 tag: [prodotto, studenti]
 ---
 # Pratica quotidiana
@@ -20,7 +20,7 @@ Dal 25 settembre 2026 (sera), sulla pagina `/oggi`:
 - Sessione giornaliera: cinque domande dai capitoli che lo studente ha aperto, due minuti, un tocco per iniziare.
 - Serie di giorni consecutivi e punti, calcolati sul server perché non si possano falsificare.
 - Promemoria con notifiche push (serve il service worker della PWA, vedi [[App mobile]]). Il permesso si chiede solo dopo la prima sessione completata, con un motivo chiaro.
-- Ripasso a intervalli crescenti quando esisteranno le [[Flashcard]].
+- Ripasso a intervalli crescenti: dal 30 settembre 2026 deciso per la beta sugli esercizi. La pratica sceglie i livelli da ripassare con la memoria stimata da FSRS, per livello, anche lungo il grafo dei prerequisiti (vedi [[2026-09-30 La memoria degli esercizi è per livello, con FSRS, e la risposta aperta pesa di più]] e [[2026-09-30 Il ripasso spaziato e quello implicito sui prerequisiti entrano nella beta]]). Un livello in scadenza è un invito, non una perdita ([[2026-09-30 Superato non si perde, padroneggiato torna da ripassare come invito]]). Le [[Flashcard]] dopo.
 - Serie di giorni e padronanza fanno guadagnare gli [[Adesivi]], dopo la beta (vedi [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]). La serie si progetta già pensando a dove si agganciano.
 - Niente classifiche finte (vedi [[Principi]]). Leghe solo quando gli utenti attivi bastano a riempirne una.
 
