@@ -20,7 +20,7 @@ Poi l'aula: Alessandro ha proposto file di banchi doppi, docente da un lato, arm
 - Il kit degli avatar (`scripts/lab/avatar_kit.py`) e la sua composizione nella pagina (`avatar-kit.ts`).
 - L'aula `/laboratorio/aula` (`scripts/lab/build_aula.py`, `classroom.ts`), la bozza senza luce `/laboratorio/aula-bozza`, la pianta disegnata; `build_banco.py` ora si può importare e ha più porte.
 - Il giocatore gira intorno ai mobili; ombre del sole e ombre di contatto su tutta l'aula; l'esperimento completo passa anche nell'aula.
-- Tre cotture della luce in sequenza per misurarne i tempi: 10 minuti (1024), 42 minuti (2048), la 4096 stimata in ore.
+- Tre cotture della luce per misurarne i tempi: 10 minuti (1024), 11 minuti e mezzo (2048, con il computer libero), 2 ore e 33 minuti (4096, insieme ad altre cotture). Alessandro ha confrontato media e alta su dieci viste e cinque ingrandimenti e le ha trovate praticamente uguali: si tiene la media.
 
 ## Rimasto aperto
 - Le tre forme del viso, l'adesivo 2D dell'avatar, l'editor nell'account, la prova delle proporzioni con studenti veri.

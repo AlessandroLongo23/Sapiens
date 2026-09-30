@@ -56,8 +56,10 @@ LAMPS = [(x, y) for y in (-3.2, -0.3, 2.6) for x in (0.0, 1.95, 3.9, 5.85)]
 
 B.X0, B.X1, B.Y0, B.Y1, B.H = X0, X1, Y0, Y1, H
 B.WINDOWS, B.WIN_Z, B.DOORS, B.LAMPS = WINDOWS, (1.0, 2.5), DOORS, LAMPS
-B.SIZE = int(os.environ.get('AULA_LIGHTMAP', '4096'))
-B.SAMPLES = int(os.environ.get('AULA_SAMPLES', '256'))
+# 2048 px and 128 samples: side by side with 4096 and 256 the difference does not show, even enlarged, and the bake
+# takes about 12 minutes on the processor (M5, nothing else running) instead of hours (30 September 2026)
+B.SIZE = int(os.environ.get('AULA_LIGHTMAP', '2048'))
+B.SAMPLES = int(os.environ.get('AULA_SAMPLES', '128'))
 B.LIGHTMAP = os.path.join(os.path.dirname(OUT), f'{STEM}-luce.png')
 B.LIGHTMAP_EXT = os.path.join(os.path.dirname(OUT), f'{STEM}-esterno.png')
 
