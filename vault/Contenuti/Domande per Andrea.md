@@ -248,6 +248,8 @@ Dove la forma non conta, la risposta aperta accetta tutte le scritture equivalen
 - [ ] Unità di misura e gradi nella risposta ($25$ cm, $149°$): si accettano con e senza (scelta fatta). Una unità diversa da quella della consegna ($0{,}25$ m per $25$ cm) si converte o è un errore?
 - [ ] Domini e condizioni di esistenza: valgono $x \neq 4$, $D = \mathbb{R} \setminus \{4\}$ e $x \neq \pm \frac{2}{3}$ (scelta fatta); servono altre scritture, come gli intervalli?
 - [ ] Funzione inversa: scritta in $x$ o in $y$ vale lo stesso (scelta fatta)?
+- [ ] Un trinomio che non si scompone: vale sia la parola "irriducibile" sia il trinomio riscritto uguale (scelta fatta). Va bene anche dove la consegna chiede i fattori di primo grado?
+- [ ] Con la virgola decimale, "$x = 0,2$" può voler dire $0$ e $2$ oppure $0{,}2$: il correttore prova le due letture e accetta la risposta se una è giusta (scelta fatta). Ti sembra giusto, o in classe si usa sempre il punto e virgola tra due soluzioni?
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]
