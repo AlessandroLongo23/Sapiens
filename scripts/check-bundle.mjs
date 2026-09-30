@@ -44,11 +44,22 @@ const offenders = walk('src')
 // `import type` is erased by the compiler, so it may name them anywhere.
 const CRUMPLE = /^import\s+(?!type\s)[^;]*?from\s+['"](three|html-to-image|@\/lib\/zaino\/(paper-crumple|page-photo))['"]/m;
 const CRUMPLE_ALLOWED = new Set(['src/lib/zaino/paper-crumple.ts', 'src/lib/zaino/page-photo.ts']);
+// The 3D lab's engine is three.js through and through; only the /laboratorio pages reach it, so it lands in their
+// own chunks. Nothing outside src/components/lab may import from it.
+const LAB_ENGINE = 'src/components/lab/engine/';
 offenders.push(
 	...walk('src')
 		.map((path) => ({ path: relative('.', path), source: readFileSync(path, 'utf8') }))
-		.filter(({ path, source }) => !CRUMPLE_ALLOWED.has(path) && CRUMPLE.test(source))
+		.filter(({ path, source }) => !CRUMPLE_ALLOWED.has(path) && !path.startsWith(LAB_ENGINE) && CRUMPLE.test(source))
 		.map(({ path, source }) => `${path} → ${source.match(CRUMPLE)?.[1]}`)
+);
+// ...and the engine stays behind the lab's pages (the dev API routes run on the server)
+const LAB_OK = /^src\/(components\/lab|app\/laboratorio|app\/\(site\)\/laboratorio|app\/api\/dev)\//;
+offenders.push(
+	...walk('src')
+		.map((path) => ({ path: relative('.', path), source: readFileSync(path, 'utf8') }))
+		.filter(({ path, source }) => !LAB_OK.test(path) && /from\s+['"][^'"]*lab\/engine\//.test(source))
+		.map(({ path }) => `${path} → the lab's engine`)
 );
 
 if (offenders.length > 0) {
