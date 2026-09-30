@@ -38,7 +38,7 @@ Sessione del 30 settembre 2026, seguito di [[2026-09-30 Terzo lotto di fisica]].
 - La composizione percentuale è spiegata sia nella 01 sia nella 35 (la 35 la richiama e aggiunge i dati di analisi): `programma.md` chiede di toglierla da una delle due.
 
 ## Stato
-Lezioni pubblicate nel database. Il codice è sul branch `chimica-biennio`, nel worktree `Sapiens-fisica`, da mettere in produzione con una PR.
+In produzione dal 30 settembre 2026 con la PR #17 (master non si era mosso, nessun conflitto). Controllate su `sapiens-edu.vercel.app` a 390 px le lezioni sulla separazione dei miscugli, sulla legge di Boyle e sui modelli di Thomson e Rutherford, con le loro schede, e la lezione 09 di fisica con la densità scritta $d$: figure caricate, interattive montate, scene disegnate, nessun errore.
 
 ## Prossimo argomento
-Il deploy del lotto e il giro sul kit rimandato dal lotto di fisica (tacche sugli assi, auto, termometro, barre dell'energia, grafici con valori negativi, `Slider`, `ToggleGroup`, `checkCommon` per le opzioni a parole). Poi il terzo anno, di fisica, di chimica o di matematica.
+Il giro sul kit rimandato dal lotto di fisica (tacche sugli assi, auto, termometro, barre dell'energia, grafici con valori negativi, `Slider`, `ToggleGroup`, `checkCommon` per le opzioni a parole). Poi il terzo anno, di fisica, di chimica o di matematica.
