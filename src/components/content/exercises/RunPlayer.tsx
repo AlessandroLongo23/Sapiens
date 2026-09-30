@@ -397,9 +397,10 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [finished, exercise, selected, verdict, busy, index]);
 
-	// Every question, the first one included, starts with the focus on its text.
+	// Every question, the first one included, starts with the focus on its text; an open question on its field
+	// instead (OpenAnswer), which would otherwise lose it here without knowing, and take no typing.
 	useEffect(() => {
-		if (!finished) question.current?.focus({ preventScroll: true });
+		if (!finished && exercise.mode !== 'open') question.current?.focus({ preventScroll: true });
 	}, [finished, exercise]);
 
 	// Answers sit in two columns when every one is short enough to share a row, otherwise in one. After rendering,
