@@ -9,6 +9,7 @@ import { hasFeature } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
 import { finishedRun, freeQuestionsLeft, hasExercises, lessonPath } from '@/lib/server/exercises';
 import { SESSION_LENGTH } from '@/lib/exercises/config';
+import { REPETITION_LENGTH } from '@/lib/exercises/levels';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { toneFor } from '@/lib/utils/icons';
 import { LessonFrame } from '@/components/content/lesson/LessonFrame';
@@ -76,7 +77,7 @@ export default async function ExercisesPage(props: LessonParams & { searchParams
 										<ExercisePath
 											titleHtml={title}
 											path={path}
-											questionCount={SESSION_LENGTH}
+											questionCount={REPETITION_LENGTH}
 											modes={modes}
 											locked={
 												<Paywall

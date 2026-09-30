@@ -84,13 +84,13 @@ function MistakeRow({ mistake: { position, exercise, choice, verdict } }: { mist
 					<div className="flex min-w-0 flex-col gap-1 rounded-lg border border-danger/40 bg-danger-soft px-3 py-2">
 						<dt className="label-mono text-danger-fg">La tua risposta</dt>
 						<dd className="min-w-0">
-							<Html html={exercise.options[choice]?.html ?? ''} className="math-content scroll-x text-danger-fg [&_.katex-display]:my-0 [&_.katex]:text-inherit" />
+							<Html html={verdict.answerHtml ?? exercise.options[choice]?.html ?? ''} className="math-content scroll-x text-danger-fg [&_.katex-display]:my-0 [&_.katex]:text-inherit" />
 						</dd>
 					</div>
 					<div className="flex min-w-0 flex-col gap-1 rounded-lg border border-ok/40 bg-ok-soft px-3 py-2">
 						<dt className="label-mono text-ok-fg">Quella giusta</dt>
 						<dd className="min-w-0">
-							<Html html={exercise.options[verdict.correctIndex]?.html ?? ''} className="math-content scroll-x text-ok-fg [&_.katex-display]:my-0 [&_.katex]:text-inherit" />
+							<Html html={verdict.expectedHtml ?? exercise.options[verdict.correctIndex]?.html ?? ''} className="math-content scroll-x text-ok-fg [&_.katex-display]:my-0 [&_.katex]:text-inherit" />
 						</dd>
 					</div>
 				</dl>

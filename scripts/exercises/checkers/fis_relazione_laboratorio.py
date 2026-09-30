@@ -219,7 +219,7 @@ def v_mean(m):
 
 
 def v_sum(m):
-    pairs = {"della densità": ("della massa e del volume", r"\rho"), "della velocità": ("della distanza e del tempo", "v")}
+    pairs = {"della densità": ("della massa e del volume", r"d"), "della velocità": ("della distanza e del tempo", "v")}
     errs = [] if pairs[m.group(1)] == (m.group(2), m.group(3)) else ["pair of relative uncertainties"]
     if val(m.group(4)) + val(m.group(5)) != val(m.group(6)):
         errs.append("sum of relative uncertainties")
@@ -282,13 +282,13 @@ MODELS = [
     ("scopo", "Misurare la temperatura di equilibrio di due masse d'acqua, una a «C» e una a «C», versate nello stesso recipiente.", v_temps),
     ("scopo", "Misurare la velocità media di un carrello su un tratto di «N» m.", ok),
     # cenni teorici: formulas with letters only
-    ("teoria", r"La densità è il rapporto tra massa e volume, $\rho = m / V$«A:|, e si misura in $\text{g/cm}^3$».", ok),
+    ("teoria", r"La densità è il rapporto tra massa e volume, $d = m / V$«A:|, e si misura in $\text{g/cm}^3$».", ok),
     ("teoria", "Il periodo si ricava dal tempo di «N» oscillazioni, $T = t / «X»$.", v_same),
     ("teoria", "La velocità media è il rapporto tra la distanza percorsa e il tempo impiegato, $v = s / t$.", ok),
     ("teoria", r"L'allungamento della molla è la differenza tra la sua lunghezza con la massa appesa e quella a riposo, $\Delta l = l - l_0$.", ok),
     ("teoria", "Il volume del cilindretto è l'aumento del livello dell'acqua nel cilindro graduato quando lo si immerge, $V = V_2 - V_1$.", ok),
     ("teoria", r"Il valore medio di $n$ misure è la loro somma divisa per $n$, $\bar{x} = \dfrac{x_1 + x_2 + \dots + x_n}{n}$.", ok),
-    ("teoria", r"Il volume di un cubetto di spigolo $l$ è $V = l^3$, quindi la sua densità è $\rho = m / l^3$.", ok),
+    ("teoria", r"Il volume di un cubetto di spigolo $l$ è $V = l^3$, quindi la sua densità è $d = m / l^3$.", ok),
     # materiali e strumenti
     ("strumenti", "Bilancia elettronica, portata «N» g, sensibilità «N» g.", v_bilancia),
     ("strumenti", "«A:Cronometro digitale|Cronometro del telefono|Cronometro da polso», sensibilità $0{,}01$ s.", ok),
@@ -315,8 +315,8 @@ RAW = [
     ("dati", rf"Nella colonna \$([tmlV])\\ \(\\text\{{(s|g|cm|mL)\}}\)\$ della tabella \$({NUM})\$ ci sono (i|le) (tempi|masse|lunghezze|temperature|volumi) delle {WORDS} misure\.", v_colonna),
     ("dati", rf"Nella colonna \$T\\ \(\{{\}}\^\\circ\\text\{{C\}}\)\$ della tabella \${NUM}\$ ci sono le temperature delle {WORDS} misure\.", ok),
     ("elaborazione", rf"\$\\bar\{{([tmlT])\}} = \\dfrac\{{({NUM})\}}\{{(\d+)\}} = ({NUM})({CEL})?\$(?: (s|g|cm))?\.", v_mean),
-    ("elaborazione", rf"L'incertezza relativa (della densità|della velocità) è la somma di quelle (della massa e del volume|della distanza e del tempo): \$\\varepsilon_\{{(\\rho|v)\}} = ({NUM}) \+ ({NUM}) = ({NUM})\$\.", v_sum),
-    ("elaborazione", rf"\$\\rho = \\dfrac\{{({NUM})\}}\{{(\d+)\}} = ({NUM})\\ \\text\{{g/cm\}}\^3\$\.", v_rho),
+    ("elaborazione", rf"L'incertezza relativa (della densità|della velocità) è la somma di quelle (della massa e del volume|della distanza e del tempo): \$\\varepsilon_\{{(d|v)\}} = ({NUM}) \+ ({NUM}) = ({NUM})\$\.", v_sum),
+    ("elaborazione", rf"\$d = \\dfrac\{{({NUM})\}}\{{(\d+)\}} = ({NUM})\\ \\text\{{g/cm\}}\^3\$\.", v_rho),
     ("elaborazione", rf"\$v = \\dfrac\{{({NUM})\}}\{{({NUM})\}} = ({NUM})\$ cm/s\.", v_vel),
     ("elaborazione", rf"La semidispersione (dei tempi|delle masse|delle lunghezze) è \$\\dfrac\{{({NUM}) - ({NUM})\}}\{{2\}} = ({NUM})\$ (s|g|cm)\.", v_half),
     ("elaborazione", rf"\$\\Delta l = ({NUM}) - ({NUM}) = ({NUM})\$ cm\.", v_diff),
@@ -604,10 +604,10 @@ def level35(sample, errs, level):
 # Level 4: which measure to improve
 
 FORMULAS = {
-    r"\rho = m / V": ("Per misurare la densità di un cilindretto un gruppo", ("m", "g", "massa", "La massa"), ("V", "mL", "volume", "Il volume"), 1),
+    r"d = m / V": ("Per misurare la densità di un cilindretto un gruppo", ("m", "g", "massa", "La massa"), ("V", "mL", "volume", "Il volume"), 1),
     "v = s / t": ("Per misurare la velocità media di un carrello un gruppo", ("s", "m", "distanza", "La distanza"), ("t", "s", "tempo", "Il tempo"), 1),
     r"A = a \cdot b": ("Per misurare l'area di un rettangolo di lati $a$ e $b$ un gruppo", ("a", "cm", "lato-a", "Il lato a"), ("b", "cm", "lato-b", "Il lato b"), 1),
-    r"\rho = m / l^3": ("Per misurare la densità di un cubetto un gruppo", ("m", "g", "massa", "La massa"), ("l", "cm", "spigolo", "Lo spigolo"), 3),
+    r"d = m / l^3": ("Per misurare la densità di un cubetto un gruppo", ("m", "g", "massa", "La massa"), ("l", "cm", "spigolo", "Lo spigolo"), 3),
 }
 DATUM = rf"\$([a-zA-Z]) = \(({NUM}) \\pm ({NUM})\)\\,\\text\{{([a-zA-Z]+)\}}\$"
 
