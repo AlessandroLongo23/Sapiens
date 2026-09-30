@@ -53,7 +53,7 @@ Con i primi due lotti le lezioni di fisica complete sono 70, il primo e il secon
 - I simboli della dilatazione ($\lambda$ lineare e $\alpha$ volumica) li ha fissati il README "come l'Amaldi, da verificare", e la conducibilità termica usa anch'essa $\lambda$: se l'Amaldi fa così va bene, altrimenti va cambiata la lezione 66.
 
 ## Stato
-Lezioni pubblicate nel database. Il codice è sul branch `fisica-terzo-lotto`, nel worktree `Sapiens-fisica`, da mettere in produzione con una PR.
+In produzione dal 30 settembre 2026 con la PR #16 (master non si era mosso, nessun conflitto). Controllate su `sapiens-edu.vercel.app` a 390 px le lezioni 43, 53 e 70 con le loro schede: figure caricate, interattive montate, scene disegnate, nessun errore.
 
 ## Prossimo argomento
-Il deploy del lotto e un giro sul kit, per portarci i pezzi riscritti più volte e correggere `Slider` e `ToggleGroup`. Poi il terzo anno di fisica, oppure il terzo anno di matematica.
+Un giro sul kit, per portarci i pezzi riscritti più volte e correggere `Slider` e `ToggleGroup`. Poi il terzo anno di fisica, oppure il terzo anno di matematica.

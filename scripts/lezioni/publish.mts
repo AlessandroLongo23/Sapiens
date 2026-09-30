@@ -27,8 +27,12 @@
  *
  * `--dir docs/lezioni/fisica` publishes another subject laid out the same way (its originali/index.json is written
  * by scripts/fisica/indice.mts). Every figure is compiled with the TikZ libraries in TIKZ_LIBRARIES.
+ *
+ * `--per-slug` matches the files to the lessons by the slug in their name (NN-slug.md, any NN) and not by their
+ * position in index.json: the chemistry lessons were numbered as they were written. Only files that exist are
+ * published. Chemistry drawings (```molecola and the like) are left as they are: scripts/chimica/ draws them.
  */
-import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
 import { parseFlashcards, type Flashcard } from '../../src/lib/content/flashcards';
 import { FIGURE_BUCKET, figureFile, parseFigure, publishedSvg, serializeFigure } from '../../src/lib/content/figures';
@@ -44,13 +48,25 @@ const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set');
 const db = createClient(process.env.PUBLIC_SUPABASE_URL!, key, { auth: { persistSession: false } });
 
-const lessonFile = (i: number, slug: string) => `${String(i + 1).padStart(2, '0')}-${slug}.md`;
+const bySlug = process.argv.includes('--per-slug');
+/** The lessons to publish, each with its file name: by position in index.json, or by the slug in the file's name. */
+const entries: { id: string; slug: string; name: string }[] = bySlug
+	? readdirSync(`${dir}/riscritte`)
+			.filter((f) => /^\d\d+-.+\.md$/.test(f))
+			.sort()
+			.map((name) => {
+				const slug = name.replace(/^\d+-|\.md$/g, '');
+				const row = index.find((r) => r.slug === slug);
+				if (!row) throw new Error(`${name}: nessuna lezione con slug ${slug} in originali/index.json`);
+				return { id: row.id, slug, name };
+			})
+	: index.map((row, i) => ({ id: row.id, slug: row.slug, name: `${String(i + 1).padStart(2, '0')}-${row.slug}.md` }));
 
 async function prepareFigures(): Promise<number> {
 	let errors = 0;
 	let bucketReady = false;
-	for (const [i, row] of index.entries()) for (const folder of ['riscritte', 'formulari']) {
-		const path = `${dir}/${folder}/${lessonFile(i, row.slug)}`;
+	for (const { name } of entries) for (const folder of ['riscritte', 'formulari']) {
+		const path = `${dir}/${folder}/${name}`;
 		if (!existsSync(path)) continue;
 		let md = readFileSync(path, 'utf8');
 		let changed = false;
@@ -58,7 +74,7 @@ async function prepareFigures(): Promise<number> {
 			const figure = parseFigure(m[1]);
 			if (!figure.name || !figure.alt) {
 				errors++;
-				console.log(`ERRORE ${folder}/${lessonFile(i, row.slug)}: figura senza "% nome" o "% alt"`);
+				console.log(`ERRORE ${folder}/${name}: figura senza "% nome" o "% alt"`);
 				continue;
 			}
 			if (publishedSvg(figure)) continue;
@@ -125,9 +141,9 @@ const same = (a: unknown, b: unknown) => {
 };
 
 // Every flashcard file must parse before anything is written.
-const parseErrors = index.flatMap((row, i) => {
-	const path = `${dir}/flashcard/${lessonFile(i, row.slug)}`;
-	return existsSync(path) ? parseFlashcards(readFileSync(path, 'utf8')).errors.map((e) => `flashcard/${lessonFile(i, row.slug)}: ${e}`) : [];
+const parseErrors = entries.flatMap(({ name }) => {
+	const path = `${dir}/flashcard/${name}`;
+	return existsSync(path) ? parseFlashcards(readFileSync(path, 'utf8')).errors.map((e) => `flashcard/${name}: ${e}`) : [];
 });
 if (parseErrors.length) {
 	parseErrors.forEach((e) => console.log(`ERRORE ${e}`));
@@ -136,8 +152,8 @@ if (parseErrors.length) {
 }
 
 let failed = 0;
-for (const [i, row] of index.entries()) {
-	const name = lessonFile(i, row.slug);
+for (const row of entries) {
+	const { name } = row;
 	const { data, error } = await db.from('content_nodes').select('theory,formulary,flashcards').eq('id', row.id).single();
 	if (error) {
 		failed++;

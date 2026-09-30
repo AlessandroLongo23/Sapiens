@@ -101,7 +101,7 @@ corregge con `ruota:` o cambiando l'ordine del SMILES).
   N 14,01; O 16,00; Na 22,99; S 32,07; Cl 35,45; ...). Esercizi e lezioni usano la stessa tavola.
 - Nomi IUPAC in italiano (2-metilbutano, acido etanoico), con il nome tradizionale tra parentesi
   quando è quello che si usa davvero (acido acetico).
-- Nessun link interno: le lezioni di chimica non hanno ancora un URL.
+- Link interni: le lezioni di chimica hanno un indirizzo, in `url.md` (vedi "Il biennio" qui sotto).
 
 ## Esercizi
 
@@ -130,3 +130,38 @@ essere bocciato. Esempio da seguire: `alcani_nomenclatura.py` e il suo controllo
 - Dentro un SMARTS di `evidenzia:` il `;` va scritto senza spazio: `; ` separa due evidenziazioni.
 - Nel tema scuro alcune evidenziazioni (giallo, arancione) si somigliano; servirebbe un ottavo
   colore, anche per gli alogeni.
+
+## Il biennio (dal 30 settembre 2026)
+
+Le lezioni del primo e del secondo anno si scrivono a lotti come quelle di fisica, con teoria, formulario,
+flashcard, note ed esercizi. Tutto quello che il README di fisica (`../fisica/README.md`) dice su figure TikZ,
+figure interattive, scene negli esercizi, generatori e controlli vale anche qui; le convenzioni chimiche sono
+quelle della sezione "Chimica: convenzioni" sopra.
+
+- File: `riscritte/NN-slug.md`, `formulari/`, `flashcard/`, `note/`, con lo slug del database. I numeri sono solo
+  per l'ordine: le lezioni del biennio usano i numeri da 10 a 47 nell'ordine dell'albero. Si pubblicano per slug:
+
+  ```sh
+  node --env-file=.env node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/publish.mts --dir docs/lezioni/chimica --per-slug --apply
+  ```
+
+  Lo script compila i blocchi ` ```tikz ` e scrive teoria, formulario e flashcard; i disegni di RDKit (` ```molecola `
+  e gli altri) si preparano prima con `pubblica_figure.py` e si caricano con `scripts/chimica/pubblica.mts`, come
+  sopra.
+- Link: `url.md` (chimica), `../url.md` (matematica), `../fisica/url.md` (fisica). Si rigenera con
+  `scripts/fisica/indice.mts --materia chemistry --dir docs/lezioni/chimica`, che scrive anche `originali/index.json`.
+  Gli argomenti che la fisica ha già (grandezze, densità, temperatura e calore, cifre significative, passaggi di
+  stato, gas) in chimica si scrivono comunque per intero, perché ogni materia sta in piedi da sola come nei libri,
+  con lo sguardo del chimico e un link alla lezione di fisica per chi vuole di più.
+- Esercizi: generatori in TypeScript come quelli di fisica e matematica (`src/lib/exercises/v2/generators/<slug>.ts`,
+  specifica e controllo Python); quelli in Python con RDKit restano per le molecole disegnate.
+- Costanti del biennio: numero di Avogadro $N_A = 6{,}02 \cdot 10^{23}\,\text{mol}^{-1}$; condizioni normali
+  $0\,^\circ\text{C}$ e $1\,\text{atm}$, volume molare $22{,}4\,\text{L/mol}$ (da confermare con Andrea: alcuni
+  libri usano le condizioni standard, $25\,^\circ\text{C}$ e $24{,}5\,\text{L/mol}$); costante dei gas
+  $R = 8{,}31\,\text{J/(mol}\cdot\text{K)} = 0{,}0821\,\text{L}\cdot\text{atm/(mol}\cdot\text{K)}$;
+  $1\,\text{atm} = 1{,}013 \cdot 10^5\,\text{Pa} = 760\,\text{mmHg}$; $T = t + 273$ (273,15 dove serve).
+  Masse atomiche con due decimali, dalla tavola della lezione 01.
+- Simboli: pressione $p$, volume $V$, temperatura assoluta $T$, quantità di sostanza $n$, massa molare $M$, densità
+  $d$ (come in fisica), concentrazione percentuale in massa $\%\,(m/m)$ e in volume $\%\,(V/V)$.
+- Per i disegni di RDKit nel worktree si usa l'interprete della cartella principale:
+  `/Users/alessandro/Desktop/Personal/Sapiens/scripts/chimica/.venv/bin/python scripts/chimica/figure.py <file.md>`.

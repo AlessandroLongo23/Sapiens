@@ -149,6 +149,15 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'equilibrio-termico-due-corpi': () => import('@/components/content/interactive/fisica/EquilibrioTermicoDueCorpi'),
 	'conduzione-sbarra-materiali': () => import('@/components/content/interactive/fisica/ConduzioneSbarra'),
 	'curva-riscaldamento-acqua': () => import('@/components/content/interactive/fisica/CurvaRiscaldamentoAcqua'),
+	// Chemistry, first two years: measurements (group 21).
+	// Chemistry, first two years: matter 1 (group 22).
+	// Chemistry, first two years: matter 2 (group 23).
+	// Chemistry, first two years: chemical changes 1 (group 24).
+	// Chemistry, first two years: chemical changes 2 (group 25).
+	// Chemistry, first two years: gases (group 26).
+	// Chemistry, first two years: the mole (group 27).
+	// Chemistry, first two years: the atom (group 28).
+	// Chemistry, first two years: water (group 29).
 };
 
 export function activateInteractives(root: HTMLElement): () => void {
