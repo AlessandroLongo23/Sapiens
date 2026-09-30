@@ -130,8 +130,17 @@ export function OpenAnswer({ state, onSubmit, locked }: Props) {
 					}
 				});
 				field.current = mf;
-				// on a phone the keyboard would cover the question: the student taps the field when ready
-				if (!window.matchMedia('(pointer: coarse)').matches) mf.focus();
+				// MathLive can believe it has the focus while the page has moved it (the button of the question before went
+				// away with it): it then ignores a click, and nothing typed arrives. A tap on the field puts the focus back.
+				const ensureFocus = () => {
+					if (document.activeElement === mf || mf.readOnly) return;
+					mf.blur();
+					mf.focus();
+				};
+				mf.addEventListener('pointerdown', () => requestAnimationFrame(ensureFocus));
+				// on a phone the keyboard would cover the question: the student taps the field when ready; elsewhere the
+				// focus goes to the field once the page has settled on the new question
+				if (!window.matchMedia('(pointer: coarse)').matches) requestAnimationFrame(ensureFocus);
 			})
 			.catch((err) => {
 				console.error('MathLive:', err);
