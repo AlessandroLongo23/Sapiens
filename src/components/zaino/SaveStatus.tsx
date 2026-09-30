@@ -1,8 +1,9 @@
 'use client';
 
-import { Check, CloudOff, Loader2 } from 'lucide-react';
+import { Check, CloudOff } from 'lucide-react';
 import { useNoteEditor } from '@/lib/state/note-editor';
 import { cn } from '@/lib/utils/cn';
+import { Spinner } from '@/components/ui/Spinner';
 
 const clock = new Intl.DateTimeFormat('it-IT', { hour: '2-digit', minute: '2-digit' });
 
@@ -18,7 +19,7 @@ export function SaveStatus({ compact = false }: { compact?: boolean }) {
 		<p role="status" aria-live="polite" className={cn('flex h-4 min-w-0 items-center gap-1.5 text-xs text-fg-subtle', compact && 'shrink-0')}>
 			{status === 'saving' && (
 				<>
-					<Loader2 className="size-3.5 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+					<Spinner className="size-3.5 shrink-0" />
 					<span className={cn(compact && 'sr-only sm:not-sr-only')}>Salvataggio…</span>
 				</>
 			)}

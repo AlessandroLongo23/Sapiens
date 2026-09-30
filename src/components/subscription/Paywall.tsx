@@ -2,13 +2,14 @@
 
 import { useId, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Loader2, Lock } from 'lucide-react';
+import { ArrowLeft, Check, Lock } from 'lucide-react';
 import { Features, FeaturesDetails, SCHOOL_YEAR_PASS, TRIAL_DAYS, formatDay, formatPrice, passEnd, passOnSale } from '@/lib/stripe/config';
 import { featuresUnlockedBy, requiredPlanFor } from '@/lib/auth/entitlements';
 import type { BillingOption } from '@/lib/subscription/checkout';
 import { useAuth } from '@/lib/state/auth';
 import { requestCheckout } from '@/lib/subscription/checkout';
 import { cn } from '@/lib/utils/cn';
+import { Spinner } from '@/components/ui/Spinner';
 
 const COPY: Record<Features, (plan: string) => string> = {
 	[Features.EXERCISES]: (p) => `Gli esercizi interattivi sono inclusi nel piano ${p}`,
@@ -108,7 +109,7 @@ export function Paywall({ feature, returnTo, backUrl, benefit, title, preview, c
 					<button type="button" onClick={() => upgrade('monthly')} disabled={busy} className={cn('mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 font-semibold text-white transition-colors hover:bg-accent-hover disabled:cursor-wait disabled:opacity-60 focus-ring-offset', compact ? 'py-2.5 text-sm' : 'py-3.5')}>
 						{busy ? (
 							<>
-								<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+								<Spinner className="size-4" />
 								<span>Un attimo…</span>
 							</>
 						) : user ? (

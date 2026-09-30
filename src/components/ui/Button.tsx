@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { Spinner } from '@/components/ui/Spinner';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'inverse' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
@@ -41,7 +41,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({ variant = 'primary', size = 'md', loading = false, className, children, disabled, type = 'button', ...rest }: ButtonProps) {
 	return (
 		<button type={type} disabled={disabled || loading} className={buttonClass(variant, size, className)} {...rest}>
-			{loading && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
+			{loading && <Spinner className="size-4" />}
 			{children}
 		</button>
 	);

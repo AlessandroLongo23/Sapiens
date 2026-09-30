@@ -15,6 +15,7 @@ Scartati: solo animazioni, solo Alessandro, solo Lorena o un'altra persona.
 
 ## Conseguenze
 - Serve una pipeline dei video: copione dalla lezione già riletta, animazione (manim, vedi [[Video brevi]]), voce. Da progettare.
+- Dal 30 settembre 2026 la pipeline serve anche alle clip delle lezioni, con un tema manim a quadretti: vedi [[2026-09-30 Le lezioni hanno clip animate per sezione, fatte con un manim a quadretti]].
 - Resta da decidere chi è il volto. Vedi [[Piano di acquisizione]].
 - Aggiornate [[Social]] e [[Video brevi]].
 

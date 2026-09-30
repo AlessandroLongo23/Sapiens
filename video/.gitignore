@@ -1,0 +1,6 @@
+.venv/
+.cache/
+media/
+.env
+__pycache__/
+scratch/

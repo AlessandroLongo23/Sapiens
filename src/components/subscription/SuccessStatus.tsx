@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle, Loader2 } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { authStore } from '@/lib/state/auth';
 import { LinkButton } from '@/components/ui/Button';
+import { Spinner } from '@/components/ui/Spinner';
 
 type Phase = 'waiting' | 'active' | 'slow';
 
@@ -62,7 +63,7 @@ export function SuccessStatus({ next, planName }: { next: string; planName: stri
 			) : (
 				<>
 					<div className="mx-auto mb-6 flex size-20 items-center justify-center rounded-full bg-surface-3" role="status">
-						<Loader2 className="size-10 animate-spin text-accent-fg" aria-hidden="true" />
+						<Spinner className="size-10 text-accent-fg" />
 						<span className="sr-only">Attivazione in corso</span>
 					</div>
 					<h1 className="mb-4 text-2xl font-bold text-fg">Stiamo attivando il tuo piano</h1>

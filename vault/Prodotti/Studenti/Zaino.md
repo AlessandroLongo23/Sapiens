@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-28
+aggiornato: 2026-09-30
 tag: [prodotto, studenti]
 ---
 # Zaino
@@ -23,7 +23,8 @@ Quaderni e note personali dello studente, con formule, collegati alle lezioni.
   - Ci sono anche lo zoom (pagina in vista, −, percentuale, +, Ctrl +/−/0), la stampa o il PDF di una copia fatta apposta (`NotePrint`), l'elenco delle scorciatoie (tasto ?), una finestra per i collegamenti al posto di `window.prompt` e le azioni "Testo normale", "Barrato" e "Formula su una riga a parte".
   - Nella modalità Avanzata la barra è nello stesso ordine, con Annulla e Ripristina, e c'è l'interruzione di pagina; l'anteprima è divisa per pagine.
   - Su richiesta di Alessandro, lo stesso giorno: l'indice dei titoli a sinistra (Titolo, Sottotitolo e Titoletto annidati, raggruppati per pagina, con il titolo che si sta leggendo segnato in rosso) e le pagine a destra; sotto i 1.024 px si apre una colonna alla volta. Le due colonne si aprono e si chiudono scorrendo di lato in 300 ms, e il foglio si sposta con loro (`SidePanel.tsx`); con il movimento ridotto compaiono subito. Un titolo scelto nell'indice porta lì in ogni modalità e, scrivendo, vi mette il cursore. L'indice si legge con markdown-it, lo stesso parser dell'anteprima (`src/lib/zaino/outline.ts`).
-  - Terza modalità, Lettura, accanto a Semplice e Avanzata: le pagine come verranno stampate, senza barra, cursore, carta né operazioni sulle pagine, con "Torna a scrivere" e Ctrl+E (o ⌘+E) per andare e tornare. Non viene ricordata come modalità di apertura. Cambiando modalità si resta sullo stesso titolo.
+  - Mentre la nota si apre c'è lo `Spinner` di tutto il sito (`src/components/ui/Spinner.tsx`: un tratto a penna che gira allungandosi e accorciandosi), dentro `Loading`, che compare solo dopo 300 ms perché un'apertura rapida non mostri niente (dal 30 settembre 2026).
+  - Terza modalità, Lettura, accanto a Semplice e Avanzata: le pagine come verranno stampate, senza barra, cursore né operazioni sulle pagine; la Carta resta, perché cambia l'aspetto della nota e non il contenuto (dal 30 settembre 2026), con "Torna a scrivere" e Ctrl+E (o ⌘+E) per andare e tornare. Non viene ricordata come modalità di apertura. Cambiando modalità si resta sullo stesso titolo.
 - Il 24 settembre 2026 è stato corretto un salvataggio non voluto: aprire una nota con formule la riscriveva, perché la conversione delle formule contava come modifica. Ora una nota soltanto aperta non viene mai salvata, e lo stesso vale per una pagina rimessa con l'annulla.
 - Il 27 settembre 2026 le pagine dello Zaino e del quaderno sono state ridisegnate come oggetti, nello stesso linguaggio dei libri della biblioteca e del [[Diario e calendario|Diario]] (`src/components/zaino/zaino.css`). Nel codice, non ancora pubblicato.
   - `/zaino`: la fascia a quadretti è una copertina con gli [[Adesivi]], come nelle pagine della biblioteca (pagina `zaino` in `cover_stickers`), e sotto il titolo ci sono le cifre: quaderni, note e note prese dalle lezioni. "Riprendi da dove eri" mostra le ultime note come fogli a quadretti staccati da un quaderno a spirale, un po' storti, fermati con un pezzo di scotch del colore del quaderno. I quaderni sono quaderni a spirale in piedi, con la copertina del colore scelto, un'etichetta con il numero e il nome scritto in penna blu, e sul bordo tanti fogli quante sono le note (da zero a tre). In fondo alla mensola c'è il contorno tratteggiato di "Un altro quaderno". I conteggi arrivano da una sola lettura delle note (`shelfStats`), non più da una per quaderno.

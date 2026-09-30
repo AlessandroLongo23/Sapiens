@@ -116,11 +116,9 @@ export function NoteHeader({
 							))}
 						</div>
 					</div>
-					{mode !== 'reading' && (
-						<MenuItem icon={SwatchBook} onSelect={() => setOpen('paper')}>
-							Carta
-						</MenuItem>
-					)}
+					<MenuItem icon={SwatchBook} onSelect={() => setOpen('paper')}>
+						Carta
+					</MenuItem>
 					<MenuSeparator />
 				</>
 			)}
@@ -248,8 +246,8 @@ export function NoteHeader({
 					</div>
 				)}
 
-				{/* Reading changes nothing, the paper included. */}
-				{md && mode !== 'reading' && (
+				{/* The paper is how the note looks, not its content, so Lettura keeps it. */}
+				{md && (
 					<div className="relative shrink-0">
 						<button
 							type="button"
