@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-28
+aggiornato: 2026-09-30
 tag: [marketing]
 ---
 # Social
@@ -10,6 +10,7 @@ Dal 28 settembre 2026 i social partono a ottobre, con Lorena (vedi [[2026-09-28 
 ## Obiettivo
 - TikTok e Instagram per gli studenti, con video brevi in serie fisse, 3-4 a settimana da novembre.
 - I video che spiegano sono animazioni scritte a lotti da Claude; quelli che presentano Sapiens hanno un volto. Vedi [[2026-09-28 Video brevi con animazioni per le spiegazioni e un volto per le presentazioni]].
+- Le animazioni nascono dalla stessa pipeline delle clip delle lezioni, con un tema manim a quadretti; i primi video vengono dalla lezione pilota. Vedi [[2026-09-30 Le clip partono da una lezione pilota, che dà anche i primi video social]].
 - I genitori si raggiungono su Facebook e Instagram, eventualmente con pubblicità: agli studenti minorenni la pubblicità profilata non si può mostrare (Digital Services Act, art. 28).
 
 ## Idee raccolte
