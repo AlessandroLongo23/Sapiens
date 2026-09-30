@@ -23,6 +23,15 @@ import PianoInclinato from './PianoInclinato';
 import DinamometriArchimede from './DinamometriArchimede';
 import GalleggianteQuote from './GalleggianteQuote';
 import RaggiSpecchi from './RaggiSpecchi';
+import LastraConduzione from './LastraConduzione';
+import CurvaRiscaldamento from './CurvaRiscaldamento';
+import PistaEnergia from './PistaEnergia';
+import StradaPosizioni from './StradaPosizioni';
+import GraficoVelocitaTempo from './GraficoVelocitaTempo';
+import CassaFune from './CassaFune';
+import FiumeBarca from './FiumeBarca';
+import CorpiCollegati from './CorpiCollegati';
+import LancioOrizzontale from './LancioOrizzontale';
 
 /**
  * The drawings of the exercises that change with the numbers (a block on an incline at the exercise's angle): each
@@ -65,6 +74,24 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	// Physics, first year: refraction and lenses (group 11).
 	'raggio-due-mezzi': RaggioDueMezzi,
 	'lente-oggetto': LenteOggetto,
+	// Physics, second year: kinematics 1 (group 12).
+	'strada-posizioni': StradaPosizioni,
+	// Physics, second year: kinematics 2 (group 13).
+	'grafico-velocita-tempo': GraficoVelocitaTempo,
+	// Physics, second year: motion in a plane (group 14).
+	'fiume-barca': FiumeBarca,
+	// Physics, second year: laws of motion (group 15).
+	// Physics, second year: forces and motion (group 16).
+	'corpi-collegati': CorpiCollegati,
+	'lancio-orizzontale': LancioOrizzontale,
+	// Physics, second year: work and power (group 17).
+	'cassa-fune': CassaFune,
+	// Physics, second year: energy (group 18).
+	'pista-energia': PistaEnergia,
+	// Physics, second year: temperature (group 19).
+	// Physics, second year: heat (group 20).
+	'lastra-conduzione': LastraConduzione,
+	'curva-riscaldamento': CurvaRiscaldamento,
 };
 
 export function SceneFigure({ scene, className }: { scene: SceneRef; className?: string }) {
