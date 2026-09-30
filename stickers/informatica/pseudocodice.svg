@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 96" data-name="Pseudocodice" data-tags="algoritmo, istruzioni, se allora, quaderno, programma" data-radius="16" data-accent="#c0352f">
+  <rect width="112" height="96" fill="#fbfaf6"/>
+  <path d="M0 26H112M0 38H112M0 50H112M0 62H112M0 74H112M0 86H112" stroke="#4f7fc0" stroke-opacity=".35" stroke-width="1"/>
+  <path d="M18 0V96" stroke="#c0352f" stroke-opacity=".6" stroke-width="1.2"/>
+  <text x="24" y="17" font-family="mono" font-size="7" letter-spacing="1.2" fill="#1b1e27" fill-opacity=".6">ALGORITMO</text>
+  
+    <text font-family="mono" font-size="8" fill="#1b1e27" x="24" y="36"><tspan fill="#c0352f" font-weight="600">leggi</tspan> n</text>
+    <text font-family="mono" font-size="8" fill="#1b1e27" x="24" y="48"><tspan fill="#c0352f" font-weight="600">se</tspan> n &gt; 0 <tspan fill="#c0352f" font-weight="600">allora</tspan></text>
+    <text font-family="mono" font-size="8" fill="#1b1e27" x="32" y="60"><tspan fill="#c0352f" font-weight="600">scrivi</tspan> n</text>
+    <text font-family="mono" font-size="8" fill="#1b1e27" x="24" y="72"><tspan fill="#c0352f" font-weight="600">fine se</tspan></text>
+  
+</svg>

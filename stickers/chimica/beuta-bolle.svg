@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" data-name="Beuta" data-tags="laboratorio, vetreria, erlenmeyer, bolle, reazione, fustellato" data-cut="8" data-accent="#2b64a8" data-cover="high_school/chemistry">
+  <path d="M33 12V38L12 82Q9 91 18 91H62Q71 91 68 82L47 38V12Z" fill="#fbfaf6"/>
+  <path d="M23.5 58Q32 54 40 58T56.5 58L68 82Q71 91 62 91H18Q9 91 12 82Z" fill="#2b64a8"/>
+  <circle cx="30" cy="80" r="3" fill="#fbfaf6" fill-opacity=".8"/>
+  <circle cx="44" cy="72" r="2.2" fill="#fbfaf6" fill-opacity=".8"/>
+  <circle cx="52" cy="82" r="3.4" fill="#fbfaf6" fill-opacity=".8"/>
+  <circle cx="38" cy="64" r="1.6" fill="#fbfaf6" fill-opacity=".8"/>
+  <circle cx="40" cy="44" r="2.2" fill="#2b64a8"/>
+  <circle cx="37" cy="30" r="1.8" fill="#2b64a8"/>
+  <circle cx="43" cy="20" r="2.6" fill="#2b64a8"/>
+  <path d="M33 12V38L12 82Q9 91 18 91H62Q71 91 68 82L47 38V12M29 12H51" fill="none" stroke="#1b1e27" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M60 72H54M57 64H52" stroke="#fbfaf6" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M20 80L28 63" stroke="#fbfaf6" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>
+</svg>

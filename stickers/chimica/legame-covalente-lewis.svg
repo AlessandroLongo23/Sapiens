@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Legame covalente" data-tags="lewis, doppietto, ottetto, cloro, elettroni, legame" data-radius="16" data-accent="#c0352f">
+  <rect width="128" height="88" fill="#fbfaf6"/>
+  <path d="M12 0V88M24 0V88M36 0V88M48 0V88M60 0V88M72 0V88M84 0V88M96 0V88M108 0V88M120 0V88M0 12H128M0 24H128M0 36H128M0 48H128M0 60H128M0 72H128M0 84H128" stroke="#4f7fc0" stroke-opacity=".22"/>
+  <circle cx="44" cy="44" r="23" fill="none" stroke="#1b1e27" stroke-opacity=".35" stroke-width="1.1" stroke-dasharray="3 2.5"/>
+  <circle cx="84" cy="44" r="23" fill="none" stroke="#1b1e27" stroke-opacity=".35" stroke-width="1.1" stroke-dasharray="3 2.5"/>
+  <text x="44" y="51" text-anchor="middle" font-family="serif" font-size="22" fill="#1b1e27">Cl</text>
+  <text x="84" y="51" text-anchor="middle" font-family="serif" font-size="22" fill="#1b1e27">Cl</text>
+  <g fill="#1b1e27">
+    <circle cx="40.5" cy="31" r="2.1"/><circle cx="47.5" cy="31" r="2.1"/>
+    <circle cx="40.5" cy="58" r="2.1"/><circle cx="47.5" cy="58" r="2.1"/>
+    <circle cx="27.5" cy="40.5" r="2.1"/><circle cx="27.5" cy="47.5" r="2.1"/>
+    <circle cx="80.5" cy="31" r="2.1"/><circle cx="87.5" cy="31" r="2.1"/>
+    <circle cx="80.5" cy="58" r="2.1"/><circle cx="87.5" cy="58" r="2.1"/>
+    <circle cx="100.5" cy="40.5" r="2.1"/><circle cx="100.5" cy="47.5" r="2.1"/>
+  </g>
+  <circle cx="64" cy="40.5" r="2.5" fill="#c0352f"/><circle cx="64" cy="47.5" r="2.5" fill="#c0352f"/>
+  <text x="64" y="80" text-anchor="middle" font-family="mono" font-size="7" letter-spacing="1" fill="#1b1e27" fill-opacity=".6">DOPPIETTO CONDIVISO</text>
+</svg>

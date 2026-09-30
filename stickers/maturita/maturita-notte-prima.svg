@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Notte prima degli esami" data-tags="maturità, esami, notte, luna, stelle, ansia" data-radius="16" data-accent="#e8b53e">
+  <rect width="128" height="88" fill="#1f2a44"/>
+  <path d="M66 16L88 24L110 14M88 24L96 42L116 36" fill="none" stroke="#e8b53e" stroke-opacity=".35" stroke-width="1"/>
+  <circle cx="27" cy="26" r="14" fill="#e8b53e"/>
+  <circle cx="34" cy="21" r="12.5" fill="#1f2a44"/>
+  <path d="M66 12.8L66.72 15.28L69.2 16L66.72 16.72L66 19.2L65.28 16.72L62.8 16L65.28 15.28ZM88 20L88.91 23.09L92 24L88.91 24.91L88 28L87.09 24.91L84 24L87.09 23.09ZM110 10.8L110.72 13.28L113.2 14L110.72 14.72L110 17.2L109.28 14.72L106.8 14L109.28 13.28ZM116 33.6L116.54 35.46L118.4 36L116.54 36.54L116 38.4L115.46 36.54L113.6 36L115.46 35.46ZM96 39.6L96.54 41.46L98.4 42L96.54 42.54L96 44.4L95.46 42.54L93.6 42L95.46 41.46Z" fill="#fbfaf6"/>
+  <text x="12" y="62" font-family="serif" font-style="italic" font-size="15" fill="#fbfaf6">notte prima</text>
+  <text x="12" y="79" font-family="serif" font-style="italic" font-size="15" fill="#fbfaf6">degli esami</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" data-name="Atomo" data-tags="nucleo, elettroni, orbite, rutherford, modello atomico, fustellato" data-cut="7" data-accent="#2b64a8">
+  <circle cx="50" cy="50" r="44" fill="#fbfaf6"/>
+  <ellipse cx="50" cy="50" rx="42" ry="14" transform="rotate(0 50 50)" fill="none" stroke="#1b1e27" stroke-width="2.4"/>
+  <ellipse cx="50" cy="50" rx="42" ry="14" transform="rotate(60 50 50)" fill="none" stroke="#1b1e27" stroke-width="2.4"/>
+  <ellipse cx="50" cy="50" rx="42" ry="14" transform="rotate(120 50 50)" fill="none" stroke="#1b1e27" stroke-width="2.4"/>
+  <circle cx="50" cy="50" r="7.5" fill="#c0352f"/>
+  <circle cx="88.7" cy="55.5" r="4.6" fill="#2b64a8"/>
+  <circle cx="25.8" cy="22.4" r="4.6" fill="#2b64a8"/>
+  <circle cx="68" cy="45.5" r="4.6" fill="#2b64a8"/>
+</svg>

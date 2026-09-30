@@ -29,6 +29,8 @@ export interface StickerDef {
 	cover?: string;
 	/** Die-cut: the file is the whole sticker, white outline included, shaped like its drawing; r is 0. */
 	cut?: boolean;
+	/** Words the album's search finds it by, besides its name and its pack's. */
+	tags?: string[];
 	/** A hash of the file, so a redrawn sticker is not served from a cache. */
 	v: string;
 }
@@ -36,6 +38,8 @@ export interface StickerDef {
 export interface StickerPack {
 	id: string;
 	name: string;
+	/** The heading the album lists it under: Matematica, Scienze, Studio, Stagioni… */
+	group?: string;
 	subject?: string;
 }
 

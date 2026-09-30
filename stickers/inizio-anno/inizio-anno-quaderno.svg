@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Quaderno nuovo" data-tags="inizio anno, quaderno, quadretti, spirale, settembre" data-radius="20" data-accent="#2b64a8">
+  <rect width="96" height="96" fill="#e8b53e"/>
+  <rect x="24" y="12" width="52" height="72" rx="4" fill="#2b64a8"/>
+  <rect x="24" y="12" width="52" height="72" rx="4" fill="none" stroke="#1b1e27" stroke-width="2"/>
+  <rect x="34" y="28" width="34" height="22" rx="2" fill="#fbfaf6"/>
+  <path d="M38 36H64M38 43H58" stroke="#1b1e27" stroke-opacity=".35" stroke-width="1"/>
+  <text x="51" y="41" text-anchor="middle" font-family="math" font-size="10" fill="#c0352f">x<tspan dy="-4" font-size="7">2</tspan></text>
+  <path d="M34 60H68M34 66H68M34 72H68M40 56V76M46 56V76M52 56V76M58 56V76M64 56V76" stroke="#fbfaf6" stroke-opacity=".3"/>
+  <path d="M20 20H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/><path d="M20 28H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/><path d="M20 36H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/><path d="M20 44H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/><path d="M20 52H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/><path d="M20 60H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/><path d="M20 68H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/><path d="M20 76H29" stroke="#1b1e27" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M84 14V26M78 20H90" stroke="#fbfaf6" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M84 34V40M81 37H87" stroke="#fbfaf6" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

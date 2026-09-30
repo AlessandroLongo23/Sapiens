@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 58" data-name="In bocca al lupo" data-tags="verifiche, verifica, compito in classe, auguri, fortuna, nastro" data-radius="14" data-accent="#b3302f">
+  <rect width="150" height="58" fill="#b3302f"/>
+  <text x="75" y="20" text-anchor="middle" font-family="mono" font-size="7" letter-spacing="1.2" fill="#fbfaf6" fill-opacity=".75">VERIFICA DOMANI</text>
+  <text x="75" y="40" text-anchor="middle" font-family="serif" font-style="italic" font-size="17" fill="#fbfaf6">in bocca al lupo</text>
+  <path d="M44 47.5Q75 51.5 106 47.5" fill="none" stroke="#e8b53e" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

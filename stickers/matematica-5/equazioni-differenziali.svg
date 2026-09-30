@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" data-name="Equazioni differenziali" data-tags="campo di direzioni, soluzione, esponenziale, y primo, cauchy" data-radius="20" data-accent="#e8b53e" data-cover="high_school/math/equazioni-differenziali-superiori">
+  <rect width="96" height="96" fill="#1f2a44"/>
+  <path d="M54.1 34.1L57.9 25.9M68.1 34.1L71.9 25.9M82.1 34.1L85.9 25.9M11.4 45.7L16.6 38.3M25.4 45.7L30.6 38.3M39.4 45.7L44.6 38.3M53.4 45.7L58.6 38.3M67.4 45.7L72.6 38.3M81.4 45.7L86.6 38.3M10.3 56.6L17.7 51.4M24.3 56.6L31.7 51.4M38.3 56.6L45.7 51.4M52.3 56.6L59.7 51.4M80.3 56.6L87.7 51.4M9.5 66.0L18.5 66.0M23.5 66.0L32.5 66.0M37.5 66.0L46.5 66.0M51.5 66.0L60.5 66.0M65.5 66.0L74.5 66.0M79.5 66.0L88.5 66.0M10.3 75.4L17.7 80.6M24.3 75.4L31.7 80.6M38.3 75.4L45.7 80.6M52.3 75.4L59.7 80.6M66.3 75.4L73.7 80.6M80.3 75.4L87.7 80.6" stroke="#fbfaf6" stroke-opacity=".5" stroke-width="1.6" stroke-linecap="round"/>
+  <polyline points="10 65.1 14 64.8 18 64.5 22 64.1 26 63.5 30 62.9 34 62.0 38 60.9 42 59.6 46 57.8 50 55.6 54 52.8 58 49.2 62 44.6 66 38.8 70 31.5 74 22.1 77 13.4" fill="none" stroke="#e8b53e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="30" cy="62.9" r="3.2" fill="#e8b53e"/>
+  <text x="10" y="22" font-family="serif" font-style="italic" font-size="15" fill="#fbfaf6">y′ = y</text>
+</svg>

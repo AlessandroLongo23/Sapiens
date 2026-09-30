@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 72" data-name="F = ma" data-tags="newton, forza, massa, accelerazione, dinamica, formula" data-radius="14" data-accent="#e8b53e">
+  <rect width="128" height="72" fill="#1f2a44"/>
+  <text x="10" y="15" font-family="mono" font-size="7" letter-spacing="1" fill="#fbfaf6" fill-opacity=".55">NEWTON</text>
+  <text x="34" y="56" text-anchor="middle" font-family="serif" font-style="italic" font-size="30" fill="#fbfaf6">F</text>
+  <text x="58" y="56" text-anchor="middle" font-family="serif" font-size="28" fill="#fbfaf6">=</text>
+  <text x="82" y="56" text-anchor="middle" font-family="serif" font-style="italic" font-size="30" fill="#fbfaf6">m</text>
+  <text x="105" y="56" text-anchor="middle" font-family="serif" font-style="italic" font-size="30" fill="#fbfaf6">a</text>
+  <path d="M28 28L38 28" fill="none" stroke="#e8b53e" stroke-width="2" stroke-linecap="round"/>
+  <path d="M42 28L37 30.5L37 25.5Z" fill="#e8b53e"/>
+  <path d="M99 34L108 34" fill="none" stroke="#e8b53e" stroke-width="2" stroke-linecap="round"/>
+  <path d="M112 34L107 36.5L107 31.5Z" fill="#e8b53e"/>
+</svg>

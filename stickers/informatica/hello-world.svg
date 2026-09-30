@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 52" data-name="Hello, world!" data-tags="primo programma, stampa, print, codice, saluto, nastro" data-radius="12" data-accent="#b3302f" data-cover="high_school/computer-science">
+  <rect width="150" height="52" fill="#b3302f"/>
+  <text x="14" y="19" font-family="mono" font-size="7" letter-spacing="1.2" fill="#fbe9e6" fill-opacity=".85">PRIMO PROGRAMMA</text>
+  <text x="14" y="38" font-family="mono" font-weight="600" font-size="14" fill="#fbfaf6">Hello, world!</text>
+  <rect x="127" y="28" width="7" height="12" fill="#fbfaf6" fill-opacity=".7"/>
+</svg>

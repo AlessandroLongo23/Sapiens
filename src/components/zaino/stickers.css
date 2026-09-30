@@ -154,7 +154,11 @@ html.signed-in .cover-defaults {
 	visibility: hidden;
 }
 
-/* The album's thumbnails. */
+/* The album's thumbnails. A cell far off screen is not laid out, so an album of hundreds opens at once. */
+.sticker-cell {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 118px;
+}
 .sticker-thumb {
 	position: relative;
 	width: 84px;

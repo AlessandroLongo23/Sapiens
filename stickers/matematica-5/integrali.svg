@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116 88" data-name="Integrali" data-tags="area, sottografico, integrale definito, rettangoli, primitiva, fustellato" data-cut="8" data-accent="#e8b53e" data-cover="high_school/math/integrali">
+  <defs><clipPath id="a"><path d="M40 70V46C56 26 80 24 100 34V70Z"/></clipPath></defs>
+  <path d="M40 70V46C56 26 80 24 100 34V70Z" fill="#e8b53e"/>
+  <path d="M52 20V70M64 20V70M76 20V70M88 20V70" stroke="#1b1e27" stroke-opacity=".3" stroke-width="1.2" clip-path="url(#a)"/>
+  <path d="M40 70V46M100 70V34" stroke="#1b1e27" stroke-width="1.4"/>
+  <path d="M28 70H110" stroke="#1b1e27" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M33.6 54L40 46C56 26 80 24 100 34L108 38" fill="none" stroke="#c0352f" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M8 72Q12 80 18 74Q22 68 22 44Q22 20 26 14Q30 8 36 14" fill="none" stroke="#1b1e27" stroke-width="5" stroke-linecap="round"/>
+  <text x="40" y="82" text-anchor="middle" font-family="math" font-weight="600" font-size="12" fill="#1b1e27">a</text>
+  <text x="100" y="82" text-anchor="middle" font-family="math" font-weight="600" font-size="12" fill="#1b1e27">b</text>
+</svg>

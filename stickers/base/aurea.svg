@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 84" data-name="Sezione aurea" data-radius="12" data-accent="#c0352f">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 84" data-name="Sezione aurea" data-tags="phi, rapporto aureo, fibonacci, proporzione, spirale" data-radius="12" data-accent="#c0352f">
   <rect width="136" height="84" fill="#fbfaf6"/>
   <g transform="translate(1 1)" fill="none">
   <path d="M0 0H134V82H0Z M82 0V82 M82 52H134 M104 52V82 M82 60H104 M90 52V60" stroke="#1b1e27" stroke-opacity=".4"/>

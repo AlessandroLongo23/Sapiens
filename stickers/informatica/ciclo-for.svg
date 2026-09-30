@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 88" data-name="Ciclo for" data-tags="ciclo, for, iterazione, ripetizione, contatore, codice" data-radius="16" data-accent="#2b64a8">
+  <rect width="128" height="88" fill="#2b64a8"/>
+  <text x="64" y="20" text-anchor="middle" font-family="mono" font-weight="500" font-size="8" fill="#fbfaf6">for (i=0; i&lt;3; i++)</text>
+  <path d="M75 36A22 22 0 1 1 53 36" fill="none" stroke="#e8b53e" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M59.5 32.5L50.2 31.4L54.2 39.8Z" fill="#e8b53e"/>
+  <text x="64" y="59" text-anchor="middle" font-family="mono" font-weight="600" font-size="12" fill="#fbfaf6">i++</text>
+</svg>

@@ -3,8 +3,7 @@
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, type Ref, type RefObject } from 'react';
 import { StickerBoard, type BoardState } from '@/lib/zaino/sticker-board';
 import { Minus, Plus } from 'lucide-react';
-import { MAX_SIZE, MIN_SIZE, STICKER_PACKS, STICKERS, stickerArt, type PlacedSticker } from '@/lib/zaino/stickers';
-import { Sheet } from '@/components/ui/Sheet';
+import { MAX_SIZE, MIN_SIZE, type PlacedSticker } from '@/lib/zaino/stickers';
 import { Button } from '@/components/ui/Button';
 import './stickers.css';
 
@@ -95,59 +94,5 @@ export function HoldingHint({ state, coarse, onPutAway, onResize }: { state: Boa
 				Rimetti via
 			</Button>
 		</div>
-	);
-}
-
-/** The album: every sticker, pack by pack, free to use as many times as wanted (the beta has no rewards). */
-export function StickerAlbum({
-	open,
-	onClose,
-	onPick,
-	description = 'Scegli un adesivo, poi attaccalo dove vuoi sul foglio.'
-}: {
-	open: boolean;
-	onClose: () => void;
-	onPick: (stickerId: string) => void;
-	description?: string;
-}) {
-	return (
-		<Sheet open={open} onClose={onClose} title="Adesivi" description={description}>
-			<div className="space-y-6">
-				{STICKER_PACKS.map((pack) => {
-					const own = STICKERS.filter((d) => d.pack === pack.id);
-					if (own.length === 0) return null;
-					return (
-						<section key={pack.id} aria-labelledby={`pack-${pack.id}`}>
-							<h3 id={`pack-${pack.id}`} className="label-mono mb-2.5 text-fg-subtle">
-								{pack.name}
-							</h3>
-							<ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-								{own.map((d) => {
-									const scale = Math.min(84 / d.w, 60 / d.h, 0.7);
-									return (
-										<li key={d.id}>
-											<button
-												type="button"
-												onClick={() => onPick(d.id)}
-												className="group flex w-full flex-col items-center gap-2 rounded-2xl bg-surface-2 px-2 pb-2.5 pt-3 transition duration-150 hover:bg-surface-3 active:scale-[0.97] focus-ring"
-											>
-												<span className="sticker-thumb transition-transform duration-150 group-hover:-translate-y-0.5" aria-hidden="true">
-													{/* Static artwork from lib/zaino/stickers, never user input. */}
-													<span
-														style={{ width: d.w, height: d.h, ['--r' as string]: `${d.r}px`, transform: `translate(-50%, -50%) scale(${scale.toFixed(3)}) rotate(-4deg)` }}
-														dangerouslySetInnerHTML={{ __html: stickerArt(d) }}
-													/>
-												</span>
-												<span className="text-xs font-medium text-fg-muted group-hover:text-fg">{d.name}</span>
-											</button>
-										</li>
-									);
-								})}
-							</ul>
-						</section>
-					);
-				})}
-			</div>
-		</Sheet>
 	);
 }

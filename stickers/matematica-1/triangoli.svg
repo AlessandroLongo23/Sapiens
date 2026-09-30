@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 88" data-name="Triangoli" data-tags="triangolo, angoli, somma degli angoli, quadrilateri, congruenza, fustellato" data-cut="8" data-accent="#2f7a57" data-cover="high_school/math/geometria-piano-triangoli">
+  <path d="M8 80L40 8L104 80Z" fill="#2f7a57" stroke="#2f7a57" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M8 80H22A14 14 0 0 0 13.7 67.2Z" fill="#e8b53e"/>
+  <path d="M40 8L34.7 19.9A13 13 0 0 0 48.6 17.7Z" fill="#e8b53e"/>
+  <path d="M104 80H88A16 16 0 0 1 93.4 68Z" fill="#e8b53e"/>
+  <path d="M8 80L40 8L104 80Z" fill="none" stroke="#fbfaf6" stroke-width="2.6" stroke-linejoin="round"/>
+  <text x="50" y="66" text-anchor="middle" font-family="serif" font-weight="600" font-size="17" fill="#fbfaf6">180°</text>
+</svg>
