@@ -83,7 +83,6 @@ export function OpenAnswer({ state, onSubmit, locked }: Props) {
 	const host = useRef<HTMLDivElement>(null);
 	const field = useRef<MathfieldElement | null>(null);
 	const [keyboard, setKeyboard] = useState<KeyboardChoice | null>(null);
-	const [empty, setEmpty] = useState(true);
 	const [failed, setFailed] = useState(false);
 	// The handlers read the latest props through a ref: the field is made once.
 	const latest = useRef({ onSubmit, locked });
@@ -91,10 +90,13 @@ export function OpenAnswer({ state, onSubmit, locked }: Props) {
 		latest.current = { onSubmit, locked };
 	});
 
+	// Always enabled: MathLive's production build does not always report typing with an "input" event, so a
+	// button waiting for it could stay off. An empty answer takes the student back to the field instead.
 	const submit = () => {
 		const mf = field.current;
 		const value = mf?.value.trim() ?? '';
-		if (!mf || !value || latest.current.locked) return;
+		if (!mf || latest.current.locked) return;
+		if (!value) return mf.focus();
 		window.mathVirtualKeyboard?.hide();
 		latest.current.onSubmit(value);
 	};
@@ -114,7 +116,6 @@ export function OpenAnswer({ state, onSubmit, locked }: Props) {
 				mf.mathVirtualKeyboardPolicy = choice === 'sapiens' ? 'auto' : 'manual';
 				mf.menuItems = [];
 				mf.smartFence = true;
-				mf.addEventListener('input', () => setEmpty(!mf.value.trim()));
 				// Enter, from the device's keyboard or the return key on screen, gives the answer.
 				mf.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter') {
@@ -208,7 +209,6 @@ export function OpenAnswer({ state, onSubmit, locked }: Props) {
 				<button
 					type="button"
 					onClick={submit}
-					disabled={empty}
 					className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-inverse px-6 py-4 font-semibold text-inverse-fg shadow-key transition-[transform,opacity] duration-150 hover:opacity-90 active:translate-y-px disabled:opacity-40 focus-ring-offset"
 				>
 					Conferma
