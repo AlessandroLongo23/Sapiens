@@ -155,11 +155,14 @@ quelle della sezione "Chimica: convenzioni" sopra.
   con lo sguardo del chimico e un link alla lezione di fisica per chi vuole di più.
 - Esercizi: generatori in TypeScript come quelli di fisica e matematica (`src/lib/exercises/v2/generators/<slug>.ts`,
   specifica e controllo Python); quelli in Python con RDKit restano per le molecole disegnate.
-- Costanti del biennio: numero di Avogadro $N_A = 6{,}02 \cdot 10^{23}\,\text{mol}^{-1}$; condizioni normali
+- Costanti del biennio: numero di Avogadro $N_A = 6{,}022 \cdot 10^{23}\,\text{mol}^{-1}$, come nella lezione 01, che nei
+  conti con dati a tre cifre si usa arrotondato a $6{,}02 \cdot 10^{23}$ (e la lezione lo dice); condizioni normali
   $0\,^\circ\text{C}$ e $1\,\text{atm}$, volume molare $22{,}4\,\text{L/mol}$ (da confermare con Andrea: alcuni
   libri usano le condizioni standard, $25\,^\circ\text{C}$ e $24{,}5\,\text{L/mol}$); costante dei gas
   $R = 8{,}31\,\text{J/(mol}\cdot\text{K)} = 0{,}0821\,\text{L}\cdot\text{atm/(mol}\cdot\text{K)}$;
-  $1\,\text{atm} = 1{,}013 \cdot 10^5\,\text{Pa} = 760\,\text{mmHg}$; $T = t + 273$ (273,15 dove serve).
+  $1\,\text{atm} = 1{,}013 \cdot 10^5\,\text{Pa} = 760\,\text{mmHg}$; carica elementare
+  $e = 1{,}60 \cdot 10^{-19}\,\text{C}$; masse di protone e neutrone circa $1\,\text{u}$, dell'elettrone circa $1/1836$ di quella del
+  protone; $T = t + 273$ (273,15 dove serve).
   Masse atomiche con due decimali, dalla tavola della lezione 01.
 - Simboli: pressione $p$, volume $V$, temperatura assoluta $T$, quantità di sostanza $n$, massa molare $M$, densità
   $d$ (come in fisica), concentrazione percentuale in massa $\%\,(m/m)$ e in volume $\%\,(V/V)$.

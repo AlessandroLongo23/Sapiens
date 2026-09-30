@@ -32,6 +32,10 @@ import CassaFune from './CassaFune';
 import FiumeBarca from './FiumeBarca';
 import CorpiCollegati from './CorpiCollegati';
 import LancioOrizzontale from './LancioOrizzontale';
+import CurvaTemperaturaTempo from './CurvaTemperaturaTempo';
+import Cromatogramma from './Cromatogramma';
+import ManometroAperto from './ManometroAperto';
+import ParticelleRiquadri from './ParticelleRiquadri';
 
 /**
  * The drawings of the exercises that change with the numbers (a block on an incline at the exercise's angle): each
@@ -94,10 +98,14 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	'curva-riscaldamento': CurvaRiscaldamento,
 	// Chemistry, first two years: measurements (group 21).
 	// Chemistry, first two years: matter 1 (group 22).
+	'particelle-riquadri': ParticelleRiquadri,
 	// Chemistry, first two years: matter 2 (group 23).
+	'curva-temperatura-tempo': CurvaTemperaturaTempo,
+	'cromatogramma': Cromatogramma,
 	// Chemistry, first two years: chemical changes 1 (group 24).
 	// Chemistry, first two years: chemical changes 2 (group 25).
 	// Chemistry, first two years: gases (group 26).
+	'manometro-aperto': ManometroAperto,
 	// Chemistry, first two years: the mole (group 27).
 	// Chemistry, first two years: the atom (group 28).
 	// Chemistry, first two years: water (group 29).

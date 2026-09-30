@@ -167,15 +167,15 @@ L'area di un quadrato ha il doppio dell'incertezza relativa del lato, il volume 
 
 ```ad-example
 Esempio 6: la densità di un cubetto di metallo
-Un cubetto di metallo ha lo spigolo $l = (3{,}0 \pm 0{,}1)\,\text{cm}$ e la massa $m = (72{,}9 \pm 0{,}1)\,\text{g}$. Calcola il volume e la densità $\rho = \dfrac{m}{V}$ (la densità è nella lezione [Grandezze derivate: area, volume e densità](/materiale/scuola-superiore/fisica/le-grandezze-fisiche-e-la-misura/grandezze-derivate-area-volume-e-densita)). Il cubetto può essere di alluminio, che ha la densità di $2{,}70\ \text{g/cm}^3$?
+Un cubetto di metallo ha lo spigolo $l = (3{,}0 \pm 0{,}1)\,\text{cm}$ e la massa $m = (72{,}9 \pm 0{,}1)\,\text{g}$. Calcola il volume e la densità $d = \dfrac{m}{V}$ (la densità è nella lezione [Grandezze derivate: area, volume e densità](/materiale/scuola-superiore/fisica/le-grandezze-fisiche-e-la-misura/grandezze-derivate-area-volume-e-densita)). Il cubetto può essere di alluminio, che ha la densità di $2{,}70\ \text{g/cm}^3$?
 
 Il volume è $V = 3{,}0^3 = 27{,}0\ \text{cm}^3$. L'incertezza relativa dello spigolo è $\varepsilon_l = \dfrac{0{,}1}{3{,}0} \approx 0{,}033$, e quella del volume è il triplo, $\varepsilon_V = 0{,}10$: il $10\%$. Quindi $\Delta V = 0{,}10 \cdot 27{,}0 = 2{,}7\ \text{cm}^3 \approx 3\ \text{cm}^3$, e $V = (27 \pm 3)\ \text{cm}^3$.
 
-La densità è $\rho = \dfrac{72{,}9}{27{,}0} = 2{,}7\ \text{g/cm}^3$, con incertezza relativa
+La densità è $d = \dfrac{72{,}9}{27{,}0} = 2{,}7\ \text{g/cm}^3$, con incertezza relativa
 
-$$\varepsilon_\rho = \varepsilon_m + \varepsilon_V = \frac{0{,}1}{72{,}9} + 0{,}10 \approx 0{,}0014 + 0{,}10 \approx 0{,}10$$
+$$\varepsilon_d = \varepsilon_m + \varepsilon_V = \frac{0{,}1}{72{,}9} + 0{,}10 \approx 0{,}0014 + 0{,}10 \approx 0{,}10$$
 
-e $\Delta\rho = 0{,}10 \cdot 2{,}7 \approx 0{,}27\ \text{g/cm}^3$, che con una cifra significativa è $0{,}3\ \text{g/cm}^3$. Il risultato è $\rho = (2{,}7 \pm 0{,}3)\ \text{g/cm}^3$.
+e $\Delta d = 0{,}10 \cdot 2{,}7 \approx 0{,}27\ \text{g/cm}^3$, che con una cifra significativa è $0{,}3\ \text{g/cm}^3$. Il risultato è $d = (2{,}7 \pm 0{,}3)\ \text{g/cm}^3$.
 
 L'intervallo va da $2{,}4$ a $3{,}0\ \text{g/cm}^3$ e contiene $2{,}70$: la misura è compatibile con l'alluminio. Con un'incertezza del $10\%$ è però compatibile anche con altri materiali; per distinguerli bisognerebbe misurare lo spigolo con il calibro, perché è lo spigolo, elevato al cubo, a pesare di più.
 ```

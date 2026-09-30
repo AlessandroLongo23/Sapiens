@@ -233,5 +233,18 @@ Le 33 lezioni del secondo anno: cinematica, moti nel piano, dinamica, forze e mo
 - [ ] Calore scambiato con le differenze positive ("ceduto uguale ad assorbito") o $Q_1 + Q_2 = 0$ con i segni; unità $\text{J/(kg}\cdot{}^\circ\text{C)}$ o $\text{J/(kg}\cdot\text{K)}$; 273 o 273,15.
 - [ ] Argomenti forse fuori dal secondo anno dell'Amaldi: la legge della conduzione con i conti, l'equivalente in acqua, la macchina di Atwood, il peso apparente, i radianti e $\omega$, la dimostrazione di $a_c = v^2/r$ con i triangoli simili, il pendolo ad ampiezza grande.
 
+## Biennio di chimica (30 settembre 2026)
+Le 38 lezioni nuove del primo e del secondo anno di chimica. Vedi [[2026-09-30 Biennio di chimica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione "Domande per Andrea" di `docs/lezioni/chimica/note/10-47`.
+- [ ] Condizioni normali a $0\,^\circ\text{C}$ e 1 atm con 22,4 L/mol (scelta fatta) o standard a $25\,^\circ\text{C}$ con 24,5 L/mol.
+- [ ] Numero di Avogadro $6{,}022 \cdot 10^{23}$ (lezione 01) arrotondato a $6{,}02$ nei conti (scelta fatta).
+- [ ] Calore specifico per grammo, J/(g·°C) (scelta fatta in chimica), o per chilogrammo come in fisica.
+- [ ] Nomi delle leggi dei gas: "Charles e Gay-Lussac" (scelta fatta, come nell'albero) o "prima e seconda legge di Gay-Lussac"; "gas ideale" o "gas perfetto"; "formula minima" o "formula empirica".
+- [ ] Simboli delle temperature di fusione ed ebollizione: $t_f$ e $t_{eb}$ o altro; "brinamento" per il passaggio da aeriforme a solido.
+- [ ] Formule dei composti ionici al primo anno, e con quale metodo; quali ioni poliatomici a memoria; gli idrati.
+- [ ] Legame covalente, elettronegatività e VSEPR si possono nominare al secondo anno (lezioni sull'acqua)? H⁺ o H₃O⁺, ione ossonio o idronio?
+- [ ] La composizione percentuale è sia nella 01 sia nella 35: da quale si toglie?
+- [ ] Rame e zolfo: Cu₂S (rapporto 3,96) o CuS negli esempi di Proust.
+- [ ] Argomenti forse fuori dal biennio: fattore di ritenzione, sopraffusione, manometro a tubo aperto, frazione molare, gas raccolto sopra l'acqua, legge di Graham, abbondanze isotopiche.
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

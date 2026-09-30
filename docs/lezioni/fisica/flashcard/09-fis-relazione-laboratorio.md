@@ -56,7 +56,7 @@ Quando una misura è in accordo con il valore atteso?
 Quando il valore atteso sta nell'intervallo da $\bar{x} - \Delta x$ a $\bar{x} + \Delta x$.
 
 ## densita-conto
-$\rho = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$ è compatibile con l'alluminio, $2{,}70\ \text{g/cm}^3$?
+$d = (2{,}7 \pm 0{,}2)\ \text{g/cm}^3$ è compatibile con l'alluminio, $2{,}70\ \text{g/cm}^3$?
 ---
 Sì: l'intervallo va da $2{,}5$ a $2{,}9\ \text{g/cm}^3$.
 
@@ -71,6 +71,6 @@ Come si sceglie che cosa migliorare nell'esperimento?
 Si guarda quale misura ha l'incertezza relativa più grande, e si cerca di misurarla meglio.
 
 ## risultato-senza-incertezza
-$\rho = 2{,}66579\ \text{g/cm}^3$ è un risultato scritto bene?
+$d = 2{,}66579\ \text{g/cm}^3$ è un risultato scritto bene?
 ---
 No: manca l'incertezza, e ha cifre che non hanno significato.

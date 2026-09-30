@@ -150,14 +150,36 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'conduzione-sbarra-materiali': () => import('@/components/content/interactive/fisica/ConduzioneSbarra'),
 	'curva-riscaldamento-acqua': () => import('@/components/content/interactive/fisica/CurvaRiscaldamentoAcqua'),
 	// Chemistry, first two years: measurements (group 21).
+	'lettura-menisco': () => import('@/components/content/interactive/chimica/LetturaMenisco'),
 	// Chemistry, first two years: matter 1 (group 22).
+	'particelle-stati-temperatura': () => import('@/components/content/interactive/chimica/ParticelleStatiTemperatura'),
+	'miscuglio-ingrandisci': () => import('@/components/content/interactive/chimica/MiscuglioIngrandisci'),
+	'soluzione-aggiungi-soluto': () => import('@/components/content/interactive/chimica/SoluzioneAggiungiSoluto'),
 	// Chemistry, first two years: matter 2 (group 23).
+	'distillazione-temperatura-colonna': () => import('@/components/content/interactive/chimica/DistillazioneColonna'),
+	'cromatografia-carta-macchie': () => import('@/components/content/interactive/chimica/CromatografiaCarta'),
+	'fusione-sostanza-pura-miscuglio': () => import('@/components/content/interactive/chimica/FusionePuraMiscuglio'),
 	// Chemistry, first two years: chemical changes 1 (group 24).
+	'lavoisier-bilancia-aperto-chiuso': () => import('@/components/content/interactive/chimica/LavoisierBilancia'),
+	'proust-rapporto-combinazione': () => import('@/components/content/interactive/chimica/ProustRapporto'),
 	// Chemistry, first two years: chemical changes 2 (group 25).
+	'proporzioni-multiple-ossidi': () => import('@/components/content/interactive/chimica/ProporzioniMultiple'),
+	'costruisci-formula-atomi': () => import('@/components/content/interactive/chimica/CostruisciFormula'),
 	// Chemistry, first two years: gases (group 26).
+	'gas-effusione-foro': () => import('@/components/content/interactive/chimica/GasEffusione'),
+	'gas-cilindro-boyle': () => import('@/components/content/interactive/chimica/GasCilindroBoyle'),
+	'gas-cilindro-charles': () => import('@/components/content/interactive/chimica/GasCilindroCharles'),
+	'gas-cilindro-avogadro': () => import('@/components/content/interactive/chimica/GasCilindroAvogadro'),
 	// Chemistry, first two years: the mole (group 27).
+	'composizione-formula-minima': () => import('@/components/content/interactive/chimica/ComposizioneFormulaMinima'),
+	'miscela-gas-dalton': () => import('@/components/content/interactive/chimica/MiscelaGasDalton'),
 	// Chemistry, first two years: the atom (group 28).
+	'rutherford-lamina-oro': () => import('@/components/content/interactive/chimica/RutherfordLamina'),
+	'costruisci-atomo': () => import('@/components/content/interactive/chimica/CostruisciAtomo'),
 	// Chemistry, first two years: water (group 29).
+	'acqua-legami-idrogeno-temperatura': () => import('@/components/content/interactive/chimica/LegamiIdrogenoTemperatura'),
+	'acqua-sale-si-scioglie': () => import('@/components/content/interactive/chimica/SaleSiScioglie'),
+	'acqua-scala-ph-indicatori': () => import('@/components/content/interactive/chimica/ScalaPhIndicatori'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {
