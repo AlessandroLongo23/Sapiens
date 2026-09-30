@@ -1,7 +1,7 @@
 ---
 stato: bozza
 release: beta
-aggiornato: 2026-09-28
+aggiornato: 2026-09-29
 tag: [marketing, piano]
 ---
 # Piano di acquisizione
@@ -25,7 +25,7 @@ Il Digital Services Act (Regolamento UE 2022/2065, art. 28, in vigore per tutte 
 Esclusi fino alla beta: stampa, sponsorizzazioni, pubblicità come canale principale.
 
 ## Base comune a ogni fascia
-- Ottobre 2026: dominio e Search Console; Lorena apre gli account e sceglie 2-3 serie di video; Claude scrive la pipeline dei video (copioni e animazioni a lotti, come le lezioni); lista d'attesa con email sulla home; primo test con un docente; elenco di 30 creator da contattare.
+- Ottobre 2026: dominio e Search Console; Lorena apre gli account e sceglie 2-3 serie di video; Claude scrive la pipeline dei video (copioni e animazioni a lotti, come le lezioni); lista d'attesa con email sulla home; primo test con un docente; elenco di 30 creator da contattare. Nessun pagamento, a creator o campagne, prima della registrazione moms (vedi [[2026-09-29 Niente pagamenti per il marketing prima della registrazione moms]]).
 - Novembre e dicembre: 3-4 video a settimana, poi si tiene la serie che funziona; pubblicare "invita un amico" e i codici dei creator, già scritti; contatti con i creator.
 - Gennaio 2027, dopo le pagelle: email alla lista d'attesa, video di presentazione con il volto, uscita dei creator.
 - Febbraio: piano fino a giugno in vendita (vedi [[Piani e prezzi]]).

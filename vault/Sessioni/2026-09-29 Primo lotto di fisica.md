@@ -57,7 +57,7 @@ Scritte nelle lezioni 04-08 e da rispettare in tutta la fisica (da confermare co
 - I prerequisiti delle lezioni di fisica non sono scritti: il grafo di `docs/lezioni/prerequisiti.md` è solo di matematica, e un arco dalla fisica alla matematica (per esempio verso "Seno, coseno e tangente") non è previsto dallo script.
 
 ## Stato
-Lezioni pubblicate nel database. Il codice (figure interattive, scene, generatori collegati) è sul branch `fisica-primo-lotto` e non è in produzione: finché non c'è il deploy, in produzione le figure interattive delle lezioni di fisica restano cornici vuote con il testo alternativo e la pagina degli esercizi non ha i generatori.
+In produzione. Lezioni pubblicate nel database; il codice è entrato in master con la PR #13 (unita con master, che nel frattempo aveva il cestino dello Zaino e gli adesivi per argomento) ed è online dal 29 settembre 2026. Controllato su `sapiens-edu.vercel.app` a 390 px: le lezioni 14 e 19 con tutte le figure e le interattive montate, la scheda della 14 con 34 scene. Il pre-push non passava nel working tree condiviso, perché la build includeva i file non committati del laboratorio di un'altra sessione: il push è partito da un worktree pulito del branch.
 
 ## Prossimo argomento
-Il deploy del branch. Poi il secondo lotto di fisica (equilibrio dei solidi e dei fluidi, ottica: 18 lezioni), oppure il terzo anno di matematica.
+Il secondo lotto di fisica (equilibrio dei solidi e dei fluidi, ottica: 18 lezioni), oppure il terzo anno di matematica.

@@ -5,6 +5,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 /* The installed app (PWA or Capacitor): the inline script in the root layout sets `html.app` before paint. Pair it with max-md: a PWA installed on a computer keeps the desktop layout. */
 @custom-variant app (&:where(.app, .app *));
+/* What the device can do, not how wide it is: `desk` has a mouse (fine pointer and hover), `handheld` does not. Features
+   that need one or the other (the labs; photographing a notebook) switch on these. */
+@custom-variant desk (@media (hover: hover) and (pointer: fine));
+@custom-variant handheld (@media not ((hover: hover) and (pointer: fine)));
 
 /* ----------------------------------------------------------------------------
    1. Tokens: the raw scale (brand colour, type, spacing, radii).
@@ -687,6 +691,9 @@
 }
 .toggle-slide[data-ready] > button {
 	background-color: transparent;
+}
+/* the raised piece carries the selection; the focus ring (a box-shadow) must survive */
+.toggle-slide[data-ready] > button:not(:focus-visible) {
 	box-shadow: none;
 }
 /* The end of an exercise run (SummarySheet). Once the sheet is up the ring fills
@@ -1572,6 +1579,11 @@ html:not(.app)::view-transition-old(.page) {
 		transform: translateY(8px);
 	}
 }
+
+/* The lab's lobby: a face comes into its place (src/components/lab/menu/Lobby.tsx). */
+.lobby-pop { transform-box: fill-box; transform-origin: center; animation: lobby-pop 0.45s var(--ease-out-soft) both; }
+@keyframes lobby-pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .lobby-pop { animation: none; } }
 
 /*
  * The formula field of the open answers (src/components/content/exercises/OpenAnswer.tsx) and its keyboard on

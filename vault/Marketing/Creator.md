@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-28
+aggiornato: 2026-09-29
 tag: [marketing, creator]
 ---
 # Creator
@@ -38,6 +38,7 @@ DeRev su 5.000 creator italiani (riportato da We Wealth, settembre 2026), per co
 Gli hashtag #imparacontiktok, #lezionidimatematica, #liceoscientifico, #maturità2026; chi commenta la seconda prova a giugno. Prima di contattare qualcuno, controllare negli ultimi video se fa pubblicità a un concorrente (Gauth ne sponsorizza molti).
 
 ## Domande aperte
+- Il primo pagamento a un creator aspetta la registrazione moms di Sapiens. Vedi [[2026-09-29 Niente pagamenti per il marketing prima della registrazione moms]].
 - Chi contatta i creator, e quando: Lorena, da ottobre (vedi [[2026-09-28 Il marketing parte a ottobre, con Lorena]]).
 - Il budget: vedi [[Piano di acquisizione]].
 - Un modello di contratto, da far rileggere a un commercialista (vedi [[Società e IVA]]).

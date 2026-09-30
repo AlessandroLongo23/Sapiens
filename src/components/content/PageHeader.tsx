@@ -107,7 +107,7 @@ export function CardGridSection({ id, title, count, layout = 'grid', children }:
 export function Page({ children, width = 'wide', tone, cover }: { children: ReactNode; width?: 'wide' | 'medium' | 'narrow'; tone?: SubjectTone; cover?: ReactNode }) {
 	const max = { wide: 'max-w-7xl', medium: 'max-w-5xl', narrow: 'max-w-3xl' }[width];
 	return (
-		<div className="relative min-h-screen overflow-hidden bg-page-alt" data-subject={tone}>
+		<div className="relative min-h-screen overflow-clip bg-page-alt" data-subject={tone}>
 			<div className="grid-paper pointer-events-none absolute inset-x-0 top-0 h-[30rem] [mask-image:linear-gradient(to_bottom,black_30%,transparent)]" aria-hidden="true" />
 			<div className={`relative z-10 mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8 app:max-md:pt-5 ${max}`}>{children}</div>
 			{cover}
