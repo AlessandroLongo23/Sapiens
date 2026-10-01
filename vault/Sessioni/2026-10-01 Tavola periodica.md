@@ -72,13 +72,15 @@ Durante il lavoro è stato corretto un difetto di `ToggleGroup` (il riquadro non
 ## Ultimi giri prima della pubblicazione
 Su proposta di un amico di Alessandro il visualizzatore ha avuto la tabella dei sottolivelli a caselle, come selettore; poi le frecce degli elettroni di un elemento e la regola della diagonale. Le orientazioni hanno lo stesso ordine nel selettore e nella tabella. Alessandro ha scelto di spostare il visualizzatore tra gli strumenti, a `/strumenti/orbitali-atomici`, e di pubblicare: commit, merge su master, push, e la lezione nel database a deploy finito. La pagina di anteprima `/prova-lezione`, fatta per leggere la lezione prima della pubblicazione, è stata tolta: portava nel pacchetto di produzione 18.786 file di `docs/lezioni`.
 
+## Pubblicazione
+Cinque commit sul branch `tavola-periodica`: le due correzioni condivise (`ToggleGroup`, scrittura dell'indirizzo degli strumenti), i due strumenti, la lezione, il vault. Il push diretto su master è stato rifiutato dalla protezione del branch, quindi è passato dalla PR #24, che ha superato i controlli di GitHub e l'anteprima di Vercel ed è stata unita. A deploy pronto la lezione è stata pubblicata nel database con il formulario e le flashcard. Controllati in produzione: la lezione con tre figure montate, formulario, flashcard, esercizi e scheda; la tavola periodica con 118 caselle e una scheda con la foto; il visualizzatore con la configurazione del ferro; un PDF e una foto.
+
 ## Rimasto aperto
 - La versione per telefono.
 - Il montaggio nelle lezioni di chimica, e che fine fanno le due figure statiche della lezione 43.
 - La fonte dei raggi covalenti.
 - Le scelte sui contenuti, in [[Domande per Andrea]].
 - Un solo archivio degli elementi anche per il laboratorio, e la versione vuota da stampare: proposte di Claude, non discusse. Per ora un test tiene allineati la tavola e lo strumento della massa molare.
-- Commit, PR e pubblicazione, quando Alessandro lo chiede.
 
 ## Prossimo argomento
-Alessandro guarda la tavola e il prototipo degli orbitali sul branch e decide se pubblicarli; poi la versione per telefono della tavola e il montaggio nelle lezioni (punto 14 dell'[[Agenda]]), e la lezione sugli orbitali (punto 15). Nella coda generale resta primo il legale e fiscale.
+La versione per telefono della tavola e il suo montaggio nelle lezioni (punto 14 dell'[[Agenda]]); per gli orbitali, la prova su telefono e le risposte di Andrea (punto 15). Nella coda generale resta primo il legale e fiscale.

@@ -1,5 +1,5 @@
 ---
-stato: in sviluppo
+stato: rilasciata
 release: da decidere
 aggiornato: 2026-10-01
 tag: [prodotto, studenti, strumenti, chimica, lezioni]
@@ -55,7 +55,7 @@ Limiti da dire nella pagina: sono gli orbitali dell'idrogeno. Negli altri atomi 
 Per la lezione il percorso di FloatHeadPhysics (corda, nodi, puntini per raggio, taglio con un piano) si presta a figure interattive nostre: il cursore del raggio con il conteggio dei puntini, il piano che taglia la sfera. Il testo si scrive da capo e lo rilegge Andrea.
 
 ## Stato del prototipo
-Scritto il 1° ottobre 2026. Vedi [[2026-10-01 Gli orbitali hanno una lezione dedicata e un visualizzatore in tre dimensioni]].
+In produzione dal 1° ottobre 2026 (PR #24). Vedi [[2026-10-01 Gli orbitali hanno una lezione dedicata e un visualizzatore in tre dimensioni]].
 
 - Dal 1° ottobre 2026 è uno strumento: `/strumenti/orbitali-atomici` (`src/app/(site)/strumenti/orbitali-atomici/page.tsx`, pagina in `src/components/orbitali/OrbitalPage.tsx`), con la carta nell'indice degli strumenti sotto Chimica, la riga nella sitemap e il link alla lezione. Alessandro ha scelto di spostarlo subito tra gli strumenti e di non tenerlo come prototipo nascosto a `/prova-orbitali`. L'articolo sotto la figura è `src/content/strumenti/orbitali-atomici.md`.
 - La matematica è in `src/lib/orbitali/idrogeno.ts`: parte radiale, funzioni di Legendre, estrazione esatta dei puntini dalle tre distribuzioni, segno della funzione d'onda, velocità del flusso, superfici dei nodi (sfere, coni, piani), sezione della nuvola con un piano. Otto test (`tests/unit/orbitali-idrogeno.test.mjs`) controllano il numero dei nodi, che il raggio medio di ogni nuvola sia $[3n^2 - l(l+1)]/2$ raggi di Bohr entro il 3 per cento, che $p_x$, $p_y$, $p_z$, $d_{xy}$ e $d_{z^2}$ puntino dove dicono i libri con i segni giusti, che i nodi siano dove devono (la sfera del 2s a 2 raggi di Bohr, i coni del $d_{z^2}$ a 54,7° dall'asse), che una sezione sia vuota quando il piano è un nodo.
@@ -74,11 +74,11 @@ Scritto il 1° ottobre 2026. Vedi [[2026-10-01 Gli orbitali hanno una lezione de
 Non fatto: una prova su telefono e su un computer con la scheda grafica.
 
 ## La lezione
-Scritta il 1° ottobre 2026, non pubblicata: `docs/lezioni/chimica/riscritte/52-chim-orbitali-numeri-quantici.md`, con formulario, 20 flashcard, note e il generatore di esercizi `chim-orbitali-numeri-quantici` (cinque livelli, PASS su 3000 esercizi per livello). Sta nel programma, al posto di "Orbitali e numeri quantici" del terzo anno, e non come approfondimento separato: l'albero aveva già quella lezione.
+Scritta e pubblicata il 1° ottobre 2026, dopo il deploy del codice: `docs/lezioni/chimica/riscritte/52-chim-orbitali-numeri-quantici.md`, con formulario, 20 flashcard, note e il generatore di esercizi `chim-orbitali-numeri-quantici` (cinque livelli, PASS su 3000 esercizi per livello). Sta nel programma, al posto di "Orbitali e numeri quantici" del terzo anno, e non come approfondimento separato: l'albero aveva già quella lezione.
 
 Il componente si aggancia ai paragrafi con i parametri fissati (richiesta di Alessandro): `src/components/orbitali/OrbitalFigure.tsx` prende un elenco di orbitali tra cui scegliere, la vista (nuvola o sezione), il piano, i nodi e il taglio accesi, spenti o a scelta, e la scala comune. Le otto figure della lezione sono in `src/components/content/interactive/chimica/orbitali.tsx` e sono registrate con i loro nomi in `src/lib/utils/interactive.ts`; l'ultima è il visualizzatore completo, che nella lezione tiene le scelte per sé e non le scrive nell'indirizzo. Una figura TikZ mostra la corda con i nodi.
 
-Per pubblicare: prima il codice in produzione (le figure), poi `publish.mts --dir docs/lezioni/chimica --per-slug --apply`. Restano da fare, se servono, le figure dei puntini contati per raggio e del piano che taglia la sfera, che la lezione oggi sostituisce con le sezioni.
+Pubblicata con `publish.mts --dir docs/lezioni/chimica --per-slug --apply` a deploy finito; controllate in produzione la pagina della lezione (tre figure montate, nessun errore), il formulario, le flashcard, gli esercizi e la scheda. La pagina di chimica e la sitemap prendono la lezione al prossimo rinnovo della cache. Restano da fare, se servono, le figure dei puntini contati per raggio e del piano che taglia la sfera, che la lezione oggi sostituisce con le sezioni.
 
 ## Domande che la lezione deve sciogliere
 - Alessandro, 1° ottobre 2026: come fa l'idrogeno ad avere tutti questi orbitali, se ha un solo elettrone? Un orbitale è uno stato in cui l'elettrone può stare, non una cosa che l'atomo possiede. L'unico elettrone dell'idrogeno di solito sta nell'1s; se assorbe energia passa a uno degli altri (stati eccitati) e tornando indietro emette luce: sono le righe dello spettro. La domanda viene spontanea guardando il visualizzatore, quindi la lezione la deve affrontare presto.
