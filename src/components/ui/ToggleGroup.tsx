@@ -78,6 +78,7 @@ export function ToggleGroup<T extends string>({
 		if (hover.current) delete hover.current.dataset.on;
 	};
 
+	const layoutKey = options.map((o) => o.label).join('\n');
 	// Placed by hand, not through state: it follows layout (the buttons' widths), not data.
 	useLayoutEffect(() => {
 		const node = group.current;
@@ -99,7 +100,9 @@ export function ToggleGroup<T extends string>({
 		const observer = new ResizeObserver(place);
 		observer.observe(node);
 		return () => observer.disconnect();
-	}, [value]);
+		// Also when the options change under the same value: with one more or one fewer the buttons are another width,
+		// and the group itself is not, so the observer would not notice.
+	}, [value, layoutKey]);
 
 	return (
 		<div
