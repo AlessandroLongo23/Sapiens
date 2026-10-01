@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-30
+aggiornato: 2026-10-01
 tag: [indice]
 ---
 # Sapiens
@@ -23,10 +23,12 @@ Sempre il 30 settembre si è deciso come arriva la risposta aperta negli eserciz
 
 Sempre il 30 settembre si è deciso che le lezioni avranno clip animate con voce, da 1 a 3 minuti per sezione, fatte con un manim a quadretti e dalla stessa pipeline dei video social; si parte da una lezione pilota, che dà anche i primi video di ottobre. Dove stanno le clip (YouTube, player di Sapiens o tutti e due) è da decidere. Vedi [[2026-09-30 Clip animate delle lezioni]].
 
+Il 1° ottobre si è decisa e scritta la tavola periodica: tra gli strumenti, a `/strumenti/tavola-periodica`, con una pagina sua; senza pagine per elemento per ora; ampia come Ptable (famiglie, stato fisico a una temperatura, andamenti periodici, blocchi, isotopi) e con due PDF da stampare; disegnata prima da computer, con la griglia che scorre sul telefono. È sul branch `tavola-periodica`, non ancora pubblicata. Vedi [[2026-10-01 Tavola periodica]] e [[Tavola periodica interattiva]]. Lo stesso giorno la scheda degli elementi ha avuto le foto (96 su 118, da Wikimedia Commons), e si è deciso che gli orbitali avranno una lezione dedicata e un visualizzatore in tre dimensioni: il prototipo è a `/strumenti/orbitali-atomici`, sullo stesso branch, e la lezione "Orbitali e numeri quantici" è scritta con otto figure agganciate ai paragrafi, formulario, flashcard ed esercizi, non ancora pubblicata. Vedi [[Orbitali atomici interattivi]].
+
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
@@ -39,10 +41,16 @@ Sempre il 30 settembre si è deciso che le lezioni avranno clip animate con voce
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-09-30 Risposta aperta e memoria degli esercizi]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-01 Tavola periodica]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-01 Gli orbitali hanno una lezione dedicata e un visualizzatore in tre dimensioni]]
+- [[2026-10-01 Nella scheda degli elementi vanno le foto, i modelli 3D restano per dopo]]
+- [[2026-10-01 La tavola periodica si disegna prima da computer, con la scheda accanto alla griglia]]
+- [[2026-10-01 La prima tavola periodica è ampia come Ptable e si fa subito]]
+- [[2026-10-01 La tavola periodica non ha pagine per elemento, per ora]]
+- [[2026-10-01 La tavola periodica sta tra gli strumenti, con una pagina sua]]
 - [[2026-09-30 Ogni lezione ha una pagina di esercizi svolti, fatta dai suoi generatori]]
 - [[2026-09-30 Le clip partono da una lezione pilota, che dà anche i primi video social]]
 - [[2026-09-30 Le lezioni hanno clip animate per sezione, fatte con un manim a quadretti]]
@@ -140,7 +148,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]]
 
 ## Idee
-Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Tavola periodica interattiva]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]].
+Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]], [[Foto e modelli 3D degli elementi]].
 
 ## Decisioni aperte più importanti
 Ognuna ha il dettaglio nella nota collegata.

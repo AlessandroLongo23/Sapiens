@@ -1,7 +1,7 @@
 ---
 stato: in uso
 release: beta
-aggiornato: 2026-09-30
+aggiornato: 2026-10-01
 tag: [contenuti, revisione]
 ---
 # Domande per Andrea
@@ -263,6 +263,30 @@ Dove la forma non conta, la risposta aperta accetta tutte le scritture equivalen
 - [ ] Funzione inversa: scritta in $x$ o in $y$ vale lo stesso (scelta fatta)?
 - [ ] Un trinomio che non si scompone: vale sia la parola "irriducibile" sia il trinomio riscritto uguale (scelta fatta). Va bene anche dove la consegna chiede i fattori di primo grado?
 - [ ] Con la virgola decimale, "$x = 0,2$" può voler dire $0$ e $2$ oppure $0{,}2$: il correttore prova le due letture e accetta la risposta se una è giusta (scelta fatta). Ti sembra giusto, o in classe si usa sempre il punto e virgola tra due soluzioni?
+
+## Tavola periodica (1° ottobre 2026)
+Dalla costruzione dello strumento `/strumenti/tavola-periodica`; vedi [[2026-10-01 Tavola periodica]] e [[Tavola periodica interattiva]]. Tra parentesi la scelta fatta.
+- [ ] Famiglie e colori: dieci famiglie, come le dà PubChem (scelta fatta). Il polonio è tra i semimetalli e l'astato tra gli alogeni; idrogeno, carbonio, azoto, ossigeno, fosforo, zolfo e selenio sono "non metalli"; alluminio, gallio, indio, stagno, tallio, piombo, bismuto e gli elementi da 113 a 116 sono "altri metalli". I libri italiani dividono allo stesso modo? E il nome "altri metalli" va bene, o si dice "metalli del blocco p"?
+- [ ] Lantanidi e attinidi: quindici elementi per riga, dal lantanio al lutezio e dall'attinio al laurenzio, sotto la tavola. Nella vista dei blocchi lantanio e attinio sono nel blocco d, perché hanno un elettrone d e nessun elettrone f, e gli altri quattordici per riga nel blocco f (scelta fatta). Oppure nel blocco d vanno lutezio e laurenzio, come propone la IUPAC?
+- [ ] Configurazione elettronica: scritta nell'ordine di riempimento, `[Ar] 4s² 3d⁶`, per tutti gli elementi (scelta fatta). I libri scrivono anche `[Ar] 3d⁶ 4s²`: quale vuoi?
+- [ ] Raggio atomico: la vista degli andamenti usa il raggio covalente di legame singolo, in pm (scelta fatta, perché scende lungo il periodo e sale lungo il gruppo come nei libri). Il sodio dà 155 pm, mentre molti libri riportano 186 pm, che è il raggio metallico. La fonte è una tabella di Wikipedia i cui valori sembrano quelli di Pyykkö e Atsumi del 2009: da verificare. Va bene il raggio covalente, o i libri usano un altro raggio?
+- [ ] Affinità elettronica: tolta dalla tavola. I valori di PubChem non sono affidabili (fluoro 322 kJ/mol contro 328) e mancano dove l'anione non è stabile. Serve? Con quale segno, e da quale fonte?
+- [ ] Energia di ionizzazione in kJ/mol (scelta fatta), convertita dagli eV di PubChem: il ferro dà 762,4, il francio 375,7 (altre fonti danno 393).
+- [ ] Numeri di ossidazione: sono quelli di PubChem, e hanno buchi che si notano. Al cloro manca +3, al bromo +3 e +7, al manganese +6, all'ossigeno −1, all'osmio +8; il palladio ha "+3, +2" dove ci si aspetta +2 e +4; i gas nobili hanno solo 0, anche lo xeno. Dal rutherfordio in poi sono calcolati: nella scheda sono segnati "previsti", sul foglio da stampare non ci sono. Serve un elenco da libro di scuola: da quale tavola lo prendiamo?
+- [ ] Elettronegatività dei gas nobili: cripton 3,00 e xeno 2,60 hanno un valore di Pauling e compaiono colorati; elio, neon e argon no. Meglio toglierli tutti dalla vista?
+- [ ] Stato fisico: calcolato dai punti di fusione e di ebollizione a 1 atm. L'elio non solidifica mai; carbonio e arsenico sublimano (il carbonio a 3825 °C, l'arsenico a 614 °C) e nella scheda il loro punto di fusione è segnato "sotto pressione". Per 25 elementi almeno uno dei due punti non è noto, e dove lo stato non si può dire la casella è tratteggiata.
+- [ ] Massa tra parentesi quadre: l'articolo dice che si usa per gli elementi radioattivi senza una composizione fissa in natura, e che torio, protoattinio e uranio hanno comunque una massa atomica. Va bene detto così?
+- [ ] Le frasi sugli andamenti (per esempio "l'energia di ionizzazione in generale cresce da sinistra a destra lungo un periodo, con qualche eccezione: il boro meno del berillio, l'ossigeno meno dell'azoto") e l'articolo sotto la tavola vanno riletti come una lezione.
+
+## Orbitali e numeri quantici (1° ottobre 2026)
+Prima lezione del terzo anno di chimica, scritta ma non pubblicata; vedi [[2026-10-01 Gli orbitali hanno una lezione dedicata e un visualizzatore in tre dimensioni]] e le note in `docs/lezioni/chimica/note/52-chim-orbitali-numeri-quantici.md`. Tra parentesi la scelta fatta.
+- [ ] La lezione sta nel programma, al posto di "Orbitali e numeri quantici" (scelta fatta), e spiega da dove vengono le forme: onda chiusa, nodi, mappa di probabilità. È troppo per una terza? In alternativa i nodi e gli orbitali in moto diventano una lezione di approfondimento a parte.
+- [ ] I numeri quantici letti sui nodi: $n - 1$ nodi in tutto, $l$ nodi angolari (scelta fatta). I libri danno le regole senza i nodi: va bene così?
+- [ ] Nomi: "numero quantico secondario" per $l$ e $m_l$ per il magnetico (scelta fatta), oppure "angolare" e $m$.
+- [ ] Orbitale come "mappa della probabilità di trovare l'elettrone", con la superficie al 90% per i disegni dei libri (scelta fatta). Alcuni libri dicono 95%.
+- [ ] Negli esercizi il livello 4 chiede di contare i nodi radiali e angolari: va tenuto?
+- [ ] La frase "il segno conterà quando studierai i legami" anticipa gli orbitali molecolari, che il programma lascia fuori: toglierla?
+- [ ] L'approfondimento dice che la velocità dei puntini è il flusso della probabilità e il momento angolare attorno all'asse, e che non è la velocità misurabile dell'elettrone: detto in modo accettabile per una terza?
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

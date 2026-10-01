@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-09-30
+aggiornato: 2026-10-01
 tag: [piano, agenda]
 ---
 # Agenda
@@ -23,7 +23,9 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 11. **Catalogo degli adesivi:** guida di stile, pipeline e primo lotto (10 capitoli del primo anno) fatti e committati il 26 settembre, con i primi adesivi fustellati e la dimensione regolabile. Restano i lotti: 29 capitoli, materie, studio, stagionali. Viene dopo i contenuti, che restano il collo di bottiglia. Note: [[Adesivi]], [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]].
 12. **SEO e dominio** (dal 28 settembre blocca anche il marketing: i video e la lista d'attesa devono puntare al dominio definitivo): scegliere e comprare il dominio (dal 28 settembre il candidato è Articolo34: Alessandro compra `articolo34.it` e `art34.it` e fa la prova a voce con studenti e genitori, contro Sapiens e Volevasi; controllo di marchi e handle da fare; vedi [[2026-09-28 Il nome si sceglie con una prova a voce, Articolo34 contro Sapiens e Volevasi]]), collegarlo a Vercel e a Search Console, inviare la sitemap dopo la rilettura del primo anno. Poi i livelli con esercizi lunghi per la scheda. Nota: [[SEO]].
 13. **Grafico interattivo negli strumenti:** punti trascinabili sul piano cartesiano e l'angolo sulla circonferenza goniometrica, come primo pezzo del componente tipo GeoGebra. Da fare con calma, in una conversazione dedicata. Dal 29 settembre serve anche alla fisica: i grafici di fisica sono statici in TikZ e si sostituiscono con il componente, che deve avere la stessa identità visiva del TikZ e montarsi sopra l'SVG statico. Nota: [[Grafici e simulazioni interattive]].
+14. **Tavola periodica** (deciso e scritto il 1° ottobre; non è nella beta e non la blocca). Sul branch `tavola-periodica`, da committare e pubblicare quando Alessandro l'ha guardata: `/strumenti/tavola-periodica` con le quattro viste, la scheda, i due PDF. Restano la versione per telefono (oggi la griglia scorre di lato), il montaggio nelle lezioni di chimica, la fonte dei raggi covalenti, le domande per Andrea, i PDF da rifare se cambia il nome. Note: [[Tavola periodica interattiva]], [[2026-10-01 Tavola periodica]].
 
+15. **Orbitali atomici** (deciso il 1° ottobre: una lezione dedicata e un visualizzatore in tre dimensioni; non è nella beta). Il visualizzatore è a `/strumenti/orbitali-atomici` e la lezione "Orbitali e numeri quantici" è scritta, con otto figure agganciate ai paragrafi, formulario, flashcard ed esercizi; tutto sul branch `tavola-periodica`, non committato e non pubblicato. Alessandro la legge; poi si pubblica il codice e dopo la lezione. Restano la prova su un computer e su un telefono veri, le domande per Andrea, se il visualizzatore va anche nella scheda della tavola periodica. Note: [[Orbitali atomici interattivi]], [[2026-10-01 Gli orbitali hanno una lezione dedicata e un visualizzatore in tre dimensioni]].
 ## Prima della v1.0 e della v2
 - Onboarding su classe e indirizzo. Lo schermo "Oggi" è deciso ed entra nella beta (vedi [[2026-09-25 Oggi è lo schermo iniziale dell'app]]); la grafica con Dario. Note: [[App mobile]], [[Progressi dello studente]].
 - Torre dei prerequisiti, una per capitolo o per anno, con Dario. Nota: [[Mappa dei prerequisiti]].
@@ -42,6 +44,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente
+- 2026-10-01: tavola periodica: tra gli strumenti con una pagina sua, senza pagine per elemento per ora, ampia come Ptable, disegnata prima da computer. Scritta lo stesso giorno sul branch `tavola-periodica`; quello che resta è al punto 14. Vedi [[2026-10-01 Tavola periodica]].
 - 2026-09-30: biennio di chimica, 38 lezioni nuove (file 10-47) e le flashcard della lezione sulla mole. Lezioni e codice in produzione (PR #17). Vedi [[2026-09-30 Biennio di chimica]].
 - 2026-09-30: clip animate nelle lezioni: da 1 a 3 minuti per sezione, con un manim a quadretti, dalla stessa pipeline dei video social; si parte subito da una lezione pilota. Vedi [[2026-09-30 Clip animate delle lezioni]].
 - 2026-09-30: risposta aperta e memoria degli esercizi: tappe con 4 ripetizioni a rampa da scelta multipla a risposta aperta; MathLive con la tastiera di Sapiens o del dispositivo; forma solo dove è l'esercizio; FSRS per livello, superato che non si perde, ripasso implicito sui prerequisiti, tutto nella beta. Vedi [[2026-09-30 Risposta aperta e memoria degli esercizi]].
