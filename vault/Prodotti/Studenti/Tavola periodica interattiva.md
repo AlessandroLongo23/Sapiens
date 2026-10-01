@@ -1,5 +1,5 @@
 ---
-stato: in sviluppo
+stato: rilasciata
 release: da decidere
 aggiornato: 2026-10-01
 tag: [prodotto, studenti, strumenti, chimica, seo]
@@ -9,7 +9,7 @@ tag: [prodotto, studenti, strumenti, chimica, seo]
 Una tavola periodica gratuita sotto `/strumenti`, con la scheda di ogni elemento, le viste sugli andamenti periodici e la versione da stampare, usata anche dentro le lezioni di chimica.
 
 ## Stato attuale
-Scritta il 1° ottobre 2026 sul branch `tavola-periodica`, non committata e non pubblicata.
+In produzione dal 1° ottobre 2026 (PR #24), a `sapiens-edu.vercel.app/strumenti/tavola-periodica`.
 
 La pagina è `/strumenti/tavola-periodica` (`src/app/(site)/strumenti/tavola-periodica/page.tsx`, componenti in `src/components/tools/periodic/`). Nel registro degli strumenti ha `ownPage: true`: ha la carta nell'indice sotto Chimica e la riga nella sitemap, ma non passa dalla pagina dei calcolatori.
 
@@ -24,7 +24,7 @@ La pagina è `/strumenti/tavola-periodica` (`src/app/(site)/strumenti/tavola-per
 
 I dati sono in `src/lib/tools/elementi.json`, scritto da `scripts/tavola-periodica/build.mjs`: nomi e masse da `chimica.ts`, il resto da PubChem, gli isotopi dal NIST, i raggi covalenti da una tabella di Wikipedia. Lo script riordina le configurazioni, mette il segno ai numeri di ossidazione e assegna i blocchi. Le foto le scarica `scripts/tavola-periodica/foto.mjs`, che scrive anche i crediti in `src/lib/tools/elementi-foto.json`. Nove test (`tests/unit/tools-tavola-periodica.test.mjs`) controllano tra l'altro che nomi e masse coincidano con lo strumento della massa molare, che gli elettroni di ogni configurazione sommino al numero atomico, che a 25 °C i liquidi siano solo bromo e mercurio. Come si lavora sui file: `docs/strumenti.md`, sezione "La tavola periodica".
 
-Controlli fatti il 1° ottobre: `tsc`, ESLint sui file nuovi, 476 test unitari, la pagina guardata nel browser a 1440, 1280 e 1024 px (chiaro e scuro) e a 390 px, senza errori in console; `npm run build` è passato sulla prima versione e non è stato rilanciato dopo le correzioni, perché era acceso il server di sviluppo di Alessandro. La suite Playwright non è stata lanciata. Due giri di un agente critico hanno trovato e fatto correggere, tra l'altro: il PDF in bianco e nero che usciva a colori, i link dell'elenco che non aprivano la scheda, Safari che bloccava la pagina muovendo il cursore (la scrittura dell'indirizzo in `useToolState` ora aspetta 250 ms, per tutti gli strumenti), la scheda fuori schermo sotto i 1280 px, il blocco f con 30 elementi, le configurazioni in due ordini diversi.
+Controlli fatti il 1° ottobre: `tsc`, ESLint sui file nuovi, 476 test unitari, la pagina guardata nel browser a 1440, 1280 e 1024 px (chiaro e scuro) e a 390 px, senza errori in console; `npm run build` passa sulla versione finale, e la PR #24 ha superato i controlli di GitHub e l'anteprima di Vercel. In produzione sono state controllate la griglia (118 caselle), una scheda con la foto, le pagine da stampare e un PDF. Due giri di un agente critico hanno trovato e fatto correggere, tra l'altro: il PDF in bianco e nero che usciva a colori, i link dell'elenco che non aprivano la scheda, Safari che bloccava la pagina muovendo il cursore (la scrittura dell'indirizzo in `useToolState` ora aspetta 250 ms, per tutti gli strumenti), la scheda fuori schermo sotto i 1280 px, il blocco f con 30 elementi, le configurazioni in due ordini diversi.
 
 Tolti perché la fonte non è affidabile: l'affinità elettronica (PubChem dà 322 kJ/mol per il fluoro contro i 328 accettati, e nessun valore dove l'anione non è stabile) e l'anno di scoperta (alluminio e calcio risultano "antichi").
 

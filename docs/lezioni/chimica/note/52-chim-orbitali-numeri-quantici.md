@@ -1,8 +1,7 @@
 # Note: Orbitali e numeri quantici
 
 Lezione nuova (1° ottobre 2026), la prima del terzo anno di chimica: capitolo "La struttura elettronica dell'atomo",
-quinta lezione su sei. Non è pubblicata: aspetta il via di Alessandro, e le sue figure interattive devono essere in
-produzione prima del testo. `check.mts` passa su lezione, formulario e flashcard; l'avviso "riempitivo" è su "stato
+quinta lezione su sei. Pubblicata il 1° ottobre 2026, dopo il deploy delle sue figure interattive (PR #24). `check.mts` passa su lezione, formulario e flashcard; l'avviso "riempitivo" è su "stato
 fondamentale", che è il termine; i 14 grassetti sono tutti termini nel punto in cui sono definiti.
 
 ## Struttura
