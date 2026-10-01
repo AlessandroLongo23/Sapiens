@@ -216,6 +216,7 @@ export const generators: Record<string, () => Promise<Generator>> = {
 	'chim-thomson-rutherford': () => import('./v2/generators/chim-thomson-rutherford').then((m) => m.default),
 	'numero-massa': () => import('./v2/generators/numero-massa').then((m) => m.default),
 	'chim-tavola-mendeleev': () => import('./v2/generators/chim-tavola-mendeleev').then((m) => m.default),
+	'chim-orbitali-numeri-quantici': () => import('./v2/generators/chim-orbitali-numeri-quantici').then((m) => m.default),
 	'chim-acqua-molecola': () => import('./v2/generators/chim-acqua-molecola').then((m) => m.default),
 	'chim-acqua-proprieta': () => import('./v2/generators/chim-acqua-proprieta').then((m) => m.default),
 	'chim-acqua-solvente': () => import('./v2/generators/chim-acqua-solvente').then((m) => m.default),

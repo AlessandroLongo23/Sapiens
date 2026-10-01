@@ -20,7 +20,7 @@ export const dynamicParams = false;
 export const revalidate = 3600;
 
 export function generateStaticParams() {
-	return TOOLS.map((t) => ({ slug: t.slug }));
+	return TOOLS.filter((t) => !t.ownPage).map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {

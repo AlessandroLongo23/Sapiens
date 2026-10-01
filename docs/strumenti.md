@@ -114,3 +114,28 @@ e discalculia (2001), del W3C per le disabilità cognitive (COGA, 2021) e dalla 
 - `npx eslint --max-warnings=0` e `npx tsc --noEmit -p .` sui file toccati.
 - La pagina aperta sul server di sviluppo: risultato e passaggi nell'HTML (`curl`), niente errori in console.
 - Testi: niente trattini lunghi, niente "piuttosto che" come contrasto, grassetto raro.
+
+## La tavola periodica
+
+`/strumenti/tavola-periodica` è uno strumento con una pagina sua: nel registro ha `ownPage: true`, quindi ha la carta
+nell'indice e la riga nella sitemap ma non passa da `[slug]` e da `ToolPage`. Il perché è nel vault, in
+`vault/Prodotti/Studenti/Tavola periodica interattiva.md`.
+
+- **I dati**, `src/lib/tools/elementi.json`: li scrive `node scripts/tavola-periodica/build.mjs` (`--scarica` per
+  riscaricare le fonti in `scripts/tavola-periodica/fonti/`, che non si committano). Nomi e masse vengono da
+  `ELEMENT_DATA` di `chimica.ts`, il resto da PubChem, NIST (isotopi) e dalla tabella dei raggi covalenti; le fonti
+  sono elencate in testa allo script. Il file non si corregge a mano: si corregge la fonte o lo script.
+- **La logica**, `src/lib/tools/tavola-periodica.ts`: posizione nella griglia, stato a una temperatura, andamenti,
+  scrittura dei numeri. I test (`tests/unit/tools-tavola-periodica.test.mjs`) controllano che nomi e masse
+  coincidano con `chimica.ts`, che gli elettroni di ogni configurazione sommino a Z, gli stati a 25 °C e gli estremi
+  degli andamenti. Affinità elettronica e anno di scoperta di PubChem non si usano: non sono affidabili.
+- **I componenti**, `src/components/tools/periodic/`: `PeriodicTable` (griglia, viste, anteprima nel vuoto in alto),
+  `ElementPanel` (la scheda), `PeriodicPage` (la pagina), `PeriodicSheet` (il foglio A4 da stampare). I colori sono
+  variabili CSS sotto `.ptable` in `globals.css`, con la versione per il tema scuro.
+- **I PDF**, `public/tavola-periodica/`: li fa `BASE=http://localhost:3000 node scripts/tavola-periodica/pdf.mjs`
+  dalle pagine `/strumenti/tavola-periodica/stampa/colori` e `/bianco-nero` di un server acceso. Vanno rifatti quando
+  cambiano i dati, il foglio o il nome del sito.
+- **Le foto**, `public/tavola-periodica/elementi/` e `src/lib/tools/elementi-foto.json`: le scarica
+  `node scripts/tavola-periodica/foto.mjs` da Wikimedia Commons (l'immagine dell'elemento su Wikidata), con autore
+  e licenza, che la scheda mostra sotto la foto. `SKIP` nello script elenca gli elementi la cui immagine non mostra
+  l'elemento; `PICK` serve a scegliere un altro file.

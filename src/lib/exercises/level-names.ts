@@ -968,6 +968,13 @@ export const levelNames: Record<string, Record<number, string>> = {
 		3: 'Massa e numero atomico',
 		4: 'Formule per analogia',
 	},
+	'chim-orbitali-numeri-quantici': {
+		1: 'Livelli, sottolivelli e nomi',
+		2: 'Quanti orbitali',
+		3: 'Terne che esistono',
+		4: 'I nodi di un orbitale',
+		5: 'Quanti elettroni',
+	},
 	'chim-acqua-molecola': {
 		1: 'La composizione',
 		2: "L'acqua dal suo elemento",

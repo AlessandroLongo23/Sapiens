@@ -56,3 +56,6 @@ stickers/anteprima-*
 
 # Screenshot di prova lasciati nella radice
 /*.png
+
+# Sources of the periodic table data, downloaded by scripts/tavola-periodica/build.mjs
+scripts/tavola-periodica/fonti/

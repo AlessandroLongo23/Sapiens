@@ -1656,3 +1656,63 @@ body {
 	--keyboard-toolbar-text-active: var(--fg-strong);
 	--keyboard-toolbar-background-selected: var(--surface-3);
 }
+
+/* The periodic table (components/tools/periodic). One pale highlighter per family, block and state, darker and
+   quieter in the dark theme; a view sets `--pt-fill` on each cell. The trend colour is mixed with the page by the
+   cell, from a faint wash to full strength. */
+.ptable {
+	--pt-l: 0.9;
+	--pt-c: 0.07;
+	--pt-alcalini: oklch(var(--pt-l) var(--pt-c) 20);
+	--pt-alcalino-terrosi: oklch(var(--pt-l) var(--pt-c) 55);
+	--pt-transizione: oklch(var(--pt-l) calc(var(--pt-c) * 0.8) 245);
+	--pt-altri-metalli: oklch(var(--pt-l) var(--pt-c) 205);
+	--pt-semimetalli: oklch(var(--pt-l) var(--pt-c) 165);
+	--pt-non-metalli: oklch(var(--pt-l) calc(var(--pt-c) * 1.2) 128);
+	--pt-alogeni: oklch(calc(var(--pt-l) + 0.03) calc(var(--pt-c) * 1.5) 95);
+	--pt-gas-nobili: oklch(var(--pt-l) var(--pt-c) 290);
+	--pt-lantanidi: oklch(var(--pt-l) var(--pt-c) 350);
+	--pt-attinidi: oklch(var(--pt-l) var(--pt-c) 320);
+	--pt-blocco-s: var(--pt-alcalini);
+	--pt-blocco-p: var(--pt-non-metalli);
+	--pt-blocco-d: var(--pt-transizione);
+	--pt-blocco-f: var(--pt-attinidi);
+	--pt-stato-s: var(--surface-3);
+	--pt-stato-l: oklch(calc(var(--pt-l) - 0.06) calc(var(--pt-c) * 1.4) 245);
+	--pt-stato-g: var(--pt-alogeni);
+	--pt-trend: oklch(0.7 0.13 250);
+	--pt-ink: var(--color-ink-950);
+}
+.dark .ptable {
+	--pt-l: 0.4;
+	--pt-c: 0.075;
+	--pt-alogeni: oklch(0.45 0.085 95);
+	--pt-stato-l: oklch(0.48 0.12 245);
+	--pt-trend: oklch(0.52 0.14 250);
+	/* Apart from the page, which an unknown state keeps. */
+	--pt-stato-s: var(--surface-4);
+	--pt-ink: var(--color-paper-50);
+}
+/* A sheet to print keeps the light colours whatever the theme, or none at all. */
+.ptable-print {
+	--pt-l: 0.9;
+	--pt-c: 0.07;
+	--pt-ink: black;
+}
+.ptable-cell {
+	background-color: var(--pt-fill, transparent);
+	color: var(--pt-ink);
+}
+/* Printing the periodic table's sheet (PeriodicSheet): the sheet alone, on A4 landscape with no page margin (it has
+   its own), with its colours. Everything that neither holds the sheet nor is in it goes. */
+@page ptable-sheet { size: A4 landscape; margin: 0; }
+@media print {
+	html:has(#ptable-sheet),
+	body:has(#ptable-sheet) { background: white !important; }
+	body:has(#ptable-sheet) :not(:has(#ptable-sheet), #ptable-sheet, #ptable-sheet *, head, head *) { display: none !important; }
+	#ptable-sheet {
+		page: ptable-sheet;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
+	}
+}

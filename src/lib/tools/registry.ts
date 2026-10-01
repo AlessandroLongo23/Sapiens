@@ -846,13 +846,37 @@ export const TOOLS: ToolMeta[] = [
 		keywords: ['resistenza', 'tensione', 'corrente', 'potenza elettrica', 'ohm']
 	},
 	{
+		slug: 'tavola-periodica',
+		title: 'Tavola periodica',
+		lead: 'I 118 elementi con massa atomica, configurazione elettronica, elettronegatività, numeri di ossidazione e isotopi. Interattiva e da stampare.',
+		description: 'Tavola periodica degli elementi interattiva: massa atomica, configurazione elettronica, elettronegatività, numeri di ossidazione, stato fisico e isotopi. Anche in PDF.',
+		category: 'chimica',
+		lessons: ['high_school/chemistry/atomo-struttura/chim-tavola-mendeleev', 'high_school/chemistry/atomo-struttura/numero-massa'],
+		related: ['orbitali-atomici', 'calcolo-massa-molare', 'calcolo-moli'],
+		sample: '{}_{26}\\mathrm{Fe}\\quad 55{,}85',
+		keywords: ['tavola periodica degli elementi', 'elementi chimici', 'mendeleev', 'numero atomico', 'massa atomica', 'elettronegatività', 'configurazione elettronica', 'numeri di ossidazione', 'isotopi'],
+		ownPage: true
+	},
+	{
+		slug: 'orbitali-atomici',
+		title: 'Orbitali atomici',
+		lead: 'Gli orbitali dell’idrogeno come nuvole di punti da ruotare, con i nodi, e la configurazione elettronica di ogni elemento nella tabella dei sottolivelli.',
+		description: 'Orbitali atomici in 3D: forme s, p, d, f come nuvole di punti, nodi e numeri quantici, e la configurazione elettronica a caselle di ogni elemento.',
+		category: 'chimica',
+		lessons: ['high_school/chemistry/chim-struttura-elettronica/chim-orbitali-numeri-quantici'],
+		related: ['tavola-periodica'],
+		sample: '2p_x \\quad 3d_{xy}',
+		keywords: ['orbitali', 'orbitale', 'numeri quantici', 'configurazione elettronica', 'regola della diagonale', 'regola di hund', 'sottolivelli', 'nodi'],
+		ownPage: true
+	},
+	{
 		slug: 'calcolo-massa-molare',
 		title: 'Calcolo della massa molare',
 		lead: 'La massa molare di una formula chimica, anche con parentesi e idrati, con la tabella degli atomi. Con i passaggi.',
 		description: 'Calcola la massa molare di un composto dalla formula chimica, anche con parentesi e idrati come CuSO4·5H2O, con le masse atomiche e i passaggi.',
 		category: 'chimica',
 		lessons: ['high_school/chemistry/chim-quantita-sostanza/mole-massa-molare'],
-		related: ['calcolo-moli', 'calcolo-molarita'],
+		related: ['calcolo-moli', 'calcolo-molarita', 'tavola-periodica'],
 		sample: '\\mathrm{H_2O}\\!: 18{,}02\\ \\text{g/mol}',
 		keywords: ['peso molecolare', 'massa molecolare', 'g/mol', 'formula chimica']
 	},

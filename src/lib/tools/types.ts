@@ -40,6 +40,8 @@ export interface ToolMeta {
 	sample: string;
 	/** Other words a student might search the index with, lower case: `['sconto', 'iva']`. */
 	keywords?: string[];
+	/** The tool has a route of its own under /strumenti (the periodic table), not the calculators' page. */
+	ownPage?: boolean;
 }
 
 /**

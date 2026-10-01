@@ -14,6 +14,27 @@ function Beaker({ x1, x2, top, bottom, level }: { x1: number; x2: number; top: n
 
 /** The drawings of the chimica tools, by slug. */
 export const CHIMICA_ART: Record<string, ReactNode> = {
+	'orbitali-atomici': (
+		<Art>
+			{/* A p orbital: two lobes on an axis, the nucleus between them, and the node that separates them. */}
+			<Ink d="M60,8 V72" className="stroke-fg-muted" strokeWidth={1} />
+			<Fill d="M60,40 C44,30 40,12 60,10 C80,12 76,30 60,40 Z" />
+			<Ink d="M60,40 C44,30 40,12 60,10 C80,12 76,30 60,40 Z" />
+			<Accent d="M60,40 C44,50 40,68 60,70 C80,68 76,50 60,40 Z" className="fill-accent/15" />
+			<Ink d="M30,40 H90" className="stroke-fg-muted" strokeWidth={1} strokeDasharray="3 3" />
+			<Dot x={60} y={40} />
+		</Art>
+	),
+	'tavola-periodica': (
+		<Art>
+			{/* The outline of the table, with the two series under it, and one element picked out. */}
+			<Fill d="M9.6,10 H15.2 V16 H20.8 V28 H76.8 V16 H104.8 V10 H110.4 V52 H9.6 Z" />
+			<Ink d="M9.6,10 H15.2 V16 H20.8 V28 H76.8 V16 H104.8 V10 H110.4 V52 H9.6 Z" />
+			<Fill d="M20.8,58 H104.8 V70 H20.8 Z" />
+			<Ink d="M20.8,58 H104.8 V70 H20.8 Z" />
+			<Accent d="M48.8,28 H54.4 V34 H48.8 Z" className="fill-accent/25" />
+		</Art>
+	),
 	'calcolo-massa-molare': (
 		<Art>
 			{/* A water molecule: the atoms and their bonds. */}

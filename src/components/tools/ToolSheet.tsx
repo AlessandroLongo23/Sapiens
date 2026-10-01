@@ -30,10 +30,19 @@ export function useToolState<T extends Record<string, string>>(defaults: T): [T,
 	}, []);
 	useEffect(() => {
 		if (!loaded.current) return;
-		const params = new URLSearchParams();
-		for (const [k, v] of Object.entries(state)) if (v !== defaults[k]) params.set(k, v);
-		const query = params.toString();
-		window.history.replaceState(window.history.state, '', query ? `?${query}` : window.location.pathname);
+		// After a pause, not at every change: Safari allows 100 writes to the history in 10 seconds and throws at the
+		// next one, which a dragged slider reaches.
+		const timer = setTimeout(() => {
+			const params = new URLSearchParams();
+			for (const [k, v] of Object.entries(state)) if (v !== defaults[k]) params.set(k, v);
+			const query = params.toString();
+			try {
+				window.history.replaceState(window.history.state, '', query ? `?${query}` : window.location.pathname);
+			} catch {
+				// The address stays behind; the tool works all the same.
+			}
+		}, 250);
+		return () => clearTimeout(timer);
 	}, [state, defaults]);
 	return [state, (patch) => setState((s) => ({ ...s, ...patch }))];
 }
