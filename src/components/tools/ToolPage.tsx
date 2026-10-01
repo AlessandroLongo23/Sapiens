@@ -21,7 +21,7 @@ export interface ToolLesson {
 	exercises: string | null;
 }
 
-function toolJsonLd(tool: ToolMeta): JsonLdData[] {
+export function toolJsonLd(tool: ToolMeta): JsonLdData[] {
 	const path = `${TOOLS_ROOT}/${tool.slug}`;
 	return [
 		{
@@ -92,7 +92,7 @@ export function ToolPage({ tool, lessons, articleHtml, children }: { tool: ToolM
 	);
 }
 
-function LearnLink({ href, icon, label, title }: { href: string; icon: ReactNode; label: string; title: string }) {
+export function LearnLink({ href, icon, label, title }: { href: string; icon: ReactNode; label: string; title: string }) {
 	return (
 		<Link href={href} className="group flex items-center gap-3 rounded-xl border border-edge bg-surface p-4 shadow-paper transition-colors hover:border-edge-strong focus-ring">
 			<span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-soft-fg">{icon}</span>

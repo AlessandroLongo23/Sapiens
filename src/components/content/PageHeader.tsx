@@ -104,8 +104,8 @@ export function CardGridSection({ id, title, count, layout = 'grid', children }:
  * `tone` colours everything tinted on the page after a subject. `cover` goes
  * over the band and the header, for the student's stickers (CoverStickers).
  */
-export function Page({ children, width = 'wide', tone, cover }: { children: ReactNode; width?: 'wide' | 'medium' | 'narrow'; tone?: SubjectTone; cover?: ReactNode }) {
-	const max = { wide: 'max-w-7xl', medium: 'max-w-5xl', narrow: 'max-w-3xl' }[width];
+export function Page({ children, width = 'wide', tone, cover }: { children: ReactNode; width?: 'full' | 'wide' | 'medium' | 'narrow'; tone?: SubjectTone; cover?: ReactNode }) {
+	const max = { full: 'max-w-[100rem]', wide: 'max-w-7xl', medium: 'max-w-5xl', narrow: 'max-w-3xl' }[width];
 	return (
 		<div className="relative min-h-screen overflow-clip bg-page-alt" data-subject={tone}>
 			<div className="grid-paper pointer-events-none absolute inset-x-0 top-0 h-[30rem] [mask-image:linear-gradient(to_bottom,black_30%,transparent)]" aria-hidden="true" />
