@@ -180,6 +180,15 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'acqua-legami-idrogeno-temperatura': () => import('@/components/content/interactive/chimica/LegamiIdrogenoTemperatura'),
 	'acqua-sale-si-scioglie': () => import('@/components/content/interactive/chimica/SaleSiScioglie'),
 	'acqua-scala-ph-indicatori': () => import('@/components/content/interactive/chimica/ScalaPhIndicatori'),
+	// Chemistry, third year: orbitals and quantum numbers (the orbital figure with the parameters of each paragraph).
+	'orbitale-1s-mappa-probabilita': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.Mappa1s })),
+	'orbitali-s-nodi-radiali': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.NodiRadiali })),
+	'orbitale-2p-nodo-angolare': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.NodoAngolare })),
+	'orbitali-2p-tre-direzioni': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.TreOrbitaliP })),
+	'orbitali-3d-cinque-forme': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.CinqueOrbitaliD })),
+	'orbitali-livelli-stessa-scala': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.LivelliStessaScala })),
+	'orbitali-2p-in-moto': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.OrbitaliInMoto })),
+	'orbitali-esplora': () => import('@/components/orbitali/OrbitalViewer'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {

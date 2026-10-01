@@ -221,6 +221,7 @@ export const configs: Record<string, LessonExercises> = {
 	'high_school/chemistry/atomo-struttura/chim-thomson-rutherford': { generator: 'chim-thomson-rutherford', levels: [1, 2, 3, 4, 5] },
 	'high_school/chemistry/atomo-struttura/numero-massa': { generator: 'numero-massa', levels: [1, 2, 3, 4, 5, 6] },
 	'high_school/chemistry/atomo-struttura/chim-tavola-mendeleev': { generator: 'chim-tavola-mendeleev', levels: [1, 2, 3, 4] },
+	'high_school/chemistry/chim-struttura-elettronica/chim-orbitali-numeri-quantici': { generator: 'chim-orbitali-numeri-quantici', levels: [1, 2, 3, 4, 5] },
 	'high_school/chemistry/chim-acqua/chim-acqua-molecola': { generator: 'chim-acqua-molecola', levels: [1, 2, 3, 4, 5] },
 	'high_school/chemistry/chim-acqua/chim-acqua-proprieta': { generator: 'chim-acqua-proprieta', levels: [1, 2, 3, 4, 5] },
 	'high_school/chemistry/chim-acqua/chim-acqua-solvente': { generator: 'chim-acqua-solvente', levels: [1, 2, 3, 4, 5, 6] },
