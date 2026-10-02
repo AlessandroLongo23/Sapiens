@@ -63,6 +63,15 @@ Il valore assoluto $|a|$ decide l'**apertura**: più $|a|$ è grande, più la pa
 \node[orange!70!black, right] at (2,-4) {$y = -x^2$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: parabola-coefficiente-a-cursore
+% alt: La parabola y = ax² con il cursore del coefficiente a, da -3 a 3, e la parabola y = x² tratteggiata per confronto: con a positivo la concavità è verso l'alto, con a negativo verso il basso, e più a è lontano da zero più la parabola è stretta
+curva: y=ax^2
+curva: y=x^2 | tratteggiata | grigio
+cursore: a = 2 da -3 a 3 passo 0,1
+finestra: x da -4 a 4, y da -5 a 5
+domanda: Porta $a$ sotto zero: cosa fa la parabola? E che cosa diventa quando $a$ arriva a $0$?
+```
 
 ```ad-warning
 L'apertura dipende dal valore assoluto
@@ -92,6 +101,18 @@ Nella parabola $y = ax^2 + c$ a ogni ordinata di $y = ax^2$ si aggiunge lo stess
 \node[gray, above] at (-2.3,5.3) {$y = x^2$};
 \node[blue!60!black, right] at (2.6,4.2) {$y = x^2 - 3$};
 \end{tikzpicture}
+```
+```grafico
+% nome: parabola-a-c-cursori
+% alt: La parabola y = ax² + c con i cursori di a e di c, e la parabola y = x² tratteggiata per confronto: cambiando c la parabola sale o scende e il vertice V resta sull'asse y, nel punto (0, c)
+curva: y=ax^2+c
+curva: y=x^2 | tratteggiata | grigio
+curva: V=\left(0;c\right) | nero
+cursore: a = 1 da -3 a 3 passo 0,1
+cursore: c = -3 da -5 a 5 passo 0,1
+finestra: x da -4 a 4, y da -5 a 5
+valore: V = \left(0;c\right)
+domanda: Muovi $c$: il vertice lascia mai l'asse $y$?
 ```
 
 ```ad-warning
@@ -195,6 +216,20 @@ Il vertice è $V(2, -1)$ e l'asse di simmetria è la retta $x = 2$. La concavit�
 \node[below right] at (2,-1) {$V$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: parabola-vertice-asse-cursori
+% alt: La parabola y = ax² + bx + c con i cursori dei tre coefficienti, il vertice V e l'asse di simmetria tratteggiato: sotto il piano sono scritte l'ascissa del vertice, -b/2a, e le sue coordinate, che cambiano con i cursori
+curva: y=ax^2+bx+c
+curva: x=-\frac{b}{2a} | tratteggiata | grigio
+curva: V=\left(-\frac{b}{2a};c-\frac{b^2}{4a}\right) | nero
+cursore: a = 1 da -3 a 3 passo 0,1
+cursore: b = -4 da -6 a 6 passo 0,1
+cursore: c = 3 da -6 a 6 passo 0,1
+finestra: x da -4 a 8, y da -5 a 7
+valore: x_V = -\frac{b}{2a}
+valore: V = \left(-\frac{b}{2a};c-\frac{b^2}{4a}\right)
+domanda: Cambia solo $c$: l'asse di simmetria si sposta? E cambiando solo $b$?
+```
 ```
 
 ```ad-warning
@@ -289,6 +324,20 @@ Con $\Delta = 0$ la parabola tocca l'asse $x$ in un solo punto, il vertice, senz
 \node[left] at (-1.3,0.7) {$a > 0$};
 \node[left] at (-1.3,-5.3) {$a < 0$};
 \end{tikzpicture}
+```
+
+Prova a passare da un caso all'altro: i punti segnati sull'asse $x$ sono le soluzioni dell'equazione associata.
+
+```grafico
+% nome: parabola-discriminante-cursori
+% alt: La parabola y = ax² + bx + c con i cursori dei tre coefficienti e il valore del discriminante: con il discriminante positivo taglia l'asse x in due punti, con il discriminante nullo lo tocca nel vertice, con il discriminante negativo non lo incontra
+curva: y=ax^2+bx+c
+cursore: a = 1 da -3 a 3 passo 0,1
+cursore: b = -2 da -6 a 6 passo 0,1
+cursore: c = -3 da -6 a 6 passo 0,1
+finestra: x da -5 a 7, y da -6 a 6
+valore: \Delta = b^2-4ac
+domanda: Alza $c$ finché $\Delta = 0$: dove tocca l'asse $x$ la parabola? Poi rendi $\Delta$ negativo.
 ```
 
 ```ad-warning
