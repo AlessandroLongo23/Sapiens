@@ -46,6 +46,21 @@ Il 2 ottobre 2026 si sono aggiunte le curve che non sono funzioni di $x$ ([[2026
 - Le disequazioni sono riconosciute e non disegnate. I punti notevoli, il punto che scorre e il nome sulla curva valgono solo per le funzioni.
 - `tests/unit/grafico.test.mjs`: 51 test.
 
+Sempre il 2 ottobre 2026 è fatto il secondo lotto, con le disequazioni:
+- Disequazioni: `y > x²`, `x² + y² < 4`, catene come `1 ≤ x ≤ 3`, più condizioni unite. La regione è colorata a strisce orizzontali alte due pixel (`sampleRegion`), il bordo è la curva dove la condizione passa da vera a falsa, tratteggiato quando il bordo non fa parte della regione.
+- Funzioni a tratti: il sistema con la graffa (`cases`, con "altrimenti") e il dominio tra graffe dopo la formula, `x² {0 < x < 2}`. Si possono nominare e derivare. Sulla tastiera di Sapiens ci sono i due tasti.
+- Punti: `(2; 3)` o `A = (2; 3)`. Un punto con due numeri si trascina e riscrive la sua riga, fermandosi sulle righe della griglia; uno che dipende da un parametro (`P = (a; a²)`) si muove con il cursore.
+- Retta tangente: dall'aspetto di una funzione; il punto di tangenza si trascina lungo la curva e l'etichetta dà la pendenza $m$, calcolata con le regole di derivazione.
+- Area tra la curva e l'asse x: i due estremi si scrivono o si trascinano, e l'etichetta dà il valore dell'integrale (Simpson su 2000 intervalli).
+- Tabella dei valori: sette righe, da un valore e con un passo scelti.
+- Inquadra le curve: un bottone accanto allo zoom. Con sole funzioni tiene le x e adatta l'altezza, lasciando fuori i rami degli asintoti; con curve in $t$ o punti inquadra tutto alla stessa scala.
+- Le righe si riordinano trascinando la maniglia, o con le frecce.
+- Nomi degli assi nelle impostazioni, per esempio $t$ e $s$.
+- Quattro esempi nuovi: funzione a tratti, sistema di disequazioni, tangente e area, triangolo di punti.
+- `tests/unit/grafico.test.mjs`: 59 test.
+
+Come sono fatti i punti conta per il passo dopo (vedi "Dopo: geometria analitica"): ogni punto è una riga con un nome, e il piano ha un livello di punti trascinabili separato dalle curve (`PlaneMark`).
+
 Misure del 1° ottobre 2026: il Compute Engine ha un ingresso che legge solo il LaTeX (`@cortex-js/compute-engine/latex-syntax`), 414 kB, 112 kB compressi, e si carica nel browser solo dove si scrive. Le formule iniziali le legge il server, quindi le loro curve sono nell'HTML.
 
 Provato con Playwright su Chromium, a 1360 px e con il profilo di un iPhone 13: nessun errore di pagina. Non provato: lo zoom con due dita, un telefono vero, Safari, la risposta aperta degli esercizi dopo lo spostamento del modulo di MathLive (il controllo dei tipi passa).
@@ -88,9 +103,9 @@ Alessandro, 1° ottobre 2026: prima di pubblicare la pagina deve essere presenta
 | Nome della curva scritto sul grafico | no | sì | sì | 1 |
 | Annulla e ripeti | sì | sì | sì | 1 |
 | Duplica un'espressione | sì | sì | sì | 1 |
-| Riordina trascinando | sì | sì | no | 2 |
-| Dominio ristretto e funzioni a tratti | sì | sì | no | 2 |
-| Tabella dei valori | sì | sì | no | 2 |
+| Riordina trascinando | sì | sì | sì | fatto il 2 ottobre |
+| Dominio ristretto e funzioni a tratti | sì | sì | sì | fatto il 2 ottobre |
+| Tabella dei valori | sì | sì | sì | fatto il 2 ottobre |
 | Cartelle e note di testo tra le espressioni | sì | in parte | no | dopo |
 | **Cursori** | | | | |
 | Cursore creato da una lettera | sì | sì | sì | |
@@ -105,23 +120,23 @@ Alessandro, 1° ottobre 2026: prima di pubblicare la pagina deve essere presenta
 | Radianti o gradi | sì | sì | sì | 1 |
 | Schermo intero, elenco che si chiude | sì | sì | sì | 1 |
 | Scala diversa sui due assi, e blocco 1:1 | sì | sì | sì | fatto con il lotto 1 |
-| Inquadra tutte le curve | in parte | sì | no | 2 |
-| Nomi degli assi | sì | sì | no | 2 |
+| Inquadra tutte le curve | in parte | sì | sì | fatto il 2 ottobre |
+| Nomi degli assi | sì | sì | sì | fatto il 2 ottobre |
 | Griglia polare | sì | sì | sì | fatto il 2 ottobre |
 | **Lettura del grafico** | | | | |
 | Zeri, massimi, minimi, intersezioni | sì | sì | sì | |
 | Punto che scorre sulla curva con le coordinate | sì | sì | sì | 1 |
 | Etichetta di un punto che resta fissata | sì | sì | sì | 1 |
-| Punti scritti come coordinate, e trascinabili | sì | sì | no | 2 |
+| Punti scritti come coordinate, e trascinabili | sì | sì | sì | fatto il 2 ottobre |
 | **Analisi** | | | | |
 | Derivata | sì | sì | sì | |
-| Retta tangente in un punto | con una formula | sì | no | 2 |
-| Integrale definito con l'area colorata | sì | sì | no | 2 |
+| Retta tangente in un punto | con una formula | sì | sì | fatto il 2 ottobre |
+| Integrale definito con l'area colorata | sì | sì | sì | fatto il 2 ottobre |
 | Asintoti e flessi | no | sì | no | con lo studio di funzione |
 | Regressioni, liste, statistica | sì | sì | no | dopo |
 | **Altri tipi** | | | | |
 | Equazioni implicite | sì | sì | sì | fatto il 2 ottobre |
-| Disequazioni | sì | sì | riconosciute, non disegnate | dopo |
+| Disequazioni | sì | sì | sì | fatto il 2 ottobre |
 | Curve parametriche | sì | sì | sì | fatto il 2 ottobre |
 | Curve polari | sì | sì | sì | fatto il 2 ottobre |
 | **Condividere** | | | | |
@@ -137,7 +152,12 @@ Alessandro, 1° ottobre 2026: prima di pubblicare la pagina deve essere presenta
 | Grafici in tre dimensioni | sì | sì | no | no |
 | Lettura sonora del grafico | sì | no | no | dopo |
 
+## Dopo: geometria analitica
+Alessandro, 2 ottobre 2026: dopo il secondo lotto vuole gli strumenti di geometria analitica, come su GeoGebra. Non è ancora discusso cosa entra. Quello che c'è già e su cui si appoggerebbe: i punti con un nome, trascinabili; le rette e le coniche come equazioni; le intersezioni tra funzioni. Quello che manca: oggetti che dipendono da altri oggetti (la retta per $A$ e $B$ che si muove con loro, il punto medio, la perpendicolare, la circonferenza di centro e raggio dati), una barra di strumenti per crearli con i clic, le misure (distanza, pendenza, angolo, area di un poligono). Oggi una riga non può usare un punto di un'altra riga.
+
 ## Domande aperte
+- Geometria analitica: quali strumenti nel primo giro, e se gli oggetti si creano solo con i clic o anche scrivendo (`retta(A, B)`).
+- Pannello e bottone si chiamano ancora "Funzioni" e "Aggiungi una funzione", ma le righe sono anche punti, equazioni e regioni: da rinominare.
 - In quale categoria dell'indice degli strumenti: oggi non c'è una categoria per le funzioni.
 - Come si mostrano i punti notevoli quando il valore esatto è semplice ($\sqrt{2}$, $\pi/2$).
 - Se le espressioni stanno nell'indirizzo, per condividere un grafico, e se si scarica l'immagine (PNG o SVG) come nel generatore di grafici a torta.
