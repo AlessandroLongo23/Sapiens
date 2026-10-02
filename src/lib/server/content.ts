@@ -2,6 +2,7 @@ import 'server-only';
 import { supabase } from './supabase';
 import { reconstructTree, type ContentNode } from '@/lib/utils/tree';
 import { storedFlashcards, type Flashcard } from '@/lib/content/flashcards';
+import { LEVELS } from '@/lib/content/levels';
 
 /**
  * Server-side access to the content tree.
@@ -13,6 +14,9 @@ import { storedFlashcards, type Flashcard } from '@/lib/content/flashcards';
  *
  * Results are cached in memory for a short time; on Vercel each function
  * instance keeps its own copy, and ISR caches the rendered pages on top.
+ * No layout reads the tree: the header's levels are a constant
+ * (lib/content/levels) and the browser fetches the rest from
+ * `/api/node/root` when the level menu or the search needs it.
  */
 
 const TREE_TTL_MS = 60_000;
@@ -61,6 +65,12 @@ async function fetchFlatNodes(): Promise<FlatNode[]> {
 	const withFormulary = new Set((formularyRes.data ?? []).map((r) => r.id as string));
 	const withFlashcards = new Set((flashcardsRes.data ?? []).map((r) => r.id as string));
 
+	// The header draws the levels from a constant (lib/content/levels): say so if the table has moved on.
+	const levels = (nodesRes.data ?? []).filter((row) => row.type === 'level');
+	if (levels.length !== LEVELS.length || LEVELS.some((level) => !levels.some((row) => row.id === level.id && row.slug === level.slug && row.title === level.title))) {
+		console.error('content_nodes: the levels differ from LEVELS in src/lib/content/levels.ts, update the constant.');
+	}
+
 	return (nodesRes.data ?? []).map((row) => ({
 		id: row.id,
 		parent_id: row.parent_id,
@@ -95,23 +105,6 @@ export async function getFlatNodes(): Promise<FlatNode[]> {
 /** The whole tree, light nodes only, children sorted by position. */
 export async function getContentTree(): Promise<ContentNode[]> {
 	return reconstructTree(await getFlatNodes());
-}
-
-/**
- * What every page hands to the shell for the header: the levels alone, which
- * is all the bar and the phone menu draw. The browser fetches the rest from
- * `/api/node/root` when the level menu or the search needs it. Shipping the
- * whole tree here put it in the cached copy of every page, so each of them
- * was rewritten whenever a lesson was published. A content outage costs the
- * menu its levels, not the page: the header falls back to the plain
- * `Materiale` link when this comes back empty.
- */
-export async function getMenuTree(): Promise<ContentNode[]> {
-	try {
-		return (await getContentTree()).map(({ id, type, title, slug, position }) => ({ id, parent_id: null, type, title, slug, position, children: [] }));
-	} catch {
-		return [];
-	}
 }
 
 export interface TopicContent {

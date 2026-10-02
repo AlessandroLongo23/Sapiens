@@ -3,7 +3,8 @@ import { pageMetadata } from '@/lib/seo/page-metadata';
 import { getFlatNodes } from '@/lib/server/content';
 import { HeroSection, type HeroCounts } from '@/components/landing/HeroSection';
 
-export const revalidate = 3600;
+// The counts are refreshed when a publish calls /api/revalidate; the daily timer only heals a render that found the database down.
+export const revalidate = 86400;
 
 export const metadata: Metadata = pageMetadata({ path: '/' });
 

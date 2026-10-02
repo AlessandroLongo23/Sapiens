@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { isStaff } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
 import { Shell } from '@/components/shell/Shell';
-import { getMenuTree } from '@/lib/server/content';
+import { LEVELS } from '@/lib/content/levels';
 import 'katex/dist/katex.min.css';
 
 /**
@@ -18,7 +18,7 @@ export const dynamic = 'force-dynamic';
 export default async function AdminLayout({ children }: { children: ReactNode }) {
 	if (!isStaff(await currentUser())) redirect('/');
 	return (
-		<Shell tree={await getMenuTree()}>
+		<Shell tree={LEVELS}>
 			<div className="min-h-screen bg-page-alt text-fg">{children}</div>
 		</Shell>
 	);

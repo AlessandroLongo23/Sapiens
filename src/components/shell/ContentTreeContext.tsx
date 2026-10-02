@@ -23,11 +23,12 @@ const loadTree = () =>
 		}));
 
 /**
- * The content tree for the header and the search. The layouts ship only the
- * levels, which is all the bar and the phone menu draw; the whole tree is
- * fetched the first time the level menu or the search asks for it. Inlined in
- * the pages it weighed about 550 KB on each of them, and every lesson
- * published changed the cached copy of every page on the site.
+ * The content tree for the header and the search. The layouts pass only the
+ * levels (a constant, lib/content/levels), which is all the bar and the phone
+ * menu draw; the whole tree is fetched the first time the level menu or the
+ * search asks for it. Inlined in the pages it weighed about 526 KB on each of
+ * them, and every lesson published changed the cached copy of every page on
+ * the site.
  */
 export function ContentTreeProvider({ tree, children }: { tree: ContentNode[]; children: ReactNode }) {
 	const [full, setFull] = useState<ContentNode[] | null>(null);
