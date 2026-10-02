@@ -53,6 +53,8 @@ Il 29 settembre 2026, prima del primo lotto di fisica, si è deciso di non usare
 ## Il plotter delle funzioni
 Il 1° ottobre 2026 il piano cartesiano è diventato un prodotto: [[Grafico di funzioni]]. È disegnato da noi sul kit, senza Mafs, JSXGraph o function-plot, e senza Desmos e GeoGebra, che per l'uso commerciale chiedono una licenza. Lo strumento è il primo uso; le figure del gruppo 2 e i grafici di fisica vengono dopo, con lo stesso componente. Vedi [[2026-10-01 Il piano cartesiano lo disegniamo noi sul kit, senza librerie di grafici]] e [[2026-10-01 Il plotter delle funzioni è il primo uso del piano cartesiano del sito]].
 
+L'elenco dei punti delle lezioni dove montare il plotter, con i cursori, e di quelli dove resta meglio TikZ è in [[Piano cartesiano nelle lezioni]] (2 ottobre 2026): sostituisce il gruppo 2 qui sopra.
+
 ## Dubbi e conflitti
 Il piano cartesiano del gruppo 2 è lo stesso componente che Alessandro il 28 settembre 2026 ha rimandato a una conversazione dedicata: le figure del gruppo 2 aspettano quella.
 
