@@ -1,0 +1,624 @@
+'use client';
+
+import { useCallback, useDeferredValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode, type Ref } from 'react';
+import { Home, Minus, Plus } from 'lucide-react';
+import { FONT, FONT_MATH, THIN, VERY_THIN } from '@/components/content/interactive/kit';
+import { axisMarks, italian, type AxisKind } from '@/lib/grafico/assi';
+import { sampleFunction, sampleImplicit, sampleParametric, type Point, type View } from '@/lib/grafico/curva';
+import { HOME, type Camera, type LineDash, type LineWidth } from '@/lib/grafico/documento';
+import { notablePoints, type Notable, type NotableKind } from '@/lib/grafico/notevoli';
+import { cn } from '@/lib/utils/cn';
+
+/**
+ * The Cartesian plane of the site (vault/Decisioni/2026-10-01 Il piano cartesiano lo disegniamo noi sul kit, senza
+ * librerie di grafici.md): axes, squared grid and curves in SVG, in the hand of the TikZ figures. With `onCamera`
+ * the student moves it: drag to pan, two fingers or the wheel to zoom, the arrows and + − from the keyboard.
+ * Without it the window is fixed, as a lesson sets it, and the page scrolls over the figure.
+ *
+ * Reading the graph: the notable points are marked, a point follows the mouse along the nearest curve, and a
+ * click on a curve or on a notable point leaves a label there until it is clicked again.
+ */
+
+/** What a curve is: y = f(x), F(x, y) = 0, or (x(t), y(t)) for t in a range. */
+export type PlaneShape = { f: (x: number) => number } | { implicit: (x: number, y: number) => number } | { parametric: { x: (t: number) => number; y: (t: number) => number; t0: number; t1: number } };
+
+export type PlaneCurve = PlaneShape & {
+	id: string;
+	color: string;
+	width?: LineWidth;
+	dash?: LineDash;
+	/** Written beside the curve: the function's letter. */
+	label?: string;
+};
+
+/** The curve as a function of x, for what only a function has (its notable points, the point that follows the mouse). */
+const NOWHERE = () => NaN;
+const asFunction = (c: PlaneCurve) => ('f' in c ? c.f : NOWHERE);
+
+export interface PlaneLook {
+	grid: boolean;
+	axes: boolean;
+	numbers: boolean;
+	/** The grid of polar coordinates in place of the squares, with its rays named in radians or in degrees. */
+	polar?: 'radians' | 'degrees';
+	/** The marks of the x axis. */
+	xAxis: AxisKind;
+	/**
+	 * What one unit of the plane is worth on the x axis, where the axis is read in another unit: 180/π in degrees, so
+	 * that 90° sits where π/2 does and the picture keeps its shape. 1 when absent.
+	 */
+	xUnit?: number;
+}
+
+export interface PlaneHandle {
+	/** The drawing as it is now, for an image to download. */
+	svg: () => SVGSVGElement | null;
+	/** The size of the drawing in pixels, which a window given in numbers needs. */
+	size: () => { w: number; h: number };
+}
+
+const DEFAULT_LOOK: PlaneLook = { grid: true, axes: true, numbers: true, xAxis: 'numbers' };
+const MIN_SPAN = 0.002;
+const MAX_SPAN = 200000;
+/** The size the server draws at, and the browser until it has measured the box. */
+const DEFAULT_SIZE = { w: 800, h: 560 };
+
+const KIND_NAMES: Record<NotableKind, string> = {
+	zero: 'Zero',
+	intercept: 'Intersezione con l’asse y',
+	max: 'Massimo',
+	min: 'Minimo',
+	meet: 'Intersezione'
+};
+
+const STROKE: Record<LineWidth, number> = { thin: 1.1, normal: 1.7, thick: 2.8 };
+const DASH: Record<LineDash, string | undefined> = { solid: undefined, dashed: '7 5', dotted: '0.1 5' };
+
+const r2 = (x: number) => Math.round(x * 100) / 100;
+const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
+
+/** The coordinates of a point as the school writes them: (1,5; −2). `xMark` follows the x: the sign of degrees. */
+export function coordinates(p: Point, digits = 3, xMark = '') {
+	return `(${italian(p.x, digits)}${xMark}; ${italian(p.y, digits)})`;
+}
+
+/** A label the student has left on a curve: at this x, whatever the curve becomes. */
+interface Pin {
+	curve: string;
+	x: number;
+}
+
+export function Plane({
+	ref,
+	camera,
+	onCamera,
+	home = HOME,
+	curves,
+	look = DEFAULT_LOOK,
+	notable = true,
+	wheel = 'zoom',
+	label,
+	className
+}: {
+	ref?: Ref<PlaneHandle>;
+	camera: Camera;
+	/** Given, the student moves the window; absent, the window is fixed. */
+	onCamera?: (camera: Camera) => void;
+	/** Where the home button and the 0 key go back to. */
+	home?: Camera;
+	curves: PlaneCurve[];
+	look?: PlaneLook;
+	/** Marks zeros, turning points and meetings. */
+	notable?: boolean;
+	/** 'zoom': the wheel zooms. 'ctrl': only with Ctrl or a pinch on the trackpad, so the page still scrolls over a figure. */
+	wheel?: 'zoom' | 'ctrl';
+	label: string;
+	className?: string;
+}) {
+	const box = useRef<HTMLDivElement>(null);
+	const svg = useRef<SVGSVGElement>(null);
+	const [size, setSize] = useState(DEFAULT_SIZE);
+	const [shown, setShown] = useState<string | null>(null);
+	const [trace, setTrace] = useState<Pin | null>(null);
+	const [pins, setPins] = useState<Pin[]>([]);
+	const free = !!onCamera;
+
+	useLayoutEffect(() => {
+		const node = box.current;
+		if (!node) return;
+		const measure = () => {
+			const { width, height } = node.getBoundingClientRect();
+			if (width > 0 && height > 0) setSize((s) => (s.w === width && s.h === height ? s : { w: width, h: height }));
+		};
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(node);
+		return () => observer.disconnect();
+	}, []);
+
+	const { w, h } = size;
+	const sx = w / camera.span;
+	const sy = sx * camera.stretch;
+	const view: View = useMemo(
+		() => ({ x0: camera.cx - camera.span / 2, x1: camera.cx + camera.span / 2, y0: camera.cy - h / (2 * sy), y1: camera.cy + h / (2 * sy) }),
+		[camera.cx, camera.cy, camera.span, h, sy]
+	);
+	const X = (x: number) => r2((x - view.x0) * sx);
+	const Y = (y: number) => r2((view.y1 - y) * sy);
+
+	// ------------------------------------------------------------ moving the window
+
+	// The gestures read the camera from a ref: several pointer events can arrive before the next render.
+	const cam = useRef(camera);
+	const dims = useRef(size);
+	useEffect(() => {
+		cam.current = camera;
+		dims.current = size;
+	});
+	useImperativeHandle(ref, () => ({ svg: () => svg.current, size: () => dims.current }));
+
+	const move = useCallback(
+		(next: Camera) => {
+			cam.current = { ...next, span: clamp(next.span, MIN_SPAN, MAX_SPAN) };
+			onCamera?.(cam.current);
+		},
+		[onCamera]
+	);
+	/** Zooms by k (below 1 goes closer) keeping the point of the drawing at (px, py) where it is. */
+	const zoomAt = useCallback(
+		(px: number, py: number, k: number) => {
+			const c = cam.current;
+			const { w, h } = dims.current;
+			const s = w / c.span;
+			const span = clamp(c.span * k, MIN_SPAN, MAX_SPAN);
+			const s2 = w / span;
+			const wx = c.cx + (px - w / 2) / s;
+			const wy = c.cy - (py - h / 2) / (s * c.stretch);
+			move({ ...c, cx: wx - (px - w / 2) / s2, cy: wy + (py - h / 2) / (s2 * c.stretch), span });
+		},
+		[move]
+	);
+
+	const pointers = useRef(new Map<number, { x: number; y: number }>());
+	/** Where the press began, to tell a click from a drag. */
+	const press = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+	const local = (e: { clientX: number; clientY: number }) => {
+		const rect = svg.current!.getBoundingClientRect();
+		return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+	};
+
+	/** The curve under a point of the drawing, within `reach` pixels above or below, and the x there. */
+	const curveAt = (p: { x: number; y: number }, reach: number): Pin | null => {
+		const x = view.x0 + p.x / sx;
+		let best: Pin | null = null;
+		let distance = reach;
+		for (const c of curves) {
+			const y = asFunction(c)(x);
+			if (!Number.isFinite(y)) continue;
+			const d = Math.abs((view.y1 - y) * sy - p.y);
+			if (d < distance) {
+				distance = d;
+				best = { curve: c.id, x };
+			}
+		}
+		return best;
+	};
+	// the x axis as it is read: in degrees a point of the plane at π/2 is written 90°
+	const xUnit = look.xUnit ?? 1;
+	const xMark = look.xAxis === 'degrees' ? '°' : '';
+	const written = (p: Point) => coordinates({ x: p.x * xUnit, y: p.y }, 3, xMark);
+	// a traced x has the decimals the zoom can tell apart, so the label reads 1,25 and not 1,2483
+	const traceDigits = clamp(Math.ceil(Math.log10(sx / xUnit)) + 1, 0, 8);
+	const tidyX = (x: number) => Number((x * xUnit).toFixed(traceDigits)) / xUnit;
+
+	const down = (e: PointerEvent<SVGSVGElement>) => {
+		const p = local(e);
+		press.current = { ...p, moved: false };
+		if (!free) return;
+		e.currentTarget.setPointerCapture(e.pointerId);
+		pointers.current.set(e.pointerId, p);
+	};
+	const drag = (e: PointerEvent<SVGSVGElement>) => {
+		const now = local(e);
+		const before = pointers.current.get(e.pointerId);
+		if (!before) {
+			// no button down: the point follows the mouse along the curve under it
+			if (e.pointerType === 'mouse') {
+				const at = curveAt(now, 14);
+				setTrace(at && { ...at, x: tidyX(at.x) });
+			}
+			return;
+		}
+		if (press.current && Math.hypot(now.x - press.current.x, now.y - press.current.y) > 5) press.current.moved = true;
+		const c = cam.current;
+		const s = dims.current.w / c.span;
+		if (pointers.current.size === 1) {
+			// a press that has not moved yet may be a click: the plane waits
+			if (!press.current?.moved) return;
+			move({ ...c, cx: c.cx - (now.x - before.x) / s, cy: c.cy + (now.y - before.y) / (s * c.stretch) });
+		} else if (pointers.current.size === 2) {
+			const other = [...pointers.current.entries()].find(([id]) => id !== e.pointerId)![1];
+			const d0 = Math.hypot(before.x - other.x, before.y - other.y);
+			const d1 = Math.hypot(now.x - other.x, now.y - other.y);
+			// the other finger stays where it is: the plane stretches around it
+			if (d0 > 0 && d1 > 0) zoomAt(other.x, other.y, d0 / d1);
+		}
+		pointers.current.set(e.pointerId, now);
+	};
+	const samePin = (a: Pin, b: Pin) => a.curve === b.curve && Math.abs(a.x - b.x) * sx < 9;
+	const togglePin = (pin: Pin) => setPins((list) => (list.some((p) => samePin(p, pin)) ? list.filter((p) => !samePin(p, pin)) : [...list, pin]));
+	const up = (e: PointerEvent<SVGSVGElement>) => {
+		const wasClick = press.current && !press.current.moved && pointers.current.size <= 1;
+		pointers.current.delete(e.pointerId);
+		if (!wasClick || e.type === 'pointercancel') return;
+		// a click on a curve leaves a label there; a click on a label takes it away
+		const at = curveAt(local(e), e.pointerType === 'mouse' ? 14 : 22);
+		if (at) togglePin({ ...at, x: tidyX(at.x) });
+	};
+
+	// React's wheel listener is passive: the page would scroll under the zoom.
+	useEffect(() => {
+		const node = svg.current;
+		if (!node || !free) return;
+		const onWheel = (e: WheelEvent) => {
+			if (wheel === 'ctrl' && !e.ctrlKey) return;
+			e.preventDefault();
+			const rect = node.getBoundingClientRect();
+			// a pinch on a trackpad arrives as a wheel with Ctrl and small steps
+			zoomAt(e.clientX - rect.left, e.clientY - rect.top, Math.exp(e.deltaY * (e.ctrlKey ? 0.01 : 0.0015)));
+		};
+		node.addEventListener('wheel', onWheel, { passive: false });
+		return () => node.removeEventListener('wheel', onWheel);
+	}, [free, wheel, zoomAt]);
+
+	const keys = (e: KeyboardEvent<SVGSVGElement>) => {
+		if (!free || e.target !== e.currentTarget) return;
+		const c = cam.current;
+		const step = c.span * 0.1;
+		const to: Record<string, Camera> = {
+			ArrowLeft: { ...c, cx: c.cx - step },
+			ArrowRight: { ...c, cx: c.cx + step },
+			ArrowUp: { ...c, cy: c.cy + step / c.stretch },
+			ArrowDown: { ...c, cy: c.cy - step / c.stretch },
+			'+': { ...c, span: c.span / 1.25 },
+			'=': { ...c, span: c.span / 1.25 },
+			'-': { ...c, span: c.span * 1.25 },
+			'0': home
+		};
+		if (!to[e.key]) return;
+		e.preventDefault();
+		move(to[e.key]);
+	};
+
+	// ------------------------------------------------------------ what is drawn
+
+	// the marks of the x axis are found in the unit the axis is read in, and drawn where they fall on the plane
+	const xRead = axisMarks(look.xAxis, view.x0 * xUnit, view.x1 * xUnit, xUnit / sx);
+	const xMarks = { major: xRead.major.map((v) => v / xUnit), minor: xRead.minor.map((v) => v / xUnit), label: (x: number) => xRead.label(x * xUnit) };
+	const yMarks = axisMarks('numbers', view.y0, view.y1, 1 / sy);
+	const axisX = clamp(X(0), 0, w);
+	const axisY = clamp(Y(0), 0, h);
+	// the numbers follow their axis, and stay on the edge when the axis is out of the window
+	const xNumbersBelow = axisY < h - 22;
+	const yNumbersLeft = axisX > 34;
+	const xAxisIn = view.y0 <= 0 && view.y1 >= 0;
+	const yAxisIn = view.x0 <= 0 && view.x1 >= 0;
+
+	const lines = useMemo(
+		() =>
+			curves.map((c) => {
+				if ('implicit' in c) return sampleImplicit(c.implicit, view, w, h);
+				if ('parametric' in c) return sampleParametric(c.parametric.x, c.parametric.y, c.parametric.t0, c.parametric.t1, view, w, h);
+				return sampleFunction(c.f, view, w, h);
+			}),
+		[curves, view, w, h]
+	);
+	const paths = lines.map((curve) => curve.map((line) => line.map((p, i) => `${i ? 'L' : 'M'}${X(p.x).toFixed(2)},${Y(p.y).toFixed(2)}`).join('')).join(''));
+
+	// The points are searched for after the curves are drawn: while the window moves they may trail by a frame,
+	// which a heavy formula (a series of 2000 terms) would otherwise pay twice.
+	const settled = useDeferredValue(view);
+	const points: Notable[][] = useMemo(() => (notable ? notablePoints(curves.map(asFunction), settled) : []), [curves, settled, notable]);
+
+	/** Where a curve's letter goes: on the curve, towards the right of the window and clear of its edges. */
+	const nameSpot = (curve: Point[][]): Point | null => {
+		let best: Point | null = null;
+		let distance = Infinity;
+		for (const line of curve)
+			for (const p of line) {
+				const px = (p.x - view.x0) * sx;
+				const py = (view.y1 - p.y) * sy;
+				if (px < 24 || px > w - 40 || py < 26 || py > h - 26) continue;
+				const d = Math.abs(px - w * 0.82);
+				if (d < distance) {
+					distance = d;
+					best = p;
+				}
+			}
+		return best;
+	};
+
+	/** The label of a point on a curve: its coordinates, and what it is when it is one of the notable points. */
+	const labelOf = (pin: Pin): { at: Point; color: string; name?: string } | null => {
+		const ci = curves.findIndex((c) => c.id === pin.curve);
+		if (ci < 0) return null;
+		const known = points[ci]?.find((p) => Math.abs(p.x - pin.x) * sx < 9);
+		const at = known ?? { x: pin.x, y: asFunction(curves[ci])(pin.x) };
+		if (!Number.isFinite(at.y)) return null;
+		return { at, color: curves[ci].color, name: known ? KIND_NAMES[known.kind] : undefined };
+	};
+
+	const shownPoint = (() => {
+		if (!shown) return null;
+		const [ci, pi] = shown.split(':').map(Number);
+		const p = points[ci]?.[pi];
+		return p ? { at: p as Point, color: curves[ci].color, name: KIND_NAMES[p.kind] } : null;
+	})();
+	const tracePoint = trace && !shownPoint ? labelOf(trace) : null;
+	const pinned = pins.map(labelOf).filter((p) => p !== null);
+
+	return (
+		<div ref={box} className={cn('relative h-full w-full overflow-hidden', className)}>
+			<svg
+				ref={svg}
+				viewBox={`0 0 ${r2(w)} ${r2(h)}`}
+				className={cn('plane-drawing absolute inset-0 h-full w-full select-none outline-none', free && 'cursor-grab focus-visible:ring-2 focus-visible:ring-accent active:cursor-grabbing')}
+				style={{ touchAction: free ? 'none' : 'pan-y' }}
+				role="group"
+				aria-label={free ? `${label}. Trascina per spostarti, usa le frecce, più e meno per ingrandire.` : label}
+				tabIndex={free ? 0 : undefined}
+				onPointerDown={down}
+				onPointerMove={drag}
+				onPointerUp={up}
+				onPointerCancel={up}
+				onPointerLeave={() => setTrace(null)}
+				onKeyDown={keys}
+			>
+				<g aria-hidden="true">
+					{look.grid && look.polar && <PolarGrid view={view} w={w} h={h} X={X} Y={Y} sx={sx} sy={sy} marks={xMarks} unit={look.polar} numbers={look.numbers} />}
+					{look.grid && !look.polar && (
+						<>
+							{xMarks.minor.map((x) => (
+								<line key={`mx${x}`} x1={X(x)} x2={X(x)} y1={0} y2={h} stroke="#d9d9d9" strokeWidth={VERY_THIN} />
+							))}
+							{yMarks.minor.map((y) => (
+								<line key={`my${y}`} x1={0} x2={w} y1={Y(y)} y2={Y(y)} stroke="#d9d9d9" strokeWidth={VERY_THIN} />
+							))}
+							{xMarks.major.map((x) => (
+								<line key={`gx${x}`} x1={X(x)} x2={X(x)} y1={0} y2={h} stroke="#b3b3b3" strokeWidth={VERY_THIN * 1.5} />
+							))}
+							{yMarks.major.map((y) => (
+								<line key={`gy${y}`} x1={0} x2={w} y1={Y(y)} y2={Y(y)} stroke="#b3b3b3" strokeWidth={VERY_THIN * 1.5} />
+							))}
+						</>
+					)}
+
+					{/* the axes, with TikZ's arrow tips, when they are in the window */}
+					{look.axes && xAxisIn && (
+						<>
+							<line x1={0} x2={w - 4} y1={Y(0)} y2={Y(0)} stroke="#000" strokeWidth={THIN * 1.5} />
+							<path d={`M${w},${Y(0)} l-8,-3 l2,3 l-2,3 Z`} fill="#000" />
+						</>
+					)}
+					{look.axes && yAxisIn && (
+						<>
+							<line x1={X(0)} x2={X(0)} y1={4} y2={h} stroke="#000" strokeWidth={THIN * 1.5} />
+							<path d={`M${X(0)},0 l-3,8 l3,-2 l3,2 Z`} fill="#000" />
+						</>
+					)}
+
+					<g fontFamily={FONT} fontSize={13} fill="#000" stroke="#fff" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round">
+						{look.numbers && (
+							<>
+								{xMarks.major
+									.filter((x) => Math.abs(x) > 1e-12 && X(x) > 16 && X(x) < w - 24)
+									.map((x) => (
+										<text key={`nx${x}`} x={X(x)} y={xNumbersBelow ? axisY + 15 : h - 6} textAnchor="middle">
+											{xMarks.label(x)}
+										</text>
+									))}
+								{yMarks.major
+									.filter((y) => Math.abs(y) > 1e-12 && Y(y) > 24 && Y(y) < h - 10)
+									.map((y) => (
+										<text key={`ny${y}`} x={yNumbersLeft ? axisX - 6 : 6} y={Y(y)} dy="0.32em" textAnchor={yNumbersLeft ? 'end' : 'start'}>
+											{yMarks.label(y)}
+										</text>
+									))}
+								{view.x0 < 0 && view.x1 > 0 && view.y0 < 0 && view.y1 > 0 && (
+									<text x={X(0) - 6} y={Y(0) + 15} textAnchor="end">
+										0
+									</text>
+								)}
+							</>
+						)}
+						{look.axes && (
+							<g fontFamily={FONT_MATH} fontStyle="italic" fontSize={15}>
+								{xAxisIn && (
+									<text x={w - 8} y={Y(0) - 8} textAnchor="end">
+										x
+									</text>
+								)}
+								{yAxisIn && (
+									<text x={X(0) + 9} y={14}>
+										y
+									</text>
+								)}
+							</g>
+						)}
+					</g>
+
+					{paths.map((d, i) => (
+						<path key={curves[i].id} d={d} fill="none" stroke={curves[i].color} strokeWidth={STROKE[curves[i].width ?? 'normal']} strokeDasharray={DASH[curves[i].dash ?? 'solid']} strokeLinejoin="round" strokeLinecap="round" />
+					))}
+
+					{curves.map((c, i) => {
+						const at = c.label ? nameSpot(lines[i]) : null;
+						return (
+							at && (
+								<text key={`name${c.id}`} x={X(at.x) + 7} y={Y(at.y) - 8} fontFamily={FONT_MATH} fontStyle="italic" fontSize={17} fill={c.color} stroke="#fff" strokeWidth={3.5} paintOrder="stroke" strokeLinejoin="round">
+									{c.label}
+								</text>
+							)
+						);
+					})}
+				</g>
+
+				{points.map((list, ci) =>
+					list.map((p, pi) => {
+						const id = `${ci}:${pi}`;
+						const pin = { curve: curves[ci].id, x: p.x };
+						return (
+							<g
+								key={`${curves[ci].id}:${p.kind}:${p.x}`}
+								role="button"
+								tabIndex={0}
+								aria-label={`${KIND_NAMES[p.kind]} in ${written(p)}`}
+								className="cursor-pointer outline-none"
+								onPointerDown={(e) => e.stopPropagation()}
+								onPointerUp={(e) => e.stopPropagation()}
+								onPointerEnter={(e) => e.pointerType === 'mouse' && setShown(id)}
+								onPointerLeave={() => setShown((s) => (s === id ? null : s))}
+								onClick={() => togglePin(pin)}
+								onKeyDown={(e) => {
+									if (e.key !== 'Enter' && e.key !== ' ') return;
+									e.preventDefault();
+									togglePin(pin);
+								}}
+								onFocus={() => setShown(id)}
+								onBlur={() => setShown((s) => (s === id ? null : s))}
+							>
+								<circle cx={X(p.x)} cy={Y(p.y)} r={14} fill="transparent" data-export="no" />
+								<circle cx={X(p.x)} cy={Y(p.y)} r={shown === id ? 4.5 : 3.2} fill={shown === id ? curves[ci].color : '#808080'} stroke="#fff" strokeWidth={1} />
+							</g>
+						);
+					})
+				)}
+
+				{pinned.map((p, i) => (
+					<PointLabel key={`pin${i}`} x={X(p.at.x)} y={Y(p.at.y)} w={w} color={p.color} name={p.name} text={written(p.at)} />
+				))}
+				{tracePoint && (
+					<g data-export="no">
+						<PointLabel x={X(tracePoint.at.x)} y={Y(tracePoint.at.y)} w={w} color={tracePoint.color} name={tracePoint.name} text={written(tracePoint.at)} />
+					</g>
+				)}
+				{shownPoint && (
+					<g data-export="no">
+						<PointLabel x={X(shownPoint.at.x)} y={Y(shownPoint.at.y)} w={w} color={shownPoint.color} name={shownPoint.name} text={written(shownPoint.at)} />
+					</g>
+				)}
+			</svg>
+
+			{free && (
+				<div className="absolute right-2 bottom-2 flex flex-col overflow-hidden rounded-xl border border-edge-strong bg-surface shadow-paper">
+					<PlaneButton label="Ingrandisci" onClick={() => zoomAt(w / 2, h / 2, 1 / 1.5)}>
+						<Plus className="size-4" aria-hidden="true" />
+					</PlaneButton>
+					<PlaneButton label="Rimpicciolisci" onClick={() => zoomAt(w / 2, h / 2, 1.5)}>
+						<Minus className="size-4" aria-hidden="true" />
+					</PlaneButton>
+					<PlaneButton label="Torna alla vista iniziale" onClick={() => move(home)}>
+						<Home className="size-4" aria-hidden="true" />
+					</PlaneButton>
+				</div>
+			)}
+		</div>
+	);
+}
+
+/** k twelfths of a turn's half, as a ray of the polar grid is named: π/6, 3π/4, or 30°, 135°. */
+function rayName(k: number, unit: 'radians' | 'degrees') {
+	if (unit === 'degrees') return `${k * 15}°`;
+	if (k === 0) return '0';
+	const g = [12, 6, 4, 3, 2, 1].find((d) => k % d === 0)!;
+	const num = k / g;
+	const den = 12 / g;
+	return `${num === 1 ? '' : num}π${den === 1 ? '' : `/${den}`}`;
+}
+
+/**
+ * The grid of polar coordinates: circles around the origin at the marks of the x axis, rays every 15°, and the name
+ * of every other ray where it leaves the window. On a stretched plane the circles are ellipses, as the curves are.
+ */
+function PolarGrid({ view, w, h, X, Y, sx, sy, marks, unit, numbers }: { view: View; w: number; h: number; X: (x: number) => number; Y: (y: number) => number; sx: number; sy: number; marks: { major: number[]; minor: number[] }; unit: 'radians' | 'degrees'; numbers: boolean }) {
+	// from the nearest point of the window to the farthest, as far as the origin is concerned
+	const nearX = view.x0 > 0 ? view.x0 : view.x1 < 0 ? -view.x1 : 0;
+	const nearY = view.y0 > 0 ? view.y0 : view.y1 < 0 ? -view.y1 : 0;
+	const near = Math.hypot(nearX, nearY);
+	const far = Math.hypot(Math.max(Math.abs(view.x0), Math.abs(view.x1)), Math.max(Math.abs(view.y0), Math.abs(view.y1)));
+	const majorStep = marks.major.length > 1 ? marks.major[1] - marks.major[0] : far;
+	const minorStep = marks.minor.length > 1 ? marks.minor[1] - marks.minor[0] : majorStep;
+	const radii = (step: number) => {
+		const out: number[] = [];
+		for (let k = Math.max(1, Math.ceil(near / step)); k * step <= far && out.length < 400; k++) out.push(k * step);
+		return out;
+	};
+	const major = radii(majorStep);
+	const minor = radii(minorStep).filter((r) => !major.some((m) => Math.abs(m - r) < minorStep / 4));
+	const cx = X(0);
+	const cy = Y(0);
+	const inside = view.x0 < 0 && view.x1 > 0 && view.y0 < 0 && view.y1 > 0;
+	const rays = Array.from({ length: 24 }, (_, k) => k);
+	return (
+		<>
+			{minor.map((r) => (
+				<ellipse key={`pm${r}`} cx={cx} cy={cy} rx={r2(r * sx)} ry={r2(r * sy)} fill="none" stroke="#d9d9d9" strokeWidth={VERY_THIN} />
+			))}
+			{major.map((r) => (
+				<ellipse key={`pM${r}`} cx={cx} cy={cy} rx={r2(r * sx)} ry={r2(r * sy)} fill="none" stroke="#b3b3b3" strokeWidth={VERY_THIN * 1.5} />
+			))}
+			{rays.map((k) => {
+				const a = (k * Math.PI) / 12;
+				return <line key={`ray${k}`} x1={cx} y1={cy} x2={r2(cx + Math.cos(a) * far * sx)} y2={r2(cy - Math.sin(a) * far * sy)} stroke={k % 2 ? '#d9d9d9' : '#b3b3b3'} strokeWidth={k % 2 ? VERY_THIN : VERY_THIN * 1.5} />;
+			})}
+			{numbers && inside && (
+				<g fontFamily={FONT} fontSize={12} fill="#666" stroke="#fff" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round" textAnchor="middle">
+					{rays
+						.filter((k) => k % 2 === 0 && k % 6 !== 0)
+						.map((k) => {
+							// where the ray leaves the window, a little inside it
+							const a = (k * Math.PI) / 12;
+							const dx = Math.cos(a) * sx;
+							const dy = -Math.sin(a) * sy;
+							const reach = Math.min(dx > 0 ? (w - 26 - cx) / dx : (26 - cx) / dx, dy > 0 ? (h - 16 - cy) / dy : (16 - cy) / dy);
+							return (
+								<text key={`rn${k}`} x={r2(cx + dx * reach)} y={r2(cy + dy * reach)} dy="0.32em">
+									{rayName(k, unit)}
+								</text>
+							);
+						})}
+				</g>
+			)}
+		</>
+	);
+}
+
+function PlaneButton({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {
+	return (
+		<button type="button" aria-label={label} title={label} onClick={onClick} className="flex size-10 items-center justify-center text-fg-muted hover:bg-surface-3 hover:text-fg-strong focus-ring">
+			{children}
+		</button>
+	);
+}
+
+/** A point on a curve with its coordinates beside it, and its name when it has one, inside the drawing. */
+function PointLabel({ x, y, w, color, name, text }: { x: number; y: number; w: number; color: string; name?: string; text: string }) {
+	const width = Math.max(text.length * 7.6, (name?.length ?? 0) * 6.4) + 16;
+	const height = name ? 36 : 22;
+	const left = x + 10 + width > w ? x - 10 - width : x + 10;
+	const top = y - height - 10 < 0 ? y + 10 : y - height - 10;
+	return (
+		<g pointerEvents="none" aria-hidden="true">
+			<circle cx={x} cy={y} r={4.5} fill={color} stroke="#fff" strokeWidth={1} />
+			<rect x={r2(left)} y={r2(top)} width={r2(width)} height={height} rx={4} fill="#fff" stroke="#000" strokeWidth={THIN} />
+			{name && (
+				<text x={r2(left + 8)} y={r2(top + 14)} fontFamily={FONT} fontSize={11} fill="#666">
+					{name}
+				</text>
+			)}
+			<text x={r2(left + 8)} y={r2(top + height - 7)} fontFamily={FONT} fontSize={14} fill="#000">
+				{text}
+			</text>
+		</g>
+	);
+}
