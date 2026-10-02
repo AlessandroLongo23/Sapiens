@@ -85,7 +85,17 @@ export const PLOT_LAYOUTS: VirtualKeyboardLayout[] = [
 				wide({ insert: '\\log_{#?}\\left(#0\\right)', latex: '\\log_a', tooltip: 'Logaritmo in base a' }),
 				wide({ latex: '\\pi', tooltip: 'Pi greco' })
 			],
-			['x', '[(]', '[)]', '[left]', '[right]', '[backspace]', '[return]']
+			[
+				'x',
+				'[(]',
+				'[)]',
+				{ insert: '\\begin{cases}#0 & #?\\\\ #? & #?\\end{cases}', label: '{ ⋮', tooltip: 'Funzione a tratti: un valore e la sua condizione per riga' },
+				{ insert: '\\left\\lbrace #0\\right\\rbrace', label: '{ }', tooltip: 'Dominio: x² {0 < x < 2}' },
+				'[left]',
+				'[right]',
+				'[backspace]',
+				'[return]'
+			]
 		]
 	}
 ];

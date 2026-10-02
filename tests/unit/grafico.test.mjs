@@ -439,13 +439,13 @@ test('the examples are graphs the plotter can draw', () => {
 		const defs = definitions(jsons);
 		for (const j of jsons) {
 			const entry = readEntry(j, defs, { degrees: state.settings.degrees });
-			assert.ok(['function', 'implicit', 'parametric', 'polar'].includes(entry.kind), `${title}: ${entry.message ?? entry.kind}`);
+			assert.ok(['function', 'implicit', 'parametric', 'polar', 'inequality', 'point'].includes(entry.kind), `${title}: ${entry.message ?? entry.kind}`);
 			const scope = { x: 0.7, y: 0.3, t: 0.7, theta: 0.7 };
 			for (const p of entry.params) {
 				assert.ok(state.sliders[p], `${title}: no slider for ${p}`);
 				scope[p] = state.sliders[p].value;
 			}
-			for (const f of entry.kind === 'parametric' ? [entry.x, entry.y] : entry.kind === 'polar' ? [entry.r] : [entry.f]) assert.ok(Number.isFinite(f(scope)), title);
+			for (const f of entry.kind === 'parametric' || entry.kind === 'point' ? [entry.x, entry.y] : entry.kind === 'polar' ? [entry.r] : [entry.f]) assert.ok(Number.isFinite(f(scope)), title);
 		}
 	}
 });
@@ -587,4 +587,125 @@ test('the polar grid travels with the link', () => {
 	const greek = stateOf(['\\sin\\left(\\omega x\\right)']);
 	greek.sliders = { omega: { value: 2, min: 0, max: 5, step: 0.1, speed: 'normal', mode: 'bounce' } };
 	assert.deepEqual(decodeState(encodeState(greek)).sliders, greek.sliders);
+});
+
+const { integral, mainRange, sampleRegion } = await jiti.import('../../src/lib/grafico/curva.ts');
+const await_axis = await jiti.import('../../src/lib/grafico/documento.ts');
+
+test('a function in pieces', () => {
+	const abs = fn('\\begin{cases}x^2 & x\\ge0\\\\ -x & x<0\\end{cases}');
+	close(abs(3), 9);
+	close(abs(-3), 3);
+	close(abs(0), 0);
+	const withElse = fn('\\begin{cases}x^2 & \\text{se } x\\ge1\\\\ 1 & \\text{altrimenti}\\end{cases}');
+	close(withElse(2), 4);
+	close(withElse(-5), 1);
+	// outside every piece the function has no value
+	assert.ok(Number.isNaN(fn('\\begin{cases}x^2 & 0<x<2\\end{cases}')(3)));
+	// the pieces can be named and derived
+	const [f, d] = rows('f(x)=\\begin{cases}x^2 & x\\ge0\\\\ -x & x<0\\end{cases}', "f'(x)");
+	close(f(-2), 2);
+	close(d(3), 6);
+	close(d(-3), -1);
+});
+
+test('a domain in braces', () => {
+	const piece = fn('x^2\\left\\{x>0\\right\\}');
+	close(piece(2), 4);
+	assert.ok(Number.isNaN(piece(-2)));
+	const between = fn('\\left(x+1\\right)\\left\\lbrace0<x<2\\right\\rbrace');
+	close(between(1), 2);
+	assert.ok(Number.isNaN(between(2)));
+	assert.ok(Number.isNaN(between(0)));
+	// drawn only where it has a value
+	const paths = sampleFunction(between, VIEW, 800, 560);
+	assert.equal(paths.length, 1);
+	close(paths[0][0].x, 0, 1e-6);
+	close(paths[0].at(-1).x, 2, 1e-6);
+});
+
+test('the slope of a function comes with it', () => {
+	const cubic = read('x^3-3x');
+	close(cubic.d({ x: 2 }), 9);
+	const named = read('g(t)=\\sin t');
+	close(named.d({ x: 0 }), 1);
+	close(read('y=ax^2').d({ a: 3, x: 1 }), 6);
+});
+
+test('a region of the plane', () => {
+	const disc = read('x^2+y^2<4');
+	assert.equal(disc.kind, 'inequality');
+	assert.equal(disc.strict, true);
+	assert.ok(disc.f({ x: 0, y: 0 }) < 0);
+	assert.ok(disc.f({ x: 3, y: 0 }) > 0);
+	const above = read('y\\ge x^2');
+	assert.equal(above.strict, false);
+	assert.ok(above.f({ x: 0, y: 1 }) < 0);
+	assert.ok(above.f({ x: 2, y: 1 }) > 0);
+	// a chain is a strip, and two conditions together are their common part
+	const strip = read('1\\le x\\le3');
+	assert.ok(strip.f({ x: 2, y: 9 }) < 0 && strip.f({ x: 0, y: 0 }) > 0 && strip.f({ x: 4, y: 0 }) > 0);
+	const quadrant = read('x>0\\land y>0');
+	assert.equal(quadrant.kind, 'inequality');
+	assert.ok(quadrant.f({ x: 1, y: 1 }) < 0 && quadrant.f({ x: 1, y: -1 }) > 0);
+	assert.deepEqual(read('y<ax+b').params, ['a', 'b']);
+});
+
+test('the strips of a region cover it', () => {
+	const disc = read('x^2+y^2<4');
+	const s = {};
+	const strips = sampleRegion((x, y) => ((s.x = x), (s.y = y), disc.f(s)), SQUARE, 800, 560);
+	const area = strips.reduce((sum, [x0, x1, y0, y1]) => sum + (x1 - x0) * (y1 - y0), 0);
+	close(area, 4 * Math.PI, 0.02);
+	for (const [x0, x1] of strips) assert.ok(x0 >= -2.001 && x1 <= 2.001);
+	// a half plane reaches the edge of the window
+	const half = read('y>x');
+	const halfStrips = sampleRegion((x, y) => ((s.x = x), (s.y = y), half.f(s)), SQUARE, 800, 560);
+	close(halfStrips.reduce((sum, [x0, x1, y0, y1]) => sum + (x1 - x0) * (y1 - y0), 0), (20 * 14) / 2, 0.05);
+});
+
+test('a point, with a name or without', () => {
+	const p = read('\\left(2;3\\right)');
+	assert.equal(p.kind, 'point');
+	assert.equal(p.free, true);
+	close(p.x({}), 2);
+	close(p.y({}), 3);
+	const a = read('A=\\left(-1{,}5;2\\right)');
+	assert.equal(a.kind, 'point');
+	assert.equal(a.name, 'A');
+	assert.equal(a.free, true);
+	close(a.x({}), -1.5);
+	// a point that follows a parameter is not dragged
+	const moving = read('P=\\left(a;a^2\\right)');
+	assert.equal(moving.free, false);
+	assert.deepEqual(moving.params, ['a']);
+	close(moving.y({ a: 3 }), 9);
+	assert.equal(read('\\left(\\cos t;\\sin t\\right)').kind, 'parametric');
+	assert.equal(read('A=\\left(\\cos t;\\sin t\\right)').kind, 'error');
+});
+
+test('the area under a curve and the range that matters', () => {
+	close(integral((x) => x * x, 0, 3), 9, 1e-9);
+	close(integral(Math.sin, 0, Math.PI), 2, 1e-9);
+	close(integral((x) => x, 2, 0), -2, 1e-9);
+	assert.ok(Number.isNaN(integral(Math.sqrt, -1, 1)));
+	const values = Array.from({ length: 401 }, (_, i) => 1 / (i / 20 - 10));
+	const [lo, hi] = mainRange(values);
+	assert.ok(lo > -3 && hi < 3, `${lo} ${hi}`);
+	assert.equal(mainRange([NaN, Infinity]), null);
+});
+
+test('the tools of a row and the names of the axes travel with the link', () => {
+	const state = stateOf(['f(x)=x^2']);
+	state.rows[0] = { ...state.rows[0], tangent: 1.5, area: [-1, 2], table: { from: -2, step: 0.5 } };
+	state.settings = { ...state.settings, xName: 't', yName: 's (m)' };
+	const back = decodeState(encodeState(state));
+	assert.deepEqual(back.rows[0], state.rows[0]);
+	assert.equal(back.settings.xName, 't');
+	assert.equal(back.settings.yName, 's (m)');
+	// a name that could be markup is not taken
+	const { axisName } = await_axis;
+	assert.equal(axisName('<b>', 'x'), 'x');
+	assert.equal(axisName('  v  ', 'y'), 'v');
+	assert.equal(axisName('', 'y'), 'y');
 });

@@ -1,15 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
-import { Download, Keyboard, Lightbulb, Link2, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, Plus, Redo2, Settings, SlidersHorizontal, Undo2, X } from 'lucide-react';
+import { Download, GripVertical, Keyboard, Lightbulb, Link2, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, Plus, Redo2, Settings, SlidersHorizontal, Undo2, X } from 'lucide-react';
 import { MathField, type MathFieldHandle } from '@/components/math/MathField';
 import { PLOT_LAYOUTS, loadMathLive, useKeyboardChoice } from '@/components/math/mathlive';
+import { italian } from '@/lib/grafico/assi';
+import { integral, mainRange } from '@/lib/grafico/curva';
 import { DEFAULT_SLIDER, EXAMPLES, HOME, decodeState, encodeState, newRow, type Camera, type PlotDoc, type PlotRow, type PlotState, type SliderSpec } from '@/lib/grafico/documento';
 import { GREEK, cleanLatex, definitions, freeName, isUnnamedFunction, readEntry, type Entry, type Json } from '@/lib/grafico/formula';
 import { cn } from '@/lib/utils/cn';
 import { downloadPlane } from './export';
-import { Plane, type PlaneCurve, type PlaneHandle } from './Plane';
-import { Collapse, IconButton, NumberBox, ParamSlider, PlaneSettingsPanel, Popover, RowStyle, usePresence, type WindowBounds } from './PlotterParts';
+import { Plane, type PlaneCurve, type PlaneHandle, type PlaneMark } from './Plane';
+import { Collapse, IconButton, NumberBox, ParamSlider, PlaneSettingsPanel, Popover, RowStyle, ValueTable, usePresence, type WindowBounds } from './PlotterParts';
 import { useHistory } from './useHistory';
 
 /**
@@ -25,6 +27,20 @@ export interface PlotterFormula {
 }
 
 type Parse = (latex: string) => Json;
+
+/** A point of the plane that is not a curve's, and what a drag of it changes. */
+interface Spot {
+	id: string;
+	row: number;
+	role: 'point' | 'fixed' | 'tangent' | 'areaStart' | 'areaEnd';
+	at: { x: number; y: number };
+	color: string;
+	name?: string;
+	text?: string;
+}
+
+/** A number as a formula field writes it: 2,5 with MathLive's decimal comma. */
+const latexNumber = (x: number) => String(Number(x.toPrecision(10))).replace('.', '{,}');
 type Panel = 'settings' | 'examples' | 'download';
 
 /** The width of the window, in units, on a phone. */
@@ -34,11 +50,6 @@ const SWEEP = { slow: 16, normal: 8, fast: 4 };
 const FALLBACK_SIZE = { w: 800, h: 560 };
 /** The degrees in a unit of the plane: with the angles in degrees the x axis is read in degrees, and 90° sits where π/2 does. */
 const DEGREES = 180 / Math.PI;
-
-/** Inequalities are recognised and not drawn yet. */
-const NOT_YET: Partial<Record<Entry['kind'], string>> = {
-	inequality: 'Le disequazioni arrivano con il prossimo passo. Per ora scrivi una funzione, un’equazione come x² + y² = 4, o una curva come r = 2θ.'
-};
 
 /** Where t runs for a curve (x(t), y(t)): what the row says, or a whole turn. */
 function tRange(row: PlotRow, degrees: boolean): [number, number] {
@@ -144,29 +155,51 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 	const params = useMemo(() => [...new Set(entries.flatMap((e) => ('params' in e ? e.params : [])))].sort(), [entries]);
 	const specOf = useCallback((name: string): SliderSpec => sliders[name] ?? DEFAULT_SLIDER, [sliders]);
 
-	const curves: PlaneCurve[] = useMemo(
-		() =>
-			rows.flatMap((row, i): PlaneCurve[] => {
-				const entry = entries[i];
-				if (row.hidden || entry.kind === 'empty' || entry.kind === 'error' || entry.kind === 'inequality') return [];
-				// one scope for all the evaluations of a curve: the sampling calls it thousands of times a frame
-				const scope: Record<string, number> = { x: 0, y: 0, t: 0, theta: 0 };
-				for (const p of entry.params) scope[p] = specOf(p).value;
-				const look = { id: String(row.id), color: row.color, width: row.width, dash: row.dash };
+	/**
+	 * What the rows put on the plane: their curves and regions, the points that are not curves (the student's points,
+	 * the foot of a tangent, the ends of an area) and, for the table of values, each function as the axis reads it.
+	 */
+	const drawing = useMemo(() => {
+		const curves: PlaneCurve[] = [];
+		const spots: Spot[] = [];
+		const functions = new Map<number, (x: number) => number>();
+		rows.forEach((row, i) => {
+			const entry = entries[i];
+			if (entry.kind === 'empty' || entry.kind === 'error') return;
+			// one scope for all the evaluations of a curve: the sampling calls it thousands of times a frame
+			const scope: Record<string, number> = { x: 0, y: 0, t: 0, theta: 0 };
+			for (const p of entry.params) scope[p] = specOf(p).value;
+			const look = { id: String(row.id), color: row.color, width: row.width, dash: row.dash };
+
+			if (entry.kind === 'function') {
 				// the formula's x is the x written on the axis
-				if (entry.kind === 'function') return [{ ...look, label: row.label ? entry.name : undefined, f: (x) => ((scope.x = x * xUnit), entry.f(scope)) }];
-				if (entry.kind === 'implicit') return [{ ...look, implicit: (x, y) => ((scope.x = x * xUnit), (scope.y = y), entry.f(scope)) }];
+				const at = (x: number) => ((scope.x = x), entry.f(scope));
+				functions.set(row.id, at);
+				if (row.hidden) return;
+				const tangent = row.tangent === undefined ? undefined : { x: row.tangent / xUnit, slope: ((scope.x = row.tangent), entry.d(scope)) * xUnit };
+				const area = row.area ? { a: row.area[0] / xUnit, b: row.area[1] / xUnit, text: `∫ = ${italian(integral(at, row.area[0], row.area[1]), 3)}` } : undefined;
+				curves.push({ ...look, label: row.label ? entry.name : undefined, f: (x) => at(x * xUnit), tangent, area });
+				if (tangent) spots.push({ id: `tangent:${row.id}`, row: row.id, role: 'tangent', at: { x: tangent.x, y: at(row.tangent!) }, color: row.color, text: `m = ${italian(tangent.slope / xUnit, 3)}` });
+				if (row.area) row.area.forEach((x, end) => spots.push({ id: `area${end}:${row.id}`, row: row.id, role: end ? 'areaEnd' : 'areaStart', at: { x: x / xUnit, y: 0 }, color: row.color }));
+				return;
+			}
+			if (row.hidden) return;
+			if (entry.kind === 'implicit') curves.push({ ...look, implicit: (x, y) => ((scope.x = x * xUnit), (scope.y = y), entry.f(scope)) });
+			else if (entry.kind === 'inequality') curves.push({ ...look, strict: entry.strict, region: (x, y) => ((scope.x = x * xUnit), (scope.y = y), entry.f(scope)) });
+			else if (entry.kind === 'point') spots.push({ id: `point:${row.id}`, row: row.id, role: entry.free ? 'point' : 'fixed', at: { x: entry.x(scope) / xUnit, y: entry.y(scope) }, color: row.color, name: entry.name });
+			else {
 				const [t0, t1] = tRange(row, settings.degrees);
 				if (entry.kind === 'polar') {
 					// r = f(θ) is the curve (r cos θ, r sin θ); a radius is a length, whatever the x axis is read in
 					const turn = settings.degrees ? Math.PI / 180 : 1;
 					const r = (theta: number) => ((scope.theta = theta), entry.r(scope));
-					return [{ ...look, parametric: { t0, t1, x: (theta) => (r(theta) * Math.cos(theta * turn)) / xUnit, y: (theta) => r(theta) * Math.sin(theta * turn) } }];
-				}
-				return [{ ...look, parametric: { t0, t1, x: (t) => ((scope.t = t), entry.x(scope) / xUnit), y: (t) => ((scope.t = t), entry.y(scope)) } }];
-			}),
-		[rows, entries, specOf, xUnit, settings.degrees]
-	);
+					curves.push({ ...look, parametric: { t0, t1, x: (theta) => (r(theta) * Math.cos(theta * turn)) / xUnit, y: (theta) => r(theta) * Math.sin(theta * turn) } });
+				} else curves.push({ ...look, parametric: { t0, t1, x: (t) => ((scope.t = t), entry.x(scope) / xUnit), y: (t) => ((scope.t = t), entry.y(scope)) } });
+			}
+		});
+		return { curves, spots, functions };
+	}, [rows, entries, specOf, xUnit, settings.degrees]);
+	const { curves } = drawing;
 
 	// A function with no value anywhere in the window draws nothing: the row says so, or it looks broken.
 	const blank = useMemo(() => {
@@ -242,6 +275,98 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 		const { w, h } = plane.current?.size() ?? FALLBACK_SIZE;
 		const span = (b.x1 - b.x0) / xUnit;
 		setCamera({ cx: (b.x0 + b.x1) / (2 * xUnit), cy: (b.y0 + b.y1) / 2, span, stretch: (h * span) / (w * (b.y1 - b.y0)) });
+	};
+
+	/** The window that holds what is drawn: the height of the functions over the x in view, and all of a curve in t or of the points. */
+	const fit = () => {
+		const { w, h } = plane.current?.size() ?? FALLBACK_SIZE;
+		const x0 = camera.cx - camera.span / 2;
+		const xs: number[] = [];
+		const ys: number[] = [];
+		let wide = false;
+		for (const c of curves) {
+			if ('f' in c) for (let k = 0; k <= 400; k++) ys.push(c.f(x0 + (camera.span * k) / 400));
+			else if ('parametric' in c) {
+				wide = true;
+				for (let k = 0; k <= 600; k++) {
+					const t = c.parametric.t0 + ((c.parametric.t1 - c.parametric.t0) * k) / 600;
+					xs.push(c.parametric.x(t));
+					ys.push(c.parametric.y(t));
+				}
+			}
+		}
+		for (const spot of drawing.spots) {
+			if (spot.role === 'point' || spot.role === 'fixed') wide = true;
+			xs.push(spot.at.x);
+			ys.push(spot.at.y);
+		}
+		const yr = mainRange(ys);
+		if (!yr) return;
+		const pad = (lo: number, hi: number): [number, number] => (hi - lo < 1e-9 ? [lo - 1, hi + 1] : [lo - (hi - lo) * 0.12, hi + (hi - lo) * 0.12]);
+		const [y0, y1] = pad(...yr);
+		const xr = wide ? mainRange(xs) : null;
+		if (!xr) {
+			// functions only: the x in view stay, the height follows the curves
+			setCamera({ cx: camera.cx, cy: (y0 + y1) / 2, span: camera.span, stretch: (h * camera.span) / (w * (y1 - y0)) });
+			return;
+		}
+		// a curve in t or a set of points keeps its shape: the same scale on both axes
+		const [a, b] = pad(...xr);
+		setCamera({ cx: (a + b) / 2, cy: (y0 + y1) / 2, span: Math.max(b - a, ((y1 - y0) * w) / h), stretch: 1 });
+	};
+
+	/** The points of the plane with what a drag of each one changes. */
+	const marks: PlaneMark[] = drawing.spots.map((spot) => {
+		const { id, at, color, name, text } = spot;
+		const row = rows.find((r) => r.id === spot.row)!;
+		if (spot.role === 'fixed') return { id, at, color, name };
+		if (spot.role === 'tangent') return { id, at, color, text, onDrag: (to) => updateRow(row.id, { tangent: Number((to.x * xUnit).toPrecision(10)) }, `tangent:${row.id}`) };
+		if (spot.role === 'point')
+			return {
+				id,
+				at,
+				color,
+				name,
+				snap: true,
+				// a dragged point rewrites its own row
+				onDrag: (to) => {
+					const latex = `${name ? `${name}=` : ''}\\left(${latexNumber(to.x * xUnit)};${latexNumber(to.y)}\\right)`;
+					fields.current.get(row.id)?.set(latex);
+					updateRow(row.id, { latex }, `point:${row.id}`);
+				}
+			};
+		const end = spot.role === 'areaEnd' ? 1 : 0;
+		return {
+			id,
+			at,
+			color,
+			snap: true,
+			onDrag: (to) => {
+				const area: [number, number] = [...row.area!];
+				area[end] = Number((to.x * xUnit).toPrecision(10));
+				updateRow(row.id, { area }, `area:${row.id}`);
+			}
+		};
+	});
+
+	// Rows change place by their grip: dragged over another row, or with the arrows.
+	const gripped = useRef<number | null>(null);
+	const moveRow = (id: number, to: number) =>
+		setRows((list) => {
+			const from = list.findIndex((r) => r.id === id);
+			if (from < 0 || to < 0 || to >= list.length || to === from) return list;
+			const next = [...list];
+			next.splice(to, 0, next.splice(from, 1)[0]);
+			return next;
+		}, 'reorder');
+	const dragRow = (clientY: number) => {
+		if (gripped.current === null) return;
+		const items = [...(root.current?.querySelectorAll<HTMLElement>('[data-row]') ?? [])];
+		const over = items.findIndex((el) => {
+			const box = el.getBoundingClientRect();
+			return clientY >= box.top && clientY <= box.bottom;
+		});
+		if (over >= 0) moveRow(gripped.current, over);
 	};
 
 	const changeSettings = (part: Partial<PlotDoc['settings']>) => {
@@ -448,7 +573,10 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 	const visible = presence.visible && panel !== null && panel === drawn;
 
 	const names = rows.filter((r) => r.latex.trim()).length;
-	const look = { grid: settings.grid, axes: settings.axes, numbers: settings.numbers, xAxis: polarGrid ? ('numbers' as const) : settings.degrees ? ('degrees' as const) : settings.xAxis, xUnit, polar: settings.polar ? (settings.degrees ? ('degrees' as const) : ('radians' as const)) : undefined };
+	// a tool switched on starts in the middle of the window, on round numbers
+	const round = (x: number) => Number(x.toPrecision(2));
+	const toolDefaults = { tangent: round(camera.cx * xUnit), area: [round((camera.cx - camera.span / 8) * xUnit), round((camera.cx + camera.span / 8) * xUnit)] as [number, number] };
+	const look = { grid: settings.grid, axes: settings.axes, numbers: settings.numbers, xAxis: polarGrid ? ('numbers' as const) : settings.degrees ? ('degrees' as const) : settings.xAxis, xUnit, xName: settings.xName, yName: settings.yName, polar: settings.polar ? (settings.degrees ? ('degrees' as const) : ('radians' as const)) : undefined };
 	const withKeyboard = keyboardHeight > 0;
 
 	return (
@@ -510,6 +638,8 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 						onCamera={setCamera}
 						home={home}
 						curves={curves}
+						marks={marks}
+						onFit={fit}
 						look={look}
 						label={names ? `Piano cartesiano con ${names === 1 ? 'una funzione' : `${names} funzioni`}` : 'Piano cartesiano'}
 					/>
@@ -585,10 +715,30 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 						<ul className="m-0 list-none p-0">
 							{rows.map((row, i) => {
 								const entry = entries[i];
-								const message = entry.kind === 'error' ? entry.message : (NOT_YET[entry.kind] ?? (blank.has(row.id) ? NO_VALUES : entry.kind === 'function' ? entry.note : undefined));
+								const message = entry.kind === 'error' ? entry.message : blank.has(row.id) ? NO_VALUES : entry.kind === 'function' ? entry.note : undefined;
 								return (
 									<li key={row.id} data-row={row.id} onFocus={() => (lastField.current = row.id)} className="border-b border-edge-soft transition-colors focus-within:bg-surface-2" style={{ scrollMarginBottom: keyboardHeight + 12 }}>
-										<div className="flex items-center gap-0.5 py-1 pr-1 pl-1.5">
+										<div className="flex items-center gap-0.5 py-1 pr-1">
+											<button
+												type="button"
+												aria-label={`Sposta la riga ${i + 1}: trascina, oppure usa le frecce su e giù`}
+												title="Sposta la riga"
+												className="flex h-9 w-5 shrink-0 cursor-grab touch-none items-center justify-center text-fg-faint hover:text-fg-muted focus-ring active:cursor-grabbing"
+												onPointerDown={(e) => {
+													e.currentTarget.setPointerCapture(e.pointerId);
+													gripped.current = row.id;
+												}}
+												onPointerMove={(e) => dragRow(e.clientY)}
+												onPointerUp={() => (gripped.current = null)}
+												onPointerCancel={() => (gripped.current = null)}
+												onKeyDown={(e) => {
+													if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+													e.preventDefault();
+													moveRow(row.id, i + (e.key === 'ArrowUp' ? -1 : 1));
+												}}
+											>
+												<GripVertical className="size-4" aria-hidden="true" />
+											</button>
 											<button
 												type="button"
 												onClick={() => updateRow(row.id, { hidden: !row.hidden })}
@@ -632,8 +782,20 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 												<NumberBox label="a" pi={!settings.degrees} value={tRange(row, settings.degrees)[1]} valid={(v) => v > tRange(row, settings.degrees)[0]} onChange={(t1) => updateRow(row.id, { t1 })} className="w-24" />
 											</div>
 										)}
+										{entry.kind === 'function' && (
+											<Collapse open={!!row.table}>
+												<ValueTable row={row} name={entry.name ? `${entry.name}(${settings.xName})` : settings.yName} variable={settings.xName} f={drawing.functions.get(row.id) ?? (() => NaN)} onChange={(table) => updateRow(row.id, { table }, `table:${row.id}`)} />
+											</Collapse>
+										)}
 										<Collapse open={styled === row.id}>
-											<RowStyle row={row} name={entry.kind === 'function' ? entry.name : undefined} onChange={(part) => updateRow(row.id, part)} onDuplicate={() => duplicate(row)} onRemove={() => remove(row.id)} />
+											<RowStyle
+												row={row}
+												name={entry.kind === 'function' ? entry.name : undefined}
+												tools={entry.kind === 'function' ? toolDefaults : undefined}
+												onChange={(part) => updateRow(row.id, part)}
+												onDuplicate={() => duplicate(row)}
+												onRemove={() => remove(row.id)}
+											/>
 										</Collapse>
 									</li>
 								);

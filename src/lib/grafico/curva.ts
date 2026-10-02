@@ -335,3 +335,66 @@ export function sampleImplicit(F: (x: number, y: number) => number, view: View, 
 	for (const side of links.keys()) follow(side);
 	return paths;
 }
+
+// ---------------------------------------------------------------- regions
+
+/** A horizontal strip of a region: from x0 to x1, between y0 and y1. */
+export type Strip = [x0: number, x1: number, y0: number, y1: number];
+
+/**
+ * The region where F(x, y) is below zero, as horizontal strips two pixels high. Along each strip F is read every
+ * few pixels and the ends are placed where it changes sign, so the edge is as fine as the curve drawn over it.
+ * Where F has no value the point is outside.
+ */
+export function sampleRegion(F: (x: number, y: number) => number, view: View, width: number, height: number): Strip[] {
+	const nx = Math.max(8, Math.min(400, Math.round(width / CELL)));
+	const ny = Math.max(8, Math.min(600, Math.round(height / 2)));
+	const dx = (view.x1 - view.x0) / nx;
+	const dy = (view.y1 - view.y0) / ny;
+	const strips: Strip[] = [];
+	const row = new Float64Array(nx + 1);
+	for (let j = 0; j < ny; j++) {
+		const y0 = view.y0 + j * dy;
+		const y = y0 + dy / 2;
+		for (let i = 0; i <= nx; i++) row[i] = F(view.x0 + i * dx, y);
+		let start: number | null = null;
+		for (let i = 0; i <= nx; i++) {
+			const inside = row[i] < 0;
+			const x = view.x0 + i * dx;
+			if (inside && start === null) {
+				// the edge is between this point and the one before, where F crosses zero
+				const before = row[i - 1];
+				start = i > 0 && Number.isFinite(before) ? x - (dx * row[i]) / (row[i] - before) : x;
+			} else if (!inside && start !== null) {
+				const before = row[i - 1];
+				strips.push([start, Number.isFinite(row[i]) ? x - dx + (dx * before) / (before - row[i]) : x - dx, y0, y0 + dy]);
+				start = null;
+			}
+		}
+		if (start !== null) strips.push([start, view.x1, y0, y0 + dy]);
+	}
+	return strips;
+}
+
+// ---------------------------------------------------------------- numbers from a curve
+
+/** The integral of f from a to b (Simpson's rule on 2000 pieces); NaN where f has no value on the way. */
+export function integral(f: (x: number) => number, a: number, b: number): number {
+	if (a === b) return 0;
+	const n = 2000;
+	const h = (b - a) / n;
+	let sum = f(a) + f(b);
+	for (let i = 1; i < n; i++) sum += f(a + i * h) * (i % 2 ? 4 : 2);
+	return (sum * h) / 3;
+}
+
+/**
+ * The lowest and highest value that matter in a list: the 2nd and 98th in a hundred, so that the branch of an
+ * asymptote does not decide the window. Null with no finite value.
+ */
+export function mainRange(values: number[]): [number, number] | null {
+	const finite = values.filter(Number.isFinite).sort((a, b) => a - b);
+	if (!finite.length) return null;
+	const at = (q: number) => finite[Math.min(finite.length - 1, Math.max(0, Math.round(q * (finite.length - 1))))];
+	return [at(0.02), at(0.98)];
+}

@@ -20,11 +20,22 @@ export type Definitions = Record<string, Json>;
 
 export type Entry =
 	/** y = f(x). */
-	| { kind: 'function'; f: Evaluator; params: string[]; note?: string; /** The letter of f(x) = …, when the row gives one. */ name?: string }
+	| {
+			kind: 'function';
+			f: Evaluator;
+			params: string[];
+			note?: string;
+			/** The letter of f(x) = …, when the row gives one. */
+			name?: string;
+			/** The derivative, by the rules: the slope of the tangent. */
+			d: Evaluator;
+	  }
 	/** F(x, y) = 0: a conic, a vertical line. `f` is the left side minus the right. */
 	| { kind: 'implicit'; f: Evaluator; params: string[] }
-	/** F(x, y) < 0 or ≤ 0. */
+	/** A region of the plane: where `f`, the margin of the condition, is below zero. Strict, its edge is not part of it. */
 	| { kind: 'inequality'; f: Evaluator; strict: boolean; params: string[] }
+	/** A point, (2; 3) or A = (2; 3). `free` when its coordinates are two plain numbers, which a drag can change. */
+	| { kind: 'point'; x: Evaluator; y: Evaluator; params: string[]; name?: string; free: boolean }
 	/** (x(t), y(t)). */
 	| { kind: 'parametric'; x: Evaluator; y: Evaluator; params: string[] }
 	/** r = f(θ), in polar coordinates. */
@@ -133,7 +144,9 @@ function items(j: Json): Json[] {
 /*
  * What `normalize` leaves: numbers, letters, and
  *   Add(…)  Negate(a)  Multiply(…)  Divide(a, b)  Power(a, b)  Root(a, n)  Log(a, b)
- *   Sum(body, index, from, to)  Product(body, index, from, to)  and the one-argument functions of UNARY.
+ *   Sum(body, index, from, to)  Product(body, index, from, to)  and the one-argument functions of UNARY;
+ *   If(condition, then, else) for a function in pieces, where a condition is True, a relation between expressions
+ *   (Less(a, b), also in a chain: Less(a, b, c)) or And, Or, Not of conditions. NaN is "no value here".
  */
 
 const isZero = (j: Json) => j === 0;
@@ -242,6 +255,21 @@ function juxtaposed(args: Json[], ctx: Context): Json[] {
 	return out;
 }
 
+const RELATION_HEADS = new Set(['Less', 'LessEqual', 'Greater', 'GreaterEqual', 'Equal', 'NotEqual']);
+
+/** A condition in normal form: x > 0, 0 < x < 2, "altrimenti". */
+function condition(j: Json, ctx: Context): Json {
+	if (j === 'True') return 'True';
+	const h = head(j);
+	const args = isArray(j) ? j.slice(1) : [];
+	if (h && RELATION_HEADS.has(h) && args.length >= 2) return [h, ...args.map((a) => normalize(a, ctx))];
+	if ((h === 'And' || h === 'Or') && args.length >= 1) return [h, ...args.map((a) => condition(a, ctx))];
+	if (h === 'Not' && args.length === 1) return ['Not', condition(args[0], ctx)];
+	// the brackets of a condition: {x > 0}, (x > 0)
+	if ((h === 'Set' || h === 'Delimiter' || h === 'Sequence') && args.length >= 1) return condition(h === 'Delimiter' ? items(args[0])[0] : args[0], ctx);
+	throw new FormulaError('La condizione di una funzione a tratti è un confronto, come x > 0 o 0 < x < 2.');
+}
+
 function normalize(j: Json, ctx: Context): Json {
 	if (typeof j === 'number') return j;
 	if (typeof j === 'string') {
@@ -265,8 +293,22 @@ function normalize(j: Json, ctx: Context): Json {
 			return neg(n(args[0]));
 		case 'Multiply':
 			return mul(...args.map(n));
-		case 'InvisibleOperator':
+		case 'InvisibleOperator': {
+			// x² {0 < x < 2}: a formula followed by its domain in braces
+			const last = args[args.length - 1];
+			if (args.length > 1 && head(last) === 'Set') return ['If', condition(last, ctx), mul(...juxtaposed(args.slice(0, -1), ctx)), NaN];
 			return mul(...juxtaposed(args, ctx));
+		}
+		// the same, as the parser reads it with a simple condition
+		case 'When':
+			return ['If', condition(args[1], ctx), n(args[0]), NaN];
+		// a function in pieces: the first condition that holds gives the value
+		case 'Which': {
+			if (args.length < 2 || args.length % 2) throw new FormulaError(UNFINISHED);
+			let out: Json = NaN;
+			for (let i = args.length - 2; i >= 0; i -= 2) out = ['If', condition(args[i], ctx), n(args[i + 1]), out];
+			return out;
+		}
 		case 'Divide':
 		case 'Rational':
 		case 'Colon':
@@ -339,6 +381,9 @@ function hasX(j: Json): boolean {
 
 /** The derivative with respect to x of an expression in normal form, by the rules. */
 function derivative(j: Json): Json {
+	// where a function has no value, neither has its slope
+	if (typeof j === 'number' && Number.isNaN(j)) return NaN;
+	if (head(j) === 'If') return ['If', (j as Json[])[1], derivative((j as Json[])[2]), derivative((j as Json[])[3])];
 	if (!hasX(j)) return 0;
 	if (j === 'x') return 1;
 	const [h, ...args] = j as [string, ...Json[]];
@@ -432,6 +477,11 @@ function compile(j: Json, letters: Set<string>): Evaluator {
 	const c = (a: Json) => compile(a, letters);
 
 	switch (h) {
+		case 'If': {
+			const holds = compileCondition(args[0], letters);
+			const [a, b] = [c(args[1]), c(args[2])];
+			return (s) => (holds(s) ? a(s) : b(s));
+		}
 		case 'Add': {
 			const fs = args.map(c);
 			return (s) => {
@@ -507,6 +557,73 @@ function compile(j: Json, letters: Set<string>): Evaluator {
 	const fn = UNARY[h];
 	const f = c(args[0]);
 	return (s) => fn(f(s));
+}
+
+const COMPARE: Record<string, (a: number, b: number) => boolean> = {
+	Less: (a, b) => a < b,
+	LessEqual: (a, b) => a <= b,
+	Greater: (a, b) => a > b,
+	GreaterEqual: (a, b) => a >= b,
+	Equal: (a, b) => a === b,
+	NotEqual: (a, b) => a !== b
+};
+
+/** Whether a condition in normal form holds. */
+function compileCondition(j: Json, letters: Set<string>): (scope: Scope) => boolean {
+	if (j === 'True') return () => true;
+	const [h, ...args] = j as [string, ...Json[]];
+	if (h === 'And' || h === 'Or') {
+		const parts = args.map((a) => compileCondition(a, letters));
+		return h === 'And' ? (s) => parts.every((p) => p(s)) : (s) => parts.some((p) => p(s));
+	}
+	if (h === 'Not') {
+		const part = compileCondition(args[0], letters);
+		return (s) => !part(s);
+	}
+	const fs = args.map((a) => compile(a, letters));
+	const holds = COMPARE[h];
+	// a chain holds link by link: 0 < x < 2
+	return (s) => {
+		let before = fs[0](s);
+		for (let i = 1; i < fs.length; i++) {
+			const now = fs[i](s);
+			if (!holds(before, now)) return false;
+			before = now;
+		}
+		return true;
+	};
+}
+
+/**
+ * How far a condition is from holding, as a number that is below zero inside the region and above it outside:
+ * for a < b it is a − b. A region is drawn from where this changes sign. `strict` collects whether every
+ * comparison leaves its edge out.
+ */
+function compileMargin(j: Json, letters: Set<string>, strict: { all: boolean }): Evaluator {
+	if (j === 'True') return () => -1;
+	const [h, ...args] = j as [string, ...Json[]];
+	if (h === 'And' || h === 'Or') {
+		const parts = args.map((a) => compileMargin(a, letters, strict));
+		return h === 'And' ? (s) => Math.max(...parts.map((p) => p(s))) : (s) => Math.min(...parts.map((p) => p(s)));
+	}
+	if (h === 'Not') {
+		const part = compileMargin(args[0], letters, strict);
+		return (s) => -part(s);
+	}
+	if (h === 'Equal' || h === 'NotEqual') throw new FormulaError('Una regione si scrive con <, >, ≤ o ≥.');
+	if (h === 'LessEqual' || h === 'GreaterEqual') strict.all = false;
+	const fs = args.map((a) => compile(a, letters));
+	const sign = h === 'Less' || h === 'LessEqual' ? 1 : -1;
+	return (s) => {
+		let worst = -Infinity;
+		let before = fs[0](s);
+		for (let i = 1; i < fs.length; i++) {
+			const now = fs[i](s);
+			worst = Math.max(worst, sign * (before - now));
+			before = now;
+		}
+		return worst;
+	};
 }
 
 // ---------------------------------------------------------------- entries
@@ -590,6 +707,25 @@ export function isUnnamedFunction(json: Json, defs: Definitions = {}): boolean {
 	return readEntry(j, defs).kind === 'function';
 }
 
+/** The derivative of a function in normal form as a function of numbers; where the rules do not reach, no slope. */
+function slope(form: Json): Evaluator {
+	try {
+		return compile(derivative(form), new Set());
+	} catch {
+		return () => NaN;
+	}
+}
+
+/** Two coordinates between brackets: a curve (x(t); y(t)) when they are written in t, a point otherwise. */
+function pairEntry(pair: Json[], ctx: Context): Entry {
+	const letters = new Set<string>();
+	const forms = pair.map((c) => normalize(c, ctx));
+	const [x, y] = forms.map((f) => compile(f, letters));
+	if (letters.has('x') || letters.has('y')) throw new FormulaError('Tra le parentesi vanno due coordinate, (2; 3), o una curva scritta con la t: (cos t; sin t).');
+	if (letters.has('t')) return { kind: 'parametric', x, y, params: paramsOf(letters) };
+	return { kind: 'point', x, y, params: paramsOf(letters), free: forms.every((f) => typeof f === 'number') };
+}
+
 /** The entry a MathJSON value stands for. Never throws: what cannot be drawn is an entry of kind 'error'. */
 export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptions = {}): Entry {
 	const j = plain(json);
@@ -604,11 +740,7 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 		if (h === 'Delimiter') {
 			const pair = items(args[0]);
 			if (pair.length === 2) {
-				const letters = new Set<string>();
-				const x = compile(normalize(pair[0], ctx), letters);
-				const y = compile(normalize(pair[1], ctx), letters);
-				if (letters.has('x') || letters.has('y')) throw new FormulaError('Una curva parametrica si scrive con la lettera t: (cos t; sin t).');
-				return { kind: 'parametric', x, y, params: paramsOf(letters) };
+				return pairEntry(pair, ctx);
 			}
 		}
 
@@ -616,6 +748,12 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 			const [left, right] = args;
 			const named = namedLeft(left);
 			const rightLetters = new Set<string>();
+			// A = (2; 3): a point with a name
+			if (isLetter(left) && head(right) === 'Delimiter' && items((right as Json[])[1]).length === 2) {
+				const point = pairEntry(items((right as Json[])[1]), ctx);
+				if (point.kind !== 'point') throw new FormulaError('Un punto ha due coordinate senza la t: A = (2; 3).');
+				return { ...point, name: letter(left) };
+			}
 			// r = f(θ): a polar curve, unless the right side is in x and y, where r is a parameter (x² + y² = r reversed)
 			if (isRadius(left)) {
 				const polar = new Set<string>();
@@ -626,29 +764,32 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 				const body = bodyInX(right, named.variable);
 				if (body === null) throw new FormulaError(`${named.name}(${named.variable}) è una funzione di ${named.variable}: a destra non può esserci anche la x.`);
 				// read as f's own body, so a function that uses itself is caught
-				const f = compile(bodyOf(named.name, { ...ctx, defs: { ...defs, [named.name]: body } }), rightLetters);
+				const form = bodyOf(named.name, { ...ctx, defs: { ...defs, [named.name]: body } });
+				const f = compile(form, rightLetters);
 				if (rightLetters.has('y')) throw new FormulaError(`${named.name}(${named.variable}) è una funzione di ${named.variable}: a destra non può esserci la y.`);
-				return { kind: 'function', f, params: paramsOf(rightLetters), name: named.name, ...note() };
+				return { kind: 'function', f, d: slope(form), params: paramsOf(rightLetters), name: named.name, ...note() };
 			}
-			const r = compile(normalize(right, ctx), rightLetters);
-			if (left === 'y' && !rightLetters.has('y')) return { kind: 'function', f: r, params: paramsOf(rightLetters), ...note() };
+			const form = normalize(right, ctx);
+			const r = compile(form, rightLetters);
+			if (left === 'y' && !rightLetters.has('y')) return { kind: 'function', f: r, d: slope(form), params: paramsOf(rightLetters), ...note() };
 			const letters = new Set(rightLetters);
 			const l = compile(normalize(left, ctx), letters);
 			return { kind: 'implicit', f: (s) => l(s) - r(s), params: paramsOf(letters) };
 		}
 
-		if (h && h in RELATIONS && args.length === 2) {
-			const { strict, flip } = RELATIONS[h];
+		// y > x², 0 < x < 2, x > 0 and y > 0: a region
+		if (h && (h in RELATIONS || h === 'And' || h === 'Or' || h === 'Not')) {
 			const letters = new Set<string>();
-			const l = compile(normalize(args[0], ctx), letters);
-			const r = compile(normalize(args[1], ctx), letters);
-			return { kind: 'inequality', f: flip ? (s) => r(s) - l(s) : (s) => l(s) - r(s), strict, params: paramsOf(letters) };
+			const strict = { all: true };
+			const f = compileMargin(condition(j, ctx), letters, strict);
+			return { kind: 'inequality', f, strict: strict.all, params: paramsOf(letters) };
 		}
 
 		const letters = new Set<string>();
-		const f = compile(normalize(j, ctx), letters);
+		const form = normalize(j, ctx);
+		const f = compile(form, letters);
 		if (letters.has('y')) throw new FormulaError('Con la y serve un segno: scrivi un’equazione, come x² + y² = 4.');
-		return { kind: 'function', f, params: paramsOf(letters), ...note() };
+		return { kind: 'function', f, d: slope(form), params: paramsOf(letters), ...note() };
 	} catch (e) {
 		return { kind: 'error', message: e instanceof FormulaError ? e.message : UNREADABLE };
 	}

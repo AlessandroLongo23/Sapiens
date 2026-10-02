@@ -1,10 +1,10 @@
 'use client';
 
 import { useCallback, useDeferredValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode, type Ref } from 'react';
-import { Home, Minus, Plus } from 'lucide-react';
+import { Home, Minus, Plus, Scan } from 'lucide-react';
 import { FONT, FONT_MATH, THIN, VERY_THIN } from '@/components/content/interactive/kit';
 import { axisMarks, italian, type AxisKind } from '@/lib/grafico/assi';
-import { sampleFunction, sampleImplicit, sampleParametric, type Point, type View } from '@/lib/grafico/curva';
+import { sampleFunction, sampleImplicit, sampleParametric, sampleRegion, type Point, type View } from '@/lib/grafico/curva';
 import { HOME, type Camera, type LineDash, type LineWidth } from '@/lib/grafico/documento';
 import { notablePoints, type Notable, type NotableKind } from '@/lib/grafico/notevoli';
 import { cn } from '@/lib/utils/cn';
@@ -19,8 +19,27 @@ import { cn } from '@/lib/utils/cn';
  * click on a curve or on a notable point leaves a label there until it is clicked again.
  */
 
-/** What a curve is: y = f(x), F(x, y) = 0, or (x(t), y(t)) for t in a range. */
-export type PlaneShape = { f: (x: number) => number } | { implicit: (x: number, y: number) => number } | { parametric: { x: (t: number) => number; y: (t: number) => number; t0: number; t1: number } };
+/** What a curve is: y = f(x), F(x, y) = 0, (x(t), y(t)) for t in a range, or the region where F(x, y) < 0. */
+export type PlaneShape =
+	| { f: (x: number) => number; /** The tangent at this x, with its slope on the plane. */ tangent?: { x: number; slope: number }; /** The area between the curve and the x axis, from a to b, with what to write in it. */ area?: { a: number; b: number; text: string } }
+	| { implicit: (x: number, y: number) => number }
+	| { parametric: { x: (t: number) => number; y: (t: number) => number; t0: number; t1: number } }
+	| { region: (x: number, y: number) => number; strict: boolean };
+
+/** A point on the plane that is not a curve's: a point the student wrote, the foot of a tangent, an end of an area. */
+export interface PlaneMark {
+	id: string;
+	at: Point;
+	color: string;
+	/** Its letter, beside it. */
+	name?: string;
+	/** Written in a label beside it: the slope of a tangent. */
+	text?: string;
+	/** Given, the point can be dragged: it gets where the pointer is, and decides where it goes. */
+	onDrag?: (to: Point) => void;
+	/** A dragged point stops on the lines of the grid when it comes near them. */
+	snap?: boolean;
+}
 
 export type PlaneCurve = PlaneShape & {
 	id: string;
@@ -43,6 +62,9 @@ export interface PlaneLook {
 	polar?: 'radians' | 'degrees';
 	/** The marks of the x axis. */
 	xAxis: AxisKind;
+	/** The names written on the axes; x and y when absent. */
+	xName?: string;
+	yName?: string;
 	/**
 	 * What one unit of the plane is worth on the x axis, where the axis is read in another unit: 180/π in degrees, so
 	 * that 90° sits where π/2 does and the picture keeps its shape. 1 when absent.
@@ -57,6 +79,7 @@ export interface PlaneHandle {
 	size: () => { w: number; h: number };
 }
 
+const NO_MARKS: PlaneMark[] = [];
 const DEFAULT_LOOK: PlaneLook = { grid: true, axes: true, numbers: true, xAxis: 'numbers' };
 const MIN_SPAN = 0.002;
 const MAX_SPAN = 200000;
@@ -94,6 +117,8 @@ export function Plane({
 	onCamera,
 	home = HOME,
 	curves,
+	marks = NO_MARKS,
+	onFit,
 	look = DEFAULT_LOOK,
 	notable = true,
 	wheel = 'zoom',
@@ -107,6 +132,9 @@ export function Plane({
 	/** Where the home button and the 0 key go back to. */
 	home?: Camera;
 	curves: PlaneCurve[];
+	marks?: PlaneMark[];
+	/** Given, a button asks for the window that holds the curves. */
+	onFit?: () => void;
 	look?: PlaneLook;
 	/** Marks zeros, turning points and meetings. */
 	notable?: boolean;
@@ -308,8 +336,18 @@ export function Plane({
 		() =>
 			curves.map((c) => {
 				if ('implicit' in c) return sampleImplicit(c.implicit, view, w, h);
+				// a region is drawn by its edge, where its margin is zero, and filled apart
+				if ('region' in c) return sampleImplicit(c.region, view, w, h);
 				if ('parametric' in c) return sampleParametric(c.parametric.x, c.parametric.y, c.parametric.t0, c.parametric.t1, view, w, h);
 				return sampleFunction(c.f, view, w, h);
+			}),
+		[curves, view, w, h]
+	);
+	const fills = useMemo(
+		() =>
+			curves.map((c) => {
+				if ('region' in c) return sampleRegion(c.region, view, w, h);
+				return null;
 			}),
 		[curves, view, w, h]
 	);
@@ -319,6 +357,23 @@ export function Plane({
 	// which a heavy formula (a series of 2000 terms) would otherwise pay twice.
 	const settled = useDeferredValue(view);
 	const points: Notable[][] = useMemo(() => (notable ? notablePoints(curves.map(asFunction), settled) : []), [curves, settled, notable]);
+
+	/** The point of the plane under the pointer, for a mark being dragged: on a line of the grid when it is near one. */
+	const toPlane = (e: { clientX: number; clientY: number }, snap: boolean): Point => {
+		const p = local(e);
+		let x = view.x0 + p.x / sx;
+		let y = view.y1 - p.y / sy;
+		if (snap) {
+			const near = (v: number, lines: number[], scale: number) => {
+				const line = lines.reduce((best, l) => (Math.abs(l - v) < Math.abs(best - v) ? l : best), Infinity);
+				return Math.abs(line - v) * scale < 7 ? line : v;
+			};
+			x = near(x, xMarks.minor, sx);
+			y = near(y, yMarks.minor, sy);
+		}
+		const digits = clamp(Math.ceil(Math.log10(sy)) + 1, 0, 8);
+		return { x: tidyX(x), y: Number(y.toFixed(digits)) };
+	};
 
 	/** Where a curve's letter goes: on the curve, towards the right of the window and clear of its edges. */
 	const nameSpot = (curve: Point[][]): Point | null => {
@@ -393,6 +448,37 @@ export function Plane({
 						</>
 					)}
 
+					{fills.map(
+						(strips, i) =>
+							strips && (
+								<path
+									key={`fill${curves[i].id}`}
+									d={strips.map(([x0, x1, y0, y1]) => `M${X(x0)},${Y(y0)}H${X(x1)}V${Y(y1)}H${X(x0)}Z`).join('')}
+									fill={curves[i].color}
+									fillOpacity={0.16}
+								/>
+							)
+					)}
+					{curves.map((c) => {
+						if (!('f' in c) || !c.area) return null;
+						// the area between the curve and the axis, piece by piece where the function has a value
+						const { a, b } = c.area;
+						const pieces: string[] = [];
+						let run: Point[] = [];
+						const close = () => {
+							if (run.length > 1) pieces.push(`M${X(run[0].x)},${Y(0)}${run.map((p) => `L${X(p.x)},${Y(clamp(p.y, view.y0 - 1, view.y1 + 1))}`).join('')}L${X(run[run.length - 1].x)},${Y(0)}Z`);
+							run = [];
+						};
+						for (let k = 0; k <= 240; k++) {
+							const x = a + ((b - a) * k) / 240;
+							const y = c.f(x);
+							if (Number.isFinite(y)) run.push({ x, y });
+							else close();
+						}
+						close();
+						return <path key={`area${c.id}`} d={pieces.join('')} fill={c.color} fillOpacity={0.2} />;
+					})}
+
 					{/* the axes, with TikZ's arrow tips, when they are in the window */}
 					{look.axes && xAxisIn && (
 						<>
@@ -435,21 +521,41 @@ export function Plane({
 							<g fontFamily={FONT_MATH} fontStyle="italic" fontSize={15}>
 								{xAxisIn && (
 									<text x={w - 8} y={Y(0) - 8} textAnchor="end">
-										x
+										{look.xName ?? 'x'}
 									</text>
 								)}
 								{yAxisIn && (
 									<text x={X(0) + 9} y={14}>
-										y
+										{look.yName ?? 'y'}
 									</text>
 								)}
 							</g>
 						)}
 					</g>
 
-					{paths.map((d, i) => (
-						<path key={curves[i].id} d={d} fill="none" stroke={curves[i].color} strokeWidth={STROKE[curves[i].width ?? 'normal']} strokeDasharray={DASH[curves[i].dash ?? 'solid']} strokeLinejoin="round" strokeLinecap="round" />
-					))}
+					{paths.map((d, i) => {
+						const c = curves[i];
+						// the edge of a region that does not hold it is dashed, as on the blackboard
+						const dash = 'region' in c && c.strict && (c.dash ?? 'solid') === 'solid' ? DASH.dashed : DASH[c.dash ?? 'solid'];
+						return <path key={c.id} d={d} fill="none" stroke={c.color} strokeWidth={STROKE[c.width ?? 'normal']} strokeDasharray={dash} strokeLinejoin="round" strokeLinecap="round" />;
+					})}
+					{curves.map((c) => {
+						if (!('f' in c) || !c.tangent) return null;
+						const { x, slope } = c.tangent;
+						const y = c.f(x);
+						if (!Number.isFinite(y) || !Number.isFinite(slope)) return null;
+						return <line key={`tan${c.id}`} x1={0} y1={Y(y + slope * (view.x0 - x))} x2={w} y2={Y(y + slope * (view.x1 - x))} stroke={c.color} strokeWidth={STROKE.thin} />;
+					})}
+					{curves.map((c) => {
+						if (!('f' in c) || !c.area) return null;
+						const mid = (c.area.a + c.area.b) / 2;
+						const y = c.f(mid);
+						return (
+							<text key={`areaText${c.id}`} x={X(mid)} y={Y(Number.isFinite(y) ? clamp(y / 2, view.y0, view.y1) : 0)} dy="0.32em" textAnchor="middle" fontFamily={FONT} fontSize={14} fill="#000" stroke="#fff" strokeWidth={3.5} paintOrder="stroke" strokeLinejoin="round">
+								{c.area.text}
+							</text>
+						);
+					})}
 
 					{curves.map((c, i) => {
 						const at = c.label ? nameSpot(lines[i]) : null;
@@ -494,6 +600,10 @@ export function Plane({
 					})
 				)}
 
+				{marks.map((m) => (
+					<Mark key={m.id} mark={m} x={X(m.at.x)} y={Y(m.at.y)} w={w} toPlane={toPlane} step={{ x: xMarks.minor.length > 1 ? xMarks.minor[1] - xMarks.minor[0] : 1, y: yMarks.minor.length > 1 ? yMarks.minor[1] - yMarks.minor[0] : 1 }} />
+				))}
+
 				{pinned.map((p, i) => (
 					<PointLabel key={`pin${i}`} x={X(p.at.x)} y={Y(p.at.y)} w={w} color={p.color} name={p.name} text={written(p.at)} />
 				))}
@@ -520,6 +630,11 @@ export function Plane({
 					<PlaneButton label="Torna alla vista iniziale" onClick={() => move(home)}>
 						<Home className="size-4" aria-hidden="true" />
 					</PlaneButton>
+					{onFit && (
+						<PlaneButton label="Inquadra le curve" onClick={onFit}>
+							<Scan className="size-4" aria-hidden="true" />
+						</PlaneButton>
+					)}
 				</div>
 			)}
 		</div>
@@ -598,6 +713,74 @@ function PlaneButton({ label, onClick, children }: { label: string; onClick: () 
 		<button type="button" aria-label={label} title={label} onClick={onClick} className="flex size-10 items-center justify-center text-fg-muted hover:bg-surface-3 hover:text-fg-strong focus-ring">
 			{children}
 		</button>
+	);
+}
+
+/**
+ * A mark: its dot, its letter, its label. One that can be dragged follows the pointer (the plane does not move
+ * under it) and moves by a step of the grid with the arrows.
+ */
+function Mark({ mark, x, y, w, toPlane, step }: { mark: PlaneMark; x: number; y: number; w: number; toPlane: (e: { clientX: number; clientY: number }, snap: boolean) => Point; step: { x: number; y: number } }) {
+	const [held, setHeld] = useState(false);
+	const drag = mark.onDrag;
+	const label = mark.text && (
+		<g pointerEvents="none">
+			<rect x={r2(x + 10 + mark.text.length * 7.6 + 16 > w ? x - 26 - mark.text.length * 7.6 : x + 10)} y={r2(y - 32)} width={r2(mark.text.length * 7.6 + 16)} height={22} rx={4} fill="#fff" stroke="#000" strokeWidth={THIN} />
+			<text x={r2((x + 10 + mark.text.length * 7.6 + 16 > w ? x - 26 - mark.text.length * 7.6 : x + 10) + 8)} y={r2(y - 17)} fontFamily={FONT} fontSize={14} fill="#000">
+				{mark.text}
+			</text>
+		</g>
+	);
+	const name = mark.name && (
+		<text x={x + 8} y={y - 9} fontFamily={FONT_MATH} fontStyle="italic" fontSize={17} fill={mark.color} stroke="#fff" strokeWidth={3.5} paintOrder="stroke" strokeLinejoin="round" pointerEvents="none">
+			{mark.name}
+		</text>
+	);
+	if (!drag)
+		return (
+			<g aria-hidden="true">
+				<circle cx={x} cy={y} r={4.2} fill={mark.color} stroke="#fff" strokeWidth={1} />
+				{name}
+				{label}
+			</g>
+		);
+	const keys = (e: KeyboardEvent<SVGGElement>) => {
+		const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key];
+		if (!d) return;
+		e.preventDefault();
+		e.stopPropagation();
+		const many = e.shiftKey ? 5 : 1;
+		drag({ x: Number((mark.at.x + d[0] * step.x * many).toPrecision(12)), y: Number((mark.at.y + d[1] * step.y * many).toPrecision(12)) });
+	};
+	return (
+		<g
+			role="button"
+			tabIndex={0}
+			aria-label={`${mark.name ? `Punto ${mark.name}` : 'Punto'}: trascinalo, oppure usa le frecce`}
+			className="cursor-grab outline-none active:cursor-grabbing"
+			style={{ touchAction: 'none' }}
+			onPointerDown={(e) => {
+				e.stopPropagation();
+				e.currentTarget.setPointerCapture(e.pointerId);
+				setHeld(true);
+			}}
+			onPointerMove={(e) => {
+				e.stopPropagation();
+				if (held) drag(toPlane(e, !!mark.snap));
+			}}
+			onPointerUp={(e) => {
+				e.stopPropagation();
+				setHeld(false);
+			}}
+			onPointerCancel={() => setHeld(false)}
+			onKeyDown={keys}
+		>
+			<circle cx={x} cy={y} r={16} fill="transparent" data-export="no" />
+			<circle cx={x} cy={y} r={held ? 9 : 7.5} fill={mark.color} fillOpacity={0.18} data-export="no" />
+			<circle cx={x} cy={y} r={4.5} fill={mark.color} stroke="#fff" strokeWidth={1} />
+			{name}
+			{label}
+		</g>
 	);
 }
 

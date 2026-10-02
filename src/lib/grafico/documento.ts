@@ -20,6 +20,12 @@ export interface PlotRow {
 	/** For a curve (x(t), y(t)) or r = f(θ): where t or θ starts and ends. Absent, a whole turn: 0 to 2π, or to 360 in degrees. */
 	t0?: number;
 	t1?: number;
+	/** For a function: the x where its tangent is drawn, as the axis reads it. */
+	tangent?: number;
+	/** For a function: the two ends of the area between the curve and the x axis. */
+	area?: [number, number];
+	/** For a function: a table of its values, from this x and by this step. */
+	table?: { from: number; step: number };
 }
 
 export type SliderSpeed = 'slow' | 'normal' | 'fast';
@@ -44,6 +50,9 @@ export interface PlaneSettings {
 	/** The marks of the x axis: numbers, or fractions of π. In degrees they are degrees. */
 	xAxis: 'numbers' | 'pi';
 	degrees: boolean;
+	/** The names written on the two axes: x and y, or t and s for a graph of physics. */
+	xName: string;
+	yName: string;
 }
 
 /**
@@ -83,7 +92,7 @@ export const COLOR_NAMES: Record<string, string> = {
 };
 
 export const HOME: Camera = { cx: 0, cy: 0, span: 20, stretch: 1 };
-export const DEFAULT_SETTINGS: PlaneSettings = { grid: true, polar: false, axes: true, numbers: true, xAxis: 'numbers', degrees: false };
+export const DEFAULT_SETTINGS: PlaneSettings = { grid: true, polar: false, axes: true, numbers: true, xAxis: 'numbers', degrees: false, xName: 'x', yName: 'y' };
 export const DEFAULT_SLIDER: SliderSpec = { value: 1, min: -10, max: 10, step: 0.1, speed: 'normal', mode: 'bounce' };
 
 /** The first colour of the palette no row has; when all are taken, the one after the last row's. */
@@ -115,9 +124,13 @@ const MODES: SliderMode[] = ['bounce', 'loop', 'once'];
 const MAX_ROWS = 40;
 const MAX_LATEX = 600;
 
+/** What only some rows have: the tangent's x, the ends of the area, the start and step of the table. */
+type RowExtras = { g?: number; i?: [number, number]; v?: [number, number] };
+
 type Packed = {
 	v: 1;
-	r: [string, string, number, number, number, number, (number | null)?, (number | null)?][];
+	r: [string, string, number, number, number, number, (number | null)?, (number | null)?, RowExtras?][];
+	n?: [string, string];
 	s: Record<string, [number, number, number, number, number, number]>;
 	o: [number, number, number, number, number, number?];
 	c: [number, number, number, number];
@@ -142,11 +155,18 @@ export function encodeState(state: PlotState): string {
 		v: 1,
 		r: state.rows.map((r) => {
 			const packed: Packed['r'][number] = [r.latex, r.color, WIDTHS.indexOf(r.width), DASHES.indexOf(r.dash), r.label ? 1 : 0, r.hidden ? 1 : 0];
-			if (r.t0 !== undefined || r.t1 !== undefined) packed.push(r.t0 ?? null, r.t1 ?? null);
+			const extras: RowExtras = {};
+			if (r.tangent !== undefined) extras.g = r.tangent;
+			if (r.area) extras.i = r.area;
+			if (r.table) extras.v = [r.table.from, r.table.step];
+			const more = Object.keys(extras).length > 0;
+			if (more || r.t0 !== undefined || r.t1 !== undefined) packed.push(r.t0 ?? null, r.t1 ?? null);
+			if (more) packed.push(extras);
 			return packed;
 		}),
 		s: Object.fromEntries(Object.entries(state.sliders).map(([name, s]) => [name, [s.value, s.min, s.max, s.step, SPEEDS.indexOf(s.speed), MODES.indexOf(s.mode)]])),
 		o: [state.settings.grid ? 1 : 0, state.settings.axes ? 1 : 0, state.settings.numbers ? 1 : 0, state.settings.xAxis === 'pi' ? 1 : 0, state.settings.degrees ? 1 : 0, state.settings.polar ? 1 : 0],
+		...(state.settings.xName !== 'x' || state.settings.yName !== 'y' ? { n: [state.settings.xName, state.settings.yName] as [string, string] } : {}),
 		c: [r6(state.camera.cx), r6(state.camera.cy), r6(state.camera.span), r6(state.camera.stretch)]
 	};
 	return toBase64Url(JSON.stringify(packed));
@@ -154,6 +174,21 @@ export function encodeState(state: PlotState): string {
 
 const finite = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
 const pick = <T>(list: T[], i: unknown, fallback: T): T => (typeof i === 'number' && list[i] !== undefined ? list[i] : fallback);
+
+/** The name of an axis: a few letters, nothing that could be markup. */
+export function axisName(name: unknown, fallback: string): string {
+	return typeof name === 'string' && /^[\p{L}\p{N}_ ()/°]{1,8}$/u.test(name.trim()) ? name.trim() : fallback;
+}
+
+function rowExtras(e: unknown): Partial<PlotRow> {
+	if (typeof e !== 'object' || e === null) return {};
+	const { g, i, v } = e as RowExtras;
+	return {
+		...(finite(g) ? { tangent: g } : {}),
+		...(Array.isArray(i) && finite(i[0]) && finite(i[1]) ? { area: [i[0], i[1]] as [number, number] } : {}),
+		...(Array.isArray(v) && finite(v[0]) && finite(v[1]) && v[1] > 0 ? { table: { from: v[0], step: v[1] } } : {})
+	};
+}
 
 /** The graph a link carries, or null when the text is not one: a link can be cut short or written by hand. */
 export function decodeState(code: string): PlotState | null {
@@ -171,7 +206,8 @@ export function decodeState(code: string): PlotState | null {
 				label: r[4] === 1,
 				hidden: r[5] === 1,
 				...(finite(r[6]) ? { t0: r[6] } : {}),
-				...(finite(r[7]) ? { t1: r[7] } : {})
+				...(finite(r[7]) ? { t1: r[7] } : {}),
+				...rowExtras(r[8])
 			};
 		});
 		const sliders: Record<string, SliderSpec> = {};
@@ -186,7 +222,7 @@ export function decodeState(code: string): PlotState | null {
 		return {
 			rows,
 			sliders,
-			settings: { grid: o[0] !== 0, axes: o[1] !== 0, numbers: o[2] !== 0, xAxis: o[3] === 1 ? 'pi' : 'numbers', degrees: o[4] === 1, polar: o[5] === 1 },
+			settings: { grid: o[0] !== 0, axes: o[1] !== 0, numbers: o[2] !== 0, xAxis: o[3] === 1 ? 'pi' : 'numbers', degrees: o[4] === 1, polar: o[5] === 1, xName: axisName(p.n?.[0], 'x'), yName: axisName(p.n?.[1], 'y') },
 			camera: { cx: c[0], cy: c[1], span: c[2], stretch: c[3] }
 		};
 	} catch {
@@ -282,6 +318,29 @@ export const EXAMPLES: PlotExample[] = [
 		title: 'Rosa e cardioide',
 		about: 'Due curve che si scrivono in una riga solo in r e θ.',
 		state: stateOf(['r=3\\cos\\left(k\\theta\\right)', 'r=1+\\cos\\left(\\theta\\right)'], { sliders: { k: slider(2, { min: 1, max: 8, step: 1 }) }, settings: { ...DEFAULT_SETTINGS, polar: true }, camera: { cx: 0, cy: 0, span: 10, stretch: 1 } })
+	},
+	{
+		title: 'Funzione a tratti',
+		about: 'Un pezzo per ogni condizione, come nel sistema con la graffa.',
+		state: stateOf(['f\\left(x\\right)=\\begin{cases}x^2 & x<1\\\\ 2-x & x\\ge1\\end{cases}'], { camera: { cx: 0, cy: 1, span: 12, stretch: 1 } })
+	},
+	{
+		title: 'Sistema di disequazioni',
+		about: 'La soluzione è la parte del piano dove le regioni si sovrappongono.',
+		state: stateOf(['y\\le-x+4', 'y>x^2-2', 'x\\ge0'], { camera: { cx: 0, cy: 1, span: 14, stretch: 1 } })
+	},
+	{
+		title: 'Tangente e area',
+		about: 'Trascina il punto di tangenza e gli estremi dell’area.',
+		state: {
+			...stateOf([], { camera: { cx: 1, cy: 1, span: 12, stretch: 1 } }),
+			rows: [{ ...newRow([], 'f\\left(x\\right)=-\\frac{x^2}{2}+2x+1'), tangent: 0, area: [1, 4] }]
+		}
+	},
+	{
+		title: 'Triangolo di punti',
+		about: 'Tre punti con un nome, da trascinare sulla griglia.',
+		state: stateOf(['A=\\left(-3;-1\\right)', 'B=\\left(4;0\\right)', 'C=\\left(1;4\\right)'], { camera: { cx: 0, cy: 1, span: 14, stretch: 1 } })
 	},
 	{
 		title: 'Polinomi di Taylor del seno',

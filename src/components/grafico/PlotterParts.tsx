@@ -5,8 +5,8 @@ import { Check, Copy, Pause, Play, Settings2, Trash2 } from 'lucide-react';
 import { checkboxClass } from '@/components/ui/Field';
 import { Slider } from '@/components/ui/Slider';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
-import { COLOR_NAMES, PALETTE, type LineDash, type LineWidth, type PlaneSettings, type PlotRow, type SliderMode, type SliderSpec, type SliderSpeed } from '@/lib/grafico/documento';
-import { readNumber, withPi } from '@/lib/grafico/assi';
+import { COLOR_NAMES, PALETTE, axisName, type LineDash, type LineWidth, type PlaneSettings, type PlotRow, type SliderMode, type SliderSpec, type SliderSpeed } from '@/lib/grafico/documento';
+import { italian, readNumber, withPi } from '@/lib/grafico/assi';
 import { cn } from '@/lib/utils/cn';
 
 /** The pieces of the plotter's panel: the look of a row, a parameter's slider with its animation, the settings of the plane. */
@@ -128,7 +128,29 @@ const DASHES: { value: LineDash; label: string }[] = [
 ];
 
 /** How a row's curve looks: colour, weight, dash, its letter on the graph; and the row's copy and removal. */
-export function RowStyle({ row, name, onChange, onDuplicate, onRemove }: { row: PlotRow; /** The function's letter, when the row has one. */ name?: string; onChange: (change: Partial<PlotRow>) => void; onDuplicate: () => void; onRemove: () => void }) {
+export function RowStyle({
+	row,
+	name,
+	tools,
+	onChange,
+	onDuplicate,
+	onRemove
+}: {
+	row: PlotRow;
+	/** The function's letter, when the row has one. */
+	name?: string;
+	/** For a function: what its tools start from when they are switched on, the middle of the window. */
+	tools?: { tangent: number; area: [number, number] };
+	onChange: (change: Partial<PlotRow>) => void;
+	onDuplicate: () => void;
+	onRemove: () => void;
+}) {
+	const tool = (on: boolean, label: string, change: Partial<PlotRow>) => (
+		<label className="flex items-center gap-2 text-sm text-fg">
+			<input type="checkbox" className={checkboxClass} checked={on} onChange={() => onChange(change)} />
+			{label}
+		</label>
+	);
 	return (
 		<div className="flex flex-col gap-3 border-t border-edge-soft bg-surface-2 px-3 py-3">
 			<div role="radiogroup" aria-label="Colore della curva" className="flex flex-wrap gap-1.5">
@@ -155,6 +177,20 @@ export function RowStyle({ row, name, onChange, onDuplicate, onRemove }: { row: 
 				<input type="checkbox" className={checkboxClass} checked={row.label && !!name} disabled={!name} onChange={(e) => onChange({ label: e.target.checked })} />
 				{name ? `Scrivi ${name} accanto alla curva` : 'Il nome accanto alla curva (serve una funzione con un nome)'}
 			</label>
+			{tools && (
+				<fieldset className="m-0 flex flex-col gap-2 border-0 border-t border-edge-soft p-0 pt-3">
+					<legend className="sr-only">Strumenti sulla funzione</legend>
+					{tool(row.tangent !== undefined, 'Retta tangente in un punto', { tangent: row.tangent === undefined ? tools.tangent : undefined })}
+					{tool(!!row.area, 'Area tra la curva e l’asse x', { area: row.area ? undefined : tools.area })}
+					<Collapse open={!!row.area}>
+						<div className="grid grid-cols-2 gap-2 pb-1 pl-6">
+							<NumberBox label="da" pi value={row.area?.[0] ?? 0} onChange={(a) => onChange({ area: [a, row.area?.[1] ?? a + 1] })} />
+							<NumberBox label="a" pi value={row.area?.[1] ?? 1} onChange={(b) => onChange({ area: [row.area?.[0] ?? b - 1, b] })} />
+						</div>
+					</Collapse>
+					{tool(!!row.table, 'Tabella dei valori', { table: row.table ? undefined : { from: -3, step: 1 } })}
+				</fieldset>
+			)}
 			<div className="flex gap-2">
 				<button type="button" onClick={onDuplicate} className="flex h-9 items-center gap-1.5 rounded-lg border border-edge bg-surface px-3 text-sm font-medium text-fg-muted hover:border-edge-strong hover:text-fg-strong focus-ring">
 					<Copy className="size-4" aria-hidden="true" />
@@ -165,6 +201,43 @@ export function RowStyle({ row, name, onChange, onDuplicate, onRemove }: { row: 
 					Elimina
 				</button>
 			</div>
+		</div>
+	);
+}
+
+/** The table a student fills in before drawing: x and the function's value, seven rows from a start and by a step. */
+export function ValueTable({ row, name, variable, f, onChange }: { row: PlotRow; name: string; variable: string; f: (x: number) => number; onChange: (table: { from: number; step: number }) => void }) {
+	const { from, step } = row.table ?? { from: -3, step: 1 };
+	const xs = Array.from({ length: 7 }, (_, k) => Number((from + k * step).toPrecision(12)));
+	return (
+		<div className="flex flex-col gap-2 px-3 pb-3">
+			<div className="grid grid-cols-2 gap-2">
+				<NumberBox label={`${variable} parte da`} pi value={from} onChange={(v) => onChange({ from: v, step })} />
+				<NumberBox label="passo" pi value={step} valid={(v) => v > 0} onChange={(v) => onChange({ from, step: v })} />
+			</div>
+			<table className="w-full border-collapse text-sm tabular-nums">
+				<thead>
+					<tr className="border-b border-edge text-fg-subtle">
+						<th scope="col" className="px-2 py-1 text-right font-[KaTeX_Math,serif] font-normal italic">
+							{variable}
+						</th>
+						<th scope="col" className="px-2 py-1 text-right font-[KaTeX_Math,serif] font-normal italic">
+							{name}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{xs.map((x) => {
+						const y = f(x);
+						return (
+							<tr key={x} className="border-b border-edge-soft last:border-0">
+								<td className="px-2 py-1 text-right text-fg">{italian(x, 4)}</td>
+								<td className="px-2 py-1 text-right text-fg-strong">{Number.isFinite(y) ? italian(y, 4) : 'non esiste'}</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
 		</div>
 	);
 }
@@ -275,6 +348,24 @@ export function PlaneSettingsPanel({
 					<ToggleGroup compact label="Segni sull’asse x" options={X_AXIS} value={settings.xAxis} onChange={(xAxis) => onChange({ xAxis })} />
 				</div>
 			)}
+			<div className="flex flex-col gap-2">
+				<p className="label-mono m-0 text-fg-subtle">Nomi degli assi</p>
+				<div className="grid grid-cols-2 gap-2">
+					{(['xName', 'yName'] as const).map((key) => (
+						<label key={key} className="flex min-w-0 flex-col gap-1 text-xs text-fg-subtle">
+							{key === 'xName' ? 'orizzontale' : 'verticale'}
+							<input
+								type="text"
+								maxLength={8}
+								value={settings[key]}
+								onChange={(e) => onChange({ [key]: e.target.value })}
+								onBlur={(e) => onChange({ [key]: axisName(e.target.value, key === 'xName' ? 'x' : 'y') })}
+								className="w-full min-w-0 rounded-lg border border-edge bg-surface px-2 py-1.5 text-sm text-fg shadow-paper outline-none transition focus:border-accent focus:ring-3 focus:ring-accent/20"
+							/>
+						</label>
+					))}
+				</div>
+			</div>
 			<div className="flex flex-col gap-2">
 				<p className="label-mono m-0 text-fg-subtle">Finestra</p>
 				<div className="grid grid-cols-2 gap-2">
