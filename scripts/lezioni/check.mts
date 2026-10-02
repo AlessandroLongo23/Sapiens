@@ -14,6 +14,9 @@ import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import katexModule from 'katex';
 import { parseFlashcards } from '../../src/lib/content/flashcards';
+import { parse as parseLatex } from '@cortex-js/compute-engine/latex-syntax';
+import { parsePlotBlock, readPlotBlock } from '../../src/lib/grafico/blocco';
+import { cleanLatex, type Json } from '../../src/lib/grafico/formula';
 
 const katex = ((katexModule as unknown as { default?: typeof katexModule }).default ?? katexModule) as typeof katexModule;
 
@@ -73,7 +76,13 @@ for (const file of process.argv.slice(2)) {
 	for (const m of text.matchAll(/```interattivo\n([\s\S]*?)```/g)) {
 		if (!/^%\s*nome:\s*\S/m.test(m[1]) || !/^%\s*alt:\s*\S/m.test(m[1])) err('figura interattiva senza "% nome:" o "% alt:"');
 	}
-	const noTikz = text.replace(/```(tikz|interattivo)[\s\S]*?```/g, '');
+	// A plane of the plotter: its lines must be read, its formulas drawn, and every letter must have its slider.
+	for (const m of text.matchAll(/```grafico\n([\s\S]*?)```/g)) {
+		const { plot, errors } = parsePlotBlock(m[1]);
+		const name = /^%\s*nome:\s*(\S+)/m.exec(m[1])?.[1] ?? 'senza nome';
+		for (const e of plot ? readPlotBlock(plot, (latex) => parseLatex(latex) as Json, cleanLatex).errors : errors) err(`grafico ${name}: ${e}`);
+	}
+	const noTikz = text.replace(/```(tikz|interattivo|grafico)[\s\S]*?```/g, '');
 
 	// Math: display first, then inline, each parsed by KaTeX.
 	let rest = noTikz.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex: string) => {

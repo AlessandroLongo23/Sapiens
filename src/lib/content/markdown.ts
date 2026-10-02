@@ -4,6 +4,9 @@ import katex from 'katex';
 import { titleHtml } from './latex';
 import { escapeHtml } from '@/lib/utils/escape';
 import { CHEM_BLOCKS, FIGURE_SCALE, figureUrl, parseFigure, publishedChemSvg, publishedSvg, type ChemBlock } from './figures';
+import { parse as parseLatex } from '@cortex-js/compute-engine/latex-syntax';
+import { parsePlotBlock, readPlotBlock } from '@/lib/grafico/blocco';
+import { cleanLatex, type Json } from '@/lib/grafico/formula';
 
 /**
  * Lesson markdown → HTML, on the server only. Math is typeset with KaTeX at
@@ -45,9 +48,15 @@ function protect(markdown: string) {
 	const math: Placeholder[] = [];
 	const tikz: string[] = [];
 	const chem: { kind: ChemBlock | 'interattivo'; code: string }[] = [];
+	const plots: { code: string; cover: number | null }[] = [];
 	let text = markdown.replace(/```tikz\n([\s\S]+?)```/g, (_, code: string) => {
 		tikz.push(code);
 		return `\n\n<div data-tikz="${tikz.length - 1}"></div>\n\n`;
+	});
+	// A plane right after a TikZ figure takes the figure as its cover.
+	text = text.replace(/(?:<div data-tikz="(\d+)"><\/div>\s*)?```grafico\n([\s\S]+?)```/g, (_, cover: string | undefined, code: string) => {
+		plots.push({ code, cover: cover === undefined ? null : Number(cover) });
+		return `\n\n<div data-plot="${plots.length - 1}"></div>\n\n`;
 	});
 	text = text.replace(CHEM_FENCE, (_, kind: ChemBlock, code: string) => {
 		chem.push({ kind, code });
@@ -62,11 +71,11 @@ function protect(markdown: string) {
 		return `MATHPLACEHOLDER${math.length - 1}END`;
 	});
 	text = text.replace(/\$([^$]+?)\$/g, (m, content: string) => {
-		if (m.includes('MATHPLACEHOLDER') || m.includes('data-tikz') || m.includes('data-chem')) return m;
+		if (m.includes('MATHPLACEHOLDER') || m.includes('data-tikz') || m.includes('data-chem') || m.includes('data-plot')) return m;
 		math.push({ display: false, content: content.trim() });
 		return `MATHPLACEHOLDER${math.length - 1}END`;
 	});
-	return { text, math, tikz, chem };
+	return { text, math, tikz, chem, plots };
 }
 
 const CHEM_FENCE = new RegExp(`\`\`\`(${CHEM_BLOCKS.join('|')})\\n([\\s\\S]+?)\`\`\``, 'g');
@@ -86,7 +95,7 @@ function formula(tex: string, display: boolean): string {
 		: `<span class="formula" data-tex="${source}">${renderTex(tex, false)}</span>`;
 }
 
-function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock | 'interattivo'; code: string }[] = []): string {
+function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock | 'interattivo'; code: string }[] = [], plots: { code: string; cover: number | null }[] = []): string {
 	return html
 		// A heading with a formula got its anchor from the placeholder; it takes the formula's own text, as the table of contents does.
 		.replace(/ id="([^"]*mathplaceholder\d+end[^"]*)"/g, (_, id: string) => ` id="${id.replace(/mathplaceholder(\d+)end/g, (_m, i: string) => slugifyHeading(math[Number(i)].content))}"`)
@@ -95,6 +104,10 @@ function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind
 			return formula(content, display);
 		})
 		.replace(/<div data-tikz="(\d+)"><\/div>/g, (_, i: string) => tikzFigure(tikz[Number(i)]))
+		.replace(/<div data-plot="(\d+)"><\/div>/g, (_, i: string) => {
+			const { code, cover } = plots[Number(i)];
+			return plotFigure(code, cover === null ? null : tikz[cover]);
+		})
 		.replace(/<div data-chem="(\d+)"><\/div>/g, (_, i: string) => {
 			const { kind, code } = chem[Number(i)];
 			return kind === 'interattivo' ? interactiveFigure(code) : chemFigure(kind, code);
@@ -136,7 +149,8 @@ function interactiveFigure(block: string): string {
 	return `<figure class="interactive-figure my-6 flex justify-center" data-interattivo="${escapeHtml(figure.name)}" data-alt="${alt}"><p class="sr-only">${alt}</p></figure>`;
 }
 
-function tikzFigure(block: string): string {
+/** The drawing of a TikZ figure: its published image, or its code for TikZJax when it has not been published yet. */
+function tikzDrawing(block: string): { html: string; image: boolean } {
 	const figure = parseFigure(block);
 	const svg = publishedSvg(figure);
 	const supabase = process.env.PUBLIC_SUPABASE_URL;
@@ -145,9 +159,33 @@ function tikzFigure(block: string): string {
 		const width = Math.round(svg.width * FIGURE_SCALE);
 		const height = Math.round(svg.height * FIGURE_SCALE);
 		// Inline width: the lesson stylesheet sizes every img at 33%, which would override the attribute.
-		return `<figure class="tikz-container my-6 flex justify-center"><img src="${figureUrl(supabase, svg.file)}" alt="${alt}" width="${width}" height="${height}" style="width:${width}px" loading="lazy" decoding="async"></figure>`;
+		return { image: true, html: `<img src="${figureUrl(supabase, svg.file)}" alt="${alt}" width="${width}" height="${height}" style="width:${width}px" loading="lazy" decoding="async">` };
 	}
-	return `<div class="tikz-container my-6 flex justify-center"><script type="text/tikz">\n${figure.code}\n</script></div>`;
+	return { image: false, html: `<script type="text/tikz">\n${figure.code}\n</script>` };
+}
+
+function tikzFigure(block: string): string {
+	const { html, image } = tikzDrawing(block);
+	return image ? `<figure class="tikz-container my-6 flex justify-center">${html}</figure>` : `<div class="tikz-container my-6 flex justify-center">${html}</div>`;
+}
+
+/**
+ * A plane of the plotter (```grafico, see lib/grafico/blocco.ts). The figure carries the block with its formulas
+ * already parsed; LessonBody puts the plane in it (utils/plot-figure.ts). After a TikZ figure the plane has that
+ * figure as its cover: the page shows the image, which Google Images indexes and a printed page keeps, and the
+ * button "Prova tu" puts the plane in its place. Alone, the plane comes when the figure scrolls near, and until
+ * then, and for crawlers, the figure holds its description. A block that cannot be read leaves its cover alone.
+ */
+function plotFigure(block: string, cover: string | null): string {
+	const { plot } = parsePlotBlock(block);
+	const fallback = cover === null ? '' : tikzFigure(cover);
+	if (!plot) return fallback;
+	const { read, errors } = readPlotBlock(plot, (latex) => parseLatex(latex) as Json, cleanLatex);
+	if (errors.length) return fallback;
+	const data = escapeHtml(JSON.stringify(read));
+	if (cover === null) return `<figure class="plot-figure my-6 flex flex-col items-center gap-3" data-grafico="${data}"><p class="sr-only">${escapeHtml(plot.alt)}</p></figure>`;
+	const button = `<button type="button" class="plot-try min-h-10 items-center rounded-lg border border-edge-strong bg-surface px-4 text-sm font-medium text-fg-strong shadow-paper transition-colors hover:bg-surface-3 focus-ring disabled:opacity-60 print:hidden" hidden aria-expanded="false">Prova tu</button>`;
+	return `<figure class="plot-figure my-6 flex flex-col items-center gap-3" data-grafico="${data}"><div class="plot-cover tikz-container flex w-full justify-center">${tikzDrawing(cover).html}</div><div class="plot-live w-full" hidden></div>${button}</figure>`;
 }
 
 const ADMONITIONS: Record<string, { color: string; title: string; icon: string }> = {
@@ -226,8 +264,8 @@ for (const rule of ['fence', 'code_block'] as const) {
 const normalize = (markdown: string) => markdown.replace(/\r\n?/g, '\n');
 
 export function renderMarkdown(markdown: string): string {
-	const { text, math, tikz, chem } = protect(normalize(markdown).split('\n').slice(2).join('\n'));
-	return restore(md.render(text), math, tikz, chem);
+	const { text, math, tikz, chem, plots } = protect(normalize(markdown).split('\n').slice(2).join('\n'));
+	return restore(md.render(text), math, tikz, chem, plots);
 }
 
 export interface ContentSection {
