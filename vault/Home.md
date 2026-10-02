@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-01
+aggiornato: 2026-10-02
 tag: [indice]
 ---
 # Sapiens
@@ -23,12 +23,12 @@ Sempre il 30 settembre si è deciso come arriva la risposta aperta negli eserciz
 
 Sempre il 30 settembre si è deciso che le lezioni avranno clip animate con voce, da 1 a 3 minuti per sezione, fatte con un manim a quadretti e dalla stessa pipeline dei video social; si parte da una lezione pilota, che dà anche i primi video di ottobre. Dove stanno le clip (YouTube, player di Sapiens o tutti e due) è da decidere. Vedi [[2026-09-30 Clip animate delle lezioni]].
 
-Il 1° ottobre si è decisa e scritta la tavola periodica: tra gli strumenti, a `/strumenti/tavola-periodica`, con una pagina sua; senza pagine per elemento per ora; ampia come Ptable (famiglie, stato fisico a una temperatura, andamenti periodici, blocchi, isotopi) e con due PDF da stampare; disegnata prima da computer, con la griglia che scorre sul telefono. In produzione dal 1° ottobre (PR #24). Vedi [[2026-10-01 Tavola periodica]] e [[Tavola periodica interattiva]]. Lo stesso giorno la scheda degli elementi ha avuto le foto (96 su 118, da Wikimedia Commons), e si è deciso che gli orbitali avranno una lezione dedicata e un visualizzatore in tre dimensioni: il visualizzatore è uno strumento, a `/strumenti/orbitali-atomici`, con la tabella dei sottolivelli che mostra anche la configurazione elettronica di ogni elemento, e la lezione "Orbitali e numeri quantici", la prima del terzo anno di chimica, è pubblicata con otto figure agganciate ai paragrafi, formulario, flashcard ed esercizi. Tutto in produzione dal 1° ottobre. Vedi [[Orbitali atomici interattivi]].
+Il 1° ottobre si è decisa e scritta la tavola periodica: tra gli strumenti, a `/strumenti/tavola-periodica`, con una pagina sua; senza pagine per elemento per ora; ampia come Ptable (famiglie, stato fisico a una temperatura, andamenti periodici, blocchi, isotopi) e con due PDF da stampare; disegnata prima da computer, con la griglia che scorre sul telefono. In produzione dal 1° ottobre (PR #24). Vedi [[2026-10-01 Tavola periodica]] e [[Tavola periodica interattiva]]. Lo stesso giorno la scheda degli elementi ha avuto le foto (96 su 118, da Wikimedia Commons), e si è deciso che gli orbitali avranno una lezione dedicata e un visualizzatore in tre dimensioni: il visualizzatore è uno strumento, a `/strumenti/orbitali-atomici`, con la tabella dei sottolivelli che mostra anche la configurazione elettronica di ogni elemento, e la lezione "Orbitali e numeri quantici", la prima del terzo anno di chimica, è pubblicata con otto figure agganciate ai paragrafi, formulario, flashcard ed esercizi. Tutto in produzione dal 1° ottobre. Vedi [[Orbitali atomici interattivi]]. Sempre il 1° ottobre si è deciso il grafico di funzioni: il plotter è il piano cartesiano di tutto il sito, disegnato da noi in SVG sul kit e senza librerie di grafici (Desmos e GeoGebra chiedono una licenza per l'uso commerciale); trova i punti notevoli, senza lo studio di funzione; accetta funzioni, equazioni implicite, disequazioni e curve parametriche, a passi; si progetta per telefono e computer insieme. Sul branch `grafico-funzioni`, non pubblicato, lo strumento ha dal 2 ottobre il primo lotto di impostazioni (aspetto delle curve, cursori animati, impostazioni del piano, annulla, link, immagine, esempi, schermo intero) e disegna anche equazioni implicite, curve parametriche e polari, con la griglia polare. Vedi [[Grafico di funzioni]] e [[2026-10-01 Grafico di funzioni]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]], [[Grafico di funzioni]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
@@ -41,10 +41,16 @@ Il 1° ottobre si è decisa e scritta la tavola periodica: tra gli strumenti, a 
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-01 Tavola periodica]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-01 Grafico di funzioni]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-02 Il plotter ha le curve implicite, parametriche e polari prima di uscire]]
+- [[2026-10-01 Il plotter esce a passi e si progetta per telefono e computer insieme]] (superata in parte)
+- [[2026-10-01 Nel plotter si scrivono funzioni, equazioni implicite, disequazioni e curve parametriche]]
+- [[2026-10-01 Il plotter trova i punti notevoli, senza lo studio di funzione]]
+- [[2026-10-01 Il plotter delle funzioni è il primo uso del piano cartesiano del sito]]
+- [[2026-10-01 Il piano cartesiano lo disegniamo noi sul kit, senza librerie di grafici]]
 - [[2026-10-01 Gli orbitali hanno una lezione dedicata e un visualizzatore in tre dimensioni]]
 - [[2026-10-01 Nella scheda degli elementi vanno le foto, i modelli 3D restano per dopo]]
 - [[2026-10-01 La tavola periodica si disegna prima da computer, con la scheda accanto alla griglia]]

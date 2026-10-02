@@ -1,6 +1,6 @@
 ---
 stato: idea
-aggiornato: 2026-09-29
+aggiornato: 2026-10-01
 tag: [idea, strumenti, matematica, fisica]
 ---
 # Grafici e simulazioni interattive
@@ -49,6 +49,9 @@ Ordine proposto prima di farle (Claude): prima il gruppo 1, che riusa il codice 
 
 ## Fisica
 Il 29 settembre 2026, prima del primo lotto di fisica, si è deciso di non usare un motore fisico e di non aggiungere pacchetti: le figure interattive di fisica usano il kit, allargato con un modulo di fisica (vettori, forze, blocchi, molle, carrucole, fili, poi cariche e linee di campo), e i modelli della scuola si disegnano dalle loro formule chiuse, con un integratore scritto a mano dove non ce ne sono. Negli esercizi la figura è una scena disegnata dagli stessi componenti. I grafici di fisica sono statici in TikZ, disegnati come quelli di matematica, finché non c'è il piano cartesiano del kit, che deve avere la stessa identità visiva del TikZ. Vedi [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]].
+
+## Il plotter delle funzioni
+Il 1° ottobre 2026 il piano cartesiano è diventato un prodotto: [[Grafico di funzioni]]. È disegnato da noi sul kit, senza Mafs, JSXGraph o function-plot, e senza Desmos e GeoGebra, che per l'uso commerciale chiedono una licenza. Lo strumento è il primo uso; le figure del gruppo 2 e i grafici di fisica vengono dopo, con lo stesso componente. Vedi [[2026-10-01 Il piano cartesiano lo disegniamo noi sul kit, senza librerie di grafici]] e [[2026-10-01 Il plotter delle funzioni è il primo uso del piano cartesiano del sito]].
 
 ## Dubbi e conflitti
 Il piano cartesiano del gruppo 2 è lo stesso componente che Alessandro il 28 settembre 2026 ha rimandato a una conversazione dedicata: le figure del gruppo 2 aspettano quella.
