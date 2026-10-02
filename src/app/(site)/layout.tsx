@@ -7,7 +7,7 @@ import { getMenuTree } from '@/lib/server/content';
  * the header's level menu, which is the same on every page of the site; the
  * pages under here that need fresh data set their own dynamic rendering.
  */
-export const revalidate = 600;
+export const revalidate = 3600;
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
 	return <Shell tree={await getMenuTree()}>{children}</Shell>;

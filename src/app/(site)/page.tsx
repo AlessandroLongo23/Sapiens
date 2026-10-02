@@ -3,7 +3,7 @@ import { pageMetadata } from '@/lib/seo/page-metadata';
 import { getFlatNodes } from '@/lib/server/content';
 import { HeroSection, type HeroCounts } from '@/components/landing/HeroSection';
 
-export const revalidate = 600;
+export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({ path: '/' });
 

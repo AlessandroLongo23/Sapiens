@@ -6,8 +6,8 @@ import { storedFlashcards, type Flashcard } from '@/lib/content/flashcards';
 /**
  * Server-side access to the content tree.
  *
- * The tree shipped to pages is "light": titles, slugs, descriptions, positions
- * and three booleans per node. Lesson text is loaded separately for the one node
+ * The tree is "light": titles, slugs, descriptions, positions and three
+ * booleans per node. Lesson text is loaded separately for the one node
  * being viewed (`getTopicContent`), so a subject page no longer carries every
  * theory document on the site.
  *
@@ -98,36 +98,17 @@ export async function getContentTree(): Promise<ContentNode[]> {
 }
 
 /**
- * The tree as shipped to the browser: only what cards, navigation and the
- * mega menu read. Sort order is already applied, so `position`, `parent_id`
- * and `updated_at` stay on the server, and false / empty fields are omitted.
- */
-export function slimTree(tree: ContentNode[]): ContentNode[] {
-	return tree.map((node) => {
-		const slim: Partial<ContentNode> = {
-			id: node.id,
-			type: node.type,
-			title: node.title,
-			slug: node.slug,
-			children: slimTree(node.children)
-		};
-		if (node.description) slim.description = node.description;
-		if (node.school_year) slim.school_year = node.school_year;
-		if (node.has_theory) slim.has_theory = true;
-		if (node.has_formulary) slim.has_formulary = true;
-		if (node.has_flashcards) slim.has_flashcards = true;
-		return slim as ContentNode;
-	});
-}
-
-/**
- * The tree every page hands to the shell for the header menu. A content
- * outage costs the menu its levels, not the page: the header falls back to
- * the plain `Materiale` link when the tree comes back empty.
+ * What every page hands to the shell for the header: the levels alone, which
+ * is all the bar and the phone menu draw. The browser fetches the rest from
+ * `/api/node/root` when the level menu or the search needs it. Shipping the
+ * whole tree here put it in the cached copy of every page, so each of them
+ * was rewritten whenever a lesson was published. A content outage costs the
+ * menu its levels, not the page: the header falls back to the plain
+ * `Materiale` link when this comes back empty.
  */
 export async function getMenuTree(): Promise<ContentNode[]> {
 	try {
-		return slimTree(await getContentTree());
+		return (await getContentTree()).map(({ id, type, title, slug, position }) => ({ id, parent_id: null, type, title, slug, position, children: [] }));
 	} catch {
 		return [];
 	}

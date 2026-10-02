@@ -1,6 +1,6 @@
 ---
 stato: in sviluppo
-aggiornato: 2026-09-23
+aggiornato: 2026-10-02
 tag: [tecnica]
 ---
 # Architettura
@@ -11,7 +11,7 @@ tag: [tecnica]
 - Stripe per gli abbonamenti, Resend per le email, Vercel per l'hosting, Vercel Analytics dopo il consenso.
 - OpenAI per [[Sapiens AI]] e per le bozze delle lezioni.
 - Quattro strati: token, token semantici, componenti (`src/components`), schermate (`src/app`). Regole per il codice in `.cursorrules` e `README.md`.
-- Pagine del materiale in ISR, KaTeX sul server.
+- Pagine del materiale in ISR, rigenerate ogni ora, KaTeX sul server. Le pagine portano solo i livelli dell'albero dei contenuti: il menu dei livelli e la ricerca scaricano l'albero intero da `/api/node/root` al primo uso. Dal 2 ottobre 2026, dopo l'avviso di Vercel sul 75% delle scritture ISR del piano gratuito (200.000 al mese, in unità da 8 KB): l'albero pesava circa 526 KB su ogni pagina e ogni rigenerazione riscriveva la pagina intera.
 - Test end-to-end Playwright (desktop, iPhone, Pixel), hook husky prima di commit e push, CI su GitHub, deploy su Vercel solo da commit verdi.
 
 ## Domande aperte

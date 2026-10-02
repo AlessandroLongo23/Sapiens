@@ -12,7 +12,7 @@ import { LinkButton } from '@/components/ui/Button';
 import { TutorList } from '@/components/tutoring/TutorList';
 
 /** The list is public and cached as static HTML, refreshed in the background; filtering happens in the browser from the URL. */
-export const revalidate = 600;
+export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({
 	title: `Ripetizioni private: tutor online e in presenza | ${SITE_NAME}`,
