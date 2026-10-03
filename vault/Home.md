@@ -49,6 +49,9 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
 - [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]
 - [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]
+- [[2026-10-03 Il laboratorio si gioca anche con il controller]]
+- [[2026-10-02 Nel laboratorio prendere e posare sono istantanei, senza il gesto di avvicinamento]]
+- [[2026-10-02 Nel laboratorio il mouse prende e posa, Q ed E usano le mani]]
 - [[2026-10-03 I grafici del plotter si salvano con nome e si mettono nelle note]]
 - [[2026-10-03 Il piano di una lezione dichiara cosa è permesso]]
 - [[2026-10-02 Le parole del plotter stanno in un elenco solo, con i nomi italiani]]
@@ -74,7 +77,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-30 Nella risposta aperta la forma conta solo dove è l'esercizio]]
 - [[2026-09-30 La risposta aperta si scrive con MathLive, con la tastiera di Sapiens o quella del dispositivo]]
 - [[2026-09-30 Ogni livello è una tappa con più tipi di esercizio, e si supera a risposta aperta]]
-- [[2026-09-30 I laboratori devono sembrare un videogioco, in uno stile pittorico e morbido]]
+- [[2026-09-30 I laboratori devono sembrare un videogioco, in uno stile pittorico e morbido]] (superata in parte)
 - [[2026-09-30 Il prototipo dei laboratori usa solo asset con licenza libera]]
 - [[2026-09-30 Gli avatar sono un kit di forme semplici, opachi nel laboratorio e adesivi nel sito]]
 - [[2026-09-30 Nel laboratorio condiviso la postazione è l'unità, per gruppi da 1 a 3]]
