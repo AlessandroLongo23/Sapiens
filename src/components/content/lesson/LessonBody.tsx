@@ -10,6 +10,7 @@ import { processTikzWhenVisible } from '@/lib/utils/tikzjax';
 import { activate3dModels } from '@/lib/utils/molecule3d';
 import { activateInteractives } from '@/lib/utils/interactive';
 import { activatePlots } from '@/lib/utils/plot-figure';
+import { activateCode } from '@/lib/utils/code-figure';
 import type { Prompt } from '@/lib/data/prompts';
 import { FloatingMenu, type MenuPosition } from './FloatingMenu';
 
@@ -58,7 +59,7 @@ function lazyGifs(container: HTMLElement): () => void {
  * The lesson text. The HTML arrives typeset from the server; here the tables
  * get their scroll boxes, GIFs load lazily, TikZ compiles when it scrolls
  * into view, the section under the sticky header is tracked for the table
- * of contents, interactive figures and planes mount when they come near or are asked for, and a text
+ * of contents, interactive figures, planes and code editors mount when they come near or are asked for, and a text
  * selection offers the assistant's actions.
  */
 export function LessonBody({ html }: { html: string }) {
@@ -83,7 +84,9 @@ export function LessonBody({ html }: { html: string }) {
 		const stop3d = activate3dModels(el);
 		const stopInteractives = activateInteractives(el);
 		const stopPlots = activatePlots(el);
+		const stopCode = activateCode(el);
 		return () => {
+			stopCode();
 			stopPlots();
 			stopInteractives();
 			stopGifs();

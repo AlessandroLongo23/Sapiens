@@ -1,6 +1,8 @@
 /** What the editor asks of a language: load it, run a program with the lines typed so far, stop it. python.ts and clang.ts implement it. */
 
-export type Language = 'python' | 'c' | 'cpp';
+import type { Language } from '@/lib/codice/blocco';
+
+export type { Language };
 
 /** What a worker sends while a program runs: printed text, an error's text, a line typed at an input, a matplotlib figure (PNG in base64), turtle operations (JSON). */
 export type ChunkKind = 'out' | 'err' | 'in' | 'image' | 'turtle';

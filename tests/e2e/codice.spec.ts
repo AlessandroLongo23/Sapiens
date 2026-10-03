@@ -240,3 +240,46 @@ test.describe('c and c++ editor', () => {
 		await expect(log(page)).toContainText('42', { timeout: 15_000 });
 	});
 });
+
+test.describe('programs in a lesson', () => {
+	const block = (page: Page, index: number) => page.locator('figure[data-codice]').nth(index);
+
+	test('a block runs, a language tab changes every block, an exercise is checked against its tests', async ({ page }) => {
+		await page.goto('/prova-codice/lezione');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+
+		const example = block(page, 0);
+		await example.scrollIntoViewIfNeeded();
+		await example.getByRole('button', { name: 'Esegui' }).click();
+		await expect(example.getByRole('log')).toContainText('5 al quadrato fa 25', { timeout: 90_000 });
+
+		const exercise = block(page, 2);
+		await exercise.scrollIntoViewIfNeeded();
+		await exercise.getByRole('button', { name: 'Verifica' }).click();
+		await expect(exercise.getByRole('log')).toContainText('1 prova superata su 4', { timeout: 90_000 });
+		await expect(exercise.getByRole('log')).toContainText('Atteso');
+		await exercise.getByRole('button', { name: 'Soluzione' }).click();
+		await exercise.getByRole('button', { name: 'Verifica' }).click();
+		await expect(exercise.getByRole('log')).toContainText('Tutte le 4 prove superate.');
+
+		// the tab of one block is the language of all of them, and the same tests check the C++ program
+		const both = block(page, 1);
+		await both.scrollIntoViewIfNeeded();
+		await both.getByRole('radio', { name: 'C++' }).click();
+		await expect(exercise.locator('.cm-content')).toContainText('#include <iostream>');
+		await exercise.scrollIntoViewIfNeeded();
+		await exercise.getByRole('button', { name: 'Verifica' }).click();
+		await expect(exercise.getByRole('log')).toContainText('1 prova superata su 4', { timeout: 240_000 });
+		await exercise.getByRole('button', { name: 'Soluzione' }).click();
+		await exercise.getByRole('button', { name: 'Verifica' }).click();
+		await expect(exercise.getByRole('log')).toContainText('Tutte le 4 prove superate.');
+
+		await both.scrollIntoViewIfNeeded();
+		await both.getByRole('button', { name: 'Esegui' }).click();
+		await both.getByLabel('Risposta al programma').fill('3');
+		await both.getByLabel('Risposta al programma').press('Enter');
+		await both.getByLabel('Risposta al programma').fill('8');
+		await both.getByLabel('Risposta al programma').press('Enter');
+		await expect(both.getByRole('log')).toContainText('Il più grande è 8');
+	});
+});

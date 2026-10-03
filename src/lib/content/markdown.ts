@@ -7,6 +7,7 @@ import { CHEM_BLOCKS, FIGURE_SCALE, figureUrl, parseFigure, publishedChemSvg, pu
 import { parse as parseLatex } from '@cortex-js/compute-engine/latex-syntax';
 import { parsePlotBlock, readPlotBlock } from '@/lib/grafico/blocco';
 import { cleanLatex, type Json } from '@/lib/grafico/formula';
+import { codeFences, parseCodeBlock } from '@/lib/codice/blocco';
 
 /**
  * Lesson markdown → HTML, on the server only. Math is typeset with KaTeX at
@@ -49,7 +50,14 @@ function protect(markdown: string) {
 	const tikz: string[] = [];
 	const chem: { kind: ChemBlock | 'interattivo'; code: string }[] = [];
 	const plots: { code: string; cover: number | null }[] = [];
-	let text = markdown.replace(/```tikz\n([\s\S]+?)```/g, (_, code: string) => {
+	// Programs first: nothing inside one is a formula or a figure.
+	const codes: string[] = [];
+	let text = markdown;
+	for (const group of codeFences(markdown).reverse()) {
+		codes.push(codeFigure(group.fences));
+		text = `${text.slice(0, group.index)}\n\n<div data-code="${codes.length - 1}"></div>\n\n${text.slice(group.index + group.length)}`;
+	}
+	text = text.replace(/```tikz\n([\s\S]+?)```/g, (_, code: string) => {
 		tikz.push(code);
 		return `\n\n<div data-tikz="${tikz.length - 1}"></div>\n\n`;
 	});
@@ -71,11 +79,11 @@ function protect(markdown: string) {
 		return `MATHPLACEHOLDER${math.length - 1}END`;
 	});
 	text = text.replace(/\$([^$]+?)\$/g, (m, content: string) => {
-		if (m.includes('MATHPLACEHOLDER') || m.includes('data-tikz') || m.includes('data-chem') || m.includes('data-plot')) return m;
+		if (m.includes('MATHPLACEHOLDER') || m.includes('data-tikz') || m.includes('data-chem') || m.includes('data-plot') || m.includes('data-code')) return m;
 		math.push({ display: false, content: content.trim() });
 		return `MATHPLACEHOLDER${math.length - 1}END`;
 	});
-	return { text, math, tikz, chem, plots };
+	return { text, math, tikz, chem, plots, codes };
 }
 
 const CHEM_FENCE = new RegExp(`\`\`\`(${CHEM_BLOCKS.join('|')})\\n([\\s\\S]+?)\`\`\``, 'g');
@@ -95,7 +103,7 @@ function formula(tex: string, display: boolean): string {
 		: `<span class="formula" data-tex="${source}">${renderTex(tex, false)}</span>`;
 }
 
-function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock | 'interattivo'; code: string }[] = [], plots: { code: string; cover: number | null }[] = []): string {
+function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind: ChemBlock | 'interattivo'; code: string }[] = [], plots: { code: string; cover: number | null }[] = [], codes: string[] = []): string {
 	return html
 		// A heading with a formula got its anchor from the placeholder; it takes the formula's own text, as the table of contents does.
 		.replace(/ id="([^"]*mathplaceholder\d+end[^"]*)"/g, (_, id: string) => ` id="${id.replace(/mathplaceholder(\d+)end/g, (_m, i: string) => slugifyHeading(math[Number(i)].content))}"`)
@@ -111,7 +119,8 @@ function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind
 		.replace(/<div data-chem="(\d+)"><\/div>/g, (_, i: string) => {
 			const { kind, code } = chem[Number(i)];
 			return kind === 'interattivo' ? interactiveFigure(code) : chemFigure(kind, code);
-		});
+		})
+		.replace(/<div data-code="(\d+)"><\/div>/g, (_, i: string) => codes[Number(i)]);
 }
 
 /** RDKit draws at screen size; a little larger reads better next to the lesson text. */
@@ -197,6 +206,19 @@ const ADMONITIONS: Record<string, { color: string; title: string; icon: string }
 	info: { color: 'teal', title: 'Info', icon: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z M12 16v-4 M12 8h.01' }
 };
 
+/**
+ * A program of the lesson (```codice, see lib/codice/blocco.ts). The figure carries the block for the editor that
+ * LessonBody puts in it (utils/code-figure.ts); until then, and for crawlers and print, it shows the program as text.
+ * A block that cannot be read is shown as plain code.
+ */
+function codeFigure(fences: { info: string; body: string }[]): string {
+	const { block } = parseCodeBlock(fences);
+	const shown = block ? block.variants[0].code : fences[0].body;
+	const pre = `<pre tabindex="0"><code>${escapeHtml(shown)}</code></pre>`;
+	if (!block) return pre;
+	return `<figure class="code-figure my-6" data-codice="${escapeHtml(JSON.stringify(block))}">${pre}</figure>`;
+}
+
 /** ```ad-note / ad-tip / … fences → callout boxes. The first line, when plain, is the title. */
 function admonitionPlugin(md: MarkdownIt) {
 	md.core.ruler.after('block', 'admonitions', (state: StateCore) => {
@@ -264,8 +286,8 @@ for (const rule of ['fence', 'code_block'] as const) {
 const normalize = (markdown: string) => markdown.replace(/\r\n?/g, '\n');
 
 export function renderMarkdown(markdown: string): string {
-	const { text, math, tikz, chem, plots } = protect(normalize(markdown).split('\n').slice(2).join('\n'));
-	return restore(md.render(text), math, tikz, chem, plots);
+	const { text, math, tikz, chem, plots, codes } = protect(normalize(markdown).split('\n').slice(2).join('\n'));
+	return restore(md.render(text), math, tikz, chem, plots, codes);
 }
 
 export interface ContentSection {

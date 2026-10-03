@@ -2,9 +2,10 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Check, ListChecks, Play, RotateCcw, Square, X } from 'lucide-react';
+import { Check, Lightbulb, ListChecks, Play, RotateCcw, Square, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
+import { tidy, type Test } from '@/lib/codice/blocco';
 import { LANGUAGES, TIME_LIMIT, type Chunk, type Language, type Outcome } from './runtime';
 import { retain, runtimeFor } from './runtimes';
 import type { Stage } from './turtle';
@@ -14,12 +15,6 @@ const Editor = dynamic(() => import('./Editor'), {
 	ssr: false,
 	loading: () => <p className="p-4 text-sm text-fg-subtle">Carico l&apos;editor…</p>
 });
-
-/** A test of an exercise: the lines the program reads and what it must print. */
-export interface Test {
-	input: string;
-	output: string;
-}
 
 /** How a test went: `got` is what the program printed, or why it stopped. */
 interface Verdict {
@@ -86,14 +81,6 @@ function joined(chunks: Chunk[], more: Chunk[]): Chunk[] {
 	return next;
 }
 
-/** What a program printed, as a test compares it: spaces at the end of a line and empty lines at the end do not count. */
-const tidy = (text: string) =>
-	text
-		.split('\n')
-		.map((line) => line.trimEnd())
-		.join('\n')
-		.trimEnd();
-
 /**
  * A program and its console, side by side: write, run, answer the program's questions in the console. With `tests`
  * it is an exercise: "Verifica" runs the program on each test's input and compares what it prints.
@@ -105,19 +92,22 @@ export function Workbench({
 	language,
 	initial,
 	tests,
+	solution,
 	toolbar,
 	compact = false
 }: {
 	language: Language;
 	initial: string;
 	tests?: Test[];
+	/** A program that passes the tests, behind a button. */
+	solution?: string | null;
 	/** At the left of the bar, before the buttons: the trial page puts its menus here. */
 	toolbar?: ReactNode;
-	/** Shorter, for a program inside a lesson. */
+	/** For a program inside a lesson: the console under the editor, each as tall as what it holds. */
 	compact?: boolean;
 }) {
-	/** Counts the times the starting program was put back in the editor, which reads its text only when it is made. */
-	const [loaded, setLoaded] = useState(0);
+	/** The program put in the editor, which reads its text only when it is made: the starting one, or the solution. */
+	const [loaded, setLoaded] = useState({ text: initial, count: 0 });
 	const [phase, setPhase] = useState<Phase>('idle');
 	const [chunks, setChunks] = useState<Chunk[]>([]);
 	/** What is happening before the program starts, like loading numpy or compiling. */
@@ -282,17 +272,18 @@ export function Workbench({
 		if (waiting.current) close('Hai cambiato il programma: eseguilo di nuovo.');
 	};
 
-	const restore = () => {
+	const put = (text: string) => {
 		if (phase !== 'idle') stop();
-		code.current = initial;
-		setEdited(false);
+		code.current = text;
+		setEdited(text !== initial);
 		clear();
-		setLoaded((n) => n + 1);
+		setLoaded(({ count }) => ({ text, count: count + 1 }));
 	};
 
 	useEffect(() => {
 		const node = log.current;
-		if (node) node.scrollTop = node.scrollHeight;
+		// a run is followed at its last line, the tests are read from the first
+		if (node) node.scrollTop = verdicts ? 0 : node.scrollHeight;
 	}, [chunks, phase, verdicts]);
 
 	useEffect(() => {
@@ -307,7 +298,7 @@ export function Workbench({
 	}, []);
 
 	const busy = phase === 'loading' || phase === 'running' || phase === 'checking';
-	const height = compact ? 'lg:h-[22rem]' : 'lg:h-[32rem]';
+
 	const passed = verdicts?.filter((v) => v.passed).length ?? 0;
 
 	return (
@@ -318,9 +309,15 @@ export function Workbench({
 					{status || STATUS[phase]}
 				</p>
 				{edited && phase === 'idle' && (
-					<Button variant="ghost" size="sm" onClick={restore} title="Rimetti il programma di partenza">
+					<Button variant="ghost" size="sm" onClick={() => put(initial)} title="Rimetti il programma di partenza">
 						<RotateCcw className="size-3.5" aria-hidden="true" />
 						<span className="max-sm:sr-only">Ripristina</span>
+					</Button>
+				)}
+				{solution && phase === 'idle' && loaded.text !== solution && (
+					<Button variant="ghost" size="sm" onClick={() => put(solution)} title="Metti la soluzione nell’editor">
+						<Lightbulb className="size-3.5" aria-hidden="true" />
+						<span className="max-sm:sr-only">Soluzione</span>
 					</Button>
 				)}
 				{phase !== 'idle' && (
@@ -340,15 +337,15 @@ export function Workbench({
 					</Button>
 				)}
 			</div>
-			<div className="grid lg:grid-cols-2">
-				<div className={cn('h-[20rem] border-b border-edge lg:border-r lg:border-b-0', compact && 'h-[14rem]', height)} onFocus={() => void runtimeFor(language).load()}>
-					<Editor key={loaded} initial={initial} language={language} label="Programma" onChange={edit} onRun={run} />
+			<div className={cn('grid', !compact && 'lg:grid-cols-2')}>
+				<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : 'h-[20rem] lg:h-[32rem] lg:border-r lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
+					<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" onChange={edit} onRun={run} />
 				</div>
 				<div
 					ref={log}
 					role="log"
 					aria-label="Console"
-					className={cn('h-[16rem] overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', compact && 'h-[12rem]', height)}
+					className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', compact ? 'max-h-[26rem] min-h-[4.5rem]' : 'h-[16rem] lg:h-[32rem]')}
 					onClick={() => field.current?.focus()}
 				>
 					{drawing && <TurtleCanvas onStage={attach} />}
@@ -383,19 +380,20 @@ export function Workbench({
 					{verdicts && tests && (
 						<div className="font-sans whitespace-normal" aria-label="Esito delle prove">
 							{phase === 'idle' && (
-								<p className={cn('mb-3 font-semibold', passed === tests.length ? 'text-ok-fg' : 'text-fg-strong')}>
-									{passed === tests.length ? `Tutte le ${tests.length} prove superate.` : `${passed} prove superate su ${tests.length}.`}
+								<p className={cn('m-0! mb-3! font-semibold', passed === tests.length ? 'text-ok-fg' : 'text-fg-strong')}>
+									{passed === tests.length ? `Tutte le ${tests.length} prove superate.` : passed === 1 ? `1 prova superata su ${tests.length}.` : `${passed} prove superate su ${tests.length}.`}
 								</p>
 							)}
-							<ol className="space-y-2">
+							{/* not a list element: the lesson's own list styles would number it */}
+							<div role="list" className="flex flex-col gap-2">
 								{verdicts.map((verdict, i) => (
-									<li key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
-										<p className={cn('flex items-center gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
+									<div role="listitem" key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
+										<p className={cn('m-0! flex items-center gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
 											{verdict.passed ? <Check className="size-4" aria-hidden="true" /> : <X className="size-4" aria-hidden="true" />}
 											Prova {i + 1}: {verdict.passed ? 'superata' : 'non superata'}
 										</p>
 										{!verdict.passed && (
-											<dl className="mt-2 grid gap-x-3 gap-y-1 text-sm sm:grid-cols-[auto_1fr]">
+											<dl className="m-0! mt-2! grid gap-x-3 gap-y-1 text-sm sm:grid-cols-[auto_1fr] [&>dd]:m-0 [&>dt]:m-0">
 												{tests[i].input !== '' && (
 													<>
 														<dt className="text-fg-subtle">Ingresso</dt>
@@ -408,9 +406,9 @@ export function Workbench({
 												<dd className="font-mono whitespace-pre-wrap text-fg">{verdict.got || '(niente)'}</dd>
 											</dl>
 										)}
-									</li>
+									</div>
 								))}
-							</ol>
+							</div>
 						</div>
 					)}
 				</div>

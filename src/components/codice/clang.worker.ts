@@ -7,6 +7,8 @@
  * throw are compile errors (clang.ts says so in Italian).
  */
 
+import { OUTPUT, compileArgs, compileFiles } from './clang-args';
+
 export type ToCompiler = { id: number; language: 'c' | 'cpp'; source: string };
 export type FromCompiler =
 	| { type: 'ready' }
@@ -22,18 +24,6 @@ interface Clang {
 	): Promise<Record<string, Uint8Array | string>>;
 }
 
-/**
- * Included before every program: stdout is not buffered, so a question printed without a newline is on the screen
- * when the program stops to read the answer.
- */
-const PRELUDE = `#include <stdio.h>
-__attribute__((constructor)) static void sapiens_init(void) { setvbuf(stdout, NULL, _IONBF, 0); }
-`;
-
-const FILE = { c: 'programma.c', cpp: 'programma.cpp' };
-const DRIVER = { c: 'clang', cpp: 'clang++' };
-const FLAGS = { c: ['-std=gnu17'], cpp: ['-std=gnu++20', '-fno-exceptions'] };
-
 const post = (message: FromCompiler) => self.postMessage(message);
 const progress = ({ totalLength, doneLength }: { totalLength: number; doneLength: number }) => post({ type: 'progress', percent: Math.round((100 * doneLength) / totalLength) });
 
@@ -44,12 +34,8 @@ async function compile(clang: Clang, language: 'c' | 'cpp', source: string) {
 		if (bytes) diagnostics += decoder.decode(bytes, { stream: true });
 	};
 	try {
-		const files = await clang.runClang(
-			[DRIVER[language], FILE[language], '-o', 'programma.wasm', '-include', 'sapiens.h', '-Wall', ...FLAGS[language]],
-			{ [FILE[language]]: source, 'sapiens.h': PRELUDE },
-			{ stdout: collect, stderr: collect, fetchProgress: progress }
-		);
-		return { wasm: files['programma.wasm'] as Uint8Array, diagnostics };
+		const files = await clang.runClang(compileArgs(language), compileFiles(language, source), { stdout: collect, stderr: collect, fetchProgress: progress });
+		return { wasm: files[OUTPUT] as Uint8Array, diagnostics };
 	} catch (error) {
 		// a compile error ends Clang with an exit code, and its messages are in `diagnostics`
 		return { wasm: null, diagnostics: diagnostics || String(error) };
