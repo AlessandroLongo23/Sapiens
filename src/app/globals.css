@@ -946,6 +946,11 @@ body {
 .markdown-content code {
 	@apply font-mono text-sm bg-surface-3 px-1.5 py-0.5 rounded text-accent-fg;
 }
+/* Tailwind's prose writes a backtick before and after inline code: in a lesson the code is shown as it is typed. */
+.markdown-content code::before,
+.markdown-content code::after {
+	content: none;
+}
 .markdown-content pre {
 	@apply bg-surface-2 p-4 rounded-md overflow-x-auto mb-6 border border-edge;
 }
