@@ -45,6 +45,8 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-02 Le parole del plotter stanno in un elenco solo, con i nomi italiani]]
+- [[2026-10-02 La geometria analitica sta nel plotter e si costruisce prima con i clic]]
 - [[2026-10-02 Il plotter ha le curve implicite, parametriche e polari prima di uscire]]
 - [[2026-10-01 Il plotter esce a passi e si progetta per telefono e computer insieme]] (superata in parte)
 - [[2026-10-01 Nel plotter si scrivono funzioni, equazioni implicite, disequazioni e curve parametriche]]

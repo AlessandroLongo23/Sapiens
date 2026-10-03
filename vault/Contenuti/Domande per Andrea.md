@@ -288,5 +288,16 @@ Prima lezione del terzo anno di chimica, scritta ma non pubblicata; vedi [[2026-
 - [ ] La frase "il segno conterà quando studierai i legami" anticipa gli orbitali molecolari, che il programma lascia fuori: toglierla?
 - [ ] L'approfondimento dice che la velocità dei puntini è il flusso della probabilità e il momento angolare attorno all'asse, e che non è la velocità misurabile dell'elettrone: detto in modo accettabile per una terza?
 
+## Grafico di funzioni e geometria analitica (2 ottobre 2026)
+Strumento non pubblicato; vedi [[Grafico di funzioni]] e la proposta in [[Geometria analitica nel plotter]].
+- [ ] L'equazione di una retta costruita da due punti si mostra in forma esplicita ($y = mx + q$), implicita ($ax + by + c = 0$) o in tutte e due a scelta?
+- [ ] L'equazione di una circonferenza costruita: sviluppata ($x^2 + y^2 + ax + by + c = 0$) o con centro e raggio in vista?
+- [ ] I nomi degli oggetti: $A, B, C$ per i punti e $r, s, t$ per le rette. Quale lettera per le circonferenze?
+- [ ] L'ampiezza di un angolo costruito è scritta sempre in gradi, con un decimale ($36{,}9°$), anche se il piano usa i radianti per le funzioni. Va bene, o serve anche in radianti?
+- [ ] I punti notevoli del triangolo prendono le lettere $G$ (baricentro), $O$ (circocentro), $I$ (incentro), $H$ (ortocentro). Sono quelle dei libri che usi?
+- [ ] I nomi dei comandi che si scrivono nel plotter: `retta`, `segmento`, `semiretta`, `parallela`, `perpendicolare`, `asse`, `bisettrice`, `tangente`, `circonferenza`, `puntomedio`, `intersezione`, `baricentro`, `poligono`, `distanza`, `angolo`, `pendenza`; per i numeri `resto`, `mcd`, `mcm`, `binomiale`, `arrotonda`. Vanno bene, o i libri usano altre parole (per esempio "mediana", "altezza" come comandi a parte)?
+- [ ] Le successioni partono da $a_0$ o da $a_1$? Il plotter accetta tutte e due, e disegna quella con il termine generale da $n = 0$. Negli esempi e nelle lezioni quale usiamo?
+- [ ] Nella funzione integrale la variabile dentro l'integrale è $t$: $F(x) = \int_0^x f(t)\,dt$. Va bene come esempio?
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]
