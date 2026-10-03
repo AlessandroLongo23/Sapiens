@@ -13,6 +13,8 @@ import { adminClient } from './supabase';
 const TABLES = [
 	['notebooks', 'user_id'],
 	['notes', 'user_id'],
+	['plots', 'user_id'],
+	['programs', 'user_id'],
 	['note_stickers', 'user_id'],
 	['cover_stickers', 'user_id'],
 	['diary_entries', 'user_id'],

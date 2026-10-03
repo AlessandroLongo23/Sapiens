@@ -2,9 +2,9 @@
 
 ## Un editor che esegue i programmi nel browser
 
-Questo strumento è un editor di codice online: scrivi un programma a sinistra, premi "Esegui" e vedi a destra, nella console, quello che il programma stampa. Funziona con tre linguaggi, Python, C e C++, e non c'è niente da installare: il programma gira dentro il tuo browser, sul tuo computer, e il codice che scrivi non viene mandato a nessun server.
+Questo strumento è un editor di codice online: scrivi un programma a sinistra, premi "Esegui" e vedi a destra, nella console, quello che il programma stampa. Funziona con Python, C, C++ e JavaScript, più le pagine web in HTML e CSS, e non c'è niente da installare: il programma gira dentro il tuo browser, sul tuo computer, e il codice che scrivi non viene mandato a nessun server.
 
-La prima volta che esegui un programma il browser scarica il linguaggio: Python è leggero, mentre per C e C++ il compilatore pesa circa 20 MB e ci vuole un po' di più. Dalla seconda volta è già lì.
+La prima volta che esegui un programma il browser scarica il linguaggio: Python è leggero, mentre per C e C++ il compilatore pesa circa 20 MB e ci vuole un po' di più. Dalla seconda volta è già lì. JavaScript e le pagine web non scaricano niente: li esegue il browser.
 
 Nel menu accanto al linguaggio trovi alcuni programmi di esempio, da eseguire così come sono e poi da cambiare. La scorciatoia per eseguire è Ctrl+Invio, oppure ⌘+Invio sul Mac.
 
@@ -48,9 +48,43 @@ In C++ non ci sono le eccezioni
 
 Gli errori che succedono mentre il programma gira sono detti in italiano: una divisione intera per zero, un accesso alla memoria fuori dai limiti (di solito un indice sbagliato in un vettore, o un puntatore non valido), una ricorsione che non finisce.
 
+## JavaScript
+
+Con "JavaScript" scrivi un programma con la console, come in Python: `console.log()` stampa, `prompt()` fa una domanda e legge la risposta dalla console, `alert()` scrive un messaggio. Un errore dice la riga in cui è successo.
+
+```ad-example
+Leggere un numero
+    const n = Number(prompt("Quanti anni hai?"));
+    console.log("Tra dieci anni ne avrai", n + 10);
+
+`prompt()` restituisce sempre un testo: `Number()` lo trasforma in un numero.
+```
+
+Questo JavaScript non ha una pagina: `document` non esiste. Per lavorare con una pagina scegli "Pagina web".
+
+## Pagine web: HTML, CSS e JavaScript
+
+Con "Pagina web" l'editor ha tre file, `index.html`, `style.css` e `script.js`, e a destra la pagina che ne esce. Finché la pagina non ha script, l'anteprima si aggiorna da sola mentre scrivi; quando c'è del JavaScript si aggiorna con "Esegui", così un `alert()` non si apre a ogni pausa.
+
+I tre file si collegano come in una pagina vera. Nella `head` di `index.html` va la riga che carica il foglio di stile, e prima di `</body>` quella che carica lo script:
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+
+```ad-warning
+Un file non collegato non fa niente
+Se scrivi in `style.css` ma la pagina non ha il `<link>`, lo stile non viene applicato: succede lo stesso con un sito vero. L'editor te lo ricorda sotto l'anteprima.
+```
+
+Sotto l'anteprima compaiono quello che lo script scrive con `console.log()` e i suoi errori, con la riga di `script.js`. Nell'anteprima i link non si aprono, i moduli non vengono inviati e lo script non può scaricare dati da altri siti; le immagini prese dal web con un indirizzo `https` si vedono.
+
+## Salvare i programmi
+
+Con un account, "I miei programmi" salva quello che hai scritto con un nome e te lo fa ritrovare da ogni dispositivo. "Salva con nome" crea un programma nuovo; "Salva" scrive sopra quello che hai caricato. Di una pagina web vengono salvati i tre file insieme. Anche dagli esercizi delle lezioni puoi salvare il tuo programma, e riaprirlo poi qui.
+
 ## Quando un programma non finisce
 
-Un ciclo che non termina è l'errore più comune di chi comincia. L'editor ferma il programma da solo dopo 10 secondi, oppure prima, se il programma ha già stampato più di 100.000 caratteri. Puoi fermarlo tu in ogni momento con il tasto "Ferma".
+Un ciclo che non termina è l'errore più comune di chi comincia. L'editor ferma il programma da solo dopo 10 secondi, oppure prima, se il programma ha già stampato più di 100.000 caratteri. Puoi fermarlo tu in ogni momento con il tasto "Ferma". In una pagina web un ciclo viene fermato dopo 2 secondi, perché lì bloccherebbe l'anteprima.
 
 ```ad-tip
 Se il programma viene fermato
@@ -59,4 +93,4 @@ Guarda la condizione del ciclo e chiediti che cosa la fa diventare falsa. Nella 
 
 ## Che cosa non fa
 
-Non è un ambiente di sviluppo completo: c'è un solo file, non ci sono cartelle, progetti o un terminale, e un programma non può leggere né scrivere file sul tuo computer. Da telefono i programmi si leggono e si eseguono bene, ma per scriverne di lunghi serve una tastiera. Il programma che scrivi non viene salvato: se ti serve, copialo prima di chiudere la pagina.
+Non è un ambiente di sviluppo completo: un programma è un solo file e una pagina web ne ha tre, non ci sono cartelle, progetti o un terminale, e un programma non può leggere né scrivere file sul tuo computer. Da telefono i programmi si leggono e si eseguono bene, ma per scriverne di lunghi serve una tastiera. Senza un account il programma che scrivi non viene salvato: se ti serve, copialo prima di chiudere la pagina.

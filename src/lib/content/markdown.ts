@@ -219,7 +219,7 @@ const ADMONITIONS: Record<string, { color: string; title: string; icon: string }
  */
 function codeFigure(fences: { info: string; body: string }[]): string {
 	const { block } = parseCodeBlock(fences);
-	const shown = block ? block.variants[0].code : fences[0].body;
+	const shown = block?.page ? block.page.files.html : block ? block.variants[0].code : fences[0].body;
 	const pre = `<pre tabindex="0"><code>${escapeHtml(shown)}</code></pre>`;
 	if (!block) return pre;
 	return `<figure class="code-figure my-6" data-codice="${escapeHtml(JSON.stringify(block))}">${pre}</figure>`;

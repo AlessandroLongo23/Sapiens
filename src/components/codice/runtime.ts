@@ -60,7 +60,7 @@ export interface Runtime {
 /** A program still running after this long is taken for a loop that never ends. */
 export const TIME_LIMIT = 10_000;
 
-export const LANGUAGES: Record<Language, string> = { python: 'Python', c: 'C', cpp: 'C++' };
+export const LANGUAGES: Record<Language, string> = { python: 'Python', c: 'C', cpp: 'C++', javascript: 'JavaScript' };
 /** A program printing in a loop is stopped here; the page would not survive much more. */
 export const OUTPUT_LIMIT = 100_000;
 

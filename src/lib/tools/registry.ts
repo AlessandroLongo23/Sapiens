@@ -972,12 +972,12 @@ export const TOOLS: ToolMeta[] = [
 	{
 		slug: 'editor-di-codice',
 		title: 'Editor di codice',
-		lead: 'Scrivi un programma in Python, C o C++ ed eseguilo nel browser, senza installare nulla: rispondi alle sue domande nella console, disegna con la tartaruga, traccia grafici.',
-		description: 'Editor di codice online per Python, C e C++: scrivi ed esegui i programmi nel browser, con input da tastiera, tartaruga, numpy e matplotlib. Gratis, senza installare nulla.',
+		lead: 'Scrivi un programma in Python, C, C++ o JavaScript, oppure una pagina web con HTML e CSS, ed eseguilo nel browser senza installare nulla. Con un account salvi i tuoi programmi e li ritrovi.',
+		description: 'Editor di codice online per Python, C, C++, JavaScript, HTML e CSS: scrivi ed esegui i programmi nel browser, con anteprima della pagina web, input da tastiera, tartaruga, numpy e matplotlib. Gratis.',
 		category: 'informatica',
 		related: ['convertitore-binario', 'calcolatrice-binaria', 'tabelle-di-verita', 'convertitore-ascii', 'complemento-a-due'],
 		sample: '\\texttt{print("ciao")}',
-		keywords: ['compilatore online', 'python online', 'c++ online', 'compilatore c online', 'interprete python', 'eseguire python', 'programmare', 'ide online', 'turtle', 'tartaruga', 'matplotlib', 'numpy'],
+		keywords: ['compilatore online', 'python online', 'c++ online', 'compilatore c online', 'javascript online', 'editor html online', 'html css javascript online', 'interprete python', 'eseguire python', 'programmare', 'ide online', 'turtle', 'tartaruga', 'matplotlib', 'numpy'],
 		ownPage: true
 	},
 	{

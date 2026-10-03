@@ -1,6 +1,6 @@
 # Prova dei programmi nelle lezioni
 
-Questa pagina prova i blocchi `codice`: un esempio da eseguire, lo stesso programma in tre linguaggi, un esercizio con le prove.
+Questa pagina prova i blocchi `codice`: un esempio da eseguire, lo stesso programma in tre linguaggi, un esercizio con le prove, un esercizio in JavaScript e una pagina web con i suoi controlli.
 
 ## Un programma da eseguire
 
@@ -150,5 +150,84 @@ int main(void) {
 
     printf("%d\n", somma);
     return 0;
+}
+```
+
+## Un esercizio in JavaScript
+
+Il programma legge un numero con `prompt()` e scrive con `console.log()` se è pari o dispari.
+
+```codice javascript
+const n = Number(prompt("Numero?"));
+// scrivi qui
+%% soluzione
+const n = Number(prompt("Numero?"));
+if (n % 2 === 0) {
+    console.log("pari");
+} else {
+    console.log("dispari");
+}
+%% prova
+4
+%% stampa
+pari
+%% prova
+7
+%% stampa
+dispari
+```
+
+## Una pagina web
+
+La pagina ha un titolo e un elenco. Scrivi "Le mie materie" nel titolo, aggiungi una terza voce all'elenco e fai diventare il titolo blu nel foglio di stile.
+
+```codice html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Materie</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1></h1>
+    <ul>
+        <li>Matematica</li>
+        <li>Informatica</li>
+    </ul>
+</body>
+</html>
+%% soluzione
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Materie</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Le mie materie</h1>
+    <ul>
+        <li>Matematica</li>
+        <li>Informatica</li>
+        <li>Fisica</li>
+    </ul>
+</body>
+</html>
+%% controllo Il titolo dice "Le mie materie"
+h1 | testo = Le mie materie
+%% controllo L'elenco ha tre voci
+ul > li | quanti = 3
+%% controllo Il titolo è blu
+h1 | stile color = blue
+```
+
+```codice css
+h1 {
+    color: black;
+}
+%% soluzione
+h1 {
+    color: blue;
 }
 ```

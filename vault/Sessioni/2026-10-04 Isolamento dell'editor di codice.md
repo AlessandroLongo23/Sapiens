@@ -17,6 +17,14 @@ Sessione della notte tra il 3 e il 4 ottobre 2026, seguito di [[2026-10-03 Edito
 - Le intestazioni di `next.config.ts` sostituiscono quelle con lo stesso nome messe da una rotta: la rotta dell'iframe va esclusa dalla regola generale.
 - In sviluppo `request.nextUrl.origin` non segue l'intestazione `Host`: la rotta legge l'host dalla richiesta.
 
+## Poi: JavaScript, pagine web, programmi salvati
+Dopo l'isolamento Alessandro ha chiesto HTML, CSS e JavaScript per la programmazione web, e un sistema di file salvati come quello del plotter. Fatti nella stessa sessione, in un secondo branch sopra quello dell'isolamento: vedi [[2026-10-04 L'editor di codice ha anche JavaScript e le pagine web]], [[2026-10-04 I programmi dell'editor si salvano con nome, come i grafici]] e le due sezioni nuove di [[Editor di codice]].
+
+Scoperto strada facendo:
+- Firefox e WebKit non passano al listener dell'errore il valore lanciato da un worker: il segnale di "serve una riga" non si riconosce dal valore, quindi il worker tiene da sé il motivo dello stop.
+- Uno script caricato da un'altra origine senza `crossorigin` ha gli errori muti ("Script error."): lo script dell'anteprima va caricato con `crossorigin`.
+- `document.open()` toglie tutti i listener della finestra: lo script dell'anteprima li rimette dopo aver scritto la pagina dello studente.
+
 ## Verifiche
 Scritte nella sezione "Controlli" di [[Editor di codice]] e nel messaggio della PR.
 
