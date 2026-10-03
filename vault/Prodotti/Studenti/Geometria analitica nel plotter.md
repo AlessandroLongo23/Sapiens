@@ -24,7 +24,7 @@ Dal 2 ottobre 2026 il primo giro è scritto sul branch `grafico-funzioni`; dal 3
 - Con il mouse su uno strumento, o con il fuoco da tastiera, una scheda accanto alla barra dice cosa fa e mostra un filmato di pochi secondi dello strumento al lavoro. I dodici filmati sono in `public/grafico/geometria`, ciascuno in WebM (VP9), MP4 (H.264) e con un'immagine JPG, 640 × 400, tra 14 e 64 kB l'uno, con il nome che dice cosa mostrano (`retta-per-due-punti.mp4`). Li registra `scripts/grafico/record-tools.mjs` con Playwright e ffmpeg dalla pagina di prova: vanno registrati di nuovo quando cambia l'aspetto del piano. Su telefono la scheda non c'è: non c'è il passaggio del mouse.
 - `tests/unit/geometria.test.mjs` (8 test) e uno in `grafico.test.mjs` per il link. Provato con Playwright su Chromium e WebKit a 1440 px, anche in tema scuro; su telefono solo uno screenshot a 390 px, senza toccare il piano.
 
-Sempre il 2 ottobre 2026, non committato, il secondo giro: altri dieci strumenti, ventidue in tutto.
+Sempre il 2 ottobre 2026 il secondo giro: altri dieci strumenti, ventidue in tutto.
 - Punti notevoli del triangolo (tre vertici o un triangolo, poi la scelta tra baricentro, circocentro, incentro e ortocentro, con le lettere $G$, $O$, $I$, $H$ se sono libere), semiretta, vettore (componenti e modulo), bisettrice (tre punti con il vertice per secondo, oppure due rette, e allora sono due), tangenti (a una circonferenza, a una conica, al grafico di una funzione: una nel punto della curva, due da un punto esterno, nessuna da dentro), circonferenza di centro e raggio (il raggio si scrive in un campo ai piedi del piano), compasso (un segmento o due punti danno il raggio, poi il centro), poligono (i vertici, e si chiude tornando sul primo: area e perimetro, con il nome triangolo o quadrilatero), angolo (tre punti o due rette; l'arco e l'ampiezza sul piano, il quadratino per l'angolo retto), pendenza (il gradino di una unità con $m$ accanto).
 - La barra ha sette bottoni, uno per gruppo: muovi, punti, rette e segmenti e vettori, rette da una condizione, circonferenze, poligoni, misure. Ogni bottone mostra lo strumento del gruppo usato per ultimo; un clic lo prende e apre l'elenco degli altri, con il nome. Un angolino segna i gruppi con più strumenti.
 - Due strumenti chiedono qualcosa che non è un clic: il raggio da scrivere e il punto notevole da scegliere. Il campo e i bottoni stanno nella riga ai piedi del piano.
@@ -32,7 +32,7 @@ Sempre il 2 ottobre 2026, non committato, il secondo giro: altri dieci strumenti
 - I filmati sono ventidue, 2 MB in tutto.
 - `tests/unit/geometria.test.mjs`: 14 test.
 
-Sempre il 2 ottobre 2026, non committato: gli oggetti si creano anche scrivendo ([[2026-10-02 Le parole del plotter stanno in un elenco solo, con i nomi italiani]]).
+Sempre il 2 ottobre 2026: gli oggetti si creano anche scrivendo ([[2026-10-02 Le parole del plotter stanno in un elenco solo, con i nomi italiani]]).
 - Ventuno comandi, con il punto e virgola tra gli argomenti: `retta(A; B)`, `segmento`, `semiretta`, `vettore`, `parallela(r; A)`, `perpendicolare(r; A)`, `asse(A; B)`, `bisettrice(A; B; C)` o `bisettrice(r; s)`, `tangente(γ; A)` o `tangente(f; A)`, `circonferenza(C; A)`, `circonferenza(C; 3)`, `circonferenza(A; B; C)`, `compasso(A; B; C)`, `puntomedio(A; B)`, `intersezione(r; s)`, `baricentro`, `circocentro`, `incentro`, `ortocentro`, `poligono(A; B; C; …)`, `distanza`, `angolo`, `pendenza(r)`. Il tipo degli argomenti sceglie il modo: un punto e un numero danno la circonferenza dal raggio. Dove l'ordine non conta si accettano tutti e due (`parallela(A; r)`).
 - Un argomento è il nome di un'altra riga: un punto ($A$), una funzione con un nome ($f$), una retta o una circonferenza costruita ($r$, $\gamma$, che si scrive `gamma`). Un raggio è un numero scritto come una formula senza lettere: $3$, $2{,}5$, $\sqrt{2}$.
 - Mentre si scrive, la riga dice cosa manca ("Scrivi retta(A; B).", "Non c'è un oggetto C") oppure cosa farà Invio ("Premi Invio per creare: retta per A e B."), e l'oggetto si vede sul piano in grigio tratteggiato.
@@ -154,7 +154,7 @@ Segmento di lunghezza data, poligono regolare, poligono rigido, archi e settori,
 ## Modi nelle lezioni
 Proposta di Alessandro, 2 ottobre 2026: montato in una lezione, il componente si limita a un insieme di strumenti o a una categoria di ingressi (solo funzioni, solo geometria, tutti e due).
 
-Parere di Claude, da confermare. Sì, ma come elenco di permessi e non come tre modi fissi. Tre modi non bastano a una lezione: quella sulla distanza punto-retta vuole solo "punto", "retta per due punti" e "distanza", non tutta la geometria. Il piano di una lezione dichiara quattro cose:
+Confermato da Alessandro il 3 ottobre 2026: [[2026-10-03 Il piano di una lezione dichiara cosa è permesso]]. Il parere di Claude era: sì, ma come elenco di permessi e non come tre modi fissi. Tre modi non bastano a una lezione: quella sulla distanza punto-retta vuole solo "punto", "retta per due punti" e "distanza", non tutta la geometria. Il piano di una lezione dichiara quattro cose:
 - le righe di partenza, e quali sono bloccate (lo studente non le cambia né le toglie);
 - gli strumenti della barra, per nome; nessuno vuol dire niente barra;
 - se si possono aggiungere righe scritte, e di che tipo (funzioni, equazioni, punti);

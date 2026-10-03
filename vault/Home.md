@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-02
+aggiornato: 2026-10-03
 tag: [indice]
 ---
 # Sapiens
@@ -45,6 +45,8 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-03 I grafici del plotter si salvano con nome e si mettono nelle note]]
+- [[2026-10-03 Il piano di una lezione dichiara cosa è permesso]]
 - [[2026-10-02 Le parole del plotter stanno in un elenco solo, con i nomi italiani]]
 - [[2026-10-02 La geometria analitica sta nel plotter e si costruisce prima con i clic]]
 - [[2026-10-02 Il plotter ha le curve implicite, parametriche e polari prima di uscire]]
