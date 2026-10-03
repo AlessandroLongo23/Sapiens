@@ -1,6 +1,7 @@
+import { spawn } from './sandbox-worker';
 import { TIME_LIMIT, type FromRunner, type Job, type Listeners, type Outcome, type Result, type Runtime, type ToRunner } from './runtime';
 
-/** The page's side of the Python worker (python.worker.ts): starts it, runs a program, ends it when it takes too long. */
+/** The sandbox's side of the Python worker (python.worker.ts): starts it, runs a program, ends it when it takes too long. */
 
 interface Run extends Listeners {
 	id: number;
@@ -17,7 +18,7 @@ export class Python implements Runtime {
 
 	load(): Promise<boolean> {
 		if (this.loading) return this.loading;
-		const worker = new Worker(new URL('./python.worker.ts', import.meta.url), { type: 'module' });
+		const worker = spawn('python');
 		this.worker = worker;
 		this.loading = new Promise((resolve) => {
 			worker.addEventListener('message', ({ data }: MessageEvent<FromRunner>) => {

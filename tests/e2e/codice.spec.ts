@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { createTestUser, deleteTestUser, gotoHydrated, loginViaModal, supabaseAdmin, type TestUser } from './helpers';
 
 /**
  * The code editor on its page among the tools (src/components/codice): Python run in the browser by Pyodide, C and C++
@@ -283,5 +284,66 @@ test.describe('programs in a lesson', () => {
 		await both.getByLabel('Risposta al programma').fill('8');
 		await both.getByLabel('Risposta al programma').press('Enter');
 		await expect(both.getByRole('log')).toContainText('Il più grande è 8');
+	});
+});
+
+/**
+ * A program is somebody's code: the student's own, or code a classmate told them to paste. It must not be able to do
+ * on the site what the student can: read the account, write in the Zaino.
+ */
+test.describe('a program and the account of who runs it', () => {
+	let user: TestUser | null = null;
+	test.beforeAll(async () => {
+		user = await createTestUser('codice');
+	});
+	test.afterAll(() => deleteTestUser(user));
+
+	test('a Python program cannot read or write as the signed-in student', async ({ page, baseURL }) => {
+		await gotoHydrated(page, '/');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+		await loginViaModal(page, user!);
+		// signing in refreshes the page, which in Firefox can cut a navigation started right after
+		await expect(() => open(page)).toPass({ timeout: 30_000 });
+		// the page itself is signed in
+		expect(await page.evaluate(() => fetch('/api/me').then((r) => r.json()).then((me) => me.user?.email))).toBe(user!.email);
+
+		await write(
+			page,
+			[
+				'from js import XMLHttpRequest, self',
+				`SITO = "${baseURL}"`,
+				'def chiedi(metodo, indirizzo, corpo=None):',
+				'    try:',
+				'        x = XMLHttpRequest.new()',
+				'        x.open(metodo, SITO + indirizzo, False)',
+				'        x.withCredentials = True',
+				'        if corpo:',
+				'            x.setRequestHeader("Content-Type", "application/json")',
+				'        x.send(corpo)',
+				'        return f"{x.status} {x.responseText[:300]}"',
+				'    except Exception as errore:',
+				'        return "bloccata"',
+				'print("origine:", self.origin)',
+				'print("GET /api/me:", chiedi("GET", "/api/me"))',
+				'print("POST /api/zaino/quaderni:", chiedi("POST", "/api/zaino/quaderni", \'{"title": "Scritto da un programma"}\'))',
+				''
+			].join('\n')
+		);
+		await run(page).click();
+		await expect(log(page)).toContainText('Programma finito', { timeout: 90_000 });
+		const printed = await log(page).innerText();
+		expect(printed).toContain('origine: null');
+		expect(printed).not.toContain(user!.email);
+		expect(printed).not.toContain(user!.id);
+		const { count } = await supabaseAdmin().from('notebooks').select('id', { count: 'exact', head: true }).eq('user_id', user!.id);
+		expect(count).toBe(0);
+	});
+
+	test('the site refuses a write that does not come from one of its pages', async ({ request, baseURL }) => {
+		// what Safari sends from the sandbox carries the session cookie: the server looks at where it comes from
+		for (const origin of ['null', 'https://example.com']) {
+			expect((await request.post('/api/zaino/quaderni', { headers: { Origin: origin }, data: {} })).status()).toBe(403);
+		}
+		expect((await request.post('/api/zaino/quaderni', { headers: { Origin: baseURL! }, data: {} })).status()).toBe(401);
 	});
 });
