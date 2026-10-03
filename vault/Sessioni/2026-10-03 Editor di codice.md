@@ -36,11 +36,19 @@ Alessandro ha chiesto i prossimi passi e se si potessero aggiungere C e C++. Cla
 
 Il dettaglio dei punti da 1 a 4 è in [[Editor di codice]].
 
+## In produzione
+Alessandro ha poi chiesto di chiudere l'editor, mettendolo tra gli strumenti di informatica e togliendo la rotta di prova. Fatto il 3 ottobre 2026 con la PR #30: lo strumento è a `/strumenti/editor-di-codice`, con la sua carta nell'indice e il suo articolo; le rotte `/prova-codice` e `/prova-codice/lezione` non esistono più. `grafico-funzioni`, da cui il branch partiva, era già in master dalla PR #27.
+
+La build di produzione ha mostrato due difetti che in sviluppo non c'erano:
+- Il service worker (`public/sw.js`, attivo solo in produzione) rispondeva dalla cache anche al file da cui parte un web worker. Nella build tutti i worker partono dallo stesso file e si distinguono da quello che segue il `#` dell'indirizzo, che la cache ignora: il secondo worker di una pagina eseguiva il codice del primo. Finora il sito non aveva worker. Ora i file di avvio dei worker vanno alla rete.
+- Il worker che esegue un programma compilato viene caricato un attimo dopo essere stato creato: ora dice quando è pronto, e riceve il programma solo allora.
+
+Verifiche: 65 prove su cinque motori contro la build di produzione in locale, poi 52 prove su quattro motori contro `sapiens-edu.vercel.app`. Su Vercel il compilatore (75 MB) viaggia compresso in 21 MB, più 4 MB di intestazioni e librerie; un programma C++ parte in 10-15 secondi a freddo con la rete vera.
+
 ## Decisioni
 - [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]
 
 ## Rimasto da fare
 - Provare l'editor su un computer di scuola e su un telefono vero, e misurare il peso in rete dalla build pubblicata.
 - Java, e come si scrivono per tre linguaggi le 44 lezioni di programmazione.
-- Il branch `editor-codice` non è stato pubblicato né unito: parte da `grafico-funzioni`, quindi va unito dopo il plotter. Le righe aggiunte a `Home.md` e `Agenda.md` non sono nel branch, perché quei file hanno modifiche non committate di altre sessioni.
 - Le domande aperte di [[Editor di codice]].

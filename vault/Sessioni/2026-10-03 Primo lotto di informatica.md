@@ -6,7 +6,7 @@ tag: [sessione, contenuti, informatica]
 
 Sessione del 3 ottobre 2026, seguito di [[2026-10-03 Editor di codice]]: è il quinto dei cinque passi che Alessandro ha chiesto di fare di seguito. Il lotto copre il primo anno di informatica delle superiori (liceo scientifico, scienze applicate): 7 capitoli, 32 lezioni, tutte senza programmazione. Sono le prime lezioni di informatica complete.
 
-Non è pubblicato: niente è stato scritto nel database e niente è online. Vedi "Stato".
+Scritto, verificato e pubblicato lo stesso giorno: vedi "Stato" e [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]].
 
 ## Cosa si è fatto
 - Prima del lotto (Claude):
@@ -39,14 +39,12 @@ Un dollaro dentro il codice in linea (il `$B$2` dei riferimenti assoluti) veniva
 
 ## Domande aperte
 - Le domande di contenuto sono in [[Domande per Andrea]], nella sezione del primo lotto di informatica; quelle di ogni lezione nelle note `docs/lezioni/informatica/note/`. Ci sono anche i fatti storici e i comportamenti dei programmi scritti a memoria, da verificare prima di pubblicare.
-- Informatica si pubblica gratis come fisica e chimica, o entra nei piani a pagamento? Non è stato discusso, ed è il motivo per cui il lotto non è pubblicato.
 - I livelli con risposta numerica (conversioni, dimensioni, pagine, formule) potrebbero avere la risposta aperta: oggi sono tutti a scelta multipla, perché non sono in `src/lib/exercises/v2/open-answers.ts`.
 - I prerequisiti delle lezioni di informatica non sono scritti: il grafo di `docs/lezioni/prerequisiti.md` è solo di matematica.
 - Le pagine delle materie (`src/lib/content/subject-copy.ts`) non sono state toccate.
-- Le figure sono state viste con l'anteprima di TikZ, non compilate in SVG: lo fa lo script di pubblicazione.
 
 ## Stato
-Scritto e verificato, non pubblicato. Il lotto è sul branch `informatica-primo-anno`, che parte da `editor-codice` (perché la correzione del dollaro tocca gli stessi file del blocco `codice`). Per pubblicare servono, nell'ordine: la decisione di Alessandro, `scripts/lezioni/publish.mts --dir docs/lezioni/informatica` (prima senza `--apply`), il controllo delle lezioni sul sito a 390 px, e l'unione del branch.
+Pubblicato il 3 ottobre 2026. Alessandro, dopo aver visto il lotto scritto, ha chiesto di chiuderlo subito dopo l'editor di codice ([[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]). `scripts/lezioni/publish.mts --dir docs/lezioni/informatica --apply` ha scritto nel database teoria, formulario e flashcard delle 32 lezioni (96 testi) e caricato nel bucket le 62 figure compilate in SVG. Il codice (generatori, collegamento degli esercizi, correzione del dollaro) entra in master con il branch `informatica-primo-anno`, dopo l'editor di codice (PR #30).
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Domande per Andrea]]

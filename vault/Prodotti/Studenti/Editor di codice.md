@@ -1,5 +1,5 @@
 ---
-stato: in sviluppo
+stato: rilasciata
 release: da decidere
 aggiornato: 2026-10-03
 tag: [prodotto, studenti, informatica, lezioni, esercizi]
@@ -9,7 +9,7 @@ tag: [prodotto, studenti, informatica, lezioni, esercizi]
 Un editor con il tasto Esegui dentro le lezioni e gli esercizi di informatica: lo studente scrive un programma in Python, C o C++ e lo fa girare nel browser, senza installare nulla.
 
 ## Stato attuale
-Sul branch `editor-codice` (parte da `grafico-funzioni`, perché usa il meccanismo dei blocchi nelle lezioni), non pubblicato. Due pagine di prova, non collegate e fuori dall'indice: `/prova-codice` (l'editor con il menu dei linguaggi e degli esempi) e `/prova-codice/lezione` (i blocchi dentro il testo di una lezione, da `docs/lezioni/prove/codice.md`).
+In produzione dal 3 ottobre 2026 (PR #30). Lo strumento è a `/strumenti/editor-di-codice`, nella categoria Informatica dell'indice degli strumenti: pagina in `src/app/(site)/strumenti/editor-di-codice/page.tsx` e `src/components/codice/EditorPage.tsx`, articolo in `src/content/strumenti/editor-di-codice.md`, voce in `src/lib/tools/registry.ts`. Nelle lezioni lo monta un blocco `codice`; nessuna lezione pubblicata ne ha ancora uno, perché la programmazione comincia al secondo anno. I blocchi si provano in sviluppo con `/prova-grafico/lezione?file=prove/codice.md`.
 
 ### I tre linguaggi
 - **Python:** Pyodide 314.0.7 (CPython 3.14 in WebAssembly) in un Web Worker, `src/components/codice/python.worker.ts`. La parte in Python sta in `public/codice/`: `sapiens.py` esegue il programma, `turtle.py` è la tartaruga, `sapiens_grafici.py` è il backend di matplotlib.
@@ -43,9 +43,14 @@ Un blocco `codice` nel markdown della lezione monta l'editor (`src/lib/codice/bl
 - `scripts/lezioni/check.mts` legge i blocchi `codice` e segnala quelli scritti male.
 - `scripts/codice/verifica.mts` esegue davvero le soluzioni sulle loro prove, nei tre linguaggi, in Node con lo stesso Python e lo stesso Clang del sito; avvisa se il programma di partenza supera già tutte le prove.
 - `tests/unit/codice.test.mjs`: 10 prove sul formato del blocco e sul motore Python.
-- `tests/e2e/codice.spec.ts`: 14 prove nel browser. Il 3 ottobre 2026 passano su Chromium, WebKit, Firefox, iPhone e Pixel emulati, sul server di sviluppo.
+- `tests/e2e/codice.spec.ts`: 14 prove nel browser. Il 3 ottobre 2026 passano su Chromium, WebKit, Firefox, iPhone e Pixel emulati, in sviluppo e contro la build di produzione (dove la prova del blocco nelle lezioni viene saltata, perché la pagina di prova esiste solo in sviluppo), e su quattro motori contro il sito pubblicato.
 
-Non provato: un telefono vero, un computer di scuola, la build di produzione, una rete lenta.
+Non provato: un telefono vero, un computer di scuola, una rete lenta.
+
+### Cosa ha mostrato la produzione
+- Il service worker del sito (`public/sw.js`) rispondeva dalla cache al file da cui parte un web worker, e così il secondo worker di una pagina eseguiva il codice del primo. Ora quei file vanno alla rete. Vale per ogni worker futuro del sito.
+- Il worker che esegue un programma compilato dice quando è pronto prima di ricevere il programma.
+- Su Vercel il compilatore viaggia compresso in 21 MB, più 4 MB di intestazioni e librerie. Con la rete vera un programma C++ parte in 10-15 secondi la prima volta.
 
 ## Obiettivo
 Da discutere. Quello che c'è nel codice è la proposta di Claude del 3 ottobre 2026, costruita su mandato di Alessandro: l'editor nelle lezioni e negli esercizi, con la correzione su ingresso e uscita. Non un IDE con file, progetti e terminale.
@@ -74,13 +79,13 @@ Alessandro, 3 ottobre 2026: numpy e matplotlib vanno messi; la tartaruga si ricr
 - Le eccezioni in C++: servirebbe una libreria C++ costruita con le eccezioni di WebAssembly.
 - La compilazione del C++ si può accorciare con un'intestazione precompilata per `<iostream>`: da provare se sui computer di scuola i 2,5 secondi diventano troppi.
 - Il peso sui telefoni veri (il compilatore è un modulo da 75 MB) e sui computer di scuola: da misurare. Se non regge, C e C++ restano da computer, in linea con [[2026-09-30 Le funzioni dipendono dal dispositivo, con un passaggio tra telefono e computer]].
-- Vercel: il limite di dimensione dei file statici (il più grande è 75 MB) e le intestazioni di cache per `/pyodide/` e `/clang/`, che oggi il browser riconferma a ogni caricamento.
+- Le intestazioni di cache per `/pyodide/` e `/clang/`: oggi il browser riconferma i file a ogni caricamento. Con un indirizzo che porta la versione si possono tenere in cache per sempre.
 - `public/pyodide/`, `public/clang/` e `public/codice/` passano dal proxy (`src/proxy.ts`) come ogni indirizzo non escluso: da escludere prima di pubblicare.
 - HTML e CSS (terzo anno) e SQL (quarto anno): un iframe isolato e SQLite in WebAssembly, secondo Claude. Non discusso.
 - I messaggi di errore in italiano, o una spiegazione accanto a quelli di Python e di Clang.
 - Salvare il codice dello studente (nello Zaino, o per lezione).
 - La tartaruga non ha `undo`, `clearstamp`, le forme registrate dallo studente né la modalità `logo`.
-- Togliere le due pagine di prova quando l'editor è in una lezione pubblicata.
+- La prova automatica del blocco nelle lezioni gira solo in sviluppo: serve una lezione pubblicata con un blocco `codice` per provarlo anche in produzione.
 
 ## Collegamenti
 - Attori: [[Studente]]

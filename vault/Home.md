@@ -25,10 +25,12 @@ Sempre il 30 settembre si è deciso che le lezioni avranno clip animate con voce
 
 Il 1° ottobre si è decisa e scritta la tavola periodica: tra gli strumenti, a `/strumenti/tavola-periodica`, con una pagina sua; senza pagine per elemento per ora; ampia come Ptable (famiglie, stato fisico a una temperatura, andamenti periodici, blocchi, isotopi) e con due PDF da stampare; disegnata prima da computer, con la griglia che scorre sul telefono. In produzione dal 1° ottobre (PR #24). Vedi [[2026-10-01 Tavola periodica]] e [[Tavola periodica interattiva]]. Lo stesso giorno la scheda degli elementi ha avuto le foto (96 su 118, da Wikimedia Commons), e si è deciso che gli orbitali avranno una lezione dedicata e un visualizzatore in tre dimensioni: il visualizzatore è uno strumento, a `/strumenti/orbitali-atomici`, con la tabella dei sottolivelli che mostra anche la configurazione elettronica di ogni elemento, e la lezione "Orbitali e numeri quantici", la prima del terzo anno di chimica, è pubblicata con otto figure agganciate ai paragrafi, formulario, flashcard ed esercizi. Tutto in produzione dal 1° ottobre. Vedi [[Orbitali atomici interattivi]]. Sempre il 1° ottobre si è deciso il grafico di funzioni: il plotter è il piano cartesiano di tutto il sito, disegnato da noi in SVG sul kit e senza librerie di grafici (Desmos e GeoGebra chiedono una licenza per l'uso commerciale); trova i punti notevoli, senza lo studio di funzione; accetta funzioni, equazioni implicite, disequazioni e curve parametriche, a passi; si progetta per telefono e computer insieme. Dal 3 ottobre è in produzione a `/strumenti/grafico-di-funzione` (PR #27), con la geometria analitica, i comandi scritti, i grafici salvati e il blocco grafico nelle note. Lo strumento ha dal 2 ottobre il primo lotto di impostazioni (aspetto delle curve, cursori animati, impostazioni del piano, annulla, link, immagine, esempi, schermo intero) e disegna anche equazioni implicite, curve parametriche e polari, con la griglia polare. Vedi [[Grafico di funzioni]] e [[2026-10-01 Grafico di funzioni]].
 
+Il 3 ottobre è arrivato l'editor di codice per informatica: Python, C e C++ eseguiti nel browser, senza server (C e C++ con Clang in WebAssembly, vedi [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]; Java resta da decidere). È in produzione tra gli strumenti, a `/strumenti/editor-di-codice` (PR #30), e nelle lezioni un blocco `codice` lo monta con una linguetta per linguaggio e la verifica degli esercizi su ingresso e uscita. Vedi [[Editor di codice]] e [[2026-10-03 Editor di codice]]. Lo stesso giorno è scritto e pubblicato il primo lotto di informatica, il primo anno: 32 lezioni senza programmazione, con formulari, flashcard e 32 generatori di esercizi (175 livelli), gratis come fisica e chimica (vedi [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]). Vedi [[2026-10-03 Primo lotto di informatica]].
+
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]], [[Grafico di funzioni]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]], [[Grafico di funzioni]], [[Editor di codice]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
@@ -41,10 +43,12 @@ Il 1° ottobre si è decisa e scritta la tavola periodica: tra gli strumenti, a 
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-01 Grafico di funzioni]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-03 Primo lotto di informatica]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]
+- [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]
 - [[2026-10-03 I grafici del plotter si salvano con nome e si mettono nelle note]]
 - [[2026-10-03 Il piano di una lezione dichiara cosa è permesso]]
 - [[2026-10-02 Le parole del plotter stanno in un elenco solo, con i nomi italiani]]
@@ -107,7 +111,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]] (superata in parte)
 - [[2026-09-26 Navigazione del diario, calendario dentro e niente vista log]]
 - [[2026-09-26 Il diario prende il posto di Oggi]]
-- [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]]
+- [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]] (superata in parte)
 - [[2026-09-26 Gli adesivi sono per tutti gli iscritti]]
 - [[2026-09-26 Pacchetti di adesivi per capitolo, materia, studio e stagione]]
 - [[2026-09-26 Gli adesivi sono SVG scritti da Claude, senza aspettare Dario]]
