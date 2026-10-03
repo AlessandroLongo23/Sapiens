@@ -6,7 +6,7 @@ import { EXAMPLES } from './examples';
 import { LANGUAGES, type Language } from './runtime';
 import { Workbench } from './Workbench';
 
-/** The trial page's editor: a language, one of its example programs, and the workbench on it. */
+/** The editor of the tool's page (/strumenti/editor-di-codice): a language, one of its example programs, and the workbench on it. */
 export function Playground() {
 	const [language, setLanguage] = useState<Language>('python');
 	const [example, setExample] = useState(0);

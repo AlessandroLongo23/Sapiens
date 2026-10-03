@@ -42,6 +42,17 @@ export const INFORMATICA_ART: Record<string, ReactNode> = {
 			</Label>
 		</Art>
 	),
+	'editor-di-codice': (
+		<Art>
+			{/* A window with lines of code, indented like a program, and the triangle that runs it. */}
+			<Fill d="M12,10 H108 V70 H12 Z" />
+			<Ink d="M12,10 H108 V70 H12 Z M12,22 H108" />
+			<Rule d="M20,32 H52 M28,41 H66 M28,50 H58 M20,59 H44" />
+			<Accent d="M84,36 L98,46 L84,56 Z" className="fill-accent/10" />
+			<Dot x={19} y={16} />
+			<Dot x={27} y={16} />
+		</Art>
+	),
 	'tabelle-di-verita': (
 		<Art>
 			<Fill d="M16,6 H106 V20 H16 Z" />

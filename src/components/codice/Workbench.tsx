@@ -101,7 +101,7 @@ export function Workbench({
 	tests?: Test[];
 	/** A program that passes the tests, behind a button. */
 	solution?: string | null;
-	/** At the left of the bar, before the buttons: the trial page puts its menus here. */
+	/** At the left of the bar, before the buttons: the tool page puts its menus here. */
 	toolbar?: ReactNode;
 	/** For a program inside a lesson: the console under the editor, each as tall as what it holds. */
 	compact?: boolean;

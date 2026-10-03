@@ -48,6 +48,11 @@ self.addEventListener('fetch', (event) => {
 	const url = new URL(request.url);
 	if (url.origin !== self.location.origin) return;
 
+	// The script a web worker starts from is left to the network: in the build every worker starts from the same
+	// file and is told apart by what follows the # of its address, which a cached answer would take from the first
+	// worker made. The second worker of a page would run the code of the first.
+	if (request.destination === 'worker' || request.destination === 'sharedworker') return;
+
 	if (url.pathname.startsWith('/_next/static/')) {
 		event.respondWith(cacheFirst(request, STATIC_CACHE));
 		return;

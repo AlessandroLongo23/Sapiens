@@ -141,8 +141,7 @@ linguaggi, con:
 node node_modules/jiti/lib/jiti-cli.mjs scripts/codice/verifica.mts docs/lezioni/informatica/riscritte/*.md
 ```
 
-Per vedere i blocchi prima di pubblicare, con il sito in sviluppo: `/prova-grafico/lezione?file=prove/codice.md`
-(oppure `/prova-codice/lezione`, che esiste anche nel sito pubblicato).
+Per vedere i blocchi prima di pubblicare, con il sito in sviluppo: `/prova-grafico/lezione?file=prove/codice.md`.
 
 Controllo automatico (formule KaTeX, link, formato dei riquadri, regole di stile):
 

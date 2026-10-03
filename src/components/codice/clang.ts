@@ -98,7 +98,10 @@ export class Clang implements Runtime {
 		const worker = new Worker(new URL('./wasi.worker.ts', import.meta.url), { type: 'module' });
 		run.worker = worker;
 		worker.addEventListener('message', ({ data }: MessageEvent<FromRunner>) => {
-			if (this.current !== run || !('id' in data)) return;
+			if (this.current !== run) return;
+			// the program goes to the worker once it listens
+			if (data.type === 'ready') worker.postMessage({ id: run.id, module: program, ...job } satisfies ToWasi);
+			if (!('id' in data)) return;
 			if (data.type === 'chunk') run.onChunk({ kind: data.kind, text: data.text });
 			else if (data.type === 'started') {
 				run.timer = setTimeout(() => this.stop('timeout'), TIME_LIMIT);
@@ -106,7 +109,6 @@ export class Clang implements Runtime {
 			} else if (data.type === 'done') this.end(data.status, data.ms);
 		});
 		worker.addEventListener('error', () => this.current === run && this.end('failed'));
-		worker.postMessage({ id: run.id, module: program, ...job } satisfies ToWasi);
 	}
 
 	/** Ends the program; the compiler stays. */

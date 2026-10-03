@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 /**
- * The code editor on its trial page (src/components/codice): Python run in the browser by Pyodide, C and C++
+ * The code editor on its page among the tools (src/components/codice): Python run in the browser by Pyodide, C and C++
  * compiled by Clang in WebAssembly. Each test loads its language again, a few seconds from a warm cache.
  */
 const log = (page: Page) => page.getByRole('log', { name: 'Console' });
@@ -9,7 +9,7 @@ const run = (page: Page) => page.getByRole('button', { name: 'Esegui' });
 const answer = (page: Page) => page.getByLabel('Risposta al programma');
 
 async function open(page: Page, example?: string, language?: 'C' | 'C++') {
-	await page.goto('/prova-codice');
+	await page.goto('/strumenti/editor-di-codice');
 	await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
 	await expect(page.locator('.cm-content')).toBeVisible();
 	if (language) await page.getByLabel('Linguaggio').selectOption({ label: language });
@@ -245,7 +245,9 @@ test.describe('programs in a lesson', () => {
 	const block = (page: Page, index: number) => page.locator('figure[data-codice]').nth(index);
 
 	test('a block runs, a language tab changes every block, an exercise is checked against its tests', async ({ page }) => {
-		await page.goto('/prova-codice/lezione');
+		// The blocks are shown by the trial page of lesson files, which exists only in development.
+		const response = await page.goto('/prova-grafico/lezione?file=prove/codice.md');
+		test.skip(response?.status() === 404, 'the trial page of lesson files is not in the production build');
 		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
 
 		const example = block(page, 0);
