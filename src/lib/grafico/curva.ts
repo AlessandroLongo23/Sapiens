@@ -237,14 +237,32 @@ const CELL = 4;
  * zero without crossing it, like (x² + y² − 1)² = 0, has no change of sign and is not found.
  */
 export function sampleImplicit(F: (x: number, y: number) => number, view: View, width: number, height: number): Point[][] {
+	return marching(F, view, width, height, false).lines;
+}
+
+/**
+ * The edge of the region where F(x, y) is below zero and its inside, from one reading of F: the inside is the cells
+ * of the same grid, whole where their four corners are in, cut along the edge where they are not. It matches the
+ * edge to the pixel and costs no reading more than the edge alone.
+ */
+export function sampleRegionEdge(F: (x: number, y: number) => number, view: View, width: number, height: number): { lines: Point[][]; inside: Point[][] } {
+	return marching(F, view, width, height, true);
+}
+
+function marching(F: (x: number, y: number) => number, view: View, width: number, height: number, fill: boolean): { lines: Point[][]; inside: Point[][] } {
 	const dx = (view.x1 - view.x0) / Math.max(8, Math.min(400, Math.round(width / CELL)));
 	const dy = (view.y1 - view.y0) / Math.max(8, Math.min(400, Math.round(height / CELL)));
-	// The grid is set off the round numbers by a part of a cell, and covers one cell more: a curve through the
-	// nodes themselves (x = 3, a circle of radius 2) would be a string of exact zeros, which have no sign.
-	const nx = Math.round((view.x1 - view.x0) / dx) + 1;
-	const ny = Math.round((view.y1 - view.y0) / dy) + 1;
-	const X = (i: number) => view.x0 + (i - 0.3819) * dx;
-	const Y = (j: number) => view.y0 + (j - 0.6180) * dy;
+		// The grid belongs to the plane, not to the window: its nodes are the same points wherever the window is, so
+	// a curve dragged across the screen keeps its shape to the pixel. Tied to the window, every step of a drag would
+	// read the curve at other points, and a fine outline (a fractal, a thin spike) would quiver as it moves.
+	// The nodes are set off the round numbers by a part of a cell: a curve through the nodes themselves (x = 3, a
+	// circle of radius 2) would be a string of exact zeros, which have no sign.
+	const i0 = Math.floor(view.x0 / dx) - 1;
+	const j0 = Math.floor(view.y0 / dy) - 1;
+	const X = (i: number) => (i0 + i + 0.6181) * dx;
+	const Y = (j: number) => (j0 + j + 0.382) * dy;
+	const nx = Math.ceil((view.x1 - X(0)) / dx) + 1;
+	const ny = Math.ceil((view.y1 - Y(0)) / dy) + 1;
 	const cols = nx + 1;
 	const values = new Float64Array(cols * (ny + 1));
 	for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) values[j * cols + i] = F(X(i), Y(j));
@@ -266,8 +284,9 @@ export function sampleImplicit(F: (x: number, y: number) => number, view: View, 
 		let found: Point | null = null;
 		for (let step = 0; step < 10; step++) {
 			const m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-			const fm = F(m.x, m.y);
-			if (!Number.isFinite(fm)) break;
+						const fm = F(m.x, m.y);
+			// for a curve, a place with no value ends the search; for a region it is outside, and the search goes on
+			if (!fill && !Number.isFinite(fm)) break;
 			if (fm < 0 === fa < 0) {
 				a = m;
 				fa = fm;
@@ -276,11 +295,17 @@ export function sampleImplicit(F: (x: number, y: number) => number, view: View, 
 				fb = fm;
 			}
 		}
-		// at a zero F has shrunk towards it; between the two sides of a pole it has grown
-		if (Math.max(Math.abs(fa), Math.abs(fb)) <= size * 0.25) {
-			// the last step is a straight line between the two ends, exact where F is one
-			const u = fa === fb ? 0.5 : fa / (fa - fb);
-			found = { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
+				if (Number.isFinite(fa) && Number.isFinite(fb)) {
+			// at a zero F has shrunk towards it; between the two sides of a pole it has grown
+			if (Math.max(Math.abs(fa), Math.abs(fb)) <= size * 0.25 || (fill && !Number.isFinite(size))) {
+				// the last step is a straight line between the two ends, exact where F is one
+				const u = fa === fb ? 0.5 : fa / (fa - fb);
+				found = { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
+			}
+		} else if (fill) {
+			// A region ends where its condition stops having a value: the terms of z² + c that have run away to
+			// infinity, the left of zero for a root. The edge is there, between the last point in and the first out.
+			found = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
 		}
 		crossings.set(side, found);
 		return found;
@@ -293,12 +318,48 @@ export function sampleImplicit(F: (x: number, y: number) => number, view: View, 
 		(links.get(s) ?? links.set(s, []).get(s)!).push(t);
 		(links.get(t) ?? links.set(t, []).get(t)!).push(s);
 	};
-	for (let j = 0; j < ny; j++)
+		const inside: Point[][] = [];
+	for (let j = 0; j < ny; j++) {
+		// the cells wholly inside, side by side, are one rectangle
+		let run = -1;
+		const flush = (to: number) => {
+			if (run >= 0) inside.push([{ x: X(run), y: Y(j) }, { x: X(to), y: Y(j) }, { x: X(to), y: Y(j + 1) }, { x: X(run), y: Y(j + 1) }]);
+			run = -1;
+		};
 		for (let i = 0; i < nx; i++) {
 			const k = j * cols + i;
-			const f = [values[k], values[k + 1], values[k + cols + 1], values[k + cols]];
-			if (!f.every(Number.isFinite)) continue;
+						const v0 = values[k];
+			const v1 = values[k + 1];
+			const v2 = values[k + cols + 1];
+			const v3 = values[k + cols];
+			const n0 = v0 < 0;
+			// most cells are all on one side: nothing to look for
+			if (n0 === v1 < 0 && n0 === v2 < 0 && n0 === v3 < 0) {
+				if (fill && n0 && run < 0) run = i;
+				if (!n0) flush(i);
+				continue;
+			}
+			flush(i);
+			const f = [v0, v1, v2, v3];
 			const sides = [2 * k, 2 * (k + 1) + 1, 2 * (k + cols), 2 * k + 1];
+			if (fill) {
+				// the part of the cell that is in: its corners inside, and the crossings between a corner in and one out
+				const corners = [
+					{ x: X(i), y: Y(j) },
+					{ x: X(i + 1), y: Y(j) },
+					{ x: X(i + 1), y: Y(j + 1) },
+					{ x: X(i), y: Y(j + 1) }
+				];
+				const part: Point[] = [];
+				for (let s = 0; s < 4; s++) {
+					if (f[s] < 0) part.push(corners[s]);
+					const at = f[s] < 0 !== f[(s + 1) % 4] < 0 ? crossing(sides[s]) : null;
+					if (at) part.push(at);
+				}
+				if (part.length > 2) inside.push(part);
+			}
+						// a curve is not looked for where F has no value; a region has its edge there too
+			if (!fill && !(Number.isFinite(v0) && Number.isFinite(v1) && Number.isFinite(v2) && Number.isFinite(v3))) continue;
 			// bottom, right, top, left: the sides where the sign changes
 			const cut = [0, 1, 2, 3].filter((s) => f[s] < 0 !== f[(s + 1) % 4] < 0).map((s) => sides[s]);
 			if (cut.length === 2) link(cut[0], cut[1]);
@@ -309,11 +370,14 @@ export function sampleImplicit(F: (x: number, y: number) => number, view: View, 
 					link(sides[0], sides[1]);
 					link(sides[2], sides[3]);
 				} else {
-					link(sides[0], sides[3]);
+										link(sides[0], sides[3]);
 					link(sides[1], sides[2]);
 				}
 			}
 		}
+		flush(nx);
+	}
+
 
 	// the links are the pieces of the curve: walk them into lines, from the loose ends first, then the closed loops
 	const paths: Point[][] = [];
@@ -331,9 +395,9 @@ export function sampleImplicit(F: (x: number, y: number) => number, view: View, 
 		}
 		if (line.length > 1) paths.push(line);
 	};
-	for (const [side, to] of links) if (to.length === 1) follow(side);
+		for (const [side, to] of links) if (to.length === 1) follow(side);
 	for (const side of links.keys()) follow(side);
-	return paths;
+	return { lines: paths, inside };
 }
 
 // ---------------------------------------------------------------- regions

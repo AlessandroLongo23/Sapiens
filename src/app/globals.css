@@ -1120,6 +1120,7 @@ body {
 .dark .markdown-content .interactive-figure .tikz-drawing,
 .dark .scene-figure .tikz-drawing,
 .dark .plane-drawing,
+.dark .plot-clip,
 .dark .plot-swatch {
 	filter: invert(1) hue-rotate(180deg);
 }

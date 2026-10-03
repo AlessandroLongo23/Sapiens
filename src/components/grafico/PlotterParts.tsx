@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { Check, Copy, Pause, Play, Settings2, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactNode } from 'react';
+import { Check, ChevronRight, Copy, Pause, Play, Settings2, Sigma, Trash2 } from 'lucide-react';
+import { Tex } from '@/components/content/interactive/kit';
+import { PLOT_TEMPLATES } from '@/components/math/mathlive';
 import { checkboxClass } from '@/components/ui/Field';
 import { Slider } from '@/components/ui/Slider';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
@@ -47,6 +49,49 @@ export function IconButton({
 			{text && <span className="hidden sm:inline">{text}</span>}
 		</button>
 	);
+}
+
+/** The heading of a section of the panel: it opens and closes the section, says how many rows it has, and holds the section's own buttons. */
+export function SectionHead({ title, count, open, onToggle, className, children }: { title: string; count: number; open: boolean; onToggle: () => void; className?: string; children?: ReactNode }) {
+	return (
+		<div className={cn('relative flex shrink-0 items-center gap-0.5 border-b border-edge-soft bg-surface py-1 pr-1.5 pl-1 lg:sticky lg:top-0 lg:z-[5]', className)}>
+			<button type="button" onClick={onToggle} aria-expanded={open} className="flex h-9 min-w-0 flex-1 items-center gap-1.5 rounded-lg px-1.5 text-left hover:bg-surface-2 focus-ring">
+				<ChevronRight className={cn('size-4 shrink-0 text-fg-faint transition-transform duration-200 motion-reduce:transition-none', open && 'rotate-90')} aria-hidden="true" />
+				<span className="label-mono text-fg-subtle">{title}</span>
+				<span className="text-xs text-fg-faint tabular-nums">{count}</span>
+			</button>
+			{children}
+		</div>
+	);
+}
+
+/** A number remembered on this device, like the width of a panel: the fallback on the server and where storage is blocked. */
+export function useStoredNumber(key: string, fallback: number): [number, (value: number) => void] {
+	const subscribe = useCallback(
+		(notify: () => void) => {
+			window.addEventListener(key, notify);
+			return () => window.removeEventListener(key, notify);
+		},
+		[key]
+	);
+	const read = () => {
+		try {
+			const saved = Number(localStorage.getItem(key));
+			return Number.isFinite(saved) && saved > 0 ? saved : fallback;
+		} catch {
+			return fallback;
+		}
+	};
+	const value = useSyncExternalStore(subscribe, read, () => fallback);
+	const save = (next: number) => {
+		try {
+			localStorage.setItem(key, String(next));
+		} catch {
+			// not remembered: the width goes back to its start
+		}
+		window.dispatchEvent(new Event(key));
+	};
+	return [value, save];
 }
 
 /**
@@ -378,6 +423,68 @@ export function PlaneSettingsPanel({
 					Stessa scala sui due assi
 				</button>
 			</div>
+		</div>
+	);
+}
+
+/**
+ * The formulas that are hard to type, ready with their holes: a function in pieces, a system, a sum, an integral.
+ * The button and the list do not take the focus from the formula being written, so the template lands at its cursor.
+ */
+export function InsertMenu({ onPick }: { onPick: (template: string) => void }) {
+	const [open, setOpen] = useState(false);
+	const box = useRef<HTMLDivElement>(null);
+	const { mounted, visible } = usePresence(open);
+	useEffect(() => {
+		if (!open) return;
+		const outside = (e: PointerEvent) => !box.current?.contains(e.target as Node) && setOpen(false);
+		const escape = (e: globalThis.KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+		document.addEventListener('pointerdown', outside);
+		document.addEventListener('keydown', escape);
+		return () => {
+			document.removeEventListener('pointerdown', outside);
+			document.removeEventListener('keydown', escape);
+		};
+	}, [open]);
+	return (
+		<div ref={box} onMouseDown={(e) => e.preventDefault()}>
+			<IconButton label="Inserisci una formula pronta" onClick={() => setOpen((o) => !o)} pressed={open}>
+				<Sigma className="size-4" aria-hidden="true" />
+			</IconButton>
+			{mounted && (
+				<ul
+					aria-label="Formule pronte"
+					inert={!visible || undefined}
+					className={cn(
+						'absolute top-full right-1.5 left-1.5 z-20 m-0 flex max-h-[min(36rem,72svh)] list-none flex-col gap-0.5 overflow-y-auto rounded-xl border border-edge-strong bg-surface p-1.5 shadow-lift transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none',
+						visible ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-1.5 opacity-0'
+					)}
+				>
+					{PLOT_TEMPLATES.map((t) => (
+						<li key={t.word}>
+							<button
+								type="button"
+								onClick={() => {
+									setOpen(false);
+									onPick(t.insert);
+								}}
+								className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left hover:bg-surface-3 focus-ring"
+							>
+								<span className="flex w-28 shrink-0 justify-center text-xs text-fg-strong">
+									<Tex>{t.preview}</Tex>
+								</span>
+								<span className="flex min-w-0 flex-col">
+									<span className="text-sm font-medium text-fg-strong">{t.title}</span>
+									<span className="text-xs text-fg-muted">{t.about}</span>
+									<span className="mt-0.5 text-xs text-fg-subtle">
+										Oppure scrivi <span className="font-mono">{t.word}</span> nella formula.
+									</span>
+								</span>
+							</button>
+						</li>
+					))}
+				</ul>
+			)}
 		</div>
 	);
 }

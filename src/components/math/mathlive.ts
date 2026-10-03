@@ -59,6 +59,38 @@ const fn = (name: string, tooltip: string) => ({ insert: `\\${name}\\left(#0\\ri
 /** A key of the functions' layer, as wide as the names beside it. */
 const wide = <T extends object>(key: T) => ({ ...key, width: 1.5 as const });
 
+/**
+ * What the plotter writes for the student, with the holes left to fill: a brace, a sum, an integral. Each is reached
+ * three ways: its word typed in a formula ("tratti"), the menu of the panel, a key of the keyboard on screen. The
+ * words are among those of the plotter's proposals (lib/grafico/comandi.ts), where the same formulas are: a test
+ * keeps the two in step.
+ *
+ * A limit of MathLive shapes them: of two holes above and below a sign the upper one comes first, so the lower
+ * bound is written already, with its usual value.
+ */
+export interface PlotTemplate {
+	/** Typed in a formula, it becomes the template. */
+	word: string;
+	title: string;
+	about: string;
+	/** MathLive's own notation: #? is a hole. */
+	insert: string;
+	/** An example, for the menu. */
+	preview: string;
+}
+export const PLOT_TEMPLATES: PlotTemplate[] = [
+	{ word: 'tratti', title: 'Funzione a tratti', about: 'Un valore e la sua condizione per riga. Invio aggiunge una riga.', insert: '\\begin{cases}#? & #?\\\\ #? & #?\\end{cases}', preview: '\\begin{cases}x^2 & x<1\\\\ 2-x & x\\ge 1\\end{cases}' },
+	{ word: 'sistema', title: 'Sistema di disequazioni', about: 'Una disequazione per riga: si colora dove valgono tutte.', insert: '\\begin{cases}#?\\\\ #?\\end{cases}', preview: '\\begin{cases}y\\le x+2\\\\ y>x^2\\end{cases}' },
+	{ word: 'somma', title: 'Somma', about: 'L’indice parte dal numero sotto e arriva a quello sopra.', insert: '\\sum_{n=1}^{#?}#?', preview: '\\sum_{n=1}^{5}x^n' },
+	{ word: 'prodotto', title: 'Prodotto', about: 'Come la somma, con i fattori.', insert: '\\prod_{n=1}^{#?}#?', preview: '\\prod_{n=1}^{3}(x-n)' },
+	{ word: 'integrale', title: 'Integrale', about: 'Con i due estremi: con la x sopra è una funzione integrale.', insert: '\\int_{0}^{#?}#?\\,dx', preview: '\\int_{0}^{x}t^2\\,dt' },
+		{ word: 'successione', title: 'Successione per ricorrenza', about: 'Ogni termine dal precedente. Il valore da cui parte va in un’altra riga: a_0 = 1.', insert: 'a_{n+1}=#?', preview: 'a_{n+1}=2a_n+1' },
+	{ word: 'derivata', title: 'Derivata', about: 'Di una formula. Per una funzione con un nome basta l’apice: f′(x).', insert: '\\frac{d}{dx}\\left(#?\\right)', preview: '\\frac{d}{dx}\\left(x^3\\right)' }
+];
+const template = (word: string) => PLOT_TEMPLATES.find((t) => t.word === word)!;
+
+
+
 /** The keys of the plotter: the letters of a formula with digits and operations, and a second layer with the functions. */
 export const PLOT_LAYOUTS: VirtualKeyboardLayout[] = [
 	{
@@ -69,7 +101,7 @@ export const PLOT_LAYOUTS: VirtualKeyboardLayout[] = [
 			['a', 'b', '[4]', '[5]', '[6]', '[*]', { insert: '\\sqrt{#0}', latex: '\\sqrt{x}', tooltip: 'Radice quadrata' }, { insert: '\\sqrt[#?]{#0}', latex: '\\sqrt[n]{x}', tooltip: 'Radice' }, { insert: '\\left|#0\\right|', latex: '|x|', tooltip: 'Valore assoluto' }],
 			['c', 't', '[1]', '[2]', '[3]', '[-]', '[(]', '[)]', { latex: '=', tooltip: 'Uguale' }],
 			[{ latex: '\\pi', tooltip: 'Pi greco' }, { latex: 'e', tooltip: 'Numero di Nepero' }, '[0]', '[,]', { latex: '<', tooltip: 'Minore' }, '[+]', { latex: '>', tooltip: 'Maggiore' }, { latex: '\\le', tooltip: 'Minore o uguale' }, { latex: '\\ge', tooltip: 'Maggiore o uguale' }],
-			['r', { latex: '\\theta', tooltip: 'Theta: l’angolo di una curva polare, r = 2θ' }, { latex: ';', tooltip: 'Separa le due coordinate: (cos t; sin t)' }, '[left]', '[right]', '[backspace]', '[return]']
+			['n', { insert: '#@_{#?}', latex: 'a_n', tooltip: 'Pedice: il termine di una successione' }, 'r', { latex: '\\theta', tooltip: 'Theta: l’angolo di una curva polare, r = 2θ' }, { latex: ';', tooltip: 'Separa le due coordinate: (cos t; sin t)' }, '[left]', '[right]', '[backspace]', '[return]']
 		]
 	},
 	{
@@ -80,16 +112,17 @@ export const PLOT_LAYOUTS: VirtualKeyboardLayout[] = [
 			[fn('arcsin', 'Arcoseno'), fn('arccos', 'Arcocoseno'), fn('arctan', 'Arcotangente'), fn('ln', 'Logaritmo naturale'), fn('log', 'Logaritmo in base 10')],
 			[
 				wide({ insert: '\\frac{1}{#0}', latex: '\\frac{1}{x}', tooltip: 'Reciproco' }),
-				wide({ insert: '\\left|#0\\right|', latex: '|x|', tooltip: 'Valore assoluto' }),
-				wide({ insert: '\\sqrt{#0}', latex: '\\sqrt{x}', tooltip: 'Radice quadrata' }),
 				wide({ insert: '\\log_{#?}\\left(#0\\right)', latex: '\\log_a', tooltip: 'Logaritmo in base a' }),
-				wide({ latex: '\\pi', tooltip: 'Pi greco' })
+				wide({ insert: template('somma').insert, latex: '\\sum', tooltip: 'Somma' }),
+				wide({ insert: template('integrale').insert, latex: '\\int', tooltip: 'Integrale con i due estremi' }),
+				wide({ insert: template('derivata').insert, latex: '\\frac{d}{dx}', tooltip: 'Derivata di una formula' }),
+				wide({ insert: template('sistema').insert, label: '{ ≤', tooltip: 'Sistema: una disequazione per riga' })
 			],
 			[
 				'x',
 				'[(]',
 				'[)]',
-				{ insert: '\\begin{cases}#0 & #?\\\\ #? & #?\\end{cases}', label: '{ ⋮', tooltip: 'Funzione a tratti: un valore e la sua condizione per riga' },
+				{ insert: template('tratti').insert, label: '{ ⋮', tooltip: 'Funzione a tratti: un valore e la sua condizione per riga' },
 				{ insert: '\\left\\lbrace #0\\right\\rbrace', label: '{ }', tooltip: 'Dominio: x² {0 < x < 2}' },
 				'[left]',
 				'[right]',
@@ -135,10 +168,46 @@ export function layoutsOnFocus(field: MathfieldElement, layouts: VirtualKeyboard
 	return () => field.removeEventListener('focusin', apply);
 }
 
-/** The shortcuts for the Italian function names, added to MathLive's own. */
-export function addNameShortcuts(field: MathfieldElement) {
-	field.inlineShortcuts = { ...field.inlineShortcuts, ...NAME_SHORTCUTS };
+/** The shortcuts for the Italian function names, added to MathLive's own, with those of the page that holds the field. */
+export function addNameShortcuts(field: MathfieldElement, more: Record<string, string> = {}) {
+	field.inlineShortcuts = { ...field.inlineShortcuts, ...NAME_SHORTCUTS, ...more };
 }
+
+/**
+ * Whether the cursor is in a row of a brace (a function in pieces, a system). MathLive has no public question for
+ * it: this reads its model, and where a later version moves it the answer is no, which only gives Enter its usual
+ * meaning back.
+ */
+export function inBrace(field: MathfieldElement): boolean {
+	return /cases$/.test(modelOf(field)?.parentEnvironment?.environmentName ?? '');
+}
+
+/** Whether the cursor is in a row of a brace with nothing written in it, and the brace has other rows: Backspace there takes the row away. */
+export function inEmptyBraceRow(field: MathfieldElement): boolean {
+	try {
+		const model = modelOf(field);
+		if (!model || !inBrace(field)) return false;
+		const atom = model.at(model.position);
+		const array = atom.parent;
+		if (!Array.isArray(atom.parentBranch) || !array?.getCell || !(array.rowCount > 1)) return false;
+		for (let col = 0; col < array.colCount; col++) if ((array.getCell(atom.parentBranch[0], col) ?? []).some((a) => a.type !== 'first' && a.type !== 'placeholder')) return false;
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+interface InnerAtom {
+	type: string;
+	parent?: { getCell?: (row: number, col: number) => InnerAtom[] | undefined; rowCount: number; colCount: number };
+	parentBranch?: unknown;
+}
+interface InnerModel {
+	parentEnvironment?: { environmentName?: string };
+	position: number;
+	at: (offset: number) => InnerAtom;
+}
+const modelOf = (field: MathfieldElement) => (field as unknown as { _mathfield?: { model?: InnerModel } })._mathfield?.model;
 
 /**
  * What the page's variables cannot reach inside a field. With a dead key waiting for its letter (^ on many

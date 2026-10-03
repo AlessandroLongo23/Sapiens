@@ -6,7 +6,7 @@ import { createJiti } from 'jiti';
 import { parse } from '@cortex-js/compute-engine/latex-syntax';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
-const { cleanLatex, definitions, readEntry } = await jiti.import('../../src/lib/grafico/formula.ts');
+const { cleanLatex, definitions, pointNames, readEntry, sequences } = await jiti.import('../../src/lib/grafico/formula.ts');
 const { sampleFunction, tickStep, ticks } = await jiti.import('../../src/lib/grafico/curva.ts');
 const { extrema, notablePoints, zeros } = await jiti.import('../../src/lib/grafico/notevoli.ts');
 
@@ -256,8 +256,9 @@ test('a function that uses itself is refused', () => {
 	const [a, b] = rows('f(x)=g(x)', 'g(x)=f(x)');
 	assert.equal(a.kind, 'error');
 	assert.equal(b.kind, 'error');
+	// the name alone is the function of x
 	const [, bare] = rows('f(x)=x', 'f+1');
-	assert.equal(bare.kind, 'error');
+	close(bare(3), 4);
 });
 
 test('the derivative of a named function', () => {
@@ -435,17 +436,25 @@ test('a broken link is no graph', () => {
 
 test('the examples are graphs the plotter can draw', () => {
 	for (const { title, state } of EXAMPLES) {
-		const jsons = state.rows.map((r) => parse(cleanLatex(r.latex)));
+		// a built object has no formula: it points to rows that are there
+		for (const r of state.rows.filter((r) => r.build)) assert.ok(r.build.of.every((id) => id !== r.id && state.rows.some((o) => o.id === id)), title);
+		const jsons = state.rows.filter((r) => !r.build).map((r) => parse(cleanLatex(r.latex)));
 		const defs = definitions(jsons);
 		for (const j of jsons) {
-			const entry = readEntry(j, defs, { degrees: state.settings.degrees });
-			assert.ok(['function', 'implicit', 'parametric', 'polar', 'inequality', 'point'].includes(entry.kind), `${title}: ${entry.message ?? entry.kind}`);
-			const scope = { x: 0.7, y: 0.3, t: 0.7, theta: 0.7 };
+			const points = pointNames(jsons);
+			const entry = readEntry(j, defs, { degrees: state.settings.degrees, points, sequences: sequences(jsons) });
+			assert.ok(['function', 'implicit', 'parametric', 'polar', 'inequality', 'point', 'definition', 'sequence', 'given'].includes(entry.kind), `${title}: ${entry.message ?? entry.kind}`);
+			if (entry.kind === 'definition' || entry.kind === 'given') continue;
+			const scope = { x: 0.7, y: 0.3, t: 0.7, theta: 0.7, n: 3 };
 			for (const p of entry.params) {
-				assert.ok(state.sliders[p], `${title}: no slider for ${p}`);
-				scope[p] = state.sliders[p].value;
+				// x_A is a coordinate of the point A, not a slider
+				const coordinate = /^[xy]_([A-Z])$/.exec(p);
+				assert.ok(coordinate ? points.includes(coordinate[1]) : state.sliders[p], `${title}: no slider for ${p}`);
+				scope[p] = coordinate ? 1.3 : state.sliders[p].value;
 			}
-			for (const f of entry.kind === 'parametric' || entry.kind === 'point' ? [entry.x, entry.y] : entry.kind === 'polar' ? [entry.r] : [entry.f]) assert.ok(Number.isFinite(f(scope)), title);
+			for (const f of entry.kind === 'parametric' || entry.kind === 'point' ? [entry.x, entry.y] : entry.kind === 'polar' ? [entry.r] : [entry.f])
+				// a number here, or at a second point for what runs away at the first (the terms of z² + c outside the set)
+				assert.ok(Number.isFinite(f(scope)) || Number.isFinite(f({ ...scope, x: -0.2, y: 0.1 })), title);
 		}
 	}
 });
@@ -488,7 +497,8 @@ test('a vertical line, and two lines that cross', () => {
 	for (const p of line) close(p.x, 3, 1e-9);
 	close(length(line), 14, 0.2);
 	const cross = implicit('x^2=y^2');
-	close(cross.reduce((sum, path) => sum + length(path), 0), 2 * 14 * Math.SQRT2, 0.4);
+	// the grid is the plane's own and goes up to a cell past each edge of the window
+	close(cross.reduce((sum, path) => sum + length(path), 0), 2 * 14 * Math.SQRT2, 0.8);
 });
 
 test('the two sides of a pole are not a curve', () => {
@@ -708,4 +718,270 @@ test('the tools of a row and the names of the axes travel with the link', () => 
 	assert.equal(axisName('<b>', 'x'), 'x');
 	assert.equal(axisName('  v  ', 'y'), 'v');
 	assert.equal(axisName('', 'y'), 'y');
+});
+
+test('an integral with its two bounds is a number for each x', () => {
+	close(fn('\\int_{0}^{x}t^2 dt')(2), 8 / 3);
+	close(fn('\\int_0^2 x^2\\,dx')(7), 8 / 3);
+	// the x of the bound is not the x that is integrated
+	close(fn('\\int_0^x x dx')(2), 2);
+	close(fn('F\\left(x\\right)=\\int_{0}^{x}\\cos\\left(t\\right)\\,dt')(1), Math.sin(1));
+	close(fn('\\int_{0}^{a}x t dt', { a: 2 })(3), 6);
+	// a function that grows without limit at one end still has its area
+	close(fn('\\int_{0}^{x}\\frac{1}{\\sqrt{t}} dt')(4), 4, 5e-3);
+	close(fn('\\int_{0}^{x}\\sin\\left(t^2\\right) dt')(10), 0.5836708999, 1e-6);
+	// with a named function inside
+	const defs = definitions([parse('f(x)=\\frac{1}{1+x^2}')]);
+	const F = readEntry(parse(cleanLatex('\\int_{0}^{x}f(t)\\,dt')), defs);
+	close(F.f({ x: 1 }), Math.PI / 4);
+	// the slope is the function integrated, by the rules, and the bounds that move count
+	close(F.d({ x: 1 }), 0.5);
+	const G = read('\\int_{0}^{x^2}e^{-t^2} dt');
+	close(G.d({ x: 1 }), 2 / Math.E);
+});
+
+test('an integral that cannot be drawn says why', () => {
+	assert.match(read('\\int x^2 dx').message, /due estremi/);
+	assert.match(read('\\int_0^2 x^2').message, /dx/);
+	assert.match(read(cleanLatex('\\int_0^{x}\\placeholder{}\\,dx')).message, /funzione da integrare/);
+});
+
+test('a system in one brace is the region where all its lines hold', () => {
+	const system = read('\\begin{cases}y\\le -x+4\\\\ y>x^2-2\\\\ x\\ge0\\end{cases}');
+	assert.equal(system.kind, 'inequality');
+	assert.ok(system.f({ x: 1, y: 1 }) < 0);
+	assert.ok(system.f({ x: -1, y: 1 }) > 0);
+	assert.ok(system.f({ x: 1, y: 5 }) > 0);
+	// a row not written yet does not count
+	assert.equal(read(cleanLatex('\\begin{cases}y<x\\\\ \\placeholder{}\\end{cases}')).kind, 'inequality');
+	assert.match(read('\\begin{cases}y=x+1\\\\ y=x^2\\end{cases}').message, /disequazione per riga/);
+});
+
+test('an empty row of a function in pieces is not a piece, and a capital letter names a function', () => {
+	const f = fn(cleanLatex('\\begin{cases}x^2 & x<1\\\\ 2-x & x\\ge1\\\\ \\placeholder{} & \\placeholder{}\\end{cases}'));
+	close(f(0.5), 0.25);
+	close(f(3), -1);
+	assert.equal(read(cleanLatex('\\begin{cases}\\placeholder{} & \\placeholder{}\\\\ \\placeholder{} & \\placeholder{}\\end{cases}')).kind, 'error');
+	const F = read('F\\left(x\\right)=x^2+1');
+	assert.equal(F.name, 'F');
+	close(F.f({ x: 2 }), 5);
+	const defs = definitions([parse('F(x)=x^2')]);
+	close(readEntry(parse('F(x)+1'), defs).f({ x: 3 }), 10);
+});
+
+test('a function of two letters is used by the other rows, and derived with respect to one', () => {
+	const rows = ['f(x)=x', 'g(y)=y', 'h\\left(x{,}y\\right)=x+y^2', 'k(x;y)=h(y;x)'].map((l) => parse(cleanLatex(l)));
+	const defs = definitions(rows);
+	const entry = (latex) => readEntry(parse(cleanLatex(latex)), defs);
+	const h = entry('h\\left(x{,}y\\right)=x+y^2');
+	assert.equal(h.kind, 'definition');
+	assert.deepEqual(h.vars, ['x', 'y']);
+	// the same letter with another right side is an equation: a level curve
+	const level = entry('h(x;y)=4');
+	assert.equal(level.kind, 'implicit');
+	close(level.f({ x: 0, y: 2 }), 0);
+	// the two letters are put in place together
+	close(entry('k(1;x)').f({ x: 3 }), 3 + 1);
+	const system = entry('\\begin{cases}f(x)>1\\\\ g(y)>1\\\\ h(x{,}y)<10\\end{cases}');
+	assert.equal(system.kind, 'inequality');
+	assert.ok(system.f({ x: 2, y: 2 }) < 0);
+	assert.ok(system.f({ x: 2, y: 3 }) > 0);
+	assert.ok(system.f({ x: 0, y: 2 }) > 0);
+	// partial derivatives: the other letter is a number
+	close(entry('\\frac{d}{dx}\\left(h(x{,}y)\\right)').f({ x: 5 }), 1);
+	close(entry('\\frac{\\partial h}{\\partial y}=x').f({ x: 2, y: 3 }), 4);
+	close(entry('\\frac{\\partial^2}{\\partial x\\partial y}\\left(x^2y^3\\right)=6').f({ x: 1, y: 1 }), 0);
+		// the name alone is the function of its own letters: a product of two is the two curves together
+	const circles = ['a(x,y)=(x-1)^2+y^2-1', 'b(x,y)=(x+1)^2+y^2-1', 'c(x,y)=a\\cdot b', 'f(x)=x', 'p(x)=f+1'].map((l) => parse(cleanLatex(l)));
+	const both = definitions(circles);
+	const of = (latex) => readEntry(parse(cleanLatex(latex)), both);
+	const product = of('a\\cdot b=0');
+	assert.equal(product.kind, 'implicit');
+	close(product.f({ x: 2, y: 0 }), 0);
+	close(product.f({ x: -1, y: 1 }), 0);
+	close(product.f({ x: 0, y: 2 }), 16);
+	const region = of('ab>k');
+	assert.equal(region.kind, 'inequality');
+	assert.deepEqual(region.params, ['k']);
+	assert.ok(region.f({ x: 0, y: 2, k: 10 }) < 0);
+	assert.ok(region.f({ x: 0, y: 2, k: 20 }) > 0);
+	// inside another function the letters are that function's own
+	close(of('c(0;2)=0').f({ x: 9, y: 9 }), 16);
+	close(of('p(3)').f({ x: 0 }), 4);
+	close(of('y=f+1').f({ x: 3 }), 4);
+	// inside a function with a name the letter derived or integrated by is the function's own
+	close(entry('p(x)=\\frac{d}{dx}\\left(h(x{,}y)\\right)').f({ x: 5 }), 1);
+	close(entry('q(x)=\\int_0^2 x^2\\,dx').f({ x: 5 }), 8 / 3);
+	assert.match(entry('h(x)').message, /h\(x; y\)/);
+	assert.match(entry("h'(x)").message, /h\(x; y\)/);
+});
+
+test('what is built from other rows travels with the link', async () => {
+	const { decodeState, encodeState, stateOf } = await jiti.import('../../src/lib/grafico/documento.ts');
+	const state = stateOf(['A=\\left(0;1\\right)', 'B=\\left(2;5\\right)', '', '', '']);
+	// the ids are not the places: a link numbers the rows again
+	state.rows = state.rows.map((r, i) => ({ ...r, id: 10 + i * 3 }));
+	state.rows[2] = { ...state.rows[2], build: { type: 'line', of: [10, 13] }, name: 'r', label: true };
+	state.rows[3] = { ...state.rows[3], build: { type: 'on', of: [16], at: 0.25 }, name: 'C' };
+	state.rows[4] = { ...state.rows[4], build: { type: 'meet', of: [16, 16], index: 1 }, name: '\\gamma_1' };
+	const back = decodeState(encodeState(state));
+	assert.deepEqual(back.rows[2].build, { type: 'line', of: [0, 1] });
+	assert.equal(back.rows[2].name, 'r');
+	assert.deepEqual(back.rows[3].build, { type: 'on', of: [2], at: 0.25 });
+	assert.deepEqual(back.rows[4].build, { type: 'meet', of: [2, 2], index: 1 });
+	assert.equal(back.rows[4].name, '\\gamma_1');
+	// a build that points outside the list, or to itself, is not taken
+	const broken = stateOf(['', '']);
+	broken.rows[1] = { ...broken.rows[1], build: { type: 'line', of: [0, 7] }, name: '<b>' };
+	const read = decodeState(encodeState(broken));
+	assert.equal(read.rows[1].build, undefined);
+	assert.equal(read.rows[1].name, undefined);
+});
+
+test('a formula takes the coordinates of a point with a name', () => {
+	const rows = ['f(x)=\\frac{x^2}{4}', 'P=\\left(2;1\\right)'].map((l) => parse(cleanLatex(l)));
+	const defs = definitions(rows);
+	const points = pointNames(rows);
+	assert.deepEqual(points, ['P']);
+	const entry = (latex) => readEntry(parse(cleanLatex(latex)), defs, { points });
+	// the tangent at P, as the school writes it and as GeoGebra does
+	for (const latex of ["y=f'\\left(x_P\\right)\\left(x-x_P\\right)+y_P", "y=f'\\left(x\\left(P\\right)\\right)\\left(x-x\\left(P\\right)\\right)+f\\left(x\\left(P\\right)\\right)", "y-y_P=f'(x_P)(x-x_P)"]) {
+		const tangent = entry(latex);
+		assert.ok(['function', 'implicit'].includes(tangent.kind), `${latex}: ${tangent.message}`);
+		assert.deepEqual(tangent.params, tangent.kind === 'function' && latex.includes('(P') ? ['x_P'] : ['x_P', 'y_P']);
+		const scope = { x: 4, y: 3, x_P: 2, y_P: 1 };
+		close(tangent.kind === 'function' ? tangent.f(scope) : tangent.f(scope), tangent.kind === 'function' ? 3 : 0);
+	}
+	// without the point the letter says what is missing, and x(Q) is x times Q
+	assert.match(entry('x_Q+1').message, /punto Q/);
+	assert.deepEqual(entry('x(Q)').params, ['Q']);
+	// x_0 is still a parameter
+	assert.deepEqual(entry('x-x_0').params, ['x_0']);
+});
+
+test('a piece of a formula used many times is found once', () => {
+	// z → z² + c twelve times, each step a pair of functions of the pair before: the formula is short, written out it is not
+	const letters = 'abcdghmnpqsuvwklijozfABC';
+	const rows = ['a(x,y)=x^2-y^2+x', 'b(x,y)=2xy+y'];
+	for (let i = 1; i < 12; i++) rows.push(`${letters[2 * i]}(x,y)=${letters[2 * i - 2]}^2-${letters[2 * i - 1]}^2+x`, `${letters[2 * i + 1]}(x,y)=2${letters[2 * i - 2]}${letters[2 * i - 1]}+y`);
+	const jsons = rows.map((l) => parse(cleanLatex(l)));
+	const started = performance.now();
+	const set = readEntry(parse(`${letters[22]}^2+${letters[23]}^2\\le4`), definitions(jsons));
+	assert.equal(set.kind, 'inequality');
+	// inside: 0 stays at 0, −1 goes between −1 and 0; outside: 1 runs away
+	assert.ok(set.f({ x: 0, y: 0 }) < 0);
+	assert.ok(set.f({ x: -1, y: 0 }) < 0);
+	assert.ok(!(set.f({ x: 1, y: 0 }) < 0));
+	for (let k = 0; k < 20000; k++) set.f({ x: -0.5 + k * 1e-5, y: 0.1 });
+	assert.ok(performance.now() - started < 1500, 'the pieces are evaluated again and again');
+	// a sum whose term is used twice still follows its index
+	const twice = definitions(['g(x)=x^2', 'h(x)=g\\cdot g+g'].map((l) => parse(cleanLatex(l))));
+	close(readEntry(parse('\\sum_{n=1}^{3}h(n)'), twice).f({ x: 0 }), 1 + 1 + 16 + 4 + 81 + 9);
+	close(readEntry(parse('\\int_0^2 h(t)dt'), twice).f({ x: 0 }), 32 / 5 + 8 / 3, 1e-9);
+});
+
+/** The entries of a plotter with these rows, sequences and named functions and all. */
+const plotter = (...latex) => {
+	const jsons = latex.map((l) => parse(cleanLatex(l)));
+	const options = { sequences: sequences(jsons), points: pointNames(jsons) };
+	const defs = definitions(jsons);
+	return jsons.map((j) => readEntry(j, defs, options));
+};
+const term = (entry, n, scope = {}) => entry.f({ x: 0, y: 0, ...scope, [entry.index]: n });
+
+test('a sequence from its general term', () => {
+	const [a] = plotter('a_n=2n+1');
+	assert.equal(a.kind, 'sequence');
+	assert.equal(a.index, 'n');
+	assert.equal(a.from, undefined);
+	assert.deepEqual(a.params, []);
+	close(term(a, 5), 11);
+	const [, tenth, sum] = plotter('a_n=\\left(1+\\frac{1}{n}\\right)^n', 'y=a_{10}', '\\sum_{k=1}^{4}a_k');
+	close(tenth.f({ x: 0 }), 1.1 ** 10);
+	close(sum.f({ x: 0 }), 2 + 1.5 ** 2 + (4 / 3) ** 3 + 1.25 ** 4);
+});
+
+test('a sequence by recurrence climbs from the values it starts from', () => {
+	const [a, start, fifth, byK] = plotter('a_{n+1}=2a_n+1', 'a_0=3', 'a_5', 'a_k+x');
+	assert.equal(a.kind, 'sequence');
+	assert.equal(a.from, 0);
+	assert.equal(start.kind, 'given');
+	// 3, 7, 15, 31, 63, 127
+	close(term(a, 0), 3);
+	close(term(a, 5), 127);
+	close(fifth.f({ x: 0 }), 127);
+	assert.ok(Number.isNaN(term(a, -1)));
+	// the index can be a letter with a slider, and the term a piece of any formula
+	assert.deepEqual(byK.params, ['k']);
+	close(byK.f({ x: 10, k: 2 }), 25);
+	close(byK.f({ x: 10, k: 4 }), 73);
+	close(byK.f({ x: 10, k: 1 }), 17);
+	// written the other way round, with the term before on the right
+	const [b] = plotter('b_n=b_{n-1}+2', 'b_1=5');
+	close(term(b, 4), 11);
+	assert.equal(b.from, 1);
+	// without a value to start from it says what is missing
+	assert.match(plotter('c_{n+1}=c_n+1')[0].message, /manca il valore/);
+	assert.match(plotter('d_{n+1}=d_n+1', 'd_0=1', 'd_{n+1}=2d_n')[2].message, /ha già la sua regola/);
+});
+
+test('two steps back, and two sequences that read each other', () => {
+	const [F] = plotter('F_{n+2}=F_{n+1}+F_n', 'F_0=0', 'F_1=1');
+	assert.deepEqual([0, 1, 2, 3, 4, 5, 6, 10, 30].map((n) => term(F, n)), [0, 1, 1, 2, 3, 5, 8, 55, 832040]);
+	// a term far up, then one below it: read, not found again
+	close(term(F, 70), 190392490709135);
+	close(term(F, 12), 144);
+	// z → z² + c as two real sequences: the set of Mandelbrot in five rows
+	const rows = plotter('a_{n+1}=a_n^2-b_n^2+x', 'b_{n+1}=2a_nb_n+y', 'a_0=0', 'b_0=0', 'a_k^2+b_k^2\\le4');
+	assert.equal(rows[0].plane, true);
+	const set = rows[4];
+	assert.equal(set.kind, 'inequality');
+	assert.deepEqual(set.params, ['k']);
+	const inside = (x, y, k = 30) => set.f({ x, y, k }) <= 0;
+	assert.ok(inside(0, 0));
+	assert.ok(inside(-1, 0));
+	assert.ok(inside(-0.1, 0.65));
+	assert.ok(!inside(1, 0));
+	assert.ok(!inside(0.3, 0.6));
+	// the terms are those of the point asked for: after another point, they start again
+	assert.ok(inside(0, 0));
+	// a point that leaves late is still in after few steps
+	assert.ok(inside(0.3, 0.6, 2));
+});
+
+test('a sequence of school: the method of Newton, a term with a parameter', () => {
+	const [, x, , limit] = plotter('f(x)=x^2-2', "x_{n+1}=x_n-\\frac{f\\left(x_n\\right)}{f'\\left(x_n\\right)}", 'x_0=1', 'y=x_6');
+	assert.equal(x.kind, 'sequence');
+	close(term(x, 6), Math.SQRT2, 1e-12);
+	close(limit.f({ x: 3 }), Math.SQRT2, 1e-12);
+	// a geometric progression with its ratio on a slider
+	const [g] = plotter('g_{n+1}=q\\cdot g_n', 'g_0=3');
+	assert.deepEqual(g.params, ['q']);
+	close(term(g, 3, { q: 2 }), 24);
+	close(term(g, 3, { q: 0.5 }), 0.375);
+	// a point A_1 and a letter a_1 with no sequence are what they were
+	const [point, letter] = plotter('A_1=\\left(2;3\\right)', 'a_1x');
+	assert.equal(point.kind, 'point');
+	assert.deepEqual(letter.params, ['a_1']);
+});
+
+test('a region ends where its condition stops having a value', async () => {
+	const { sampleRegionEdge } = await jiti.import('../../src/lib/grafico/curva.ts');
+	// far from the set the terms of z² + c run to infinity and past it: no value, which is outside
+	const set = plotter('a_{n+1}=a_n^2-b_n^2+x', 'b_{n+1}=2a_nb_n+y', 'a_0=0', 'b_0=0', 'a_k^2+b_k^2\\le4')[4];
+	const scope = { x: 0, y: 0, k: 28 };
+	const F = (x, y) => ((scope.x = x), (scope.y = y), set.f(scope));
+	assert.ok(Number.isNaN(F(-0.6, 0.75)));
+	const { lines, inside } = sampleRegionEdge(F, { x0: -0.68, x1: -0.05, y0: 0.41, y1: 0.81 }, 1500, 920);
+	// every point of the drawing is a point: one without coordinates stops the whole path where it is
+	for (const piece of [...lines, ...inside]) for (const p of piece) assert.ok(Number.isFinite(p.x) && Number.isFinite(p.y));
+	// the inside goes up to the top of the main body, near y = 0.65
+	assert.ok(Math.max(...inside.flatMap((piece) => piece.map((p) => p.y))) > 0.64);
+	// the edge is drawn there too: on the left of zero √x has no value, and the region y < √x ends on x = 0
+	const root = read('y<\\sqrt{x}');
+	const edge = sampleRegionEdge((x, y) => root.f({ x, y }), { x0: -5, x1: 5, y0: -5, y1: 5 }, 800, 800).lines;
+	assert.ok(edge.some((line) => line.some((p) => Math.abs(p.x) < 0.02 && p.y < -1)));
+	// a curve is another matter: y = √x written as an equation has no line along x = 0
+	const curve = implicit('y-\\sqrt{x}=0');
+	assert.ok(!curve.some((line) => line.some((p) => Math.abs(p.x) < 0.02 && p.y < -1)));
 });

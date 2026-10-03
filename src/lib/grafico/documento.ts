@@ -4,6 +4,8 @@
  * vault/Prodotti/Studenti/Grafico di funzioni.md
  */
 
+import { BUILD_TYPES, type Build } from './geometria';
+
 export type LineWidth = 'thin' | 'normal' | 'thick';
 export type LineDash = 'solid' | 'dashed' | 'dotted';
 
@@ -26,6 +28,12 @@ export interface PlotRow {
 	area?: [number, number];
 	/** For a function: a table of its values, from this x and by this step. */
 	table?: { from: number; step: number };
+	/** A row that is not a formula but an object built from other rows: the line through A and B. Its `latex` is empty. */
+	build?: Build;
+	/** The name of a built object, in LaTeX: A, r, \gamma_1. A formula has its name in the formula. */
+	name?: string;
+	/** A point made with a tool on the plane: a formula like any other, shown with the construction it belongs to. */
+	placed?: boolean;
 }
 
 export type SliderSpeed = 'slow' | 'normal' | 'fast';
@@ -121,11 +129,11 @@ const DASHES: LineDash[] = ['solid', 'dashed', 'dotted'];
 const SPEEDS: SliderSpeed[] = ['slow', 'normal', 'fast'];
 const MODES: SliderMode[] = ['bounce', 'loop', 'once'];
 
-const MAX_ROWS = 40;
+const MAX_ROWS = 120;
 const MAX_LATEX = 600;
 
 /** What only some rows have: the tangent's x, the ends of the area, the start and step of the table. */
-type RowExtras = { g?: number; i?: [number, number]; v?: [number, number] };
+type RowExtras = { g?: number; i?: [number, number]; v?: [number, number]; /** A build: its type, the places of its rows in the list, then `at` and `index`. */ b?: [string, number[], (number | null)?, (number | null)?]; m?: string; /** Placed with a tool. */ k?: 1 };
 
 type Packed = {
 	v: 1;
@@ -159,6 +167,10 @@ export function encodeState(state: PlotState): string {
 			if (r.tangent !== undefined) extras.g = r.tangent;
 			if (r.area) extras.i = r.area;
 			if (r.table) extras.v = [r.table.from, r.table.step];
+			// a link numbers the rows by their place: a build points to places
+			if (r.build) extras.b = [r.build.type, r.build.of.map((id) => state.rows.findIndex((o) => o.id === id)), r.build.at ?? null, r.build.index ?? null];
+			if (r.name) extras.m = r.name;
+			if (r.placed) extras.k = 1;
 			const more = Object.keys(extras).length > 0;
 			if (more || r.t0 !== undefined || r.t1 !== undefined) packed.push(r.t0 ?? null, r.t1 ?? null);
 			if (more) packed.push(extras);
@@ -180,10 +192,18 @@ export function axisName(name: unknown, fallback: string): string {
 	return typeof name === 'string' && /^[\p{L}\p{N}_ ()/°]{1,8}$/u.test(name.trim()) ? name.trim() : fallback;
 }
 
-function rowExtras(e: unknown): Partial<PlotRow> {
+/** The name of a built object: a letter or a Greek one, with a number below. */
+const BUILT_NAME = /^(?:[A-Za-z]|\\[a-z]{2,8})(?:_\{?[0-9]{1,3}\}?)?$/;
+
+function rowExtras(e: unknown, self: number, count: number): Partial<PlotRow> {
 	if (typeof e !== 'object' || e === null) return {};
-	const { g, i, v } = e as RowExtras;
+	const { g, i, v, b, m, k } = e as RowExtras;
+	const place = (k: unknown) => Number.isInteger(k) && (k as number) >= 0 && (k as number) < count && k !== self;
+	const built = Array.isArray(b) && (BUILD_TYPES as readonly string[]).includes(b[0]) && Array.isArray(b[1]) && b[1].length >= 1 && b[1].length <= 12 && b[1].every(place);
 	return {
+		...(built ? { build: { type: b[0] as Build['type'], of: b[1], ...(finite(b[2]) ? { at: b[2] } : {}), ...(Number.isInteger(b[3]) && (b[3] as number) >= 0 && (b[3] as number) < 4 ? { index: b[3] as number } : {}) } } : {}),
+		...(typeof m === 'string' && BUILT_NAME.test(m) ? { name: m } : {}),
+		...(k === 1 ? { placed: true } : {}),
 		...(finite(g) ? { tangent: g } : {}),
 		...(Array.isArray(i) && finite(i[0]) && finite(i[1]) ? { area: [i[0], i[1]] as [number, number] } : {}),
 		...(Array.isArray(v) && finite(v[0]) && finite(v[1]) && v[1] > 0 ? { table: { from: v[0], step: v[1] } } : {})
@@ -195,6 +215,7 @@ export function decodeState(code: string): PlotState | null {
 	try {
 		const p = JSON.parse(fromBase64Url(code)) as Partial<Packed>;
 		if (p.v !== 1 || !Array.isArray(p.r)) return null;
+		const count = Math.min(p.r.length, MAX_ROWS);
 		const rows: PlotRow[] = p.r.slice(0, MAX_ROWS).map((r, id) => {
 			if (!Array.isArray(r) || typeof r[0] !== 'string' || r[0].length > MAX_LATEX) throw new Error('row');
 			return {
@@ -207,7 +228,7 @@ export function decodeState(code: string): PlotState | null {
 				hidden: r[5] === 1,
 				...(finite(r[6]) ? { t0: r[6] } : {}),
 				...(finite(r[7]) ? { t1: r[7] } : {}),
-				...rowExtras(r[8])
+				...rowExtras(r[8], id, count)
 			};
 		});
 		const sliders: Record<string, SliderSpec> = {};
@@ -243,6 +264,86 @@ const slider = (value: number, more: Partial<SliderSpec> = {}): SliderSpec => ({
 const named = (state: PlotState, labels: number[]): PlotState => ({ ...state, rows: state.rows.map((r, i) => (labels.includes(i) ? { ...r, label: true } : r)) });
 
 /** Graphs ready to open, from the programme of the Italian school. */
+// ---------------------------------------------------------------- showpieces
+
+/*
+ * Graphs made to see how far the plotter goes (Alessandro, 2 October 2026: "to test the absolute limit", to be taken
+ * away later). They lean on three things: a function of two letters used by its name alone, the coordinates of a
+ * point in a formula (x_A), and a piece of a formula that is evaluated once however many times it is used.
+ */
+
+/** The distance of (x; y) from the point P, and its square. */
+const square = (P: string) => `\\left(x-x_${P}\\right)^2+\\left(y-y_${P}\\right)^2`;
+const distance = (P: string) => `\\sqrt{${square(P)}}`;
+const point = (name: string, x: number, y: number) => `${name}=\\left(${String(x).replace('.', '{,}')};${String(y).replace('.', '{,}')}\\right)`;
+const xy = '\\left(x,y\\right)';
+
+const SHOWPIECES: PlotExample[] = [
+	{
+		title: 'Metaball',
+		about: 'Tre punti da trascinare: è colorato dove la somma dei loro campi supera k.',
+		state: stateOf([point('A', -1.5, 0.5), point('B', 1.5, 1), point('C', 0, -1.5), `m${xy}=\\frac{1}{${square('A')}}+\\frac{1}{${square('B')}}+\\frac{1}{${square('C')}}`, 'm\\ge k'], {
+			sliders: { k: slider(1, { min: 0.3, max: 3, step: 0.05 }) },
+			camera: { cx: 0, cy: 0, span: 11, stretch: 1 }
+		})
+	},
+	{
+		title: 'Interferenza di due sorgenti',
+		about: 'Le onde di A e di B si sommano. Trascina le sorgenti, e fai partire w per vederle correre.',
+		state: stateOf([point('A', -2, 0), point('B', 2, 0), `u${xy}=${distance('A')}`, `v${xy}=${distance('B')}`, '\\sin\\left(ku-w\\right)+\\sin\\left(kv-w\\right)>0'], {
+			sliders: { k: slider(4, { min: 1, max: 8 }), w: slider(0, { min: 0, max: 6.28, step: 0.04, speed: 'fast', mode: 'loop' }) },
+			camera: { cx: 0, cy: 0, span: 16, stretch: 1 }
+		})
+	},
+	{
+				title: 'Insieme di Mandelbrot',
+		about: 'z² + c come due successioni che si leggono a vicenda: resta colorato il c da cui z non scappa dopo k passi.',
+		state: stateOf(['a_{n+1}=a_n^2-b_n^2+x', 'b_{n+1}=2a_nb_n+y', 'a_0=0', 'b_0=0', 'a_k^2+b_k^2\\le4'], {
+			sliders: { k: slider(12, { min: 1, max: 40, step: 1, speed: 'slow' }) },
+			camera: { cx: -0.65, cy: 0, span: 3.6, stretch: 1 }
+		})
+	},
+	{
+		title: 'Ellisse, iperbole e ovale dagli stessi fuochi',
+		about: 'Somma, differenza e prodotto delle distanze da A e B. Trascina i fuochi.',
+		state: stateOf([point('A', -2, 0), point('B', 2, 0), `p${xy}=${distance('A')}`, `q${xy}=${distance('B')}`, 'p+q=k', '\\left|p-q\\right|=h', 'pq=c'], {
+			sliders: { k: slider(6, { min: 4.1, max: 10 }), h: slider(2, { min: 0.1, max: 3.9 }), c: slider(4.5, { min: 0.5, max: 12 }) },
+			camera: { cx: 0, cy: 0, span: 14, stretch: 1 }
+		})
+	},
+	{
+		title: 'Linee di livello di un dipolo',
+		about: 'Il potenziale di due cariche opposte in A e B: una riga sola disegna tutte le linee.',
+		state: stateOf([point('A', -2, 0), point('B', 2, 0), `p${xy}=${distance('A')}`, `q${xy}=${distance('B')}`, '\\sin\\left(k\\pi\\left(\\frac{1}{p}-\\frac{1}{q}\\right)\\right)=0'], {
+			sliders: { k: slider(4, { min: 1, max: 10, step: 0.5 }) },
+			camera: { cx: 0, cy: 0, span: 14, stretch: 1 }
+		})
+	},
+	{
+		title: 'Cuore che batte',
+		about: 'Una disequazione di sesto grado. Fai partire a.',
+		state: {
+			...stateOf([], { sliders: { a: slider(1, { min: 0.7, max: 1.3, step: 0.01, speed: 'fast' }) }, camera: { cx: 0, cy: 0.2, span: 5, stretch: 1 } }),
+			rows: [{ ...newRow([], '\\left(x^2+y^2-a\\right)^3\\le x^2y^3'), color: PALETTE[1] }]
+		}
+	},
+	{
+		title: 'Curva a farfalla',
+		about: 'Una sola curva polare, con θ che fa dodici giri.',
+		state: {
+			...stateOf([], { settings: { ...DEFAULT_SETTINGS, polar: true }, camera: { cx: 0, cy: 0.8, span: 11, stretch: 1 } }),
+			rows: [{ ...newRow([], 'r=e^{\\sin\\theta}-2\\cos\\left(4\\theta\\right)+\\sin^5\\left(\\frac{2\\theta-\\pi}{24}\\right)'), t0: 0, t1: 24 * Math.PI, color: PALETTE[4] }]
+		}
+	}
+];
+
+/** A graph with objects built on its rows: each build names its rows by their place in the list. */
+function withBuilds(state: PlotState, builds: [Build, string?][]): PlotState {
+	const rows: PlotRow[] = state.rows.map((r) => ({ ...r, placed: true }));
+	for (const [build, name] of builds) rows.push({ ...newRow(rows), build, ...(name ? { name, label: !/^[A-Z]/.test(name) } : {}) });
+	return { ...state, rows };
+}
+
 export const EXAMPLES: PlotExample[] = [
 	{
 		title: 'Parabola',
@@ -330,6 +431,34 @@ export const EXAMPLES: PlotExample[] = [
 		state: stateOf(['y\\le-x+4', 'y>x^2-2', 'x\\ge0'], { camera: { cx: 0, cy: 1, span: 14, stretch: 1 } })
 	},
 	{
+		title: 'Circonferenza per tre punti',
+		about: 'Il centro è dove si incontrano gli assi dei lati: trascina i vertici.',
+		state: withBuilds(stateOf(['A=\\left(-3;0\\right)', 'B=\\left(3;0\\right)', 'C=\\left(1;4\\right)'], { camera: { cx: 0, cy: 1, span: 14, stretch: 1 } }), [
+			[{ type: 'segment', of: [0, 1] }],
+			[{ type: 'segment', of: [1, 2] }],
+			[{ type: 'segment', of: [2, 0] }],
+			[{ type: 'circle3', of: [0, 1, 2] }, '\\gamma'],
+			[{ type: 'bisector', of: [0, 1] }, 'r'],
+			[{ type: 'bisector', of: [1, 2] }, 's'],
+			[{ type: 'meet', of: [7, 8], index: 0 }, 'O']
+		])
+	},
+		{
+		title: 'Successioni e limiti',
+		about: 'Un termine generale che sale verso e, e una ricorrenza che scende verso √2.',
+		state: stateOf(['a_n=\\left(1+\\frac{1}{n}\\right)^n', 'y=e', 'b_{n+1}=\\frac{b_n}{2}+\\frac{1}{b_n}', 'b_0=4', 'y=\\sqrt{2}'], { camera: { cx: 9, cy: 2.2, span: 22, stretch: 3 } })
+	},
+	{
+		title: 'Successione di Fibonacci',
+		about: 'Ogni termine è la somma dei due prima: servono due valori di partenza.',
+		state: stateOf(['F_{n+2}=F_{n+1}+F_n', 'F_0=0', 'F_1=1'], { camera: { cx: 5.5, cy: 28, span: 14, stretch: 0.14 } })
+	},
+	{
+		title: 'Funzione integrale',
+		about: 'L’area sotto f da 0 a x, come funzione di x: la sua pendenza è f.',
+		state: stateOf(['f\\left(x\\right)=e^{-x^2}', 'F\\left(x\\right)=\\int_0^{x}f\\left(t\\right)\\,dt'], { camera: { cx: 0, cy: 0, span: 8, stretch: 1 } })
+	},
+	{
 		title: 'Tangente e area',
 		about: 'Trascina il punto di tangenza e gli estremi dell’area.',
 		state: {
@@ -350,5 +479,6 @@ export const EXAMPLES: PlotExample[] = [
 			settings: { ...DEFAULT_SETTINGS, xAxis: 'pi' },
 			camera: { cx: 0, cy: 0, span: 6 * Math.PI, stretch: 2 }
 		})
-	}
+	},
+	...SHOWPIECES
 ];
