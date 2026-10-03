@@ -74,6 +74,8 @@ function protect(markdown: string) {
 		chem.push({ kind: 'interattivo', code });
 		return `\n\n<div data-chem="${chem.length - 1}"></div>\n\n`;
 	});
+	// A dollar in inline code is a dollar (a spreadsheet's `$B$2`), not the edge of a formula.
+	text = text.replace(/`[^`\n]+`/g, (code) => code.replace(/\$/g, DOLLAR));
 	text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, content: string) => {
 		math.push({ display: true, content: content.trim() });
 		return `MATHPLACEHOLDER${math.length - 1}END`;
@@ -85,6 +87,9 @@ function protect(markdown: string) {
 	});
 	return { text, math, tikz, chem, plots, codes };
 }
+
+/** Stands for a dollar inside inline code while the formulas are lifted out. */
+const DOLLAR = 'DOLLARINCODE';
 
 const CHEM_FENCE = new RegExp(`\`\`\`(${CHEM_BLOCKS.join('|')})\\n([\\s\\S]+?)\`\`\``, 'g');
 
@@ -120,7 +125,8 @@ function restore(html: string, math: Placeholder[], tikz: string[], chem: { kind
 			const { kind, code } = chem[Number(i)];
 			return kind === 'interattivo' ? interactiveFigure(code) : chemFigure(kind, code);
 		})
-		.replace(/<div data-code="(\d+)"><\/div>/g, (_, i: string) => codes[Number(i)]);
+		.replace(/<div data-code="(\d+)"><\/div>/g, (_, i: string) => codes[Number(i)])
+		.replaceAll(DOLLAR, '&#36;');
 }
 
 /** RDKit draws at screen size; a little larger reads better next to the lesson text. */
