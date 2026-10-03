@@ -1,5 +1,5 @@
 ---
-stato: in sviluppo
+stato: rilasciata
 release: da decidere
 aggiornato: 2026-10-03
 tag: [prodotto, studenti, strumenti, matematica, geometria]
@@ -11,7 +11,7 @@ Gli strumenti per costruire oggetti geometrici sul piano del [[Grafico di funzio
 La proposta è di Claude. Il 2 ottobre 2026 Alessandro ha deciso il primo giro, i clic prima della scrittura e lo stesso componente: [[2026-10-02 La geometria analitica sta nel plotter e si costruisce prima con i clic]]. Il resto è proposta.
 
 ## Stato attuale
-Dal 2 ottobre 2026 il primo giro è scritto sul branch `grafico-funzioni`; dal 3 ottobre è committato e sta nella pagina `/strumenti/grafico-di-funzione`, dove i filmati degli strumenti sono anche nella pagina, con i dati strutturati `VideoObject`.
+Dal 2 ottobre 2026 il primo giro è scritto; dal 3 ottobre è in produzione (PR #27) e sta nella pagina `/strumenti/grafico-di-funzione`, dove i filmati degli strumenti sono anche nella pagina, con i dati strutturati `VideoObject`.
 
 - La barra sul piano (`GeometryBar.tsx`): una colonna a sinistra su computer, una striscia che scorre in alto su telefono. Dodici strumenti: muovi, punto, intersezione, punto medio, retta per due punti, segmento, parallela, perpendicolare, asse del segmento, circonferenza di centro e punto, circonferenza per tre punti, distanza. Lo strumento resta in mano; Esc lascia prima i clic fatti, poi lo strumento. Una riga ai piedi del piano dice cosa manca.
 - I clic (`geometry.ts`, `useGeometryTool`): su un punto lo usa; nel vuoto crea un punto libero, che si ferma sugli incroci della griglia; su un oggetto crea un punto vincolato; dove due oggetti si incontrano crea il punto di intersezione. Prima dell'ultimo clic l'oggetto si vede tratteggiato in grigio. Parallela e perpendicolare prendono retta e punto in qualunque ordine; punto medio e asse prendono anche un segmento.
