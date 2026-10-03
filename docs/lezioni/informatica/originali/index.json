@@ -1,0 +1,1370 @@
+[
+  {
+    "id": "e872357e-38ba-43b8-8a98-07021c847d55",
+    "parent_id": "70ad1f09-b942-4a0a-983f-c049b372a337",
+    "title": "Informazione, dati e codici",
+    "slug": "inf-informazione-dati",
+    "path": "high_school/computer-science/informatica/inf-informazione-dati",
+    "chapter": "Informatica e informazione"
+  },
+  {
+    "id": "15c2f877-0ab3-425a-b022-d2f9e89ac730",
+    "parent_id": "70ad1f09-b942-4a0a-983f-c049b372a337",
+    "title": "Hardware e software",
+    "slug": "hardware-software",
+    "path": "high_school/computer-science/informatica/hardware-software",
+    "chapter": "Informatica e informazione"
+  },
+  {
+    "id": "b54d0a87-a21a-4634-b963-fde58406afec",
+    "parent_id": "70ad1f09-b942-4a0a-983f-c049b372a337",
+    "title": "Bit, byte e unità di misura",
+    "slug": "inf-bit-byte",
+    "path": "high_school/computer-science/informatica/inf-bit-byte",
+    "chapter": "Informatica e informazione"
+  },
+  {
+    "id": "d459672f-a723-4d7b-9df8-ba4839fe8897",
+    "parent_id": "9823079a-6485-484d-a1c6-ff4af68c9adf",
+    "title": "I sistemi di numerazione posizionali",
+    "slug": "inf-sistemi-posizionali",
+    "path": "high_school/computer-science/inf-sistemi-numerazione/inf-sistemi-posizionali",
+    "chapter": "I sistemi di numerazione"
+  },
+  {
+    "id": "fe0236ad-895c-497b-ae2d-82f8a1f3bdbc",
+    "parent_id": "9823079a-6485-484d-a1c6-ff4af68c9adf",
+    "title": "Conversioni tra binario e decimale",
+    "slug": "inf-binario-decimale",
+    "path": "high_school/computer-science/inf-sistemi-numerazione/inf-binario-decimale",
+    "chapter": "I sistemi di numerazione"
+  },
+  {
+    "id": "d8a0f0ad-91e7-4205-8853-00fb2fe48323",
+    "parent_id": "9823079a-6485-484d-a1c6-ff4af68c9adf",
+    "title": "Il sistema esadecimale",
+    "slug": "inf-esadecimale",
+    "path": "high_school/computer-science/inf-sistemi-numerazione/inf-esadecimale",
+    "chapter": "I sistemi di numerazione"
+  },
+  {
+    "id": "3529526a-bd4a-4c9b-b0c6-8e181885163c",
+    "parent_id": "9823079a-6485-484d-a1c6-ff4af68c9adf",
+    "title": "Addizione e moltiplicazione in binario",
+    "slug": "inf-aritmetica-binaria",
+    "path": "high_school/computer-science/inf-sistemi-numerazione/inf-aritmetica-binaria",
+    "chapter": "I sistemi di numerazione"
+  },
+  {
+    "id": "968f62ae-57bb-4592-8018-4e80ed56b41b",
+    "parent_id": "91ebc292-0288-4bbf-8e7a-140a84610d5b",
+    "title": "Numeri interi con segno e complemento a due",
+    "slug": "inf-interi-segno",
+    "path": "high_school/computer-science/inf-codifica/inf-interi-segno",
+    "chapter": "La codifica dell'informazione"
+  },
+  {
+    "id": "e2e790a3-cc0e-4312-8421-bb0650f1c43e",
+    "parent_id": "91ebc292-0288-4bbf-8e7a-140a84610d5b",
+    "title": "Numeri reali in virgola mobile",
+    "slug": "inf-virgola-mobile",
+    "path": "high_school/computer-science/inf-codifica/inf-virgola-mobile",
+    "chapter": "La codifica dell'informazione"
+  },
+  {
+    "id": "c8928339-c3fb-4b71-89da-96f8d9c25653",
+    "parent_id": "91ebc292-0288-4bbf-8e7a-140a84610d5b",
+    "title": "La codifica dei caratteri: ASCII e Unicode",
+    "slug": "inf-codifica-caratteri",
+    "path": "high_school/computer-science/inf-codifica/inf-codifica-caratteri",
+    "chapter": "La codifica dell'informazione"
+  },
+  {
+    "id": "cdad5902-514b-4b5c-a368-66938d5ab2c1",
+    "parent_id": "91ebc292-0288-4bbf-8e7a-140a84610d5b",
+    "title": "La codifica delle immagini: pixel e colori",
+    "slug": "inf-codifica-immagini",
+    "path": "high_school/computer-science/inf-codifica/inf-codifica-immagini",
+    "chapter": "La codifica dell'informazione"
+  },
+  {
+    "id": "f3f323cd-7e33-46ce-b3c3-5d249c5ad553",
+    "parent_id": "91ebc292-0288-4bbf-8e7a-140a84610d5b",
+    "title": "La codifica dei suoni",
+    "slug": "inf-codifica-suoni",
+    "path": "high_school/computer-science/inf-codifica/inf-codifica-suoni",
+    "chapter": "La codifica dell'informazione"
+  },
+  {
+    "id": "0a99673b-f8ba-482a-b1fe-ff7bd73530c8",
+    "parent_id": "bd39468c-c0af-49de-9f94-ab38392cfaa1",
+    "title": "La macchina di von Neumann",
+    "slug": "inf-von-neumann",
+    "path": "high_school/computer-science/inf-architettura/inf-von-neumann",
+    "chapter": "L'architettura del computer"
+  },
+  {
+    "id": "b389efe4-1e8e-4f35-a021-fecafd87e81b",
+    "parent_id": "bd39468c-c0af-49de-9f94-ab38392cfaa1",
+    "title": "La CPU e il ciclo di esecuzione delle istruzioni",
+    "slug": "inf-cpu",
+    "path": "high_school/computer-science/inf-architettura/inf-cpu",
+    "chapter": "L'architettura del computer"
+  },
+  {
+    "id": "a39c93e1-fd32-4869-98cf-9848c0503c7f",
+    "parent_id": "bd39468c-c0af-49de-9f94-ab38392cfaa1",
+    "title": "Memoria centrale e memorie di massa",
+    "slug": "memoria-storage",
+    "path": "high_school/computer-science/inf-architettura/memoria-storage",
+    "chapter": "L'architettura del computer"
+  },
+  {
+    "id": "64257edd-d719-44b8-8b88-8dafcaac8649",
+    "parent_id": "bd39468c-c0af-49de-9f94-ab38392cfaa1",
+    "title": "Bus e periferiche",
+    "slug": "inf-bus-periferiche",
+    "path": "high_school/computer-science/inf-architettura/inf-bus-periferiche",
+    "chapter": "L'architettura del computer"
+  },
+  {
+    "id": "df995791-eb9b-48f3-9164-0892133de4e0",
+    "parent_id": "bd39468c-c0af-49de-9f94-ab38392cfaa1",
+    "title": "Computer, dispositivi mobili e sistemi embedded",
+    "slug": "inf-tipi-computer",
+    "path": "high_school/computer-science/inf-architettura/inf-tipi-computer",
+    "chapter": "L'architettura del computer"
+  },
+  {
+    "id": "add989d9-cec6-4fa1-8fb7-eab45cbf422f",
+    "parent_id": "50b09081-4143-4ab8-874b-285b954c9168",
+    "title": "Funzioni del sistema operativo",
+    "slug": "inf-funzioni-so",
+    "path": "high_school/computer-science/sistemi-operativi/inf-funzioni-so",
+    "chapter": "Il sistema operativo"
+  },
+  {
+    "id": "edc11bae-c9b4-45e3-9bbd-dd93b5e740d0",
+    "parent_id": "50b09081-4143-4ab8-874b-285b954c9168",
+    "title": "Avvio del computer e interfacce utente",
+    "slug": "inf-avvio-interfacce",
+    "path": "high_school/computer-science/sistemi-operativi/inf-avvio-interfacce",
+    "chapter": "Il sistema operativo"
+  },
+  {
+    "id": "e9ae40c3-8921-4c9e-b6e8-5eb4c18449b3",
+    "parent_id": "50b09081-4143-4ab8-874b-285b954c9168",
+    "title": "Processi, thread e multitasking",
+    "slug": "processi-thread",
+    "path": "high_school/computer-science/sistemi-operativi/processi-thread",
+    "chapter": "Il sistema operativo"
+  },
+  {
+    "id": "351b1819-1d9e-4829-82ba-9be25440a87f",
+    "parent_id": "50b09081-4143-4ab8-874b-285b954c9168",
+    "title": "La gestione della memoria",
+    "slug": "inf-gestione-memoria",
+    "path": "high_school/computer-science/sistemi-operativi/inf-gestione-memoria",
+    "chapter": "Il sistema operativo"
+  },
+  {
+    "id": "e132348a-a6a5-45bd-a565-f8d20904093a",
+    "parent_id": "50b09081-4143-4ab8-874b-285b954c9168",
+    "title": "Il file system: file, cartelle e percorsi",
+    "slug": "inf-file-system",
+    "path": "high_school/computer-science/sistemi-operativi/inf-file-system",
+    "chapter": "Il sistema operativo"
+  },
+  {
+    "id": "c96c0970-b427-45cc-ba75-8de73c3795a0",
+    "parent_id": "d1a43419-9a9f-4e35-a749-4c96d41a7400",
+    "title": "Celle, valori e formule",
+    "slug": "excel",
+    "path": "high_school/computer-science/office/excel",
+    "chapter": "Il foglio di calcolo"
+  },
+  {
+    "id": "e1691a38-9d1e-4682-a16b-a19f76dfcfcd",
+    "parent_id": "d1a43419-9a9f-4e35-a749-4c96d41a7400",
+    "title": "Riferimenti relativi e assoluti",
+    "slug": "inf-riferimenti-celle",
+    "path": "high_school/computer-science/office/inf-riferimenti-celle",
+    "chapter": "Il foglio di calcolo"
+  },
+  {
+    "id": "8b360097-cfbc-4e2f-8f9d-549478549825",
+    "parent_id": "d1a43419-9a9f-4e35-a749-4c96d41a7400",
+    "title": "Le funzioni del foglio di calcolo",
+    "slug": "inf-funzioni-foglio",
+    "path": "high_school/computer-science/office/inf-funzioni-foglio",
+    "chapter": "Il foglio di calcolo"
+  },
+  {
+    "id": "ec5b9a04-daa5-40f2-9564-e8e50af5ddf3",
+    "parent_id": "d1a43419-9a9f-4e35-a749-4c96d41a7400",
+    "title": "Condizioni e funzioni logiche",
+    "slug": "inf-funzioni-logiche",
+    "path": "high_school/computer-science/office/inf-funzioni-logiche",
+    "chapter": "Il foglio di calcolo"
+  },
+  {
+    "id": "22cb21af-e151-4208-881b-f36165268f7f",
+    "parent_id": "d1a43419-9a9f-4e35-a749-4c96d41a7400",
+    "title": "Grafici per rappresentare i dati",
+    "slug": "inf-grafici-dati",
+    "path": "high_school/computer-science/office/inf-grafici-dati",
+    "chapter": "Il foglio di calcolo"
+  },
+  {
+    "id": "da052193-9a7f-4b8b-a86c-29b177fa6bb0",
+    "parent_id": "d1a43419-9a9f-4e35-a749-4c96d41a7400",
+    "title": "Ordinare, filtrare e riassumere i dati",
+    "slug": "inf-analisi-dati",
+    "path": "high_school/computer-science/office/inf-analisi-dati",
+    "chapter": "Il foglio di calcolo"
+  },
+  {
+    "id": "2a3b3207-f44a-4c8a-8204-b1f20eac84ea",
+    "parent_id": "400a27e8-5565-4ab6-b77d-cba5d8f63463",
+    "title": "Struttura di un documento elettronico",
+    "slug": "word",
+    "path": "high_school/computer-science/presentazioni/word",
+    "chapter": "Documenti di testo e presentazioni"
+  },
+  {
+    "id": "009fb549-d133-49ff-82d9-98d7a0c2521e",
+    "parent_id": "400a27e8-5565-4ab6-b77d-cba5d8f63463",
+    "title": "Stili, titoli, tabelle e indici automatici",
+    "slug": "inf-stili-indici",
+    "path": "high_school/computer-science/presentazioni/inf-stili-indici",
+    "chapter": "Documenti di testo e presentazioni"
+  },
+  {
+    "id": "b69eea5d-dd93-41d5-b116-11f36f3d8439",
+    "parent_id": "400a27e8-5565-4ab6-b77d-cba5d8f63463",
+    "title": "Progettare una presentazione",
+    "slug": "powerpoint",
+    "path": "high_school/computer-science/presentazioni/powerpoint",
+    "chapter": "Documenti di testo e presentazioni"
+  },
+  {
+    "id": "efe828ec-24c1-45df-9eb7-bf4e8114ae54",
+    "parent_id": "400a27e8-5565-4ab6-b77d-cba5d8f63463",
+    "title": "Slide efficaci: testo, immagini e grafici",
+    "slug": "creare-slide",
+    "path": "high_school/computer-science/presentazioni/creare-slide",
+    "chapter": "Documenti di testo e presentazioni"
+  },
+  {
+    "id": "bb3dbcbf-cfae-4746-bc20-b712207dd1cb",
+    "parent_id": "d4b01007-b189-49c3-914a-ceca4da79a9a",
+    "title": "Internet, la rete delle reti",
+    "slug": "internet",
+    "path": "high_school/computer-science/internet-web/internet",
+    "chapter": "Internet e il web"
+  },
+  {
+    "id": "eb4da930-13cc-472a-bf09-5e8cd7f15dd9",
+    "parent_id": "d4b01007-b189-49c3-914a-ceca4da79a9a",
+    "title": "Il modello client-server",
+    "slug": "inf-client-server",
+    "path": "high_school/computer-science/internet-web/inf-client-server",
+    "chapter": "Internet e il web"
+  },
+  {
+    "id": "3651668c-4a24-46db-97d5-d41e8c708942",
+    "parent_id": "d4b01007-b189-49c3-914a-ceca4da79a9a",
+    "title": "Indirizzi IP e nomi di dominio",
+    "slug": "inf-indirizzi-domini",
+    "path": "high_school/computer-science/internet-web/inf-indirizzi-domini",
+    "chapter": "Internet e il web"
+  },
+  {
+    "id": "2685ee5a-938f-45e4-b0bf-1ec3445b1610",
+    "parent_id": "d4b01007-b189-49c3-914a-ceca4da79a9a",
+    "title": "Il web: ipertesti, URL e protocollo HTTP",
+    "slug": "http-html",
+    "path": "high_school/computer-science/internet-web/http-html",
+    "chapter": "Internet e il web"
+  },
+  {
+    "id": "30d3c339-924b-47c5-9a45-8cc1348c2c70",
+    "parent_id": "d4b01007-b189-49c3-914a-ceca4da79a9a",
+    "title": "Posta elettronica e altri servizi di Internet",
+    "slug": "inf-servizi-internet",
+    "path": "high_school/computer-science/internet-web/inf-servizi-internet",
+    "chapter": "Internet e il web"
+  },
+  {
+    "id": "42500986-8388-4485-9298-4d68cb80083b",
+    "parent_id": "d4b01007-b189-49c3-914a-ceca4da79a9a",
+    "title": "Cercare e valutare le informazioni in rete",
+    "slug": "inf-ricerca-informazioni",
+    "path": "high_school/computer-science/internet-web/inf-ricerca-informazioni",
+    "chapter": "Internet e il web"
+  },
+  {
+    "id": "f03a3895-850c-4ebd-84fa-06b38cd87963",
+    "parent_id": "d4b01007-b189-49c3-914a-ceca4da79a9a",
+    "title": "Il cloud: archiviare, condividere e lavorare insieme",
+    "slug": "cloud",
+    "path": "high_school/computer-science/internet-web/cloud",
+    "chapter": "Internet e il web"
+  },
+  {
+    "id": "740c9b20-dce1-4544-851b-fbec4172dc54",
+    "parent_id": "44b13e1d-8ef0-48d3-9600-7b37e3e45d13",
+    "title": "Virus e malware",
+    "slug": "virus-malware",
+    "path": "high_school/computer-science/sicurezza/virus-malware",
+    "chapter": "Sicurezza e cittadinanza digitale"
+  },
+  {
+    "id": "3385b7d7-a7d1-4b46-9fc2-bc9420d62885",
+    "parent_id": "44b13e1d-8ef0-48d3-9600-7b37e3e45d13",
+    "title": "Password e autenticazione",
+    "slug": "password-sicure",
+    "path": "high_school/computer-science/sicurezza/password-sicure",
+    "chapter": "Sicurezza e cittadinanza digitale"
+  },
+  {
+    "id": "1213a28d-e0e4-496f-ae6b-10fb0f064f23",
+    "parent_id": "44b13e1d-8ef0-48d3-9600-7b37e3e45d13",
+    "title": "Phishing e truffe in rete",
+    "slug": "inf-phishing",
+    "path": "high_school/computer-science/sicurezza/inf-phishing",
+    "chapter": "Sicurezza e cittadinanza digitale"
+  },
+  {
+    "id": "a74ef448-be8e-45dd-833d-2ec3f6643287",
+    "parent_id": "44b13e1d-8ef0-48d3-9600-7b37e3e45d13",
+    "title": "Privacy e dati personali",
+    "slug": "inf-privacy",
+    "path": "high_school/computer-science/sicurezza/inf-privacy",
+    "chapter": "Sicurezza e cittadinanza digitale"
+  },
+  {
+    "id": "b05c57fb-45d9-45ff-b143-9af134e7391e",
+    "parent_id": "44b13e1d-8ef0-48d3-9600-7b37e3e45d13",
+    "title": "Diritto d'autore e licenze",
+    "slug": "inf-diritto-autore",
+    "path": "high_school/computer-science/sicurezza/inf-diritto-autore",
+    "chapter": "Sicurezza e cittadinanza digitale"
+  },
+  {
+    "id": "228bdc01-ef98-4057-9b44-1df9d00b7fc3",
+    "parent_id": "11a18cfc-09ef-479c-8017-aed9838e4607",
+    "title": "Il concetto di algoritmo",
+    "slug": "algoritmi",
+    "path": "high_school/computer-science/programmazione-visiva/algoritmi",
+    "chapter": "Algoritmi e diagrammi di flusso"
+  },
+  {
+    "id": "f7e45578-a939-4a1a-9b68-635681ffa2bf",
+    "parent_id": "11a18cfc-09ef-479c-8017-aed9838e4607",
+    "title": "Dal problema all'algoritmo",
+    "slug": "inf-problema-algoritmo",
+    "path": "high_school/computer-science/programmazione-visiva/inf-problema-algoritmo",
+    "chapter": "Algoritmi e diagrammi di flusso"
+  },
+  {
+    "id": "097ab728-47e1-4702-9b9d-87a3774097ce",
+    "parent_id": "11a18cfc-09ef-479c-8017-aed9838e4607",
+    "title": "I diagrammi di flusso",
+    "slug": "diagrammi-flusso",
+    "path": "high_school/computer-science/programmazione-visiva/diagrammi-flusso",
+    "chapter": "Algoritmi e diagrammi di flusso"
+  },
+  {
+    "id": "134a885d-4fcc-4d28-bdef-c59744119460",
+    "parent_id": "11a18cfc-09ef-479c-8017-aed9838e4607",
+    "title": "Lo pseudocodice",
+    "slug": "inf-pseudocodice",
+    "path": "high_school/computer-science/programmazione-visiva/inf-pseudocodice",
+    "chapter": "Algoritmi e diagrammi di flusso"
+  },
+  {
+    "id": "80221bac-ba56-412c-94c3-4ab0a4f783fa",
+    "parent_id": "11a18cfc-09ef-479c-8017-aed9838e4607",
+    "title": "Sequenza, selezione, iterazione e teorema di Böhm-Jacopini",
+    "slug": "inf-bohm-jacopini",
+    "path": "high_school/computer-science/programmazione-visiva/inf-bohm-jacopini",
+    "chapter": "Algoritmi e diagrammi di flusso"
+  },
+  {
+    "id": "6a51db12-464d-4180-b233-ed422f0d393a",
+    "parent_id": "11a18cfc-09ef-479c-8017-aed9838e4607",
+    "title": "La programmazione a blocchi",
+    "slug": "scratch",
+    "path": "high_school/computer-science/programmazione-visiva/scratch",
+    "chapter": "Algoritmi e diagrammi di flusso"
+  },
+  {
+    "id": "6078693e-dd27-44db-9b59-5ad22217d3d1",
+    "parent_id": "f26578c9-6f2f-4839-940a-a608c26861ee",
+    "title": "Linguaggi, compilatori e interpreti",
+    "slug": "inf-linguaggi-programmazione",
+    "path": "high_school/computer-science/inf-primi-programmi/inf-linguaggi-programmazione",
+    "chapter": "Linguaggi e primi programmi"
+  },
+  {
+    "id": "6d6984f7-84de-4f9d-aa4a-37c20e8b02e0",
+    "parent_id": "f26578c9-6f2f-4839-940a-a608c26861ee",
+    "title": "Il primo programma: input e output",
+    "slug": "inf-input-output",
+    "path": "high_school/computer-science/inf-primi-programmi/inf-input-output",
+    "chapter": "Linguaggi e primi programmi"
+  },
+  {
+    "id": "b3f9c8b4-c19f-431e-a91a-6b04b3bf0ba4",
+    "parent_id": "f26578c9-6f2f-4839-940a-a608c26861ee",
+    "title": "Variabili, assegnamento e tipi di dato",
+    "slug": "inf-variabili-tipi",
+    "path": "high_school/computer-science/inf-primi-programmi/inf-variabili-tipi",
+    "chapter": "Linguaggi e primi programmi"
+  },
+  {
+    "id": "1f98d9f8-a219-49d9-9c83-bb5b345a5694",
+    "parent_id": "f26578c9-6f2f-4839-940a-a608c26861ee",
+    "title": "Operatori ed espressioni",
+    "slug": "inf-espressioni",
+    "path": "high_school/computer-science/inf-primi-programmi/inf-espressioni",
+    "chapter": "Linguaggi e primi programmi"
+  },
+  {
+    "id": "89ec34b7-9d8d-4a92-9c33-5a1714f7c31d",
+    "parent_id": "f26578c9-6f2f-4839-940a-a608c26861ee",
+    "title": "Errori e debug",
+    "slug": "inf-errori-debug",
+    "path": "high_school/computer-science/inf-primi-programmi/inf-errori-debug",
+    "chapter": "Linguaggi e primi programmi"
+  },
+  {
+    "id": "29acf32c-0d7a-4bf5-ba55-e51c051cb77e",
+    "parent_id": "2f94de8a-ce74-4df8-9b26-a23124129fe1",
+    "title": "Condizioni e operatori di confronto",
+    "slug": "inf-condizioni",
+    "path": "high_school/computer-science/inf-selezione/inf-condizioni",
+    "chapter": "La selezione"
+  },
+  {
+    "id": "926b73c9-5fb7-45e4-a1c4-d8d859ed2340",
+    "parent_id": "2f94de8a-ce74-4df8-9b26-a23124129fe1",
+    "title": "La selezione a due vie",
+    "slug": "inf-selezione-due-vie",
+    "path": "high_school/computer-science/inf-selezione/inf-selezione-due-vie",
+    "chapter": "La selezione"
+  },
+  {
+    "id": "00de57b4-195c-4154-88bf-311eeb590b96",
+    "parent_id": "2f94de8a-ce74-4df8-9b26-a23124129fe1",
+    "title": "Gli operatori logici",
+    "slug": "inf-operatori-logici",
+    "path": "high_school/computer-science/inf-selezione/inf-operatori-logici",
+    "chapter": "La selezione"
+  },
+  {
+    "id": "9834f1d4-7ac1-4dd9-9217-1f245657d82a",
+    "parent_id": "2f94de8a-ce74-4df8-9b26-a23124129fe1",
+    "title": "Selezioni annidate e a più vie",
+    "slug": "inf-selezione-multipla",
+    "path": "high_school/computer-science/inf-selezione/inf-selezione-multipla",
+    "chapter": "La selezione"
+  },
+  {
+    "id": "a859ef10-ed6d-457d-a0b3-fb9d572db64f",
+    "parent_id": "de5ffd04-bcf3-43c9-ab45-aa546c910055",
+    "title": "Il ciclo while",
+    "slug": "inf-ciclo-while",
+    "path": "high_school/computer-science/inf-iterazione/inf-ciclo-while",
+    "chapter": "L'iterazione"
+  },
+  {
+    "id": "5b2dad59-c04e-46b5-b0f1-9a8450df8c2d",
+    "parent_id": "de5ffd04-bcf3-43c9-ab45-aa546c910055",
+    "title": "Il ciclo for",
+    "slug": "inf-ciclo-for",
+    "path": "high_school/computer-science/inf-iterazione/inf-ciclo-for",
+    "chapter": "L'iterazione"
+  },
+  {
+    "id": "88a01625-a569-42b4-aed0-5e662f811c1f",
+    "parent_id": "de5ffd04-bcf3-43c9-ab45-aa546c910055",
+    "title": "Contatori e accumulatori",
+    "slug": "inf-contatori-accumulatori",
+    "path": "high_school/computer-science/inf-iterazione/inf-contatori-accumulatori",
+    "chapter": "L'iterazione"
+  },
+  {
+    "id": "3429bd8f-0e30-4f00-9394-ea4d1aa86c09",
+    "parent_id": "de5ffd04-bcf3-43c9-ab45-aa546c910055",
+    "title": "Cicli annidati",
+    "slug": "inf-cicli-annidati",
+    "path": "high_school/computer-science/inf-iterazione/inf-cicli-annidati",
+    "chapter": "L'iterazione"
+  },
+  {
+    "id": "2accd894-9941-482e-acc5-0e01286df758",
+    "parent_id": "de5ffd04-bcf3-43c9-ab45-aa546c910055",
+    "title": "Massimo, minimo e media di una sequenza",
+    "slug": "inf-massimo-minimo-media",
+    "path": "high_school/computer-science/inf-iterazione/inf-massimo-minimo-media",
+    "chapter": "L'iterazione"
+  },
+  {
+    "id": "4f9eef71-883f-4304-9a03-774e6263f1ac",
+    "parent_id": "1910dd6c-6b49-43bb-a881-2efe4a256b68",
+    "title": "Definire e chiamare una funzione",
+    "slug": "inf-definire-funzioni",
+    "path": "high_school/computer-science/inf-funzioni/inf-definire-funzioni",
+    "chapter": "Le funzioni"
+  },
+  {
+    "id": "2a54cdd7-2397-4408-9d07-f45af94a6516",
+    "parent_id": "1910dd6c-6b49-43bb-a881-2efe4a256b68",
+    "title": "Parametri e valore di ritorno",
+    "slug": "inf-parametri-ritorno",
+    "path": "high_school/computer-science/inf-funzioni/inf-parametri-ritorno",
+    "chapter": "Le funzioni"
+  },
+  {
+    "id": "a5fb3b32-8c6b-4b42-996b-7b2f698bf70d",
+    "parent_id": "1910dd6c-6b49-43bb-a881-2efe4a256b68",
+    "title": "Variabili locali e globali",
+    "slug": "inf-visibilita",
+    "path": "high_school/computer-science/inf-funzioni/inf-visibilita",
+    "chapter": "Le funzioni"
+  },
+  {
+    "id": "8c730678-9c3a-4cb2-b596-a6e560879073",
+    "parent_id": "1910dd6c-6b49-43bb-a881-2efe4a256b68",
+    "title": "Passaggio dei parametri per valore e per riferimento",
+    "slug": "inf-passaggio-parametri",
+    "path": "high_school/computer-science/inf-funzioni/inf-passaggio-parametri",
+    "chapter": "Le funzioni"
+  },
+  {
+    "id": "f8728513-d3cf-4176-80f2-3442d54e2ab0",
+    "parent_id": "1910dd6c-6b49-43bb-a881-2efe4a256b68",
+    "title": "Scomporre un problema: la progettazione top-down",
+    "slug": "inf-top-down",
+    "path": "high_school/computer-science/inf-funzioni/inf-top-down",
+    "chapter": "Le funzioni"
+  },
+  {
+    "id": "67542583-26dd-4c82-ad09-6b951482a97b",
+    "parent_id": "49dae26b-4099-4e59-b842-0ad89b02b87c",
+    "title": "I vettori",
+    "slug": "inf-vettori",
+    "path": "high_school/computer-science/inf-array/inf-vettori",
+    "chapter": "Vettori, matrici e stringhe"
+  },
+  {
+    "id": "71909a6a-fd40-498e-b9c6-b6f486229e4e",
+    "parent_id": "49dae26b-4099-4e59-b842-0ad89b02b87c",
+    "title": "La ricerca sequenziale",
+    "slug": "inf-ricerca-sequenziale",
+    "path": "high_school/computer-science/inf-array/inf-ricerca-sequenziale",
+    "chapter": "Vettori, matrici e stringhe"
+  },
+  {
+    "id": "7bb7a2b2-58a1-420b-840e-ddc78ec7c0be",
+    "parent_id": "49dae26b-4099-4e59-b842-0ad89b02b87c",
+    "title": "Le matrici",
+    "slug": "inf-matrici",
+    "path": "high_school/computer-science/inf-array/inf-matrici",
+    "chapter": "Vettori, matrici e stringhe"
+  },
+  {
+    "id": "7017eea3-3cd2-4931-992d-efb519e3523a",
+    "parent_id": "49dae26b-4099-4e59-b842-0ad89b02b87c",
+    "title": "Le stringhe",
+    "slug": "inf-stringhe",
+    "path": "high_school/computer-science/inf-array/inf-stringhe",
+    "chapter": "Vettori, matrici e stringhe"
+  },
+  {
+    "id": "eb05e670-c8a9-495d-bea6-7c1f22cdbb0e",
+    "parent_id": "81d18230-e2dd-4628-99c5-cb5e4cbae1a2",
+    "title": "La ricerca binaria",
+    "slug": "inf-ricerca-binaria",
+    "path": "high_school/computer-science/inf-ordinamento/inf-ricerca-binaria",
+    "chapter": "Ricerca e ordinamento"
+  },
+  {
+    "id": "e4b56b6b-cc1f-4a5f-bd40-76c2be0ff0f4",
+    "parent_id": "81d18230-e2dd-4628-99c5-cb5e4cbae1a2",
+    "title": "L'ordinamento per selezione",
+    "slug": "inf-selection-sort",
+    "path": "high_school/computer-science/inf-ordinamento/inf-selection-sort",
+    "chapter": "Ricerca e ordinamento"
+  },
+  {
+    "id": "8b172304-5cf1-4e8b-9139-cf5e1cc4b8cf",
+    "parent_id": "81d18230-e2dd-4628-99c5-cb5e4cbae1a2",
+    "title": "L'ordinamento a bolle",
+    "slug": "inf-bubble-sort",
+    "path": "high_school/computer-science/inf-ordinamento/inf-bubble-sort",
+    "chapter": "Ricerca e ordinamento"
+  },
+  {
+    "id": "21faeead-e549-4242-9739-c1ba96f1c6aa",
+    "parent_id": "81d18230-e2dd-4628-99c5-cb5e4cbae1a2",
+    "title": "L'ordinamento per inserimento",
+    "slug": "inf-insertion-sort",
+    "path": "high_school/computer-science/inf-ordinamento/inf-insertion-sort",
+    "chapter": "Ricerca e ordinamento"
+  },
+  {
+    "id": "b565939e-900b-4892-809e-8bebec7c979f",
+    "parent_id": "81d18230-e2dd-4628-99c5-cb5e4cbae1a2",
+    "title": "Confrontare gli algoritmi contando le operazioni",
+    "slug": "inf-confronto-algoritmi",
+    "path": "high_school/computer-science/inf-ordinamento/inf-confronto-algoritmi",
+    "chapter": "Ricerca e ordinamento"
+  },
+  {
+    "id": "9bd704a7-29b8-4f75-9f05-5f25b0da06de",
+    "parent_id": "393d102c-0f91-4648-87d6-efd9b31fb441",
+    "title": "Leggere e scrivere un file di testo",
+    "slug": "inf-file-testo",
+    "path": "high_school/computer-science/inf-file/inf-file-testo",
+    "chapter": "I file"
+  },
+  {
+    "id": "2b9592ce-d672-4938-964f-958cfef0c740",
+    "parent_id": "393d102c-0f91-4648-87d6-efd9b31fb441",
+    "title": "File di dati in formato CSV",
+    "slug": "inf-file-csv",
+    "path": "high_school/computer-science/inf-file/inf-file-csv",
+    "chapter": "I file"
+  },
+  {
+    "id": "d216f05b-3dc9-419f-928c-b7187041875e",
+    "parent_id": "393d102c-0f91-4648-87d6-efd9b31fb441",
+    "title": "Dati strutturati: XML e JSON",
+    "slug": "inf-xml-json",
+    "path": "high_school/computer-science/inf-file/inf-xml-json",
+    "chapter": "I file"
+  },
+  {
+    "id": "888e408b-45c9-4c7a-bf12-ca7d293f2fe3",
+    "parent_id": "51c97618-20f5-4993-9198-b1a6cf8fe285",
+    "title": "I formati dei file multimediali",
+    "slug": "formati-multimediali",
+    "path": "high_school/computer-science/multimedia/formati-multimediali",
+    "chapter": "Immagini, suoni e video digitali"
+  },
+  {
+    "id": "f654c38d-3bed-4e99-982e-207b265ca036",
+    "parent_id": "51c97618-20f5-4993-9198-b1a6cf8fe285",
+    "title": "Grafica bitmap e grafica vettoriale",
+    "slug": "inf-bitmap-vettoriale",
+    "path": "high_school/computer-science/multimedia/inf-bitmap-vettoriale",
+    "chapter": "Immagini, suoni e video digitali"
+  },
+  {
+    "id": "d65e6bf6-c8a8-4fd4-893f-5efcab28e53d",
+    "parent_id": "51c97618-20f5-4993-9198-b1a6cf8fe285",
+    "title": "La compressione dei dati, con e senza perdita",
+    "slug": "inf-compressione",
+    "path": "high_school/computer-science/multimedia/inf-compressione",
+    "chapter": "Immagini, suoni e video digitali"
+  },
+  {
+    "id": "437a95ea-3795-4512-82fc-6c348eb86f65",
+    "parent_id": "51c97618-20f5-4993-9198-b1a6cf8fe285",
+    "title": "Audio e video digitali",
+    "slug": "inf-audio-video",
+    "path": "high_school/computer-science/multimedia/inf-audio-video",
+    "chapter": "Immagini, suoni e video digitali"
+  },
+  {
+    "id": "e0ea1678-45dc-4b1a-9c8e-8c0030d3d80c",
+    "parent_id": "51c97618-20f5-4993-9198-b1a6cf8fe285",
+    "title": "Caratteri tipografici e font",
+    "slug": "inf-font",
+    "path": "high_school/computer-science/multimedia/inf-font",
+    "chapter": "Immagini, suoni e video digitali"
+  },
+  {
+    "id": "6a69b080-8445-4d5a-8de4-507bbd022a28",
+    "parent_id": "a20c5c7e-1a42-4e07-8af1-4fc33faf6f55",
+    "title": "I linguaggi di markup",
+    "slug": "inf-markup",
+    "path": "high_school/computer-science/inf-html/inf-markup",
+    "chapter": "Il linguaggio HTML"
+  },
+  {
+    "id": "a753e3b7-7940-43f5-b97a-e8c97050084c",
+    "parent_id": "a20c5c7e-1a42-4e07-8af1-4fc33faf6f55",
+    "title": "Struttura di una pagina HTML",
+    "slug": "inf-html-struttura",
+    "path": "high_school/computer-science/inf-html/inf-html-struttura",
+    "chapter": "Il linguaggio HTML"
+  },
+  {
+    "id": "b1bd7daf-07eb-4dfa-beea-708a822f65ab",
+    "parent_id": "a20c5c7e-1a42-4e07-8af1-4fc33faf6f55",
+    "title": "Testo, link e immagini",
+    "slug": "inf-html-testo-link",
+    "path": "high_school/computer-science/inf-html/inf-html-testo-link",
+    "chapter": "Il linguaggio HTML"
+  },
+  {
+    "id": "dc932273-3c89-40dc-bc41-4cbbf8c71d2f",
+    "parent_id": "a20c5c7e-1a42-4e07-8af1-4fc33faf6f55",
+    "title": "Elenchi e tabelle",
+    "slug": "inf-html-elenchi-tabelle",
+    "path": "high_school/computer-science/inf-html/inf-html-elenchi-tabelle",
+    "chapter": "Il linguaggio HTML"
+  },
+  {
+    "id": "85f44cc0-9721-416a-9fc4-14dd283f2e2c",
+    "parent_id": "a20c5c7e-1a42-4e07-8af1-4fc33faf6f55",
+    "title": "I moduli",
+    "slug": "inf-html-moduli",
+    "path": "high_school/computer-science/inf-html/inf-html-moduli",
+    "chapter": "Il linguaggio HTML"
+  },
+  {
+    "id": "b3344805-c000-4957-901d-a16a61a5ab6d",
+    "parent_id": "67255855-5898-4dc7-ab5f-4c634419e125",
+    "title": "Regole e selettori CSS",
+    "slug": "inf-css-regole",
+    "path": "high_school/computer-science/inf-css/inf-css-regole",
+    "chapter": "I fogli di stile"
+  },
+  {
+    "id": "e3c34283-e6b9-4b87-b4b9-f867ca6055a9",
+    "parent_id": "67255855-5898-4dc7-ab5f-4c634419e125",
+    "title": "Il modello a scatola",
+    "slug": "inf-css-box",
+    "path": "high_school/computer-science/inf-css/inf-css-box",
+    "chapter": "I fogli di stile"
+  },
+  {
+    "id": "8a329563-17a8-466b-9239-b56d378fff91",
+    "parent_id": "67255855-5898-4dc7-ab5f-4c634419e125",
+    "title": "L'impaginazione di una pagina web",
+    "slug": "inf-css-layout",
+    "path": "high_school/computer-science/inf-css/inf-css-layout",
+    "chapter": "I fogli di stile"
+  },
+  {
+    "id": "317afaae-1a0e-4eec-bd87-ee52be55b3eb",
+    "parent_id": "67255855-5898-4dc7-ab5f-4c634419e125",
+    "title": "Pagine responsive e accessibili",
+    "slug": "inf-responsive",
+    "path": "high_school/computer-science/inf-css/inf-responsive",
+    "chapter": "I fogli di stile"
+  },
+  {
+    "id": "6e133b27-132a-438d-a330-1ea91cf8f8d4",
+    "parent_id": "771f3fdf-9629-406f-93ff-b7b5b1e41884",
+    "title": "Gli script nella pagina web",
+    "slug": "inf-script-client",
+    "path": "high_school/computer-science/inf-web-interattivo/inf-script-client",
+    "chapter": "Pagine web interattive"
+  },
+  {
+    "id": "1d97f9b3-2e0d-4f8e-8a0b-32887d63b7b0",
+    "parent_id": "771f3fdf-9629-406f-93ff-b7b5b1e41884",
+    "title": "Il DOM e gli eventi",
+    "slug": "inf-dom-eventi",
+    "path": "high_school/computer-science/inf-web-interattivo/inf-dom-eventi",
+    "chapter": "Pagine web interattive"
+  },
+  {
+    "id": "f6f2a6b2-f0b9-4523-b41c-64be2e59fdf0",
+    "parent_id": "771f3fdf-9629-406f-93ff-b7b5b1e41884",
+    "title": "Controllare i dati di un modulo",
+    "slug": "inf-validazione-moduli",
+    "path": "high_school/computer-science/inf-web-interattivo/inf-validazione-moduli",
+    "chapter": "Pagine web interattive"
+  },
+  {
+    "id": "4e46661b-7290-468d-b4d4-a5a7ac952f16",
+    "parent_id": "2e85e973-3523-41c6-b0bc-2ff54d433d27",
+    "title": "Funzioni ricorsive",
+    "slug": "inf-funzioni-ricorsive",
+    "path": "high_school/computer-science/inf-ricorsione/inf-funzioni-ricorsive",
+    "chapter": "La ricorsione"
+  },
+  {
+    "id": "e41fb876-77b4-4d81-a777-63bc56a4406b",
+    "parent_id": "2e85e973-3523-41c6-b0bc-2ff54d433d27",
+    "title": "Fattoriale, potenze e successione di Fibonacci",
+    "slug": "inf-ricorsione-esempi",
+    "path": "high_school/computer-science/inf-ricorsione/inf-ricorsione-esempi",
+    "chapter": "La ricorsione"
+  },
+  {
+    "id": "0e243aa3-81f9-4267-9b9f-2512064f9e2d",
+    "parent_id": "2e85e973-3523-41c6-b0bc-2ff54d433d27",
+    "title": "L'ordinamento per fusione",
+    "slug": "inf-merge-sort",
+    "path": "high_school/computer-science/inf-ricorsione/inf-merge-sort",
+    "chapter": "La ricorsione"
+  },
+  {
+    "id": "1b254e2f-d226-4da8-a9f3-7df4f3ebd501",
+    "parent_id": "c651631b-f185-4330-aa44-7735ef4ae608",
+    "title": "Dalla programmazione strutturata agli oggetti",
+    "slug": "inf-paradigmi",
+    "path": "high_school/computer-science/inf-oggetti/inf-paradigmi",
+    "chapter": "La programmazione a oggetti"
+  },
+  {
+    "id": "4766693e-126b-4173-ab85-4c04bdf716a4",
+    "parent_id": "c651631b-f185-4330-aa44-7735ef4ae608",
+    "title": "Classi e oggetti",
+    "slug": "inf-classi-oggetti",
+    "path": "high_school/computer-science/inf-oggetti/inf-classi-oggetti",
+    "chapter": "La programmazione a oggetti"
+  },
+  {
+    "id": "710ba234-52d7-416f-a09c-fa84ccaf4dbd",
+    "parent_id": "c651631b-f185-4330-aa44-7735ef4ae608",
+    "title": "Attributi, metodi e costruttori",
+    "slug": "inf-attributi-metodi",
+    "path": "high_school/computer-science/inf-oggetti/inf-attributi-metodi",
+    "chapter": "La programmazione a oggetti"
+  },
+  {
+    "id": "85e5d62c-af92-4489-9c48-d6f5be29436c",
+    "parent_id": "c651631b-f185-4330-aa44-7735ef4ae608",
+    "title": "L'incapsulamento",
+    "slug": "inf-incapsulamento",
+    "path": "high_school/computer-science/inf-oggetti/inf-incapsulamento",
+    "chapter": "La programmazione a oggetti"
+  },
+  {
+    "id": "6ac36762-e1ae-44ba-bb89-14fff6d0ad44",
+    "parent_id": "c651631b-f185-4330-aa44-7735ef4ae608",
+    "title": "Il diagramma delle classi UML",
+    "slug": "inf-uml",
+    "path": "high_school/computer-science/inf-oggetti/inf-uml",
+    "chapter": "La programmazione a oggetti"
+  },
+  {
+    "id": "d45b6244-bf2c-4cea-9ec1-1dd51849fdb6",
+    "parent_id": "c651631b-f185-4330-aa44-7735ef4ae608",
+    "title": "Classi derivate ed ereditarietà",
+    "slug": "inf-sottoclassi",
+    "path": "high_school/computer-science/inf-oggetti/inf-sottoclassi",
+    "chapter": "La programmazione a oggetti"
+  },
+  {
+    "id": "1996a6ea-c35c-4b0e-9452-f5c8f231d04e",
+    "parent_id": "c651631b-f185-4330-aa44-7735ef4ae608",
+    "title": "Il polimorfismo",
+    "slug": "inf-polimorfismo",
+    "path": "high_school/computer-science/inf-oggetti/inf-polimorfismo",
+    "chapter": "La programmazione a oggetti"
+  },
+  {
+    "id": "2fa87596-4b11-458a-bd99-0b83dd2761f5",
+    "parent_id": "6e2df8d7-4a1e-47ee-a233-4c6a5dc61b14",
+    "title": "La pila",
+    "slug": "inf-pila",
+    "path": "high_school/computer-science/inf-strutture-dati/inf-pila",
+    "chapter": "Strutture dati"
+  },
+  {
+    "id": "91e5f63d-7c72-4881-9158-e78534883ce7",
+    "parent_id": "6e2df8d7-4a1e-47ee-a233-4c6a5dc61b14",
+    "title": "La coda",
+    "slug": "inf-coda",
+    "path": "high_school/computer-science/inf-strutture-dati/inf-coda",
+    "chapter": "Strutture dati"
+  },
+  {
+    "id": "a6e67d21-021f-46d5-8288-4b1e51af3cb3",
+    "parent_id": "6e2df8d7-4a1e-47ee-a233-4c6a5dc61b14",
+    "title": "Alberi binari di ricerca",
+    "slug": "inf-alberi-binari",
+    "path": "high_school/computer-science/inf-strutture-dati/inf-alberi-binari",
+    "chapter": "Strutture dati"
+  },
+  {
+    "id": "26af6734-dc9f-4c92-8df5-c977b0cd41a2",
+    "parent_id": "ffaa6621-dbc5-4e73-8da0-8646e7698b65",
+    "title": "Dagli archivi ai DBMS",
+    "slug": "inf-archivi-dbms",
+    "path": "high_school/computer-science/inf-progettazione-db/inf-archivi-dbms",
+    "chapter": "Progettare una base di dati"
+  },
+  {
+    "id": "5fea4d0e-b82c-4c15-bd52-89371d645a6a",
+    "parent_id": "ffaa6621-dbc5-4e73-8da0-8646e7698b65",
+    "title": "Le fasi della progettazione",
+    "slug": "inf-fasi-progettazione",
+    "path": "high_school/computer-science/inf-progettazione-db/inf-fasi-progettazione",
+    "chapter": "Progettare una base di dati"
+  },
+  {
+    "id": "893dabf1-ce94-45a8-bbc7-06fe460d860f",
+    "parent_id": "ffaa6621-dbc5-4e73-8da0-8646e7698b65",
+    "title": "Il modello E/R: entità e attributi",
+    "slug": "inf-entita-attributi",
+    "path": "high_school/computer-science/inf-progettazione-db/inf-entita-attributi",
+    "chapter": "Progettare una base di dati"
+  },
+  {
+    "id": "b2607acf-fe6a-4fc2-9123-121eac111c00",
+    "parent_id": "ffaa6621-dbc5-4e73-8da0-8646e7698b65",
+    "title": "Associazioni e cardinalità",
+    "slug": "inf-associazioni-er",
+    "path": "high_school/computer-science/inf-progettazione-db/inf-associazioni-er",
+    "chapter": "Progettare una base di dati"
+  },
+  {
+    "id": "83e46f92-cc9f-44f6-9305-1debf13bce7f",
+    "parent_id": "5991378f-be18-4f85-b09b-11bdf1bc6ead",
+    "title": "Relazioni, tabelle e chiavi",
+    "slug": "inf-tabelle-chiavi",
+    "path": "high_school/computer-science/inf-modello-relazionale/inf-tabelle-chiavi",
+    "chapter": "Il modello relazionale"
+  },
+  {
+    "id": "12628556-4036-4f31-806d-d765d58ff8ae",
+    "parent_id": "5991378f-be18-4f85-b09b-11bdf1bc6ead",
+    "title": "Dallo schema E/R allo schema relazionale",
+    "slug": "inf-da-er-a-tabelle",
+    "path": "high_school/computer-science/inf-modello-relazionale/inf-da-er-a-tabelle",
+    "chapter": "Il modello relazionale"
+  },
+  {
+    "id": "5473a929-f366-4a4e-b17d-f94facee3948",
+    "parent_id": "5991378f-be18-4f85-b09b-11bdf1bc6ead",
+    "title": "L'integrità referenziale",
+    "slug": "inf-integrita-referenziale",
+    "path": "high_school/computer-science/inf-modello-relazionale/inf-integrita-referenziale",
+    "chapter": "Il modello relazionale"
+  },
+  {
+    "id": "f2737760-bdd2-4d6f-b220-b93db5306c4d",
+    "parent_id": "5991378f-be18-4f85-b09b-11bdf1bc6ead",
+    "title": "Gli operatori dell'algebra relazionale",
+    "slug": "inf-algebra-relazionale",
+    "path": "high_school/computer-science/inf-modello-relazionale/inf-algebra-relazionale",
+    "chapter": "Il modello relazionale"
+  },
+  {
+    "id": "9cd3804f-6f32-4d5a-a314-369a199834e3",
+    "parent_id": "5991378f-be18-4f85-b09b-11bdf1bc6ead",
+    "title": "La normalizzazione",
+    "slug": "inf-normalizzazione",
+    "path": "high_school/computer-science/inf-modello-relazionale/inf-normalizzazione",
+    "chapter": "Il modello relazionale"
+  },
+  {
+    "id": "7bcf06c7-8898-466c-8d6d-a54814541edd",
+    "parent_id": "e153350d-1649-4660-8f27-7d312524c412",
+    "title": "Creare e modificare tabelle",
+    "slug": "inf-sql-tabelle",
+    "path": "high_school/computer-science/inf-sql/inf-sql-tabelle",
+    "chapter": "Il linguaggio SQL"
+  },
+  {
+    "id": "8fd7950a-7524-49f4-873b-6db7a51d5e97",
+    "parent_id": "e153350d-1649-4660-8f27-7d312524c412",
+    "title": "Inserire, aggiornare e cancellare dati",
+    "slug": "inf-sql-dati",
+    "path": "high_school/computer-science/inf-sql/inf-sql-dati",
+    "chapter": "Il linguaggio SQL"
+  },
+  {
+    "id": "94c6a6a2-fdf8-4ce5-8e96-cc5eee023a86",
+    "parent_id": "e153350d-1649-4660-8f27-7d312524c412",
+    "title": "Interrogazioni su una tabella",
+    "slug": "inf-sql-select",
+    "path": "high_school/computer-science/inf-sql/inf-sql-select",
+    "chapter": "Il linguaggio SQL"
+  },
+  {
+    "id": "86d6c8d4-55ca-419e-a5f6-ea953ceb9748",
+    "parent_id": "e153350d-1649-4660-8f27-7d312524c412",
+    "title": "Interrogazioni su più tabelle: la join",
+    "slug": "inf-sql-join",
+    "path": "high_school/computer-science/inf-sql/inf-sql-join",
+    "chapter": "Il linguaggio SQL"
+  },
+  {
+    "id": "e334edc4-557c-4427-8ff1-e85137c3ca9b",
+    "parent_id": "e153350d-1649-4660-8f27-7d312524c412",
+    "title": "Funzioni di aggregazione e raggruppamenti",
+    "slug": "inf-sql-raggruppamenti",
+    "path": "high_school/computer-science/inf-sql/inf-sql-raggruppamenti",
+    "chapter": "Il linguaggio SQL"
+  },
+  {
+    "id": "98d92c3e-1ca9-476f-927e-9d9411dfada0",
+    "parent_id": "e153350d-1649-4660-8f27-7d312524c412",
+    "title": "Interrogazioni annidate",
+    "slug": "inf-sql-annidate",
+    "path": "high_school/computer-science/inf-sql/inf-sql-annidate",
+    "chapter": "Il linguaggio SQL"
+  },
+  {
+    "id": "26d69174-b4e9-437f-a9f4-3481296033c0",
+    "parent_id": "70d9a990-a84a-41c8-b5a8-3ede34963a26",
+    "title": "L'intelligenza artificiale: definizioni e storia",
+    "slug": "inf-ia-definizioni",
+    "path": "high_school/computer-science/inf-intelligenza-artificiale/inf-ia-definizioni",
+    "chapter": "L'intelligenza artificiale"
+  },
+  {
+    "id": "a4f81016-c646-4055-9009-0b9928e83a4c",
+    "parent_id": "70d9a990-a84a-41c8-b5a8-3ede34963a26",
+    "title": "L'intelligenza artificiale simbolica: regole e ricerca",
+    "slug": "inf-ia-simbolica",
+    "path": "high_school/computer-science/inf-intelligenza-artificiale/inf-ia-simbolica",
+    "chapter": "L'intelligenza artificiale"
+  },
+  {
+    "id": "036fc845-0abc-45a8-9c45-d72689ec4ee0",
+    "parent_id": "70d9a990-a84a-41c8-b5a8-3ede34963a26",
+    "title": "Imparare dagli esempi: l'apprendimento automatico",
+    "slug": "inf-imparare-esempi",
+    "path": "high_school/computer-science/inf-intelligenza-artificiale/inf-imparare-esempi",
+    "chapter": "L'intelligenza artificiale"
+  },
+  {
+    "id": "20cf913d-0712-46d7-a933-34cbb308649c",
+    "parent_id": "70d9a990-a84a-41c8-b5a8-3ede34963a26",
+    "title": "Il neurone artificiale e le reti neurali",
+    "slug": "inf-neurone-artificiale",
+    "path": "high_school/computer-science/inf-intelligenza-artificiale/inf-neurone-artificiale",
+    "chapter": "L'intelligenza artificiale"
+  },
+  {
+    "id": "c273dd5b-2a6f-40e0-a3da-dd379defe2f0",
+    "parent_id": "70d9a990-a84a-41c8-b5a8-3ede34963a26",
+    "title": "I sistemi generativi e i modelli linguistici",
+    "slug": "inf-ia-generativa",
+    "path": "high_school/computer-science/inf-intelligenza-artificiale/inf-ia-generativa",
+    "chapter": "L'intelligenza artificiale"
+  },
+  {
+    "id": "54884bbd-0a88-4a2a-8721-2961e7c562b4",
+    "parent_id": "70d9a990-a84a-41c8-b5a8-3ede34963a26",
+    "title": "Distorsioni, etica e regole dell'intelligenza artificiale",
+    "slug": "inf-ia-distorsioni",
+    "path": "high_school/computer-science/inf-intelligenza-artificiale/inf-ia-distorsioni",
+    "chapter": "L'intelligenza artificiale"
+  },
+  {
+    "id": "79494a48-1dd1-480e-a95d-30ed80dfe472",
+    "parent_id": "c736c79b-a89a-485e-80df-f3b2a4e04a4b",
+    "title": "Elementi e tipi di rete",
+    "slug": "inf-elementi-rete",
+    "path": "high_school/computer-science/inf-reti/inf-elementi-rete",
+    "chapter": "Le reti di computer"
+  },
+  {
+    "id": "90bc05bf-d54a-4238-ae24-2f66cdc3e959",
+    "parent_id": "c736c79b-a89a-485e-80df-f3b2a4e04a4b",
+    "title": "Trasmettere i dati: banda, pacchetti ed errori",
+    "slug": "inf-trasmissione-dati",
+    "path": "high_school/computer-science/inf-reti/inf-trasmissione-dati",
+    "chapter": "Le reti di computer"
+  },
+  {
+    "id": "e91efdea-089e-4867-9770-bcf4c27d7525",
+    "parent_id": "c736c79b-a89a-485e-80df-f3b2a4e04a4b",
+    "title": "Il modello ISO/OSI",
+    "slug": "inf-iso-osi",
+    "path": "high_school/computer-science/inf-reti/inf-iso-osi",
+    "chapter": "Le reti di computer"
+  },
+  {
+    "id": "5bf88aee-9bf5-4d8a-a527-15149dc55fa9",
+    "parent_id": "c736c79b-a89a-485e-80df-f3b2a4e04a4b",
+    "title": "Switch, router e access point",
+    "slug": "inf-dispositivi-rete",
+    "path": "high_school/computer-science/inf-reti/inf-dispositivi-rete",
+    "chapter": "Le reti di computer"
+  },
+  {
+    "id": "a82bc4f0-69df-433f-b650-c468ea30ff0a",
+    "parent_id": "3ef94adc-7a53-4c89-a4f9-2ffa07276b10",
+    "title": "La suite TCP/IP",
+    "slug": "inf-suite-tcp-ip",
+    "path": "high_school/computer-science/inf-tcp-ip/inf-suite-tcp-ip",
+    "chapter": "Internet e i protocolli TCP/IP"
+  },
+  {
+    "id": "d51f1a89-9eca-486f-a924-3cc0fc94e7e6",
+    "parent_id": "3ef94adc-7a53-4c89-a4f9-2ffa07276b10",
+    "title": "Indirizzi IP, subnet mask e NAT",
+    "slug": "inf-indirizzi-ipv4",
+    "path": "high_school/computer-science/inf-tcp-ip/inf-indirizzi-ipv4",
+    "chapter": "Internet e i protocolli TCP/IP"
+  },
+  {
+    "id": "1a3c5e68-b01b-4b01-a9f1-5e319bfd0c8d",
+    "parent_id": "3ef94adc-7a53-4c89-a4f9-2ffa07276b10",
+    "title": "L'instradamento dei pacchetti",
+    "slug": "inf-instradamento",
+    "path": "high_school/computer-science/inf-tcp-ip/inf-instradamento",
+    "chapter": "Internet e i protocolli TCP/IP"
+  },
+  {
+    "id": "eb991e5b-fafe-42ae-89ff-9cc255139e43",
+    "parent_id": "3ef94adc-7a53-4c89-a4f9-2ffa07276b10",
+    "title": "I protocolli TCP e UDP",
+    "slug": "inf-tcp-udp",
+    "path": "high_school/computer-science/inf-tcp-ip/inf-tcp-udp",
+    "chapter": "Internet e i protocolli TCP/IP"
+  },
+  {
+    "id": "e4313fe1-98fe-4bb7-b23c-ae2e8b8670d0",
+    "parent_id": "3ef94adc-7a53-4c89-a4f9-2ffa07276b10",
+    "title": "Il sistema dei nomi di dominio",
+    "slug": "inf-dns",
+    "path": "high_school/computer-science/inf-tcp-ip/inf-dns",
+    "chapter": "Internet e i protocolli TCP/IP"
+  },
+  {
+    "id": "7e6e3912-60f2-4a3c-9d2b-4916d2d06885",
+    "parent_id": "3ef94adc-7a53-4c89-a4f9-2ffa07276b10",
+    "title": "Il web dinamico: server, script e basi di dati",
+    "slug": "inf-web-dinamico",
+    "path": "high_school/computer-science/inf-tcp-ip/inf-web-dinamico",
+    "chapter": "Internet e i protocolli TCP/IP"
+  },
+  {
+    "id": "f0d36186-f5d8-4467-8c06-acc23d88380f",
+    "parent_id": "b86169ec-b00c-4df3-9767-d596d2db913f",
+    "title": "Riservatezza, integrità e disponibilità",
+    "slug": "inf-sicurezza-sistemi",
+    "path": "high_school/computer-science/inf-crittografia/inf-sicurezza-sistemi",
+    "chapter": "Sicurezza e crittografia"
+  },
+  {
+    "id": "8626a0bb-81b6-45ca-80e3-4779665fa06e",
+    "parent_id": "b86169ec-b00c-4df3-9767-d596d2db913f",
+    "title": "I cifrari classici",
+    "slug": "inf-cifrari-classici",
+    "path": "high_school/computer-science/inf-crittografia/inf-cifrari-classici",
+    "chapter": "Sicurezza e crittografia"
+  },
+  {
+    "id": "3b105fde-255d-4e3b-9157-733fb66d1bac",
+    "parent_id": "b86169ec-b00c-4df3-9767-d596d2db913f",
+    "title": "La crittografia a chiave simmetrica",
+    "slug": "inf-chiave-simmetrica",
+    "path": "high_school/computer-science/inf-crittografia/inf-chiave-simmetrica",
+    "chapter": "Sicurezza e crittografia"
+  },
+  {
+    "id": "2cd164c7-adf7-4cf9-90bd-9c91a7b2bcca",
+    "parent_id": "b86169ec-b00c-4df3-9767-d596d2db913f",
+    "title": "La crittografia a chiave pubblica",
+    "slug": "inf-chiave-pubblica",
+    "path": "high_school/computer-science/inf-crittografia/inf-chiave-pubblica",
+    "chapter": "Sicurezza e crittografia"
+  },
+  {
+    "id": "56242e9a-fda7-4583-8091-c7cb141b0120",
+    "parent_id": "b86169ec-b00c-4df3-9767-d596d2db913f",
+    "title": "L'algoritmo RSA",
+    "slug": "inf-rsa",
+    "path": "high_school/computer-science/inf-crittografia/inf-rsa",
+    "chapter": "Sicurezza e crittografia"
+  },
+  {
+    "id": "262ba6ad-1a50-44d9-9eca-e7e0fa01d8dc",
+    "parent_id": "b86169ec-b00c-4df3-9767-d596d2db913f",
+    "title": "Funzioni hash, firma digitale e certificati",
+    "slug": "inf-firma-digitale",
+    "path": "high_school/computer-science/inf-crittografia/inf-firma-digitale",
+    "chapter": "Sicurezza e crittografia"
+  },
+  {
+    "id": "3d5c742f-60ad-4502-8fed-6442da25554c",
+    "parent_id": "3d58f6d9-da19-4358-adb8-114900619d5f",
+    "title": "Grafi e loro rappresentazione",
+    "slug": "inf-grafi-rappresentazione",
+    "path": "high_school/computer-science/inf-grafi/inf-grafi-rappresentazione",
+    "chapter": "Algoritmi sui grafi"
+  },
+  {
+    "id": "836251ad-fe16-4b64-8b08-92c9283f86fb",
+    "parent_id": "3d58f6d9-da19-4358-adb8-114900619d5f",
+    "title": "Visita in ampiezza e in profondità",
+    "slug": "inf-visite-grafi",
+    "path": "high_school/computer-science/inf-grafi/inf-visite-grafi",
+    "chapter": "Algoritmi sui grafi"
+  },
+  {
+    "id": "e209ef64-4943-4688-83f9-7b610e83c63c",
+    "parent_id": "3d58f6d9-da19-4358-adb8-114900619d5f",
+    "title": "Il cammino minimo: l'algoritmo di Dijkstra",
+    "slug": "inf-cammini-minimi",
+    "path": "high_school/computer-science/inf-grafi/inf-cammini-minimi",
+    "chapter": "Algoritmi sui grafi"
+  },
+  {
+    "id": "d6df17cc-1145-4397-9f28-ca181abca645",
+    "parent_id": "62903c77-750f-4fad-ab89-a4aaa89313c4",
+    "title": "Gli automi a stati finiti",
+    "slug": "inf-automi",
+    "path": "high_school/computer-science/inf-computabilita/inf-automi",
+    "chapter": "Computabilità e complessità"
+  },
+  {
+    "id": "dde47c84-16c4-40ed-8118-ad7a8cce6355",
+    "parent_id": "62903c77-750f-4fad-ab89-a4aaa89313c4",
+    "title": "La macchina di Turing",
+    "slug": "inf-macchina-turing",
+    "path": "high_school/computer-science/inf-computabilita/inf-macchina-turing",
+    "chapter": "Computabilità e complessità"
+  },
+  {
+    "id": "e547f994-bebb-4b73-b566-47e319048fea",
+    "parent_id": "62903c77-750f-4fad-ab89-a4aaa89313c4",
+    "title": "La macchina universale e la tesi di Church-Turing",
+    "slug": "inf-tesi-church-turing",
+    "path": "high_school/computer-science/inf-computabilita/inf-tesi-church-turing",
+    "chapter": "Computabilità e complessità"
+  },
+  {
+    "id": "c31dbfee-8b27-46d8-8890-2a3461abf27b",
+    "parent_id": "62903c77-750f-4fad-ab89-a4aaa89313c4",
+    "title": "Problemi non calcolabili: il problema della fermata",
+    "slug": "inf-problema-fermata",
+    "path": "high_school/computer-science/inf-computabilita/inf-problema-fermata",
+    "chapter": "Computabilità e complessità"
+  },
+  {
+    "id": "b921d8ed-c381-4541-a94f-c5abeec9cbe5",
+    "parent_id": "62903c77-750f-4fad-ab89-a4aaa89313c4",
+    "title": "Il costo di un algoritmo e la notazione O grande",
+    "slug": "inf-o-grande",
+    "path": "high_school/computer-science/inf-computabilita/inf-o-grande",
+    "chapter": "Computabilità e complessità"
+  },
+  {
+    "id": "a4140516-1581-4195-85e7-7d037d7cf116",
+    "parent_id": "62903c77-750f-4fad-ab89-a4aaa89313c4",
+    "title": "Problemi trattabili e intrattabili: le classi P e NP",
+    "slug": "inf-classi-p-np",
+    "path": "high_school/computer-science/inf-computabilita/inf-classi-p-np",
+    "chapter": "Computabilità e complessità"
+  },
+  {
+    "id": "dddde3f9-e0a7-4326-8df7-4f2e0e8e807a",
+    "parent_id": "89785833-1f7d-4853-b90d-d689ab6a67dc",
+    "title": "Errori di arrotondamento e di troncamento",
+    "slug": "inf-errori-numerici",
+    "path": "high_school/computer-science/inf-calcolo-numerico/inf-errori-numerici",
+    "chapter": "Il calcolo numerico"
+  },
+  {
+    "id": "2c82c733-bce1-44fc-8fa2-cb3e7fb67c85",
+    "parent_id": "89785833-1f7d-4853-b90d-d689ab6a67dc",
+    "title": "Il calcolo di pi greco",
+    "slug": "inf-calcolo-pi-greco",
+    "path": "high_school/computer-science/inf-calcolo-numerico/inf-calcolo-pi-greco",
+    "chapter": "Il calcolo numerico"
+  },
+  {
+    "id": "5b6cc96f-48ac-41cd-ac05-4cefbbb59816",
+    "parent_id": "89785833-1f7d-4853-b90d-d689ab6a67dc",
+    "title": "Gli zeri di una funzione: il metodo di bisezione",
+    "slug": "inf-bisezione",
+    "path": "high_school/computer-science/inf-calcolo-numerico/inf-bisezione",
+    "chapter": "Il calcolo numerico"
+  },
+  {
+    "id": "3d416d77-9032-4898-ab25-c4f353acd4b2",
+    "parent_id": "89785833-1f7d-4853-b90d-d689ab6a67dc",
+    "title": "Il metodo delle tangenti",
+    "slug": "inf-metodo-newton",
+    "path": "high_school/computer-science/inf-calcolo-numerico/inf-metodo-newton",
+    "chapter": "Il calcolo numerico"
+  },
+  {
+    "id": "71ac2e13-0666-4917-9e8a-a6d57b5df14d",
+    "parent_id": "89785833-1f7d-4853-b90d-d689ab6a67dc",
+    "title": "L'integrazione numerica",
+    "slug": "inf-integrazione-numerica",
+    "path": "high_school/computer-science/inf-calcolo-numerico/inf-integrazione-numerica",
+    "chapter": "Il calcolo numerico"
+  },
+  {
+    "id": "bea04e44-392f-4963-8b6a-f9dede053737",
+    "parent_id": "0810ae6b-3e03-4940-989c-b4ae08c2af96",
+    "title": "Modelli e simulazioni",
+    "slug": "inf-modelli-simulazioni",
+    "path": "high_school/computer-science/inf-simulazione/inf-modelli-simulazioni",
+    "chapter": "La simulazione"
+  },
+  {
+    "id": "dedb9e0e-0f7d-4a19-b428-dcb16cc1950e",
+    "parent_id": "0810ae6b-3e03-4940-989c-b4ae08c2af96",
+    "title": "Il metodo Monte Carlo",
+    "slug": "inf-monte-carlo",
+    "path": "high_school/computer-science/inf-simulazione/inf-monte-carlo",
+    "chapter": "La simulazione"
+  },
+  {
+    "id": "25c0cc78-727b-4f24-b942-914cbb264d63",
+    "parent_id": "0810ae6b-3e03-4940-989c-b4ae08c2af96",
+    "title": "Simulare un moto: il metodo di Eulero",
+    "slug": "inf-metodo-eulero",
+    "path": "high_school/computer-science/inf-simulazione/inf-metodo-eulero",
+    "chapter": "La simulazione"
+  },
+  {
+    "id": "65d20736-2911-42e0-8ee9-90f763ded810",
+    "parent_id": "0810ae6b-3e03-4940-989c-b4ae08c2af96",
+    "title": "Confrontare un modello con i dati",
+    "slug": "inf-modello-dati",
+    "path": "high_school/computer-science/inf-simulazione/inf-modello-dati",
+    "chapter": "La simulazione"
+  },
+  {
+    "id": "7872feab-bbfa-437f-a3b3-f6ba442abb9c",
+    "parent_id": "10ce4a06-bad3-4a4d-ad72-93cf373f8fbe",
+    "title": "Dati di addestramento e di verifica",
+    "slug": "inf-addestramento-verifica",
+    "path": "high_school/computer-science/inf-apprendimento-automatico/inf-addestramento-verifica",
+    "chapter": "L'apprendimento automatico"
+  },
+  {
+    "id": "04eea807-7fd9-448c-94f1-9cdff45965ca",
+    "parent_id": "10ce4a06-bad3-4a4d-ad72-93cf373f8fbe",
+    "title": "La regressione lineare",
+    "slug": "inf-regressione-lineare",
+    "path": "high_school/computer-science/inf-apprendimento-automatico/inf-regressione-lineare",
+    "chapter": "L'apprendimento automatico"
+  },
+  {
+    "id": "173ae63d-fd05-4702-bf00-98e327f49b0c",
+    "parent_id": "10ce4a06-bad3-4a4d-ad72-93cf373f8fbe",
+    "title": "La classificazione: i vicini più prossimi",
+    "slug": "inf-classificazione",
+    "path": "high_school/computer-science/inf-apprendimento-automatico/inf-classificazione",
+    "chapter": "L'apprendimento automatico"
+  },
+  {
+    "id": "5ecf1fe5-e8f2-4119-8e2f-eaf35d9bf1f3",
+    "parent_id": "10ce4a06-bad3-4a4d-ad72-93cf373f8fbe",
+    "title": "Gli alberi di decisione",
+    "slug": "inf-alberi-decisione",
+    "path": "high_school/computer-science/inf-apprendimento-automatico/inf-alberi-decisione",
+    "chapter": "L'apprendimento automatico"
+  },
+  {
+    "id": "34dfc3c5-acdf-4551-b9f3-1f7138989204",
+    "parent_id": "10ce4a06-bad3-4a4d-ad72-93cf373f8fbe",
+    "title": "Addestrare una rete neurale",
+    "slug": "inf-addestrare-rete",
+    "path": "high_school/computer-science/inf-apprendimento-automatico/inf-addestrare-rete",
+    "chapter": "L'apprendimento automatico"
+  }
+]

@@ -25,11 +25,30 @@ Alessandro ha chiesto se si possono importare librerie. Claude ha verificato che
 
 Prima, su richiesta di Alessandro, i colori dell'editor sono diventati quelli di Dark Modern di VS Code (Light Modern nel tema chiaro del sito), letti dal tema installato in Cursor.
 
+## I cinque passi
+Alessandro ha chiesto i prossimi passi e se si potessero aggiungere C e C++. Claude ne ha proposti cinque, e Alessandro ha detto di farli tutti, nell'ordine.
+
+1. **Mettere al sicuro il prototipo Python.** Provato su Chromium, WebKit, Firefox, iPhone e Pixel emulati, con una suite Playwright nuova (`tests/e2e/codice.spec.ts`). Firefox ha trovato un difetto: lì un ciclo che stampa senza fine arrivava al limite di tempo prima che a quello di stampa, perché ogni `print` passava da Python a JavaScript; ora il testo si raccoglie dentro Python. Committato sul branch `editor-codice`, costruito senza cambiare il branch attivo della cartella condivisa.
+2. **C e C++ nel browser.** Clang 22 in WebAssembly (`@yowasp/clang`), con un WASI scritto da noi; due worker, uno per il compilatore e uno per ogni programma. `scanf` e `cin` si rispondono nella console come `input()`. Limite: niente eccezioni in C++.
+3. **Decisione sui linguaggi**, con le misure: [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]. Claude aveva detto, prima di controllare, che C e C++ non si eseguivano bene nel browser: era sbagliato.
+4. **Il blocco nelle lezioni e gli esercizi.** Un blocco `codice` nel markdown monta l'editor; più blocchi di seguito sono lo stesso programma in più linguaggi, con le linguette; con le prove il blocco è un esercizio corretto su ingresso e uscita. Uno script esegue le soluzioni sulle prove, nei tre linguaggi, prima di pubblicare. Il branch `editor-codice` è stato spostato sopra `grafico-funzioni`, dove vive il meccanismo dei blocchi delle lezioni.
+5. **Il primo lotto di informatica.** Vedi [[2026-10-03 Primo lotto di informatica]].
+
+Il dettaglio dei punti da 1 a 4 è in [[Editor di codice]].
+
+## In produzione
+Alessandro ha poi chiesto di chiudere l'editor, mettendolo tra gli strumenti di informatica e togliendo la rotta di prova. Fatto il 3 ottobre 2026 con la PR #30: lo strumento è a `/strumenti/editor-di-codice`, con la sua carta nell'indice e il suo articolo; le rotte `/prova-codice` e `/prova-codice/lezione` non esistono più. `grafico-funzioni`, da cui il branch partiva, era già in master dalla PR #27.
+
+La build di produzione ha mostrato due difetti che in sviluppo non c'erano:
+- Il service worker (`public/sw.js`, attivo solo in produzione) rispondeva dalla cache anche al file da cui parte un web worker. Nella build tutti i worker partono dallo stesso file e si distinguono da quello che segue il `#` dell'indirizzo, che la cache ignora: il secondo worker di una pagina eseguiva il codice del primo. Finora il sito non aveva worker. Ora i file di avvio dei worker vanno alla rete.
+- Il worker che esegue un programma compilato viene caricato un attimo dopo essere stato creato: ora dice quando è pronto, e riceve il programma solo allora.
+
+Verifiche: 65 prove su cinque motori contro la build di produzione in locale, poi 52 prove su quattro motori contro `sapiens-edu.vercel.app`. Su Vercel il compilatore (75 MB) viaggia compresso in 21 MB, più 4 MB di intestazioni e librerie; un programma C++ parte in 10-15 secondi a freddo con la rete vera.
+
 ## Decisioni
-Nessuna registrata.
+- [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]
 
 ## Rimasto da fare
-- Provare a mano il prototipo, anche su Safari e su un telefono vero.
-- Decidere i linguaggi oltre Python: supera in parte [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]].
-- Decidere se committare il prototipo e su quale branch: oggi è nell'albero di `grafico-funzioni` insieme al plotter e al laboratorio.
+- Provare l'editor su un computer di scuola e su un telefono vero, e misurare il peso in rete dalla build pubblicata.
+- Java, e come si scrivono per tre linguaggi le 44 lezioni di programmazione.
 - Le domande aperte di [[Editor di codice]].

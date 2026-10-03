@@ -301,5 +301,52 @@ Vedi [[Grafico di funzioni]] e la proposta in [[Geometria analitica nel plotter]
 - [ ] Nel plotter `varianza(a; b; c)` e `devstandard(a; b; c)` dividono per $n$, come nella lezione di statistica. Serve anche la versione campionaria ($n - 1$), con un nome suo?
 - [ ] `casuale(2; 5)` è un numero tra 2 e 5, e per scegliere tra due soli valori servono le graffe: `casuale({2; 5})`. Con tre o più valori le graffe non servono. È chiaro per uno studente, o confonde?
 
+## Primo lotto di informatica: il primo anno (3 ottobre 2026)
+Dal lotto delle 32 lezioni del primo anno ([[2026-10-03 Primo lotto di informatica]]). Qui le domande che toccano più lezioni o che decidono una convenzione; le altre, lezione per lezione, sono in `docs/lezioni/informatica/note/`. Le convenzioni scelte sono in `docs/lezioni/informatica/README.md`.
+
+Convenzioni di tutto il lotto:
+- [ ] Multipli del byte: kB = 1000 B (Sistema Internazionale) e KiB = 1024 B (norma IEC), con il fattore sempre scritto negli esercizi. Il vostro libro usa KB = 1024? Serve una frase in più nella lezione 03?
+- [ ] Velocità di trasmissione in Mbit/s, e quantità di bit in Mbit. Oppure Mb e Mbps, come nelle offerte delle connessioni?
+- [ ] Numeri nelle altre basi con il pedice ($1011_2$, cifre esadecimali in tondo). Le sequenze di bit in modulo e segno e in complemento a due sono senza pedice, perché sono bit in una rappresentazione e non numeri in base due: va bene?
+- [ ] "Traboccamento" con "overflow" tra parentesi, "nucleo" con "kernel", "avvio" con "boot", "in attesa" e non "bloccato", "slide" con "diapositive": i termini italiani come principali vanno bene, o in classe si usano quelli inglesi?
+- [ ] Funzioni del foglio di calcolo con i nomi italiani (`SOMMA`, `MEDIA`, `SE`, `CONTA.SE`) e il punto e virgola come separatore. Fogli Google in italiano usa gli stessi nomi?
+
+Informazione e basi (lezioni 01-07):
+- [ ] Informazione come "dato a cui è stato dato un significato", o la definizione con l'incertezza?
+- [ ] I dati (documenti, foto) sono software? La lezione 02 dice di no. Il firmware sta nel software di base o è una categoria a parte? Antivirus e programmi di utilità dove stanno?
+- [ ] Software libero e open source come sinonimi: va bene al primo anno?
+- [ ] Da decimale a binario: quale metodo per primo? Ora le divisioni successive fino a 127 e la sottrazione delle potenze di due fino a 1023. Il limite di 10 bit (12 per l'esadecimale) va alzato a 16?
+- [ ] "Quanti bit servono" compare nella 01, nella 03 e nella 05: dove deve stare?
+- [ ] L'ottale ha una sezione breve e un livello di esercizi nella lezione sull'esadecimale: basta?
+- [ ] La sottrazione binaria con il prestito ha un solo paragrafo e nessun esercizio. Va sviluppata?
+
+Codifica (lezioni 08-12):
+- [ ] Il complemento a due è definito dal peso negativo del bit più significativo, e "inverti e somma 1" è il procedimento. Va bene? Servono complemento a uno o eccesso?
+- [ ] Virgola mobile: il formato a 32 bit con l'eccesso 127 è troppo per una prima? Serve un cenno a infinito e NaN?
+- [ ] I codici ASCII 48, 65 e 97 si danno in verifica o si chiedono a memoria? Di UTF-8 serve il dettaglio dei bit di prefisso?
+- [ ] "Risoluzione" è il numero di pixel o la densità in dpi? Servono tavolozza e CMYK?
+- [ ] Campionamento: "almeno il doppio" o "più del doppio" della frequenza massima? Il teorema va nominato (Nyquist-Shannon)?
+
+Architettura e sistema operativo (lezioni 13-22):
+- [ ] Lo schema di von Neumann ha quattro blocchi (CPU, memoria centrale, periferiche, bus), con le memorie di massa tra le periferiche. Va bene, o serve un blocco a parte? Serve un cenno all'architettura Harvard?
+- [ ] Il linguaggio macchina inventato della lezione sulla CPU ha le istruzioni in italiano (`CARICA`, `SOMMA`, `SALVA`, `FERMA`) e tre registri, senza MAR e MDR. O i nomi inglesi dei libri (`LOAD`, `ADD`, `STORE`)?
+- [ ] "Istruzioni al secondo = frequenza diviso impulsi per istruzione" è molto semplificato: tenerlo?
+- [ ] La ROM dentro la memoria centrale va bene? Servono dischi ottici e nastri?
+- [ ] Le funzioni del sistema operativo sono cinque, o sei con "utenti e sicurezza"? Quattro strati, o il modello a cipolla del libro?
+- [ ] Stati di un processo: tre (pronto, in esecuzione, in attesa), o cinque con "nuovo" e "terminato"? I thread sono un cenno senza esercizi: basta?
+- [ ] Gestione della memoria: paginazione senza segmentazione va bene? Il conto delle pagine si chiede davvero in verifica?
+- [ ] Percorsi: `C:\Utenti` (il nome mostrato in italiano) o `C:\Users` (quello vero sul disco)?
+
+Foglio di calcolo, documenti e presentazioni (lezioni 23-32):
+- [ ] Riferimenti assoluti: l'esempio è l'IVA al 22%. Meglio un cambio di valuta, che non invecchia? I riferimenti misti restano nella lezione, con la tavola pitagorica, o vanno in fondo come approfondimento?
+- [ ] Mancano `#RIF!`, `CONTA.VALORI` e le varianti di `ARROTONDA`: servono?
+- [ ] Grafici: la lezione dice "linee" per ogni andamento nel tempo, senza l'eccezione dei pochi dati a colonne. Serve il grafico a barre orizzontali? "Oltre cinque o sei fette" per la torta è una regola pratica.
+- [ ] "Tabella pivot" va bene come unico nome? Fogli Google non ha il comando dei subtotali: la lezione va attenuata?
+- [ ] Nomi degli stili: Titolo 1, Corpo del testo, Didascalia (quelli di LibreOffice Writer), "indice" con "sommario" detto una volta. In classe si usano questi?
+- [ ] Presentazioni: da uno a due minuti per slide; al massimo 6 righe e almeno 24 punti. Vanno bene come regole, o servono numeri diversi?
+- [ ] Diritto d'autore sulle immagini: citare l'eccezione didattica (legge 633/1941, articolo 70)? Da vedere anche con chi segue il legale.
+
+Fatti da verificare (le lezioni sono online dal 3 ottobre 2026; questi sono scritti a memoria dagli agenti, con la fonte nelle note): "First Draft of a Report on the EDVAC" (1945); ASCII (1963, minuscole nel 1967); Unicode 1.0 (1991); IEEE 754 (1985); il teorema del campionamento (Shannon 1949); il CD audio a 44,1 kHz e 16 bit; i prefissi binari IEC (1998); il supercomputer Leonardo del CINECA; i comportamenti dei programmi (nomi degli errori del foglio in italiano, aggiornamento dell'indice e della tabella pivot, `SUBTOTALE`).
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

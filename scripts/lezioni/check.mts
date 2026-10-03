@@ -34,7 +34,7 @@ const BANNED: [RegExp, string][] = [
 ];
 
 const urls = new Set(
-	['docs/lezioni/url.md', 'docs/lezioni/fisica/url.md', 'docs/lezioni/chimica/url.md'].flatMap((f) => [...readFileSync(f, 'utf8').matchAll(/(\/materiale\/[^\s)]+)/g)].map((m) => m[1])),
+	['docs/lezioni/url.md', 'docs/lezioni/fisica/url.md', 'docs/lezioni/chimica/url.md', 'docs/lezioni/informatica/url.md'].flatMap((f) => [...readFileSync(f, 'utf8').matchAll(/(\/materiale\/[^\s)]+)/g)].map((m) => m[1])),
 );
 
 let errors = 0;
@@ -85,7 +85,8 @@ for (const file of process.argv.slice(2)) {
 	}
 	// A program: its language and its parts must be read. Whether a solution passes its tests is for scripts/codice/verifica.mts.
 	for (const group of codeFences(text)) for (const e of parseCodeBlock(group.fences).errors) err(`codice: ${e}`);
-	const noTikz = text.replace(/```(tikz|interattivo|grafico|codice)[\s\S]*?```/g, '');
+	// Inline code is not prose and holds no formulas: a dollar there is a dollar (a spreadsheet's `$B$2`).
+	const noTikz = text.replace(/```(tikz|interattivo|grafico|codice)[\s\S]*?```/g, '').replace(/`[^`\n]+`/g, ' ');
 
 	// Math: display first, then inline, each parsed by KaTeX.
 	let rest = noTikz.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex: string) => {
