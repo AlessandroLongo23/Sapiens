@@ -175,8 +175,9 @@ const DASHES: { value: LineDash; label: string }[] = [
 /** How a row's curve looks: colour, weight, dash, its letter on the graph; and the row's copy and removal. */
 export function RowStyle({
 	row,
-	name,
+		name,
 	tools,
+	sequence,
 	onChange,
 	onDuplicate,
 	onRemove
@@ -185,7 +186,9 @@ export function RowStyle({
 	/** The function's letter, when the row has one. */
 	name?: string;
 	/** For a function: what its tools start from when they are switched on, the middle of the window. */
-	tools?: { tangent: number; area: [number, number] };
+		tools?: { tangent: number; area: [number, number] };
+	/** For a sequence: the index its table starts from, and whether its rule can be drawn as a cobweb. */
+	sequence?: { from: number; rule: boolean };
 	onChange: (change: Partial<PlotRow>) => void;
 	onDuplicate: () => void;
 	onRemove: () => void;
@@ -233,7 +236,18 @@ export function RowStyle({
 							<NumberBox label="a" pi value={row.area?.[1] ?? 1} onChange={(b) => onChange({ area: [row.area?.[0] ?? b - 1, b] })} />
 						</div>
 					</Collapse>
-					{tool(!!row.table, 'Tabella dei valori', { table: row.table ? undefined : { from: -3, step: 1 } })}
+										{tool(!!row.table, 'Tabella dei valori', { table: row.table ? undefined : { from: -3, step: 1 } })}
+					{tool(!!row.asymptotes, 'Asintoti', { asymptotes: row.asymptotes ? undefined : true })}
+				</fieldset>
+			)}
+			{sequence && (
+				<fieldset className="m-0 flex flex-col gap-2 border-0 border-t border-edge-soft p-0 pt-3">
+					<legend className="sr-only">Strumenti sulla successione</legend>
+					{tool(!!row.table, 'Tabella dei termini', { table: row.table ? undefined : { from: sequence.from, step: 1 } })}
+					<label className={cn('flex items-center gap-2 text-sm', sequence.rule ? 'text-fg' : 'text-fg-faint')}>
+						<input type="checkbox" className={checkboxClass} checked={!!row.cobweb && sequence.rule} disabled={!sequence.rule} onChange={() => onChange({ cobweb: row.cobweb ? undefined : true })} />
+						{sequence.rule ? 'Diagramma a ragnatela' : 'Diagramma a ragnatela (serve una regola a un passo, come aₙ₊₁ = g(aₙ))'}
+					</label>
 				</fieldset>
 			)}
 			<div className="flex gap-2">
@@ -251,14 +265,16 @@ export function RowStyle({
 }
 
 /** The table a student fills in before drawing: x and the function's value, seven rows from a start and by a step. */
-export function ValueTable({ row, name, variable, f, onChange }: { row: PlotRow; name: string; variable: string; f: (x: number) => number; onChange: (table: { from: number; step: number }) => void }) {
-	const { from, step } = row.table ?? { from: -3, step: 1 };
-	const xs = Array.from({ length: 7 }, (_, k) => Number((from + k * step).toPrecision(12)));
+export function ValueTable({ row, name, variable, f, whole = false, onChange }: { row: PlotRow; name: string; variable: string; f: (x: number) => number; /** The terms of a sequence: whole indexes, ten of them. */ whole?: boolean; onChange: (table: { from: number; step: number }) => void }) {
+	const given = row.table ?? { from: -3, step: 1 };
+	const from = whole ? Math.round(given.from) : given.from;
+	const step = whole ? Math.max(1, Math.round(given.step)) : given.step;
+	const xs = Array.from({ length: whole ? 10 : 7 }, (_, k) => Number((from + k * step).toPrecision(12)));
 	return (
 		<div className="flex flex-col gap-2 px-3 pb-3">
 			<div className="grid grid-cols-2 gap-2">
-				<NumberBox label={`${variable} parte da`} pi value={from} onChange={(v) => onChange({ from: v, step })} />
-				<NumberBox label="passo" pi value={step} valid={(v) => v > 0} onChange={(v) => onChange({ from, step: v })} />
+				<NumberBox label={`${variable} parte da`} pi={!whole} value={from} valid={(v) => !whole || Number.isInteger(v)} onChange={(v) => onChange({ from: v, step })} />
+				<NumberBox label="passo" pi={!whole} value={step} valid={(v) => v > 0 && (!whole || Number.isInteger(v))} onChange={(v) => onChange({ from, step: v })} />
 			</div>
 			<table className="w-full border-collapse text-sm tabular-nums">
 				<thead>
@@ -277,7 +293,7 @@ export function ValueTable({ row, name, variable, f, onChange }: { row: PlotRow;
 						return (
 							<tr key={x} className="border-b border-edge-soft last:border-0">
 								<td className="px-2 py-1 text-right text-fg">{italian(x, 4)}</td>
-								<td className="px-2 py-1 text-right text-fg-strong">{Number.isFinite(y) ? italian(y, 4) : 'non esiste'}</td>
+								<td className="px-2 py-1 text-right text-fg-strong">{Number.isFinite(y) ? italian(y, whole ? 6 : 4) : 'non esiste'}</td>
 							</tr>
 						);
 					})}

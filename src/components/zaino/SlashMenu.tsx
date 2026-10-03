@@ -2,7 +2,7 @@
 
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
 import type { SuggestionProps } from '@tiptap/suggestion';
-import { BookOpen, FilePlus2, Heading1, Heading2, Heading3, Link2, List, ListOrdered, Minus, Pilcrow, Quote, Sigma, SquareSigma, Sticker, type LucideIcon } from 'lucide-react';
+import { BookOpen, ChartSpline, FilePlus2, Heading1, Heading2, Heading3, Link2, List, ListOrdered, Minus, Pilcrow, Quote, Sigma, SquareSigma, Sticker, type LucideIcon } from 'lucide-react';
 import type { SlashId, SlashItem } from '@/lib/zaino/slash-items';
 import { cn } from '@/lib/utils/cn';
 
@@ -24,7 +24,8 @@ const ICON: Record<SlashId, LucideIcon> = {
 	math: Sigma,
 	'block-math': SquareSigma,
 	link: Link2,
-	sticker: Sticker,
+		sticker: Sticker,
+	plot: ChartSpline,
 	page: FilePlus2,
 	guide: BookOpen
 };

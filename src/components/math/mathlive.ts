@@ -85,6 +85,7 @@ export const PLOT_TEMPLATES: PlotTemplate[] = [
 	{ word: 'prodotto', title: 'Prodotto', about: 'Come la somma, con i fattori.', insert: '\\prod_{n=1}^{#?}#?', preview: '\\prod_{n=1}^{3}(x-n)' },
 	{ word: 'integrale', title: 'Integrale', about: 'Con i due estremi: con la x sopra è una funzione integrale.', insert: '\\int_{0}^{#?}#?\\,dx', preview: '\\int_{0}^{x}t^2\\,dt' },
 		{ word: 'successione', title: 'Successione per ricorrenza', about: 'Ogni termine dal precedente. Il valore da cui parte va in un’altra riga: a_0 = 1.', insert: 'a_{n+1}=#?', preview: 'a_{n+1}=2a_n+1' },
+		{ word: 'limite', title: 'Limite', about: 'Dove tende la x va sotto: un numero, 0⁺ per un lato solo, ∞ per l’infinito.', insert: '\\lim_{x\\to #?}#?', preview: '\\lim_{x\\to 0}\\frac{\\sin x}{x}' },
 	{ word: 'derivata', title: 'Derivata', about: 'Di una formula. Per una funzione con un nome basta l’apice: f′(x).', insert: '\\frac{d}{dx}\\left(#?\\right)', preview: '\\frac{d}{dx}\\left(x^3\\right)' }
 ];
 const template = (word: string) => PLOT_TEMPLATES.find((t) => t.word === word)!;

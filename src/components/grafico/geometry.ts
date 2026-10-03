@@ -4,8 +4,9 @@ import type { Made } from '@/lib/grafico/comandi';
 import { newRow, type PlotRow } from '@/lib/grafico/documento';
 import {
 	canMeet,
-	circleEquation,
+		circleEquation,
 	coefficients,
+	conicEquation,
 	construct,
 	intersections,
 	lineEquation,
@@ -51,14 +52,19 @@ export type ToolId =
 	| 'circle3'
 	| 'polygon'
 	| 'distance'
-	| 'angle'
-	| 'slope';
+		| 'angle'
+	| 'slope'
+	| 'reflect'
+	| 'translate'
+	| 'rotate'
+	| 'dilate'
+	| 'regression';
 
 /**
  * The tools. `clip` names the short film of the tool at work, in public/grafico/geometria (recorded by
  * scripts/grafico/record-tools.mjs, as .webm, .mp4 and a .jpg to show before it plays).
  */
-export const TOOLS: { id: ToolId; name: string; about: string; clip: string }[] = [
+export const TOOLS: { id: ToolId; name: string; about: string; /** Missing for a tool not yet filmed. */ clip?: string }[] = [
 	{ id: 'move', name: 'Muovi', about: 'Trascina un punto: quello che ci è costruito sopra lo segue. Trascinando il vuoto sposti il piano.', clip: 'muovi-un-punto' },
 	{ id: 'point', name: 'Punto', about: 'Un clic nel vuoto crea un punto libero. Su una retta o una curva il punto resta vincolato a quell’oggetto; dove due oggetti si incontrano nasce il loro punto in comune.', clip: 'punto' },
 	{ id: 'meet', name: 'Intersezione', about: 'Scegli due oggetti: compaiono tutti i loro punti in comune, con le coordinate.', clip: 'intersezione' },
@@ -80,9 +86,19 @@ export const TOOLS: { id: ToolId; name: string; about: string; clip: string }[] 
 	{ id: 'polygon', name: 'Poligono', about: 'Scegli i vertici uno dopo l’altro, e per chiudere torna sul primo. La riga ne dà l’area e il perimetro.', clip: 'poligono' },
 	{ id: 'distance', name: 'Distanza', about: 'Tra due punti, tra un punto e una retta, o tra due rette parallele.', clip: 'distanza-punto-retta' },
 	{ id: 'angle', name: 'Angolo', about: 'Scegli tre punti, con il vertice per secondo. Oppure due rette: è l’angolo che non supera quello retto.', clip: 'angolo' },
-	{ id: 'slope', name: 'Pendenza', about: 'Scegli una retta: di quanto sale quando la x cresce di uno.', clip: 'pendenza' }
+		{ id: 'slope', name: 'Pendenza', about: 'Scegli una retta: di quanto sale quando la x cresce di uno.', clip: 'pendenza' },
+	{ id: 'regression', name: 'Retta di regressione', about: 'Scegli i punti uno dopo l’altro, e per finire torna sul primo: è la retta che passa più vicino a tutti. La riga ne dà l’equazione e il coefficiente r.' },
+	{ id: 'reflect', name: 'Simmetria', about: 'Scegli un oggetto, poi la retta o il punto rispetto a cui specchiarlo.' },
+	{ id: 'translate', name: 'Traslazione', about: 'Scegli un oggetto, poi un vettore, oppure due punti: da dove e fin dove.' },
+	{ id: 'rotate', name: 'Rotazione', about: 'Scegli un oggetto, poi il centro, e scrivi l’angolo in gradi: positivo in senso antiorario.' },
+	{ id: 'dilate', name: 'Omotetia', about: 'Scegli un oggetto, poi il centro, e scrivi il rapporto: 2 raddoppia, 0,5 dimezza, un numero negativo ribalta.' }
 ];
 export const toolOf = (id: ToolId) => TOOLS.find((t) => t.id === id)!;
+
+/** The event by which the page asks the plotter to take a tool in hand: the guide under it has a button for each tool. */
+export const TOOL_EVENT = 'sapiens:plot-tool';
+/** Asks the plotter of this page to take a tool in hand and to come into view. */
+export const tryTool = (id: ToolId) => window.dispatchEvent(new CustomEvent<ToolId>(TOOL_EVENT, { detail: id }));
 
 /** The bar shows one button for each group: the tool of the group used last, with the others a click away. */
 export const GROUPS: { name: string; tools: ToolId[] }[] = [
@@ -92,7 +108,8 @@ export const GROUPS: { name: string; tools: ToolId[] }[] = [
 	{ name: 'Rette da una condizione', tools: ['parallel', 'perpendicular', 'bisector', 'anglebisector', 'tangent'] },
 	{ name: 'Circonferenze', tools: ['circle', 'circler', 'compass', 'circle3'] },
 	{ name: 'Poligoni', tools: ['polygon'] },
-	{ name: 'Misure', tools: ['distance', 'angle', 'slope'] }
+		{ name: 'Misure', tools: ['distance', 'angle', 'slope', 'regression'] },
+	{ name: 'Trasformazioni', tools: ['reflect', 'translate', 'rotate', 'dilate'] }
 ];
 /** Where the films of the tools are, and their size in pixels. */
 export const CLIPS = { path: '/grafico/geometria', width: 640, height: 400 };
@@ -309,8 +326,18 @@ export function describe(build: Build, nameOf: (id: number) => string): string {
 			return names.length === 2 ? `angolo tra ${a} e ${b}` : `angolo ${a}${b}${c}`;
 		case 'slope':
 			return `pendenza di ${a}`;
-		case 'centre':
+				case 'centre':
 			return `${CENTRES[build.index ?? 0].toLowerCase()} di ${a}${b}${c}`;
+		case 'reflect':
+			return `simmetrico di ${a} rispetto a ${b}`;
+		case 'translate':
+			return names.length === 3 ? `traslato di ${a} del vettore ${b}${c}` : `traslato di ${a} del vettore ${b}`;
+		case 'rotate':
+			return `ruotato di ${a} attorno a ${b} di ${String(build.at ?? 0).replace('.', ',').replace('-', '−')}°`;
+		case 'dilate':
+			return `omotetico di ${a} dal centro ${b}, rapporto ${String(build.at ?? 1).replace('.', ',').replace('-', '−')}`;
+		case 'regression':
+			return `retta di regressione di ${names.join(', ')}`;
 	}
 }
 
@@ -321,8 +348,11 @@ export function equationsOf(row: PlotRow, geo: Geo, degrees = true): string[] {
 	if (geo.kind === 'line') {
 		const size = texRoot(geo.d.x * geo.d.x + geo.d.y * geo.d.y);
 		if (geo.arrow) return [`\\text{componenti } ${pointText(geo.d)}`, `\\text{modulo } ${size}`];
-		return geo.segment ? [`\\text{lunghezza } ${size}`] : [lineEquation(geo)];
+				if (geo.segment) return [`\\text{lunghezza } ${size}`];
+		// a line fitted to points says how well it fits
+		return geo.fit === undefined ? [lineEquation(geo)] : [lineEquation(geo), `r=${texNumber(Number(geo.fit.toFixed(4)))}`];
 	}
+	if (geo.kind === 'conic' && !geo.circle) return [conicEquation(geo.q)];
 	if (geo.kind === 'conic' && geo.circle) return [circleEquation(geo.circle), `\\text{centro } ${pointText(geo.circle.c)},\\ \\text{raggio } ${texRoot(geo.circle.r ** 2)}`];
 	if (geo.kind === 'measure') return [`d=${texRoot(geo.value ** 2)}`];
 	if (geo.kind === 'polygon') return [`\\text{area } ${texNumber(polygonArea(geo.points))}`, `\\text{perimetro } ${texNumber(polygonPerimeter(geo.points))}`];
@@ -374,7 +404,12 @@ const HINTS: Record<ToolId, (picks: Picked[]) => string> = {
 	polygon: (p) => (p.length < 3 ? ['Scegli il primo vertice.', 'Ora il secondo.', 'Ora il terzo.'][p.length] : 'Un altro vertice, oppure torna sul primo per chiudere.'),
 	distance: TWO('Scegli un punto, o una retta.', 'Ora il secondo punto, o una retta.'),
 	angle: THREE_OR_LINES,
-	slope: () => 'Scegli una retta.'
+		slope: () => 'Scegli una retta.',
+	reflect: TWO('Scegli l’oggetto da specchiare.', 'Ora la retta, oppure il punto, rispetto a cui specchiarlo.'),
+	translate: (p) => ['Scegli l’oggetto da spostare.', 'Ora un vettore, oppure il punto da cui parte lo spostamento.', 'Ora il punto in cui arriva.'][p.length],
+	rotate: (p) => ['Scegli l’oggetto da ruotare.', 'Ora il centro della rotazione.', 'Scrivi l’angolo, in gradi.'][p.length],
+	dilate: (p) => ['Scegli l’oggetto da ingrandire o ridurre.', 'Ora il centro dell’omotetia.', 'Scrivi il rapporto.'][p.length],
+	regression: (p) => (p.length < 2 ? ['Scegli il primo punto.', 'Ora il secondo.'][p.length] : 'Un altro punto, oppure torna sul primo per finire.')
 };
 
 export function useGeometryTool({ rows, geos, used, xUnit, append }: Args) {
@@ -456,17 +491,25 @@ export function useGeometryTool({ rows, geos, used, xUnit, append }: Args) {
 			names.add(name);
 			return name;
 		};
-		const fresh = () => newRow([...rows, ...added]);
+				const fresh = () => newRow([...rows, ...added]);
+		/** The image of an object: a point keeps a letter, a line and a circle theirs, a segment or a polygon none. */
+		const imageOf = (b: Build, subject: number, make: (b: Build, name?: string, label?: boolean) => number, name: (kind: 'point' | 'line' | 'circle' | 'angle', wish?: string) => string) => {
+			const geo = geos.get(subject);
+			if (geo?.kind === 'point') make(b, name('point'));
+			else if (geo?.kind === 'line' && !geo.segment) make(b, name('line'));
+			else if (geo?.kind === 'conic') make(b, name('circle'));
+			else make(b);
+		};
 		// a line or a circle has its letter written beside it; a point always has
 		const build = (b: Build, name?: string, label = !!name) => added.push({ ...fresh(), build: b, ...(name ? { name } : {}), ...(label ? { label: true } : {}) });
-		return { added, take, fresh, build };
+		return { added, take, fresh, build, imageOf };
 	};
 
 	const onPick = (plane: Point, scale: PlaneScale) => {
 		// a tool that waits for a number or a choice does not take clicks
 		if (ask) return;
 		const target = locate(plane, scale);
-		const { added, take, fresh, build } = maker();
+		const { added, take, fresh, build, imageOf } = maker();
 		/** The row of the point under the click: the one that is there, or a new one. */
 		const pointId = (t: Target): number => {
 			if (t.kind === 'point') return t.id;
@@ -497,7 +540,14 @@ export function useGeometryTool({ rows, geos, used, xUnit, append }: Args) {
 			const row = rows.find((r) => r.id === target.object);
 			return row?.build?.type === type ? row.build : null;
 		};
-		/** Three points, vertex second, or two lines: the bisector of an angle and its size ask for the same. */
+					/** The row under the click, when it was built as this type: a vector, taken as it is. */
+			const builtUnderAny = (type: Build['type']) => {
+				const row = target.object === undefined ? undefined : rows.find((r) => r.id === target.object);
+				return row?.build?.type === type ? row.id : null;
+			};
+			/** The image of an object under a transformation, with the name its kind takes. */
+			const image = (b: Build, subject: number) => imageOf(b, subject, build, take);
+			/** Three points, vertex second, or two lines: the bisector of an angle and its size ask for the same. */
 		const pointsOrLines = (ofPoints: (a: number, b: number, c: number) => void, ofLines: (g: number, h: number) => void) => {
 			const line = straight(target.object);
 			if (!picks.length) next = [target.kind !== 'point' && line !== undefined ? { id: line, kind: 'line' } : { id: pointId(target), kind: 'point' }];
@@ -635,6 +685,50 @@ export function useGeometryTool({ rows, geos, used, xUnit, append }: Args) {
 				else say = 'Qui non c’è una curva: scegli una circonferenza, una conica o un grafico.';
 				break;
 			}
+						case 'reflect':
+			case 'translate':
+			case 'rotate':
+			case 'dilate': {
+				// the object first: the point under the click, or what is drawn there, or a new point
+				if (!picks.length) {
+					next = [target.kind !== 'point' && target.object !== undefined ? { id: target.object, kind: 'object' } : { id: pointId(target), kind: 'point' }];
+					break;
+				}
+				const subject = picks[0].id;
+				if (tool === 'reflect') {
+					const line = straight(target.object);
+					const mirror = target.kind !== 'point' && line !== undefined ? line : pointId(target);
+					if (mirror !== subject) {
+						image({ type: 'reflect', of: [subject, mirror] }, subject);
+						next = [];
+					}
+				} else if (tool === 'translate') {
+					const vector = picks.length === 1 && target.kind !== 'point' ? builtUnderAny('vector') : null;
+					if (vector !== null) {
+						image({ type: 'translate', of: [subject, vector] }, subject);
+						next = [];
+					} else if (picks.length === 1) next = [...picks, { id: pointId(target), kind: 'point' }];
+					else {
+						const to = pointId(target);
+						if (to !== picks[1].id) {
+							image({ type: 'translate', of: [subject, picks[1].id, to] }, subject);
+							next = [];
+						}
+					}
+				} else {
+					next = [...picks, { id: pointId(target), kind: 'point' }];
+					question = { kind: 'number', label: tool === 'rotate' ? 'Angolo in gradi' : 'Rapporto' };
+				}
+				break;
+			}
+			case 'regression': {
+				const id = pointId(target);
+				if (picks.length >= 2 && id === picks[0].id) {
+					build({ type: 'regression', of: picks.map((p) => p.id) }, take('line'));
+					next = [];
+				} else if (!has(id) && picks.length < MAX_VERTICES) next = [...picks, { id, kind: 'point' }];
+				break;
+			}
 			case 'slope': {
 				const line = straight(target.object);
 				if (line === undefined) say = 'Qui non c’è una retta.';
@@ -684,8 +778,11 @@ export function useGeometryTool({ rows, geos, used, xUnit, append }: Args) {
 
 	/** The number typed, or the choice made, for the tool that was waiting for it. False when it cannot be used. */
 	const answer = (value: number): boolean => {
-		const { added, take, build } = maker();
-		if (tool === 'circler' && picks[0]) {
+		const { added, take, build, imageOf } = maker();
+		if ((tool === 'rotate' || tool === 'dilate') && picks.length === 2) {
+			if (!Number.isFinite(value) || (tool === 'dilate' && value === 0)) return false;
+			imageOf({ type: tool, of: [picks[0].id, picks[1].id], at: tidy(value) }, picks[0].id, build, take);
+		} else if (tool === 'circler' && picks[0]) {
 			if (!(value > 0)) return false;
 			build({ type: 'circler', of: [picks[0].id], at: tidy(value) }, take('circle'));
 		} else if (tool === 'centre' && picks.length === 3) build({ type: 'centre', of: picks.map((p) => p.id), index: value }, take('point', CENTRE_LETTERS[value]));

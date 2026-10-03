@@ -171,3 +171,57 @@ export function notablePoints(fs: F[], view: View): Notable[][] {
 		return out.filter((p, n) => !out.slice(0, n).some((q) => Math.abs(q.x - p.x) <= (x1 - x0) * 1e-7 && Math.abs(q.y - p.y) <= yScale * 1e-7));
 	});
 }
+
+/** The asymptotes of a function: the x of the vertical ones in a stretch of the axis, and the lines y = mx + q it comes close to far away. */
+export interface Asymptotes {
+	vertical: number[];
+	/** `side` is −1 for the left end of the axis, 1 for the right, 0 for a line that is the asymptote at both. */
+	lines: { m: number; q: number; side: -1 | 0 | 1 }[];
+}
+
+/**
+ * The asymptotes, found by trying numbers. A vertical one is where 1/f is zero, or where the function stops having
+ * values, and f grows without end from a side. A line far away has slope lim (f(2t) − f(t))/t and height
+ * lim (2f(t) − f(2t)), which is q whatever the slope: no difference of large numbers that almost cancel.
+ */
+export function asymptotes(f: F, x0: number, x1: number, limit: (g: F, at: number, side: number) => number): Asymptotes {
+	const scale = x1 - x0;
+	const blows = (x: number) => Math.abs(limit(f, x, 1)) === Infinity || Math.abs(limit(f, x, -1)) === Infinity;
+	const candidates = zeros((x) => 1 / f(x), x0, x1);
+	// the ends of the domain: ln x at 0
+	const N = 400;
+	let before = f(x0);
+	for (let i = 1; i <= N; i++) {
+		const x = x0 + (scale * i) / N;
+		const now = f(x);
+		if (Number.isFinite(before) !== Number.isFinite(now)) {
+			let [a, b] = [x - scale / N, x];
+			const inside = Number.isFinite(before);
+			for (let k = 0; k < 50; k++) {
+				const mid = (a + b) / 2;
+				if (Number.isFinite(f(mid)) === inside) a = mid;
+				else b = mid;
+			}
+			candidates.push(tidy((a + b) / 2, scale));
+		}
+		before = now;
+	}
+	const vertical = unique(candidates.filter(blows).sort((a, b) => a - b), scale);
+
+	const far = (side: -1 | 1) => {
+		const m = limit((t) => (f(2 * t) - f(t)) / t, side * Infinity, 0);
+		if (!Number.isFinite(m)) return null;
+		const q = limit((t) => 2 * f(t) - f(2 * t), side * Infinity, 0);
+		if (!Number.isFinite(q)) return null;
+		const round = (v: number) => (Math.abs(v) < 1e-7 ? 0 : Number(v.toPrecision(8)));
+		return { m: round(m), q: round(q) };
+	};
+	const [left, right] = [far(-1), far(1)];
+	const lines: Asymptotes['lines'] = [];
+	if (left && right && left.m === right.m && left.q === right.q) lines.push({ ...left, side: 0 });
+	else {
+		if (left) lines.push({ ...left, side: -1 });
+		if (right) lines.push({ ...right, side: 1 });
+	}
+	return { vertical, lines };
+}

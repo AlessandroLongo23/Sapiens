@@ -1,21 +1,24 @@
 'use client';
 
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
-import { Download, GripVertical, Keyboard, Lightbulb, Link2, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, Plus, Redo2, Settings, SlidersHorizontal, Undo2, X } from 'lucide-react';
+import { Dices, Download, FolderOpen, GripVertical, Keyboard, Lightbulb, Link2, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, Plus, Redo2, Settings, SlidersHorizontal, Trash2, Undo2, X } from 'lucide-react';
 import { MathField, type MathFieldHandle } from '@/components/math/MathField';
 import { PLOT_LAYOUTS, loadMathLive, useKeyboardChoice } from '@/components/math/mathlive';
 import { makeWritten, readLabel, readWritten, tidyName, track, type CommandArg, type Made } from '@/lib/grafico/comandi';
 import { italian } from '@/lib/grafico/assi';
-import { integral, mainRange } from '@/lib/grafico/curva';
+import { integral, mainRange, type Point } from '@/lib/grafico/curva';
 import { DEFAULT_SLIDER, EXAMPLES, HOME, decodeState, encodeState, newRow, type Camera, type PlotDoc, type PlotRow, type PlotState, type SliderSpec } from '@/lib/grafico/documento';
-import { COORDINATE, GREEK, cleanLatex, definitions, freeName, isUnnamedFunction, pointNames, readEntry, sequences, type Entry, type Json } from '@/lib/grafico/formula';
+import { COORDINATE, GREEK, MAX_TERMS, cleanLatex, definitions, freeName, isUnnamedFunction, limit, pointNames, readEntry, reseed, sequences, type Entry, type Json } from '@/lib/grafico/formula';
+import { asymptotes } from '@/lib/grafico/notevoli';
 import { construct, fromFunction, fromImplicit, project, texAngle, texNumber, texRoot, type Geo } from '@/lib/grafico/geometria';
 import { Tex } from '@/components/content/interactive/kit';
 import { cn } from '@/lib/utils/cn';
-import { downloadPlane } from './export';
+import { downloadPlane, standaloneSvg } from './export';
+import { useAuth } from '@/lib/state/auth';
 import { PLOT_COMPLETER } from './completer';
+import { SavedPlots, overwritePlot } from './SavedPlots';
 import { GeometryBar, ToolHint } from './GeometryBar';
-import { describe, equationsOf, plainName, plainTex, previewOf, shapeOf, toolOf, useGeometryTool, writtenRows } from './geometry';
+import { TOOL_EVENT, describe, equationsOf, plainName, plainTex, previewOf, shapeOf, toolOf, useGeometryTool, writtenRows, type ToolId } from './geometry';
 import { Plane, type PlaneCurve, type PlaneHandle, type PlaneMark } from './Plane';
 import { Collapse, IconButton, InsertMenu, NumberBox, SectionHead, useStoredNumber, ParamSlider, PlaneSettingsPanel, Popover, RowStyle, ValueTable, usePresence, type WindowBounds } from './PlotterParts';
 import { useHistory } from './useHistory';
@@ -48,7 +51,7 @@ interface Spot {
 
 /** A number as a formula field writes it: 2,5 with MathLive's decimal comma. */
 const latexNumber = (x: number) => String(Number(x.toPrecision(10))).replace('.', '{,}');
-type Panel = 'settings' | 'examples' | 'download';
+type Panel = 'settings' | 'examples' | 'download' | 'clear' | 'library';
 
 /** The width of the window, in units, on a phone. */
 const NARROW_SPAN = 10;
@@ -77,10 +80,35 @@ const labelOf = (row: PlotRow) => {
 const Formula = memo(function Formula({ tex }: { tex: string }) {
 	return <Tex>{tex}</Tex>;
 });
+/** What the plane is given when a tool is tried from the guide and has nothing to work on. */
+const TRY = { line: 'y=\\frac{x}{2}-1', circle: 'x^2+y^2=4' };
 const NOT_AN_OBJECT: Geo = { kind: 'none', why: 'Serve un punto, una retta o una curva: la riga da cui partiva è cambiata o non c’è più.' };
-const NO_VALUES = 'In questa parte del piano la funzione non ha valori: controlla il dominio, o spostati.';
+/** The colour of what helps to read a drawing and is not a curve of the student's: the line y = x of a cobweb. */
+const GUIDE = '#808080';
+/** Pixels between the strokes of a field of slopes, and half the length of a stroke. */
+const FIELD = { gap: 30, half: 9 };
+const NO_VALUES =  'In questa parte del piano la funzione non ha valori: controlla il dominio, o spostati.';
 
-export function Plotter({ initial, read }: { initial: PlotState; /** The reading of the starting formulas, made on the server. */ read: PlotterFormula[] }) {
+export function Plotter({
+	initial,
+	read,
+	view = false,
+	origin = null,
+	onState,
+	onOrigin
+}: {
+	initial: PlotState;
+	/** The reading of the starting formulas, made on the server; empty where the page has none, and the browser reads them. */
+	read: PlotterFormula[];
+	/** Only the plane, with what the graph draws and nothing to change it with: a graph shown in a note. */
+	view?: boolean;
+	/** The saved graph this one was loaded from: "Salva" writes over it. */
+	origin?: { id: string; title: string } | null;
+	/** Told the graph as a link would carry it, each time it changes: a note keeps its own copy. */
+	onState?: (code: string) => void;
+	/** Told the saved graph the plane now comes from, after a load or a save. */
+	onOrigin?: (origin: { id: string; title: string } | null) => void;
+}) {
 	const { value: doc, change, undo, redo, canUndo, canRedo } = useHistory<PlotDoc>(() => ({ rows: initial.rows, sliders: initial.sliders, settings: initial.settings }));
 	const [home, setHome] = useState<Camera>(initial.camera);
 	const [camera, setCamera] = useState<Camera>(initial.camera);
@@ -95,6 +123,8 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 	const [full, setFull] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [playing, setPlaying] = useState<Record<string, true>>({});
+		// Counts the times the numbers by chance were drawn again: what is drawn with them is found again.
+	const [seed, setSeed] = useState(0);
 	// The row whose formula is being written, until Enter or the focus leaving it.
 	const [editing, setEditing] = useState<number | null>(null);
 	const root = useRef<HTMLDivElement>(null);
@@ -266,9 +296,11 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 	const drawing = useMemo(() => {
 		const curves: PlaneCurve[] = [];
 		const spots: Spot[] = [];
+		/** The fields of slopes, for the curves that follow them through the points of the plane. */
+		const fields: { row: PlotRow; slope: (X: number, y: number) => number; stamp: string }[] = [];
 				const functions = new Map<number, (x: number) => number>();
 		// the rows that give a name to a function: what any other formula may be using
-		const named = rows.filter((_, i) => ['definition', 'sequence', 'given'].includes(entries[i].kind) || (entries[i].kind === 'function' && 'name' in entries[i] && entries[i].name)).map((r) => r.latex).join('\n');
+		const named = rows.filter((_, i) => ['definition', 'sequence', 'given', 'orbit'].includes(entries[i].kind) || (entries[i].kind === 'point' && /_\d+$/.test(entries[i].name ?? '')) || (entries[i].kind === 'function' && 'name' in entries[i] && entries[i].name)).map((r) => r.latex).join('\n');
 		rows.forEach((row, i) => {
 			const entry = entries[i];
 			if (row.build) {
@@ -297,13 +329,87 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 									for (const p of entry.params) scope[p] = valueOf(p, (id) => geos.get(id));
 			// What the curve is: its formula, the functions it may use, the values of its letters, how the plane reads it.
 			// While this stays the same the plane does not find the curve again: dragging a point leaves the others alone.
-			const stamp = `${row.latex}|${named}|${entry.params.map((p) => scope[p]).join(',')}|${xUnit}|${settings.degrees}|${row.t0},${row.t1}`;
+			const stamp = `${row.latex}|${named}|${entry.params.map((p) => scope[p]).join(',')}|${xUnit}|${settings.degrees}|${row.t0},${row.t1}|${seed}`;
 			const look = { id: String(row.id), stamp, color: row.color, width: row.width, dash: row.dash };
 
-						if (entry.kind === 'sequence') {
+												if (entry.kind === 'orbit') {
+				// the terms of a sequence of points, as many as the plotter keeps: a speck each, a figure together
+				if (row.hidden) return;
+				const { index, x, y, from } = entry;
+				curves.push({
+					...look,
+					small: true,
+					dots: () => {
+						const points: Point[] = [];
+						for (let k = from; k < from + MAX_TERMS; k++) {
+							scope[index] = k;
+							const at = { x: x(scope) / xUnit, y: y(scope) };
+							if (Number.isFinite(at.x) && Number.isFinite(at.y)) points.push(at);
+						}
+						return points;
+					}
+				});
+				return;
+			}
+			if (entry.kind === 'field') {
+				if (row.hidden) return;
+				// the slope at a place of the plane, as the plane's own axes read it
+				const slope = (X: number, y: number) => ((scope.x = X * xUnit), (scope.y = y), entry.f(scope) * xUnit);
+				fields.push({ row, slope, stamp });
+				curves.push({
+					...look,
+					width: 'thin',
+					dash: 'solid',
+					// a short stroke at every crossing of a grid that stays with the plane, as long on the screen whatever its slope
+					path: (view, sx, sy) => {
+						const lines: Point[][] = [];
+						const [gx, gy] = [FIELD.gap / sx, FIELD.gap / sy];
+						for (let i = Math.ceil(view.x0 / gx); i * gx <= view.x1; i++)
+							for (let j = Math.ceil(view.y0 / gy); j * gy <= view.y1; j++) {
+								const [X, y] = [i * gx, j * gy];
+								const m = slope(X, y);
+								if (Number.isNaN(m)) continue;
+								const [ux, uy] = Number.isFinite(m) ? [sx, m * sy] : [0, 1];
+								const norm = Math.hypot(ux, uy);
+								const [hx, hy] = [(FIELD.half * ux) / norm / sx, (FIELD.half * uy) / norm / sy];
+								lines.push([
+									{ x: X - hx, y: y - hy },
+									{ x: X + hx, y: y + hy }
+								]);
+							}
+						return { lines };
+					}
+				});
+				return;
+			}
+			if (entry.kind === 'sequence') {
 				// the terms of a sequence are points, (n; a_n), for the whole numbers in the window; one that depends on x has none
 				if (row.hidden || entry.plane) return;
 				const { index, f, from = 0 } = entry;
+				if (row.cobweb && entry.step) {
+					// the rule's curve, the line y = x, and the stair between them from the first term
+					const g = entry.step;
+					curves.push({ id: `${row.id}:rule`, stamp, color: row.color, width: 'thin', dash: 'solid', f: (x) => ((scope.x = x), g(scope)) });
+					curves.push({ id: `${row.id}:diagonal`, stamp: 'diagonal', color: GUIDE, width: 'thin', dash: 'dashed', f: (x) => x });
+					curves.push({
+						...look,
+						id: `${row.id}:web`,
+						path: () => {
+							const stair: Point[] = [];
+							scope[index] = from;
+							let a = f(scope);
+							if (Number.isFinite(a)) stair.push({ x: a, y: 0 });
+							for (let k = from + 1; k <= from + 80 && Number.isFinite(a) && Math.abs(a) < 1e6; k++) {
+								scope[index] = k;
+								const next = f(scope);
+								if (!Number.isFinite(next)) break;
+								stair.push({ x: a, y: next }, { x: next, y: next });
+								a = next;
+							}
+							return { lines: stair.length > 1 ? [stair] : [] };
+						}
+					});
+				}
 				curves.push({
 					...look,
 					dots: (view) => {
@@ -327,10 +433,37 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 				const at = (x: number) => ((scope.x = x), entry.f(scope));
 				functions.set(row.id, at);
 				if (row.hidden) return;
-				const tangent = row.tangent === undefined ? undefined : { x: row.tangent / xUnit, slope: ((scope.x = row.tangent), entry.d(scope)) * xUnit };
+				// where the function has no value, or no slope, there is no tangent: its point waits on the axis to be moved
+				const slopeThere = row.tangent === undefined ? NaN : ((scope.x = row.tangent), entry.d(scope)) * xUnit;
+				const tangent = row.tangent !== undefined && Number.isFinite(slopeThere) && Number.isFinite(at(row.tangent)) ? { x: row.tangent / xUnit, slope: slopeThere } : undefined;
 				const area = row.area ? { a: row.area[0] / xUnit, b: row.area[1] / xUnit, text: `∫ = ${italian(integral(at, row.area[0], row.area[1]), 3)}` } : undefined;
 				curves.push({ ...look, label: row.label ? entry.name : undefined, f: (x) => at(x * xUnit), tangent, area });
+				if (row.asymptotes)
+					curves.push({
+						id: `${row.id}:asymptotes`,
+						stamp,
+						color: row.color,
+						width: 'thin',
+						dash: 'dashed',
+						// found again for the stretch of the axis in view: a vertical one is looked for where the window is
+						path: (view) => {
+							const found = asymptotes(at, view.x0 * xUnit, view.x1 * xUnit, limit);
+							return {
+								lines: [
+									...found.vertical.map((a) => [
+										{ x: a / xUnit, y: view.y0 },
+										{ x: a / xUnit, y: view.y1 }
+									]),
+									...found.lines.map(({ m, q }) => [
+										{ x: view.x0, y: m * view.x0 * xUnit + q },
+										{ x: view.x1, y: m * view.x1 * xUnit + q }
+									])
+								]
+							};
+						}
+					});
 				if (tangent) spots.push({ id: `tangent:${row.id}`, row: row.id, role: 'tangent', at: { x: tangent.x, y: at(row.tangent!) }, color: row.color, text: `m = ${italian(tangent.slope / xUnit, 3)}` });
+				else if (row.tangent !== undefined) spots.push({ id: `tangent:${row.id}`, row: row.id, role: 'tangent', at: { x: row.tangent / xUnit, y: 0 }, color: row.color, text: 'qui non c’è tangente' });
 				if (row.area) row.area.forEach((x, end) => spots.push({ id: `area${end}:${row.id}`, row: row.id, role: end ? 'areaEnd' : 'areaStart', at: { x: x / xUnit, y: 0 }, color: row.color }));
 				return;
 			}
@@ -349,8 +482,43 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 				} else curves.push({ ...look, parametric: { t0, t1, x: (t) => ((scope.t = t), entry.x(scope) / xUnit), y: (t) => ((scope.t = t), entry.y(scope)) } });
 			}
 		});
-		return { curves, spots, functions };
-	}, [rows, entries, geos, valueOf, xUnit, settings.degrees]);
+				// Through every point of the plane, the curve that follows a field of slopes: the solution that passes there.
+		const through = spots.filter((s) => s.role === 'point' || s.role === 'fixed' || s.role === 'glide');
+		for (const { row, slope, stamp } of fields)
+			through.forEach((spot, k) => {
+				curves.push({
+					id: `${row.id}:solution${k}`,
+					stamp: `${stamp}|${spot.at.x},${spot.at.y}`,
+					color: row.color,
+					width: row.width,
+					dash: row.dash,
+					path: (view, sx) => {
+						// Runge and Kutta's four slopes a step, a few pixels long, each way until the curve leaves the window
+						const h = 3 / sx;
+						const tall = view.y1 - view.y0;
+						const run = (dir: 1 | -1) => {
+							const line: Point[] = [];
+							let { x, y } = spot.at;
+							for (let n = 0; n < 4000 && x >= view.x0 - h && x <= view.x1 + h && y > view.y0 - tall && y < view.y1 + tall; n++) {
+								line.push({ x, y });
+								const d = dir * h;
+								const k1 = slope(x, y);
+								const k2 = slope(x + d / 2, y + (d / 2) * k1);
+								const k3 = slope(x + d / 2, y + (d / 2) * k2);
+								const k4 = slope(x + d, y + d * k3);
+								const next = y + (d / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+								if (!Number.isFinite(next)) break;
+								x += d;
+								y = next;
+							}
+							return line;
+						};
+						return { lines: [[...run(-1).reverse(), ...run(1).slice(1)]] };
+					}
+				});
+			});
+				return { curves, spots, functions };
+	}, [rows, entries, geos, valueOf, xUnit, settings.degrees, seed]);
 	const { curves } = drawing;
 
 	// A function with no value anywhere in the window draws nothing: the row says so, or it looks broken.
@@ -483,6 +651,38 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 	useEffect(() => {
 		cancelTool.current = geometry.cancel;
 	});
+	// The guide under the plotter has a button for each tool: the tool is taken in hand and the plane comes into view.
+	// A tool that works on an object finds one there: a line for the parallel and the slope, a curve for the tangent, two
+	// objects that meet for the intersection. What the plane already has is used, and nothing of the student's is touched.
+	const takeTool = (id: ToolId) => {
+		const kinds = rows.filter((r) => !r.hidden).map((r) => geos.get(r.id)?.kind);
+		const has = (kind: Geo['kind']) => kinds.includes(kind);
+		const missing: string[] = [];
+		if (['parallel', 'perpendicular', 'slope'].includes(id) && !has('line')) missing.push(TRY.line);
+		if (id === 'tangent' && !has('conic') && !has('curve')) missing.push(TRY.circle);
+		if (id === 'meet' && kinds.filter((k) => k === 'line' || k === 'conic').length < 2) missing.push(has('line') ? TRY.circle : TRY.line);
+		if (missing.length)
+			setRows((list) => {
+				// before a last row left empty, where the student goes on writing
+				const empty = list.length && !list[list.length - 1].latex.trim() && !list[list.length - 1].build ? list.slice(-1) : [];
+				const next = list.slice(0, list.length - empty.length);
+				for (const latex of missing) next.push(newRow([...next, ...empty], latex));
+				return [...next, ...empty];
+			});
+		geometry.choose(id);
+	};
+	const chooseTool = useRef(takeTool);
+	useEffect(() => {
+		chooseTool.current = takeTool;
+	});
+	useEffect(() => {
+		const take = (e: Event) => {
+			chooseTool.current((e as CustomEvent<ToolId>).detail);
+			root.current?.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+		};
+		window.addEventListener(TOOL_EVENT, take);
+		return () => window.removeEventListener(TOOL_EVENT, take);
+	}, []);
 	const toolInHand = geometry.tool !== 'move';
 	useEffect(() => {
 		if (!toolInHand) return;
@@ -848,9 +1048,8 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 		else stepBack();
 	};
 
-	const share = async () => {
-		const url = `${window.location.origin}${window.location.pathname}#g=${encodeState({ ...doc, camera })}`;
-		window.history.replaceState(null, '', url);
+	/** The link to the graph as it is, copied; the address bar has it too. */
+	const copyLink = async (url: string) => {
 		try {
 			await navigator.clipboard.writeText(url);
 			setCopied(true);
@@ -858,6 +1057,63 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 		} catch {
 			// no clipboard here: the address bar has the link all the same
 		}
+	};
+	const linkNow = () => `${window.location.origin}${window.location.pathname}#g=${encodeState({ ...doc, camera })}`;
+	const share = async () => {
+		const url = linkNow();
+		window.history.replaceState(null, '', url);
+		await copyLink(url);
+	};
+	// Everything off the plane: the formulas, what was built, the sliders. The settings of the plane stay, and the step
+	// can be undone. `keep` copies the link to the graph first, which is how a graph is kept for now.
+	const hasContent = rows.some((r) => r.latex.trim() || r.build);
+	// The saved graph the plane was loaded from, or last saved as, with what it held then: "Salva" writes over it.
+	// What is compared leaves the window out: looking around a graph is not a change to save.
+	const user = useAuth((s) => s.user);
+	const [saved, setSaved] = useState<{ id: string; title: string; code: string } | null>(() => origin && { ...origin, code: encodeState({ rows: initial.rows, sliders: initial.sliders, settings: initial.settings, camera: HOME }) });
+	const docCode = useMemo(() => encodeState({ ...doc, camera: HOME }), [doc]);
+	// Who holds the plotter (a note) is told what is on the plane and which saved graph it comes from.
+	const tell = useRef({ onState, onOrigin });
+	useEffect(() => {
+		tell.current = { onState, onOrigin };
+	});
+	useEffect(() => {
+		tell.current.onState?.(encodeState({ ...doc, camera }));
+	}, [doc, camera]);
+	const savedId = saved?.id;
+	const savedTitle = saved?.title;
+	useEffect(() => {
+		tell.current.onOrigin?.(savedId && savedTitle ? { id: savedId, title: savedTitle } : null);
+	}, [savedId, savedTitle]);
+	const dirty = saved ? saved.code !== docCode : hasContent;
+	const stateNow = () => encodeState({ ...doc, camera });
+	/** The plane as a picture, kept with a saved graph for the list. */
+	const pictureNow = () => {
+		const svg = plane.current?.svg();
+		return svg ? standaloneSvg(svg).text : null;
+	};
+	const clear = async (keep: 'link' | 'save' | null) => {
+		if (keep === 'link') await copyLink(linkNow());
+		if (keep === 'save' && saved) {
+			try {
+				await overwritePlot(saved.id, stateNow(), pictureNow());
+			} catch {
+				// not saved: the plane is not emptied, and the library says why
+				toggle('library');
+				return;
+			}
+		}
+		setSaved(null);
+		cancelTool.current();
+		const row = newRow([]);
+		change((d) => ({ ...d, rows: [row], sliders: {} }));
+		window.history.replaceState(null, '', window.location.pathname);
+		setCamera(home);
+		setPlaying({});
+		setStyled(null);
+		setHeld(null);
+		setSynced((n) => n + 1);
+		setPanel(null);
 	};
 	const download = (kind: 'svg' | 'png') => {
 		const svg = plane.current?.svg();
@@ -883,7 +1139,26 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 	const look = { grid: settings.grid, axes: settings.axes, numbers: settings.numbers, xAxis: polarGrid ? ('numbers' as const) : settings.degrees ? ('degrees' as const) : settings.xAxis, xUnit, xName: settings.xName, yName: settings.yName, polar: settings.polar ? (settings.degrees ? ('degrees' as const) : ('radians' as const)) : undefined };
 	const withKeyboard = keyboardHeight > 0;
 
-		// A row of the panel: a formula with its field, or a built object with its definition and its equation. `n` is its place in its section.
+				/** Where a tangent starts when it is switched on: the middle of the window, or the nearest place beside it where the function has a value. */
+	const tangentStart = (id: number, middle: number) => {
+		const at = drawing.functions.get(id);
+		if (!at || Number.isFinite(at(middle))) return middle;
+		const step = round((camera.span * xUnit) / 16);
+		for (let k = 1; k <= 8; k++) for (const x of [middle + k * step, middle - k * step]) if (Number.isFinite(at(x))) return Number(x.toPrecision(10));
+		return middle;
+	};
+	/** A row that is a number: what it is worth. A limit that grows without end, or that is not there, says so. */
+	const valueText = (v: number) => (v === Infinity ? 'Vale +∞.' : v === -Infinity ? 'Vale −∞.' : Number.isNaN(v) ? 'Non ha un valore: se è un limite, da destra e da sinistra non coincidono, oppure non esiste.' : `Vale ${italian(v, 6)}.`);
+	/** The asymptotes of a function in the stretch of the axis in view, in words. */
+	const asymptoteText = (id: number) => {
+		const at = drawing.functions.get(id);
+		if (!at) return undefined;
+		const found = asymptotes(at, (camera.cx - camera.span / 2) * xUnit, (camera.cx + camera.span / 2) * xUnit, limit);
+		const line = ({ m, q }: { m: number; q: number }) => (m === 0 ? `y = ${italian(q, 4)}` : `y = ${m === 1 ? '' : m === -1 ? '−' : italian(m, 4)}x${q === 0 ? '' : q > 0 ? ` + ${italian(q, 4)}` : ` − ${italian(-q, 4)}`}`);
+		const all = [...found.vertical.map((a) => `x = ${italian(a, 4)}`), ...found.lines.map(line)];
+		return all.length ? `${all.length === 1 ? 'Asintoto' : 'Asintoti'}: ${all.join('; ')}.` : 'Nessun asintoto in questa parte del piano.';
+	};
+	// A row of the panel: a formula with its field, or a built object with its definition and its equation. `n` is its place in its section.
 	const renderRow = (row: PlotRow, n: number) => {
 		const built = inConstruction(row);
 								const i = rows.indexOf(row);
@@ -891,7 +1166,7 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 								const geo = row.build ? geos.get(row.id) : undefined;
 								const written = row.build ? null : writtenOf(row.latex, row.id);
 								const message =
-									written ? ('why' in written ? written.why : `Premi Invio per creare: ${[...new Set(written.made.map((m) => describe(m.build, nameOf)))].join(', ')}${written.made.length > 1 ? ` (${written.made.length} oggetti)` : ''}.`) : geo?.kind === 'none' ? geo.why : entry.kind === 'error' ? entry.message : blank.has(row.id) ? NO_VALUES : entry.kind === 'function' ? entry.note : entry.kind === 'sequence' && entry.plane ? `I termini di ${entry.name} dipendono da x o da y: non hanno punti loro. Usane uno in un’altra riga, come ${entry.name}₁₀ ≤ 4.` : entry.kind === 'definition' ? `${entry.name} dipende da ${entry.vars.join(' e ')}: non ha una curva sua. Usala in un’altra riga, come ${entry.name} = 4 oppure ${entry.name}(${entry.vars.join('; ')}) < 1.` : undefined;
+									written ? ('why' in written ? written.why : `Premi Invio per creare: ${[...new Set(written.made.map((m) => describe(m.build, nameOf)))].join(', ')}${written.made.length > 1 ? ` (${written.made.length} oggetti)` : ''}.`) : geo?.kind === 'none' ? geo.why : entry.kind === 'error' ? entry.message : entry.kind === 'function' && entry.constant ? valueText(drawing.functions.get(row.id)?.(0) ?? NaN) : blank.has(row.id) ? NO_VALUES : entry.kind === 'function' ? (row.asymptotes ? asymptoteText(row.id) : entry.note) : entry.kind === 'orbit' ? `I primi ${MAX_TERMS} punti della successione ${entry.name}.` : entry.kind === 'field' ? 'Un trattino per ogni pendenza. Metti un punto sul piano per vedere la soluzione che ci passa.' : entry.kind === 'sequence' && row.cobweb && !entry.step ? 'La ragnatela si disegna per una regola a un passo senza l’indice, come aₙ₊₁ = g(aₙ).' : entry.kind === 'sequence' && entry.plane ? `I termini di ${entry.name} dipendono da x o da y: non hanno punti loro. Usane uno in un’altra riga, come ${entry.name}₁₀ ≤ 4.` : entry.kind === 'definition' ? `${entry.name} dipende da ${entry.vars.join(' e ')}: non ha una curva sua. Usala in un’altra riga, come ${entry.name} = 4 oppure ${entry.name}(${entry.vars.join('; ')}) < 1.` : undefined;
 								return (
 									<li
 										key={row.id}
@@ -978,10 +1253,26 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 												<X className="size-4" aria-hidden="true" />
 											</IconButton>
 										</div>
-										{message && (
+																				{message && (
 											<p role="status" className="mt-0 mb-2 px-3 text-sm text-fg-muted">
 												{message}
 											</p>
+										)}
+										{/* numbers by chance stay the same while the graph is looked at: this draws them again */}
+										{!row.build && /casuale|random/.test(row.latex) && entry.kind !== 'error' && (
+											<div className="mb-2 px-3">
+												<button
+													type="button"
+													onClick={() => {
+														reseed();
+														setSeed((n) => n + 1);
+													}}
+													className="flex h-8 items-center gap-1.5 rounded-lg border border-edge-strong bg-surface px-2.5 text-sm font-medium text-fg-strong shadow-paper hover:bg-surface-3 focus-ring"
+												>
+													<Dices className="size-3.5" aria-hidden="true" />
+													Estrai di nuovo
+												</button>
+											</div>
 										)}
 										{(entry.kind === 'parametric' || entry.kind === 'polar') && (
 											<div className="flex items-end gap-2 px-3 pb-2.5">
@@ -989,6 +1280,18 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 												<NumberBox label="da" pi={!settings.degrees} value={tRange(row, settings.degrees)[0]} valid={(v) => v < tRange(row, settings.degrees)[1]} onChange={(t0) => updateRow(row.id, { t0 })} className="w-24" />
 												<NumberBox label="a" pi={!settings.degrees} value={tRange(row, settings.degrees)[1]} valid={(v) => v > tRange(row, settings.degrees)[0]} onChange={(t1) => updateRow(row.id, { t1 })} className="w-24" />
 											</div>
+										)}
+										{entry.kind === 'sequence' && !entry.plane && (
+											<Collapse open={!!row.table}>
+												<ValueTable
+													row={row}
+													name={`${entry.name}_${entry.index}`}
+													variable={entry.index}
+													whole
+													f={(k) => entry.f({ x: 0, y: 0, t: 0, theta: 0, ...Object.fromEntries(entry.params.map((p) => [p, valueOf(p, (id) => geos.get(id))])), [entry.index]: Math.round(k) })}
+													onChange={(table) => updateRow(row.id, { table }, `table:${row.id}`)}
+												/>
+											</Collapse>
 										)}
 										{entry.kind === 'function' && (
 											<Collapse open={!!row.table}>
@@ -999,7 +1302,8 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 											<RowStyle
 												row={row}
 												name={entry.kind === 'function' ? entry.name : labelOf(row) ? plainName(labelOf(row)!) : row.build && row.name && geo && (geo.kind === 'line' || geo.kind === 'conic') ? plainName(row.name) : undefined}
-												tools={entry.kind === 'function' ? toolDefaults : undefined}
+												tools={entry.kind === 'function' ? { ...toolDefaults, tangent: tangentStart(row.id, toolDefaults.tangent) } : undefined}
+												sequence={entry.kind === 'sequence' && !entry.plane ? { from: entry.from ?? 0, rule: !!entry.step } : undefined}
 												onChange={(part) => updateRow(row.id, part)}
 												onDuplicate={() => duplicate(row)}
 												onRemove={() => remove(row.id)}
@@ -1009,9 +1313,17 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 								);
 	};
 
+		// In a note the graph is looked at: the plane alone, which can be moved and brought back.
+	if (view)
+		return (
+			<div ref={root} className="relative h-full w-full overflow-hidden">
+				<Plane ref={plane} camera={camera} onCamera={setCamera} home={home} wheel="ctrl" curves={curves} marks={marks.map((m) => ({ ...m, onDrag: undefined }))} look={look} label={names ? `Piano cartesiano con ${names === 1 ? 'una funzione' : `${names} funzioni`}` : 'Piano cartesiano'} />
+			</div>
+		);
+
 	return (
 		<div
-						ref={root}
+			ref={root}
 			onKeyDown={shortcuts}
 			onPointerDownCapture={(e) => (lastPress.current = { target: e.target, time: performance.now() })}
 			className={cn('flex flex-col border-edge bg-surface', full ? 'fixed inset-0 z-50 overflow-hidden' : 'overflow-clip rounded-2xl border shadow-paper lg:h-[min(78vh,54rem)] lg:overflow-hidden')}
@@ -1039,9 +1351,19 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 				<IconButton label="Copia il link a questo grafico" text="Condividi" onClick={() => void share()}>
 					<Link2 className="size-4" aria-hidden="true" />
 				</IconButton>
+				<span data-popover="library">
+					<IconButton label={saved ? `I miei grafici: sul piano c’è ${saved.title}${dirty ? ', con modifiche non salvate' : ''}` : 'I miei grafici: salva e riapri'} text={saved ? `${saved.title}${dirty ? ' •' : ''}` : 'I miei grafici'} onClick={() => toggle('library')} pressed={panel === 'library'}>
+						<FolderOpen className="size-4" aria-hidden="true" />
+					</IconButton>
+				</span>
 				<span data-popover="download">
 					<IconButton label="Scarica l’immagine" onClick={() => toggle('download')} pressed={panel === 'download'}>
 						<Download className="size-4" aria-hidden="true" />
+					</IconButton>
+				</span>
+				<span data-popover="clear">
+					<IconButton label="Svuota il piano" onClick={() => toggle('clear')} pressed={panel === 'clear'} disabled={!hasContent}>
+						<Trash2 className="size-4" aria-hidden="true" />
 					</IconButton>
 				</span>
 				<span data-popover="settings">
@@ -1101,7 +1423,9 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 											type="button"
 											onClick={() => {
 												load(example.state);
-												setPanel(null);
+											// an example is not the saved graph that was on the plane
+											setSaved(null);
+											setPanel(null);
 											}}
 											className="flex w-full flex-col rounded-lg px-2.5 py-2 text-left hover:bg-surface-3 focus-ring"
 										>
@@ -1111,6 +1435,55 @@ export function Plotter({ initial, read }: { initial: PlotState; /** The reading
 									</li>
 								))}
 							</ul>
+						</Popover>
+					)}
+					{drawn === 'clear' && (
+						<Popover title="Svuotare il piano?" anchor="clear" onClose={closePanel} visible={visible}>
+							<p className="mt-0 mb-3 text-sm text-fg-muted">
+								Togli tutte le formule, i punti e gli oggetti costruiti. {user && saved && !dirty ? `“${saved.title}” resta tra i tuoi grafici.` : dirty ? 'Ci sono modifiche non salvate.' : ''} “Annulla” riporta tutto indietro finché resti su questa pagina.
+							</p>
+							<div className="flex flex-col gap-2">
+								{/* with an account the graph is saved first: over the one it came from, or with a name from the library */}
+								{user && saved && dirty ? (
+									<button type="button" onClick={() => void clear('save')} className="h-10 rounded-lg border border-edge-strong bg-surface text-sm font-medium text-fg-strong hover:bg-surface-3 focus-ring">
+										Salva “{saved.title}” e svuota
+									</button>
+								) : user && !saved ? (
+									<button type="button" onClick={() => toggle('library')} className="h-10 rounded-lg border border-edge-strong bg-surface text-sm font-medium text-fg-strong hover:bg-surface-3 focus-ring">
+										Salva con nome…
+									</button>
+								) : !user ? (
+									<button type="button" onClick={() => void clear('link')} className="h-10 rounded-lg border border-edge-strong bg-surface text-sm font-medium text-fg-strong hover:bg-surface-3 focus-ring">
+										Copia il link e svuota
+									</button>
+								) : null}
+								<button type="button" onClick={() => void clear(null)} className="h-10 rounded-lg bg-accent text-sm font-medium text-white hover:opacity-90 focus-ring">
+									{user && saved && !dirty ? 'Svuota' : 'Svuota senza salvare'}
+								</button>
+								<button type="button" onClick={closePanel} className="h-10 rounded-lg text-sm font-medium text-fg-muted hover:bg-surface-3 hover:text-fg-strong focus-ring">
+									Lascia tutto com’è
+								</button>
+							</div>
+						</Popover>
+					)}
+					{drawn === 'library' && (
+						<Popover title="I miei grafici" anchor="library" onClose={closePanel} visible={visible}>
+							<SavedPlots
+								current={saved}
+								dirty={dirty}
+								empty={!hasContent}
+								state={stateNow}
+								preview={pictureNow}
+								onSaved={(plot) => setSaved({ id: plot.id, title: plot.title, code: docCode })}
+								onLoad={(plot) => {
+									const state = decodeState(plot.state);
+									if (!state) return;
+									load(state);
+									setSaved({ id: plot.id, title: plot.title, code: encodeState({ ...state, camera: HOME }) });
+									setPanel(null);
+								}}
+								onGone={() => setSaved(null)}
+							/>
 						</Popover>
 					)}
 					{drawn === 'download' && (

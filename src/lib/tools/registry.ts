@@ -122,12 +122,12 @@ export const TOOLS: ToolMeta[] = [
 		slug: 'grafico-di-funzione',
 		title: 'Grafico di funzione',
 		lead: 'Scrivi una funzione e guardane il grafico: zeri, massimi, minimi e intersezioni, parametri con i cursori, rette e circonferenze da costruire sul piano.',
-		description: 'Disegna il grafico di una funzione online: zeri, massimi e minimi, parametri con i cursori, equazioni, disequazioni e geometria analitica sul piano cartesiano.',
+		description: 'Calcolatrice grafica online: disegna il grafico di una funzione con zeri, massimi e minimi, e costruisci rette e circonferenze sul piano cartesiano.',
 		category: 'algebra',
 		lessons: ['high_school/math/funzioni/funzioni-lineari', 'high_school/math/parabola-disequazioni/funzioni-quadratiche', 'high_school/math/geometria-analitica/equazione-di-una-retta'],
-		related: ['equazioni-secondo-grado', 'disequazioni-secondo-grado', 'equazione-circonferenza', 'distanza-tra-due-punti'],
-		sample: 'y = x^2 - 2x - 1',
-		keywords: ['grafico di funzione online', 'disegnare funzioni', 'piano cartesiano', 'studio di funzione', 'geometria analitica', 'retta', 'parabola', 'circonferenza', 'disequazioni', 'curve parametriche', 'successioni', 'geogebra', 'desmos'],
+		related: ['retta-passante-per-due-punti', 'distanza-tra-due-punti', 'punto-medio-segmento', 'equazione-circonferenza', 'parabola-vertice-fuoco-direttrice', 'equazioni-secondo-grado', 'disequazioni-secondo-grado'],
+		sample: 'y = x^3 - 3x',
+		keywords: ['grafico di funzione online', 'calcolatrice grafica', 'plotter', 'disegnare funzioni', 'piano cartesiano', 'studio di funzione', 'geometria analitica', 'retta', 'parabola', 'circonferenza', 'disequazioni', 'curve parametriche', 'successioni', 'geogebra', 'desmos'],
 		ownPage: true
 	},
 	{

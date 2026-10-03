@@ -15,12 +15,22 @@ import { ToolGuide } from './ToolGuide';
 export const PLOTTER_SLUG = 'grafico-di-funzione';
 export const PLOTTER_PATH = `${TOOLS_ROOT}/${PLOTTER_SLUG}`;
 
+/** Where the article leaves room for the tools of geometry: a line of its own in the markdown. */
+const TOOLS_MARK = '<p>@@strumenti@@</p>';
 /**
- * The page of the plotter: the plane with its panel, the way to the lessons, the article that says how to write a
- * formula, and the tools of geometry one by one, each with its film.
+ * One column for everything under the plane, wider than a lesson's text: this page has no index beside it. The
+ * prose keeps the width of a line that reads well, from the same left edge; headings and films take the whole column.
+ */
+const COLUMN = 'mx-auto max-w-5xl';
+const PROSE = 'markdown-content [&>*]:max-w-[70ch] [&>h1]:max-w-none [&>h2]:max-w-none';
+
+/**
+ * The page of the plotter: the plane with its panel, the way to the lessons, and the article that says how to write
+ * a formula, with the tools of geometry in their section, each with its film.
  */
 export function PlotterPage({ tool, lessons, articleHtml, initial, read }: { tool: ToolMeta; lessons: ToolLesson[]; articleHtml: string | null; initial: PlotState; read: PlotterFormula[] }) {
 	const related = (tool.related ?? []).map(toolBySlug).filter((t): t is ToolMeta => !!t);
+	const [before, after] = articleHtml?.split(TOOLS_MARK) ?? [];
 	return (
 		<Page width="full">
 			<JsonLd data={toolJsonLd(tool)} />
@@ -51,12 +61,16 @@ export function PlotterPage({ tool, lessons, articleHtml, initial, read }: { too
 				</nav>
 			)}
 
-			{articleHtml && <Html html={articleHtml} className="markdown-content mx-auto mt-14 max-w-[70ch]" />}
-
-			<ToolGuide />
+			{before && (
+				<div className={`${COLUMN} mt-14`}>
+					<Html html={before} className={PROSE} />
+					{after !== undefined && <ToolGuide />}
+					{after && <Html html={after} className={`${PROSE} mt-8`} />}
+				</div>
+			)}
 
 			{related.length > 0 && (
-				<section aria-labelledby="related-tools" className="mx-auto mt-14 max-w-[70ch] border-t border-edge pt-6">
+				<section aria-labelledby="related-tools" className={`${COLUMN} mt-14 border-t border-edge pt-6`}>
 					<h2 id="related-tools" className="label-mono mb-3 text-fg-subtle">
 						Altri strumenti
 					</h2>

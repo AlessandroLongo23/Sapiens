@@ -27,7 +27,11 @@ export interface PlotRow {
 	/** For a function: the two ends of the area between the curve and the x axis. */
 	area?: [number, number];
 	/** For a function: a table of its values, from this x and by this step. */
-	table?: { from: number; step: number };
+		table?: { from: number; step: number };
+	/** For a function: its asymptotes, drawn as dashed lines and written under the row. */
+	asymptotes?: boolean;
+	/** For a sequence given by a recurrence: the cobweb of its terms, between the rule's curve and y = x. */
+	cobweb?: boolean;
 	/** A row that is not a formula but an object built from other rows: the line through A and B. Its `latex` is empty. */
 	build?: Build;
 	/** The name of a built object, in LaTeX: A, r, \gamma_1. A formula has its name in the formula. */
@@ -133,7 +137,7 @@ const MAX_ROWS = 120;
 const MAX_LATEX = 600;
 
 /** What only some rows have: the tangent's x, the ends of the area, the start and step of the table. */
-type RowExtras = { g?: number; i?: [number, number]; v?: [number, number]; /** A build: its type, the places of its rows in the list, then `at` and `index`. */ b?: [string, number[], (number | null)?, (number | null)?]; m?: string; /** Placed with a tool. */ k?: 1 };
+type RowExtras = { g?: number; i?: [number, number]; v?: [number, number]; /** A build: its type, the places of its rows in the list, then `at` and `index`. */ b?: [string, number[], (number | null)?, (number | null)?]; m?: string; /** Placed with a tool. */ k?: 1; /** Asymptotes shown. */ y?: 1; /** Cobweb shown. */ w?: 1 };
 
 type Packed = {
 	v: 1;
@@ -170,7 +174,9 @@ export function encodeState(state: PlotState): string {
 			// a link numbers the rows by their place: a build points to places
 			if (r.build) extras.b = [r.build.type, r.build.of.map((id) => state.rows.findIndex((o) => o.id === id)), r.build.at ?? null, r.build.index ?? null];
 			if (r.name) extras.m = r.name;
-			if (r.placed) extras.k = 1;
+						if (r.placed) extras.k = 1;
+			if (r.asymptotes) extras.y = 1;
+			if (r.cobweb) extras.w = 1;
 			const more = Object.keys(extras).length > 0;
 			if (more || r.t0 !== undefined || r.t1 !== undefined) packed.push(r.t0 ?? null, r.t1 ?? null);
 			if (more) packed.push(extras);
@@ -197,13 +203,15 @@ const BUILT_NAME = /^(?:[A-Za-z]|\\[a-z]{2,8})(?:_\{?[0-9]{1,3}\}?)?$/;
 
 function rowExtras(e: unknown, self: number, count: number): Partial<PlotRow> {
 	if (typeof e !== 'object' || e === null) return {};
-	const { g, i, v, b, m, k } = e as RowExtras;
+	const { g, i, v, b, m, k, y, w } = e as RowExtras;
 	const place = (k: unknown) => Number.isInteger(k) && (k as number) >= 0 && (k as number) < count && k !== self;
 	const built = Array.isArray(b) && (BUILD_TYPES as readonly string[]).includes(b[0]) && Array.isArray(b[1]) && b[1].length >= 1 && b[1].length <= 12 && b[1].every(place);
 	return {
 		...(built ? { build: { type: b[0] as Build['type'], of: b[1], ...(finite(b[2]) ? { at: b[2] } : {}), ...(Number.isInteger(b[3]) && (b[3] as number) >= 0 && (b[3] as number) < 4 ? { index: b[3] as number } : {}) } } : {}),
 		...(typeof m === 'string' && BUILT_NAME.test(m) ? { name: m } : {}),
-		...(k === 1 ? { placed: true } : {}),
+				...(k === 1 ? { placed: true } : {}),
+		...(y === 1 ? { asymptotes: true } : {}),
+		...(w === 1 ? { cobweb: true } : {}),
 		...(finite(g) ? { tangent: g } : {}),
 		...(Array.isArray(i) && finite(i[0]) && finite(i[1]) ? { area: [i[0], i[1]] as [number, number] } : {}),
 		...(Array.isArray(v) && finite(v[0]) && finite(v[1]) && v[1] > 0 ? { table: { from: v[0], step: v[1] } } : {})

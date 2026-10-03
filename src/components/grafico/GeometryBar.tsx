@@ -157,6 +157,42 @@ const PICTURES: Record<Exclude<ToolId, 'move'>, ReactNode> = {
 			<path d="M2 20L22 5" />
 			<path d="M7 16.3H15V10.3" strokeWidth={1} strokeDasharray="2 2" />
 		</>
+	),
+	reflect: (
+		<>
+			<path d="M12 3V21" strokeDasharray="2 2.5" />
+			<path d="M9 8L4 16H9Z M15 8L20 16H15Z" />
+		</>
+	),
+	translate: (
+		<>
+			<path d="M4 15L8 8L11 15Z" />
+			<path d="M13 15L17 8L20 15Z" />
+			<path d="M7 19H17M14.5 17L17 19L14.5 21" />
+		</>
+	),
+	rotate: (
+		<>
+			<Dot x={6} y={18} />
+			<path d="M6 18L19 18M6 18L15.2 8.8" />
+			<path d="M15 18A9 9 0 0 0 12.4 11.6M12.2 14L12.4 11.6L14.8 11.9" />
+		</>
+	),
+	dilate: (
+		<>
+			<Dot x={4.5} y={19} />
+			<path d="M4.5 19L20 6M4.5 19L20 15" strokeDasharray="2 2.5" />
+			<path d="M9 13.5H11.5V16H9Z M15 7.5H20V12.5H15Z" />
+		</>
+	),
+	regression: (
+		<>
+			<path d="M3 18L21 6" />
+			<Dot x={6} y={14} />
+			<Dot x={10} y={15.5} />
+			<Dot x={13} y={9.5} />
+			<Dot x={18} y={9.5} />
+		</>
 	)
 };
 
@@ -289,11 +325,13 @@ export function GeometryBar({ tool, onChoose }: { tool: ToolId; onChoose: (tool:
 			{shown && (
 				<div id="tool-tip" role="tooltip" className="pointer-events-none absolute z-30 w-72 overflow-hidden rounded-xl border border-edge-strong bg-surface shadow-lift max-lg:hidden" style={{ top: tip.top, left: tip.left }}>
 					{/* the film is the plane itself, so in the dark theme it is turned like the plane */}
-					<video key={shown.clip} className="plot-clip block aspect-[8/5] w-full bg-white" width={CLIPS.width} height={CLIPS.height} poster={`${CLIPS.path}/${shown.clip}.jpg`} autoPlay loop muted playsInline preload="auto" aria-hidden="true">
-						<source src={`${CLIPS.path}/${shown.clip}.webm`} type="video/webm" />
-						<source src={`${CLIPS.path}/${shown.clip}.mp4`} type="video/mp4" />
-					</video>
-					<div className="border-t border-edge px-3 py-2.5">
+					{shown.clip && (
+						<video key={shown.clip} className="plot-clip block aspect-[8/5] w-full border-b border-edge bg-white" width={CLIPS.width} height={CLIPS.height} poster={`${CLIPS.path}/${shown.clip}.jpg`} autoPlay loop muted playsInline preload="auto" aria-hidden="true">
+							<source src={`${CLIPS.path}/${shown.clip}.webm`} type="video/webm" />
+							<source src={`${CLIPS.path}/${shown.clip}.mp4`} type="video/mp4" />
+						</video>
+					)}
+					<div className="px-3 py-2.5">
 						<p className="m-0 text-sm font-medium text-fg-strong">{shown.name}</p>
 						<p className="mt-0.5 mb-0 text-sm text-fg-muted">{shown.about}</p>
 					</div>

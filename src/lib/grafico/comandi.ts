@@ -62,7 +62,14 @@ export const COMMANDS: Command[] = [
 	named('resto', 'Resto della divisione', 'resto(a; b)', 'Quello che avanza dividendo a per b: resto(7; 3) è 1.'),
 	named('mcd', 'Massimo comune divisore', 'mcd(a; b)', 'Tra due o più numeri interi.'),
 	named('mcm', 'Minimo comune multiplo', 'mcm(a; b)', 'Tra due o più numeri interi.'),
-	named('binomiale', 'Coefficiente binomiale', 'binomiale(n; k)', 'In quanti modi si scelgono k oggetti tra n.'),
+		named('binomiale', 'Coefficiente binomiale', 'binomiale(n; k)', 'In quanti modi si scelgono k oggetti tra n.'),
+		{ ...named('casuale', 'Numero a caso', 'casuale()', 'Senza niente è tra 0 e 1; con un numero tra 0 e quello; con due tra l’uno e l’altro. Con tre o più, o con una lista tra graffe, è uno di quelli: anche un punto tra A, B e C.', 1), also: ['random'], uses: ['casuale()', 'casuale(a; b)', 'casuale(A; B; C)'] },
+	named('media', 'Media', 'media(a; b; c; …)', 'La somma dei numeri divisa per quanti sono.', 3),
+	named('mediana', 'Mediana', 'mediana(a; b; c; …)', 'Il numero che sta a metà, messi in ordine.', 3),
+	named('varianza', 'Varianza', 'varianza(a; b; c; …)', 'La media dei quadrati degli scarti dalla media.', 3),
+	named('devstandard', 'Deviazione standard', 'devstandard(a; b; c; …)', 'La radice della varianza: quanto i numeri si allontanano dalla media.', 3),
+	{ ...named('normale', 'Distribuzione normale', 'normale(x; μ; σ)', 'La curva a campana di Gauss, con media μ e deviazione standard σ.', 3), also: ['gaussiana'], insert: '\\operatorname{normale}\\left(x;#?;#?\\right)' },
+	{ ...named('distbinomiale', 'Distribuzione binomiale', 'distbinomiale(k; n; p)', 'La probabilità di k successi in n prove, ciascuna con probabilità p. Per vederla scrivi aₖ = distbinomiale(k; 10; 0,5).', 3), also: ['bernoulli'] },
 	{ word: 'fattoriale', title: 'Fattoriale', group: 'funzione', uses: ['n!'], about: 'Il prodotto degli interi da 1 a n.', insert: '#?!' },
 
 	// ---- letters and numbers with a name
@@ -87,6 +94,7 @@ export const COMMANDS: Command[] = [
 	{ word: 'somma', also: ['sommatoria', 'sum'], title: 'Somma', group: 'scrittura', uses: ['Σ da n = 1 a N'], about: 'L’indice parte dal numero sotto e arriva a quello sopra.', insert: '\\sum_{n=1}^{#?}#?' },
 	{ word: 'prodotto', also: ['produttoria', 'prod'], title: 'Prodotto', group: 'scrittura', uses: ['Π da n = 1 a N'], about: 'Come la somma, con i fattori.', insert: '\\prod_{n=1}^{#?}#?' },
 	{ word: 'integrale', also: ['int'], title: 'Integrale', group: 'scrittura', uses: ['∫ da a a b'], about: 'Con i due estremi: con la x sopra è una funzione integrale.', insert: '\\int_{0}^{#?}#?\\,dx' },
+		{ word: 'limite', also: ['lim'], title: 'Limite', group: 'scrittura', uses: ['lim per x → a'], about: 'Dove tende la x va sotto: un numero, 0⁺ o 0⁻ per un lato solo, ∞ per l’infinito. La riga dice quanto vale.', insert: '\\lim_{x\\to #?}#?' },
 	{ word: 'derivata', title: 'Derivata', group: 'scrittura', uses: ['d/dx ( … )'], about: 'Di una formula. Per una funzione con un nome basta l’apice: f′(x).', insert: '\\frac{d}{dx}\\left(#?\\right)' },
 	{ word: 'successione', title: 'Successione per ricorrenza', group: 'scrittura', uses: ['aₙ₊₁ = …'], about: 'Ogni termine dal precedente. Il valore da cui parte va in un’altra riga: a₀ = 1.', insert: 'a_{n+1}=#?' },
 
@@ -111,7 +119,12 @@ export const COMMANDS: Command[] = [
 	object('poligono', 'Poligono', 'polygon', ['poligono(A; B; C; …)'], 'Per i suoi vertici, in ordine. La riga ne dà l’area e il perimetro.', 3, ['triangolo']),
 	object('distanza', 'Distanza', 'distance', ['distanza(A; B)', 'distanza(A; r)'], 'Tra due punti, tra un punto e una retta, o tra due rette parallele.'),
 	object('angolo', 'Angolo', 'angle', ['angolo(A; B; C)', 'angolo(r; s)'], 'Di tre punti, con il vertice per secondo, oppure tra due rette.', 3),
-	object('pendenza', 'Pendenza', 'slope', ['pendenza(r)'], 'Di quanto sale una retta quando la x cresce di uno.', 1)
+		object('pendenza', 'Pendenza', 'slope', ['pendenza(r)'], 'Di quanto sale una retta quando la x cresce di uno.', 1),
+	object('regressione', 'Retta di regressione', 'regression', ['regressione(A; B; C; …)'], 'La retta che passa più vicino a tutti i punti, con il coefficiente r.', 3),
+	object('simmetria', 'Simmetria', 'reflect', ['simmetria(A; r)', 'simmetria(A; C)'], 'L’immagine di un oggetto rispetto a una retta, oppure rispetto a un punto.', 2, ['simmetrico']),
+	object('traslazione', 'Traslazione', 'translate', ['traslazione(A; P; Q)', 'traslazione(A; v)'], 'L’immagine di un oggetto spostato del vettore da P a Q.', 3),
+	object('rotazione', 'Rotazione', 'rotate', ['rotazione(A; C; 90)'], 'L’immagine di un oggetto ruotato attorno a C dell’angolo in gradi, in senso antiorario.', 3),
+	object('omotetia', 'Omotetia', 'dilate', ['omotetia(A; C; 2)'], 'L’immagine di un oggetto ingrandito o ridotto dal centro C con quel rapporto.', 3)
 ];
 
 const wordsOf = (c: Command) => [c.word, ...(c.also ?? [])];
@@ -297,7 +310,13 @@ export function makeWritten(word: string, args: CommandArg[], get: (id: number) 
 	const ids = args.map((a) => ('id' in a ? a.id : -1));
 	const [a, b, c] = ids;
 	const needs = `Scrivi ${command.uses.join(' oppure ')}.`;
-	const points = (n: number) => kinds === Array(n).fill('point').join(' ');
+		const points = (n: number) => kinds === Array(n).fill('point').join(' ');
+	/** The image of the first argument: a point keeps a letter, a line and a circle theirs, a segment none. */
+	const image = (build: Build): Made => {
+		const geo = get(ids[0]);
+		const name = geo?.kind === 'point' ? 'point' : geo?.kind === 'line' && !geo.segment ? 'line' : geo?.kind === 'conic' ? 'circle' : undefined;
+		return name ? { build, name, label: true } : { build };
+	};
 	if (new Set(ids.filter((id) => id >= 0)).size !== ids.filter((id) => id >= 0).length) return 'Servono oggetti diversi tra loro.';
 
 	switch (command.word) {
@@ -355,8 +374,22 @@ export function makeWritten(word: string, args: CommandArg[], get: (id: number) 
 			return args.length >= 3 && points(args.length) ? [{ build: { type: 'polygon', of: ids } }] : needs;
 		case 'distanza':
 			return args.length === 2 && args.map(kind).every((k) => k === 'point' || k === 'line') ? [{ build: { type: 'distance', of: [a, b] } }] : needs;
-		case 'pendenza':
+				case 'pendenza':
 			return kinds === 'line' ? [{ build: { type: 'slope', of: [a] } }] : needs;
+		case 'regressione':
+			return args.length >= 2 && args.length <= MAX_VERTICES && points(args.length) ? [{ build: { type: 'regression', of: ids }, name: 'line', label: true }] : needs;
+		case 'simmetria':
+			return args.length === 2 && a >= 0 && (kind(args[1]) === 'line' || kind(args[1]) === 'point') ? [image({ type: 'reflect', of: [a, b] })] : needs;
+		case 'traslazione':
+			if (args.length === 3 && a >= 0 && kind(args[1]) === 'point' && kind(args[2]) === 'point') return [image({ type: 'translate', of: [a, b, c] })];
+			return args.length === 2 && a >= 0 && kind(args[1]) === 'line' ? [image({ type: 'translate', of: [a, b] })] : needs;
+		case 'rotazione':
+		case 'omotetia': {
+			if (args.length !== 3 || a < 0 || kind(args[1]) !== 'point' || !('value' in args[2])) return needs;
+			const value = Number(args[2].value.toPrecision(10));
+			if (command.word === 'omotetia' && value === 0) return 'Il rapporto di un’omotetia non è zero.';
+			return [image({ type: command.word === 'rotazione' ? 'rotate' : 'dilate', of: [a, b], at: value })];
+		}
 		case 'intersezione': {
 			if (args.length !== 2 || ids.some((id) => id < 0)) return needs;
 			const [g, h] = [get(a)!, get(b)!];

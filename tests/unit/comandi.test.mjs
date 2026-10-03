@@ -20,7 +20,8 @@ test('every word is one command, and no word is another word of the list', () =>
 });
 
 test('the letters typed bring up the words that begin with them', () => {
-	assert.deepEqual(words('tra'), ['tratti']);
+	assert.deepEqual(words('tra'), ['tratti', 'traslazione']);
+	assert.deepEqual(words('trat'), ['tratti']);
 	// the words that begin with the letters come before those with a title that does: "Retta parallela"
 	assert.equal(words('ret')[0], 'retta');
 	assert.ok(words('ret').includes('parallela'));

@@ -27,7 +27,7 @@ export type PlaneShape =
 	| { parametric: { x: (t: number) => number; y: (t: number) => number; t0: number; t1: number } }
 	| { region: (x: number, y: number) => number; strict: boolean }
 		/** Points on their own, found for the window in view: the terms of a sequence, (n; a_n). */
-	| { dots: (view: View) => Point[] }
+		| { dots: (view: View) => Point[]; /** Many points that make a figure together, each a speck: the thousands of a chaos game. */ small?: boolean }
 	/** Straight pieces found for the window in view: a ray up to its edge, a polygon, the arc of an angle with its size beside it. */
 	| { path: (view: View, sx: number, sy: number) => PlanePath };
 
@@ -590,7 +590,11 @@ export function Plane({
 						const dash = 'region' in c && c.strict && (c.dash ?? 'solid') === 'solid' ? DASH.dashed : DASH[c.dash ?? 'solid'];
 						return <path key={c.id} d={d} fill="none" stroke={c.color} strokeWidth={STROKE[c.width ?? 'normal']} strokeDasharray={dash} strokeLinejoin="round" strokeLinecap="round" />;
 					})}
-										{sampled.map((s, i) => s.dots?.map((p) => <circle key={`dot${curves[i].id}:${p.x}`} cx={X(p.x)} cy={Y(p.y)} r={3.2} fill={curves[i].color} stroke="#fff" strokeWidth={0.8} />))}
+										{sampled.map((s, i) => {
+						const c = curves[i];
+						const small = 'dots' in c && c.small;
+						return s.dots?.map((p, k) => <circle key={`dot${c.id}:${k}`} cx={X(p.x)} cy={Y(p.y)} r={small ? 1.3 : 3.2} fill={c.color} stroke={small ? 'none' : '#fff'} strokeWidth={0.8} />);
+					})}
 					{overlay.map((c) => (
 						<path key={`over${c.id}`} d={pathOf(sampleCurve(c, view, w, h, sx, sy, true).lines)} fill="none" stroke={c.color} strokeWidth={STROKE[c.width ?? 'normal']} strokeDasharray={DASH[c.dash ?? 'solid']} strokeLinecap="round" data-export="no" />
 					))}

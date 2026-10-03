@@ -77,7 +77,7 @@ export function ReadingView({ markdown, stickers, paper, onWrite }: { markdown: 
 						<div key={i} className="flex flex-col items-center gap-2">
 							{/* Laid out at full size and zoomed, like the editor's sheets, so the text wraps where it does there. */}
 							<div data-page-index={i} style={{ zoom, width: SHEET_WIDTH, minHeight: SHEET_MIN_HEIGHT }}>
-								<StaticPage markdown={text} stickers={byPage.get(i) ?? []} paper={paper} katex={katex} className="shadow-lift dark:ring-1 dark:ring-edge-strong" />
+								<StaticPage markdown={text} stickers={byPage.get(i) ?? []} paper={paper} katex={katex} live className="shadow-lift dark:ring-1 dark:ring-edge-strong" />
 							</div>
 							<p className="label-mono text-[11px] text-fg-subtle" aria-hidden="true">
 								{i + 1} / {pages.length}

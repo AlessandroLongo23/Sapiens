@@ -14,15 +14,15 @@ import { PLOTTER_PATH, PLOTTER_SLUG, PlotterPage } from '@/components/grafico/Pl
  * address, and the canonical is the plain address.
  */
 
-// The links to lessons follow the content tree.
-export const revalidate = 3600;
+// The links to lessons follow the content tree: a publish refreshes them through /api/revalidate, with no timer.
+export const revalidate = false;
 
 /** What the plane shows before anything is typed. */
 const START = ['f\\left(x\\right)=x^2-2x-1'];
 
 export function generateMetadata(): Metadata {
 	const tool = toolBySlug(PLOTTER_SLUG)!;
-	return pageMetadata({ title: `Grafico di funzione online, con geometria analitica | ${SITE_NAME}`, description: tool.description, path: PLOTTER_PATH });
+	return pageMetadata({ title: `Grafico di funzione online: calcolatrice grafica e geometria analitica | ${SITE_NAME}`, description: tool.description, path: PLOTTER_PATH });
 }
 
 export default async function PlotterRoute() {

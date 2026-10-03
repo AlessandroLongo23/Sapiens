@@ -32,9 +32,15 @@ export type Entry =
 			note?: string;
 			/** The letter of f(x) = …, when the row gives one. */
 			name?: string;
-			/** The derivative, by the rules: the slope of the tangent. */
+						/** The derivative, by the rules: the slope of the tangent. */
 			d: Evaluator;
+			/** With no x in it the formula is a number, the same everywhere: a limit, a sum, 2 + 3. */
+			constant?: boolean;
 	  }
+		/** A sequence of points, P_{n+1} = puntomedio(P_n; A): its terms are the points (x(n); y(n)), from `from` on. */
+	| { kind: 'orbit'; name: string; index: string; x: Evaluator; y: Evaluator; from: number; params: string[] }
+	/** y′ = f(x; y): the slopes of a differential equation, drawn as a field of short strokes. */
+	| { kind: 'field'; f: Evaluator; params: string[] }
 	/** F(x, y) = 0: a conic, a vertical line. `f` is the left side minus the right. */
 	| { kind: 'implicit'; f: Evaluator; params: string[] }
 	/** A region of the plane: where `f`, the margin of the condition, is below zero. Strict, its edge is not part of it. */
@@ -50,7 +56,7 @@ export type Entry =
 	 * whose index is in the scope under the letter `index`. `from` is the first index it has a value at, when it
 	 * starts from given values. `plane` when its terms depend on x or y: then it has no points of its own.
 	 */
-	| { kind: 'sequence'; name: string; index: string; f: Evaluator; from?: number; plane: boolean; params: string[] }
+		| { kind: 'sequence'; name: string; index: string; f: Evaluator; from?: number; plane: boolean; params: string[]; /** For a_{n+1} = g(a_n): g, as a function of x, for the cobweb. */ step?: Evaluator }
 	/** A value a sequence starts from, a_0 = 3: it draws nothing, the sequence reads it. */
 	| { kind: 'given'; params: string[] }
 	/** h(x; y) = …: a function of two letters or more has no curve of its own, the other rows use it. */
@@ -112,6 +118,38 @@ const UNARY: Record<string, (x: number) => number> = {
 	Factorial: factorial
 };
 
+/**
+ * Numbers by chance that stay the same while a graph is looked at. A call gives the same number for the same place
+ * in a sequence (the index, and t along a curve), so the thousand points of a sequence do not jump at every redraw;
+ * `reseed` draws them all again.
+ */
+let SEED = 0x9e3779b9;
+export function reseed() {
+	SEED = (Math.random() * 0x100000000) >>> 0;
+}
+const BITS = new Float64Array(1);
+const WORDS = new Uint32Array(BITS.buffer);
+const stir = (h: number, v: number) => {
+	BITS[0] = v;
+	h = Math.imul(h ^ WORDS[0], 0x85ebca6b);
+	h = Math.imul(h ^ WORDS[1] ^ (h >>> 13), 0xc2b2ae35);
+	return h ^ (h >>> 16);
+};
+const INDEXES = ['n', 'k', 'i', 'j', 'm', 't'];
+/** A number from 0 (included) to 1 (not), for one call of `casuale` at one place. */
+function chance(site: number, s: Scope): number {
+	let h = stir(SEED ^ site, site);
+	for (const name of INDEXES) h = stir(h, s[name] ?? 0);
+	return (stir(h, 1) >>> 0) / 0x100000000;
+}
+/** A number for a call, from what it is given: two calls written alike draw alike. */
+function siteOf(args: Json[], order: number): number {
+	const text = JSON.stringify(args);
+	let h = 2166136261 ^ order;
+	for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+	return h >>> 0;
+}
+
 /** The greatest common divisor of two whole numbers; of anything else, no value. */
 function gcd(a: number, b: number): number {
 	if (!Number.isInteger(a) || !Number.isInteger(b)) return NaN;
@@ -137,8 +175,33 @@ const MANY: Record<string, { min: number; max: number; f: (...xs: number[]) => n
 	Mod: { min: 2, max: 2, f: (a, b) => a - b * Math.floor(a / b) },
 	Gcd: { min: 2, max: Infinity, f: (...xs) => xs.reduce(gcd) },
 	Lcm: { min: 2, max: Infinity, f: (...xs) => xs.reduce((a, b) => (a === 0 || b === 0 ? 0 : Math.abs(a * b) / gcd(a, b))) },
-	Binomial: { min: 2, max: 2, f: binomial }
+		Binomial: { min: 2, max: 2, f: binomial },
+	Mean: { min: 1, max: Infinity, f: (...xs) => mean(xs) },
+	Median: {
+		min: 1,
+		max: Infinity,
+		f: (...xs) => {
+			if (xs.some(Number.isNaN)) return NaN;
+			const sorted = [...xs].sort((a, b) => a - b);
+			const mid = sorted.length >> 1;
+			return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+		}
+	},
+	// of the numbers given, all of them: the variance of a population, as the school defines it first
+	Variance: { min: 1, max: Infinity, f: (...xs) => variance(xs) },
+	Deviation: { min: 1, max: Infinity, f: (...xs) => Math.sqrt(variance(xs)) },
+	// the bell of Gauss at x, with mean μ and standard deviation σ
+	Normal: { min: 3, max: 3, f: (x, mu, sigma) => (sigma > 0 ? Math.exp(-(((x - mu) / sigma) ** 2) / 2) / (sigma * Math.sqrt(2 * Math.PI)) : NaN) },
+	// k successes in n trials, each with probability p
+	BinomialP: { min: 3, max: 3, f: (k, n, p) => (p < 0 || p > 1 ? NaN : binomial(n, k) * p ** k * (1 - p) ** (n - k)) }
 };
+function mean(xs: number[]): number {
+	return xs.reduce((s, x) => s + x, 0) / xs.length;
+}
+function variance(xs: number[]): number {
+	const m = mean(xs);
+	return xs.reduce((s, x) => s + (x - m) ** 2, 0) / xs.length;
+}
 
 /** Function names a student may type as letters: the Italian ones, and the usual ones when the backslash is missing. */
 const NAMED: Record<string, string> = {
@@ -166,10 +229,16 @@ const NAMED: Record<string, string> = {
 	resto: 'Mod',
 	mcd: 'Gcd',
 	mcm: 'Lcm',
-	binomiale: 'Binomial'
+		binomiale: 'Binomial',
+	media: 'Mean',
+	mediana: 'Median',
+	varianza: 'Variance',
+	devstandard: 'Deviation',
+	normale: 'Normal',
+	distbinomiale: 'BinomialP'
 };
 /** How a function of several numbers is asked for, when it is given the wrong number of them. */
-const MANY_USE: Record<string, string> = { Max: 'max(a; b)', Min: 'min(a; b)', Mod: 'resto(a; b)', Gcd: 'mcd(a; b)', Lcm: 'mcm(a; b)', Binomial: 'binomiale(n; k)' };
+const MANY_USE: Record<string, string> = { Max: 'max(a; b)', Min: 'min(a; b)', Mod: 'resto(a; b)', Gcd: 'mcd(a; b)', Lcm: 'mcm(a; b)', Binomial: 'binomiale(n; k)', Mean: 'media(a; b; c)', Median: 'mediana(a; b; c)', Variance: 'varianza(a; b; c)', Deviation: 'devstandard(a; b; c)', Normal: 'normale(x; μ; σ)', BinomialP: 'distbinomiale(k; n; p)' };
 
 /** A function of several numbers in normal form. */
 function many(h: string, args: Json[]): Json {
@@ -250,7 +319,7 @@ interface Context {
 	 * Shared by the whole reading of an entry: `truncated` once a sum to infinity was cut short, for the note under
 	 * the row; `bound` counts the integrals, to name their variables.
 	 */
-	flags: { truncated: boolean; bound: number; /** The sequences in normal form, as the terms of this entry reach them. */ system?: SeqSystem; /** The bodies of the named functions already put in normal form: used twice, a function is the same piece of the formula twice. */ forms: Map<string, Json> };
+	flags: { truncated: boolean; bound: number; /** How many calls of `casuale` the entry has so far. */ draws?: number; /** The sequences in normal form, as the terms of this entry reach them. */ system?: SeqSystem; /** The bodies of the named functions already put in normal form: used twice, a function is the same piece of the formula twice. */ forms: Map<string, Json> };
 		/** Angles in degrees: sin 90 is 1, and arcsin 1 is 90. */
 	degrees: boolean;
 		/** The names of the points of the plotter: x_P is a number only where there is a P. */
@@ -321,12 +390,29 @@ function substitute(j: Json, values: Record<string, Json>, done = new Map<Json, 
 	const known = done.get(j);
 	if (known !== undefined) return known;
 	// the index of a sum and the variable of an integral are names, not values
-	const bound = j[0] === 'Sum' || j[0] === 'Product' || j[0] === 'Integral';
+	const bound = j[0] === 'Sum' || j[0] === 'Product' || j[0] === 'Integral' || j[0] === 'Limit';
 	const parts = j.map((a, i) => (i === 0 || (bound && i === 2) ? a : substitute(a, values, done)));
 	// what does not change stays the very same piece
 	const out = parts.every((a, i) => a === j[i]) ? j : parts;
 	done.set(j, out);
 	return out;
+}
+
+/**
+ * A number by chance, in normal form: Random(site, 'range', a, b) between two numbers, Random(site, 'pick', …) one
+ * of those given. With nothing it is between 0 and 1, with one number between 0 and that, with two between them;
+ * with three or more, or with a set in braces, it is one of them.
+ */
+function drawn(args: Json[], ctx: Context): Json {
+	const set = args.length === 1 && head(args[0]) === 'Set' ? (args[0] as Json[]).slice(1).flatMap((a) => (head(a) === 'Delimiter' ? items((a as Json[])[1]) : [a])) : null;
+	const list = set ?? args;
+	const site = siteOf(list, (ctx.flags.draws = (ctx.flags.draws ?? 0) + 1));
+	const n = (a: Json) => normalize(a, ctx);
+	if (set || list.length >= 3) {
+		if (!list.length) throw new FormulaError('Tra le graffe servono i numeri tra cui scegliere: casuale({1; 2; 3}).');
+		return ['Random', site, 'pick', ...list.map(n)];
+	}
+	return ['Random', site, 'range', list.length === 2 ? n(list[0]) : 0, list.length === 0 ? 1 : n(list[list.length - 1])];
 }
 
 /**
@@ -347,6 +433,12 @@ function juxtaposed(args: Json[], ctx: Context): Json[] {
 				i++;
 				continue;
 			}
+		}
+				// casuale(), casuale(5), casuale(1; 6), casuale(a; b; c): a number by chance
+		if ((a === 'casuale' || a === 'random') && head(next) === 'Delimiter') {
+			out.push(drawn((next as Json[]).length > 1 ? items((next as Json[])[1]) : [], ctx));
+			i++;
+			continue;
 		}
 		const builtin = typeof a === 'string' ? NAMED[a] : undefined;
 		const named = isName(a) && a in ctx.defs;
@@ -500,7 +592,24 @@ function normalize(j: Json, ctx: Context): Json {
 			return ['Integral', n(renamed(body, variable, bound)), bound, n(from), n(to)];
 		}
 
-				// P.x, P.y: the same coordinates, as Desmos writes them
+								// the parser's own name for a number by chance, and the choice among points of a sequence of points
+		case 'Random':
+			return drawn(args, ctx);
+		case 'RandomPick':
+			return ['Random', args[0], 'pick', ...args.slice(1).map(n)];
+
+		// lim for x → a of f(x): the number the values come close to, found by trying nearer and nearer
+		case 'Limit': {
+			const [fn, at, side = 0] = args;
+			if (head(fn) !== 'Function' || (fn as Json[]).length !== 3 || !isVariable((fn as Json[])[2])) throw new FormulaError('Sotto lim va scritto dove tende la variabile, come x → 2 oppure n → ∞.');
+			const [, body, variable] = fn as [string, Json, string];
+			if (body === 'Nothing' || at === 'Nothing') throw new FormulaError(UNFINISHED);
+			const bound = `$${ctx.flags.bound++}`;
+			const infinite = at === 'PositiveInfinity' ? Infinity : at === 'NegativeInfinity' || (head(at) === 'Negate' && (at as Json[])[1] === 'PositiveInfinity') ? -Infinity : null;
+			return ['Limit', n(renamed(body, variable, bound)), bound, infinite ?? n(at), typeof side === 'number' ? Math.sign(side) : 0];
+		}
+
+		// P.x, P.y: the same coordinates, as Desmos writes them
 		case 'PointX':
 		case 'PointY':
 			if (typeof args[0] !== 'string' || !ctx.points.has(letter(args[0]))) throw new FormulaError(UNREADABLE);
@@ -618,10 +727,20 @@ function derivative(j: Json, v = 'x'): Json {
 		case 'Round':
 		case 'Sign':
 		case 'Factorial':
-		case 'Gcd':
+				case 'Gcd':
 		case 'Lcm':
 		case 'Binomial':
+		case 'BinomialP':
+		case 'Median':
 			return 0;
+		case 'Mean':
+			return div(add(...args.map(d)), args.length);
+		// the bell's slope: −(x − μ)/σ² times the bell, for μ and σ that do not move
+		case 'Normal':
+			return hasX(args[1]) || hasX(args[2]) ? NaN : mul(neg(div(add(u, neg(args[1])), pow(args[2], 2))), j, d(u));
+		case 'Variance':
+		case 'Deviation':
+			return NaN;
 		// the slope of the one that is the greatest, or the smallest, at that place
 		case 'Max':
 		case 'Min':
@@ -634,6 +753,12 @@ function derivative(j: Json, v = 'x'): Json {
 		case 'Product':
 			// (∏ u)′ = ∏ u · Σ u′/u, where no factor is zero
 			return mul(j, ['Sum', div(d(u), u), args[1], args[2], args[3]]);
+						// chance has no slope
+		case 'Random':
+			return NaN;
+		// the slope of a limit is the limit of the slopes, where the point it tends to stays still
+		case 'Limit':
+			return hasX(args[2]) ? NaN : ['Limit', d(u), args[1], args[2], args[3]];
 		case 'Integral': {
 			// the fundamental theorem, with bounds that move: g(b)·b′ − g(a)·a′, and the integral of ∂g/∂x where g has an x
 			const [, variable, from, to] = args;
@@ -867,6 +992,30 @@ function buildOperation(h: string, args: Json[], c: (a: Json) => Evaluator, lett
 				return acc;
 			};
 		}
+						case 'Random': {
+			const site = args[0] as number;
+			const of = args.slice(2).map(c);
+			if (args[1] === 'pick') return (s) => of[Math.min(of.length - 1, Math.floor(chance(site, s) * of.length))](s);
+			const [a, b] = of;
+			return (s) => {
+				const from = a(s);
+				return from + chance(site, s) * (b(s) - from);
+			};
+		}
+		case 'Limit': {
+			const variable = args[1] as string;
+			const inner = new Set<string>();
+			const body = build(args[0], inner, session);
+			inner.delete(variable);
+			inner.forEach((l) => letters.add(l));
+			const at = c(args[2]);
+			const side = args[3] as number;
+			return (s) => {
+				const value = limit((t) => ((s[variable] = t), TICK++, body(s)), at(s), side);
+				TICK++;
+				return value;
+			};
+		}
 		case 'Integral': {
 			const variable = args[1] as string;
 						const inner = new Set<string>();
@@ -917,6 +1066,66 @@ function buildOperation(h: string, args: Json[], c: (a: Json) => Evaluator, lett
 			return (s) => Math.log(f(s));
 	}
 	return (s) => fn(f(s));
+}
+
+/**
+ * The values of g along points that close in on a place: the one where two values in a row differ least, which is
+ * where the function has settled and the rounding of the numbers has not yet taken over. Infinity where the values
+ * grow without end with one sign; no value where they neither settle nor grow.
+ */
+function settled(g: (t: number) => number, points: number[]): number {
+	let best = NaN;
+	let gap = Infinity;
+	let before = NaN;
+	let last = NaN;
+		let growing = 0;
+	// a slow climb with no end, as the logarithm's: always further from zero, by steps that do not shrink
+	let climb = 0;
+	let firstStep = 0;
+	let lastStep = 0;
+	for (const t of points) {
+		const v = g(t);
+		if (!Number.isFinite(v)) {
+			if (v === Infinity || v === -Infinity) last = v;
+			continue;
+		}
+		if (Number.isFinite(before)) {
+						const d = Math.abs(v - before);
+			// Once settled, a jump is the rounding: so close to the point 1 − cos x is exactly 0, and the quotient with it.
+			if (gap <= 1e-5 * Math.max(1, Math.abs(best)) && d > 100 * gap && d > 1e-12) break;
+			if (d <= gap) {
+				gap = d;
+				best = v;
+			}
+						growing = Math.abs(v) > Math.abs(before) * 1.5 && Math.sign(v) === Math.sign(before) ? growing + 1 : 0;
+			if (Math.abs(v) > Math.abs(before) && Math.sign(v) === Math.sign(before)) {
+				if (!climb) firstStep = d;
+				climb++;
+				lastStep = d;
+			} else climb = 0;
+		}
+		before = v;
+		last = v;
+	}
+		if (growing >= 8 || last === Infinity || last === -Infinity) return Math.abs(last) > 1e3 ? Math.sign(last) * Infinity : NaN;
+	if (climb >= 20 && lastStep >= 0.5 * firstStep && lastStep > 1e-9) return Math.sign(last) * Infinity;
+	return gap <= 1e-5 * Math.max(1, Math.abs(best)) ? best : NaN;
+}
+
+/** The limit of g at a point, from one side (1 from above, −1 from below) or from both, and at infinity. */
+export function limit(g: (t: number) => number, at: number, side: number): number {
+	if (Number.isNaN(at)) return NaN;
+	const steps = Array.from({ length: 48 }, (_, k) => 2 ** -(k + 3));
+	if (!Number.isFinite(at)) return settled(g, Array.from({ length: 36 }, (_, k) => Math.sign(at) * 2 ** (k + 3)));
+	const scale = Math.max(1, Math.abs(at));
+	const from = (sign: number) => settled(g, steps.map((h) => at + sign * h * scale));
+	if (side) return from(side);
+	const [above, below] = [from(1), from(-1)];
+	if (above === below) return above;
+	// from a side where the function is not there, the other side is the limit: √x at 0
+	if (Number.isNaN(below) && !Number.isFinite(g(at - steps[10] * scale))) return above;
+	if (Number.isNaN(above) && !Number.isFinite(g(at + steps[10] * scale))) return below;
+	return Math.abs(above - below) <= 1e-6 * Math.max(1, Math.abs(above)) ? (above + below) / 2 : NaN;
 }
 
 /** Gauss's four points on a piece: exact for a polynomial up to the seventh degree, and never at the ends, where 1/√t has no value. */
@@ -1040,7 +1249,11 @@ export interface Sequence {
 	shift: number;
 	body: Json | null;
 	starts: [number, Json][];
+	/** A sequence of points: its terms are those of the two sequences of its coordinates, named with POINT_X and POINT_Y. */
+	point?: true;
 }
+/** The names of the two sequences that are the coordinates of a sequence of points: no formula can write them. */
+const coordinateOf = (name: string, axis: 'x' | 'y') => `${name}§${axis}`;
 export type Sequences = Record<string, Sequence>;
 
 /** The letters an index is written with. */
@@ -1071,8 +1284,93 @@ export function sequences(entries: Json[]): Sequences {
 	const seqs: Sequences = {};
 	const rows = entries.map((entry) => sequenceRow(plain(entry)));
 	for (const row of rows) if (row && 'rule' in row && !(row.name in seqs)) seqs[row.name] = { ...row.rule, starts: [] };
-	for (const row of rows) if (row && 'start' in row && row.name in seqs && !seqs[row.name].starts.some(([at]) => at === row.start.at)) seqs[row.name].starts.push([row.start.at, row.start.value]);
+		for (const row of rows) if (row && 'start' in row && row.name in seqs && !seqs[row.name].starts.some(([at]) => at === row.start.at)) seqs[row.name].starts.push([row.start.at, row.start.value]);
+
+	// A sequence of points: a rule for P with the points it starts from, P_0 = (1; 2). It is two sequences of numbers,
+	// the x and the y of its terms, which read each other through the rule.
+	const first: Record<string, [number, Json, Json][]> = {};
+	for (const entry of entries) {
+		const start = pointStart(plain(entry));
+		if (start && start.name in seqs && seqs[start.name].body !== null) (first[start.name] ??= []).push([start.at, start.x, start.y]);
+	}
+	const names = new Set(Object.keys(first));
+	for (const name of names) {
+		const { index, shift, body } = seqs[name];
+		const parts = pointParts(body!, names, { n: 0 });
+		if (!parts) continue;
+		seqs[name] = { index, shift, body: null, starts: [], point: true };
+		seqs[coordinateOf(name, 'x')] = { index, shift, body: parts[0], starts: first[name].map(([at, x]) => [at, x]) };
+		seqs[coordinateOf(name, 'y')] = { index, shift, body: parts[1], starts: first[name].map(([at, , y]) => [at, y]) };
+	}
 	return seqs;
+}
+
+/** P_0 = (1; 2): a point a sequence of points starts from. */
+function pointStart(j: Json): { name: string; at: number; x: Json; y: Json } | null {
+	if (head(j) !== 'Equal' || (j as Json[]).length !== 3) return null;
+	const [, left, right] = j as Json[];
+	if (typeof left !== 'string' || head(right) !== 'Delimiter') return null;
+	const pair = items((right as Json[])[1]);
+	const written = /^([A-Za-z])_(\d+)$/.exec(letter(left));
+	return written && pair.length === 2 ? { name: written[1], at: Number(written[2]), x: pair[0], y: pair[1] } : null;
+}
+
+/**
+ * A formula on points as the two formulas of its coordinates: a point by its name, a term of a sequence of points,
+ * a pair, sums and differences of points, a point times or over a number, the midpoint of two, and one by chance
+ * among some. Null for anything that is not a point.
+ */
+function pointParts(j: Json, sequences: Set<string>, sites: { n: number }): [Json, Json] | null {
+	const both = (f: (axis: 0 | 1) => Json): [Json, Json] => [f(0), f(1)];
+	const each = (list: Json[]) => {
+		const parts = list.map((a) => pointParts(a, sequences, sites));
+		return parts.every((p): p is [Json, Json] => p !== null) ? parts : null;
+	};
+	if (typeof j === 'string') {
+		const name = letter(j);
+		const term = /^([A-Za-z])_([nkijm])$/.exec(name);
+		if (term && sequences.has(term[1])) return [['Subscript', coordinateOf(term[1], 'x'), term[2]], ['Subscript', coordinateOf(term[1], 'y'), term[2]]];
+		return /^[A-Z](?:_\d+)?$/.test(name) ? [`x_${name}`, `y_${name}`] : null;
+	}
+	if (!isArray(j)) return null;
+	const [h, ...args] = j as [string, ...Json[]];
+	if (h === 'Subscript' && typeof args[0] === 'string' && sequences.has(args[0])) return [['Subscript', coordinateOf(args[0], 'x'), args[1]], ['Subscript', coordinateOf(args[0], 'y'), args[1]]];
+	if (h === 'Delimiter') {
+		const inside = args.length ? items(args[0]) : [];
+		return inside.length === 2 ? [inside[0], inside[1]] : inside.length === 1 ? pointParts(inside[0], sequences, sites) : null;
+	}
+	if (h === 'Add' || h === 'Subtract') {
+		const parts = each(args);
+		return parts && both((axis) => [h, ...parts.map((p) => p[axis])]);
+	}
+	if (h === 'Negate') {
+		const part = pointParts(args[0], sequences, sites);
+		return part && both((axis) => ['Negate', part[axis]]);
+	}
+	if (h === 'Divide' || h === 'Rational') {
+		const part = pointParts(args[0], sequences, sites);
+		return part && both((axis) => ['Divide', part[axis], args[1]]);
+	}
+	const call = h === 'InvisibleOperator' && args.length === 2 && typeof args[0] === 'string' && head(args[1]) === 'Delimiter' ? { name: args[0], of: (args[1] as Json[]).length > 1 ? items((args[1] as Json[])[1]) : [] } : h === 'Random' ? { name: 'casuale', of: args } : null;
+	if (call?.name === 'puntomedio' || call?.name === 'medio') {
+		const parts = call.of.length === 2 ? each(call.of) : null;
+		return parts && both((axis) => ['Divide', ['Add', parts[0][axis], parts[1][axis]], 2]);
+	}
+	if (call?.name === 'casuale' || call?.name === 'random') {
+		const list = call.of.length === 1 && head(call.of[0]) === 'Set' ? (call.of[0] as Json[]).slice(1).flatMap((a) => (head(a) === 'Delimiter' ? items((a as Json[])[1]) : [a])) : call.of;
+		const parts = list.length ? each(list) : null;
+		if (!parts) return null;
+		// one draw for the two coordinates: the same point for both
+		const site = siteOf(list, 1000 + sites.n++);
+		return both((axis) => ['RandomPick', site, ...parts.map((p) => p[axis])]);
+	}
+	if (h === 'Multiply' || h === 'InvisibleOperator') {
+		const parts = args.map((a) => pointParts(a, sequences, sites));
+		const at = parts.findIndex((p) => p !== null);
+		if (at < 0 || parts.some((p, i) => p !== null && i !== at)) return null;
+		return both((axis) => ['Multiply', ...args.map((a, i) => (i === at ? parts[at]![axis] : a))]);
+	}
+	return null;
 }
 
 /** Whether a sequence's rule reads other terms of the sequence itself: then it needs a value to start from. */
@@ -1342,6 +1640,7 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 	if (JSON.stringify(j).includes('\\\\int')) return { kind: 'error', message: NO_INTEGRAND };
 	const ctx: Context = { defs, open: [], flags: { truncated: false, bound: 0, forms: new Map() }, degrees: !!options.degrees, points: new Set(options.points), slots: {}, seqs: options.sequences ?? {} };
 	const note = () => (ctx.flags.truncated ? { note: TRUNCATED } : {});
+	const constant = (letters: Set<string>) => (letters.has('x') ? {} : { constant: true });
 		try {
 		const h = head(j);
 		const args = isArray(j) ? j.slice(1) : [];
@@ -1355,12 +1654,41 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 				compile(normalize(row.start.value, ctx), letters);
 				return { kind: 'given', params: paramsOf(letters) };
 			}
+						if (seq.point) {
+				// a sequence of points: its terms are points of the plane
+				const [qx, qy] = [ctx.seqs[coordinateOf(row.name, 'x')], ctx.seqs[coordinateOf(row.name, 'y')]];
+								// both in normal form before either is made to run: the two sequences are computed together
+				const [tx, ty] = [termOf(coordinateOf(row.name, 'x'), qx.index, ctx), termOf(coordinateOf(row.name, 'y'), qy.index, ctx)];
+				const x = compile(tx, letters);
+				const y = compile(ty, letters);
+				letters.delete(qx.index);
+				return { kind: 'orbit', name: row.name, index: qx.index, x, y, from: Math.min(...qx.starts.map(([at]) => at)), params: paramsOf(letters) };
+			}
 			if (JSON.stringify(seq.body) !== JSON.stringify(row.rule.body)) throw new FormulaError(`La successione ${row.name} ha già la sua regola in un’altra riga.`);
 			const { index, shift, body, starts } = seq;
 			if ((shift > 0 || (body !== null && readsItself(body, row.name))) && !starts.length) throw new FormulaError(`Alla successione ${row.name} manca il valore da cui parte: scrivi ${row.name}_0 = … in un’altra riga.`);
-			const f = compile(termOf(row.name, index, ctx), letters);
+						const f = compile(termOf(row.name, index, ctx), letters);
 			letters.delete(index);
-			return { kind: 'sequence', name: row.name, index, f, ...(starts.length ? { from: Math.min(...starts.map(([at]) => at)) } : {}), plane: letters.has('x') || letters.has('y'), params: paramsOf(letters) };
+			// a_{n+1} = g(a_n), with nothing else of the sequence and no n in g: the rule as a function of x
+			let step: Evaluator | undefined;
+			if (shift === 1 && body !== null) {
+				const own = (j: Json): Json => {
+					if (typeof j === 'string') return letter(j) === `${row.name}_${index}` ? 'x' : j;
+					if (!isArray(j)) return j;
+					return j[0] === 'Subscript' && j[1] === row.name && j[2] === index ? 'x' : [j[0], ...j.slice(1).map(own)];
+				};
+				const rule = own(body);
+				if (!readsItself(rule, row.name) && !mentions(rule, index)) {
+					try {
+						const ruleLetters = new Set<string>();
+						const g = compile(normalize(rule, ctx), ruleLetters);
+						if (!ruleLetters.has('y')) step = g;
+					} catch {
+						// a rule the cobweb cannot draw: the sequence is there all the same
+					}
+				}
+			}
+			return { kind: 'sequence', ...(step ? { step } : {}), name: row.name, index, f, ...(starts.length ? { from: Math.min(...starts.map(([at]) => at)) } : {}), plane: letters.has('x') || letters.has('y'), params: paramsOf(letters) };
 		}
 
 		// (x(t), y(t))
@@ -1377,6 +1705,12 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 			const candidate = namedLeft(left);
 			const named = candidate && (!(candidate.name in defs) || JSON.stringify(defs[candidate.name]) === JSON.stringify({ vars: candidate.vars, body: right })) ? candidate : null;
 			const rightLetters = new Set<string>();
+						// y′ = x − y, dy/dx = x − y: the slopes of a differential equation
+			if ((head(left) === 'Prime' && (left as Json[])[1] === 'y' && ((left as Json[])[2] ?? 1) === 1) || (head(left) === 'D' && (left as Json[])[1] === 'y' && (left as Json[])[2] === 'x' && (left as Json[]).length === 3)) {
+				const letters = new Set<string>();
+				const f = compile(normalize(right, ctx), letters);
+				return { kind: 'field', f, params: paramsOf(letters) };
+			}
 			// A = (2; 3): a point with a name
 			if (isLetter(left) && head(right) === 'Delimiter' && items((right as Json[])[1]).length === 2) {
 				const point = pairEntry(items((right as Json[])[1]), ctx);
@@ -1403,11 +1737,11 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 				const form = applied(name, 0, ['x'], own);
 				const f = compile(form, rightLetters);
 				if (rightLetters.has('y')) throw new FormulaError(`${name}(${variable}) è una funzione di ${variable}: a destra non può esserci la y.`);
-				return { kind: 'function', f, d: slope(form), params: paramsOf(rightLetters), name, ...note() };
+				return { kind: 'function', f, d: slope(form), params: paramsOf(rightLetters), name, ...constant(rightLetters), ...note() };
 			}
 			const form = normalize(right, ctx);
 			const r = compile(form, rightLetters);
-			if (left === 'y' && !rightLetters.has('y')) return { kind: 'function', f: r, d: slope(form), params: paramsOf(rightLetters), ...note() };
+			if (left === 'y' && !rightLetters.has('y')) return { kind: 'function', f: r, d: slope(form), params: paramsOf(rightLetters), ...constant(rightLetters), ...note() };
 			const letters = new Set(rightLetters);
 			const l = compile(normalize(left, ctx), letters);
 			return { kind: 'implicit', f: (s) => l(s) - r(s), params: paramsOf(letters) };
@@ -1432,7 +1766,7 @@ export function readEntry(json: Json, defs: Definitions = {}, options: ReadOptio
 		const form = normalize(j, ctx);
 		const f = compile(form, letters);
 		if (letters.has('y')) throw new FormulaError('Con la y serve un segno: scrivi un’equazione, come x² + y² = 4.');
-		return { kind: 'function', f, d: slope(form), params: paramsOf(letters), ...note() };
+		return { kind: 'function', f, d: slope(form), params: paramsOf(letters), ...constant(letters), ...note() };
 	} catch (e) {
 		return { kind: 'error', message: e instanceof FormulaError ? e.message : UNREADABLE };
 	}

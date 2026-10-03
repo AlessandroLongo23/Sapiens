@@ -9,7 +9,7 @@
 
 import type { Point } from './curva';
 
-export const BUILD_TYPES = ['on', 'meet', 'midpoint', 'line', 'segment', 'parallel', 'perpendicular', 'bisector', 'circle', 'circle3', 'distance', 'ray', 'vector', 'anglebisector', 'circler', 'compass', 'tangent', 'polygon', 'angle', 'slope', 'centre'] as const;
+export const BUILD_TYPES = ['on', 'meet', 'midpoint', 'line', 'segment', 'parallel', 'perpendicular', 'bisector', 'circle', 'circle3', 'distance', 'ray', 'vector', 'anglebisector', 'circler', 'compass', 'tangent', 'polygon', 'angle', 'slope', 'centre', 'reflect', 'translate', 'rotate', 'dilate', 'regression'] as const;
 export type BuildType = (typeof BUILD_TYPES)[number];
 
 /**
@@ -21,7 +21,10 @@ export type BuildType = (typeof BUILD_TYPES)[number];
  *   anglebisector: [A, vertex, C], or [line, line] with `index` for which of the two
  *   tangent: [point, conic or curve], with `index` among the tangents from the point
  *   polygon: its vertices     angle: [A, vertex, C] or [line, line]     slope: [line]
- *   centre: [A, B, C], with `index` 0 for the centroid, 1 the circumcentre, 2 the incentre, 3 the orthocentre
+  *   centre: [A, B, C], with `index` 0 for the centroid, 1 the circumcentre, 2 the incentre, 3 the orthocentre
+ *   reflect: [object, line or point]     translate: [object, vector] or [object, from, to]
+ *   rotate: [object, centre], with `at` the angle in degrees, anticlockwise     dilate: [object, centre], with `at` the ratio
+ *   regression: the points the line is fitted to, by least squares
  */
 export interface Build {
 	type: BuildType;
@@ -36,7 +39,7 @@ export type Conic = [number, number, number, number, number, number];
 export type Geo =
 	| { kind: 'point'; x: number; y: number }
 	/** The points p + t·d; a segment is t from 0 to 1, a ray t from 0 on. `arrow` for a vector, drawn with its tip. */
-	| { kind: 'line'; p: Point; d: Point; segment?: true; ray?: true; arrow?: true }
+		| { kind: 'line'; p: Point; d: Point; segment?: true; ray?: true; arrow?: true; /** For a line fitted to points: r, how well it fits. */ fit?: number }
 	/** `f` when the conic is the graph of a function (a parabola written y = x²): a point sits on it by its x. */
 	| { kind: 'conic'; q: Conic; circle?: { c: Point; r: number }; f?: (x: number) => number }
 	/** A function that is neither a line nor a conic: a point can sit on it, nothing more yet. */
@@ -67,6 +70,54 @@ const conicAt = (q: Conic, x: number, y: number) => q[0] * x * x + q[1] * x * y 
 
 function circleConic(c: Point, r: number): Geo {
 	return { kind: 'conic', q: [1, 0, 1, -2 * c.x, -2 * c.y, c.x * c.x + c.y * c.y - r * r], circle: { c, r } };
+}
+
+// ---------------------------------------------------------------- transformations and fits
+
+/** A 2 × 2 matrix by rows: [a, b, c, d] sends (x; y) to (ax + by; cx + dy). */
+type Matrix = [number, number, number, number];
+const apply = (m: Matrix, p: Point): Point => ({ x: m[0] * p.x + m[1] * p.y, y: m[2] * p.x + m[3] * p.y });
+
+/** An object after p ↦ m·p + t: a symmetry, a translation, a rotation, a dilation. What is only a size has no image. */
+function transformed(geo: Geo, m: Matrix, t: Point): Geo {
+	const map = (p: Point): Point => {
+		const q = apply(m, p);
+		return { x: q.x + t.x, y: q.y + t.y };
+	};
+	if (geo.kind === 'point') return { kind: 'point', ...map(geo) };
+	if (geo.kind === 'line') return { ...geo, p: map(geo.p), d: apply(m, geo.d) };
+	if (geo.kind === 'polygon') return { kind: 'polygon', points: geo.points.map(map) };
+		if (geo.kind === 'conic') {
+		const det = m[0] * m[3] - m[1] * m[2];
+		// the transformations here keep shapes: a circle goes to the circle of the centre's image
+		if (geo.circle) return circleConic(map(geo.circle.c), geo.circle.r * Math.sqrt(Math.abs(det)));
+		// a point is on the image when the point it comes from is on the conic
+		const back = (x: number, y: number): [number, number] => [(m[3] * (x - t.x) - m[1] * (y - t.y)) / det, (-m[2] * (x - t.x) + m[0] * (y - t.y)) / det];
+		return fromImplicit((x, y) => conicAt(geo.q, ...back(x, y))) ?? none('Questa conica non ha un’immagine che si possa scrivere.');
+	}
+	return none('Si trasformano punti, rette, segmenti, vettori, circonferenze, coniche e poligoni.');
+}
+
+/** The line of least squares through some points, y = mx + q, with r, how well it fits (1 or −1 for points in a line). */
+export function regression(points: Point[]): { m: number; q: number; r: number; mean: Point } | null {
+	const n = points.length;
+	const mean = { x: points.reduce((s, p) => s + p.x, 0) / n, y: points.reduce((s, p) => s + p.y, 0) / n };
+	const sxx = points.reduce((s, p) => s + (p.x - mean.x) ** 2, 0);
+	const syy = points.reduce((s, p) => s + (p.y - mean.y) ** 2, 0);
+	const sxy = points.reduce((s, p) => s + (p.x - mean.x) * (p.y - mean.y), 0);
+	if (sxx < EPS) return null;
+	const m = sxy / sxx;
+	return { m, q: mean.y - m * mean.x, r: syy < EPS ? 1 : sxy / Math.sqrt(sxx * syy), mean };
+}
+
+/** A x² + B xy + C y² + D x + E y + F = 0, with the first coefficient positive. */
+export function conicEquation(q: Conic): string {
+	const lead = q.find((v) => Math.abs(v) > 1e-12) ?? 1;
+	const k = q.map((v) => v / lead) as Conic;
+	const names = ['x^2', 'xy', 'y^2', 'x', 'y', ''];
+	let out = '';
+	k.forEach((v, i) => (out += term(v, names[i], out === '')));
+	return `${out || '0'}=0`;
 }
 
 // ---------------------------------------------------------------- a formula as an object
@@ -345,6 +396,41 @@ export function construct(build: Build, get: (id: number) => Geo): Geo {
 			if (!A) return none(NO_POINT);
 			if (!parts[1] || (parts[1].kind !== 'conic' && parts[1].kind !== 'curve')) return none('La tangente si traccia a una conica o al grafico di una funzione.');
 			return tangents(A, parts[1])[build.index ?? 0] ?? none('Da questo punto non partono tangenti: è dentro la curva.');
+		}
+				case 'reflect': {
+			const mirror = parts[1];
+			if (!parts[0] || !mirror) return none(NO_POINT);
+			// in a point: every point goes as far on the other side
+			if (mirror.kind === 'point') return transformed(parts[0], [-1, 0, 0, -1], { x: 2 * mirror.x, y: 2 * mirror.y });
+			if (mirror.kind !== 'line') return none('La simmetria è rispetto a una retta o a un punto.');
+			const u = unit(mirror.d);
+			// p ↦ 2 (p·u) u − p about the line's point: the matrix 2uuᵀ − 1
+			const m: Matrix = [2 * u.x * u.x - 1, 2 * u.x * u.y, 2 * u.x * u.y, 2 * u.y * u.y - 1];
+			return transformed(parts[0], m, sub(mirror.p, apply(m, mirror.p)));
+		}
+		case 'translate': {
+			const by = parts.length === 3 && B && C ? sub(C, B) : line(1)?.d;
+			if (!parts[0] || !by) return none('La traslazione vuole un vettore, oppure due punti: da dove e fin dove.');
+			return transformed(parts[0], [1, 0, 0, 1], by);
+		}
+		case 'rotate': {
+			if (!parts[0] || !B) return none(NO_POINT);
+			const angle = ((build.at ?? 0) * Math.PI) / 180;
+			const [c, s] = [Math.cos(angle), Math.sin(angle)];
+			const m: Matrix = [c, -s, s, c];
+			return transformed(parts[0], m, sub(B, apply(m, B)));
+		}
+		case 'dilate': {
+			if (!parts[0] || !B) return none(NO_POINT);
+			const k = build.at ?? 1;
+			if (Math.abs(k) < EPS) return none('Il rapporto di un’omotetia non è zero.');
+			return transformed(parts[0], [k, 0, 0, k], { x: B.x * (1 - k), y: B.y * (1 - k) });
+		}
+		case 'regression': {
+			const points = parts.filter((g): g is Extract<Geo, { kind: 'point' }> => g.kind === 'point');
+			if (points.length !== parts.length || points.length < 2) return none('La retta di regressione vuole almeno due punti.');
+			const fit = regression(points);
+			return fit ? { kind: 'line', p: { x: fit.mean.x, y: fit.mean.y }, d: { x: 1, y: fit.m }, fit: fit.r } : none('I punti hanno tutti la stessa x: la retta sarebbe verticale.');
 		}
 		case 'polygon': {
 			const points = parts.filter((g): g is Extract<Geo, { kind: 'point' }> => g.kind === 'point');
