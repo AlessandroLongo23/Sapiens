@@ -11,8 +11,8 @@ import { PERIODIC_PATH, PERIODIC_SLUG, PeriodicPage } from '@/components/tools/p
  * plain address.
  */
 
-// The links to lessons follow the content tree.
-export const revalidate = 3600;
+// The links to lessons follow the content tree: a publish refreshes them through /api/revalidate, with no timer.
+export const revalidate = false;
 
 export function generateMetadata(): Metadata {
 	const tool = toolBySlug(PERIODIC_SLUG)!;

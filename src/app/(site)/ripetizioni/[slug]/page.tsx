@@ -11,7 +11,7 @@ import { Page } from '@/components/content/PageHeader';
 import { TutorAvatar } from '@/components/tutoring/TutorAvatar';
 import { RequestForm } from '@/components/tutoring/RequestForm';
 
-export const revalidate = 600;
+export const revalidate = 3600;
 
 /** No params are prerendered at build; each address renders on first request and is then served from the cache (see `revalidate` above). */
 export function generateStaticParams() {

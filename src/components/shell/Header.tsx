@@ -10,7 +10,7 @@ import { useSearch } from '@/lib/state/search';
 import { useAuth } from '@/lib/state/auth';
 import type { ContentNode } from '@/lib/utils/tree';
 import { cn } from '@/lib/utils/cn';
-import { useContentTree } from './ContentTreeContext';
+import { useContentTree, useFullContentTree } from './ContentTreeContext';
 import { SearchField } from './SearchField';
 import { SubjectMegaMenu } from './SubjectMegaMenu';
 import { ThemeToggle } from './ThemeToggle';
@@ -52,12 +52,19 @@ function NavLink({ href, active, className, children }: { href: string; active: 
 export function Header({ hidden = false, immersive = false, bare = false }: { hidden?: boolean; immersive?: boolean; /** Not shown at any width (the note editor). */ bare?: boolean }) {
 	const pathname = usePathname();
 	const tree = useContentTree();
+	const { tree: full, load } = useFullContentTree();
 	const isActive = useSearch((s) => s.isActive);
 	const activate = useSearch((s) => s.activate);
 	const user = useAuth((s) => s.user);
 	const [mega, setMega] = useState<{ level: ContentNode; /** Set (to a fresh value each time) when opened from the keyboard, so focus moves into the menu. */ keyboard: number } | null>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const megaMenu = tree.length > 0;
+	// The menu draws the level from the whole tree, so one asked for before the tree has arrived opens when it does.
+	const megaLevel = (mega && full?.find((level) => level.id === mega.level.id)) || null;
+	const openMega = (level: ContentNode, keyboard: number) => {
+		load();
+		setMega({ level, keyboard });
+	};
 	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 	const triggers = useRef(new Map<string, HTMLAnchorElement>());
 	const later = (fn: () => void, ms: number) => {
@@ -95,6 +102,8 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 			}}
 			onMouseLeave={() => mega && later(closeMega, 200)}
 			onMouseEnter={() => mega && clearTimeout(timer.current)}
+			// A mouse over the bar is about to reach a level: the tree is on its way before the menu opens. Touch never fetches it here.
+			onPointerEnter={(e) => megaMenu && e.pointerType === 'mouse' && load()}
 			onKeyDown={(e) => {
 				if (e.key !== 'Escape' || !mega) return;
 				triggers.current.get(mega.level.id)?.focus();
@@ -119,12 +128,12 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 						<nav aria-label="Livelli didattici" className="hidden lg:block">
 							<ul className="flex items-center gap-6 2xl:gap-7">
 								{tree.map((level) => {
-									const open = mega?.level.id === level.id;
+									const open = megaLevel?.id === level.id;
 									return (
 										<li
 											key={level.id}
 											className="relative flex items-center"
-											onMouseEnter={() => later(() => setMega({ level, keyboard: 0 }), mega ? 0 : 120)}
+											onMouseEnter={() => later(() => openMega(level, 0), mega ? 0 : 120)}
 											onMouseLeave={() => !mega && clearTimeout(timer.current)}
 										>
 											<Link
@@ -137,7 +146,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 												onKeyDown={(e) => {
 													if (e.key === 'ArrowDown') {
 														e.preventDefault();
-														setMega({ level, keyboard: Date.now() });
+														openMega(level, Date.now());
 													}
 												}}
 												aria-current={pathname === nodePath([level]) ? 'page' : undefined}
@@ -149,7 +158,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 											<button
 												type="button"
 												// A mouse click on a menu the hover already opened leaves it open.
-												onClick={(e) => (open ? e.detail === 0 && closeMega() : setMega({ level, keyboard: e.detail === 0 ? Date.now() : 0 }))}
+												onClick={(e) => (open ? e.detail === 0 && closeMega() : openMega(level, e.detail === 0 ? Date.now() : 0))}
 												aria-expanded={open}
 												aria-controls={open ? 'level-menu' : undefined}
 												aria-label={`Materie di ${level.title}`}
@@ -205,12 +214,12 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 					</button>
 				</div>
 			</div>
-			{mega && (
+			{mega && megaLevel && (
 				<>
 					{/* A veil over the page, so the menu reads as on top; the pointer passes through it. */}
 					<div className="pointer-events-none fixed inset-x-0 bottom-0 z-0 animate-fade-in bg-ink-950/15 dark:bg-black/55" style={{ top: 'var(--header-h, 64px)' }} aria-hidden="true" />
 					<div className="absolute inset-x-0 z-10" style={{ top: 'var(--header-h, 64px)' }}>
-						<SubjectMegaMenu id="level-menu" level={mega.level} pathname={pathname} onClose={closeMega} autoFocus={mega.keyboard} />
+						<SubjectMegaMenu id="level-menu" level={megaLevel} pathname={pathname} onClose={closeMega} autoFocus={mega.keyboard} />
 					</div>
 				</>
 			)}

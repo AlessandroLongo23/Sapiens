@@ -1,6 +1,7 @@
 import { SITEMAP_CHUNK, XML_HEADERS, buildSitemapUrls, renderSitemapIndex, renderUrlset } from '@/lib/server/sitemap';
 
-export const revalidate = 600;
+// Refreshed when a publish calls /api/revalidate.
+export const revalidate = false;
 
 /** Every indexable URL; above SITEMAP_CHUNK entries it becomes an index of chunked sitemaps. */
 export async function GET() {

@@ -1,14 +1,13 @@
 import type { ReactNode } from 'react';
 import { Shell } from '@/components/shell/Shell';
-import { getMenuTree } from '@/lib/server/content';
+import { LEVELS } from '@/lib/content/levels';
 
 /**
- * Marketing, tutoring and account pages. They carry the content tree only for
- * the header's level menu, which is the same on every page of the site; the
- * pages under here that need fresh data set their own dynamic rendering.
+ * Marketing, tutoring and account pages. The layout reads nothing: the header
+ * draws the levels from a constant, so a page with static content is built
+ * once per deployment and never regenerated. The pages under here that show
+ * data set their own caching.
  */
-export const revalidate = 600;
-
-export default async function SiteLayout({ children }: { children: ReactNode }) {
-	return <Shell tree={await getMenuTree()}>{children}</Shell>;
+export default function SiteLayout({ children }: { children: ReactNode }) {
+	return <Shell tree={LEVELS}>{children}</Shell>;
 }

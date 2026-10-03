@@ -2,17 +2,21 @@ import 'server-only';
 import { supabase } from './supabase';
 import { reconstructTree, type ContentNode } from '@/lib/utils/tree';
 import { storedFlashcards, type Flashcard } from '@/lib/content/flashcards';
+import { LEVELS } from '@/lib/content/levels';
 
 /**
  * Server-side access to the content tree.
  *
- * The tree shipped to pages is "light": titles, slugs, descriptions, positions
- * and three booleans per node. Lesson text is loaded separately for the one node
+ * The tree is "light": titles, slugs, descriptions, positions and three
+ * booleans per node. Lesson text is loaded separately for the one node
  * being viewed (`getTopicContent`), so a subject page no longer carries every
  * theory document on the site.
  *
  * Results are cached in memory for a short time; on Vercel each function
  * instance keeps its own copy, and ISR caches the rendered pages on top.
+ * No layout reads the tree: the header's levels are a constant
+ * (lib/content/levels) and the browser fetches the rest from
+ * `/api/node/root` when the level menu or the search needs it.
  */
 
 const TREE_TTL_MS = 60_000;
@@ -61,6 +65,12 @@ async function fetchFlatNodes(): Promise<FlatNode[]> {
 	const withFormulary = new Set((formularyRes.data ?? []).map((r) => r.id as string));
 	const withFlashcards = new Set((flashcardsRes.data ?? []).map((r) => r.id as string));
 
+	// The header draws the levels from a constant (lib/content/levels): say so if the table has moved on.
+	const levels = (nodesRes.data ?? []).filter((row) => row.type === 'level');
+	if (levels.length !== LEVELS.length || LEVELS.some((level) => !levels.some((row) => row.id === level.id && row.slug === level.slug && row.title === level.title))) {
+		console.error('content_nodes: the levels differ from LEVELS in src/lib/content/levels.ts, update the constant.');
+	}
+
 	return (nodesRes.data ?? []).map((row) => ({
 		id: row.id,
 		parent_id: row.parent_id,
@@ -95,42 +105,6 @@ export async function getFlatNodes(): Promise<FlatNode[]> {
 /** The whole tree, light nodes only, children sorted by position. */
 export async function getContentTree(): Promise<ContentNode[]> {
 	return reconstructTree(await getFlatNodes());
-}
-
-/**
- * The tree as shipped to the browser: only what cards, navigation and the
- * mega menu read. Sort order is already applied, so `position`, `parent_id`
- * and `updated_at` stay on the server, and false / empty fields are omitted.
- */
-export function slimTree(tree: ContentNode[]): ContentNode[] {
-	return tree.map((node) => {
-		const slim: Partial<ContentNode> = {
-			id: node.id,
-			type: node.type,
-			title: node.title,
-			slug: node.slug,
-			children: slimTree(node.children)
-		};
-		if (node.description) slim.description = node.description;
-		if (node.school_year) slim.school_year = node.school_year;
-		if (node.has_theory) slim.has_theory = true;
-		if (node.has_formulary) slim.has_formulary = true;
-		if (node.has_flashcards) slim.has_flashcards = true;
-		return slim as ContentNode;
-	});
-}
-
-/**
- * The tree every page hands to the shell for the header menu. A content
- * outage costs the menu its levels, not the page: the header falls back to
- * the plain `Materiale` link when the tree comes back empty.
- */
-export async function getMenuTree(): Promise<ContentNode[]> {
-	try {
-		return slimTree(await getContentTree());
-	} catch {
-		return [];
-	}
 }
 
 export interface TopicContent {

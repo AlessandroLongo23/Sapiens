@@ -16,8 +16,10 @@ import { TOOL_COMPONENTS } from '@/components/tools/registry';
 type Params = { params: Promise<{ slug: string }> };
 
 export const dynamicParams = false;
-// The links to lessons follow the content tree.
-export const revalidate = 3600;
+// Built once per deployment. The links to lessons follow the content tree, but with `dynamicParams = false` Next
+// does not render these pages again on demand (tried with /api/revalidate), so a newly published lesson shows
+// here from the next deploy.
+export const revalidate = false;
 
 export function generateStaticParams() {
 	return TOOLS.filter((t) => !t.ownPage).map((t) => ({ slug: t.slug }));

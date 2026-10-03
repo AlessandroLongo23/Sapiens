@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowDown, ArrowRight, ArrowUp, CornerDownLeft, NotebookPen } from 'lucide-react';
@@ -9,7 +9,6 @@ import { useLessonLayout } from '@/lib/state/lesson-layout';
 import { useNoteHits } from '@/lib/hooks/use-note-hits';
 import { useSemanticHits } from '@/lib/hooks/use-semantic-hits';
 import { useMd } from '@/lib/hooks/use-media';
-import { reconstructTree, type ContentNode } from '@/lib/utils/tree';
 import { buildIndex, fuse, highlight, search, titleOf, type LessonHit, type PlaceHit, type SearchSection, type SectionHit } from '@/lib/search/rank';
 import { toneFor } from '@/lib/utils/icons';
 import { ZAINO_ROOT } from '@/lib/config/site';
@@ -17,7 +16,7 @@ import type { NoteHit } from '@/lib/zaino/config';
 import { cn } from '@/lib/utils/cn';
 import { NodeIcon } from '@/components/ui/NodeIcon';
 import { PenStroke } from '@/components/content/PageHeader';
-import { useContentTree } from './ContentTreeContext';
+import { useFullContentTree } from './ContentTreeContext';
 import { SearchField } from './SearchField';
 
 /** What the empty search suggests: one word, a title, and two questions the way a student asks them. */
@@ -49,9 +48,8 @@ interface Group {
  * opens the lesson at that heading; then the other paragraphs, the lessons,
  * subjects and chapters, and the student's notes above all of them.
  *
- * The tree comes from the library routes when they loaded it; elsewhere it is
- * fetched the first time the search opens, so marketing pages ship nothing.
- * The lessons' sections are fetched on first open too, and the ranking runs
+ * The tree is fetched the first time the search or the level menu needs it,
+ * so no page ships it. The lessons' sections are fetched on first open too, and the ranking runs
  * in the browser (see lib/search/rank.ts), so results follow every keystroke.
  * For a question, a sentence or a search the words answer poorly, the sections
  * nearest in meaning (/api/search/semantic) join the ranking after a pause.
@@ -61,12 +59,10 @@ export function SearchOverlay() {
 	const { query, isActive, setQuery, deactivate } = useSearch();
 	const router = useRouter();
 	const md = useMd();
-	const pageTree = useContentTree();
-	const [fetched, setFetched] = useState<ContentNode[] | null>(null);
+	const { tree: full, load } = useFullContentTree();
 	const [sections, setSections] = useState<SearchSection[]>([]);
-	const fetching = useRef(false);
-	const tree = useMemo(() => (pageTree.length ? pageTree : (fetched ?? [])), [pageTree, fetched]);
-	const loading = isActive && !pageTree.length && !fetched;
+	const tree = useMemo(() => full ?? [], [full]);
+	const loading = isActive && !full;
 	// Kept mounted for the closing animation.
 	const [shown, setShown] = useState(isActive);
 	if (isActive && !shown) setShown(true);
@@ -80,13 +76,8 @@ export function SearchOverlay() {
 	useEffect(() => {
 		if (!isActive) return;
 		loadSections().then(setSections);
-		if (!loading || fetching.current) return;
-		fetching.current = true;
-		fetch('/api/node/root')
-			.then((r) => (r.ok ? r.json() : []))
-			.then((nodes) => setFetched(reconstructTree(nodes)))
-			.catch(() => setFetched([]));
-	}, [isActive, loading]);
+		load();
+	}, [isActive, load]);
 
 	const index = useMemo(() => buildIndex(tree, sections), [tree, sections]);
 	const deferred = useDeferredValue(query);
