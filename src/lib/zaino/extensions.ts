@@ -3,6 +3,9 @@ import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import { Placeholder } from '@tiptap/extensions';
 import { mathOptions } from './math';
+import type { ComponentType } from 'react';
+import type { ReactNodeViewProps } from '@tiptap/react';
+import { PlotBlock } from './plot-block';
 import { RawBlock } from './raw-block';
 import { SlashCommands, type SlashHandlers } from './slash';
 
@@ -15,8 +18,10 @@ export function noteExtensions(options: {
 	onMathClick: (latex: string, pos: number, block: boolean) => void;
 	onEditSource: () => void;
 	placeholder?: string;
-	/** The slash menu, where the editor has one (the note's pages). */
+		/** The slash menu, where the editor has one (the note's pages). */
 	slash?: SlashHandlers;
+	/** What draws a graph of the plotter in the note, where the editor has graphs. */
+	plotView?: ComponentType<ReactNodeViewProps>;
 }): Extensions {
 	const math = mathOptions(options.onMathClick);
 	return [
@@ -34,6 +39,8 @@ export function noteExtensions(options: {
 		math.block,
 		math.inline,
 		RawBlock.configure({ onEditSource: options.onEditSource }),
+		// before the code block of the starter kit, which would take the fence for code
+		...(options.plotView ? [PlotBlock.configure({ view: options.plotView })] : []),
 		...(options.slash ? [SlashCommands.configure({ handlers: options.slash })] : [])
 	];
 }

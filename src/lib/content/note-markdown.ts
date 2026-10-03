@@ -18,6 +18,19 @@ type Katex = typeof katexType;
 
 const md = markdownit({ html: false, linkify: false, typographer: true });
 
+// A graph of the plotter (lib/zaino/plot-block.ts) is a fenced block whose first line is the graph. Here it becomes
+// a box that says so, with the graph in an attribute: the reading view draws the plane in it (StaticPage), the
+// thumbnails and the print copy show the box.
+const fence = md.renderer.rules.fence!;
+md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+	const token = tokens[idx];
+	if (token.info.trim() !== 'plotter') return fence(tokens, idx, options, env, self);
+	const [code = '', origin = ''] = token.content.split('\n');
+	if (!/^[A-Za-z0-9_-]*$/.test(code)) return fence(tokens, idx, options, env, self);
+	const name = /^da [0-9a-f-]{36} (.+)$/.exec(origin)?.[1];
+	return `<div class="note-plot-static" data-plot="${code}"><span>${escapeHtml(name ?? 'Grafico')}</span></div>\n`;
+};
+
 /** Whether a document contains anything KaTeX would have to typeset. */
 export const hasMath = (markdown: string): boolean => markdown.includes('$');
 

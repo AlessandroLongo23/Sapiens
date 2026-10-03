@@ -6,6 +6,7 @@ import { migrateMathStrings } from '@tiptap/extension-mathematics';
 import type katexType from 'katex';
 import {
 	Bold,
+	ChartSpline,
 	Code,
 	Heading1,
 	Heading2,
@@ -39,6 +40,7 @@ import { cn } from '@/lib/utils/cn';
 import { HoldingHint, NoteStickers, type StickerControls } from './NoteStickers';
 import { StickerAlbum } from './StickerAlbum';
 import { EditorToolbar, type ToolbarAction } from './EditorToolbar';
+import { PlotBlockView, plotBlockIntent } from './PlotBlockView';
 import { MathPopover, type MathTarget } from './MathPopover';
 import { LinkDialog } from './LinkDialog';
 import { useModKey } from './NoteViewControls';
@@ -81,6 +83,12 @@ export interface DeletedPage {
 
 const newId = () => crypto.randomUUID();
 const withoutPage = ({ page: _page, ...s }: PlacedSticker): PlacedSticker => s;
+
+/** A graph of the plotter where the caret is: an empty block, which opens at once to be written in. */
+function addPlot(editor: Editor) {
+	plotBlockIntent.open = true;
+	editor.chain().focus().insertContent({ type: 'plotBlock', attrs: { code: '' } }).run();
+}
 
 /**
  * The Word-like mode. Formatting is applied to the text itself, so `###` is
@@ -393,7 +401,8 @@ export function SimpleEditor({
 				}
 			},
 			{ id: 'link', label: 'Collegamento', icon: Link2, shortcut: 'Control+K', secondary: true, run: () => setLinking(editor), isActive: () => editor.isActive('link') },
-			{ id: 'stickers', priority: 1.5, label: 'Adesivi', icon: Sticker, startsGroup: true, run: () => setAlbum(true) },
+			{ id: 'plot', priority: 1.5, label: 'Grafico', icon: ChartSpline, startsGroup: true, run: () => addPlot(editor) },
+			{ id: 'stickers', priority: 1.5, label: 'Adesivi', icon: Sticker, run: () => setAlbum(true) },
 			{ id: 'page', priority: 1.5, label: 'Nuova pagina', icon: Plus, shortcut: 'Control+Enter', run: () => runPageOp({ kind: 'add', at: activeIndex + 1 }), isDisabled: () => pageCount >= MAX_PAGES }
 		];
 	}, [editor, active, activeIndex, pageCount, runPageOp]);
@@ -422,6 +431,8 @@ export function SimpleEditor({
 					return setMathTarget({ latex: '', pos: target.state.selection.from, block: item.id === 'block-math', page, fresh: true });
 				case 'link':
 					return setLinking(target);
+								case 'plot':
+					return addPlot(target);
 				case 'sticker':
 					return setAlbum(true);
 				case 'page':
@@ -643,8 +654,9 @@ function PageSheet({
 	const editor = useEditor({
 		extensions: noteExtensions({
 			onMathClick: (latex, pos, block) => onMathClick({ latex, pos, block, page: id }),
-			onEditSource,
-			slash
+						onEditSource,
+			slash,
+			plotView: PlotBlockView
 		}),
 		content: initial,
 		contentType: 'markdown',

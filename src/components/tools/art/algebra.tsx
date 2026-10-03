@@ -25,6 +25,16 @@ export const ALGEBRA_ART: Record<string, ReactNode> = {
 			<Ink d="M66,34 H78 V46 H66 Z M80,34 H92 V46 H80 Z M94,34 H106 V46 H94 Z M73,22 H85 V34 H73 Z" />
 		</Art>
 	),
+	'grafico-di-funzione': (
+		<Art>
+			{/* A curve on the plane with its maximum and its minimum marked: what the plotter draws and finds. */}
+			<Axes ox={62} oy={41} />
+			<Accent d="M16,72 C28,32 34,18 44,18 S62,64 80,64 S96,50 108,10" />
+			<Dashed d="M44,18 V41 M80,64 V41" />
+			<Dot x={44} y={18} accent />
+			<Dot x={80} y={64} accent />
+		</Art>
+	),
 	'equazioni-secondo-grado': (
 		<Art>
 			<Axes ox={20} oy={52} />

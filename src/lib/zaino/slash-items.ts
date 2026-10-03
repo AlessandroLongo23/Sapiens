@@ -17,7 +17,8 @@ export type SlashId =
 	| 'math'
 	| 'block-math'
 	| 'link'
-	| 'sticker'
+		| 'sticker'
+	| 'plot'
 	| 'page'
 	| 'guide';
 
@@ -46,6 +47,7 @@ export const SLASH_ITEMS: SlashItem[] = [
 	{ id: 'math', title: 'Formula nel testo', description: 'Una formula dentro la frase', group: 'Formule', hint: '$…$', aliases: ['matematica', 'equazione', 'latex', 'math', 'katex', '$'] },
 	{ id: 'block-math', title: 'Formula su una riga a parte', description: 'Una formula grande, centrata', group: 'Formule', hint: '$$…$$', aliases: ['matematica', 'equazione', 'latex', 'math', 'blocco', 'display', '$$'] },
 	{ id: 'link', title: 'Collegamento', description: 'Un link a una pagina', group: 'Inserisci', aliases: ['link', 'url', 'indirizzo', 'sito'] },
+	{ id: 'plot', title: 'Grafico', description: 'Un piano cartesiano con funzioni e geometria', group: 'Inserisci', aliases: ['grafico', 'funzione', 'plotter', 'piano cartesiano', 'geometria', 'plot', 'geogebra'] },
 	{ id: 'sticker', title: 'Adesivo', description: 'Scegli un adesivo da attaccare', group: 'Inserisci', aliases: ['adesivi', 'sticker', 'figurina'] },
 	{ id: 'page', title: 'Nuova pagina', description: 'Una pagina dopo questa', group: 'Inserisci', aliases: ['pagina', 'page', 'interruzione', 'foglio'] },
 	{ id: 'guide', title: 'Guida alle formule', description: 'Come si scrivono formule e testo', group: 'Aiuto', aliases: ['aiuto', 'help', 'latex', 'markdown', 'guida'] }

@@ -61,6 +61,17 @@ Se $\Delta > 0$ la parabola taglia l'asse $x$ in due punti, $x_1$ e $x_2$. Il tr
 \node at (2.59,0.28) {\small $+$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: segno-trinomio-cursore-c
+% alt: La parabola y = x² - 2x + c con il cursore di c e il valore del discriminante: è colorata la parte di piano dove il trinomio è positivo, oppure quella dove è negativo, e cambia quando la parabola smette di tagliare l'asse x
+curva: y=x^2-2x+c
+scelta: \text{positivo} :: x^2-2x+c>0 | blu
+scelta: \text{negativo} :: x^2-2x+c<0 | rosso
+cursore: c = -3 da -5 a 5 passo 0,1
+finestra: x da -5 a 7, y da -6 a 6
+valore: \Delta = 4-4c
+domanda: Alza $c$ fino a $1$, poi oltre: per quali $x$ il trinomio resta negativo?
+```
 
 Il trinomio è positivo per $x < -1$ oppure $x > 3$, negativo tra $-1$ e $3$. In generale, con $a > 0$ e $\Delta > 0$, il trinomio è positivo per i **valori esterni** all'intervallo delle soluzioni, $x < x_1$ oppure $x > x_2$, e negativo per i **valori interni**, $x_1 < x < x_2$.
 
@@ -131,6 +142,16 @@ Con $a < 0$ la parabola ha la concavità rivolta verso il basso, e i segni si sc
 \node at (2.59,-0.30) {\small $-$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: segno-trinomio-cursore-a
+% alt: La parabola y = a(x² - 2x - 3) con il cursore di a: taglia sempre l'asse x in -1 e in 3, e la parte di piano dove il trinomio è positivo passa dai valori interni, con a negativo, ai valori esterni, con a positivo
+curva: y=a\left(x^2-2x-3\right)
+scelta: \text{positivo} :: a\left(x^2-2x-3\right)>0 | blu
+scelta: \text{negativo} :: a\left(x^2-2x-3\right)<0 | rosso
+cursore: a = -1 da -3 a 3 passo 0,1
+finestra: x da -5 a 7, y da -6 a 6
+domanda: Porta $a$ da negativo a positivo: i due zeri si spostano? E i segni?
+```
 
 Allo stesso modo, con $a < 0$ e $\Delta = 0$ il trinomio è negativo per ogni $x$ tranne il vertice, dove vale zero, e con $\Delta < 0$ è negativo per ogni $x$. Per non dover ricordare due regole, nelle disequazioni si moltiplica per $-1$ e si cambia il verso: da $-x^2 + 2x + 3 > 0$ si passa a $x^2 - 2x - 3 < 0$, che ha le stesse soluzioni, $-1 < x < 3$.
 
@@ -146,6 +167,22 @@ Con $a > 0$ le soluzioni dipendono solo dal segno di $\Delta$ e dal verso. Se $a
 | $\leq 0$ | $x_1 \leq x \leq x_2$ | $x = x_1$ | nessun $x$ |
 
 "Ogni $x$" vuol dire $S = \mathbb{R}$, "nessun $x$" vuol dire $S = \emptyset$. La colonna di $\Delta > 0$ si ricorda così: con $a > 0$, il verso $>$ vuole i valori esterni, il verso $<$ quelli interni.
+
+Ogni casella della tabella è una posizione del cursore: scegli il verso, muovi $c$ e guarda quale parte di piano resta colorata.
+
+```grafico
+% nome: disequazione-secondo-grado-tabella-cursore
+% alt: La parabola y = x² - 2x + c con il cursore di c, il discriminante e i quattro versi tra cui scegliere: è colorata la parte di piano dove vale la disequazione, con il bordo tratteggiato quando gli estremi sono esclusi
+curva: y=x^2-2x+c
+scelta: > 0 :: x^2-2x+c>0
+scelta: \geq 0 :: x^2-2x+c\ge0
+scelta: < 0 :: x^2-2x+c<0
+scelta: \leq 0 :: x^2-2x+c\le0
+cursore: c = -3 da -5 a 5 passo 0,1
+finestra: x da -5 a 7, y da -6 a 6
+valore: \Delta = 4-4c
+domanda: Con $c = 1$ il discriminante è zero: che cosa cambia tra $> 0$ e $\geq 0$? E tra $< 0$ e $\leq 0$?
+```
 
 ## Come si risolve
 

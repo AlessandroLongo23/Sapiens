@@ -72,7 +72,7 @@ Proposta di Claude del 27 settembre 2026. Tra parentesi la prima onda, cioè gli
 
 **Vita scolastica.** Media dei voti, con il modo "che voto mi serve per arrivare a..." (prima onda). Crediti scolastici. Simulatore del voto di maturità. Conversione dei voti (decimi, quindicesimi, trentesimi, centesimi). Giorni alla maturità. Sono gli strumenti che uno studente riapre, e si legano al [[Diario e calendario]].
 
-**Più avanti.** Derivate, integrali, limiti, grafico di una funzione: la domanda è alta ma servono un motore di calcolo simbolico e la concorrenza è forte (Symbolab, Wolfram, GeoGebra, YouMath). Per i grafici conviene incorporare Desmos o GeoGebra.
+**Più avanti.** Derivate, integrali, limiti, grafico di una funzione: la domanda è alta ma servono un motore di calcolo simbolico e la concorrenza è forte (Symbolab, Wolfram, GeoGebra, YouMath). Per i grafici si era pensato di incorporare Desmos o GeoGebra: dal 1° ottobre 2026 è scartato, perché tutti e due chiedono una licenza per l'uso commerciale, e il grafico di funzioni si fa in casa: vedi [[Grafico di funzioni]].
 
 La prima onda conta circa 20 strumenti.
 

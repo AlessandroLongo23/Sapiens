@@ -53,6 +53,14 @@ Quaderni e note personali dello studente, con formule, collegati alle lezioni.
   - Provato con Playwright e utenti di prova poi cancellati (`tests/e2e/zaino-trash.spec.ts`): conteggi, ripristino, ripristino del quaderno, nome già preso, eliminazione per sempre, svuotamento, lancio dal menu, trascinamento sul cestino e ripristino dalla pagina.
 - Il 28 settembre 2026, nella barra della nota, le etichette dei bottoni aspettano un attimo solo la prima volta: passando ai bottoni vicini compaiono subito (`.tb-tip` in `src/app/globals.css`). Committato su master, non ancora pubblicato.
 
+- Dal 3 ottobre 2026 una nota può contenere un grafico del plotter ([[2026-10-03 I grafici del plotter si salvano con nome e si mettono nelle note]]):
+  - Nella barra degli strumenti della modalità Semplice c'è "Grafico", e nel menu `/` la voce "Grafico": aggiungono un blocco vuoto, che si apre subito sul plotter.
+  - Il blocco (`src/lib/zaino/plot-block.ts`, `PlotBlockView.tsx`) mostra il piano del grafico, alto 20 rem, con il nome del grafico salvato da cui viene, "Modifica" e il cestino. "Modifica" apre il plotter intero in una finestra sopra la nota; "Fatto", Esc o un clic fuori riportano il grafico nel blocco.
+  - La nota tiene una copia sua del grafico, scritta nel markdown come blocco recintato `plotter`: la prima riga è il grafico come lo porta un link, la seconda, se c'è, il grafico salvato da cui viene (`da <id> <nome>`). Dal plotter aperto, "I miei grafici" carica un grafico salvato nel blocco, "Salva" scrive sopra quello da cui il blocco viene, "Salva con nome" ne crea un altro.
+  - Nella Lettura il piano è disegnato e si può spostare (`StaticPage` con `live`). Nelle miniature delle pagine e nella copia per la stampa c'è un riquadro con il nome, alto quanto il blocco.
+  - Provato con Playwright e un utente di prova, poi cancellato: aggiungere il blocco, scrivere una funzione, "Fatto", il salvataggio automatico della nota, la pagina ricaricata, riaprire, "Salva con nome" dal blocco, la Lettura. `tests/unit/nota-grafico.test.mjs`, 2 test.
+  - Limiti: nella modalità Avanzata il blocco è il suo testo, una riga di codice illeggibile; la stampa non disegna il grafico; non provato su telefono; ogni piano mostrato carica anche MathLive, che lì non serve.
+
 ## Obiettivo
 Il quaderno digitale dello studente, integrato con [[Diario e calendario]] e con le [[Lezioni]]: dalla lezione si prende una nota, dalla nota si torna alla lezione.
 

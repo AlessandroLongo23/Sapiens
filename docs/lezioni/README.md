@@ -32,6 +32,52 @@ pubblicato (`pubblicate/`, oppure `originali/` prima della prima pubblicazione):
 modificato la lezione dall'interfaccia, la salta. Per correggere una lezione basta modificare il file
 in `riscritte/` e rilanciare lo script.
 
+## Il piano cartesiano con i cursori
+
+Un blocco `grafico` monta nella lezione il piano del plotter, con le formule già scritte: lo studente muove i
+cursori e legge, non scrive. Messo subito dopo una figura TikZ la prende come copertina: la pagina mostra la
+figura, e il bottone "Prova tu" mette il piano al suo posto (la figura resta per Google Immagini e per la stampa);
+la croce nell'angolo del piano la riporta.
+Da solo, il piano compare quando la pagina ci arriva.
+
+````
+```grafico
+% nome: parabola-vertice-discriminante
+% alt: La parabola y = ax² + bx + c con i cursori dei tre coefficienti, il discriminante e il vertice
+curva: f(x)=ax^2+bx+c | nome
+curva: y=x^2 | tratteggiata | grigio
+cursore: a = 1 da -3 a 3 passo 0,1
+cursore: b = -4 da -6 a 6 passo 0,1
+cursore: c = 3 da -6 a 6 passo 0,1
+finestra: x da -6 a 8, y da -5 a 7
+valore: \Delta = b^2-4ac
+valore: V = \left(-\frac{b}{2a};c-\frac{b^2}{4a}\right)
+domanda: Muovi $c$ finché $\Delta = 0$: dove sta il vertice?
+```
+````
+
+Una riga, una cosa:
+- `curva:` una formula come la legge il plotter (funzione, equazione, disequazione, punto `A=(2;1)`, curva in
+  `t`), poi l'aspetto dopo ` | `: `tratteggiata`, `a punti`, `sottile`, `spessa`, `nome` (la lettera accanto alla
+  curva), un colore (`blu`, `rosso`, `verde`, `arancione`, `viola`, `verde acqua`, `magenta`, `nero`, `grigio`),
+  `t da 0 a 2pi`.
+- `scelta:` una delle formule tra cui sceglie un controllo a segmenti, `etichetta :: formula`, con un colore suo
+  dopo ` | ` se serve (blu dove il trinomio è positivo, rosso dove è negativo); servono almeno due righe, e fanno
+  una sola curva.
+- `cursore:` `a = 1 da -3 a 3 passo 0,5`; con `anima` in fondo ha il bottone che lo muove da solo. Ogni lettera
+  delle formule deve avere il suo.
+- `finestra:` `x da -6 a 6, y da -4 a 8`. I due assi hanno la stessa scala; con `forma: 3:2` (larghezza e
+  altezza del disegno) la scala dell'asse y si adatta, per i grafici di fisica.
+- `valore:` un nome, `=`, e un'espressione dei parametri, o una coppia di coordinate: sta scritto sotto il piano
+  e segue i cursori.
+- `assi:` i nomi dei due assi, `t (s), s (m)`. `sposta: sì` lascia spostare e ingrandire la finestra.
+- `domanda:` cosa provare, sotto il piano; le formule tra dollari.
+
+Un blocco che non si legge non compare nella pagina (resta la figura di copertina): lo segnala il controllo
+automatico qui sotto. Per vederlo prima di pubblicare, con il sito in sviluppo:
+`/prova-grafico/lezione?file=riscritte/87-funzioni-quadratiche.md` (senza `file` apre `prove/grafico.md`, con
+un esempio per ogni pezzo).
+
 Controllo automatico (formule KaTeX, link, formato dei riquadri, regole di stile):
 
 ```sh

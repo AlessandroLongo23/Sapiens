@@ -429,3 +429,22 @@ ul:has(> [data-crumpled]) {
 		transform: translateY(-1px) scale(0.96, 1.06);
 	}
 }
+
+/* A graph of the plotter where a note is only drawn (the thumbnails, the print copy, the reading view before the
+   plane arrives): a box as tall as the block in the editor, so the page keeps its length. */
+.note-plot-static {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 20rem;
+	margin: 1rem 0;
+	overflow: hidden;
+	border: 1px solid var(--edge);
+	border-radius: 1rem;
+	background: var(--surface);
+	color: var(--fg-muted);
+	font-size: 0.875rem;
+}
+.note-plot-static.is-live {
+	display: block;
+}

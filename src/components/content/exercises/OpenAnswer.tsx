@@ -2,67 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Keyboard } from 'lucide-react';
-import type { MathfieldElement, VirtualKeyboardLayout } from 'mathlive';
+import type { MathfieldElement } from 'mathlive';
 import { cn } from '@/lib/utils/cn';
+import { ANSWER_LAYOUT, dressField, type KeyboardChoice, layoutsOnFocus, loadMathLive, readKeyboard, saveKeyboard } from '@/components/math/mathlive';
 
 /**
  * Where the student types an open answer (vault/Decisioni/2026-09-30 La risposta aperta si scrive con MathLive, con
  * la tastiera di Sapiens o quella del dispositivo.md): a MathLive formula field, loaded the first time an open
  * question appears. Two ways to write, remembered on this device: Sapiens's keyboard on screen, the first choice on
  * touch screens, or the device's own keyboard, where / opens a fraction and ^ an exponent. MathLive draws with the
- * KaTeX fonts the page already has, so it loads none of its own.
+ * KaTeX fonts the page already has, so it loads none of its own. The loading and the keyboards are shared with the
+ * other formula fields: components/math/mathlive.ts.
  */
 
 export type OpenState = 'idle' | 'pending' | 'correct' | 'incorrect';
-
-/** The way to write chosen on this device: 'sapiens' (the keyboard on screen) or 'device'. */
-const KEYBOARD_KEY = 'sapiens:keyboard';
-type KeyboardChoice = 'sapiens' | 'device';
-
-function readKeyboard(): KeyboardChoice {
-	try {
-		const saved = localStorage.getItem(KEYBOARD_KEY);
-		if (saved === 'sapiens' || saved === 'device') return saved;
-	} catch {
-		// storage blocked: the default for this screen
-	}
-	return window.matchMedia('(pointer: coarse)').matches ? 'sapiens' : 'device';
-}
-
-function saveKeyboard(choice: KeyboardChoice) {
-	try {
-		localStorage.setItem(KEYBOARD_KEY, choice);
-	} catch {
-		// not remembered, still used for this visit
-	}
-}
-
-/** The keys a school answer needs, in one layer: digits and operations, fractions, powers and roots, the words of a solution set. */
-const SAPIENS_LAYOUT: VirtualKeyboardLayout = {
-	label: '123',
-	tooltip: 'Tastiera di Sapiens',
-	rows: [
-		['[7]', '[8]', '[9]', '[/]', { insert: '\\frac{#@}{#?}', latex: '\\frac{a}{b}', tooltip: 'Frazione' }, { insert: '#@^{#?}', latex: 'x^n', tooltip: 'Potenza' }, { insert: '#@_{#?}', latex: 'x_n', tooltip: 'Pedice' }, 'x', 'y'],
-		['[4]', '[5]', '[6]', '[*]', { insert: '\\sqrt{#0}', latex: '\\sqrt{x}', tooltip: 'Radice quadrata' }, { insert: '\\sqrt[#?]{#0}', latex: '\\sqrt[n]{x}', tooltip: 'Radice' }, { latex: '\\pi', tooltip: 'Pi greco' }, 'a', 'b'],
-		['[1]', '[2]', '[3]', '[-]', '[(]', '[)]', { latex: '\\pm', tooltip: 'Più o meno' }, { latex: '=', tooltip: 'Uguale' }, { latex: '\\neq', tooltip: 'Diverso' }],
-		['[0]', '[,]', ';', '[+]', { insert: '\\left|#0\\right|', latex: '|x|', tooltip: 'Valore assoluto' }, { latex: '\\emptyset', tooltip: 'Insieme vuoto' }, { latex: '\\mathbb{R}', tooltip: 'Numeri reali' }, { latex: '\\lor', tooltip: 'Oppure' }, '[backspace]'],
-		['[left]', '[right]', { insert: '\\text{impossibile}', label: 'impossibile', class: 'small', tooltip: 'Nessuna soluzione', width: 2 }, { insert: '\\text{indeterminata}', label: 'indeterminata', class: 'small', tooltip: 'Tutti i numeri reali', width: 2 }, '[return]']
-	]
-};
-
-let loaded: Promise<typeof MathfieldElement> | null = null;
-/** MathLive, once per page, set up for Italian: the decimal comma, no sounds, the page's fonts. */
-function loadMathLive(): Promise<typeof MathfieldElement> {
-	loaded ??= import('mathlive').then(({ MathfieldElement }) => {
-		MathfieldElement.decimalSeparator = ',';
-		MathfieldElement.fontsDirectory = null;
-		MathfieldElement.soundsDirectory = null;
-		window.mathVirtualKeyboard.layouts = [SAPIENS_LAYOUT, 'alphabetic'];
-		window.mathVirtualKeyboard.editToolbar = 'none';
-		return MathfieldElement;
-	});
-	return loaded;
-}
 
 const FIELD_CLASS: Record<OpenState, string> = {
 	idle: 'border-edge-strong bg-surface shadow-paper focus-within:border-inverse',
@@ -113,6 +66,8 @@ export function OpenAnswer({ state, onSubmit, locked }: Props) {
 				mf.className = 'block w-full min-h-[56px] bg-transparent px-4 py-3 text-xl text-fg-strong outline-none sm:text-2xl';
 				// some settings exist only once the field is in the page
 				host.current.replaceChildren(mf);
+				layoutsOnFocus(mf, [ANSWER_LAYOUT]);
+				dressField(mf);
 				mf.mathVirtualKeyboardPolicy = choice === 'sapiens' ? 'auto' : 'manual';
 				mf.menuItems = [];
 				mf.smartFence = true;

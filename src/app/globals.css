@@ -1118,7 +1118,10 @@ body {
 .dark .markdown-content .tikz-container svg,
 .dark .markdown-content .tikz-container img,
 .dark .markdown-content .interactive-figure .tikz-drawing,
-.dark .scene-figure .tikz-drawing {
+.dark .scene-figure .tikz-drawing,
+.dark .plane-drawing,
+.dark .plot-clip,
+.dark .plot-swatch {
 	filter: invert(1) hue-rotate(180deg);
 }
 .admonition {
@@ -1633,6 +1636,12 @@ math-field {
 	--selection-background-color: var(--accent-soft);
 	--selection-color: var(--fg-strong);
 	--contains-highlight-background-color: transparent;
+	/* A dead key waiting for its letter (^ on many keyboards): MathLive paints what is being composed yellow.
+	   Here it is a thin underline, as text fields show it; dressField (components/math/mathlive.ts) does the same
+	   under a dark system theme, where MathLive sets the colour out of the page's reach. */
+	--composition-background-color: transparent;
+	--composition-text-color: var(--fg-strong);
+	--composition-underline-color: var(--fg-subtle);
 	--smart-fence-color: var(--fg-subtle);
 	color: var(--fg-strong);
 }
@@ -1715,4 +1724,25 @@ body {
 		print-color-adjust: exact;
 		-webkit-print-color-adjust: exact;
 	}
+}
+
+/* A parameter's slider in the plotter's panel (components/grafico/PlotterParts.tsx): the shared Slider on one line,
+   letter, track, value, whatever the width of the screen. */
+.plot-slider {
+	grid-template-columns: auto minmax(0, 1fr) auto !important;
+}
+.plot-slider > label {
+	min-width: 1.25rem;
+	font-family: KaTeX_Math, 'Times New Roman', serif;
+	font-style: italic;
+	font-size: 1.05rem;
+	color: var(--fg-strong);
+}
+.plot-slider > input[type='range'] {
+	grid-column: 2 !important;
+	grid-row: 1 !important;
+}
+.plot-slider > div {
+	grid-column: 3 !important;
+	grid-row: 1 !important;
 }

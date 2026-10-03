@@ -19,13 +19,15 @@ const ALLOWED = new Set([
 	'src/components/zaino/MathPopover.tsx',
 	'src/components/zaino/LinkDialog.tsx',
 	'src/components/zaino/SlashMenu.tsx',
+	'src/components/zaino/PlotBlockView.tsx',
 	'src/lib/zaino/extensions.ts',
 	'src/lib/zaino/math.ts',
+	'src/lib/zaino/plot-block.ts',
 	'src/lib/zaino/raw-block.ts',
 	'src/lib/zaino/slash.ts'
 ]);
 
-const HEAVY = /from\s+['"](@tiptap\/[^'"]+|@\/lib\/zaino\/(extensions|math|raw-block))['"]/;
+const HEAVY = /from\s+['"](@tiptap\/[^'"]+|@\/lib\/zaino\/(extensions|math|raw-block|plot-block))['"]/;
 
 function walk(dir) {
 	return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
