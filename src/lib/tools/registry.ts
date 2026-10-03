@@ -119,6 +119,18 @@ export const TOOLS: ToolMeta[] = [
 		keywords: ['equazione', 'incognita']
 	},
 	{
+		slug: 'grafico-di-funzione',
+		title: 'Grafico di funzione',
+		lead: 'Scrivi una funzione e guardane il grafico: zeri, massimi, minimi e intersezioni, parametri con i cursori, rette e circonferenze da costruire sul piano.',
+		description: 'Disegna il grafico di una funzione online: zeri, massimi e minimi, parametri con i cursori, equazioni, disequazioni e geometria analitica sul piano cartesiano.',
+		category: 'algebra',
+		lessons: ['high_school/math/funzioni/funzioni-lineari', 'high_school/math/parabola-disequazioni/funzioni-quadratiche', 'high_school/math/geometria-analitica/equazione-di-una-retta'],
+		related: ['equazioni-secondo-grado', 'disequazioni-secondo-grado', 'equazione-circonferenza', 'distanza-tra-due-punti'],
+		sample: 'y = x^2 - 2x - 1',
+		keywords: ['grafico di funzione online', 'disegnare funzioni', 'piano cartesiano', 'studio di funzione', 'geometria analitica', 'retta', 'parabola', 'circonferenza', 'disequazioni', 'curve parametriche', 'successioni', 'geogebra', 'desmos'],
+		ownPage: true
+	},
+	{
 		slug: 'equazioni-secondo-grado',
 		title: 'Equazioni di secondo grado',
 		lead: "Dai coefficienti o dall'equazione scritta per intero: discriminante, formula risolutiva, soluzioni esatte e approssimate.",
