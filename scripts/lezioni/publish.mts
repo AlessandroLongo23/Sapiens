@@ -37,6 +37,7 @@ import { createClient } from '@supabase/supabase-js';
 import { parseFlashcards, type Flashcard } from '../../src/lib/content/flashcards';
 import { FIGURE_BUCKET, figureFile, parseFigure, publishedSvg, serializeFigure } from '../../src/lib/content/figures';
 import { compileFigure } from '../figure/compile.mjs';
+import { revalidateSite } from '../revalidate.mjs';
 
 const apply = process.argv.includes('--apply');
 const dirArg = process.argv.indexOf('--dir');
@@ -152,6 +153,7 @@ if (parseErrors.length) {
 }
 
 let failed = 0;
+let written = 0;
 for (const row of entries) {
 	const { name } = row;
 	const { data, error } = await db.from('content_nodes').select('theory,formulary,flashcards').eq('id', row.id).single();
@@ -186,10 +188,12 @@ for (const row of entries) {
 			} else {
 				mkdirSync(`${dir}/${published}`, { recursive: true });
 				writeFileSync(last, text);
+				written++;
 				console.log(`scritto ${label}`);
 			}
 		}
 	}
 }
 console.log(apply ? '' : '\nProva senza scrivere. Per pubblicare: --apply');
+if (written) await revalidateSite();
 process.exitCode = failed ? 1 : 0;

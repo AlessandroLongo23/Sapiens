@@ -11,8 +11,8 @@ import { ORBITAL_PATH, ORBITAL_SLUG, OrbitalPage } from '@/components/orbitali/O
  * address.
  */
 
-// The links to lessons follow the content tree.
-export const revalidate = 3600;
+// The links to lessons follow the content tree: a publish refreshes them through /api/revalidate, with no timer.
+export const revalidate = false;
 
 export function generateMetadata(): Metadata {
 	const tool = toolBySlug(ORBITAL_SLUG)!;

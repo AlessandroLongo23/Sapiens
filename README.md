@@ -48,7 +48,7 @@ Il codice segue quattro strati, dal basso verso l'alto:
 
 ## Contenuti e SEO
 
-Le pagine del materiale sono ISR (ogni pagina è generata alla prima richiesta e poi servita dalla cache, rigenerata ogni 10 minuti; `generateStaticParams` vuoto sulle route dinamiche è ciò che lo abilita), con titolo, descrizione, canonical, Open Graph e dati strutturati generati da `src/lib/seo`. Le formule sono tipografate con KaTeX sul server: il browser riceve HTML già pronto e carica KaTeX solo per la chat dell'assistente. Gli esercizi sono generati sul server a ogni richiesta e arrivano già tipografati. I vecchi URL `/wiki/...` e le varianti non canoniche fanno un redirect permanente.
+Le pagine del materiale sono ISR (ogni pagina è generata alla prima richiesta e poi servita dalla cache, rigenerata quando uno script di pubblicazione chiama `/api/revalidate` (`node --env-file=.env scripts/revalidate.mjs` dopo una modifica a mano), senza timer; `generateStaticParams` vuoto sulle route dinamiche è ciò che lo abilita), con titolo, descrizione, canonical, Open Graph e dati strutturati generati da `src/lib/seo`. Le formule sono tipografate con KaTeX sul server: il browser riceve HTML già pronto e carica KaTeX solo per la chat dell'assistente. Gli esercizi sono generati sul server a ogni richiesta e arrivano già tipografati. I vecchi URL `/wiki/...` e le varianti non canoniche fanno un redirect permanente.
 
 ## Test
 

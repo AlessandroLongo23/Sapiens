@@ -15,6 +15,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
+import { revalidateSite } from '../revalidate.mjs';
 import { CHEM_BLOCKS, FIGURE_BUCKET, parseFigure, publishedChemSvg, type ChemBlock } from '../../src/lib/content/figures';
 
 const apply = process.argv.includes('--apply');
@@ -90,6 +91,7 @@ const subject = nodes.find((n) => n.slug === 'chemistry' && n.parent_id === leve
 const lessonNode = (slug: string) => nodes.find((n) => n.slug === slug && n.parent_id && byId.get(n.parent_id)?.parent_id === subject.id);
 
 let failed = 0;
+let written = 0;
 for (const name of lessons) {
 	const slug = name.replace(/^\d\d-|\.md$/g, '');
 	const node = lessonNode(slug);
@@ -125,10 +127,12 @@ for (const name of lessons) {
 			} else {
 				mkdirSync(`${dir}/${published}`, { recursive: true });
 				writeFileSync(last, next);
+				written++;
 				console.log(`scritto ${label}`);
 			}
 		}
 	}
 }
 console.log(apply ? '' : '\nProva senza scrivere. Per pubblicare: --apply');
+if (written) await revalidateSite();
 process.exitCode = failed ? 1 : 0;

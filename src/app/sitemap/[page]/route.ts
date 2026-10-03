@@ -1,6 +1,6 @@
 import { SITEMAP_CHUNK, XML_HEADERS, buildSitemapUrls, renderUrlset } from '@/lib/server/sitemap';
 
-export const revalidate = 600;
+export const revalidate = 3600;
 
 /** Chunk N of the sitemap index, only used once the site has more than SITEMAP_CHUNK URLs. */
 export async function GET(_request: Request, { params }: { params: Promise<{ page: string }> }) {

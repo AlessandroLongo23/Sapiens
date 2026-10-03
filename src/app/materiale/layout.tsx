@@ -1,16 +1,19 @@
 import type { ReactNode } from 'react';
 import { Shell } from '@/components/shell/Shell';
-import { getMenuTree } from '@/lib/server/content';
+import { LEVELS } from '@/lib/content/levels';
 import 'katex/dist/katex.min.css';
 
 /**
- * Public content pages are rendered once and served as static HTML from
- * Vercel's edge cache, regenerated in the background every 10 minutes so
- * edits made in the admin area appear without a redeploy. The tree shipped
- * to the browser is slimmed to what cards, navigation and the menu read.
+ * Public content pages are rendered on their first visit and then served as
+ * static HTML from Vercel's cache. They have no timer: the scripts that
+ * publish to the database call /api/revalidate, and each page is rendered
+ * again on its next visit. Vercel bills every regeneration whose output
+ * differs by a byte, and the same content does not always render to the same
+ * bytes (the order of the streamed rows follows which data arrived first), so
+ * a timer rewrote pages that had not changed. The header's levels are a
+ * constant, and the browser fetches the rest of the tree when the level menu
+ * or the search needs it.
  */
-export const revalidate = 600;
-
-export default async function LibraryLayout({ children }: { children: ReactNode }) {
-	return <Shell tree={await getMenuTree()}>{children}</Shell>;
+export default function LibraryLayout({ children }: { children: ReactNode }) {
+	return <Shell tree={LEVELS}>{children}</Shell>;
 }

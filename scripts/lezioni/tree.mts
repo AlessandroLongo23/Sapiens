@@ -21,6 +21,7 @@
 import { readFileSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
 import { slugify } from '../../src/lib/seo/slug';
+import { revalidateSite } from '../revalidate.mjs';
 
 type Row = { id: string; parent_id: string | null; type: string; title: string; slug: string; position: number; theory: string | null; formulary: string | null };
 type Lesson = { slug: string; title: string; absorbs: string[] };
@@ -224,3 +225,4 @@ for (const c of spec) for (const a of c.absorbs) {
 	if (error) throw new Error(`cancellazione del capitolo ${a}: ${error.message}`);
 }
 console.log('\nAlbero applicato.');
+await revalidateSite();

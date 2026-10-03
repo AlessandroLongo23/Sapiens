@@ -12,7 +12,6 @@ import { NodeIcon } from '@/components/ui/NodeIcon';
 import { chaptersByYear } from '@/components/content/ChapterYears';
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
-// The browser's tree drops `has_theory` when it is false, so only `true` counts.
 const lessonReady = (lesson: ContentNode) => lesson.has_theory === true;
 /** A chapter is ready once one of its lessons is written, as on the subject page. */
 const chapterReady = (chapter: ContentNode) => chapter.children.some(lessonReady);
