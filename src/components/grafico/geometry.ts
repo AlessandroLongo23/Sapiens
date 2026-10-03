@@ -87,11 +87,11 @@ export const TOOLS: { id: ToolId; name: string; about: string; /** Missing for a
 	{ id: 'distance', name: 'Distanza', about: 'Tra due punti, tra un punto e una retta, o tra due rette parallele.', clip: 'distanza-punto-retta' },
 	{ id: 'angle', name: 'Angolo', about: 'Scegli tre punti, con il vertice per secondo. Oppure due rette: è l’angolo che non supera quello retto.', clip: 'angolo' },
 		{ id: 'slope', name: 'Pendenza', about: 'Scegli una retta: di quanto sale quando la x cresce di uno.', clip: 'pendenza' },
-	{ id: 'regression', name: 'Retta di regressione', about: 'Scegli i punti uno dopo l’altro, e per finire torna sul primo: è la retta che passa più vicino a tutti. La riga ne dà l’equazione e il coefficiente r.' },
-	{ id: 'reflect', name: 'Simmetria', about: 'Scegli un oggetto, poi la retta o il punto rispetto a cui specchiarlo.' },
-	{ id: 'translate', name: 'Traslazione', about: 'Scegli un oggetto, poi un vettore, oppure due punti: da dove e fin dove.' },
-	{ id: 'rotate', name: 'Rotazione', about: 'Scegli un oggetto, poi il centro, e scrivi l’angolo in gradi: positivo in senso antiorario.' },
-	{ id: 'dilate', name: 'Omotetia', about: 'Scegli un oggetto, poi il centro, e scrivi il rapporto: 2 raddoppia, 0,5 dimezza, un numero negativo ribalta.' }
+	{ id: 'regression', name: 'Retta di regressione', about: 'Scegli i punti uno dopo l’altro, e per finire torna sul primo: è la retta che passa più vicino a tutti. La riga ne dà l’equazione e il coefficiente r.', clip: 'retta-di-regressione' },
+	{ id: 'reflect', name: 'Simmetria', about: 'Scegli un oggetto, poi la retta o il punto rispetto a cui specchiarlo.', clip: 'simmetria-assiale' },
+	{ id: 'translate', name: 'Traslazione', about: 'Scegli un oggetto, poi un vettore, oppure due punti: da dove e fin dove.', clip: 'traslazione' },
+	{ id: 'rotate', name: 'Rotazione', about: 'Scegli un oggetto, poi il centro, e scrivi l’angolo in gradi: positivo in senso antiorario.', clip: 'rotazione' },
+	{ id: 'dilate', name: 'Omotetia', about: 'Scegli un oggetto, poi il centro, e scrivi il rapporto: 2 raddoppia, 0,5 dimezza, un numero negativo ribalta.', clip: 'omotetia' }
 ];
 export const toolOf = (id: ToolId) => TOOLS.find((t) => t.id === id)!;
 

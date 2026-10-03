@@ -38,6 +38,16 @@ const ANGLE_SIDES = [
 	['click', -3, -1.5],
 	['click', 1, 2]
 ];
+/** A cloud of points, for the line that passes nearest to all of them. */
+const CLOUD = [
+	[-3, -1.5],
+	[-1.5, -0.25],
+	[0, -0.5],
+	[1.5, 1],
+	[3, 1]
+];
+/** A polygon drawn before the film starts: something to transform. */
+const shape = (...points) => [['tool', 'Poligono'], ...points.map(([x, y]) => ['click', x, y]), ['click', ...points[0]]];
 /**
  * A scene: the formulas on the plane, what is done before the film starts (`before`), the tool, and what is filmed.
   * Steps: ['click', x, y], ['drag', x, y] (from where the pointer is), ['tool', name], ['wait', frames], ['type', text]
@@ -65,7 +75,12 @@ const SCENES = [
 	{ clip: 'compasso', before: [['tool', 'Segmento'], ['click', -3.5, -2], ['click', -1.5, -2]], tool: 'Compasso', steps: [['click', -2.5, -2], ['click', 1.5, 0.25]] },
 	{ clip: 'poligono', tool: 'Poligono', steps: [['click', -3, -1.5], ['click', 2.5, -2], ['click', 3, 1], ['click', -1, 2], ['click', -3, -1.5]] },
 	{ clip: 'angolo', before: ANGLE_SIDES, tool: 'Angolo', steps: [['click', 3, -1.5], ['click', -3, -1.5], ['click', 1, 2]] },
-	{ clip: 'pendenza', formulas: [LINE], tool: 'Pendenza', steps: [['click', -2, -2]] }
+	{ clip: 'pendenza', formulas: [LINE], tool: 'Pendenza', steps: [['click', -2, -2]] },
+	{ clip: 'retta-di-regressione', before: [['tool', 'Punto'], ...CLOUD.map(([x, y]) => ['click', x, y])], tool: 'Retta di regressione', steps: [...CLOUD.map(([x, y]) => ['click', x, y]), ['click', ...CLOUD[0]]] },
+	{ clip: 'simmetria-assiale', formulas: ['y=2x+1'], before: shape([-3, 0.5], [-1.5, 0.5], [-2.5, 2]), tool: 'Simmetria', steps: [['click', -2.25, 0.5], ['click', -1, -1]] },
+	{ clip: 'traslazione', before: shape([-3, 0.5], [-1.5, 0.5], [-2.5, 2]), tool: 'Traslazione', steps: [['click', -2.25, 0.5], ['click', -3.5, -0.5], ['click', 0, -2]] },
+	{ clip: 'rotazione', before: shape([0.5, -2], [2, -2], [1.5, -1]), tool: 'Rotazione', steps: [['click', 1.25, -2], ['click', 0, 0], ['type', '90']] },
+	{ clip: 'omotetia', before: shape([-2.5, -1.5], [-1, -1.5], [-2, -0.5]), tool: 'Omotetia', steps: [['click', -1.75, -1.5], ['click', -3.5, -2], ['type', '2']] }
 ];
 
 /** The pointer drawn on the page, which a screenshot would not show, and the ring of a click. */
@@ -85,7 +100,8 @@ const POINTER = `
 const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
 async function film(browser, scene) {
-	const page = await (await browser.newContext({ viewport: { width: 1200, height: 800 }, deviceScaleFactor: 2, colorScheme: 'light', reducedMotion: 'reduce' })).newPage();
+	// tall enough for the whole plane: a field that asks for a number under it would scroll the page to be seen
+	const page = await (await browser.newContext({ viewport: { width: 1200, height: 1200 }, deviceScaleFactor: 2, colorScheme: 'light', reducedMotion: 'reduce' })).newPage();
 	await page.goto(`${BASE}/strumenti/grafico-di-funzione#g=${encodeState(stateOf(scene.formulas ?? [' ']))}`, { waitUntil: 'networkidle' });
 	await page.getByRole('button', { name: 'Rifiuta' }).click().catch(() => {});
 	await page.getByRole('button', { name: 'Chiudi l’elenco delle funzioni' }).click();
