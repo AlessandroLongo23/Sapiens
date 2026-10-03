@@ -17,6 +17,7 @@ import { parseFlashcards } from '../../src/lib/content/flashcards';
 import { parse as parseLatex } from '@cortex-js/compute-engine/latex-syntax';
 import { parsePlotBlock, readPlotBlock } from '../../src/lib/grafico/blocco';
 import { cleanLatex, type Json } from '../../src/lib/grafico/formula';
+import { codeFences, parseCodeBlock } from '../../src/lib/codice/blocco';
 
 const katex = ((katexModule as unknown as { default?: typeof katexModule }).default ?? katexModule) as typeof katexModule;
 
@@ -82,7 +83,9 @@ for (const file of process.argv.slice(2)) {
 		const name = /^%\s*nome:\s*(\S+)/m.exec(m[1])?.[1] ?? 'senza nome';
 		for (const e of plot ? readPlotBlock(plot, (latex) => parseLatex(latex) as Json, cleanLatex).errors : errors) err(`grafico ${name}: ${e}`);
 	}
-	const noTikz = text.replace(/```(tikz|interattivo|grafico)[\s\S]*?```/g, '');
+	// A program: its language and its parts must be read. Whether a solution passes its tests is for scripts/codice/verifica.mts.
+	for (const group of codeFences(text)) for (const e of parseCodeBlock(group.fences).errors) err(`codice: ${e}`);
+	const noTikz = text.replace(/```(tikz|interattivo|grafico|codice)[\s\S]*?```/g, '');
 
 	// Math: display first, then inline, each parsed by KaTeX.
 	let rest = noTikz.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex: string) => {

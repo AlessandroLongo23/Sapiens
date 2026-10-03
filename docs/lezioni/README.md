@@ -78,6 +78,71 @@ automatico qui sotto. Per vederlo prima di pubblicare, con il sito in sviluppo:
 `/prova-grafico/lezione?file=riscritte/87-funzioni-quadratiche.md` (senza `file` apre `prove/grafico.md`, con
 un esempio per ogni pezzo).
 
+## I programmi da eseguire
+
+Un blocco `codice` mette nella lezione l'editor con un programma che lo studente esegue e modifica. Il linguaggio
+sta sulla riga del blocco: `python`, `c` oppure `cpp`. Il programma gira nel browser dello studente.
+
+````
+```codice python
+for i in range(1, 6):
+    print(i, "al quadrato fa", i * i)
+```
+````
+
+Più blocchi uno dopo l'altro, separati solo da righe vuote e ciascuno in un linguaggio diverso, sono lo stesso
+programma in più linguaggi: la pagina ne mostra uno, con una linguetta per linguaggio, e la scelta dello studente
+vale per tutti i programmi e per le visite successive.
+
+Con le prove il blocco è un esercizio. Le righe che cominciano con `%%` aprono le altre parti:
+
+````
+```codice python
+n = int(input())
+somma = 0
+# scrivi qui il ciclo
+
+print(somma)
+%% soluzione
+n = int(input())
+somma = 0
+for i in range(1, n + 1):
+    somma += i
+
+print(somma)
+%% prova
+4
+%% stampa
+10
+%% prova
+100
+%% stampa
+5050
+```
+````
+
+- Prima di ogni `%%` c'è il programma di partenza, quello che lo studente trova nell'editor.
+- `%% soluzione` è un programma che supera le prove; lo studente lo vede con il tasto "Soluzione".
+- `%% prova` apre le righe che il programma legge, `%% stampa` quello che deve scrivere. "Verifica" esegue il
+  programma su ogni prova e confronta l'uscita, senza contare gli spazi in fondo alle righe. Le prove si scrivono in
+  un solo blocco e valgono per tutti i linguaggi.
+- Nelle prove di Python la domanda di `input("...")` non viene stampata, quindi non entra nel confronto. In C e in
+  C++ il programma dell'esercizio non deve scrivere domande prima di leggere.
+- La consegna si scrive nel testo della lezione, prima del blocco.
+
+Cosa c'è: in Python la libreria standard, `turtle` (ridisegnata per il browser), `numpy` e `matplotlib`; in C la
+libreria standard; in C++ la libreria standard senza le eccezioni (`try`, `catch` e `throw` non compilano). Un
+programma si ferma dopo 10 secondi o dopo 100.000 caratteri stampati.
+
+Il controllo automatico qui sotto legge i blocchi. Le soluzioni si eseguono davvero sulle loro prove, nei tre
+linguaggi, con:
+
+```
+node node_modules/jiti/lib/jiti-cli.mjs scripts/codice/verifica.mts docs/lezioni/informatica/riscritte/*.md
+```
+
+Per vedere i blocchi prima di pubblicare, con il sito in sviluppo: `/prova-grafico/lezione?file=prove/codice.md`.
+
 Controllo automatico (formule KaTeX, link, formato dei riquadri, regole di stile):
 
 ```sh

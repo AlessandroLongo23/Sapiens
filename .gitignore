@@ -59,3 +59,8 @@ stickers/anteprima-*
 
 # Sources of the periodic table data, downloaded by scripts/tavola-periodica/build.mjs
 scripts/tavola-periodica/fonti/
+
+# Pyodide runtime, copied from node_modules by scripts/codice/pyodide.mjs after every install
+public/pyodide/
+# The C and C++ compiler, copied from node_modules by scripts/codice/clang.mjs after every install
+public/clang/

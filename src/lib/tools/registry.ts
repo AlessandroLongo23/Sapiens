@@ -970,6 +970,17 @@ export const TOOLS: ToolMeta[] = [
 		keywords: ['da mb a gb', 'da gb a mb', 'kilobyte', 'gigabyte', 'gibibyte', 'unità di misura informatica']
 	},
 	{
+		slug: 'editor-di-codice',
+		title: 'Editor di codice',
+		lead: 'Scrivi un programma in Python, C o C++ ed eseguilo nel browser, senza installare nulla: rispondi alle sue domande nella console, disegna con la tartaruga, traccia grafici.',
+		description: 'Editor di codice online per Python, C e C++: scrivi ed esegui i programmi nel browser, con input da tastiera, tartaruga, numpy e matplotlib. Gratis, senza installare nulla.',
+		category: 'informatica',
+		related: ['convertitore-binario', 'calcolatrice-binaria', 'tabelle-di-verita', 'convertitore-ascii', 'complemento-a-due'],
+		sample: '\\texttt{print("ciao")}',
+		keywords: ['compilatore online', 'python online', 'c++ online', 'compilatore c online', 'interprete python', 'eseguire python', 'programmare', 'ide online', 'turtle', 'tartaruga', 'matplotlib', 'numpy'],
+		ownPage: true
+	},
+	{
 		slug: 'calcolatrice-binaria',
 		title: 'Calcolatrice binaria',
 		lead: 'Somma, sottrazione e moltiplicazione in binario, in colonna, con i riporti e i prestiti.',
