@@ -1,6 +1,6 @@
 import type { PyodideInterface } from 'pyodide';
 import type { PyCallable } from 'pyodide/ffi';
-import type { ChunkKind, FromWorker, RunStatus, ToWorker } from './python';
+import { emitter, type FromRunner, type RunStatus, type ToRunner } from './runtime';
 
 /**
  * Python in the browser: Pyodide in a worker, so a program that never ends cannot freeze the page (the page ends the
@@ -11,13 +11,11 @@ import type { ChunkKind, FromWorker, RunStatus, ToWorker } from './python';
  * the clock at 'started'.
  */
 
-/** A program printing in a loop is stopped here; the page would not survive much more. */
-const OUTPUT_LIMIT = 100_000;
 const MODULES = ['sapiens.py', 'turtle.py', 'sapiens_grafici.py'];
 /** Where the modules are written in Pyodide's file system; it goes first on sys.path. */
 const HOME = '/sapiens';
 
-const post = (message: FromWorker) => self.postMessage(message);
+const post = (message: FromRunner) => self.postMessage(message);
 
 const loading: Promise<{ pyodide: PyodideInterface; esegui: PyCallable }> = (async () => {
 	const origin = self.location.origin;
@@ -59,30 +57,15 @@ async function packages(pyodide: PyodideInterface, id: number, source: string) {
 	}
 }
 
-self.onmessage = async ({ data }: MessageEvent<ToWorker>) => {
+self.onmessage = async ({ data }: MessageEvent<ToRunner>) => {
 	const ready = await loading.catch(() => null);
 	if (!ready) return;
 	const { pyodide, esegui } = ready;
-	const { id, source, inputs, seed } = data;
+	const { id, source, inputs, seed, batch = false } = data;
 	await packages(pyodide, id, source).catch(() => {});
 	post({ type: 'started', id });
-	// The lines already typed were echoed by the first runs: nothing is sent until the last of them has gone by.
-	let replayed = inputs.length;
-	let sent = 0;
-	const emit = (kind: ChunkKind, text: string) => {
-		if (replayed > 0) {
-			if (kind === 'in') replayed--;
-			return true;
-		}
-		// images and drawings have their own limits (sapiens.py, turtle.py)
-		if (kind === 'out' || kind === 'err' || kind === 'in') {
-			sent += text.length;
-			if (sent > OUTPUT_LIMIT) return false;
-		}
-		post({ type: 'chunk', id, kind, text });
-		return true;
-	};
+	const emit = emitter(batch ? 0 : inputs.length, (kind, text) => post({ type: 'chunk', id, kind, text }));
 	const started = performance.now();
-	const status = esegui(source, inputs, seed, emit) as RunStatus;
+	const status = esegui(source, inputs, seed, emit, batch) as RunStatus;
 	post({ type: 'done', id, status, ms: performance.now() - started });
 };

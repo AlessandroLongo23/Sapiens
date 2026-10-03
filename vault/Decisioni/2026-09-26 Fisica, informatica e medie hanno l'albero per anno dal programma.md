@@ -1,12 +1,14 @@
 ---
-stato: decisa
-aggiornato: 2026-09-26
+stato: superata in parte
+aggiornato: 2026-10-03
 tag: [decisione, contenuti]
 ---
 # Fisica, informatica e medie hanno l'albero per anno dal programma
 
 ## Decisione
 Fisica e informatica delle superiori e le materie delle medie hanno un albero di capitoli e lezioni costruito sul programma ministeriale e sui libri più diffusi, con i capitoli divisi per anno come la matematica e la chimica. Le superiori seguono il liceo scientifico: fisica del liceo scientifico, informatica del liceo scientifico delle scienze applicate. Le medie hanno tre materie: matematica, Scienze intera (fisica, chimica, biologia, Terra e astronomia) e Tecnologia intera (compresa l'informatica). L'università resta com'è, se ne parla dopo.
+
+Superata in parte il 3 ottobre 2026 da [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]: Python non è più l'unico linguaggio di informatica, si aggiungono C e C++.
 
 ## Perché
 Alessandro, il 26 settembre 2026: matematica e chimica delle superiori erano organizzate per anno, fisica e informatica no, e le medie avevano solo quattro capitoli di matematica. Vuole finire di organizzare medie e superiori secondo i programmi ministeriali.

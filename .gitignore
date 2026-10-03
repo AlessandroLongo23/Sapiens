@@ -62,3 +62,5 @@ scripts/tavola-periodica/fonti/
 
 # Pyodide runtime, copied from node_modules by scripts/codice/pyodide.mjs after every install
 public/pyodide/
+# The C and C++ compiler, copied from node_modules by scripts/codice/clang.mjs after every install
+public/clang/

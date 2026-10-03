@@ -3,17 +3,19 @@
 import { useEffect, useRef } from 'react';
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
+import { cpp } from '@codemirror/lang-cpp';
 import { python } from '@codemirror/lang-python';
 import { bracketMatching, indentOnInput, indentUnit } from '@codemirror/language';
 import { EditorState } from '@codemirror/state';
 import { EditorView, drawSelection, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
+import type { Language } from './runtime';
 import { vscodeTheme } from './theme';
 
 /**
- * The code editor: CodeMirror with VS Code's colours (theme.ts) and Python's indentation (four spaces, Tab indents, Esc then Tab leaves the
+ * The code editor: CodeMirror with VS Code's colours (theme.ts), for Python, C or C++ (four spaces, Tab indents, Esc then Tab leaves the
  * field). It keeps its own text: `initial` is read once, so a different program means a new `key`. Mod-Enter runs.
  */
-export default function Editor({ initial, label, onChange, onRun }: { initial: string; label: string; onChange: (code: string) => void; onRun: () => void }) {
+export default function Editor({ initial, language, label, onChange, onRun }: { initial: string; language: Language; label: string; onChange: (code: string) => void; onRun: () => void }) {
 	const host = useRef<HTMLDivElement>(null);
 	const handlers = useRef({ onChange, onRun });
 	useEffect(() => {
@@ -47,7 +49,7 @@ export default function Editor({ initial, label, onChange, onRun }: { initial: s
 					closeBrackets(),
 					highlightActiveLine(),
 					highlightActiveLineGutter(),
-					python(),
+					language === 'python' ? python() : cpp(),
 					indentUnit.of('    '),
 					EditorState.tabSize.of(4),
 					vscodeTheme,
@@ -59,7 +61,7 @@ export default function Editor({ initial, label, onChange, onRun }: { initial: s
 			})
 		});
 		return () => view.destroy();
-		// `initial` and `label` are read when the editor is made
+		// `initial`, `language` and `label` are read when the editor is made
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

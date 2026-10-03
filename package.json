@@ -30,11 +30,12 @@
 		"test:smoke": "E2E_SKIP_STRIPE_LISTEN=1 playwright test --project=chromium tests/e2e/smoke.spec.ts",
 		"check:bundle": "node scripts/check-bundle.mjs",
 		"stickers": "node scripts/stickers/build.mjs",
-		"postinstall": "node scripts/codice/pyodide.mjs"
+		"postinstall": "node scripts/codice/pyodide.mjs && node scripts/codice/clang.mjs"
 	},
 	"dependencies": {
 		"@codemirror/autocomplete": "^6.20.3",
 		"@codemirror/commands": "^6.11.1",
+		"@codemirror/lang-cpp": "^6.0.3",
 		"@codemirror/lang-python": "^6.2.1",
 		"@codemirror/language": "^6.12.4",
 		"@codemirror/state": "^6.7.6",
@@ -52,6 +53,7 @@
 		"@tiptap/suggestion": "^3.31.3",
 		"@vercel/analytics": "^2.0.1",
 		"@vercel/speed-insights": "^2.0.0",
+		"@yowasp/clang": "^22.0.0-git20542-10",
 		"3dmol": "^2.5.5",
 		"html-to-image": "^1.11.13",
 		"katex": "^0.18.7",

@@ -110,16 +110,21 @@ def _disegni_in_sospeso():
         turtle._flush()
 
 
-def esegui(source, inputs, seed, emit):
+def esegui(source, inputs, seed, emit, batch=False):
     global _emit, _images
     left = list(inputs.to_py())[::-1]
 
     def leggi(prompt=""):
         # what the turtle drew before the question is on the canvas while the student answers
         _disegni_in_sospeso()
-        sys.stdout.write(str(prompt))
+        # the tests of an exercise compare what the program prints: the question of an input() is not part of it
+        if not batch:
+            sys.stdout.write(str(prompt))
         _svuota()
         if not left:
+            # with no keyboard (the tests of an exercise) the input is over, as for a program fed by a file
+            if batch:
+                raise EOFError("EOF when reading a line")
             raise Attesa()
         line = left.pop()
         emit("in", line + "\n")

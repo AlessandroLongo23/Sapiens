@@ -1,17 +1,18 @@
 import { test, expect, type Page } from '@playwright/test';
 
 /**
- * The code editor on its trial page: Python run in the browser by Pyodide (src/components/codice). Each test loads
- * Python again, a few seconds from a warm cache.
+ * The code editor on its trial page (src/components/codice): Python run in the browser by Pyodide, C and C++
+ * compiled by Clang in WebAssembly. Each test loads its language again, a few seconds from a warm cache.
  */
 const log = (page: Page) => page.getByRole('log', { name: 'Console' });
 const run = (page: Page) => page.getByRole('button', { name: 'Esegui' });
 const answer = (page: Page) => page.getByLabel('Risposta al programma');
 
-async function open(page: Page, example?: string) {
-	await page.goto('/prova-python');
+async function open(page: Page, example?: string, language?: 'C' | 'C++') {
+	await page.goto('/prova-codice');
 	await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
 	await expect(page.locator('.cm-content')).toBeVisible();
+	if (language) await page.getByLabel('Linguaggio').selectOption({ label: language });
 	if (example) await page.getByLabel('Esempio').selectOption({ label: example });
 }
 
@@ -155,5 +156,87 @@ test.describe('python editor', () => {
 		await reply(page, '7');
 		await expect(log(page)).toContainText('7 x 10 = 70');
 		expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+	});
+});
+
+test.describe('c and c++ editor', () => {
+	/** The compiler is 105 MB: the first load of a cold cache is slow. */
+	const COMPILER = 240_000;
+
+	test('a C++ program reads the answers typed in the console', async ({ page }) => {
+		await open(page, 'Saluto', 'C++');
+		await run(page).click();
+		await expect(answer(page)).toBeVisible({ timeout: COMPILER });
+		await reply(page, 'Ada');
+		await reply(page, '2010');
+		await expect(log(page)).toContainText('Programma finito');
+		await expect(log(page)).toContainText('Come ti chiami? Ada');
+		await expect(log(page)).toContainText('Nel 2026 compi 16 anni.');
+		expect((await log(page).innerText()).match(/Come ti chiami/g)).toHaveLength(1);
+	});
+
+	test('srand(time(0)) gives the same numbers while the program is run again for each answer', async ({ page }) => {
+		await open(page, 'Indovina il numero', 'C++');
+		await run(page).click();
+		let low = 1;
+		let high = 100;
+		for (let turns = 1; ; turns++) {
+			expect(turns).toBeLessThanOrEqual(7);
+			const guess = Math.floor((low + high) / 2);
+			await expect(answer(page)).toBeVisible({ timeout: COMPILER });
+			await reply(page, String(guess));
+			await expect.poll(async () => ((await log(page).innerText()).match(/Troppo|Indovinato/g) ?? []).length).toBe(turns);
+			const last = (await log(page).innerText()).match(/Troppo piccolo|Troppo grande|Indovinato/g)!.pop();
+			if (last === 'Troppo piccolo') low = guess + 1;
+			else if (last === 'Troppo grande') high = guess - 1;
+			else break;
+		}
+	});
+
+	test('C: scanf, a compile error with its line, a division by zero in Italian', async ({ page }) => {
+		await open(page, 'Tabellina', 'C');
+		await run(page).click();
+		await expect(answer(page)).toBeVisible({ timeout: COMPILER });
+		await reply(page, '7');
+		await expect(log(page)).toContainText('7 x 10 = 70');
+
+		await page.getByLabel('Esempio').selectOption({ label: 'Un errore di compilazione' });
+		await run(page).click();
+		await expect(log(page)).toContainText("programma.c:4:14: error: expected ';'");
+
+		await page.getByLabel('Esempio').selectOption({ label: 'Una divisione per zero' });
+		await run(page).click();
+		await expect(log(page)).toContainText('Calcolo 10 / 0...');
+		await expect(log(page)).toContainText('divisione intera per zero');
+	});
+
+	test('C++: classes and the standard library; no exceptions, said in Italian', async ({ page }) => {
+		await open(page, 'Classi ed ereditarietà', 'C++');
+		await run(page).click();
+		await expect(log(page)).toContainText('Rettangolo: area 12', { timeout: COMPILER });
+		await expect(log(page)).toContainText('Cerchio: area 3.14159');
+
+		await page.getByLabel('Esempio').selectOption({ label: 'Vettore ordinato' });
+		await run(page).click();
+		await expect(log(page)).toContainText('3 7 19 25 42');
+
+		await write(page, '#include <stdexcept>\nint main() { try { throw std::runtime_error("x"); } catch (...) {} }\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('il C++ non ha le eccezioni');
+	});
+
+	test('a C++ loop that never ends is stopped, and the compiler is still there', async ({ page }) => {
+		await open(page, 'Un ciclo che non finisce', 'C++');
+		await run(page).click();
+		await expect(log(page)).toContainText('Fermato: il programma ha stampato troppo', { timeout: COMPILER });
+
+		await write(page, 'int main() { while (true) {} }\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('Fermato dopo 10 secondi', { timeout: 30_000 });
+
+		await write(page, '#include <iostream>\nint main() { std::cout << 6 * 7 << std::endl; }\n');
+		await run(page).click();
+		// no download this time: only the compilation
+		await expect(log(page)).toContainText('42', { timeout: 15_000 });
 	});
 });

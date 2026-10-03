@@ -75,17 +75,18 @@ const chrome = EditorView.theme({
 	'.cm-bracket-2': { color: v('bracket3') }
 });
 
-/** Python's TextMate scopes in VS Code, on the tags of the Lezer grammar. */
+/** The TextMate scopes of Python, C and C++ in VS Code, on the tags of the Lezer grammars. */
 const highlight = HighlightStyle.define([
-	{ tag: [tags.controlKeyword, tags.moduleKeyword, tags.keyword], color: v('keyword') },
-	{ tag: [tags.definitionKeyword, tags.operatorKeyword, tags.bool, tags.null], color: v('storage') },
+	{ tag: [tags.controlKeyword, tags.moduleKeyword, tags.keyword, tags.processingInstruction], color: v('keyword') },
+	{ tag: [tags.definitionKeyword, tags.operatorKeyword, tags.modifier, tags.bool, tags.null, tags.self, tags.standard(tags.typeName), tags.special(tags.name)], color: v('storage') },
+	{ tag: [tags.typeName, tags.namespace], color: v('type') },
 	{ tag: [tags.function(tags.variableName), tags.function(tags.definition(tags.variableName)), tags.function(tags.propertyName)], color: v('function') },
 	{ tag: tags.definition(tags.className), color: v('type') },
 	{ tag: [tags.variableName, tags.propertyName], color: v('variable') },
-	{ tag: [tags.string, tags.special(tags.string)], color: v('string') },
+	{ tag: [tags.string, tags.special(tags.string), tags.character], color: v('string') },
 	{ tag: tags.escape, color: v('escape') },
 	{ tag: tags.number, color: v('number') },
-	{ tag: tags.lineComment, color: v('comment') },
+	{ tag: tags.comment, color: v('comment') },
 	{ tag: tags.meta, color: v('function') }
 ]);
 
