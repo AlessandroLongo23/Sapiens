@@ -45,6 +45,9 @@ La build di produzione ha mostrato due difetti che in sviluppo non c'erano:
 
 Verifiche: 65 prove su cinque motori contro la build di produzione in locale, poi 52 prove su quattro motori contro `sapiens-edu.vercel.app`. Su Vercel il compilatore (75 MB) viaggia compresso in 21 MB, più 4 MB di intestazioni e librerie; un programma C++ parte in 10-15 secondi a freddo con la rete vera.
 
+## Ordine tra i branch
+Alla fine della sessione, su richiesta di Alessandro: cancellati in locale e su GitHub i branch già uniti (`editor-codice`, `informatica-primo-anno`, `codice-senza-apici`, `nota-informatica-in-produzione`, `tavola-periodica`, `orbitali-in-produzione`, `meno-scritture-isr`). Restano `master` e `pigreko`, che non è unito e ha la sua cartella di lavoro. Il laboratorio resta lavoro in corso, non committato, nella cartella principale.
+
 ## Decisioni
 - [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]
 

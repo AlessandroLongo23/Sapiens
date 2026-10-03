@@ -44,7 +44,9 @@ Un dollaro dentro il codice in linea (il `$B$2` dei riferimenti assoluti) veniva
 - Le pagine delle materie (`src/lib/content/subject-copy.ts`) non sono state toccate.
 
 ## Stato
-Pubblicato il 3 ottobre 2026. Alessandro, dopo aver visto il lotto scritto, ha chiesto di chiuderlo subito dopo l'editor di codice ([[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]). `scripts/lezioni/publish.mts --dir docs/lezioni/informatica --apply` ha scritto nel database teoria, formulario e flashcard delle 32 lezioni (96 testi) e caricato nel bucket le 62 figure compilate in SVG. Il codice (generatori, collegamento degli esercizi, correzione del dollaro) entra in master con il branch `informatica-primo-anno`, dopo l'editor di codice (PR #30).
+Pubblicato il 3 ottobre 2026. Alessandro, dopo aver visto il lotto scritto, ha chiesto di chiuderlo subito dopo l'editor di codice ([[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]). `scripts/lezioni/publish.mts --dir docs/lezioni/informatica --apply` ha scritto nel database teoria, formulario e flashcard delle 32 lezioni (96 testi) e caricato nel bucket le 62 figure compilate in SVG. Il codice (generatori, collegamento degli esercizi, correzione del dollaro) è in master e in produzione con la PR #31, dopo l'editor di codice (PR #30).
+
+Controllato su `sapiens-edu.vercel.app` a 390 px: le 32 lezioni e le 32 schede di esercizi si aprono, senza errori di KaTeX e senza scorrimento laterale, con 58 figure caricate. Sul sito il codice in linea compariva con gli apici inversi attorno, messi dallo stile `prose` di Tailwind: tolti con la PR #32.
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Domande per Andrea]]
