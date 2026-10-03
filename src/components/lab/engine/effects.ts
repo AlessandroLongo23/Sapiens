@@ -415,7 +415,8 @@ export class Grains {
 		this.mesh.visible = n > 0;
 		if (!n) return;
 		const prof = this.liquid.profile;
-		const y0 = prof.bottom;
+		// on the bottom, or on the bed of what has settled there
+		const y0 = Math.max(prof.bottom, this.liquid.bedTop());
 		const top = Math.max(y0 + 0.002, this.liquid.localLevel());
 		for (let i = 0; i < n; i++) {
 			// the middle turns a little faster than near the wall, where the glass holds it back

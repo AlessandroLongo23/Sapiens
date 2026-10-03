@@ -29,6 +29,12 @@ export type Shape = {
 	grip: number;
 	/** Power grasp round a cylinder, a pinch of something thin, or a pen's tripod grip (thumb, index, middle). */
 	kind: 'power' | 'pinch' | 'pen';
+	/**
+	 * A button the thumb works, on the outside of the surface, in the object's frame (a gas lighter's trigger). The
+	 * hand then has one place round the object, the one that puts the thumb's pad on the button: held like a wand, the
+	 * four fingers under it and the thumb on top.
+	 */
+	button?: [number, number, number];
 };
 
 /** A fixed hold for the odd shapes: palm point, fingers and palm normal in the object's frame (right hand). */
@@ -51,7 +57,7 @@ export const SHAPES: Record<string, Shape> = {
 	Thermometer: cyl(0.0035, 0, 0.3, 0.22, 'pen'),
 	Pipette: { radius: (y) => (y < 0.26 ? 0.0096 : 0.0035), y0: 0.26, y1: 0.46, grip: 0.425, kind: 'pinch' },
 	Spatula: cyl(0.0045, 0.03, 0.2, 0.15, 'pen'),
-	Lighter: cyl(0.0125, 0.12, 0.215, 0.168),
+	Lighter: { ...cyl(0.0125, 0.12, 0.215, 0.168), button: [0, 0.135, 0.023] },
 	Funnel: cyl(0.0036, -0.07, 0, -0.03, 'pinch'),
 	BunsenCollar: cyl(0.0078, 0.021, 0.04, 0.03, 'pinch')
 };

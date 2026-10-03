@@ -12,8 +12,11 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
  * be sorted one by one.
  */
 
-/** Parts whose own transform changes while the page runs, inside objects that otherwise stand still. */
-const MOVING_PARTS = new Set(['BunsenCollar', 'GasTapHandle', 'ThermoColumn', 'ClockHour', 'ClockMinute', 'ClockSecond', 'FilterPaper', 'CuOLid']);
+/**
+ * Parts whose own transform changes while the page runs, inside objects that otherwise stand still; and the notebook,
+ * which the crosshair must find on the bench and which leaves it while it is read.
+ */
+const MOVING_PARTS = new Set(['BunsenCollar', 'GasTapHandle', 'ThermoColumn', 'ClockHour', 'ClockMinute', 'ClockSecond', 'FilterPaper', 'CuOLid', 'Notebook']);
 /** Kept whole: looked up by name or material after loading, or a surface to put things on that is small anyway. */
 const KEEP_WHOLE = new Set(['Tripod', 'Lighting', 'HeatMat']);
 /** Below this radius a mesh does not shape a visible shadow: labels, graduations, small caps. */

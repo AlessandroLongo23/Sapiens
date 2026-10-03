@@ -42,7 +42,9 @@ function fields(name: string, type: GripType): Field[] {
 		{ key: 'thumbDrop', label: "Pollice sotto l'indice", min: -0.03, max: 0.03, step: 0.001, unit: 'mm', scale: 1000, only: ['precision', 'power'] },
 		{ key: 'fan', label: 'Ventaglio delle dita', min: -15, max: 25, step: 1, unit: '°', only: ['precision', 'power'] },
 		{ key: 'fingers', label: 'Dita che toccano', min: 1, max: 4, step: 1, unit: '', only: ['precision', 'power'] },
-		{ key: 'tuck', label: 'Chiusura delle altre dita', min: 0, max: 1, step: 0.05, unit: '' }
+		{ key: 'tuck', label: 'Chiusura delle altre dita', min: 0, max: 1, step: 0.05, unit: '' },
+		// an object with a button: the thumb puts the hand, and this turns the wrist round the object
+		...(s?.button && !tri ? [{ key: 'turn' as const, label: "Polso girato attorno all'oggetto", min: -180, max: 180, step: 1, unit: '°' }] : [])
 	].filter((f) => !f.only || f.only.includes(type)) as Field[];
 }
 
@@ -286,7 +288,7 @@ export function HandLab() {
 				</select>
 				<div className="mt-3 space-y-2.5">
 					{fields(pose.name, pose.spec.type).map((f) => (
-						<Slider key={f.key} f={f} value={pose.spec[f.key] as number} onChange={(v) => setSpec({ [f.key]: v })} />
+						<Slider key={f.key} f={f} value={(pose.spec[f.key] as number | undefined) ?? 0} onChange={(v) => setSpec({ [f.key]: v })} />
 					))}
 				</div>
 				<div className="mt-4 space-y-2.5 border-t border-ink-100 pt-3">

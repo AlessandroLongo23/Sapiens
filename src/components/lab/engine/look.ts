@@ -286,8 +286,10 @@ export class Look {
 				varying vec3 vV;
 				varying float vDist;
 				void main() {
-					float along = vUvw.x;
-					float across = vUvw.y;
+					// clamped: with multisampling a varying is extrapolated past the card's edge, and the pow below of a
+					// negative number is a NaN, which the bloom then spreads over the screen as black rectangles
+					float along = clamp(vUvw.x, 0.0, 1.0);
+					float across = clamp(vUvw.y, 0.0, 1.0);
 					float edge = smoothstep(0.0, 0.25, across) * smoothstep(1.0, 0.75, across);
 					float fade = pow(1.0 - along, 1.6) * smoothstep(0.0, 0.04, along);
 					float facing = pow(abs(dot(vN, vV)), 0.7);

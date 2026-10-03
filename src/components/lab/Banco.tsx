@@ -7,7 +7,7 @@ import { LOOK } from './engine/look';
 import { SHAPES } from './engine/grasp';
 import { Notebook } from './engine/notebook';
 import { Banco as BancoWork, type BancoSnapshot } from './engine/banco';
-import { applySettings, Key, loadSettings, Prompt, Settings, type LabSettings } from './hud';
+import { applySettings, Controls, EnterHint, loadSettings, Prompt, Settings, Tip, type LabSettings } from './hud';
 
 const MODEL = '/lab/banco.glb';
 
@@ -16,12 +16,12 @@ const noSnap = () => null;
 
 /**
  * The vertical slice of the lab as a game: nothing on screen but the scene, a dot for a crosshair, the name of what
- * it points at and a line of subtitles. What to do is in the notebook (Q); Esc pauses.
+ * it points at and a line of subtitles. What to do is in the notebook, which lies on the bench (Q or E on it); Esc
+ * pauses.
  */
 export function Banco() {
 	const host = useRef<HTMLDivElement>(null);
 	const sceneRef = useRef<LabScene | null>(null);
-	const notebookRef = useRef<Notebook | null>(null);
 	const [work, setWork] = useState<BancoWork | null>(null);
 	const [progress, setProgress] = useState(0);
 	const [error, setError] = useState('');
@@ -29,7 +29,6 @@ export function Banco() {
 	const [locked, setLocked] = useState(false);
 	const [run, setRun] = useState(0);
 	const [tip, setTip] = useState(true);
-	const [reading, setReading] = useState(false);
 	const snap = useSyncExternalStore<BancoSnapshot | null>(work?.subscribe ?? noSub, work?.getSnapshot ?? noSnap, noSnap);
 
 	useEffect(() => {
@@ -45,17 +44,24 @@ export function Banco() {
 		}
 		sceneRef.current = scene;
 		applySettings(scene.player, loadSettings());
-		scene.onLock = setLocked;
+		// a controller's button enters by itself (fps.ts), once the lab is loaded
+		scene.player.canEnter = false;
+		scene.onLock = (on) => {
+			setLocked(on);
+			if (on) setStarted(true);
+		};
 		const family = getComputedStyle(document.documentElement).getPropertyValue('--font-caveat').trim() || 'cursive';
 		Promise.all([scene.load(MODEL, (f) => alive && setProgress(f * 0.95)), document.fonts.load(`40px ${family}`), document.fonts.load(`bold 40px ${family}`)])
 			.then(() => {
 				if (!alive) return;
 				const nb = new Notebook(scene.camera, family);
 				scene.blockers.push(nb.group);
-				notebookRef.current = nb;
+				// raised from the bench by the student (Q or E on it), or by the work at the end
+				nb.onToggle = (open) => open && setTip(false);
 				const w = new BancoWork(scene, nb);
 				scene.start();
 				if (process.env.NODE_ENV !== 'production') (window as unknown as { __lab: unknown }).__lab = { scene, work: w, free: w.free, notebook: nb, LOOK, SHAPES };
+				scene.player.canEnter = true;
 				setProgress(1);
 				setWork(w);
 			})
@@ -64,26 +70,9 @@ export function Banco() {
 			alive = false;
 			scene.dispose();
 			sceneRef.current = null;
-			notebookRef.current = null;
 			setWork(null);
 		};
 	}, [run]);
-
-	// Q (or Tab) raises and lowers the notebook
-	useEffect(() => {
-		const onKey = (e: KeyboardEvent) => {
-			if (e.code !== 'KeyQ' && e.code !== 'Tab') return;
-			if (!sceneRef.current?.player.locked) return;
-			e.preventDefault();
-			const nb = notebookRef.current;
-			if (!nb) return;
-			nb.toggle();
-			setReading(nb.open);
-			setTip(false);
-		};
-		window.addEventListener('keydown', onKey);
-		return () => window.removeEventListener('keydown', onKey);
-	}, []);
 
 	useEffect(() => {
 		if (!started) return;
@@ -100,16 +89,10 @@ export function Banco() {
 		setProgress(0);
 		setStarted(false);
 		setTip(true);
-		setReading(false);
 		setRun((r) => r + 1);
 	};
 
 	const paused = started && !locked;
-	// at the end the notebook comes up by itself
-	const done = !!snap?.done;
-	useEffect(() => {
-		if (done) queueMicrotask(() => setReading(true));
-	}, [done]);
 
 	return (
 		<div className="fixed inset-0 overflow-hidden bg-[#2a2638] select-none">
@@ -120,7 +103,7 @@ export function Banco() {
 					<div className={`size-[5px] rounded-full bg-white/90 shadow-[0_0_4px_rgba(0,0,0,0.5)] transition-transform ${snap?.actions.length ? 'scale-150' : ''}`} />
 				</div>
 			)}
-			{started && locked && snap && !reading && (snap.target || snap.actions.length > 0) && <Prompt target={snap.target} actions={snap.actions} />}
+			{started && locked && snap && (snap.target || snap.actions.length > 0) && <Prompt target={snap.target} actions={snap.actions} />}
 
 			{started && locked && snap?.message && (
 				<div key={snap.message.text} className="pointer-events-none absolute bottom-[9%] left-1/2 z-20 max-w-[640px] -translate-x-1/2 text-center">
@@ -129,12 +112,7 @@ export function Banco() {
 			)}
 
 			{started && locked && tip && (
-				<div className="pointer-events-none absolute bottom-6 left-1/2 z-20 -translate-x-1/2 text-[13px] tracking-wide text-white/75 [text-shadow:0_1px_3px_rgba(0,0,0,0.7)]">
-					<Key>Q</Key> apri il quaderno <span className="mx-2 text-white/40">·</span> <Key>W</Key>
-					<Key>A</Key>
-					<Key>S</Key>
-					<Key>D</Key> muoviti <span className="mx-2 text-white/40">·</span> <Key>Esc</Key> pausa
-				</div>
+				<Tip />
 			)}
 
 			{paused && <Pause apply={(st) => sceneRef.current && applySettings(sceneRef.current.player, st)} onResume={() => sceneRef.current?.player.lock()} onRestart={restart} done={!!snap?.done} />}
@@ -156,14 +134,14 @@ function Title({ progress, ready, error, onStart }: { progress: number; ready: b
 				{error ? (
 					<p className="max-w-md text-sm text-[#ffe0e0]">{error}</p>
 				) : ready ? (
-					<span className="animate-pulse text-[15px] tracking-wide text-[#fff6e8]/90">Clicca per entrare</span>
+					<EnterHint />
 				) : (
 					<div className="h-[3px] w-56 overflow-hidden rounded-full bg-white/20">
 						<div className="h-full rounded-full bg-[#fff1dc]/85 transition-[width] duration-300" style={{ width: `${Math.round(progress * 100)}%` }} />
 					</div>
 				)}
 			</div>
-			<div className="absolute bottom-6 text-xs text-[#fff1dc]/55">Un prototipo di Sapiens · da computer, con mouse e tastiera</div>
+			<div className="absolute bottom-6 text-xs text-[#fff1dc]/55">Un prototipo di Sapiens · da computer, con mouse e tastiera o con un controller</div>
 		</button>
 	);
 }
@@ -186,20 +164,7 @@ function Pause({ apply, onResume, onRestart, done }: { apply: (s: LabSettings) =
 					</Link>
 				</nav>
 				<Settings apply={apply} />
-				<dl className="mt-10 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[13px] text-[#fff1dc]/75">
-					<dt className="font-semibold text-[#fff1dc]/90">W A S D</dt>
-					<dd>muoviti · Shift corri · C abbassati</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Mouse</dt>
-					<dd>guarda intorno · Z avvicina lo sguardo</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Clic sinistro</dt>
-					<dd>la mano sinistra prende o appoggia</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Clic destro</dt>
-					<dd>la mano destra prende o appoggia</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">F</dt>
-					<dd>usa insieme quello che hai in mano</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Q</dt>
-					<dd>il quaderno</dd>
-				</dl>
+				<Controls uses="usa quello che tiene: mescola, versa nell'altra mano" />
 			</div>
 		</div>
 	);

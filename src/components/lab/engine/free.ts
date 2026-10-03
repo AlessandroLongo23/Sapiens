@@ -1,31 +1,43 @@
+import { onDevice, tell } from './pad';
 import { Box3, Color, Matrix4, Mesh, Object3D, Quaternion, Vector3 } from 'three';
 import type { LabScene } from './scene';
 import { canHold, SHAPES, type Side } from './grasp';
-import { Hands, holdFrame, PEN_PRONATION, penHeld } from './hands';
+import { Hands, holdFrame, PEN_PRONATION, penHeld, toolHold } from './hands';
 import { ease, orient, placePoint, type Pose } from './anim';
 import { Ghost } from './ghost';
 import type { Contents, LiquidBody } from './liquid';
+import type { Notebook } from './notebook';
 
 /*
- * The free lab: no steps, two hands. The left mouse button works with the left hand and the right button with the
- * right hand: on an object with an empty hand it takes it, while holding something on a surface it puts it down.
- * F uses the two things together: stir with the rod in the other hand's container, or pour one container into the
- * other. Everything moves the hands (hands.ts); objects hang from them.
+ * The free lab: no steps, two hands, and one rule for the inputs.
+ *
+ * The mouse buttons take and put down: the left button with the left hand, the right button with the right hand. On
+ * an object with an empty hand it takes it, while holding something on a surface it puts it down. Nothing else.
+ * Both happen at once, with no reach: the object is in the hand, or on the bench where its ghost was.
+ *
+ * Q and E use the hands, Q the left and E the right: the tool a hand holds on what the crosshair points at (the
+ * pipette in the acid, the lighter on the burner), or a free hand on a control (the gas tap, the goggles). With a
+ * thing in each hand and both of them able to act on the other, Q is the left one's action and E the right one's
+ * (two containers: Q pours the left into the right, E the right into the left); when only one action is possible
+ * (a rod and a container), either key does it. The notebook lies on the bench: Q or E on it raises it to read.
+ *
+ * Everything moves the hands (hands.ts); objects hang from them.
  */
 
 /** Something the student can do now, and with which input: what the prompt under the crosshair shows. */
 export type Action = {
-	/** A mouse button (the hand), F, or the mouse wheel. */
-	input: 'L' | 'R' | 'F' | 'W';
-	verb: 'grab' | 'place' | 'pour' | 'stir' | 'light' | 'turn' | 'wear' | 'scoop' | 'insert' | 'fold' | 'wait' | 'draw' | 'confirm';
+	/** A mouse button (a hand takes or puts down), Q or E (the left or the right hand uses), the mouse wheel, or the R key. */
+	input: 'L' | 'R' | 'Q' | 'E' | 'W' | 'KeyR';
+	verb: 'grab' | 'place' | 'pour' | 'stir' | 'light' | 'turn' | 'wear' | 'scoop' | 'insert' | 'fold' | 'wait' | 'draw' | 'confirm' | 'read';
 	text: string;
 	/** Shown, but it cannot be done (the spot is too far or taken). */
 	blocked?: boolean;
 };
 
 /**
- * An action the work on top of the free lab adds (the experiment): a tool in hand used on what the crosshair points
- * at, a control to click or turn. `run` is what a press does (a blocked one says `why`), `wheel` what the wheel does.
+ * An action on Q, E or the wheel: a tool in hand used on what the crosshair points at, a control worked by a free
+ * hand, the two hands' things used together. `run` is what a press does (a blocked one says `why`), `wheel` what the
+ * wheel does. The work on top of the free lab (the experiment) adds its own.
  */
 export type Use = Action & {
 	run?: () => Promise<void> | void;
@@ -36,6 +48,10 @@ export type Use = Action & {
 	/** Hides the usual grab and put down (a hand is busy with something, as filling a pipette). */
 	exclusive?: boolean;
 };
+
+/** The key that uses a hand: Q the left, E the right. */
+export const keyOf = (side: Side): 'Q' | 'E' => (side === 'L' ? 'Q' : 'E');
+const KEYS = ['Q', 'E'] as const;
 
 export type FreeSnapshot = {
 	left: string | null;
@@ -48,14 +64,26 @@ export type FreeSnapshot = {
 	actions: Action[];
 };
 
-type Placement = { side: Side; node: Object3D; position: Vector3; quaternion: Quaternion; ok: boolean; why: string };
+type Placement = { side: Side; node: Object3D; position: Vector3; quaternion: Quaternion; ok: boolean; why: string; on?: Object3D };
 
 const CONTAINERS = new Set(['Beaker', 'AcidBeaker', 'ConicalFlask', 'CuOJar', 'EvapDish']);
 const FIXED = new Set(['GasTapHandle', 'BunsenCollar']);
+/**
+ * What cannot stand on a bench, with the radius of the end it lies on: the funnel stands only in the flask, and on the
+ * bench it lies on its rim and the end of its stem.
+ */
+const LYING: Record<string, number> = { Funnel: 0.0033 };
+/** What is put down into the mouth of a container and rests there, with the thickness of its wall, metres. */
+const SEATED: Record<string, number> = { Funnel: 0.0012 };
 /** From the upright shoulder (avatar.reachOrigin): the arm, and the torso leaning over the bench up to 45°. */
 export const REACH = 1.05;
 /** A click (or F) given while the hands are still busy counts if the action ends within this many seconds. */
 const BUFFER = 0.4;
+/** Seconds the hands are busy while one comes up with what it took, and while it goes down after putting down. */
+const RAISE = 0.25;
+const LOWER = 0.12;
+/** The notebook as it lies on the bench (build_lab.py). */
+const BOOK = 'Notebook';
 const UP = new Vector3(0, 1, 0);
 
 export class FreeLab {
@@ -74,25 +102,40 @@ export class FreeLab {
 	private last: Side = 'R';
 	private aim: { target: string | null; actions: Action[] } = { target: null, actions: [] };
 	private offered: Use[] = [];
-	/** A click or F given while the hands were busy, kept for a moment: it runs as soon as they are free. */
-	private queued: { input: Side | 'F'; target: Object3D | null; age: number } | null = null;
+	/**
+	 * How far what each hand holds is turned, about the vertical, from the way it would be put down (radians): the
+	 * wheel and R turn the one whose ghost is showing. Back to zero when the hand takes something.
+	 */
+	private spin: Record<Side, number> = { L: 0, R: 0 };
+	/** The hand whose object's ghost is showing. */
+	private placing: Side | null = null;
+	/** A click or a key given while the hands were busy, kept for a moment: it runs as soon as they are free. */
+	private queued: { input: Side | 'Q' | 'E'; target: Object3D | null; age: number } | null = null;
 	/** The actions the work on top adds, for what the crosshair points at (null: nothing). */
 	uses: (hovered: Object3D | null) => Use[] = () => [];
+	/** What the work on top lets the thing in `side`'s hand do to the one in the other hand, or null. */
+	together: (side: Side, mine: Object3D, other: Object3D) => Omit<Use, 'input'> | null = () => null;
 	/** Why an object cannot be taken now (hot, the goggles are not on), or null. */
 	refuse: (o: Object3D) => string | null = () => null;
 
-	constructor(private s: LabScene) {
+	constructor(
+		private s: LabScene,
+		private notebook: Notebook | null = null
+	) {
 		s.onPress = (button, target) => this.press(button === 0 ? 'L' : 'R', target);
-		s.onCombine = () => this.combine();
+		s.onUse = (side) => this.key(side);
 		s.onWheel = (d) => this.wheel(d);
+		s.onTurn = (dir = 1) => this.turn((dir * Math.PI) / 4);
 		// the body stays still while the hands work
 		s.handsBusy = () => this.busy;
 		s.onUpdate = (dt) => this.update(dt);
 		// only what a free hand can take, or what can be used, now is highlighted
-		s.canHover = (o) => this.takeable(o) !== null || (!this.busy && this.uses(o).length > 0);
+		s.canHover = (o) => this.takeable(o) !== null || (!this.busy && this.usesAt(o).length > 0);
 		s.setTargets([]);
 		s.scene.add(this.ghost.group);
 		this.snap = this.build();
+		// the texts name the inputs of the device in use
+		onDevice(() => this.emit());
 	}
 
 	subscribe = (fn: () => void) => {
@@ -119,13 +162,13 @@ export class FreeLab {
 	private build(): FreeSnapshot {
 		const L = this.hands.held('L')?.name;
 		const R = this.hands.held('R')?.name;
-		let hint = 'Punta un oggetto: clic sinistro lo prende con la mano sinistra, clic destro con la destra.';
+		let hint = 'Punta un oggetto: {L} lo prende con la mano sinistra, {R} con la destra.';
 		if (L && R) {
-			if ((L === 'GlassRod' && CONTAINERS.has(R)) || (R === 'GlassRod' && CONTAINERS.has(L))) hint = 'Premi F per mescolare con la bacchetta.';
-			else if (CONTAINERS.has(L) && CONTAINERS.has(R)) hint = "Premi F per versare da una mano nell'altra.";
-			else hint = 'Punta il banco e fai clic per appoggiare quello che hai in mano.';
-		} else if (L || R) hint = "Prendi un'altra cosa con la mano libera, o punta il banco e fai clic per appoggiare.";
-		return { left: this.label('L'), right: this.label('R'), message: this.message, busy: this.busy, hint, target: this.aim.target, actions: this.aim.actions };
+			if ((L === 'GlassRod' && CONTAINERS.has(R)) || (R === 'GlassRod' && CONTAINERS.has(L))) hint = 'Premi {Q} o {E} per mescolare con la bacchetta.';
+			else if (CONTAINERS.has(L) && CONTAINERS.has(R)) hint = 'Premi {Q} per versare dalla sinistra nella destra, {E} dalla destra nella sinistra.';
+			else hint = 'Punta il banco e {clic} per appoggiare quello che hai in mano.';
+		} else if (L || R) hint = "Prendi un'altra cosa con la mano libera, o punta il banco e {clic} per appoggiare.";
+		return { left: this.label('L'), right: this.label('R'), message: this.message, busy: this.busy, hint: tell(hint), target: this.aim.target, actions: this.aim.actions };
 	}
 
 	/** The free hands that can take `o` now (in reach, not already held), or null. */
@@ -153,29 +196,180 @@ export class FreeLab {
 		return b;
 	}
 
+	private own = new Map<Object3D, Box3>();
+
+	/**
+	 * An object's bounds in its own frame from what is its own: not what stands in it or has become part of it (a
+	 * thermometer in a beaker, the paper in the funnel).
+	 */
+	private ownBox(o: Object3D) {
+		let b = this.own.get(o);
+		if (!b) {
+			b = new Box3();
+			o.updateMatrixWorld(true);
+			const inv = o.matrixWorld.clone().invert();
+			const mine = (c: Object3D) => {
+				for (let p: Object3D | null = c; p && p !== o; p = p.parent) if (p.userData.label || p.userData.partOf) return false;
+				return true;
+			};
+			o.traverse((c) => {
+				const m = c as Mesh;
+				if (!m.isMesh || m.userData.noPick || !mine(m)) return;
+				m.geometry.computeBoundingBox();
+				b!.union(m.geometry.boundingBox!.clone().applyMatrix4(new Matrix4().multiplyMatrices(inv, m.matrixWorld)));
+			});
+			this.own.set(o, b);
+		}
+		return b;
+	}
+
 	/** Its bounds in the world at a pose. */
 	private boxAt(o: Object3D, position: Vector3, quaternion: Quaternion) {
 		return this.localBox(o).clone().applyMatrix4(new Matrix4().compose(position, quaternion, new Vector3(1, 1, 1)));
+	}
+
+	/**
+	 * How an object that widens along its axis (local Y) lies on a surface: on its rim and on its narrow end, of radius
+	 * `r`. The rotation from upright, and how high its origin then is.
+	 */
+	private lying(o: Object3D, r: number) {
+		const b = this.ownBox(o);
+		const R = Math.max(b.max.x, b.max.z);
+		const tilt = Math.atan2(R - r, b.max.y - b.min.y);
+		const axis = new Vector3(Math.cos(tilt), Math.sin(tilt), 0);
+		return { quaternion: new Quaternion().setFromUnitVectors(UP, axis), height: r * Math.cos(tilt) - b.min.y * Math.sin(tilt) };
+	}
+
+	/**
+	 * How a funnel rests in a container: both are solids of revolution on the same axis, so it goes down until its
+	 * outside meets the container's inside. From the two profiles: the lowest height of its origin above the
+	 * container's at which, at every height, it is no wider than the cavity. It holds if what stops it is the cone on
+	 * the mouth, or the stem's end on the bottom with the cone too wide for the mouth (a short beaker); if the whole
+	 * of it goes in, the mouth is too wide for it; standing on its stem with the cone above the rim, the container is too low; and
+	 * stopped at the stem the mouth is too narrow.
+	 */
+	private seat(node: Object3D, host: Object3D): { height: number; why: string } | null {
+		const key = `${node.name}>${host.name}`;
+		if (!this.seats.has(key)) this.seats.set(key, this.seatOf(node, host));
+		return this.seats.get(key)!;
+	}
+
+	private seats = new Map<string, { height: number; why: string } | null>();
+
+	private seatOf(node: Object3D, host: Object3D): { height: number; why: string } | null {
+		const mine = this.s.liquids.get(node.name)?.profile;
+		const cavity = this.s.liquids.get(host.name)?.profile;
+		if (!mine || !cavity) return null;
+		const wall = SEATED[node.name];
+		const STEP = 0.0005;
+		// the first place, from its lowest point up, where it is wider than the cavity; null if it fits
+		const stuck = (h: number) => {
+			for (let t = mine.bottom; t <= mine.top; t += 0.001) {
+				const y = h + t;
+				if (y > cavity.top) break;
+				if (y < cavity.bottom || mine.radiusAt(t) + wall > cavity.radiusAt(y)) return t;
+			}
+			return null;
+		};
+		const lowest = cavity.bottom - mine.bottom + STEP;
+		let h = lowest;
+		let at: number | null = null;
+		for (; h < cavity.top - mine.bottom; h += STEP) {
+			const t = stuck(h);
+			if (t === null) break;
+			at = t;
+		}
+		// `at` is where it touched just before it fitted. Nowhere: it went all the way down and stands on its stem's
+		// end, which holds only if its wide end is too wide to follow (the rim then keeps it upright)
+		const fallsIn = mine.radiusAt(mine.top) + wall <= cavity.radiusAt(cavity.top);
+		// and if the cone starts above the rim, only the stem is in the mouth and nothing keeps it upright
+		const why = at === null ? (fallsIn ? 'Bocca troppo larga' : h > cavity.top + 0.004 ? 'Bocca troppo bassa' : '') : at < 0.002 ? 'Bocca troppo stretta' : '';
+		return { height: h, why };
+	}
+
+	/** The container a seated thing (the funnel) rests in, if any. */
+	hostOf(node: Object3D): Object3D | null {
+		if (!(node.name in SEATED) || this.s.held.has(node)) return null;
+		const p = node.getWorldPosition(new Vector3());
+		for (const name of this.s.liquids.keys()) {
+			const o = this.s.nodes.get(name);
+			if (!o || o === node || !this.s.rest.has(name)) continue;
+			const s = this.seat(node, o);
+			if (!s) continue;
+			const q = o.getWorldPosition(new Vector3());
+			if (Math.hypot(p.x - q.x, p.z - q.z) < 0.012 && Math.abs(p.y - q.y - s.height) < 0.02) return o;
+		}
+		return null;
+	}
+
+	/** What rests in a container's mouth, if anything. */
+	private seatedOn(host: Object3D): Object3D | null {
+		for (const name of Object.keys(SEATED)) {
+			const n = this.s.nodes.get(name);
+			if (n && this.hostOf(n) === host) return n;
+		}
+		return null;
 	}
 
 	/** Where the object in `side`'s hand would go on the surface the crosshair points at, and whether it can. */
 	private placement(side: Side): Placement | null {
 		const node = this.hands.held(side);
 		if (!node) return null;
+		// a funnel on the container the crosshair is on: in its mouth, where the two shapes meet
+		if (node.name in SEATED) {
+			const host = this.s.under();
+			const s = host && host !== node && !this.s.held.has(host) && !host.userData.partOf ? this.seat(node, host) : null;
+			if (host && s) {
+				const rest = this.s.rest.get(node.name);
+				const quaternion = new Quaternion().setFromAxisAngle(UP, this.s.player.yaw);
+				if (rest) quaternion.multiply(rest.quaternion);
+				const position = host.getWorldPosition(new Vector3()).add(new Vector3(0, s.height, 0));
+				const far = position.distanceTo(this.s.avatar.reachOrigin(side)) > REACH;
+				const tilted = UP.clone().applyQuaternion(host.getWorldQuaternion(new Quaternion())).y < 0.99;
+				const taken = this.seatedOn(host) !== null;
+				return { side, node, position, quaternion, on: host, ok: !far && !tilted && !taken && !s.why, why: far ? 'Troppo lontano' : tilted || taken ? 'Occupato' : s.why };
+			}
+		}
 		const spot = this.s.surfaceAt([...this.s.held]);
 		if (!spot) return null;
 		const rest = this.s.rest.get(node.name);
 		const yaw = new Quaternion().setFromAxisAngle(UP, this.s.player.yaw);
-		// upright as it stood on the bench, turned with the student
-		const quaternion = rest ? yaw.clone().multiply(rest.quaternion) : yaw;
-		const position = spot.clone().add(new Vector3(0, rest ? rest.position.y - this.s.benchY : 0, 0));
+		const lie = node.name in LYING ? this.lying(node, LYING[node.name]) : null;
+		// upright as it stood on the bench, turned with the student; or lying, its wide end to the student's right
+		// and turned as the student turned it (the wheel, R)
+		yaw.premultiply(new Quaternion().setFromAxisAngle(UP, this.spin[side]));
+		const quaternion = lie ? yaw.clone().multiply(lie.quaternion) : rest ? yaw.clone().multiply(rest.quaternion) : yaw;
+		const position = spot.clone().add(new Vector3(0, lie ? lie.height : rest ? rest.position.y - this.s.benchY : 0, 0));
+		// the crosshair is where its middle goes: a long thing whose origin is one end (a pipette's tip, a thermometer's
+		// bulb) would otherwise lie from the crosshair on, half off the bench
+		const middle = this.ownBox(node).getCenter(new Vector3()).applyQuaternion(quaternion).setY(0);
+		if (middle.length() > 0.01) position.sub(middle);
 		if (spot.distanceTo(this.s.avatar.reachOrigin(side)) > REACH) return { side, node, position, quaternion, ok: false, why: 'Troppo lontano' };
 		// not into another object standing there: their footprints on the bench must not overlap
 		const mine = this.boxAt(node, position, quaternion).expandByScalar(-0.003);
+		// and in the object's own frame too: the box of a long thing lying askew in the room's axes is a square as wide
+		// as the thing is long, and would find the bench taken far from it
+		const own = this.localBox(node).clone().expandByScalar(-0.003);
+		const toOwn = new Matrix4().compose(position, quaternion, new Vector3(1, 1, 1)).invert();
 		for (const name of this.s.rest.keys()) {
 			const o = this.s.nodes.get(name);
 			if (!o || o === node || this.s.held.has(o) || !o.visible) continue;
-			if (mine.intersectsBox(this.boxAt(o, o.getWorldPosition(new Vector3()), o.getWorldQuaternion(new Quaternion())))) return { side, node, position, quaternion, ok: false, why: 'Occupato' };
+			const other = this.boxAt(o, o.getWorldPosition(new Vector3()), o.getWorldQuaternion(new Quaternion()));
+			if (mine.intersectsBox(other) && own.intersectsBox(other.clone().applyMatrix4(toOwn))) return { side, node, position, quaternion, ok: false, why: 'Occupato' };
+		}
+		// and not over the edge of the worktop it is put on: every corner of its own box stays on it
+		const top = this.s.benches.find(([x0, x1, z0, z1, y]) => Math.abs(spot.y - y) < 0.012 && spot.x > x0 && spot.x < x1 && spot.z > z0 && spot.z < z1);
+		if (top) {
+			const [x0, x1, z0, z1] = top;
+			const b = this.ownBox(node);
+			const at = new Matrix4().compose(position, quaternion, new Vector3(1, 1, 1));
+			const slack = 0.004;
+			for (const x of [b.min.x, b.max.x])
+				for (const y of [b.min.y, b.max.y])
+					for (const z of [b.min.z, b.max.z]) {
+						const c = new Vector3(x, y, z).applyMatrix4(at);
+						if (c.x < x0 - slack || c.x > x1 + slack || c.z < z0 - slack || c.z > z1 + slack) return { side, node, position, quaternion, ok: false, why: 'Sporge dal banco' };
+					}
 		}
 		return { side, node, position, quaternion, ok: true, why: '' };
 	}
@@ -189,32 +383,43 @@ export class FreeLab {
 		const hovered = this.s.hoveredObject();
 		this.ghost.hide();
 		this.offered = [];
+		this.placing = null;
 		if (!this.busy && this.s.player.locked) {
-			const uses = this.uses(hovered);
-			this.offered = uses;
+			const uses = this.usesAt(hovered);
 			const exclusive = uses.some((u) => u.exclusive);
-			const sides = hovered && !exclusive ? this.takeable(hovered)?.filter((side) => !uses.some((u) => u.input === side)) : null;
+			// what the two hands' things do together goes on the keys the crosshair leaves free
+			const pair = exclusive ? [] : this.pair().filter((p) => !uses.some((u) => u.input === p.input));
+			this.offered = [...uses, ...pair];
+			const sides = hovered && !exclusive ? this.takeable(hovered) : null;
 			if (uses.length) target = uses.find((u) => u.target)?.target ?? (hovered ? ((hovered.userData.label as string) ?? hovered.name) : null);
 			for (const u of uses) actions.push({ input: u.input, verb: u.verb, text: u.text, blocked: u.blocked });
+			// a funnel in hand over a container goes into its mouth, whatever else can be done with the container
+			const seats = (['L', 'R'] as Side[]).map((side) => this.placement(side)).filter((p): p is Placement => !!p?.on);
 			if (hovered && sides?.length) {
 				target = (hovered.userData.label as string) ?? hovered.name;
-				for (const side of sides) actions.push({ input: side, verb: 'grab', text: sides.length === 2 ? (side === 'L' ? 'Prendi con la sinistra' : 'Prendi con la destra') : 'Prendi' });
+				for (const side of sides) actions.push({ input: side, verb: 'grab', text: 'Prendi' });
+			}
+			if (seats.length) {
+				const shown = seats[0];
+				this.ghost.show(shown.node, shown.position, shown.quaternion, shown.ok);
+				target = (shown.on!.userData.label as string) ?? shown.on!.name;
+				for (const p of seats) actions.push({ input: p.side, verb: 'place', text: p.ok ? "Metti l'imbuto" : p.why, blocked: !p.ok });
+			} else if (hovered && sides?.length) {
+				// taking it is all there is
 			} else if ((L || R) && !uses.length) {
 				const order: Side[] = this.last === 'L' ? ['L', 'R'] : ['R', 'L'];
 				const places = order.map((side) => this.placement(side)).filter((p): p is Placement => !!p);
 				if (places.length) {
 					const shown = places[0];
 					this.ghost.show(shown.node, shown.position, shown.quaternion, shown.ok);
+					this.placing = shown.side;
 					target = (shown.node.userData.label as string) ?? shown.node.name;
 					for (const p of places.sort((a, b) => (a.side === 'L' ? -1 : 1) - (b.side === 'L' ? -1 : 1)))
 						actions.push({ input: p.side, verb: 'place', text: p.ok ? (places.length === 2 ? `Posa ${p.side === 'L' ? 'la sinistra' : 'la destra'}` : 'Posa') : p.why, blocked: !p.ok });
+					for (const input of ['W', 'KeyR'] as const) actions.push({ input, verb: 'turn', text: 'Ruota' });
 				}
 			}
-			if (L && R && !uses.some((u) => u.input === 'F')) {
-				const rod = L.name === 'GlassRod' || R.name === 'GlassRod';
-				if (rod && (CONTAINERS.has(L.name) || CONTAINERS.has(R.name))) actions.push({ input: 'F', verb: 'stir', text: 'Mescola' });
-				else if (CONTAINERS.has(L.name) && CONTAINERS.has(R.name)) actions.push({ input: 'F', verb: 'pour', text: 'Versa' });
-			}
+			for (const u of pair) actions.push({ input: u.input, verb: u.verb, text: u.text, blocked: u.blocked });
 		}
 		const next = { target, actions };
 		if (JSON.stringify(next) !== JSON.stringify(this.aim)) {
@@ -224,7 +429,7 @@ export class FreeLab {
 	}
 
 	say(kind: 'info' | 'warn' | 'ok', text: string) {
-		this.message = { kind, text };
+		this.message = { kind, text: tell(text) };
 		this.msgT = kind === 'warn' ? 8 : 6;
 		this.emit();
 	}
@@ -232,12 +437,52 @@ export class FreeLab {
 	/** The hold pose; with an offset (two hands working together) it follows the gaze fully, so the work is in view. */
 	hold(side: Side, offset?: Vector3, pen = penHeld(this.hands.held(side))) {
 		const p = this.s.player;
-		return holdFrame(side, p.hand, p.hand.yaw, p.hand.pitch, offset, offset ? 1 : 0.6, pen ? PEN_PRONATION : 0);
+		return toolHold(holdFrame(side, p.hand, p.hand.yaw, p.hand.pitch, offset, offset ? 1 : 0.6, pen ? PEN_PRONATION : 0), side, this.hands.held(side), this.hands.gripOf(side), p.hand.yaw);
 	}
 
 	// ---------------------------------------------------------------------------------------------
 
-	/** Runs what the work on top offers for this input, if anything: true when it took the input. */
+	/**
+	 * What Q and E do now, with the crosshair on `hovered`: lower the notebook while it is up, raise it when the
+	 * crosshair is on it (reading takes the eyes, not a hand: either key, whatever the hands hold), or else what the
+	 * work on top offers.
+	 */
+	private usesAt(hovered: Object3D | null): Use[] {
+		const nb = this.notebook;
+		const label = (this.s.nodes.get(BOOK)?.userData.label as string) ?? 'Quaderno';
+		if (nb?.open) return KEYS.map((input) => ({ input, verb: 'read', text: 'Chiudi il quaderno', target: label, exclusive: true, run: () => void (nb.open = false) }));
+		if (nb && hovered?.name === BOOK) return KEYS.map((input) => ({ input, verb: 'read', text: 'Leggi', run: () => void (nb.open = true) }));
+		return this.uses(hovered);
+	}
+
+	/**
+	 * What the things in the two hands do together, by key: Q is the left one's action on the right one, E the right
+	 * one's on the left one. When only one of the two is possible, either key does it.
+	 */
+	private pair(): Use[] {
+		if (!this.hands.held('L') || !this.hands.held('R')) return [];
+		const acts = (['L', 'R'] as Side[]).flatMap((side) => {
+			const use = this.act(side);
+			return use ? [{ side, use }] : [];
+		});
+		if (acts.length === 1) return KEYS.map((input) => ({ ...acts[0].use, input }));
+		return acts.map((a) => ({ ...a.use, input: keyOf(a.side) }));
+	}
+
+	/** What the thing in `side`'s hand does to the one in the other hand: the rod stirs in it, a container pours into it. */
+	private act(side: Side): Omit<Use, 'input'> | null {
+		const otherSide: Side = side === 'L' ? 'R' : 'L';
+		const mine = this.hands.held(side)!;
+		const other = this.hands.held(otherSide)!;
+		const more = this.together(side, mine, other);
+		if (more) return more;
+		if (mine.name === 'GlassRod' && CONTAINERS.has(other.name)) return { verb: 'stir', text: 'Mescola', run: () => this.stir(side, other) };
+		if (CONTAINERS.has(mine.name) && CONTAINERS.has(other.name) && (this.s.liquids.get(mine.name)?.contents.vol ?? 0) > 0.05)
+			return { verb: 'pour', text: `Versa nella ${otherSide === 'L' ? 'sinistra' : 'destra'}`, run: async () => void (await this.pour(side, other)) };
+		return null;
+	}
+
+	/** Runs what is offered for this input, if anything: true when it took the input. */
 	private use(input: Action['input']) {
 		const u = this.offered.find((x) => x.input === input);
 		if (!u) return false;
@@ -254,15 +499,26 @@ export class FreeLab {
 
 	private wheel(delta: number) {
 		if (this.busy) return;
-		this.offered.find((x) => x.input === 'W')?.wheel?.(delta);
+		const use = this.offered.find((x) => x.input === 'W');
+		if (use) use.wheel?.(delta);
+		// a notch of a mouse wheel is 15°
+		else this.turn(-delta * 0.0026);
 	}
 
+	/** Turns what is about to be put down, the object whose ghost is showing, about the vertical. */
+	private turn(angle: number) {
+		if (this.busy || !this.placing) return;
+		this.spin[this.placing] += angle;
+	}
+
+	/** A mouse button: its hand takes what the crosshair points at, or puts down what it holds. */
 	private press(side: Side, target: Object3D | null) {
 		if (this.busy) {
 			this.queued = { input: side, target, age: 0 };
 			return;
 		}
-		if (this.use(side)) return;
+		// while a hand is busy with something (the pipette drawing, the notebook up) the buttons do nothing
+		if (this.offered.some((u) => u.exclusive)) return;
 		const other: Side = side === 'L' ? 'R' : 'L';
 		const hand = side === 'L' ? 'sinistra' : 'destra';
 		const held = this.hands.held(side);
@@ -273,13 +529,16 @@ export class FreeLab {
 			if (this.hands.distance(side, target) > REACH) return this.say('info', 'Non ci arrivi: avvicinati al banco.');
 			const no = this.refuse(target);
 			if (no) return this.say('warn', no);
+			const inIt = this.seatedOn(target);
+			if (inIt) return this.say('info', `Prima togli ${inIt.name === 'Funnel' ? "l'imbuto" : 'quello che ci sta sopra'}.`);
 			this.last = side;
 			void this.run(() => this.grab(side, target));
 			return;
 		}
 		const at = this.placement(side);
 		if (!at) return this.say('info', `Per appoggiare quello che hai nella mano ${hand}, punta un piano: il banco, la reticella.`);
-		if (!at.ok) return this.say('info', at.why === 'Occupato' ? "Lì c'è già qualcosa." : 'Lì non ci arrivi: appoggia più vicino.');
+		if (!at.ok && at.why.startsWith('Bocca')) return this.say('info', at.why === 'Bocca troppo larga' ? "Qui l'imbuto non si regge: la bocca è più larga dell'imbuto." : at.why === 'Bocca troppo bassa' ? "Qui l'imbuto non si regge: il recipiente è più basso del suo gambo." : "Qui l'imbuto non entra: la bocca è più stretta del suo gambo.");
+		if (!at.ok) return this.say('info', at.why === 'Occupato' ? "Lì c'è già qualcosa." : at.why === 'Sporge dal banco' ? 'Così sporge dal banco: spostalo più dentro, o ruotalo.' : 'Lì non ci arrivi: appoggia più vicino.');
 		void this.run(() => this.putDown(side, held, at));
 	}
 
@@ -297,23 +556,22 @@ export class FreeLab {
 		}
 	}
 
+	/** The object is in the hand at once, and the hand comes up into view (hands.ts, grasp): there is no reach. */
 	private async grab(side: Side, node: Object3D) {
 		// anything leaning in the object (a thermometer) stays with it; the object leaves its host
 		if (node.parent !== this.s.labRoot) this.s.labRoot.attach(node);
-		this.s.held.add(node);
 		// the grip that is comfortable once it is held in front of the body
-		const ok = await this.hands.take(side, node, 'carry', this.hold(side, undefined, penHeld(node)).q);
-		if (!ok) {
-			this.s.held.delete(node);
-			return;
-		}
-		await this.hands.carry(side, () => this.hold(side), 0.55, 0.06);
-		this.hands.drive(side, null);
+		if (!this.hands.grasp(side, node, this.hold(side, undefined, penHeld(node)).q)) return;
+		this.spin[side] = 0;
+		this.s.held.add(node);
+		await this.s.anim.wait(RAISE);
 	}
 
+	/** The object is on the bench at once, where its ghost was, and the hand goes back down. */
 	private async putDown(side: Side, node: Object3D, at: Placement) {
-		await this.hands.place(side, at.position, at.quaternion);
+		this.hands.drop(side, at.position, at.quaternion);
 		this.s.held.delete(node);
+		await this.s.anim.wait(LOWER);
 	}
 
 	private update(dt: number) {
@@ -323,9 +581,12 @@ export class FreeLab {
 			this.queued = null;
 			// the crosshair has moved on since: what the hands do next is decided on what it points at now
 			this.aimAt();
-			if (q.input === 'F') this.combine();
-			else this.press(q.input, q.target);
+			if (q.input === 'L' || q.input === 'R') this.press(q.input, q.target);
+			else this.key(q.input === 'Q' ? 'L' : 'R');
 		}
+		// the notebook on the bench is the one in front of the eyes: it leaves the bench while it is up
+		const book = this.s.nodes.get(BOOK);
+		if (book && this.notebook) book.visible = !this.notebook.raised;
 		this.aimAt();
 		if (this.msgT > 0 && (this.msgT -= dt) <= 0) {
 			this.message = null;
@@ -334,30 +595,78 @@ export class FreeLab {
 	}
 
 	// ---------------------------------------------------------------------------------------------
-	// the two hands together
+	// the keys, and the two hands together
 
-	private combine() {
+	/** Q or E: the left or the right hand uses what it holds, or works what the crosshair points at. */
+	private key(side: Side) {
+		const input = keyOf(side);
 		if (this.busy) {
-			this.queued = { input: 'F', target: null, age: 0 };
+			this.queued = { input, target: null, age: 0 };
 			return;
 		}
-		if (this.use('F')) return;
-		const L = this.hands.held('L');
-		const R = this.hands.held('R');
-		if (!L || !R) return this.say('info', 'Per usare due cose insieme ti serve qualcosa in tutte e due le mani.');
-		const rod: Side | null = L.name === 'GlassRod' ? 'L' : R.name === 'GlassRod' ? 'R' : null;
-		if (rod) {
-			const cup: Side = rod === 'L' ? 'R' : 'L';
-			if (!CONTAINERS.has(this.hands.held(cup)!.name)) return this.say('info', 'Con la bacchetta si mescola dentro un recipiente.');
-			void this.run(() => this.stir(rod, this.hands.held(cup)!));
-			return;
+		if (this.use(input)) return;
+		if (this.hands.held('L') && this.hands.held('R') && !this.offered.length) this.say('info', `${this.label('L')} e ${this.label('R')} non si usano insieme.`);
+	}
+
+	/**
+	 * Takes the origin (the tip) of what `side` holds to a place over a container's mouth, turned `q`, and keeps it
+	 * there. It does not go straight: from where the hand holds things the tip would rise through the glass. It goes
+	 * first to the height it is headed for, a hand's width short of the place, then across.
+	 */
+	async above(side: Side, at: Vector3, q: Quaternion, dur = 0.8) {
+		const h = this.hands;
+		const short = h.held(side)!.getWorldPosition(new Vector3()).sub(at).setY(0);
+		let left = dur;
+		if (short.length() > 0.1) {
+			const via = at.clone().add(short.setLength(0.09));
+			await h.carry(side, () => h.palmFor(side, via, q), dur * 0.65, 0.02);
+			left = dur * 0.35;
 		}
-		if (CONTAINERS.has(L.name) && CONTAINERS.has(R.name)) {
-			const fromSide: Side = (this.s.liquids.get(R.name)?.contents.vol ?? 0) > 0.05 ? 'R' : 'L';
-			void this.run(async () => void (await this.pour(fromSide, this.hands.held(fromSide === 'R' ? 'L' : 'R')!)));
-			return;
+		const to = () => h.palmFor(side, at, q);
+		h.drive(side, to);
+		await h.carry(side, to, left);
+	}
+
+	/**
+	 * The way back from over a container: the tip of what `side` holds moves off level, a hand's width towards where
+	 * the hand holds things, and only then is the hand let go back there. Straight back, it would come down through
+	 * the glass.
+	 */
+	async away(side: Side) {
+		const h = this.hands;
+		const node = h.held(side);
+		if (node) {
+			const p = node.getWorldPosition(new Vector3());
+			const q = node.getWorldQuaternion(new Quaternion());
+			const out = Hands.objectFrom(this.hold(side), h.gripOf(side)!).position.sub(p).setY(0);
+			if (out.length() > 0.05) {
+				const via = p.clone().add(out.setLength(0.09));
+				await h.carry(side, () => h.palmFor(side, via, q), 0.3);
+			}
 		}
-		this.say('info', `${this.label('L')} e ${this.label('R')} non si usano insieme.`);
+		h.drive(side, null);
+	}
+
+	/**
+	 * Brings the container `side` holds in front of the chest, upright, wherever the eyes look: a place where both
+	 * hands work comfortably. It stays there until the returned function is called. `low` puts it that much lower and
+	 * further; `lean` tips it that way (a horizontal direction, its length the angle in radians), as a jar is offered
+	 * to the spatula.
+	 */
+	async present(side: Side, low = 0, lean?: Vector3) {
+		const h = this.hands;
+		const sign = side === 'R' ? 1 : -1;
+		const at = () => {
+			const yaw = new Quaternion().setFromAxisAngle(UP, this.s.player.yaw);
+			const o = Hands.objectFrom(this.hold(side), h.gripOf(side)!);
+			const upright = new Quaternion().setFromUnitVectors(UP.clone().applyQuaternion(o.quaternion), UP).multiply(o.quaternion);
+			const p = this.s.camera.position.clone().add(new Vector3(sign * 0.02, -0.38 - low, -0.4 - low * 0.6).applyQuaternion(yaw));
+			if (lean) upright.premultiply(new Quaternion().setFromAxisAngle(new Vector3().crossVectors(UP, lean).normalize(), lean.length()));
+			return h.palmFor(side, p, upright);
+		};
+		await h.carry(side, at, 0.45);
+		h.drive(side, at);
+		return () => h.drive(side, null);
 	}
 
 	/**
@@ -372,19 +681,7 @@ export class FreeLab {
 		const rod = h.held(rodSide)!;
 		const cupSide: Side | null = h.held('L') === cup ? 'L' : h.held('R') === cup ? 'R' : null;
 		const lq = this.s.liquids.get(cup.name);
-		if (cupSide) {
-			const cupSign = cupSide === 'R' ? 1 : -1;
-			// in front of the chest, upright, wherever the eyes look: a place where both hands work comfortably
-			const cupAt = () => {
-				const yaw = new Quaternion().setFromAxisAngle(UP, this.s.player.yaw);
-				const o = Hands.objectFrom(this.hold(cupSide), h.gripOf(cupSide)!);
-				const upright = new Quaternion().setFromUnitVectors(UP.clone().applyQuaternion(o.quaternion), UP).multiply(o.quaternion);
-				const at = this.s.camera.position.clone().add(new Vector3(cupSign * 0.02, -0.38, -0.4).applyQuaternion(yaw));
-				return h.palmFor(cupSide, at, upright);
-			};
-			await h.carry(cupSide, cupAt, 0.45);
-			h.drive(cupSide, cupAt);
-		}
+		const release = cupSide ? await this.present(cupSide) : null;
 		// the side of the container the rod hand is on, in the container's frame: the cone leans that way, as a rod held
 		// like a pen does
 		const yaw = this.s.player.yaw;
@@ -464,7 +761,8 @@ export class FreeLab {
 		};
 		// above the mouth, then down the cone's axis, guided and corrected all the way
 		const high = cone.top + 0.03;
-		await h.carry(rodSide, () => palm(axis(high)), 0.55, 0.03);
+		const first = axis(high);
+		await this.above(rodSide, first.position, first.quaternion, 0.6);
 		let y = high;
 		h.drive(rodSide, () => palm(axis(y)));
 		await this.s.anim.run(0.45, (k, dt) => {
@@ -506,8 +804,8 @@ export class FreeLab {
 			y = cone.bottom + (high + 0.01 - cone.bottom) * k;
 			correct(dt);
 		});
-		h.drive(rodSide, null);
-		if (cupSide) h.drive(cupSide, null);
+		await this.away(rodSide);
+		release?.();
 		this.say('ok', lq && lq.contents.vol > 0 ? 'Mescolato.' : 'Hai mescolato un recipiente vuoto.');
 	}
 
@@ -515,7 +813,7 @@ export class FreeLab {
 	 * Pours from one hand's container into another: the one in the other hand, which comes to the middle, or one
 	 * standing on the bench (a funnel, a dish on the gauze). The pouring one goes over it and tips towards it by
 	 * turning the forearm; liquid flows only once its tilted surface rises above the lip, with the pose the wrist
-	 * actually reaches. `keep` stops it with that much left (a pipette's drop, a beaker's sediment); `receive`
+	 * actually reaches, and goes on until the container is empty. `keep` stops it with that much left; `receive`
 	 * takes what flows, when the receiver is not a plain vessel.
 	 */
 	async pour(fromSide: Side, to: Object3D, opts: { keep?: number; receive?: (c: Contents) => void; mouth?: { y: number; r: number } } = {}): Promise<number> {
@@ -532,7 +830,7 @@ export class FreeLab {
 			this.say('info', 'Lì dentro non si versa.');
 			return 0;
 		}
-		const keep = opts.keep ?? 0.02;
+		const keep = opts.keep ?? 0;
 		if (toSide) {
 			const toSign = toSide === 'R' ? 1 : -1;
 			const toAt = () => this.hold(toSide, new Vector3(toSign * 0.04, -0.17, -0.4));
@@ -572,6 +870,7 @@ export class FreeLab {
 		const land = new Vector3();
 		let rate = 0;
 		let stuck = 0;
+		let held = 0;
 		let total = 0;
 		this.pourMiss = 0;
 		this.pourTrace = [];
@@ -600,8 +899,8 @@ export class FreeLab {
 			if (aim.length() > 0.12) aim.setLength(0.12);
 			// it pours only into the mouth: until the stream would land inside, the tilt waits
 			const inside = miss < mouthR * 0.7 && lip.y > mouth.y;
-			if (process.env.NODE_ENV !== 'production') this.pourTrace.push([miss, lip.y - mouth.y, mouthR, tilt, aim.length()].map((v) => Math.round(v * 1000) / 1000));
 			const head = src.level() - lip.y;
+			if (process.env.NODE_ENV !== 'production') this.pourTrace.push([miss, lip.y - mouth.y, mouthR, tilt, aim.length(), head * 1000, stuck].map((v) => Math.round(v * 1000) / 1000));
 			let flow = 0;
 			if (!inside && head > -0.0004) {
 				stuck += dt;
@@ -611,9 +910,14 @@ export class FreeLab {
 			}
 			if (flow === 0 && head > -0.0004) {
 				this.pourMiss = Math.max(this.pourMiss, miss);
-				flow = Math.min(Math.max(0, src.contents.vol - keep), (head + 0.0004) * 2600 * dt);
+				const left = Math.max(0, src.contents.vol - keep);
+				flow = Math.min(left, (head + 0.0004) * 2600 * dt);
+				// the last drops go with the rest: a film too thin to pour would stay drawn on the bottom
+				if (left - flow < 0.05) flow = left;
 				flow = Math.min(flow, Math.max(0, dst.capacity * 0.95 - dst.contents.vol));
 				if (flow > 0) {
+					// the stream wandering off the mouth for a moment is not a pour that cannot be done
+					stuck = 0;
 					total += flow;
 					const c = src.contents.take(flow, true);
 					if (opts.receive) opts.receive(c);
@@ -624,7 +928,9 @@ export class FreeLab {
 			tilt = Math.min(max, tilt + (flow > 0 ? 0.16 : 0.8) * dt);
 			color.copy(src.material.color);
 			this.s.stream.set(flow > 0 ? lip : null, dirW, dst.level(), flow / dt, color, src.material.opacity);
-			return src.contents.vol <= keep + 0.001 || tilt >= max || dst.contents.vol >= dst.capacity * 0.95;
+			// fully tipped, it stays there while liquid still comes out
+			if (tilt >= max) held = flow > 0 ? 0 : held + dt;
+			return src.contents.vol <= keep + 0.001 || held > 0.6 || dst.contents.vol >= dst.capacity * 0.95;
 		});
 		this.s.stream.set(null, dirW, 0, 0, color, 0);
 		const back = tilt;

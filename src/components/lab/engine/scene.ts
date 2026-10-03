@@ -50,7 +50,7 @@ import { FirstPerson } from './fps';
 import { optimizeStatic } from './optimize';
 import { Avatar } from './avatar';
 import { Classroom } from './classroom';
-import { Hands, holdFrame, PEN_PRONATION, penHeld } from './hands';
+import { Hands, holdFrame, PEN_PRONATION, penHeld, toolHold } from './hands';
 
 /**
  * Makes the glass: a clear coat that only reflects, and goes opaque at grazing angles like real glass. One side at a
@@ -78,7 +78,7 @@ function glassMaterial(tint: Color, base: number, env: Texture | null, side: Sid
 			s.fragmentShader.replace(
 				'#include <opaque_fragment>',
 				`float nv = abs(dot(normalize(normal), normalize(vViewPosition)));
-				float fr = pow(1.0 - nv, 3.0);
+				float fr = pow(max(0.0, 1.0 - nv), 3.0);
 				float a = clamp(base + fr * 0.5, 0.0, 0.92);
 				gl_FragColor = vec4(outgoingLight + tint * a, a);`
 			);
@@ -123,18 +123,22 @@ export class LabScene {
 	gauzeTop = 0;
 	gauzeCenter = new Vector3();
 	benchY = 0.9;
+	/** The worktops, as floor rectangles with their height: [minX, maxX, minZ, maxZ, y]. */
+	benches: [number, number, number, number, number][] = [];
 	time = 0;
 
 	onPick: (name: string, hit: Object3D) => void = () => {};
 	onHover: (h: Hover) => void = () => {};
 	onUpdate: (dt: number) => void = () => {};
 	onLock: (locked: boolean) => void = () => {};
-	/** A mouse button (0 left, 2 right) or E (as the right button) while the mouse is captured, with what the crosshair points at. */
+	/** A mouse button (0 left, 2 right) while the mouse is captured, with what the crosshair points at. */
 	onPress: (button: 0 | 2, target: Object3D | null) => void = (_b, t) => {
 		if (t) this.onPick(t.name, t);
 	};
-	/** F: use what the two hands hold together. */
-	onCombine: () => void = () => {};
+	/** Q or E: the left or the right hand uses what it holds, or works what the crosshair points at. */
+	onUse: (side: 'L' | 'R') => void = () => {};
+	/** R, while the mouse is captured: a turn of what is about to be put down. */
+	onTurn: (dir?: 1 | -1) => void = () => {};
 	/** The mouse wheel, while the mouse is captured. */
 	onWheel: (delta: number) => void = () => {};
 	/** Whether the hands are busy with something the body must keep still for (the free lab sets it). */
@@ -189,11 +193,15 @@ export class LabScene {
 
 		// the scene never moves: left to recompute its own matrix it would force every object's every frame
 		this.scene.matrixAutoUpdate = false;
-		this.camera = new PerspectiveCamera(60, 1, 0.01, 40);
+		// as far as the town outside the windows goes (its ground reaches 285 m, and the haze is full at 350): at 40 m the
+		// far plane cut the roofs across the street. The depth's precision is set by the near plane, not by this
+		this.camera = new PerspectiveCamera(60, 1, 0.01, 400);
 		// in the scene, so what hangs from it (the notebook) is drawn
 		this.scene.add(this.camera);
 		this.player = new FirstPerson(this.camera, r.domElement);
 		this.player.onWheel = (d) => this.onWheel(d);
+		this.player.onTurn = (dir) => this.onTurn(dir);
+		this.player.onPadPress = (button) => this.press(button);
 		this.player.onLockChange = (locked) => {
 			this.onLock(locked);
 			if (!locked) this.setHovered(null);
@@ -224,6 +232,13 @@ export class LabScene {
 			this.outline.edgeThickness = 1;
 			this.outline.edgeStrength = 2.2;
 			this.bloom = new UnrealBloomPass(new Vector2(w, h), 0.25, 0.55, 0.9);
+			// a NaN pixel from any material stays one pixel: left in, each level of the blur widens it into a black rectangle
+			const highPass = this.bloom.materialHighPassFilter;
+			highPass.fragmentShader = highPass.fragmentShader.replace(
+				'gl_FragColor = mix( outputColor, texel, alpha );',
+				`vec4 kept = mix( outputColor, texel, alpha );
+				gl_FragColor = any( isnan( kept ) ) || any( isinf( kept ) ) ? outputColor : kept;`
+			);
 			this.composer.addPass(this.bloom);
 			// tone mapping, sRGB and the grade in one pass (look.ts)
 			this.grade = new GradedOutputPass();
@@ -387,7 +402,13 @@ export class LabScene {
 			b.getCenter(this.gauzeCenter);
 		}
 		const bench = this.nodes.get('BenchTop');
-		if (bench) this.benchY = new Box3().setFromObject(bench).max.y;
+		if (bench) {
+			const b = new Box3().setFromObject(bench);
+			this.benchY = b.max.y;
+			this.benches = [[b.min.x, b.max.x, b.min.z, b.max.z, b.max.y]];
+		}
+		// a room with its own plan lists every worktop
+		if (lighting?.plan?.benches.length) this.benches = lighting.plan.benches;
 		const clip = [new Plane(new Vector3(0, -1, 0), this.gauzeY + 0.0005)];
 		this.flame = new Flame(clip, () => this.gauzeY);
 		if (this.look) this.flame.boost = 2.4;
@@ -422,7 +443,9 @@ export class LabScene {
 		// what can hide part of an object in reach, for the outline's depth (outline.ts)
 		for (const o of [...this.nodes.values()].filter((n) => n.userData.pick)) o.traverse((c) => c.layers.enable(OCCLUDERS));
 		this.avatar.root.traverse((c) => c.layers.enable(OCCLUDERS));
-		this.hands = new Hands(this.avatar, (side) => holdFrame(side, this.player.hand, this.player.hand.yaw, this.player.hand.pitch, undefined, 0.6, penHeld(this.hands.held(side)) ? PEN_PRONATION : 0));
+		this.hands = new Hands(this.avatar, (side) =>
+			toolHold(holdFrame(side, this.player.hand, this.player.hand.yaw, this.player.hand.pitch, undefined, 0.6, penHeld(this.hands.held(side)) ? PEN_PRONATION : 0), side, this.hands.held(side), this.hands.gripOf(side), this.player.hand.yaw)
+		);
 		// a room with its own plan (build_aula.py): where to walk and start, and the other people in it
 		const plan = lighting?.plan;
 		if (plan) {
@@ -519,6 +542,10 @@ export class LabScene {
 			// a part that became one with another object (the paper in the funnel) picks that one
 			if (owner?.userData.partOf) owner = this.nodes.get(owner.userData.partOf as string) ?? owner;
 			if (owner && this.held.has(owner)) continue;
+			// a hidden object is not there (the goggles once worn): its click box is outside the scene and stays visible
+			let hidden = false;
+			for (let p: Object3D | null = owner; p && !hidden; p = p.parent) hidden = !p.visible;
+			if (hidden) continue;
 			return owner;
 		}
 		return null;
@@ -527,6 +554,11 @@ export class LabScene {
 	/** What is highlighted now. */
 	hoveredObject() {
 		return this.hovered;
+	}
+
+	/** What the crosshair is on, whether or not a hand can do anything with it (what is held is looked through). */
+	under() {
+		return this.pick();
 	}
 
 	private setHovered(o: Object3D | null) {
@@ -639,8 +671,7 @@ export class LabScene {
 			const t = this.pick();
 			this.setHovered(t && this.canHover(t) ? t : null);
 		}
-		if (this.player.takeInteract()) this.press(2);
-		if (this.player.takeCombine()) this.onCombine();
+		for (const side of this.player.takeUses()) this.onUse(side);
 		// pulse the outline of what to do next
 		if (!this.look) this.outline.edgeStrength = 2.5 + 2.5 * (0.5 + 0.5 * Math.sin(this.time * 4));
 		this.look?.update(dt, this.time, this.camera);
