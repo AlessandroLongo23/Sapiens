@@ -81,9 +81,9 @@ const config: NextConfig = {
 	images: { formats: ['image/avif', 'image/webp'] },
 	async headers() {
 		return [
-			// Every address but the code editor's sandbox, which has a policy of its own: the headers given here would
+			// Every address but the two pages of the code editor's sandbox, which have a policy of their own: the headers given here would
 			// replace the ones its route sets (src/app/codice-sandbox/route.ts).
-			{ source: '/((?!codice-sandbox$).*)', headers: SECURITY_HEADERS },
+			{ source: '/((?!codice-sandbox(?:/pagina)?$).*)', headers: SECURITY_HEADERS },
 			// The code editor's sandbox is a page without the site's origin (src/app/codice-sandbox/route.ts): the files of
 			// the languages are public, and it may read them.
 			{ source: '/:folder(codice|pyodide|clang)/:path*', headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }] },

@@ -12,8 +12,8 @@ import type { Chunk, Job, Listeners, Outcome, Result, Runtime } from './runtime'
 
 export const SANDBOX_PATH = '/codice-sandbox';
 
-/** Python, or the C and C++ compiler. */
-export type Engine = 'python' | 'clang';
+/** Python, the C and C++ compiler, or JavaScript as a program with a console. */
+export type Engine = 'python' | 'clang' | 'javascript';
 
 export type ToSandbox =
 	| { op: 'load'; engine: Engine; request: number }

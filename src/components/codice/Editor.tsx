@@ -4,18 +4,26 @@ import { useEffect, useRef } from 'react';
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { cpp } from '@codemirror/lang-cpp';
+import { css } from '@codemirror/lang-css';
+import { html } from '@codemirror/lang-html';
+import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import { bracketMatching, indentOnInput, indentUnit } from '@codemirror/language';
-import { EditorState } from '@codemirror/state';
+import { EditorState, type Extension } from '@codemirror/state';
 import { EditorView, drawSelection, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
 import type { Language } from './runtime';
+
+/** What the editor colours: a language of the programs, or a file of a web page. */
+export type Syntax = Language | 'html' | 'css' | 'js';
+
+const SYNTAX: Record<Syntax, () => Extension> = { python, c: cpp, cpp, javascript: () => javascript(), js: () => javascript(), html: () => html(), css };
 import { vscodeTheme } from './theme';
 
 /**
- * The code editor: CodeMirror with VS Code's colours (theme.ts), for Python, C or C++ (four spaces, Tab indents, Esc then Tab leaves the
+ * The code editor: CodeMirror with VS Code's colours (theme.ts), for a program or a file of a web page (four spaces, Tab indents, Esc then Tab leaves the
  * field). It keeps its own text: `initial` is read once, so a different program means a new `key`. Mod-Enter runs.
  */
-export default function Editor({ initial, language, label, onChange, onRun }: { initial: string; language: Language; label: string; onChange: (code: string) => void; onRun: () => void }) {
+export default function Editor({ initial, language, label, onChange, onRun }: { initial: string; language: Syntax; label: string; onChange: (code: string) => void; onRun: () => void }) {
 	const host = useRef<HTMLDivElement>(null);
 	const handlers = useRef({ onChange, onRun });
 	useEffect(() => {
@@ -49,7 +57,7 @@ export default function Editor({ initial, language, label, onChange, onRun }: { 
 					closeBrackets(),
 					highlightActiveLine(),
 					highlightActiveLineGutter(),
-					language === 'python' ? python() : cpp(),
+					SYNTAX[language](),
 					indentUnit.of('    '),
 					EditorState.tabSize.of(4),
 					vscodeTheme,

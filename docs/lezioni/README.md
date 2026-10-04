@@ -81,7 +81,7 @@ un esempio per ogni pezzo).
 ## I programmi da eseguire
 
 Un blocco `codice` mette nella lezione l'editor con un programma che lo studente esegue e modifica. Il linguaggio
-sta sulla riga del blocco: `python`, `c` oppure `cpp`. Il programma gira nel browser dello studente.
+sta sulla riga del blocco: `python`, `c`, `cpp` oppure `javascript`. Il programma gira nel browser dello studente.
 
 ````
 ```codice python
@@ -128,14 +128,58 @@ print(somma)
   un solo blocco e valgono per tutti i linguaggi.
 - Nelle prove di Python la domanda di `input("...")` non viene stampata, quindi non entra nel confronto. In C e in
   C++ il programma dell'esercizio non deve scrivere domande prima di leggere.
+- In JavaScript il programma legge con `prompt()` e scrive con `console.log()`; nelle prove la domanda di `prompt()`
+  non viene stampata, come in Python.
 - La consegna si scrive nel testo della lezione, prima del blocco.
+
+Una pagina web è un gruppo di blocchi che comincia con `html`: i blocchi `html`, `css` e `js` uno dopo l'altro sono
+i tre file della pagina (`index.html`, `style.css`, `script.js`), e lo studente li vede con una linguetta per file
+accanto alla pagina che ne esce. La pagina collega gli altri due file come una pagina vera, con
+`<link rel="stylesheet" href="style.css">` e `<script src="script.js"></script>`: un file non collegato non viene
+applicato, e l'editor lo dice.
+
+Una pagina non stampa niente, quindi il suo esercizio si corregge su quello che la pagina è. `%% controllo` è seguito
+dalla frase che lo studente legge, e le righe sotto sono le regole: un selettore CSS e, dopo ` | `, la condizione.
+
+````
+```codice html
+<h1></h1>
+<ul>
+    <li>Matematica</li>
+</ul>
+%% soluzione
+<h1>Le mie materie</h1>
+<ul>
+    <li>Matematica</li>
+    <li>Fisica</li>
+</ul>
+%% controllo Il titolo dice "Le mie materie"
+h1 | testo = Le mie materie
+%% controllo L'elenco ha due voci
+ul > li | quanti = 2
+```
+````
+
+| Regola | Cosa controlla |
+|---|---|
+| `h1` | il selettore trova almeno un elemento |
+| `ul > li \| quanti = 3` | quanti elementi trova |
+| `h1 \| testo = Ciao` | il testo del primo, senza contare gli spazi ripetuti |
+| `p \| testo contiene Ciao` | il testo del primo contiene la parola |
+| `a \| attributo href` | il primo ha l'attributo |
+| `a \| attributo href = pagina.html` | l'attributo ha quel valore |
+| `h1 \| stile color = blue` | lo stile calcolato dal browser; il valore si scrive come in CSS |
+
+Un controllo con più regole passa quando passano tutte. `%% soluzione` in un file è la soluzione di quel file; un
+file senza soluzione resta com'è. I controlli sul comportamento (un clic che cambia la pagina) non ci sono ancora.
 
 Cosa c'è: in Python la libreria standard, `turtle` (ridisegnata per il browser), `numpy` e `matplotlib`; in C la
 libreria standard; in C++ la libreria standard senza le eccezioni (`try`, `catch` e `throw` non compilano). Un
-programma si ferma dopo 10 secondi o dopo 100.000 caratteri stampati.
+programma si ferma dopo 10 secondi o dopo 100.000 caratteri stampati. In una pagina web lo script non può fare
+richieste di rete, e un ciclo che gira per più di 2 secondi viene fermato.
 
-Il controllo automatico qui sotto legge i blocchi. Le soluzioni si eseguono davvero sulle loro prove, nei tre
-linguaggi, con:
+Il controllo automatico qui sotto legge i blocchi. Le soluzioni si eseguono davvero sulle loro prove, in ogni
+linguaggio, con il comando qui sotto; i controlli delle pagine web si provano solo nel browser.
 
 ```
 node node_modules/jiti/lib/jiti-cli.mjs scripts/codice/verifica.mts docs/lezioni/informatica/riscritte/*.md

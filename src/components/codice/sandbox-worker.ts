@@ -4,7 +4,7 @@
  * scripts/codice/sandbox.mjs next to this one). The line is a classic script with a dynamic import: Chrome does not
  * start a module worker in a page without an origin.
  */
-export function spawn(name: 'python' | 'clang' | 'wasi'): Worker {
+export function spawn(name: 'python' | 'clang' | 'wasi' | 'javascript'): Worker {
 	const script = new URL(`./${name}.worker.js`, import.meta.url).href;
 	// an import that fails becomes the worker's error, which the runtimes listen for
 	const line = `import(${JSON.stringify(script)}).catch((error) => setTimeout(() => { throw error; }));`;
