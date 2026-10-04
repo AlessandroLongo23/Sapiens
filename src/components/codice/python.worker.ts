@@ -56,6 +56,8 @@ function place(pyodide: PyodideInterface, files: Record<string, string>) {
 	for (const [path, text] of Object.entries(files)) {
 		const folder = path.split('/').slice(0, -1).join('/');
 		if (folder) pyodide.FS.mkdirTree(`${PROJECT}/${folder}`);
+		// a folder with nothing in it yet
+		if (path.endsWith('/')) continue;
 		// a picture is the data URL of its bytes
 		const data = /^data:[^,]*;base64,(.*)$/.exec(text);
 		pyodide.FS.writeFile(`${PROJECT}/${path}`, data ? Uint8Array.from(atob(data[1]), (c) => c.charCodeAt(0)) : text);

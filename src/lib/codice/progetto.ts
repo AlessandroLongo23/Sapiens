@@ -3,8 +3,9 @@
  * ProjectBench.tsx). A program with a module, a C++ program in more files, a site of pages that link each other.
  * Pure: the server reads a saved project with the same rules the browser writes it with.
  *
- * A file is a path and a text. The path may have folders (`css/style.css`); there are no empty folders. A picture
- * is kept as the data URL of its bytes, so a project is one object of text whatever is in it.
+ * A file is a path and a text. The path may have folders (`css/style.css`). A folder with nothing in it yet is kept
+ * as a path that ends with a slash and has no text (`img/`): everything that runs a project passes over it. A
+ * picture is kept as the data URL of its bytes, so a project is one object of text whatever is in it.
  */
 
 export type ProjectFiles = Record<string, string>;
@@ -43,9 +44,22 @@ export const MAX_PROJECT_SIZE = 1_500_000;
 const MAX_PATH = 80;
 const MAX_DEPTH = 4;
 
+/** The mark of a folder kept for itself: `img/`. */
+export const isFolder = (path: string) => path.endsWith('/');
+
 export const extensionOf = (path: string) => /\.([a-z0-9]+)$/i.exec(path)?.[1].toLowerCase() ?? '';
 export const kindOf = (path: string): FileKind | null => KINDS[extensionOf(path)] ?? null;
 export const isImage = (path: string) => kindOf(path) === 'image';
+
+/** Why a path cannot be a folder's (written without the slash at its end), as a sentence; null when it can. */
+export function folderProblem(path: string): string | null {
+	if (!path) return 'Scrivi un nome.';
+	if (path.length > MAX_PATH) return `Il nome è troppo lungo: al più ${MAX_PATH} caratteri.`;
+	const parts = path.split('/');
+	if (parts.length > MAX_DEPTH - 1) return 'Troppe cartelle una dentro l’altra.';
+	if (parts.some((part) => !/^[A-Za-z0-9_][A-Za-z0-9_-]*$/.test(part))) return 'Nel nome di una cartella vanno solo lettere, cifre e trattini.';
+	return null;
+}
 
 /** Why a path cannot be a file's, as a sentence; null when it can. */
 export function pathProblem(path: string): string | null {
@@ -66,17 +80,26 @@ export function readProject(value: unknown): ProjectFiles | null {
 	const files: ProjectFiles = {};
 	let size = 0;
 	for (const [path, text] of entries) {
+		if (isFolder(path)) {
+			if (text !== '' || folderProblem(path.slice(0, -1))) return null;
+			files[path] = '';
+			continue;
+		}
 		if (typeof text !== 'string' || pathProblem(path)) return null;
 		if (isImage(path) && !/^data:image\/(png|jpeg|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]*$/.test(text)) return null;
 		size += text.length;
 		files[path] = text;
 	}
+	// folders alone are not a project
+	if (Object.keys(files).every(isFolder)) return null;
 	return size <= MAX_PROJECT_SIZE ? files : null;
 }
 
 /** The paths of a project in the order of its list: folders first, then names. */
 export const sortedPaths = (files: ProjectFiles) =>
-	Object.keys(files).sort((a, b) => {
+	Object.keys(files)
+		.filter((path) => !isFolder(path))
+		.sort((a, b) => {
 		const [x, y] = [a.split('/'), b.split('/')];
 		for (let i = 0; i < Math.min(x.length, y.length); i++) {
 			const [last, other] = [i === x.length - 1, i === y.length - 1];

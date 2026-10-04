@@ -72,7 +72,7 @@ Con "Progetto" l'editor diventa quello di un programma vero: a sinistra l'elenco
 
 Ogni file che apri diventa una scheda sopra il codice. Le schede si chiudono, si trascinano per cambiarne l'ordine, e con il tasto in fondo alla barra delle schede si spostano in una seconda colonna, per avere due file uno accanto all'altro.
 
-Nell'elenco crei un file con il primo tasto, e passando sopra un file compaiono la matita per rinominarlo e il cestino per eliminarlo. Il nome può avere una cartella davanti, come `css/stile.css`. Le estensioni accettate sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`, `md`, `json`, `txt` e `csv`. Il secondo tasto aggiunge un'immagine dal tuo dispositivo: viene rimpicciolita e resta dentro il progetto.
+Nell'elenco crei un file con il primo tasto e una cartella con il secondo; passando sopra un file o una cartella compaiono la matita per rinominare e il cestino per eliminare. Un file entra in una cartella trascinandolo sopra, ed esce trascinandolo sulla parte vuota dell'elenco. In Python un modulo in una cartella si importa con `from cartella import modulo`. Le estensioni accettate sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`, `md`, `json`, `txt` e `csv`. Il terzo tasto aggiunge un'immagine dal tuo dispositivo: viene rimpicciolita e resta dentro il progetto.
 
 "Esegui" avvia sempre lo stesso programma, quello con il triangolino accanto al nome nell'elenco: puoi aprire un modulo, modificarlo e premere "Esegui" senza tornare al file principale. Per far partire il programma da un altro file, passa sopra il suo nome e premi il triangolino. In un sito "Esegui" mostra la pagina che hai aperto per ultima.
 

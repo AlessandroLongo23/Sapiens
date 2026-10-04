@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useCallback, useRef, useState, type DragEvent, type ReactNode } from 'react';
 import { Columns2, Globe, Settings, X } from 'lucide-react';
 import type { Check, Language, Test } from '@/lib/codice/blocco';
-import { MAX_FILES, MAX_PROJECT_SIZE, isImage, kindOf, pathProblem, sortedPaths, targetOf, type ProjectFiles } from '@/lib/codice/progetto';
+import { MAX_FILES, MAX_PROJECT_SIZE, folderProblem, isFolder, isImage, kindOf, pathProblem, sortedPaths, targetOf, type ProjectFiles } from '@/lib/codice/progetto';
 import { cn } from '@/lib/utils/cn';
 import { Explorer } from './Explorer';
 import { SettingsPanel } from './SettingsPanel';
@@ -140,7 +140,9 @@ export function ProjectBench({
 }) {
 	const explorer = layout === 'explorer';
 	/** The files in the order they are listed: sorted in the explorer, as the lesson wrote them in the tabs. */
-	const listed = (of: ProjectFiles) => (explorer ? sortedPaths(of) : Object.keys(of));
+	const listed = (of: ProjectFiles) => (explorer ? sortedPaths(of) : Object.keys(of).filter((path) => !isFolder(path)));
+	/** The folders kept for themselves, which may be empty. */
+	const kept = (of: ProjectFiles) => Object.keys(of).filter(isFolder).map((path) => path.slice(0, -1));
 	/** What "Esegui" does at the start, and the tabs that are open: in a lesson every file, in the tool the first, with the page beside it when there is one. */
 	const starting = (of: ProjectFiles, path: string) => {
 		const run = targetOf(path, Object.keys(of)) ? path : (listed(of).find((other) => targetOf(other, Object.keys(of))) ?? null);
@@ -153,6 +155,7 @@ export function ProjectBench({
 	/** The files as they are now; the list is drawn from `paths`, which changes only when a file is made, renamed or deleted. */
 	const files = useRef(initial);
 	const [paths, setPaths] = useState(() => listed(initial));
+	const [folders, setFolders] = useState(() => kept(initial));
 	const [groups, setGroups] = useState(() => starting(initial, first).groups);
 	/** The group the keyboard was last in: a file opened from the list goes there. */
 	const [focus, setFocus] = useState(0);
@@ -182,6 +185,36 @@ export function ProjectBench({
 		setSolved(false);
 		onEdit?.(next);
 		listeners.current.forEach((listener) => listener());
+	};
+
+	/** The list drawn again from the files. */
+	const refresh = (next: ProjectFiles) => {
+		setPaths(listed(next));
+		setFolders(kept(next));
+	};
+
+	/** A folder that a file left stays, with nothing in it, until it is deleted. */
+	const keeping = (next: ProjectFiles, left: string): ProjectFiles => {
+		const folder = left.split('/').slice(0, -1).join('/');
+		return !folder || Object.keys(next).some((path) => path.startsWith(`${folder}/`)) ? next : { ...next, [`${folder}/`]: '' };
+	};
+
+	/** The tabs and what "Esegui" does, after paths have changed: `to` gives the new path of a file, or null when it is gone. */
+	const follow = (next: ProjectFiles, to: (path: string) => string | null) => {
+		setGroups((now) =>
+			tidy(
+				now.map((group) => {
+					const tabs = group.tabs.flatMap((tab) => (special(tab) ? [tab] : (to(tab) ?? []))).flat();
+					const active = group.active === null || special(group.active) ? group.active : (to(group.active) ?? tabs[0] ?? null);
+					return tabs.length === group.tabs.length && tabs.every((tab, i) => tab === group.tabs[i]) ? group : inView(tabs, active, next, group.count + 1);
+				})
+			)
+		);
+		const run = targetNow.current;
+		if (run === null) return;
+		const moved = to(run);
+		const rest = listed(next);
+		if (moved !== run) aim(moved && targetOf(moved, rest) ? moved : (rest.find((other) => targetOf(other, rest)) ?? null));
 	};
 
 	/** The tab of the page is there for a page and not for a program. */
@@ -256,7 +289,7 @@ export function ProjectBench({
 		const start = starting(next, now && !special(now) && now in next ? now : listed(next)[0]);
 		targetNow.current = start.run;
 		setTarget(start.run);
-		setPaths(listed(next));
+		refresh(next);
 		setGroups(start.groups.map((group) => ({ ...group, count: group.count + groups[0].count + 1 })));
 		setFocus(0);
 		setEdited(isSolution);
@@ -274,7 +307,7 @@ export function ProjectBench({
 		if (Object.keys(files.current).length >= MAX_FILES) return `Un progetto ha al più ${MAX_FILES} file.`;
 		const next = { ...files.current, [path]: '' };
 		changed(next);
-		setPaths(listed(next));
+		refresh(next);
 		show(path);
 		return null;
 	};
@@ -284,33 +317,65 @@ export function ProjectBench({
 		if (problem) return problem;
 		if (to in files.current) return 'C’è già un file con questo nome.';
 		if (isImage(from) !== isImage(to)) return 'Un’immagine resta un’immagine, e un file di testo un file di testo.';
-		const next: ProjectFiles = {};
+		let next: ProjectFiles = {};
 		for (const [path, text] of Object.entries(files.current)) next[path === from ? to : path] = text;
+		next = keeping(next, from);
 		changed(next);
-		setPaths(listed(next));
-		setGroups((now) => now.map((group) => (group.tabs.includes(from) ? inView(group.tabs.map((tab) => (tab === from ? to : tab)), group.active === from ? to : group.active, next, group.count + 1) : group)));
-		if (targetNow.current === from) aim(targetOf(to, Object.keys(next)) ? to : null);
+		refresh(next);
+		follow(next, (path) => (path === from ? to : path));
 		return null;
 	};
 
 	const remove = (path: string) => {
-		const next = { ...files.current };
+		let next = { ...files.current };
 		delete next[path];
-		const rest = listed(next);
-		if (rest.length === 0) return;
+		if (listed(next).length === 0) return;
+		next = keeping(next, path);
 		changed(next);
-		setPaths(rest);
-		setGroups((now) =>
-			tidy(
-				now.map((group) => {
-					if (!group.tabs.includes(path)) return group;
-					const tabs = group.tabs.filter((tab) => tab !== path);
-					return inView(tabs, group.active === path ? (tabs[0] ?? null) : group.active, next, group.count + 1);
-				})
-			)
-		);
-		if (targetNow.current === path) aim(rest.find((other) => targetOf(other, rest)) ?? null);
+		refresh(next);
+		follow(next, (other) => (other === path ? null : other));
 	};
+
+	const createFolder = (path: string): string | null => {
+		const problem = folderProblem(path);
+		if (problem) return problem;
+		if (Object.keys(files.current).some((other) => other.startsWith(`${path}/`))) return 'C’è già una cartella con questo nome.';
+		if (Object.keys(files.current).length >= MAX_FILES) return `Un progetto ha al più ${MAX_FILES} tra file e cartelle.`;
+		const next = { ...files.current, [`${path}/`]: '' };
+		changed(next);
+		refresh(next);
+		return null;
+	};
+
+	const renameFolder = (from: string, to: string): string | null => {
+		const problem = folderProblem(to);
+		if (problem) return problem;
+		if (to.startsWith(`${from}/`)) return 'Una cartella non entra in se stessa.';
+		if (Object.keys(files.current).some((other) => other.startsWith(`${to}/`))) return 'C’è già una cartella con questo nome.';
+		const moved = (path: string) => (path.startsWith(`${from}/`) ? `${to}/${path.slice(from.length + 1)}` : path);
+		// a file deep in the folder must still have a path that can be a file's
+		const deep = Object.keys(files.current).find((path) => !isFolder(path) && pathProblem(moved(path)));
+		if (deep) return pathProblem(moved(deep));
+		const next: ProjectFiles = {};
+		for (const [path, text] of Object.entries(files.current)) next[moved(path)] = text;
+		changed(next);
+		refresh(next);
+		follow(next, moved);
+		return null;
+	};
+
+	const removeFolder = (folder: string) => {
+		const next: ProjectFiles = {};
+		for (const [path, text] of Object.entries(files.current)) if (!path.startsWith(`${folder}/`)) next[path] = text;
+		// a project has at least one file
+		if (listed(next).length === 0) return;
+		changed(next);
+		refresh(next);
+		follow(next, (path) => (path.startsWith(`${folder}/`) ? null : path));
+	};
+
+	/** A file dragged into a folder of the list, or out of every folder. */
+	const moveInto = (path: string, folder: string) => rename(path, folder ? `${folder}/${path.split('/').pop()}` : path.split('/').pop()!);
 
 	const upload = async (file: File): Promise<string | null> => {
 		const picture = await readPicture(file);
@@ -326,7 +391,7 @@ export function ProjectBench({
 		if (weight(files.current) + picture.data.length > MAX_PROJECT_SIZE) return 'Il progetto è troppo pesante per questa immagine: togline un’altra, o usane una più piccola.';
 		const next = { ...files.current, [path]: picture.data };
 		changed(next);
-		setPaths(listed(next));
+		refresh(next);
 		show(path);
 		return null;
 	};
@@ -465,7 +530,7 @@ export function ProjectBench({
 	const slots: ProjectSlots = {
 		layout,
 		chooser: explorer ? (
-			<Explorer paths={paths} active={groups[Math.min(focus, groups.length - 1)]?.active ?? ''} target={target} editable={editable} onOpen={show} onAim={aim} onCreate={create} onRename={rename} onDelete={remove} onUpload={upload} />
+			<Explorer paths={paths} folders={folders} active={groups[Math.min(focus, groups.length - 1)]?.active ?? ''} target={target} editable={editable} onOpen={show} onAim={aim} onCreate={create} onCreateFolder={createFolder} onRename={rename} onRenameFolder={renameFolder} onMove={moveInto} onDelete={remove} onDeleteFolder={removeFolder} onUpload={upload} />
 		) : (
 			<div role="tablist" aria-label="File" className="flex shrink-0 gap-1 overflow-x-auto border-b border-edge bg-surface-2 px-2 pt-1.5">
 				{paths.map((path) => (

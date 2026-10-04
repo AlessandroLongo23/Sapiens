@@ -30,7 +30,7 @@ export function compileFiles(language: 'c' | 'cpp', source: string, files?: Reco
 	const tree: Tree = { 'sapiens.h': PRELUDE };
 	if (!files) return { ...tree, [FILE[language]]: source };
 	for (const [path, text] of Object.entries(files)) {
-		if (text.startsWith('data:')) continue;
+		if (text.startsWith('data:') || path.endsWith('/')) continue;
 		const parts = path.split('/');
 		let folder = tree;
 		for (const part of parts.slice(0, -1)) folder = (folder[part] ??= {}) as Tree;

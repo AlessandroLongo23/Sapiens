@@ -385,7 +385,74 @@ test.describe('projects: more files', () => {
 		await page.getByRole('button', { name: 'Elimina raggi.txt' }).click();
 		await files(page).getByRole('button', { name: 'Elimina', exact: true }).click();
 		await expect(file(page, 'raggi.txt')).toHaveCount(0);
-		await expect(files(page).getByRole('listitem')).toHaveCount(3);
+		await expect(files(page).locator('[data-path]')).toHaveCount(3);
+	});
+
+	test('folders are made in the list, and a file dragged over one goes into it', async ({ page, isMobile, browserName }) => {
+		await open(page, 'Python con un modulo', 'Progetto');
+		const titles = () => files(page).locator('[data-path]').evaluateAll((rows) => rows.map((row) => (row as HTMLElement).dataset.path ?? ''));
+		await page.getByRole('button', { name: 'Nuova cartella' }).click();
+		await page.getByLabel('Nome della nuova cartella').fill('i miei moduli');
+		await page.getByLabel('Nome della nuova cartella').press('Enter');
+		await expect(files(page).getByRole('alert')).toContainText('solo lettere, cifre e trattini');
+		await page.getByLabel('Nome della nuova cartella').fill('moduli');
+		await page.getByLabel('Nome della nuova cartella').press('Enter');
+		// a folder with nothing in it is there, before the files
+		expect(await titles()).toEqual(['moduli/', 'geometria.py', 'main.py', 'raggi.txt']);
+
+		if (!isMobile && browserName === 'chromium') {
+			// dragged over the folder, the folder is marked as the place the file would go
+			const from = (await file(page, 'geometria.py').boundingBox())!;
+			const to = (await file(page, 'moduli/').boundingBox())!;
+			await page.mouse.move(from.x + 30, from.y + 8);
+			await page.mouse.down();
+			await page.mouse.move(to.x + 40, to.y + 8, { steps: 8 });
+			await expect(files(page).locator('[data-taking]')).toHaveCount(1);
+			await page.mouse.up();
+			await expect(files(page).locator('[data-taking]')).toHaveCount(0);
+		} else {
+			await page.getByRole('button', { name: 'Rinomina geometria.py' }).click();
+			await page.getByLabel('Nuovo nome del file').fill('moduli/geometria.py');
+			await page.getByLabel('Nuovo nome del file').press('Enter');
+		}
+		await expect.poll(titles).toEqual(['moduli/', 'moduli/geometria.py', 'main.py', 'raggi.txt']);
+
+		// the module is imported from its folder
+		await file(page, 'main.py').click();
+		await write(page, 'from moduli import geometria\nprint(round(geometria.area_cerchio(1), 2))\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('3.14', { timeout: 90_000 });
+
+		// a new file in the folder, the folder renamed with what is in it, and deleted with it
+		await page.getByRole('button', { name: 'Nuovo file in moduli' }).click();
+		await expect(page.getByLabel('Nome del nuovo file')).toHaveValue('moduli/');
+		await page.getByLabel('Nome del nuovo file').fill('moduli/note.txt');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await page.getByRole('button', { name: 'Rinomina la cartella moduli' }).click();
+		await page.getByLabel('Nuovo nome della cartella').fill('libreria');
+		await page.getByLabel('Nuovo nome della cartella').press('Enter');
+		await expect.poll(titles).toEqual(['libreria/', 'libreria/geometria.py', 'libreria/note.txt', 'main.py', 'raggi.txt']);
+		await expect(page.getByRole('tab', { name: 'note.txt' })).toHaveAttribute('title', 'libreria/note.txt');
+
+		// closed, a folder hides what is in it
+		await file(page, 'libreria/').click();
+		await expect.poll(titles).toEqual(['libreria/', 'main.py', 'raggi.txt']);
+		await file(page, 'libreria/').click();
+
+		if (!isMobile && browserName === 'chromium') {
+			// dragged onto the empty part of the list, a file leaves its folder, which stays
+			const inside = (await file(page, 'libreria/note.txt').boundingBox())!;
+			const list = (await files(page).locator('ul').boundingBox())!;
+			await page.mouse.move(inside.x + 40, inside.y + 8);
+			await page.mouse.down();
+			await page.mouse.move(list.x + list.width / 2, list.y + list.height / 2, { steps: 8 });
+			await page.mouse.up();
+			await expect.poll(titles).toEqual(['libreria/', 'libreria/geometria.py', 'main.py', 'note.txt', 'raggi.txt']);
+		}
+
+		await page.getByRole('button', { name: 'Elimina la cartella libreria' }).click();
+		await files(page).getByRole('button', { name: 'Elimina tutto' }).click();
+		await expect.poll(async () => (await titles()).filter((title) => title.startsWith('libreria'))).toEqual([]);
 	});
 
 	test('a C++ program is compiled from all its sources', async ({ page }) => {

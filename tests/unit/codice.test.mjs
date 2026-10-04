@@ -12,7 +12,7 @@ const { assemble, hasScript } = await jiti.import('../../src/components/codice/w
 const { guardLoops, guardInline } = await jiti.import('../../src/components/codice/loop-guard.ts');
 const { environment, format, random } = await jiti.import('../../src/components/codice/js-environment.ts');
 const { readProgramFiles } = await jiti.import('../../src/lib/codice/salvati.ts');
-const { pathProblem, readProject, resolvePath, sortedPaths, targetOf } = await jiti.import('../../src/lib/codice/progetto.ts');
+const { folderProblem, pathProblem, readProject, resolvePath, sortedPaths, targetOf } = await jiti.import('../../src/lib/codice/progetto.ts');
 const { reindent } = await jiti.import('../../src/components/codice/settings.ts');
 
 test('a block is read into its program, its solution and its tests', () => {
@@ -150,6 +150,14 @@ test('a project is files with paths: what a path may be, how it is found from an
 	assert.equal(readProject({ 'a.exe': '' }), null);
 	assert.equal(readProject({}), null);
 	assert.deepEqual(readProgramFiles('project', { 'a.py': 'x' }), { 'a.py': 'x' });
+	// a folder with nothing in it yet is a path that ends with a slash
+	assert.deepEqual(readProject({ 'main.py': 'x', 'img/': '' }), { 'main.py': 'x', 'img/': '' });
+	assert.equal(readProject({ 'img/': '' }), null);
+	assert.equal(readProject({ 'main.py': 'x', 'la mia/': '' }), null);
+	assert.equal(readProject({ 'main.py': 'x', 'img/': 'testo' }), null);
+	assert.deepEqual(sortedPaths({ 'main.py': '', 'img/': '' }), ['main.py']);
+	assert.match(folderProblem('a.b'), /solo lettere/);
+	assert.equal(folderProblem('css/temi'), null);
 });
 
 test('blocks named as files are a project: its files, the one to open, its tests or its checks', () => {
