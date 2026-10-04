@@ -31,7 +31,7 @@ async function reply(page: Page, line: string) {
 
 /** How many pixels of the turtle's canvas are not white. */
 const drawn = (page: Page) =>
-	page.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
+	log(page).locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
 		const { data } = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height);
 		let count = 0;
 		for (let i = 0; i < data.length; i += 4) if (data[i] < 240 || data[i + 1] < 240 || data[i + 2] < 240) count++;
@@ -147,7 +147,7 @@ test.describe('python editor', () => {
 		await write(page, 'import turtle\nturtle.onkey(print, "a")\n');
 		await run(page).click();
 		await expect(log(page)).toContainText('TurtleGraphicsError');
-		await expect(page.locator('canvas')).toHaveCount(0);
+		await expect(log(page).locator('canvas')).toHaveCount(0);
 	});
 
 	test('the page does not scroll sideways', async ({ page }) => {

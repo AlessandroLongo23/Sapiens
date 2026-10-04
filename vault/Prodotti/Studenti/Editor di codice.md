@@ -55,7 +55,7 @@ Tutto dal nostro sito, niente CDN mentre lo studente usa la pagina: l'indirizzo 
 Ogni linguaggio si scarica al primo clic nell'editor o al primo Esegui, mai con la pagina.
 
 ### Cosa fa l'editor
-- **Editor:** CodeMirror 6 (`Editor.tsx`), con i colori di Dark Modern di VS Code nel tema scuro e di Light Modern in quello chiaro, letti dal tema installato in Cursor (`theme.ts`); parentesi colorate per profondità; rientro di quattro spazi; Ctrl+Invio o ⌘+Invio esegue.
+- **Editor:** CodeMirror 6 (`Editor.tsx`), con i colori di Dark Modern di VS Code nel tema scuro e di Light Modern in quello chiaro, letti dal tema installato in Cursor (`theme.ts`); parentesi colorate per profondità; nello strumento, da 640 px in su, una minimappa del programma lungo il bordo destro del codice (`@replit/codemirror-minimap`), che nelle lezioni non c'è; rientro di quattro spazi; Ctrl+Invio o ⌘+Invio esegue.
 - **Console e tasti:** `Workbench.tsx`. Esegui, Ferma, Ripristina (rimette il programma di partenza), e negli esercizi Verifica e Soluzione.
 - **Leggere dalla tastiera** (`input()`, `scanf`, `cin`): la risposta si scrive nella console, nel punto in cui il programma la chiede. Vedi "Dettagli".
 - **Errori:** in Python il traceback mostra solo le righe del programma dello studente. In C e C++ i messaggi sono quelli di Clang, con riga e colonna; gli errori durante l'esecuzione (divisione per zero, memoria fuori dai limiti, ricorsione senza fine) sono detti in italiano.

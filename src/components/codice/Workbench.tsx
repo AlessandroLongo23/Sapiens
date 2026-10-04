@@ -343,7 +343,7 @@ export function Workbench({
 			</div>
 			<div className={cn('grid', !compact && 'lg:grid-cols-2')}>
 				<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : 'h-[20rem] lg:h-[32rem] lg:border-r lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
-					<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" onChange={edit} onRun={run} />
+					<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" minimap={!compact} onChange={edit} onRun={run} />
 				</div>
 				<div
 					ref={log}

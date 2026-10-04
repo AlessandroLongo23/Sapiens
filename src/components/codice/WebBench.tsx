@@ -229,7 +229,7 @@ export function WebBench({
 						))}
 					</div>
 					<div className="min-h-0 flex-1 overflow-auto">
-						<Editor key={`${loaded.count}:${tab}`} initial={view.text} language={tab} label={FILE_NAMES[tab]} onChange={(text) => edit(tab, text)} onRun={() => void show()} />
+						<Editor key={`${loaded.count}:${tab}`} initial={view.text} language={tab} label={FILE_NAMES[tab]} minimap={!compact} onChange={(text) => edit(tab, text)} onRun={() => void show()} />
 					</div>
 				</div>
 				<div className={cn('flex min-w-0 flex-col', !compact && 'lg:h-[32rem]')}>
