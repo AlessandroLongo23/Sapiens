@@ -56,7 +56,7 @@ function closing(outcome: Outcome, ms: number, language: Language): string | nul
 		case 'stopped':
 			return 'Interrotto.';
 		case 'failed':
-			return `${language === 'python' ? 'Python non si è caricato' : 'Il compilatore non si è caricato'}. Controlla la connessione e riprova.`;
+			return `${language === 'c' || language === 'cpp' ? 'Il compilatore non si è caricato' : `${LANGUAGES[language]} non si è caricato`}. Controlla la connessione e riprova.`;
 		default:
 			return null;
 	}
@@ -85,7 +85,7 @@ function joined(chunks: Chunk[], more: Chunk[]): Chunk[] {
  * A program and its console, side by side: write, run, answer the program's questions in the console. With `tests`
  * it is an exercise: "Verifica" runs the program on each test's input and compares what it prints.
  *
- * The program runs in the browser (python.worker.ts, clang.worker.ts and wasi.worker.ts); the language is downloaded
+ * The program runs in the browser, in the sandbox (sandbox.ts); the language is downloaded
  * at the first click in the editor or the first run, not with the page. A new `initial` or `language` needs a new `key`.
  */
 export function Workbench({
@@ -94,7 +94,8 @@ export function Workbench({
 	tests,
 	solution,
 	toolbar,
-	compact = false
+	compact = false,
+	onEdit
 }: {
 	language: Language;
 	initial: string;
@@ -105,6 +106,7 @@ export function Workbench({
 	toolbar?: ReactNode;
 	/** For a program inside a lesson: the console under the editor, each as tall as what it holds. */
 	compact?: boolean;
+	onEdit?: (code: string) => void;
 }) {
 	/** The program put in the editor, which reads its text only when it is made: the starting one, or the solution. */
 	const [loaded, setLoaded] = useState({ text: initial, count: 0 });
@@ -268,6 +270,7 @@ export function Workbench({
 	const edit = (text: string) => {
 		code.current = text;
 		setEdited(text !== initial);
+		onEdit?.(text);
 		// the lines typed so far answered the old program
 		if (waiting.current) close('Hai cambiato il programma: eseguilo di nuovo.');
 	};
@@ -276,6 +279,7 @@ export function Workbench({
 		if (phase !== 'idle') stop();
 		code.current = text;
 		setEdited(text !== initial);
+		onEdit?.(text);
 		clear();
 		setLoaded(({ count }) => ({ text, count: count + 1 }));
 	};
@@ -303,7 +307,7 @@ export function Workbench({
 
 	return (
 		<section className="not-prose overflow-hidden rounded-2xl border border-edge bg-surface shadow-paper" aria-label={`Editor di ${LANGUAGES[language]}`}>
-			<div className="flex flex-wrap items-center gap-2 border-b border-edge px-3 py-2">
+			<div className="relative flex flex-wrap items-center gap-2 border-b border-edge px-3 py-2">
 				{toolbar ?? <span className="label-mono px-1 text-fg-subtle">{LANGUAGES[language]}</span>}
 				<p className="ml-auto text-sm text-fg-subtle" role="status">
 					{status || STATUS[phase]}

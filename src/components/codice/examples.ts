@@ -1,3 +1,4 @@
+import type { Page } from '@/lib/codice/blocco';
 import type { Language } from './runtime';
 
 type Example = { title: string; code: string };
@@ -369,4 +370,259 @@ int main() {
 	}
 ];
 
-export const EXAMPLES: Record<Language, Example[]> = { python: PYTHON, c: C, cpp: CPP };
+const JAVASCRIPT: Example[] = [
+	{
+		title: 'Saluto',
+		code: `const nome = prompt("Come ti chiami?");
+const anno = Number(prompt("In che anno sei nato?"));
+
+console.log(\`Ciao \${nome}!\`);
+console.log(\`Nel 2026 compi \${2026 - anno} anni.\`);
+`
+	},
+	{
+		title: 'Tabellina',
+		code: `const n = Number(prompt("Di quale numero vuoi la tabellina?"));
+
+for (let i = 1; i <= 10; i++) {
+    console.log(\`\${n} x \${i} = \${n * i}\`);
+}
+`
+	},
+	{
+		title: 'Liste e oggetti',
+		code: `const voti = [7, 8.5, 6, 9, 7.5];
+
+const somma = voti.reduce((totale, voto) => totale + voto, 0);
+const media = somma / voti.length;
+
+console.log("Voti:", voti);
+console.log("Media:", media.toFixed(2));
+console.log("Sufficienti:", voti.filter((voto) => voto >= 6).length);
+
+const studente = { nome: "Giulia", classe: "3B", voti };
+console.log(studente);
+`
+	},
+	{
+		title: 'Indovina il numero',
+		code: `const segreto = Math.floor(Math.random() * 100) + 1;
+let tentativi = 0;
+
+while (true) {
+    const numero = Number(prompt("Prova a indovinare (1-100):"));
+    tentativi++;
+    if (numero < segreto) {
+        console.log("Troppo piccolo");
+    } else if (numero > segreto) {
+        console.log("Troppo grande");
+    } else {
+        console.log(\`Indovinato in \${tentativi} tentativi!\`);
+        break;
+    }
+}
+`
+	},
+	{
+		title: 'Un errore',
+		code: `function media(numeri) {
+    return somma(numeri) / numeri.length;
+}
+
+console.log(media([4, 8, 6]));
+`
+	},
+	{
+		title: 'Un ciclo che non finisce',
+		code: `let i = 0;
+while (i < 10) {
+    console.log(i);
+}
+`
+	}
+];
+
+/** Pages for trying the editor: the three files together, a click that changes the page, a mistake to find. */
+export const PAGES: { title: string; files: Page }[] = [
+	{
+		title: 'La mia prima pagina',
+		files: {
+			html: `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>La mia prima pagina</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Ciao, mondo!</h1>
+    <p>Questa è la mia <strong>prima pagina</strong> web.</p>
+    <ul>
+        <li>HTML dice che cosa c'è nella pagina</li>
+        <li>CSS dice che aspetto ha</li>
+        <li>JavaScript dice che cosa fa</li>
+    </ul>
+</body>
+</html>
+`,
+			css: `body {
+    font-family: system-ui, sans-serif;
+    margin: 2rem;
+    color: #222;
+}
+
+h1 {
+    color: #c2410c;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+`,
+			js: ''
+		}
+	},
+	{
+		title: 'Un contatore',
+		files: {
+			html: `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Contatore</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Contatore</h1>
+    <p id="numero">0</p>
+    <button id="meno">-1</button>
+    <button id="piu">+1</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
+`,
+			css: `body {
+    font-family: system-ui, sans-serif;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+#numero {
+    font-size: 4rem;
+    margin: 1rem 0;
+}
+
+button {
+    font-size: 1.25rem;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid #999;
+    border-radius: 0.5rem;
+    background: white;
+    cursor: pointer;
+}
+`,
+			js: `let conto = 0;
+const numero = document.querySelector("#numero");
+
+function mostra() {
+    numero.textContent = conto;
+    numero.style.color = conto < 0 ? "crimson" : "black";
+    console.log("Il contatore vale", conto);
+}
+
+document.querySelector("#piu").addEventListener("click", () => {
+    conto++;
+    mostra();
+});
+
+document.querySelector("#meno").addEventListener("click", () => {
+    conto--;
+    mostra();
+});
+`
+		}
+	},
+	{
+		title: 'Una lista di cose da fare',
+		files: {
+			html: `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Da fare</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Da fare</h1>
+    <input id="testo" placeholder="Che cosa devi fare?">
+    <button id="aggiungi">Aggiungi</button>
+    <ul id="lista"></ul>
+
+    <script src="script.js"></script>
+</body>
+</html>
+`,
+			css: `body {
+    font-family: system-ui, sans-serif;
+    margin: 2rem;
+}
+
+input, button {
+    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+}
+
+li {
+    margin-top: 0.5rem;
+    cursor: pointer;
+}
+
+li.fatto {
+    text-decoration: line-through;
+    color: gray;
+}
+`,
+			js: `const testo = document.querySelector("#testo");
+const lista = document.querySelector("#lista");
+
+document.querySelector("#aggiungi").addEventListener("click", () => {
+    if (testo.value === "") return;
+
+    const voce = document.createElement("li");
+    voce.textContent = testo.value;
+    // un clic sulla voce la segna come fatta
+    voce.addEventListener("click", () => voce.classList.toggle("fatto"));
+    lista.append(voce);
+
+    testo.value = "";
+    testo.focus();
+});
+`
+		}
+	},
+	{
+		title: 'Un foglio di stile dimenticato',
+		files: {
+			html: `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Manca qualcosa</title>
+</head>
+<body>
+    <h1>Perché non sono blu?</h1>
+    <p>Nel file style.css il titolo è blu, ma la pagina non lo sa.</p>
+</body>
+</html>
+`,
+			css: `h1 {
+    color: royalblue;
+}
+`,
+			js: ''
+		}
+	}
+];
+
+export const EXAMPLES: Record<Language, Example[]> = { python: PYTHON, c: C, cpp: CPP, javascript: JAVASCRIPT };

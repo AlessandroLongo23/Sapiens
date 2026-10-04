@@ -1,15 +1,17 @@
 /**
  * Runs the exercises of lesson files: every ```codice block with tests has its solutions run on them, in each
  * language, with the same Python and the same Clang the site gives the student (Pyodide and @yowasp/clang, here in
- * Node). An error (exit code 1) is a solution that does not pass a test, or a block that cannot be read; a warning is
+ * Node); JavaScript runs in Node's own engine. The checks of a web page need a browser and are not run. An error (exit code 1) is a solution that does not pass a test, or a block that cannot be read; a warning is
  * a starting program that already passes every test, or an exercise with no solution to check.
  *
  *   node node_modules/jiti/lib/jiti-cli.mjs scripts/codice/verifica.mts docs/lezioni/informatica/riscritte/*.md
  */
 import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 import { codeFences, parseCodeBlock, tidy, type Language, type Test } from '../../src/lib/codice/blocco';
 import { OUTPUT, compileArgs, compileFiles } from '../../src/components/codice/clang-args';
 import { runWasi } from '../../src/components/codice/wasi';
+import { environment, random } from '../../src/components/codice/js-environment';
 
 type Run = (source: string, test: Test) => Promise<{ printed: string; failure: string | null }>;
 
@@ -70,7 +72,21 @@ function loadClang(): Promise<(language: 'c' | 'cpp') => Run> {
 	})());
 }
 
-const runner = async (language: Language): Promise<Run> => (language === 'python' ? loadPython() : (await loadClang())(language));
+/** JavaScript with the console and the prompt() the editor gives it; timers are not waited for. */
+const javascript: Run = async (source, test) => {
+	let printed = '';
+	const scope = environment(lines(test.input), true, (kind, text) => void (kind === 'out' && (printed += text)), () => {
+		throw new Error('input finito');
+	});
+	try {
+		runInNewContext(source, { ...scope, Math: Object.assign(Object.create(Math), { random: random(1) }) }, { timeout: 10_000 });
+		return { printed, failure: null };
+	} catch (error) {
+		return { printed, failure: String(error) };
+	}
+};
+
+const runner = async (language: Language): Promise<Run> => (language === 'python' ? loadPython() : language === 'javascript' ? javascript : (await loadClang())(language));
 
 let errors = 0;
 let exercises = 0;
@@ -85,6 +101,7 @@ for (const file of process.argv.slice(2)) {
 		const { block, errors: unread } = parseCodeBlock(group.fences);
 		const where = `programma ${index + 1}`;
 		unread.forEach((e) => err(`${where}: ${e}`));
+		if (block?.page?.checks.length) out.push(`  avviso ${where}: pagina web, i controlli si provano nel browser`);
 		if (!block || block.tests.length === 0) continue;
 		exercises++;
 		for (const variant of block.variants) {

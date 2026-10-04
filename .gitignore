@@ -64,3 +64,5 @@ scripts/tavola-periodica/fonti/
 public/pyodide/
 # The C and C++ compiler, copied from node_modules by scripts/codice/clang.mjs after every install
 public/clang/
+# The scripts of the code editor's sandbox, built by scripts/codice/sandbox.mjs
+public/codice/sandbox/

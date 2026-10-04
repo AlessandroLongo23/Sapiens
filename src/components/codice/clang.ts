@@ -1,9 +1,10 @@
 import type { FromCompiler, ToCompiler } from './clang.worker';
 import { TIME_LIMIT, type FromRunner, type Job, type Listeners, type Outcome, type Result, type Runtime } from './runtime';
+import { spawn } from './sandbox-worker';
 import type { ToWasi } from './wasi.worker';
 
 /**
- * C and C++: the page's side of the compiler (clang.worker.ts) and of the worker that runs a compiled program
+ * C and C++: the sandbox's side of the compiler (clang.worker.ts) and of the worker that runs a compiled program
  * (wasi.worker.ts). The compiler stays loaded for the whole visit; every run has a new worker, ended when the
  * program is over or takes too long. A program that waits for the keyboard is run again for every line typed, and
  * the compiled program is kept, so only the first of those runs compiles.
@@ -32,7 +33,7 @@ export class Clang implements Runtime {
 
 	load(): Promise<boolean> {
 		if (this.loading) return this.loading;
-		const worker = new Worker(new URL('./clang.worker.ts', import.meta.url), { type: 'module' });
+		const worker = spawn('clang');
 		this.compiler = worker;
 		this.loading = new Promise((resolve) => {
 			worker.addEventListener('message', ({ data }: MessageEvent<FromCompiler>) => {
@@ -95,7 +96,7 @@ export class Clang implements Runtime {
 		}
 		if (!program) return this.end('error');
 
-		const worker = new Worker(new URL('./wasi.worker.ts', import.meta.url), { type: 'module' });
+		const worker = spawn('wasi');
 		run.worker = worker;
 		worker.addEventListener('message', ({ data }: MessageEvent<FromRunner>) => {
 			if (this.current !== run) return;

@@ -1,12 +1,12 @@
 ---
 stato: rilasciata
 release: da decidere
-aggiornato: 2026-10-03
+aggiornato: 2026-10-04
 tag: [prodotto, studenti, informatica, lezioni, esercizi]
 ---
 # Editor di codice
 
-Un editor con il tasto Esegui dentro le lezioni e gli esercizi di informatica: lo studente scrive un programma in Python, C o C++ e lo fa girare nel browser, senza installare nulla.
+Un editor con il tasto Esegui dentro le lezioni e gli esercizi di informatica: lo studente scrive un programma in Python, C, C++ o JavaScript, oppure una pagina web in HTML e CSS, lo fa girare nel browser senza installare nulla e lo salva tra i suoi programmi.
 
 ## Stato attuale
 In produzione dal 3 ottobre 2026 (PR #30). Lo strumento è a `/strumenti/editor-di-codice`, nella categoria Informatica dell'indice degli strumenti: pagina in `src/app/(site)/strumenti/editor-di-codice/page.tsx` e `src/components/codice/EditorPage.tsx`, articolo in `src/content/strumenti/editor-di-codice.md`, voce in `src/lib/tools/registry.ts`. Nelle lezioni lo monta un blocco `codice`; nessuna lezione pubblicata ne ha ancora uno, perché la programmazione comincia al secondo anno. I blocchi si provano in sviluppo con `/prova-grafico/lezione?file=prove/codice.md`.
@@ -17,8 +17,38 @@ In produzione dal 3 ottobre 2026 (PR #30). Lo strumento è a `/strumenti/editor-
 - **Limite del C++:** non ha le eccezioni, perché la libreria C++ di questo compilatore è costruita senza. `try`, `catch` e `throw` sono errori di compilazione, e l'editor lo dice in italiano. Classi, ereditarietà, libreria standard e puntatori funzionano.
 - Un'interfaccia sola per i tre (`runtime.ts`), e un solo motore per linguaggio in tutta la pagina (`runtimes.ts`): una lezione con cinque programmi carica Python una volta.
 
+### JavaScript e le pagine web
+Aggiunti il 4 ottobre 2026 (vedi [[2026-10-04 L'editor di codice ha anche JavaScript e le pagine web]]). Sono due cose diverse.
+
+- **JavaScript come programma** (`javascript.worker.ts`, `javascript.ts`, `js-environment.ts`): un programma con la console, come Python. `console.log` stampa, `prompt()` legge dalla console con lo stesso meccanismo della riesecuzione, `alert()` scrive, `Math.random` ha il seme. Un errore dice la riga. Gira in un worker dell'iframe isolato, uno per esecuzione, e non scarica niente. Non ha `document`.
+- **Pagina web** (`WebBench.tsx`): tre file, `index.html`, `style.css` e `script.js`, con una linguetta ciascuno, e accanto la pagina che ne esce. Sotto l'anteprima c'è la console con i `console.log` e gli errori dello script, con la riga.
+  - I file si collegano come in una pagina vera, con `<link rel="stylesheet" href="style.css">` e `<script src="script.js"></script>` (`web-assemble.ts`). Un file non collegato non viene applicato e una nota lo dice.
+  - Senza script l'anteprima segue i tasti, mezzo secondo dopo l'ultimo. Con uno script aspetta "Esegui", così un `alert()` non si apre a ogni pausa.
+  - L'anteprima è un secondo iframe isolato, la rotta `src/app/codice-sandbox/pagina/route.ts`, con il suo script `pagina.ts`. Lo script dello studente lì non può fare richieste di rete, inviare moduli o aprire link; le immagini `https` si vedono, `alert()` e `prompt()` sono quelli del browser.
+  - Uno script di pagina gira nel thread della pagina, e un ciclo infinito bloccherebbe la scheda. `loop-guard.ts` legge lo script con il parser di CodeMirror e mette in ogni ciclo una chiamata che lo ferma dopo 2 secondi, senza spostare le righe.
+- **Nelle lezioni** un gruppo di blocchi che comincia con `html` è una pagina; `javascript` da solo è un programma. L'esercizio di una pagina si corregge con `%% controllo`: una frase per lo studente e regole fatte di un selettore CSS e una condizione (`quanti`, `testo`, `attributo`, `stile`), eseguite sulla pagina resa (`web-checks.ts`). Il formato è in `docs/lezioni/README.md`.
+
+### I programmi salvati
+Dal 4 ottobre 2026 (vedi [[2026-10-04 I programmi dell'editor si salvano con nome, come i grafici]]). Costruito sul modello dei grafici del plotter.
+
+- Nella barra dell'editor il tasto "I miei programmi" apre un pannello (`SavedPrograms.tsx`): "Salva con nome" crea un programma, "Salva" scrive sopra quello caricato, l'elenco li ricarica e li elimina. Senza account il pannello apre l'accesso.
+- Un programma salvato ha un nome, un linguaggio (`python`, `c`, `cpp`, `javascript`, `web`) e i suoi file: `main` per un programma, `html`, `css` e `js` per una pagina (`src/lib/codice/salvati.ts`).
+- Tabella `programs` (migrazione `20261004120000_programs.sql`, applicata in produzione il 4 ottobre), con la sicurezza a livello di riga come `plots`. Server in `src/lib/server/programmi.ts`, rotte `/api/programmi` e `/api/programmi/[id]`.
+- Nei blocchi delle lezioni c'è "Salva", che mette il programma dello studente tra i suoi; da lì non si carica niente, perché il blocco è della lezione.
+- I programmi e i grafici sono ora nell'esportazione dei dati dell'account (`src/lib/server/account.ts`); i grafici mancavano.
+
+### Dove gira un programma
+Dal 4 ottobre 2026 i programmi non girano più nella pagina del sito ma in un iframe isolato, perché un programma Python eseguito sulla nostra origine poteva agire sul sito con la sessione di chi lo eseguiva (vedi [[2026-10-04 I programmi dell'editor girano in un iframe senza l'origine del sito]]).
+
+- **La pagina** (`sandbox.ts`) crea un iframe nascosto con `sandbox="allow-scripts"`, gli manda il programma e riceve quello che stampa. `runtimes.ts` dà all'editor questi due motori al posto di quelli veri.
+- **L'iframe** è la rotta `src/app/codice-sandbox/route.ts`. Ha un'origine sua (`null`): niente cookie leggibili, niente archivi del browser, niente service worker. La sua Content Security Policy lascia raggiungere solo `/codice/`, `/pyodide/` e `/clang/`, e i worker la ereditano. `next.config.ts` esclude questa rotta dalle intestazioni di sicurezza del resto del sito, che altrimenti sostituirebbero le sue.
+- **Dentro l'iframe** (`sandbox-host.ts`) stanno i motori veri (`python.ts`, `clang.ts`) e i loro worker. Un worker parte da una riga creata sul posto che importa lo script dal sito (`sandbox-worker.ts`): Chrome non avvia worker di tipo modulo in una pagina senza origine.
+- **Gli script dell'iframe** non li compila Next: `scripts/codice/sandbox.mjs` li costruisce con esbuild in `public/codice/sandbox/` (in `.gitignore`), dopo ogni `npm install` e prima di `next dev` e `next build`. Chi modifica i worker con il server di sviluppo acceso usa `node scripts/codice/sandbox.mjs --watch`.
+- **I file dei linguaggi** hanno `Access-Control-Allow-Origin: *`, perché l'iframe li legge da un'altra origine.
+- **Sul server** `src/proxy.ts` rifiuta con 403 ogni richiesta che modifica qualcosa (tutto tranne GET, HEAD, OPTIONS) se la sua intestazione `Origin` non è il sito. Serve perché WebKit manda il cookie di sessione anche dall'iframe isolato: lì la policy dell'iframe è la prima difesa e questa è la seconda. Le richieste senza `Origin` (webhook di Stripe, script) passano.
+
 ### Da dove arrivano i file
-Tutto dalla nostra origine, niente CDN mentre lo studente usa la pagina: la Content Security Policy di `next.config.ts` non cambia e l'indirizzo dello studente non va a terzi. Due script girano dopo ogni `npm install` (`postinstall`), e le due cartelle sono in `.gitignore`:
+Tutto dal nostro sito, niente CDN mentre lo studente usa la pagina: l'indirizzo dello studente non va a terzi. La Content Security Policy di `next.config.ts` è cambiata solo per permettere al sito di mettere in un iframe una propria pagina (`frame-src 'self'`). Due script girano dopo ogni `npm install` (`postinstall`), e le due cartelle sono in `.gitignore`:
 - `scripts/codice/pyodide.mjs` copia Pyodide in `public/pyodide/` (13,5 MB) e scarica una volta da jsDelivr i 12 pacchetti di numpy e matplotlib (13,3 MB), controllati con gli hash del file di lock;
 - `scripts/codice/clang.mjs` copia il compilatore in `public/clang/` (105 MB su disco, 20 MB in rete con Brotli).
 
@@ -42,8 +72,8 @@ Un blocco `codice` nel markdown della lezione monta l'editor (`src/lib/codice/bl
 ### Controlli
 - `scripts/lezioni/check.mts` legge i blocchi `codice` e segnala quelli scritti male.
 - `scripts/codice/verifica.mts` esegue davvero le soluzioni sulle loro prove, nei tre linguaggi, in Node con lo stesso Python e lo stesso Clang del sito; avvisa se il programma di partenza supera già tutte le prove.
-- `tests/unit/codice.test.mjs`: 10 prove sul formato del blocco e sul motore Python.
-- `tests/e2e/codice.spec.ts`: 14 prove nel browser. Il 3 ottobre 2026 passano su Chromium, WebKit, Firefox, iPhone e Pixel emulati, in sviluppo e contro la build di produzione (dove la prova del blocco nelle lezioni viene saltata, perché la pagina di prova esiste solo in sviluppo), e su quattro motori contro il sito pubblicato.
+- `tests/unit/codice.test.mjs`: 17 prove sul formato del blocco (programmi e pagine), sulle regole dei controlli, sul collegamento dei file, sulla guardia dei cicli, su JavaScript e sul motore Python.
+- `tests/e2e/codice.spec.ts`: 23 prove nel browser. Sette sono del 4 ottobre: JavaScript, le pagine web (due), i programmi salvati (tre), un esercizio in JavaScript e uno di pagina in una lezione. Due sono sull'isolamento, e la prima ora prova anche lo script di una pagina web: un programma Python eseguito da uno studente che ha fatto l'accesso prova a leggere `/api/me` e a creare un quaderno, e non deve riuscirci; il server rifiuta una scrittura con `Origin` diversa dal sito. Le altre 14: Il 3 ottobre 2026 passano su Chromium, WebKit, Firefox, iPhone e Pixel emulati, in sviluppo e contro la build di produzione (dove la prova del blocco nelle lezioni viene saltata, perché la pagina di prova esiste solo in sviluppo), e su quattro motori contro il sito pubblicato.
 
 Non provato: un telefono vero, un computer di scuola, una rete lenta.
 
@@ -81,14 +111,21 @@ Alessandro, 3 ottobre 2026: numpy e matplotlib vanno messi; la tartaruga si ricr
 - Il peso sui telefoni veri (il compilatore è un modulo da 75 MB) e sui computer di scuola: da misurare. Se non regge, C e C++ restano da computer, in linea con [[2026-09-30 Le funzioni dipendono dal dispositivo, con un passaggio tra telefono e computer]].
 - Le intestazioni di cache per `/pyodide/` e `/clang/`: oggi il browser riconferma i file a ogni caricamento. Con un indirizzo che porta la versione si possono tenere in cache per sempre.
 - `public/pyodide/`, `public/clang/` e `public/codice/` passano dal proxy (`src/proxy.ts`) come ogni indirizzo non escluso: da escludere prima di pubblicare.
-- HTML e CSS (terzo anno) e SQL (quarto anno): un iframe isolato e SQLite in WebAssembly, secondo Claude. Non discusso.
+- SQL (quarto anno): SQLite in WebAssembly, secondo Claude. Non discusso.
+- I controlli sul comportamento di una pagina (un clic che cambia il testo) non ci sono: oggi si controlla solo com'è la pagina appena caricata.
+- Nell'anteprima non si caricano librerie da CDN (Bootstrap, jQuery): la policy lo vieta. Da decidere se serve.
+- La guardia dei cicli non copre il codice scritto negli attributi (`onclick="while(true){}"`).
+- Il limite del piano gratuito per i programmi salvati è una scelta di Claude: 10, senza limite con un piano a pagamento. Da confermare.
+- Un blocco con l'editor dentro le note dello [[Zaino]], come quello del plotter: non fatto.
+- I programmi eliminati non passano dal cestino.
 - I messaggi di errore in italiano, o una spiegazione accanto a quelli di Python e di Clang.
-- Salvare il codice dello studente (nello Zaino, o per lezione).
+- L'isolamento non limita la memoria: un programma può ancora far chiudere la scheda. Il limite di 10 secondi copre solo il tempo.
+- Su Chromium non è stato verificato che cosa succede togliendo la policy dell'iframe (se il cookie parte o no): la prova non caricava Python. Su WebKit parte, su Firefox no.
 - La tartaruga non ha `undo`, `clearstamp`, le forme registrate dallo studente né la modalità `logo`.
 - La prova automatica del blocco nelle lezioni gira solo in sviluppo: serve una lezione pubblicata con un blocco `codice` per provarlo anche in produzione.
 
 ## Collegamenti
 - Attori: [[Studente]]
 - Note: [[Lezioni]], [[Esercizi]], [[Programma ministeriale]], [[Pipeline lezioni]]
-- Decisioni: [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]], [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]], [[2026-09-30 Le funzioni dipendono dal dispositivo, con un passaggio tra telefono e computer]]
-- Sessioni: [[2026-10-03 Editor di codice]]
+- Decisioni: [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]], [[2026-10-04 L'editor di codice ha anche JavaScript e le pagine web]], [[2026-10-04 I programmi dell'editor si salvano con nome, come i grafici]], [[2026-10-04 I programmi dell'editor girano in un iframe senza l'origine del sito]], [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]], [[2026-09-30 Le funzioni dipendono dal dispositivo, con un passaggio tra telefono e computer]]
+- Sessioni: [[2026-10-03 Editor di codice]], [[2026-10-04 Isolamento dell'editor di codice]]

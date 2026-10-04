@@ -1,14 +1,15 @@
 import { test, expect, type Page } from '@playwright/test';
+import { createTestUser, deleteTestUser, gotoHydrated, loginViaModal, supabaseAdmin, type TestUser } from './helpers';
 
 /**
  * The code editor on its page among the tools (src/components/codice): Python run in the browser by Pyodide, C and C++
- * compiled by Clang in WebAssembly. Each test loads its language again, a few seconds from a warm cache.
+ * compiled by Clang in WebAssembly, JavaScript, and web pages with their preview. Each test loads its language again, a few seconds from a warm cache.
  */
 const log = (page: Page) => page.getByRole('log', { name: 'Console' });
 const run = (page: Page) => page.getByRole('button', { name: 'Esegui' });
 const answer = (page: Page) => page.getByLabel('Risposta al programma');
 
-async function open(page: Page, example?: string, language?: 'C' | 'C++') {
+async function open(page: Page, example?: string, language?: 'C' | 'C++' | 'JavaScript' | 'Pagina web') {
 	await page.goto('/strumenti/editor-di-codice');
 	await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
 	await expect(page.locator('.cm-content')).toBeVisible();
@@ -241,6 +242,183 @@ test.describe('c and c++ editor', () => {
 	});
 });
 
+test.describe('javascript', () => {
+	test('prompt() reads from the console, an error says its line, a loop that never ends is stopped', async ({ page }) => {
+		await open(page, undefined, 'JavaScript');
+		await run(page).click();
+		await reply(page, 'Ada');
+		await reply(page, '2010');
+		await expect(log(page)).toContainText('Ciao Ada!');
+		await expect(log(page)).toContainText('Nel 2026 compi 16 anni.');
+		await expect(log(page)).toContainText('Programma finito');
+		expect((await log(page).innerText()).match(/Come ti chiami\?/g)).toHaveLength(1);
+
+		await page.getByLabel('Esempio').selectOption({ label: 'Un errore' });
+		await run(page).click();
+		await expect(log(page)).toContainText('ReferenceError');
+		await expect(log(page)).toContainText('alla riga 2');
+
+		await page.getByLabel('Esempio').selectOption({ label: 'Un ciclo che non finisce' });
+		await run(page).click();
+		await expect(log(page)).toContainText('Fermato: il programma ha stampato troppo');
+
+		await write(page, 'console.log("prima");\nsetTimeout(() => console.log("dopo", [1, { a: "x" }]), 200);\nwhile (true) {}\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('Fermato dopo 10 secondi', { timeout: 30_000 });
+
+		await write(page, 'setTimeout(() => console.log("dopo", [1, { a: "x" }]), 200);\nconsole.log("prima");\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('prima\ndopo [1, { a: "x" }]');
+	});
+});
+
+test.describe('web pages', () => {
+	const shown = (page: Page) => page.frameLocator('iframe[title="Anteprima della pagina"]');
+	const colour = (page: Page) => shown(page).locator('h1').evaluate((title) => getComputedStyle(title).color);
+
+	test('the three files make the page, which follows the keys while it has no script', async ({ page }) => {
+		await open(page, undefined, 'Pagina web');
+		await expect(shown(page).locator('h1')).toHaveText('Ciao, mondo!');
+		expect(await colour(page)).toBe('rgb(194, 65, 12)');
+
+		await page.getByRole('tab', { name: 'style.css' }).click();
+		await write(page, 'h1 { color: rgb(0, 0, 255); }\n');
+		await expect.poll(() => colour(page)).toBe('rgb(0, 0, 255)');
+
+		// the text of a tab is there when the tab is opened again
+		await page.getByRole('tab', { name: 'index.html' }).click();
+		await expect(page.locator('.cm-content')).toContainText('<h1>Ciao, mondo!</h1>');
+		await page.getByRole('tab', { name: 'style.css' }).click();
+		await expect(page.locator('.cm-content')).toContainText('rgb(0, 0, 255)');
+
+		// a file that is not linked does nothing, and the editor says so
+		await page.getByLabel('Esempio').selectOption({ label: 'Un foglio di stile dimenticato' });
+		await expect(log(page)).toContainText('style.css non è collegato alla pagina');
+		expect(await colour(page)).toBe('rgb(0, 0, 0)');
+	});
+
+	test('the script runs in the page: clicks, the console, an error with its line, a loop that is stopped', async ({ page }) => {
+		await open(page, 'Un contatore', 'Pagina web');
+		await shown(page).locator('#piu').click();
+		await shown(page).locator('#piu').click();
+		await shown(page).locator('#meno').click();
+		await expect(shown(page).locator('#numero')).toHaveText('1');
+		await expect(log(page)).toContainText('Il contatore vale 2\nIl contatore vale 1');
+
+		// with a script the page waits for Esegui
+		await page.getByRole('tab', { name: 'script.js' }).click();
+		await write(page, 'document.querySelector("#numero").textContent = "nuovo";\nconst a = 1;\na.b.c = 2;\n');
+		await expect(page.getByText('Esegui per aggiornare la pagina')).toBeVisible();
+		await expect(shown(page).locator('#numero')).toHaveText('1');
+		await run(page).click();
+		await expect(shown(page).locator('#numero')).toHaveText('nuovo');
+		await expect(log(page)).toContainText('TypeError');
+		await expect(log(page)).toContainText('in script.js, riga 3');
+
+		await write(page, 'let i = 0;\nwhile (i < 10) {\n}\ndocument.querySelector("#numero").textContent = "mai";\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('Ciclo fermato: gira da più di 2 secondi senza finire.', { timeout: 20_000 });
+		await expect(log(page)).toContainText('in script.js, riga 2');
+		// the editor is still alive
+		await write(page, 'document.querySelector("#numero").textContent = "vivo";\n');
+		await run(page).click();
+		await expect(shown(page).locator('#numero')).toHaveText('vivo');
+	});
+});
+
+test.describe('saved programs', () => {
+	let user: TestUser | null = null;
+	test.beforeAll(async () => {
+		user = await createTestUser('programmi');
+	});
+	test.afterAll(() => deleteTestUser(user));
+
+	const library = (page: Page) => page.getByRole('dialog', { name: 'I miei programmi' });
+	const openLibrary = async (page: Page) => {
+		// the button says the name of the program in the editor, once there is one
+		if (!(await library(page).isVisible())) await page.getByTitle(/^I miei programmi/).click();
+	};
+	const saveAs = async (page: Page, name: string) => {
+		await openLibrary(page);
+		await library(page).getByLabel('Nome con cui salvare il programma').fill(name);
+		await library(page).getByRole('button', { name: 'Salva con nome' }).click();
+	};
+
+	test('without an account the panel asks to sign in', async ({ page }) => {
+		await open(page);
+		await page.getByRole('button', { name: 'I miei programmi' }).click();
+		await expect(library(page).getByRole('button', { name: 'Accedi o registrati' })).toBeVisible();
+	});
+
+	test('a program and a page are saved with a name, found again, written over and deleted', async ({ page }) => {
+		await gotoHydrated(page, '/');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+		await loginViaModal(page, user!);
+		await expect(() => open(page)).toPass({ timeout: 30_000 });
+
+		await write(page, 'print("salvato uno")\n');
+		await saveAs(page, 'Il mio primo');
+		await expect(library(page)).toContainText('Il mio primo, salvato.');
+		// one name, one program (on a phone the panel is over the editor: Esc closes it)
+		await page.keyboard.press('Escape');
+		await write(page, 'print("un altro")\n');
+		await saveAs(page, 'il mio PRIMO');
+		await expect(library(page).getByRole('alert')).toContainText('Hai già un programma con questo nome.');
+
+		// a page keeps its three files
+		await page.keyboard.press('Escape');
+		await page.getByLabel('Linguaggio').selectOption({ label: 'Pagina web' });
+		await page.getByRole('tab', { name: 'style.css' }).click();
+		await write(page, 'h1 { color: rgb(0, 128, 0); }\n');
+		await saveAs(page, 'La mia pagina');
+		await expect(library(page)).toContainText('La mia pagina, salvato.');
+
+		// another visit: both are there, each opens in its language
+		await open(page);
+		await openLibrary(page);
+		await expect(library(page).getByRole('listitem')).toHaveCount(2);
+		await library(page).getByRole('button', { name: /^Il mio primo/ }).click();
+		await expect(page.getByLabel('Linguaggio')).toHaveValue('python');
+		await expect(page.locator('.cm-content')).toContainText('print("salvato uno")');
+		await run(page).click();
+		await expect(log(page)).toContainText('salvato uno', { timeout: 90_000 });
+
+		// Salva writes over it
+		await page.keyboard.press('Escape');
+		await write(page, 'print("salvato due")\n');
+		await openLibrary(page);
+		await expect(library(page)).toContainText('con modifiche non salvate');
+		await library(page).getByRole('button', { name: 'Salva', exact: true }).click();
+		await expect(library(page)).toContainText('Il mio primo, salvato.');
+
+		await library(page).getByRole('button', { name: /^La mia pagina/ }).click();
+		await expect(page.getByLabel('Linguaggio')).toHaveValue('web');
+		await expect(page.frameLocator('iframe[title="Anteprima della pagina"]').locator('h1')).toHaveCSS('color', 'rgb(0, 128, 0)');
+
+		const { data } = await supabaseAdmin().from('programs').select('title,language,files').eq('user_id', user!.id).order('title');
+		expect(data).toEqual([
+			{ title: 'Il mio primo', language: 'python', files: { main: 'print("salvato due")\n' } },
+			{ title: 'La mia pagina', language: 'web', files: expect.objectContaining({ css: 'h1 { color: rgb(0, 128, 0); }\n', html: expect.stringContaining('<h1>Ciao, mondo!</h1>') }) }
+		]);
+
+		await openLibrary(page);
+		await library(page).getByRole('button', { name: 'Elimina il programma Il mio primo' }).click();
+		await library(page).getByRole('button', { name: 'Elimina', exact: true }).click();
+		await expect(library(page).getByRole('listitem')).toHaveCount(1);
+	});
+
+	test('the server refuses what is not a program', async ({ page }) => {
+		await gotoHydrated(page, '/');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+		await loginViaModal(page, user!);
+		const post = (data: unknown) => page.request.post('/api/programmi', { data }).then((r) => r.status());
+		expect(await post({ title: 'x', language: 'java', files: { main: 'x' } })).toBe(400);
+		expect(await post({ title: 'x', language: 'python', files: { main: 'x', html: 'y' } })).toBe(400);
+		expect(await post({ title: 'x', language: 'python', files: { main: '  ' } })).toBe(400);
+		expect(await post({ title: '', language: 'python', files: { main: 'x' } })).toBe(400);
+	});
+});
+
 test.describe('programs in a lesson', () => {
 	const block = (page: Page, index: number) => page.locator('figure[data-codice]').nth(index);
 
@@ -283,5 +461,126 @@ test.describe('programs in a lesson', () => {
 		await both.getByLabel('Risposta al programma').fill('8');
 		await both.getByLabel('Risposta al programma').press('Enter');
 		await expect(both.getByRole('log')).toContainText('Il più grande è 8');
+	});
+
+	test('a javascript exercise is checked on what it prints, a web page on what it is', async ({ page }) => {
+		const response = await page.goto('/prova-grafico/lezione?file=prove/codice.md');
+		test.skip(response?.status() === 404, 'the trial page of lesson files is not in the production build');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+
+		const script = block(page, 3);
+		await script.scrollIntoViewIfNeeded();
+		await script.getByRole('button', { name: 'Verifica' }).click();
+		await expect(script.getByRole('log')).toContainText('0 prove superate su 2', { timeout: 60_000 });
+		await script.getByRole('button', { name: 'Soluzione' }).click();
+		await script.getByRole('button', { name: 'Verifica' }).click();
+		await expect(script.getByRole('log')).toContainText('Tutte le 2 prove superate.');
+
+		const web = block(page, 4);
+		await web.scrollIntoViewIfNeeded();
+		const shown = web.frameLocator('iframe[title="Anteprima della pagina"]');
+		await expect(shown.locator('li')).toHaveCount(2);
+		await web.getByRole('button', { name: 'Verifica' }).click();
+		await expect(web.getByRole('log')).toContainText('0 controlli superati su 3');
+		await expect(web.getByRole('log')).toContainText('Di "ul > li" ne trovo 2, ne servono 3.');
+		await web.getByRole('button', { name: 'Soluzione' }).click();
+		await expect(shown.locator('h1')).toHaveText('Le mie materie');
+		await web.getByRole('button', { name: 'Verifica' }).click();
+		await expect(web.getByRole('log')).toContainText('Tutti i 3 controlli superati.');
+	});
+});
+
+/**
+ * A program is somebody's code: the student's own, or code a classmate told them to paste. It must not be able to do
+ * on the site what the student can: read the account, write in the Zaino.
+ */
+test.describe('a program and the account of who runs it', () => {
+	let user: TestUser | null = null;
+	test.beforeAll(async () => {
+		user = await createTestUser('codice');
+	});
+	test.afterAll(() => deleteTestUser(user));
+
+	test('a Python program cannot read or write as the signed-in student', async ({ page, baseURL }) => {
+		await gotoHydrated(page, '/');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+		await loginViaModal(page, user!);
+		// signing in refreshes the page, which in Firefox can cut a navigation started right after
+		await expect(() => open(page)).toPass({ timeout: 30_000 });
+		// the page itself is signed in
+		expect(await page.evaluate(() => fetch('/api/me').then((r) => r.json()).then((me) => me.user?.email))).toBe(user!.email);
+
+		await write(
+			page,
+			[
+				'from js import XMLHttpRequest, self',
+				`SITO = "${baseURL}"`,
+				'def chiedi(metodo, indirizzo, corpo=None):',
+				'    try:',
+				'        x = XMLHttpRequest.new()',
+				'        x.open(metodo, SITO + indirizzo, False)',
+				'        x.withCredentials = True',
+				'        if corpo:',
+				'            x.setRequestHeader("Content-Type", "application/json")',
+				'        x.send(corpo)',
+				'        return f"{x.status} {x.responseText[:300]}"',
+				'    except Exception as errore:',
+				'        return "bloccata"',
+				'print("origine:", self.origin)',
+				'print("GET /api/me:", chiedi("GET", "/api/me"))',
+				'print("POST /api/zaino/quaderni:", chiedi("POST", "/api/zaino/quaderni", \'{"title": "Scritto da un programma"}\'))',
+				''
+			].join('\n')
+		);
+		await run(page).click();
+		await expect(log(page)).toContainText('Programma finito', { timeout: 90_000 });
+		const printed = await log(page).innerText();
+		expect(printed).toContain('origine: null');
+		expect(printed).not.toContain(user!.email);
+		expect(printed).not.toContain(user!.id);
+
+		// the script of a web page runs in a page, not in a worker: it must be as far from the account
+		await page.getByLabel('Linguaggio').selectOption({ label: 'Pagina web' });
+		await page.getByLabel('Esempio').selectOption({ label: 'Un contatore' });
+		await page.getByRole('tab', { name: 'script.js' }).click();
+		await write(
+			page,
+			[
+				`const SITO = "${baseURL}";`,
+				'function chiedi(metodo, indirizzo, corpo) {',
+				'    try {',
+				'        const x = new XMLHttpRequest();',
+				'        x.open(metodo, SITO + indirizzo, false);',
+				'        x.withCredentials = true;',
+				'        x.send(corpo);',
+				'        return x.status + " " + x.responseText.slice(0, 300);',
+				'    } catch (errore) {',
+				'        return "bloccata";',
+				'    }',
+				'}',
+				'console.log("origine:", self.origin);',
+				'console.log("GET /api/me:", chiedi("GET", "/api/me"));',
+				'console.log("POST /api/zaino/quaderni:", chiedi("POST", "/api/zaino/quaderni", \'{"title": "Scritto da una pagina"}\'));',
+				'console.log("fine");',
+				''
+			].join('\n')
+		);
+		await run(page).click();
+		await expect(log(page)).toContainText('fine');
+		const shown = await log(page).innerText();
+		expect(shown).toContain('origine: null');
+		expect(shown).not.toContain(user!.email);
+		expect(shown).not.toContain(user!.id);
+
+		const { count } = await supabaseAdmin().from('notebooks').select('id', { count: 'exact', head: true }).eq('user_id', user!.id);
+		expect(count).toBe(0);
+	});
+
+	test('the site refuses a write that does not come from one of its pages', async ({ request, baseURL }) => {
+		// what Safari sends from the sandbox carries the session cookie: the server looks at where it comes from
+		for (const origin of ['null', 'https://example.com']) {
+			expect((await request.post('/api/zaino/quaderni', { headers: { Origin: origin }, data: {} })).status()).toBe(403);
+		}
+		expect((await request.post('/api/zaino/quaderni', { headers: { Origin: baseURL! }, data: {} })).status()).toBe(401);
 	});
 });

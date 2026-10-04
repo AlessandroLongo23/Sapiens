@@ -4,7 +4,7 @@ import { emitter, type FromRunner, type RunStatus, type ToRunner } from './runti
 
 /**
  * Python in the browser: Pyodide in a worker, so a program that never ends cannot freeze the page (the page ends the
- * worker). The runtime and the packages come from /pyodide on this origin (scripts/codice/pyodide.mjs); the runner,
+ * worker). The runtime and the packages come from /pyodide on the site (scripts/codice/pyodide.mjs); the runner,
  * the turtle and matplotlib's backend are Python files in /codice (public/codice/sapiens.py explains the runner).
  *
  * The packages a program imports (numpy, matplotlib) load before it starts, outside its time limit: the page starts
@@ -18,7 +18,8 @@ const HOME = '/sapiens';
 const post = (message: FromRunner) => self.postMessage(message);
 
 const loading: Promise<{ pyodide: PyodideInterface; esegui: PyCallable }> = (async () => {
-	const origin = self.location.origin;
+	// the worker starts from a blob of the sandbox: the site is where this script comes from
+	const origin = new URL(import.meta.url).origin;
 	const base = `${origin}/pyodide/`;
 	const { loadPyodide } = (await import(/* webpackIgnore: true */ `${base}pyodide.mjs`)) as typeof import('pyodide');
 	const [pyodide, sources] = await Promise.all([

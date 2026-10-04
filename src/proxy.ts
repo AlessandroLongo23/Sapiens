@@ -3,6 +3,20 @@ import { createServerClient } from '@supabase/ssr';
 import { isAdminPath, isPrivatePath, requiresLogin } from '@/lib/config/site';
 import { aliasTarget } from '@/lib/seo/slug';
 
+const READS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+/** Whether the page that sent the request is on the host the request was sent to. */
+function fromThisSite(request: NextRequest) {
+	const origin = request.headers.get('origin');
+	if (origin === null) return true;
+	const host = request.headers.get('x-forwarded-host') ?? request.headers.get('host');
+	try {
+		return new URL(origin).host === host;
+	} catch {
+		return false;
+	}
+}
+
 /**
  * Runs before every page and API route.
  *
@@ -31,6 +45,12 @@ export default async function proxy(request: NextRequest) {
 
 	const alias = aliasTarget(pathname);
 	if (alias) return NextResponse.redirect(new URL(alias + search, request.url), 308);
+
+	// A request that changes something comes from one of the site's own pages. The session cookie is SameSite=Lax,
+	// which stops other sites; but a frame without an origin inside one of our pages (the code editor's sandbox,
+	// src/components/codice/sandbox.ts) still counts as the same site for Safari, and what it sends carries the
+	// cookie. A request without Origin is not a browser's: Stripe's webhook, the publishing scripts.
+	if (!READS.has(request.method) && !fromThisSite(request)) return new NextResponse(null, { status: 403 });
 
 	// An exercise answer carries its own sealed proof and waits on nothing; checking the session here would put a
 	// round trip to Supabase Auth on every click (src/app/api/esercizi/[id]/route.ts).
