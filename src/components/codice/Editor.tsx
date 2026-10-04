@@ -13,12 +13,13 @@ import { bracketMatching, indentOnInput, indentUnit } from '@codemirror/language
 import { Compartment, EditorState, type Extension } from '@codemirror/state';
 import { EditorView, drawSelection, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
 import { showMinimap } from '@replit/codemirror-minimap';
+import type { FileKind } from '@/lib/codice/progetto';
 import type { Language } from './runtime';
 
-/** What the editor colours: a language of the programs, or a file of a web page. */
-export type Syntax = Language | 'html' | 'css' | 'js';
+/** What the editor colours: a language of the programs, or the kind of a file of a project. */
+export type Syntax = Language | Exclude<FileKind, 'image'>;
 
-const SYNTAX: Record<Syntax, () => Extension> = { python, c: cpp, cpp, javascript: () => javascript(), js: () => javascript(), html: () => html(), css };
+const SYNTAX: Record<Syntax, () => Extension> = { python, c: cpp, cpp, header: cpp, javascript: () => javascript(), json: () => javascript(), html: () => html(), css, markdown: () => [], text: () => [] };
 import { editorLook, textSize, themeColors } from './theme';
 
 /** The narrowest window the minimap is shown in. */

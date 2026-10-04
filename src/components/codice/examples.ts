@@ -1,4 +1,4 @@
-import type { Page } from '@/lib/codice/blocco';
+import type { ProjectFiles } from '@/lib/codice/progetto';
 import type { Language } from './runtime';
 
 type Example = { title: string; code: string };
@@ -442,12 +442,16 @@ while (i < 10) {
 	}
 ];
 
-/** Pages for trying the editor: the three files together, a click that changes the page, a mistake to find. */
-export const PAGES: { title: string; files: Page }[] = [
+/**
+ * Projects for trying the editor: a page with its style and its script, a site of two pages that link each other, a
+ * Python program with a module and a file to read, a C++ program in more files, a mistake to find.
+ */
+export const PROJECTS: { title: string; open: string; files: ProjectFiles }[] = [
 	{
 		title: 'La mia prima pagina',
+		open: 'index.html',
 		files: {
-			html: `<!DOCTYPE html>
+			'index.html': `<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -465,7 +469,7 @@ export const PAGES: { title: string; files: Page }[] = [
 </body>
 </html>
 `,
-			css: `body {
+			'style.css': `body {
     font-family: system-ui, sans-serif;
     margin: 2rem;
     color: #222;
@@ -479,13 +483,14 @@ li {
     margin-bottom: 0.5rem;
 }
 `,
-			js: ''
+			'script.js': ''
 		}
 	},
 	{
 		title: 'Un contatore',
+		open: 'index.html',
 		files: {
-			html: `<!DOCTYPE html>
+			'index.html': `<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -502,7 +507,7 @@ li {
 </body>
 </html>
 `,
-			css: `body {
+			'style.css': `body {
     font-family: system-ui, sans-serif;
     text-align: center;
     margin-top: 2rem;
@@ -522,7 +527,7 @@ button {
     cursor: pointer;
 }
 `,
-			js: `let conto = 0;
+			'script.js': `let conto = 0;
 const numero = document.querySelector("#numero");
 
 function mostra() {
@@ -545,8 +550,9 @@ document.querySelector("#meno").addEventListener("click", () => {
 	},
 	{
 		title: 'Una lista di cose da fare',
+		open: 'index.html',
 		files: {
-			html: `<!DOCTYPE html>
+			'index.html': `<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -563,7 +569,7 @@ document.querySelector("#meno").addEventListener("click", () => {
 </body>
 </html>
 `,
-			css: `body {
+			'style.css': `body {
     font-family: system-ui, sans-serif;
     margin: 2rem;
 }
@@ -583,7 +589,7 @@ li.fatto {
     color: gray;
 }
 `,
-			js: `const testo = document.querySelector("#testo");
+			'script.js': `const testo = document.querySelector("#testo");
 const lista = document.querySelector("#lista");
 
 document.querySelector("#aggiungi").addEventListener("click", () => {
@@ -602,9 +608,147 @@ document.querySelector("#aggiungi").addEventListener("click", () => {
 		}
 	},
 	{
-		title: 'Un foglio di stile dimenticato',
+		title: 'Un sito di due pagine',
+		open: 'index.html',
 		files: {
-			html: `<!DOCTYPE html>
+			'index.html': `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Il mio sito</title>
+    <link rel="stylesheet" href="css/stile.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="chi-sono.html">Chi sono</a>
+    </nav>
+    <h1>Benvenuto nel mio sito</h1>
+    <p>Questa è la pagina iniziale. Il menu qui sopra porta all'altra pagina.</p>
+</body>
+</html>
+`,
+			'chi-sono.html': `<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Chi sono</title>
+    <link rel="stylesheet" href="css/stile.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="chi-sono.html">Chi sono</a>
+    </nav>
+    <h1>Chi sono</h1>
+    <p>Le due pagine usano lo stesso foglio di stile, che sta nella cartella <code>css</code>.</p>
+</body>
+</html>
+`,
+			'css/stile.css': `body {
+    font-family: system-ui, sans-serif;
+    margin: 0 2rem 2rem;
+    color: #222;
+}
+
+nav {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #ccc;
+}
+
+nav a {
+    color: #c2410c;
+    text-decoration: none;
+    font-weight: 600;
+}
+`
+		}
+	},
+	{
+		title: 'Python con un modulo',
+		open: 'main.py',
+		files: {
+			'main.py': `import geometria
+
+# i numeri stanno in un file di testo, uno per riga
+with open("raggi.txt") as file:
+    raggi = [float(riga) for riga in file]
+
+for r in raggi:
+    print(f"raggio {r}: area {geometria.area_cerchio(r):.2f}, circonferenza {geometria.circonferenza(r):.2f}")
+`,
+			'geometria.py': `import math
+
+
+def area_cerchio(raggio):
+    return math.pi * raggio ** 2
+
+
+def circonferenza(raggio):
+    return 2 * math.pi * raggio
+`,
+			'raggi.txt': `1
+2.5
+10
+`
+		}
+	},
+	{
+		title: 'C++ in più file',
+		open: 'main.cpp',
+		files: {
+			'main.cpp': `#include <iostream>
+#include "frazione.h"
+using namespace std;
+
+int main() {
+    Frazione a(1, 2), b(1, 3);
+    Frazione somma = a.piu(b);
+    cout << "1/2 + 1/3 = ";
+    somma.stampa();
+    cout << endl;
+    return 0;
+}
+`,
+			'frazione.h': `#pragma once
+
+class Frazione {
+public:
+    Frazione(int numeratore, int denominatore);
+    Frazione piu(const Frazione& altra) const;
+    void stampa() const;
+
+private:
+    int n, d;
+};
+`,
+			'frazione.cpp': `#include <iostream>
+#include <numeric>
+#include "frazione.h"
+
+Frazione::Frazione(int numeratore, int denominatore) {
+    int divisore = std::gcd(numeratore, denominatore);
+    n = numeratore / divisore;
+    d = denominatore / divisore;
+}
+
+Frazione Frazione::piu(const Frazione& altra) const {
+    return Frazione(n * altra.d + altra.n * d, d * altra.d);
+}
+
+void Frazione::stampa() const {
+    std::cout << n << "/" << d;
+}
+`
+		}
+	},
+	{
+		title: 'Un foglio di stile dimenticato',
+		open: 'index.html',
+		files: {
+			'index.html': `<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -616,11 +760,11 @@ document.querySelector("#aggiungi").addEventListener("click", () => {
 </body>
 </html>
 `,
-			css: `h1 {
+			'style.css': `h1 {
     color: royalblue;
 }
 `,
-			js: ''
+			'script.js': ''
 		}
 	}
 ];

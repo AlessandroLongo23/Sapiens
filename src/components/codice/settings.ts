@@ -25,6 +25,9 @@ export interface EditorSettings {
 	pairs: boolean;
 	/** The share of the width the code takes beside its output, from 0 to 1. */
 	split: number;
+	/** In a project: the share of the width the list of files takes, and the share of the height the output takes under the code. */
+	explorer: number;
+	output: number;
 }
 
 /**
@@ -43,10 +46,14 @@ export function reindent(text: string, to: number): string {
 	return text.replace(/^ +(?=\S)/gm, (spaces) => ' '.repeat((spaces.length / unit) * to));
 }
 
-export const DEFAULTS: EditorSettings = { theme: 'modern', size: 15, tab: 4, minimap: true, wrap: false, numbers: true, pairs: true, split: 0.5 };
+export const DEFAULTS: EditorSettings = { theme: 'modern', size: 15, tab: 4, minimap: true, wrap: false, numbers: true, pairs: true, split: 0.5, explorer: 0.2, output: 0.34 };
 /** The code and its output each keep at least this share of the width. */
 export const SPLIT_MIN = 0.25;
 export const SPLIT_MAX = 0.75;
+export const EXPLORER_MIN = 0.12;
+export const EXPLORER_MAX = 0.4;
+export const OUTPUT_MIN = 0.12;
+export const OUTPUT_MAX = 0.75;
 
 const KEY = 'sapiens:editor';
 const EVENT = 'sapiens:editor';
@@ -61,6 +68,10 @@ function read(): EditorSettings {
 		// nothing stored, or storage is off
 	}
 	const flag = (name: 'minimap' | 'wrap' | 'numbers' | 'pairs') => (typeof stored[name] === 'boolean' ? stored[name] : DEFAULTS[name]);
+	const share = (name: 'split' | 'explorer' | 'output', min: number, max: number) => {
+		const value = stored[name];
+		return typeof value === 'number' && value >= min && value <= max ? value : DEFAULTS[name];
+	};
 	return {
 		theme: typeof stored.theme === 'string' && Object.hasOwn(THEMES, stored.theme) ? (stored.theme as ThemeId) : DEFAULTS.theme,
 		size: typeof stored.size === 'number' && Number.isInteger(stored.size) && stored.size >= SIZE_MIN && stored.size <= SIZE_MAX ? stored.size : DEFAULTS.size,
@@ -69,7 +80,9 @@ function read(): EditorSettings {
 		wrap: flag('wrap'),
 		numbers: flag('numbers'),
 		pairs: flag('pairs'),
-		split: typeof stored.split === 'number' && stored.split >= SPLIT_MIN && stored.split <= SPLIT_MAX ? stored.split : DEFAULTS.split
+		split: share('split', SPLIT_MIN, SPLIT_MAX),
+		explorer: share('explorer', EXPLORER_MIN, EXPLORER_MAX),
+		output: share('output', OUTPUT_MIN, OUTPUT_MAX)
 	};
 }
 

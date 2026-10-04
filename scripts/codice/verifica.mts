@@ -101,6 +101,7 @@ for (const file of process.argv.slice(2)) {
 		const { block, errors: unread } = parseCodeBlock(group.fences);
 		const where = `programma ${index + 1}`;
 		unread.forEach((e) => err(`${where}: ${e}`));
+		if (block?.project && (block.project.tests.length || block.project.checks.length)) out.push(`  avviso ${where}: progetto a più file, le prove e i controlli si provano nel browser`);
 		if (block?.page?.checks.length) out.push(`  avviso ${where}: pagina web, i controlli si provano nel browser`);
 		if (!block || block.tests.length === 0) continue;
 		exercises++;

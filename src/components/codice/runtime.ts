@@ -34,6 +34,8 @@ export interface Job {
 	seed: number;
 	/** The time the first run started, in milliseconds. */
 	clock: number;
+	/** The other files of the program's project, by path: modules to import, files to open, sources to compile with it. A picture is the data URL of its bytes. */
+	files?: Record<string, string>;
 	/** No keyboard: when the lines are over the program reads the end of the input. For the tests of an exercise. */
 	batch?: boolean;
 }

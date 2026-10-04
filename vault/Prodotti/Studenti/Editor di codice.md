@@ -21,12 +21,26 @@ In produzione dal 3 ottobre 2026 (PR #30). Lo strumento è a `/strumenti/editor-
 Aggiunti il 4 ottobre 2026 (vedi [[2026-10-04 L'editor di codice ha anche JavaScript e le pagine web]]). Sono due cose diverse.
 
 - **JavaScript come programma** (`javascript.worker.ts`, `javascript.ts`, `js-environment.ts`): un programma con la console, come Python. `console.log` stampa, `prompt()` legge dalla console con lo stesso meccanismo della riesecuzione, `alert()` scrive, `Math.random` ha il seme. Un errore dice la riga. Gira in un worker dell'iframe isolato, uno per esecuzione, e non scarica niente. Non ha `document`.
-- **Pagina web** (`WebBench.tsx`): tre file, `index.html`, `style.css` e `script.js`, con una linguetta ciascuno, e accanto la pagina che ne esce. Sotto l'anteprima c'è la console con i `console.log` e gli errori dello script, con la riga.
+- **Pagina web** (`WebBench.tsx`; dal pomeriggio del 4 ottobre è un progetto, vedi "Progetti a più file"): tre file, `index.html`, `style.css` e `script.js`, con una linguetta ciascuno, e accanto la pagina che ne esce. Sotto l'anteprima c'è la console con i `console.log` e gli errori dello script, con la riga.
   - I file si collegano come in una pagina vera, con `<link rel="stylesheet" href="style.css">` e `<script src="script.js"></script>` (`web-assemble.ts`). Un file non collegato non viene applicato e una nota lo dice.
   - Senza script l'anteprima segue i tasti, mezzo secondo dopo l'ultimo. Con uno script aspetta "Esegui", così un `alert()` non si apre a ogni pausa.
   - L'anteprima è un secondo iframe isolato, la rotta `src/app/codice-sandbox/pagina/route.ts`, con il suo script `pagina.ts`. Lo script dello studente lì non può fare richieste di rete, inviare moduli o aprire link; le immagini `https` si vedono, `alert()` e `prompt()` sono quelli del browser.
   - Uno script di pagina gira nel thread della pagina, e un ciclo infinito bloccherebbe la scheda. `loop-guard.ts` legge lo script con il parser di CodeMirror e mette in ogni ciclo una chiamata che lo ferma dopo 2 secondi, senza spostare le righe.
 - **Nelle lezioni** un gruppo di blocchi che comincia con `html` è una pagina; `javascript` da solo è un programma. L'esercizio di una pagina si corregge con `%% controllo`: una frase per lo studente e regole fatte di un selettore CSS e una condizione (`quanti`, `testo`, `attributo`, `stile`), eseguite sulla pagina resa (`web-checks.ts`). Il formato è in `docs/lezioni/README.md`.
+
+### Progetti a più file
+Dal 4 ottobre 2026 (vedi [[2026-10-04 L'editor di codice ha i progetti a più file, accanto allo snippet]]). Lo snippet, un file con la sua uscita, resta com'è; il progetto è l'altra forma.
+
+- **Modello** (`src/lib/codice/progetto.ts`): un progetto è un oggetto percorso → testo. I percorsi possono avere cartelle (`css/stile.css`, fino a quattro livelli), non esistono cartelle vuote. Estensioni: `py`, `c`, `cpp`, `h`, `hpp`, `js`, `html`, `css`, `md`, `json`, `txt`, `csv` e le immagini `png`, `jpg`, `gif`, `webp`, `svg`. Al più 40 file e 1,5 milioni di caratteri in tutto.
+- **Immagini**: caricate dal dispositivo, rimpicciolite nel browser a 1280 px di lato lungo e tenute dentro il progetto come data URL. Nessun bucket. I PDF non ci sono.
+- **Banco** (`ProjectBench.tsx`): possiede i file e li dà a `Workbench` (programmi) o a `WebBench` (pagine), che ne sono la console e l'anteprima. "Esegui" vale per l'ultimo programma o l'ultima pagina aperti, segnati nell'elenco; aprire un modulo o un foglio di stile non lo cambia.
+- **Due disposizioni**: `explorer`, nello strumento, ha l'elenco dei file a sinistra (`Explorer.tsx`: crea, rinomina, elimina, aggiungi immagine), il codice accanto e l'uscita sotto, con due maniglie (`Panes` in `Split.tsx`); `tabs`, nelle lezioni, ha una linguetta per file sopra il codice.
+- **Python**: i file del progetto vengono scritti in `/progetto` dentro Pyodide prima di ogni esecuzione, che parte da lì: `import modulo` e `open("dati.txt")` funzionano, e un modulo modificato viene riletto. Nel traceback il file avviato si chiama ancora `programma.py`, i moduli `/progetto/nome.py`.
+- **C e C++**: tutti i `.c`, o tutti i `.cpp`, si compilano insieme; gli altri file sono lì per `#include`.
+- **Pagine**: `web-assemble.ts` dà a ogni percorso scritto nella pagina (`<link>`, `<script src>`, `<img src>`, `url()` nei fogli di stile) il file del progetto; un percorso che non esiste e un file non collegato sono detti in una nota. Un link a un'altra pagina del progetto la apre nell'anteprima e nell'editor. Un file `.md` è mostrato come pagina.
+- **Nelle lezioni**: blocchi `codice` con il nome di un file sono un progetto; `%% crea` dà allo studente l'elenco per creare file. Il vecchio gruppo `html`, `css`, `js` è ora un progetto con i nomi `index.html`, `style.css`, `script.js`.
+- **Salvataggio**: un progetto salvato ha linguaggio `project` e i suoi file (migrazione `20261004160000_program_projects.sql`, applicata in produzione). I programmi `web` salvati prima si aprono come progetti.
+- La voce "Pagina web" del menu non c'è più: una pagina è un esempio di "Progetto".
 
 ### I programmi salvati
 Dal 4 ottobre 2026 (vedi [[2026-10-04 I programmi dell'editor si salvano con nome, come i grafici]]). Costruito sul modello dei grafici del plotter.
@@ -73,8 +87,8 @@ Un blocco `codice` nel markdown della lezione monta l'editor (`src/lib/codice/bl
 ### Controlli
 - `scripts/lezioni/check.mts` legge i blocchi `codice` e segnala quelli scritti male.
 - `scripts/codice/verifica.mts` esegue davvero le soluzioni sulle loro prove, nei tre linguaggi, in Node con lo stesso Python e lo stesso Clang del sito; avvisa se il programma di partenza supera già tutte le prove.
-- `tests/unit/codice.test.mjs`: 17 prove sul formato del blocco (programmi e pagine), sulle regole dei controlli, sul collegamento dei file, sulla guardia dei cicli, su JavaScript e sul motore Python.
-- `tests/e2e/codice.spec.ts`: 23 prove nel browser. Sette sono del 4 ottobre: JavaScript, le pagine web (due), i programmi salvati (tre), un esercizio in JavaScript e uno di pagina in una lezione. Due sono sull'isolamento, e la prima ora prova anche lo script di una pagina web: un programma Python eseguito da uno studente che ha fatto l'accesso prova a leggere `/api/me` e a creare un quaderno, e non deve riuscirci; il server rifiuta una scrittura con `Origin` diversa dal sito. Le altre 14: Il 3 ottobre 2026 passano su Chromium, WebKit, Firefox, iPhone e Pixel emulati, in sviluppo e contro la build di produzione (dove la prova del blocco nelle lezioni viene saltata, perché la pagina di prova esiste solo in sviluppo), e su quattro motori contro il sito pubblicato.
+- `tests/unit/codice.test.mjs`: 20 prove (17 prima dei progetti) sul formato del blocco (programmi e pagine), sulle regole dei controlli, sul collegamento dei file, sulla guardia dei cicli, su JavaScript e sul motore Python.
+- `tests/e2e/codice.spec.ts`: 30 prove nel browser (le ultime aggiunte: maniglia e impostazioni, quattro sui progetti, un progetto in una lezione; queste ultime sette sono passate solo su Chromium in sviluppo). Delle prime 23: Sette sono del 4 ottobre: JavaScript, le pagine web (due), i programmi salvati (tre), un esercizio in JavaScript e uno di pagina in una lezione. Due sono sull'isolamento, e la prima ora prova anche lo script di una pagina web: un programma Python eseguito da uno studente che ha fatto l'accesso prova a leggere `/api/me` e a creare un quaderno, e non deve riuscirci; il server rifiuta una scrittura con `Origin` diversa dal sito. Le altre 14: Il 3 ottobre 2026 passano su Chromium, WebKit, Firefox, iPhone e Pixel emulati, in sviluppo e contro la build di produzione (dove la prova del blocco nelle lezioni viene saltata, perché la pagina di prova esiste solo in sviluppo), e su quattro motori contro il sito pubblicato.
 
 Non provato: un telefono vero, un computer di scuola, una rete lenta.
 
@@ -112,6 +126,8 @@ Alessandro, 3 ottobre 2026: numpy e matplotlib vanno messi; la tartaruga si ricr
 - Il peso sui telefoni veri (il compilatore è un modulo da 75 MB) e sui computer di scuola: da misurare. Se non regge, C e C++ restano da computer, in linea con [[2026-09-30 Le funzioni dipendono dal dispositivo, con un passaggio tra telefono e computer]].
 - Le intestazioni di cache per `/pyodide/` e `/clang/`: oggi il browser riconferma i file a ogni caricamento. Con un indirizzo che porta la versione si possono tenere in cache per sempre.
 - `public/pyodide/`, `public/clang/` e `public/codice/` passano dal proxy (`src/proxy.ts`) come ogni indirizzo non escluso: da escludere prima di pubblicare.
+- Nei progetti: JavaScript a moduli (`import` tra file `.js`) non c'è; i PDF non si caricano; non si scarica il progetto come cartella; non si trascinano i file tra cartelle; il traceback di Python non usa il nome vero del file avviato.
+- Le immagini stanno dentro il progetto, non in un bucket: scelta proposta da Claude, Alessandro ha detto di procedere. Se servono file grandi va ridiscusso, con il tema di cosa caricano dei minorenni.
 - SQL (quarto anno): SQLite in WebAssembly, secondo Claude. Non discusso.
 - I controlli sul comportamento di una pagina (un clic che cambia il testo) non ci sono: oggi si controlla solo com'è la pagina appena caricata.
 - Nell'anteprima non si caricano librerie da CDN (Bootstrap, jQuery): la policy lo vieta. Da decidere se serve.
@@ -128,5 +144,5 @@ Alessandro, 3 ottobre 2026: numpy e matplotlib vanno messi; la tartaruga si ricr
 ## Collegamenti
 - Attori: [[Studente]]
 - Note: [[Lezioni]], [[Esercizi]], [[Programma ministeriale]], [[Pipeline lezioni]]
-- Decisioni: [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]], [[2026-10-04 L'editor di codice ha anche JavaScript e le pagine web]], [[2026-10-04 I programmi dell'editor si salvano con nome, come i grafici]], [[2026-10-04 I programmi dell'editor girano in un iframe senza l'origine del sito]], [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]], [[2026-09-30 Le funzioni dipendono dal dispositivo, con un passaggio tra telefono e computer]]
+- Decisioni: [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]], [[2026-10-04 L'editor di codice ha i progetti a più file, accanto allo snippet]], [[2026-10-04 L'editor di codice ha anche JavaScript e le pagine web]], [[2026-10-04 I programmi dell'editor si salvano con nome, come i grafici]], [[2026-10-04 I programmi dell'editor girano in un iframe senza l'origine del sito]], [[2026-09-26 Fisica, informatica e medie hanno l'albero per anno dal programma]], [[2026-09-30 Le funzioni dipendono dal dispositivo, con un passaggio tra telefono e computer]]
 - Sessioni: [[2026-10-03 Editor di codice]], [[2026-10-04 Isolamento dell'editor di codice]]

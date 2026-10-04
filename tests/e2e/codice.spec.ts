@@ -8,8 +8,10 @@ import { createTestUser, deleteTestUser, gotoHydrated, loginViaModal, supabaseAd
 const log = (page: Page) => page.getByRole('log', { name: 'Console' });
 const run = (page: Page) => page.getByRole('button', { name: 'Esegui' });
 const answer = (page: Page) => page.getByLabel('Risposta al programma');
+/** A file in the list of a project's files. */
+const file = (page: Page, path: string) => page.getByRole('navigation', { name: 'File del progetto' }).getByTitle(path, { exact: true });
 
-async function open(page: Page, example?: string, language?: 'C' | 'C++' | 'JavaScript' | 'Pagina web') {
+async function open(page: Page, example?: string, language?: 'C' | 'C++' | 'JavaScript' | 'Progetto') {
 	await page.goto('/strumenti/editor-di-codice');
 	await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
 	await expect(page.locator('.cm-content')).toBeVisible();
@@ -272,23 +274,23 @@ test.describe('javascript', () => {
 	});
 });
 
-test.describe('web pages', () => {
+test.describe('projects: web pages', () => {
 	const shown = (page: Page) => page.frameLocator('iframe[title="Anteprima della pagina"]');
 	const colour = (page: Page) => shown(page).locator('h1').evaluate((title) => getComputedStyle(title).color);
 
 	test('the three files make the page, which follows the keys while it has no script', async ({ page }) => {
-		await open(page, undefined, 'Pagina web');
+		await open(page, undefined, 'Progetto');
 		await expect(shown(page).locator('h1')).toHaveText('Ciao, mondo!');
 		expect(await colour(page)).toBe('rgb(194, 65, 12)');
 
-		await page.getByRole('tab', { name: 'style.css' }).click();
+		await file(page, 'style.css').click();
 		await write(page, 'h1 { color: rgb(0, 0, 255); }\n');
 		await expect.poll(() => colour(page)).toBe('rgb(0, 0, 255)');
 
 		// the text of a tab is there when the tab is opened again
-		await page.getByRole('tab', { name: 'index.html' }).click();
+		await file(page, 'index.html').click();
 		await expect(page.locator('.cm-content')).toContainText('<h1>Ciao, mondo!</h1>');
-		await page.getByRole('tab', { name: 'style.css' }).click();
+		await file(page, 'style.css').click();
 		await expect(page.locator('.cm-content')).toContainText('rgb(0, 0, 255)');
 
 		// a file that is not linked does nothing, and the editor says so
@@ -298,7 +300,7 @@ test.describe('web pages', () => {
 	});
 
 	test('the script runs in the page: clicks, the console, an error with its line, a loop that is stopped', async ({ page }) => {
-		await open(page, 'Un contatore', 'Pagina web');
+		await open(page, 'Un contatore', 'Progetto');
 		await shown(page).locator('#piu').click();
 		await shown(page).locator('#piu').click();
 		await shown(page).locator('#meno').click();
@@ -306,7 +308,7 @@ test.describe('web pages', () => {
 		await expect(log(page)).toContainText('Il contatore vale 2\nIl contatore vale 1');
 
 		// with a script the page waits for Esegui
-		await page.getByRole('tab', { name: 'script.js' }).click();
+		await file(page, 'script.js').click();
 		await write(page, 'document.querySelector("#numero").textContent = "nuovo";\nconst a = 1;\na.b.c = 2;\n');
 		await expect(page.getByText('Esegui per aggiornare la pagina')).toBeVisible();
 		await expect(shown(page).locator('#numero')).toHaveText('1');
@@ -323,6 +325,81 @@ test.describe('web pages', () => {
 		await write(page, 'document.querySelector("#numero").textContent = "vivo";\n');
 		await run(page).click();
 		await expect(shown(page).locator('#numero')).toHaveText('vivo');
+	});
+});
+
+test.describe('projects: more files', () => {
+	const shown = (page: Page) => page.frameLocator('iframe[title="Anteprima della pagina"]');
+	const files = (page: Page) => page.getByRole('navigation', { name: 'File del progetto' });
+
+	test('a link opens the other page of the site, in the preview and in the editor, with the style of a folder', async ({ page }) => {
+		await open(page, 'Un sito di due pagine', 'Progetto');
+		await expect(shown(page).locator('h1')).toHaveText('Benvenuto nel mio sito');
+		await shown(page).getByRole('link', { name: 'Chi sono' }).click();
+		await expect(shown(page).locator('h1')).toHaveText('Chi sono');
+		await expect(shown(page).locator('nav a').first()).toHaveCSS('color', 'rgb(194, 65, 12)');
+		await expect(page.locator('.cm-content')).toContainText('<h1>Chi sono</h1>');
+		await expect(file(page, 'chi-sono.html')).toHaveAttribute('aria-current', 'true');
+
+		// a path that is no file of the project is said
+		await file(page, 'index.html').click();
+		await write(page, '<link rel="stylesheet" href="css/altro.css">\n<h1>Senza stile</h1>\n<img src="foto.png">\n');
+		await expect(log(page)).toContainText('css/altro.css non esiste nel progetto');
+		await expect(log(page)).toContainText('foto.png non esiste nel progetto');
+	});
+
+	test('a Python program imports the modules of its project and opens its files; files are made, renamed, deleted', async ({ page }) => {
+		await open(page, 'Python con un modulo', 'Progetto');
+		await run(page).click();
+		await expect(log(page)).toContainText('raggio 2.5: area 19.63, circonferenza 15.71', { timeout: 90_000 });
+
+		await page.getByRole('button', { name: 'Nuovo file' }).click();
+		await page.getByLabel('Nome del nuovo file').fill('saluti.exe');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await expect(files(page).getByRole('alert')).toContainText('L’estensione deve essere una di queste');
+		await page.getByLabel('Nome del nuovo file').fill('geometria.py');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await expect(files(page).getByRole('alert')).toContainText('C’è già un file con questo nome.');
+		await page.getByLabel('Nome del nuovo file').fill('saluti.py');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await write(page, 'def ciao():\n    return "ciao dal modulo nuovo"\n');
+
+		// main.py is still what Esegui runs: the module was only opened
+		await file(page, 'main.py').click();
+		await write(page, 'import saluti\nprint(saluti.ciao())\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('ciao dal modulo nuovo');
+
+		// a module that was changed is read again, and one that was renamed is not found under its old name
+		await page.getByRole('button', { name: 'Rinomina saluti.py' }).click();
+		await page.getByLabel('Nuovo nome del file').fill('parole.py');
+		await page.getByLabel('Nuovo nome del file').press('Enter');
+		await run(page).click();
+		await expect(log(page)).toContainText("ModuleNotFoundError: No module named 'saluti'");
+
+		await page.getByRole('button', { name: 'Elimina raggi.txt' }).click();
+		await files(page).getByRole('button', { name: 'Elimina', exact: true }).click();
+		await expect(file(page, 'raggi.txt')).toHaveCount(0);
+		await expect(files(page).getByRole('listitem')).toHaveCount(3);
+	});
+
+	test('a C++ program is compiled from all its sources', async ({ page }) => {
+		await open(page, 'C++ in più file', 'Progetto');
+		await run(page).click();
+		await expect(log(page)).toContainText('1/2 + 1/3 = 5/6', { timeout: 240_000 });
+	});
+
+	test('a picture from the device is a file of the project, shown by the page that names it', async ({ page }) => {
+		await open(page, undefined, 'Progetto');
+		// one pixel
+		const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+		await page.locator('input[type=file]').setInputFiles({ name: 'La mia foto.png', mimeType: 'image/png', buffer: png });
+		await expect(file(page, 'La-mia-foto.png')).toHaveAttribute('aria-current', 'true');
+		await expect(page.getByAltText('L’immagine La-mia-foto.png')).toBeVisible();
+
+		await file(page, 'index.html').click();
+		await write(page, '<h1>Foto</h1>\n<img id="foto" src="La-mia-foto.png" alt="">\n');
+		await expect.poll(() => shown(page).locator('#foto').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(1);
 	});
 });
 
@@ -459,8 +536,8 @@ test.describe('saved programs', () => {
 
 		// a page keeps its three files
 		await page.keyboard.press('Escape');
-		await page.getByLabel('Linguaggio').selectOption({ label: 'Pagina web' });
-		await page.getByRole('tab', { name: 'style.css' }).click();
+		await page.getByLabel('Linguaggio').selectOption({ label: 'Progetto' });
+		await file(page, 'style.css').click();
 		await write(page, 'h1 { color: rgb(0, 128, 0); }\n');
 		await saveAs(page, 'La mia pagina');
 		await expect(library(page)).toContainText('La mia pagina, salvato.');
@@ -484,13 +561,13 @@ test.describe('saved programs', () => {
 		await expect(library(page)).toContainText('Il mio primo, salvato.');
 
 		await library(page).getByRole('button', { name: /^La mia pagina/ }).click();
-		await expect(page.getByLabel('Linguaggio')).toHaveValue('web');
+		await expect(page.getByLabel('Linguaggio')).toHaveValue('project');
 		await expect(page.frameLocator('iframe[title="Anteprima della pagina"]').locator('h1')).toHaveCSS('color', 'rgb(0, 128, 0)');
 
 		const { data } = await supabaseAdmin().from('programs').select('title,language,files').eq('user_id', user!.id).order('title');
 		expect(data).toEqual([
 			{ title: 'Il mio primo', language: 'python', files: { main: 'print("salvato due")\n' } },
-			{ title: 'La mia pagina', language: 'web', files: expect.objectContaining({ css: 'h1 { color: rgb(0, 128, 0); }\n', html: expect.stringContaining('<h1>Ciao, mondo!</h1>') }) }
+			{ title: 'La mia pagina', language: 'project', files: expect.objectContaining({ 'style.css': 'h1 { color: rgb(0, 128, 0); }\n', 'index.html': expect.stringContaining('<h1>Ciao, mondo!</h1>') }) }
 		]);
 
 		await openLibrary(page);
@@ -580,6 +657,29 @@ test.describe('programs in a lesson', () => {
 		await web.getByRole('button', { name: 'Verifica' }).click();
 		await expect(web.getByRole('log')).toContainText('Tutti i 3 controlli superati.');
 	});
+
+	test('a project in a lesson has a tab for each file, and its pages link each other', async ({ page }) => {
+		const response = await page.goto('/prova-grafico/lezione?file=prove/codice.md');
+		test.skip(response?.status() === 404, 'the trial page of lesson files is not in the production build');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+
+		const site = block(page, 5);
+		await site.scrollIntoViewIfNeeded();
+		await expect(site.getByRole('tab')).toHaveText(['index.html', 'contatti.html', 'stile.css']);
+		const shown = site.frameLocator('iframe[title="Anteprima della pagina"]');
+		await shown.getByRole('link', { name: 'Contatti' }).click();
+		await expect(shown.locator('h1')).toHaveText('Contatti');
+		await expect(site.getByRole('tab', { name: 'contatti.html' })).toHaveAttribute('aria-selected', 'true');
+
+		const program = block(page, 6);
+		await program.scrollIntoViewIfNeeded();
+		await program.getByRole('button', { name: 'Verifica' }).click();
+		await expect(program.getByRole('log')).toContainText('0 prove superate su 1', { timeout: 90_000 });
+		await program.getByRole('button', { name: 'Soluzione' }).click();
+		await expect(program.getByRole('tab', { name: 'conti.py' })).toBeVisible();
+		await program.getByRole('button', { name: 'Verifica' }).click();
+		await expect(program.getByRole('log')).toContainText('Prova 1: superata');
+	});
 });
 
 /**
@@ -632,9 +732,9 @@ test.describe('a program and the account of who runs it', () => {
 		expect(printed).not.toContain(user!.id);
 
 		// the script of a web page runs in a page, not in a worker: it must be as far from the account
-		await page.getByLabel('Linguaggio').selectOption({ label: 'Pagina web' });
+		await page.getByLabel('Linguaggio').selectOption({ label: 'Progetto' });
 		await page.getByLabel('Esempio').selectOption({ label: 'Un contatore' });
-		await page.getByRole('tab', { name: 'script.js' }).click();
+		await file(page, 'script.js').click();
 		await write(
 			page,
 			[

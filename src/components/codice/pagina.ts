@@ -1,4 +1,5 @@
-import type { Check, Page } from '@/lib/codice/blocco';
+import type { Check } from '@/lib/codice/blocco';
+import { kindOf, resolvePath, type ProjectFiles } from '@/lib/codice/progetto';
 import { format } from './js-environment';
 import { GUARD, assemble } from './web-assemble';
 import { runCheck, type CheckVerdict } from './web-checks';
@@ -11,10 +12,13 @@ import { runCheck, type CheckVerdict } from './web-checks';
  * checks of an exercise are run here, on the page itself. scripts/codice/sandbox.mjs builds it.
  */
 
-export type ToPage = { type: 'page'; page: Page } | { type: 'checks'; id: number; checks: Check[] };
+/** `html` is the text of the page when it is not the file's own: a Markdown file turned into a page. */
+export type ToPage = { type: 'page'; files: ProjectFiles; path: string; html?: string } | { type: 'checks'; id: number; checks: Check[] };
 export type FromPage =
 	| { type: 'ready' }
 	| { type: 'loaded' }
+	/** A link to another page of the project was clicked. */
+	| { type: 'navigate'; path: string }
 	| { type: 'chunk'; kind: 'out' | 'err' | 'note'; text: string }
 	| { type: 'verdicts'; id: number; verdicts: CheckVerdict[] };
 
@@ -56,24 +60,30 @@ const print =
 		say(kind, `${values.map((v) => format(v)).join(' ')}\n`);
 Object.assign(console, { log: print('out'), info: print('out'), debug: print('out'), warn: print('err'), error: print('err') });
 
-let script = '';
+/** The scripts of the page shown, by the address they were loaded from, and the page's own path. */
+let scripts = new Map<string, string>();
+let shown = '';
+let project: ProjectFiles = {};
 
 /** What is listened for around the student's page; writing the page removes every listener, so it is called again. */
 function listen() {
 	addEventListener('message', (event: MessageEvent<ToPage>) => {
 		if (event.source !== parent || event.origin !== SITE) return;
 		const order = event.data;
-		if (order.type === 'page') show(order.page);
+		if (order.type === 'page') show(order.files, order.path, order.html);
 		else if (order.type === 'checks') post({ type: 'verdicts', id: order.id, verdicts: order.checks.map((check) => runCheck(document, check)) });
 	});
 	addEventListener('error', (event) => {
 		if (!(event instanceof ErrorEvent)) return;
 		const error = event.error as unknown;
 		const text = error instanceof Error ? `${error.name}: ${error.message}` : event.message.replace(/^Uncaught /, '');
-		// the line of script.js the error passed through: its own, or the one that called what failed
-		const through = error instanceof Error && script ? new RegExp(`${script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}:(\\d+)`).exec(error.stack ?? '') : null;
-		const line = event.filename === script ? event.lineno : through ? Number(through[1]) : 0;
-		const where = line ? `script.js, riga ${line}` : 'index.html';
+		// the line of a script of the project the error passed through: its own, or the one that called what failed
+		let where = shown;
+		if (scripts.has(event.filename)) where = `${scripts.get(event.filename)}, riga ${event.lineno}`;
+		else if (error instanceof Error) {
+			const through = /(blob:[^\s)]+?):(\d+)/.exec(error.stack ?? '');
+			if (through && scripts.has(through[1])) where = `${scripts.get(through[1])}, riga ${through[2]}`;
+		}
 		say('err', `${text}\n    in ${where}\n`);
 	});
 	addEventListener('unhandledrejection', (event) => {
@@ -88,6 +98,10 @@ function listen() {
 			const href = link?.getAttribute('href') ?? '';
 			if (!link || href.startsWith('#')) return;
 			event.preventDefault();
+			// a page of the project is shown by the editor, in the place of this one
+			const target = resolvePath(shown, href);
+			const kind = target === null ? null : kindOf(target);
+			if (target !== null && target in project && (kind === 'html' || kind === 'markdown')) return post({ type: 'navigate', path: target });
 			say('note', `Nell’anteprima i link non si aprono: questo porta a ${href}\n`);
 		},
 		true
@@ -95,9 +109,15 @@ function listen() {
 	addEventListener('load', () => post({ type: 'loaded' }));
 }
 
-function show(page: Page) {
-	script = URL.createObjectURL(new Blob([page.js], { type: 'text/javascript' }));
-	const { html, notes } = assemble(page, script);
+function show(files: ProjectFiles, path: string, text?: string) {
+	project = files;
+	shown = path;
+	scripts = new Map();
+	const { html, notes } = assemble(files, path, text ?? files[path] ?? '', (script) => {
+		const address = URL.createObjectURL(new Blob([files[script]], { type: 'text/javascript' }));
+		scripts.set(address, script);
+		return address;
+	});
 	document.open();
 	listen();
 	document.write(html);

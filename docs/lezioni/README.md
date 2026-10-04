@@ -170,6 +170,35 @@ ul > li | quanti = 2
 | `a \| attributo href = pagina.html` | l'attributo ha quel valore |
 | `h1 \| stile color = blue` | lo stile calcolato dal browser; il valore si scrive come in CSS |
 
+Un progetto a più file è un gruppo di blocchi che hanno ciascuno il nome di un file: lo studente li vede con una
+linguetta per file, nell'ordine in cui sono scritti, e il primo è quello aperto. Serve per due pagine che si
+richiamano, per un programma con un modulo, per un C++ con il suo `.h`.
+
+````
+```codice index.html
+<link rel="stylesheet" href="stile.css">
+<a href="contatti.html">Contatti</a>
+```
+
+```codice contatti.html
+<a href="index.html">Home</a>
+```
+
+```codice stile.css
+a { color: teal; }
+```
+````
+
+- I nomi possono avere una cartella (`css/stile.css`); le estensioni sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`,
+  `md`, `json`, `txt`, `csv`. Un'immagine non si scrive in un blocco.
+- "Esegui" avvia il programma, o mostra la pagina, del primo blocco che si può eseguire; poi quello che lo studente
+  apre. In Python gli altri file sono moduli e file da leggere, in C e C++ si compilano insieme, in una pagina si
+  collegano con il loro percorso e un link porta all'altra pagina.
+- L'esercizio si corregge con `%% prova` e `%% stampa` se parte un programma, con `%% controllo` se parte una pagina.
+  `%% soluzione` in un file è la soluzione di quel file.
+- `%% crea`, da solo in fondo a un blocco, dà allo studente l'elenco dei file come nello strumento, con cui creare,
+  rinominare ed eliminare file. Senza, i file sono quelli della lezione e si possono solo modificare.
+
 Un controllo con più regole passa quando passano tutte. `%% soluzione` in un file è la soluzione di quel file; un
 file senza soluzione resta com'è. I controlli sul comportamento (un clic che cambia la pagina) non ci sono ancora.
 

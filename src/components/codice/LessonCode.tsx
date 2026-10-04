@@ -2,10 +2,11 @@
 
 import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
-import type { CodeBlock, Language } from '@/lib/codice/blocco';
+import type { CodeBlock, Language, ProjectBlock } from '@/lib/codice/blocco';
+import { webAsProject } from '@/lib/codice/salvati';
+import { ProjectBench } from './ProjectBench';
 import { LANGUAGES } from './runtime';
 import { SavedPrograms, type Program } from './SavedPrograms';
-import { WebBench } from './WebBench';
 import { Workbench } from './Workbench';
 
 /** The language chosen on this device: every program of every lesson opens in it, when it is written in it. */
@@ -44,19 +45,35 @@ function Save({ program }: { program: () => Program }) {
  * A web page has its three files and what the page looks like.
  */
 export function LessonCode({ block }: { block: CodeBlock }) {
-	return block.page ? <LessonPage page={block.page} /> : <LessonProgram block={block} />;
+	// a page of three blocks is a project of three files under the names a page links them by
+	const page = block.page;
+	const project: ProjectBlock | undefined =
+		block.project ??
+		(page && {
+			files: webAsProject(page.files),
+			solution: page.solution && webAsProject(page.solution),
+			open: 'index.html',
+			create: false,
+			tests: [],
+			checks: page.checks
+		});
+	return project ? <LessonProject project={project} /> : <LessonProgram block={block} />;
 }
 
-function LessonPage({ page }: { page: NonNullable<CodeBlock['page']> }) {
-	const now = useRef(page.files);
+function LessonProject({ project }: { project: ProjectBlock }) {
+	const now = useRef(project.files);
 	return (
-		<WebBench
+		<ProjectBench
 			compact
-			initial={page.files}
-			solution={page.solution}
-			checks={page.checks.length ? page.checks : undefined}
+			layout={project.create ? 'explorer' : 'tabs'}
+			editable={project.create}
+			initial={project.files}
+			open={project.open}
+			solution={project.solution}
+			tests={project.tests.length ? project.tests : undefined}
+			checks={project.checks.length ? project.checks : undefined}
 			onEdit={(files) => (now.current = files)}
-			toolbar={<Save program={() => ({ language: 'web', files: now.current })} />}
+			toolbar={<Save program={() => ({ language: 'project', files: now.current })} />}
 		/>
 	);
 }

@@ -1,22 +1,21 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Check, Lightbulb, ListChecks, Play, RotateCcw, Settings, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
-import { PAGE_FILES, type Check as PageCheck, type Page, type PageFile } from '@/lib/codice/blocco';
+import type { Check as PageCheck } from '@/lib/codice/blocco';
+import { kindOf, type ProjectFiles } from '@/lib/codice/progetto';
 import { guardInline, guardLoops } from './loop-guard';
 import type { FromPage, ToPage } from './pagina';
 import { SettingsPanel } from './SettingsPanel';
-import { Split } from './Split';
-import { FILE_NAMES, hasScript } from './web-assemble';
+import type { ProjectSlots } from './ProjectBench';
+import { hasScript } from './web-assemble';
+import { Layout } from './Workbench';
 import type { CheckVerdict } from './web-checks';
 
-const Editor = dynamic(() => import('./Editor'), {
-	ssr: false,
-	loading: () => <p className="p-4 text-sm text-fg-subtle">Carico l&apos;editor…</p>
-});
+/** How a Markdown file looks as a page: readable, and nothing more. */
+const MARKDOWN_PAGE = '<!doctype html><meta charset="utf-8"><style>body{font-family:system-ui,sans-serif;max-width:44rem;margin:1.5rem auto;padding:0 1rem;line-height:1.6;color:#222}img{max-width:100%}pre,code{background:#f3f3f3;border-radius:4px}pre{padding:.75rem;overflow:auto}code{padding:.1em .3em}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:.3rem .6rem}</style>';
 
 /** The page of the iframe the preview is shown in (src/app/codice-sandbox/pagina/route.ts). */
 const PAGE_PATH = '/codice-sandbox/pagina';
@@ -37,60 +36,35 @@ const LINE: Record<Line['kind'], string> = {
 };
 
 /**
- * A web page and what it looks like, side by side: three files (index.html, style.css, script.js) and the page they
- * make, with a console for what its script prints. With `checks` it is an exercise: "Verifica" loads the page and
- * looks in it for what each check asks.
+ * The pages of a project and what they look like: the preview of the page "Esegui" shows, with a console for what
+ * its scripts print. The files and their editor are the project's (ProjectBench.tsx). With `checks` it is an
+ * exercise: "Verifica" loads the page and looks in it for what each check asks.
  *
  * The page is shown in an iframe that is not the site's (pagina.ts is its script): the student's JavaScript runs
- * there and can reach nothing of the site. A page without scripts is shown again a moment after every key; one
- * with scripts waits for "Esegui", so an alert() does not open at every pause. A new `initial` needs a new `key`.
+ * there and can reach nothing of the site. A project without scripts is shown again a moment after every key; one
+ * with scripts waits for "Esegui", so an alert() does not open at every pause. A link to another page of the
+ * project opens that page, in the preview and in the editor.
  */
-export function WebBench({
-	initial,
-	checks,
-	solution,
-	toolbar,
-	compact = false,
-	onEdit
-}: {
-	initial: Page;
-	checks?: PageCheck[];
-	/** A page that passes the checks, behind a button. */
-	solution?: Page | null;
-	/** At the left of the bar, before the buttons. */
-	toolbar?: ReactNode;
-	/** For a page inside a lesson: the preview under the editor. */
-	compact?: boolean;
-	onEdit?: (files: Page) => void;
-}) {
-	/** The files put in the editor, which reads its text only when it is made. */
-	const [loaded, setLoaded] = useState({ files: initial, count: 0 });
-	/** The file in the editor, with its text as it was when its tab was opened. */
-	const [view, setView] = useState<{ tab: PageFile; text: string }>({
-		tab: 'html',
-		text: initial.html
-	});
-	const { tab } = view;
+export function WebBench({ project, checks, toolbar, compact = false }: { project: ProjectSlots; checks?: PageCheck[]; /** At the left of the bar, before the buttons. */ toolbar?: ReactNode; /** For a page inside a lesson: the preview under the editor. */ compact?: boolean }) {
 	const [lines, setLines] = useState<Line[]>([]);
 	const [verdicts, setVerdicts] = useState<CheckVerdict[] | null>(null);
 	const [checking, setChecking] = useState(false);
 	/** The files have changed and the preview still shows the page of before. */
 	const [stale, setStale] = useState(false);
-	const [edited, setEdited] = useState(false);
 	/** The editor's settings are shown in the place of the page. */
 	const [settings, setSettings] = useState(false);
 
-	const files = useRef(initial);
 	const holder = useRef<HTMLDivElement>(null);
 	const frame = useRef<HTMLIFrameElement | null>(null);
 	const pause = useRef(0);
 	/** Who waits for the page to load, and for the answer to the checks sent with a number. */
 	const onLoaded = useRef<((ok: boolean) => void) | null>(null);
-	const onVerdicts = useRef<{
-		id: number;
-		done: (verdicts: CheckVerdict[]) => void;
-	} | null>(null);
+	const onVerdicts = useRef<{ id: number; done: (verdicts: CheckVerdict[]) => void } | null>(null);
 	const ids = useRef(0);
+	const latest = useRef(project);
+	useEffect(() => {
+		latest.current = project;
+	});
 
 	/** A new iframe for the page as the files are now: whatever the old page was doing ends with it. */
 	const mount = useCallback(() => {
@@ -119,25 +93,32 @@ export function WebBench({
 	const show = useCallback(() => {
 		setStale(false);
 		setLines([]);
+		setVerdicts(null);
 		return mount();
 	}, [mount]);
 
 	useEffect(() => {
+		/** The page for the preview: every loop of its scripts guarded, a Markdown file turned into a page. */
+		const send = async (target: Window) => {
+			const page = latest.current.page();
+			if (!page) return;
+			const files: ProjectFiles = {};
+			for (const [path, text] of Object.entries(page.files)) files[path] = kindOf(path) === 'javascript' ? guardLoops(text) : kindOf(path) === 'html' ? guardInline(text) : text;
+			let html: string | undefined;
+			if (kindOf(page.path) === 'markdown') {
+				const { default: MarkdownIt } = await import('markdown-it');
+				html = `${MARKDOWN_PAGE}${new MarkdownIt({ html: true, linkify: true }).render(page.files[page.path] ?? '')}`;
+			}
+			// the iframe's origin has no name to address it by; the window is the one this page made
+			target.postMessage({ type: 'page', files, path: page.path, html } satisfies ToPage, '*');
+		};
 		const receive = (event: MessageEvent<FromPage>) => {
 			const target = frame.current?.contentWindow;
 			if (!target || event.source !== target) return;
 			const message = event.data;
-			if (message.type === 'ready') {
-				const { html, css, js } = files.current;
-				// the iframe's origin has no name to address it by; the window is the one this page made
-				target.postMessage(
-					{
-						type: 'page',
-						page: { html: guardInline(html), css, js: guardLoops(js) }
-					} satisfies ToPage,
-					'*'
-				);
-			} else if (message.type === 'loaded') onLoaded.current?.(true);
+			if (message.type === 'ready') void send(target);
+			else if (message.type === 'loaded') onLoaded.current?.(true);
+			else if (message.type === 'navigate') latest.current.navigate(message.path);
 			else if (message.type === 'chunk') {
 				setLines((shown) => {
 					const last = shown[shown.length - 1];
@@ -155,31 +136,30 @@ export function WebBench({
 		};
 	}, [mount]);
 
-	const edit = (file: PageFile, text: string) => {
-		files.current = { ...files.current, [file]: text };
-		setEdited(true);
-		setVerdicts(null);
-		onEdit?.(files.current);
-		window.clearTimeout(pause.current);
-		if (hasScript(files.current)) setStale(true);
-		else pause.current = window.setTimeout(() => void show(), PAUSE);
-	};
+	// a file changed: a project without scripts is shown again after a pause, one with scripts waits for Esegui
+	useEffect(
+		() =>
+			project.listen(() => {
+				setVerdicts(null);
+				window.clearTimeout(pause.current);
+				const page = latest.current.page();
+				if (page && hasScript(page.files)) setStale(true);
+				else pause.current = window.setTimeout(() => void show(), PAUSE);
+			}),
+		// the project's `listen` is the same function for the life of the bench
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[show]
+	);
 
-	const put = (next: Page) => {
-		files.current = next;
-		setEdited(next !== initial);
-		setVerdicts(null);
-		onEdit?.(next);
-		setLoaded(({ count }) => ({ files: next, count: count + 1 }));
-		setView((now) => ({ tab: now.tab, text: next[now.tab] }));
-		void show();
-	};
+	// Ctrl+Enter in the project's editor, and the opening of another page, show the page
+	useEffect(() => {
+		project.register(() => void show());
+	});
 
 	/** Loads the page again and asks it about each check. */
 	const check = async () => {
 		if (!checks) return;
 		setChecking(true);
-		setVerdicts(null);
 		const ok = await show();
 		const id = ++ids.current;
 		const answers = ok
@@ -196,16 +176,11 @@ export function WebBench({
 				})
 			: null;
 		onVerdicts.current = null;
-		setVerdicts(
-			answers ??
-				checks.map(() => ({
-					passed: false,
-					why: 'La pagina non si è caricata.'
-				}))
-		);
+		setVerdicts(answers ?? checks.map(() => ({ passed: false, why: 'La pagina non si è caricata.' })));
 		setChecking(false);
 	};
 
+	const fill = project.layout === 'explorer';
 	const passed = verdicts?.filter((v) => v.passed).length ?? 0;
 
 	return (
@@ -215,19 +190,19 @@ export function WebBench({
 				<p className="ml-auto text-sm text-fg-subtle" role="status">
 					{checking ? 'Verifico…' : stale ? 'Esegui per aggiornare la pagina' : ''}
 				</p>
-				{edited && (
-					<Button variant="ghost" size="sm" onClick={() => put(initial)} title="Rimetti la pagina di partenza">
+				{project.edited && (
+					<Button variant="ghost" size="sm" onClick={project.reset} title="Rimetti i file di partenza">
 						<RotateCcw className="size-3.5" aria-hidden="true" />
 						<span className="max-sm:sr-only">Ripristina</span>
 					</Button>
 				)}
-				{solution && loaded.files !== solution && (
-					<Button variant="ghost" size="sm" onClick={() => put(solution)} title="Metti la soluzione nell’editor">
+				{project.solve && (
+					<Button variant="ghost" size="sm" onClick={project.solve} title="Metti la soluzione nell’editor">
 						<Lightbulb className="size-3.5" aria-hidden="true" />
 						<span className="max-sm:sr-only">Soluzione</span>
 					</Button>
 				)}
-				{!compact && (
+				{(!compact || fill) && (
 					<Button variant="ghost" size="sm" onClick={() => setSettings((now) => !now)} aria-pressed={settings} title={settings ? 'Torna alla pagina' : 'Impostazioni dell’editor'} className={cn(settings && 'bg-surface-3 text-fg-strong')}>
 						<Settings className="size-3.5" aria-hidden="true" />
 						<span className="sr-only">Impostazioni dell’editor</span>
@@ -244,37 +219,18 @@ export function WebBench({
 					</Button>
 				)}
 			</div>
-			<Split
-				stacked={compact}
-				left={
-					<div className={cn('flex min-w-0 flex-col border-b border-edge', compact ? 'max-h-[26rem]' : 'h-[20rem] lg:h-[32rem] lg:border-b-0')}>
-						<div role="tablist" aria-label="File della pagina" className="flex shrink-0 gap-1 border-b border-edge bg-surface-2 px-2 pt-1.5">
-							{PAGE_FILES.map((file) => (
-								<button
-									key={file}
-									type="button"
-									role="tab"
-									aria-selected={tab === file}
-									onClick={() => setView({ tab: file, text: files.current[file] })}
-									className={cn('rounded-t-lg border border-b-0 px-3 py-1.5 font-mono text-[0.8125rem] focus-ring', tab === file ? 'border-edge bg-surface text-fg-strong' : 'border-transparent text-fg-muted hover:text-fg-strong')}
-								>
-									{FILE_NAMES[file]}
-								</button>
-							))}
-						</div>
-						<div className="min-h-0 flex-1 overflow-auto">
-							<Editor key={`${loaded.count}:${tab}`} initial={view.text} language={tab} label={FILE_NAMES[tab]} minimap={!compact} onChange={(text) => edit(tab, text)} onRun={() => void show()} />
-						</div>
-					</div>
-				}
-				right={
+			<Layout
+				project={project}
+				compact={compact}
+				code={null}
+				output={
 					<>
-						{settings && <SettingsPanel className="lg:h-[32rem]" />}
+						{settings && <SettingsPanel className={fill ? 'h-full' : 'lg:h-[32rem]'} />}
 						{/* the page stays under the settings: it is not loaded again when they close */}
-						<div className={cn('flex min-w-0 flex-col', !compact && 'lg:h-[32rem]', settings && 'hidden')}>
-							<div ref={holder} className={cn('min-h-0 bg-white', compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />
+						<div className={cn('flex min-w-0 flex-col', fill ? 'h-full' : !compact && 'lg:h-[32rem]', settings && 'hidden')}>
+							<div ref={holder} className={cn('min-h-0 bg-white', fill ? 'flex-1' : compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />
 							{(lines.length > 0 || verdicts) && (
-								<div role="log" aria-label="Console" className={cn(!compact && 'max-h-56', 'shrink-0 overflow-auto border-t border-edge bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg')}>
+								<div role="log" aria-label="Console" className={cn(fill ? 'max-h-[45%]' : !compact && 'max-h-56', 'shrink-0 overflow-auto border-t border-edge bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg')}>
 									{lines.map((line, i) => (
 										<span key={i} className={LINE[line.kind]}>
 											{line.text}

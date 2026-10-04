@@ -31,9 +31,16 @@
  *     h1 | testo = Ciao
  *     ```
  *
+ * A group whose blocks are named as files (`codice main.py`, `codice geometria.py`) is a project: more files, one
+ * of them in the editor, with a tab each. The first block is the file the editor opens. Its exercise is checked as a
+ * program's (`%% prova`, `%% stampa`) when "Esegui" runs a program, as a page's (`%% controllo`) when it shows a page.
+ * `%% crea`, alone on its line in any block, lets the student make, rename and delete files.
+ *
  * `%% controllo` is followed by what the student reads, and its lines are rules: a CSS selector and, after ` | `,
  * what must be true of the elements it finds (see parseRule). A check passes when all its rules do.
  */
+
+import { isImage, kindOf, pathProblem, targetOf, type ProjectFiles } from './progetto';
 
 export type Language = 'python' | 'c' | 'cpp' | 'javascript';
 
@@ -75,11 +82,23 @@ export interface PageBlock {
 	checks: Check[];
 }
 
-/** A program in one or more languages, with its tests; or a web page (then `variants` is empty). */
+export interface ProjectBlock {
+	files: ProjectFiles;
+	solution: ProjectFiles | null;
+	/** The file the editor opens. */
+	open: string;
+	/** The student can make, rename and delete files. */
+	create: boolean;
+	tests: Test[];
+	checks: Check[];
+}
+
+/** A program in one or more languages, with its tests; or a web page, or a project (then `variants` is empty). */
 export interface CodeBlock {
 	variants: CodeVariant[];
 	tests: Test[];
 	page?: PageBlock;
+	project?: ProjectBlock;
 }
 
 const NAMES: Record<string, Language | 'html' | 'css'> = { python: 'python', py: 'python', c: 'c', cpp: 'cpp', 'c++': 'cpp', javascript: 'javascript', js: 'javascript', html: 'html', css: 'css' };
@@ -122,6 +141,8 @@ interface Parts {
 	solution: string | null;
 	tests: Test[];
 	checks: Check[];
+	/** `%% crea` was written. */
+	create: boolean;
 	errors: string[];
 }
 
@@ -140,6 +161,7 @@ function readParts(body: string): Parts {
 	const tests: Test[] = [];
 	const checks: Check[] = [];
 	let input: string | null = null;
+	let create = false;
 	for (const { name, argument, lines } of parts.slice(1)) {
 		if (name !== 'controllo' && argument) errors.push(`"%% ${name}" va da solo sulla riga`);
 		if (name === 'soluzione') {
@@ -163,17 +185,21 @@ function readParts(body: string): Parts {
 			}
 			if (rules.length === 0) errors.push(`il controllo "${argument}" non ha regole`);
 			checks.push({ description: argument, rules });
-		} else errors.push(`parte sconosciuta "%% ${name}" (soluzione, prova, stampa, controllo)`);
+		} else if (name === 'crea') {
+			create = true;
+			if (lines.some((l) => l.trim())) errors.push('"%% crea" va da solo, in fondo al blocco');
+		} else errors.push(`parte sconosciuta "%% ${name}" (soluzione, prova, stampa, controllo, crea)`);
 	}
 	if (input !== null) errors.push('una "%% prova" senza la sua "%% stampa"');
-	return { code, solution, tests, checks, errors };
+	return { code, solution, tests, checks, create, errors };
 }
 
 /** One fence of a program: `info` is what follows ```codice on its line. */
 export function parseCodeFence(info: string, body: string): { variant: CodeVariant | null; tests: Test[]; errors: string[] } {
 	const name = NAMES[info.trim().toLowerCase()];
 	const language = name === 'html' || name === 'css' ? undefined : name;
-	const { code, solution, tests, checks, errors } = readParts(body);
+	const { code, solution, tests, checks, create, errors } = readParts(body);
+	if (create) errors.push('"%% crea" vale per i progetti, i blocchi con il nome di un file');
 	if (name === 'css') errors.unshift('un blocco css va dopo il blocco html della sua pagina');
 	else if (!language) errors.unshift(`linguaggio "${info.trim()}" non riconosciuto (python, c, cpp, javascript, html, css)`);
 	if (!code) errors.push('il blocco non ha un programma');
@@ -212,8 +238,50 @@ function parsePage(fences: { info: string; body: string }[]): { block: CodeBlock
 	return { block: errors.length === 0 ? { variants: [], tests: [], page: { files, solution, checks } } : null, errors };
 }
 
+/** A fence named as a file: `main.py`, `css/style.css`. */
+const isFile = (info: string) => /\.[A-Za-z0-9]+$/.test(info.trim()) && !Object.hasOwn(NAMES, info.trim().toLowerCase());
+
+/** The fences of a project: each is a file, the first the one the editor opens. */
+function parseProject(fences: { info: string; body: string }[]): { block: CodeBlock | null; errors: string[] } {
+	const errors: string[] = [];
+	const files: ProjectFiles = {};
+	const solutions: ProjectFiles = {};
+	const tests: Test[] = [];
+	const checks: Check[] = [];
+	let create = false;
+	for (const fence of fences) {
+		const path = fence.info.trim();
+		if (!isFile(path)) {
+			errors.push(`in un progetto ogni blocco ha il nome di un file: "${path}" non lo è`);
+			continue;
+		}
+		const problem = pathProblem(path);
+		if (problem) errors.push(`${path}: ${problem}`);
+		else if (isImage(path)) errors.push(`${path}: un'immagine non si scrive in un blocco`);
+		if (path in files) errors.push(`il file ${path} compare due volte nello stesso progetto`);
+		const read = readParts(fence.body);
+		errors.push(...read.errors.map((e) => `${path}: ${e}`));
+		files[path] = read.code;
+		if (read.solution !== null) solutions[path] = read.solution;
+		tests.push(...read.tests);
+		checks.push(...read.checks);
+		create ||= read.create;
+	}
+	const paths = Object.keys(files);
+	const open = paths[0] ?? '';
+	const target = targetOf(open, paths) ? open : paths.find((path) => targetOf(path, paths));
+	const kind = target ? targetOf(target, paths) : null;
+	if (tests.length && kind !== 'program') errors.push('"%% prova" vale quando Esegui avvia un programma: qui il primo file eseguibile è una pagina');
+	if (checks.length && kind !== 'page') errors.push('"%% controllo" vale quando Esegui mostra una pagina: qui il primo file eseguibile è un programma');
+	if (target && kindOf(target) === 'markdown' && checks.length) errors.push('i controlli valgono per le pagine html');
+	const solved = Object.keys(solutions).length > 0;
+	if (solved && tests.length === 0 && checks.length === 0) errors.push('una soluzione senza prove né controlli');
+	return { block: errors.length === 0 ? { variants: [], tests: [], project: { files, solution: solved ? { ...files, ...solutions } : null, open, create, tests, checks } } : null, errors };
+}
+
 /** The fences of one program, in the order they are written. */
 export function parseCodeBlock(fences: { info: string; body: string }[]): { block: CodeBlock | null; errors: string[] } {
+	if (fences.some((fence) => isFile(fence.info))) return parseProject(fences);
 	if (fences.some((fence) => fence.info.trim().toLowerCase() === 'html')) return parsePage(fences);
 	const errors: string[] = [];
 	const variants: CodeVariant[] = [];

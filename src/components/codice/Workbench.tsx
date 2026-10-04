@@ -9,7 +9,8 @@ import { tidy, type Test } from '@/lib/codice/blocco';
 import { LANGUAGES, TIME_LIMIT, type Chunk, type Language, type Outcome } from './runtime';
 import { retain, runtimeFor } from './runtimes';
 import { SettingsPanel } from './SettingsPanel';
-import { Split } from './Split';
+import { Panes, Split } from './Split';
+import type { ProjectSlots } from './ProjectBench';
 import type { Stage } from './turtle';
 import { TurtleCanvas } from './TurtleCanvas';
 
@@ -72,6 +73,9 @@ const FAILURE: Partial<Record<Outcome, string>> = {
 	failed: 'Il linguaggio non si è caricato.'
 };
 
+/** What makes every rerun of a run repeat the first: a seed for its random numbers, and the time it started. */
+const firstRun = (): [number, number] => [Math.floor(Math.random() * 2 ** 31), Date.now()];
+
 /** Adds pieces to the console, joining a piece to the one before when they are of the same kind. */
 function joined(chunks: Chunk[], more: Chunk[]): Chunk[] {
 	const next = chunks.slice();
@@ -97,7 +101,8 @@ export function Workbench({
 	solution,
 	toolbar,
 	compact = false,
-	onEdit
+	onEdit,
+	project
 }: {
 	language: Language;
 	initial: string;
@@ -109,6 +114,8 @@ export function Workbench({
 	/** For a program inside a lesson: the console under the editor, each as tall as what it holds. */
 	compact?: boolean;
 	onEdit?: (code: string) => void;
+	/** The program is a file of a project (ProjectBench.tsx), which has the files and their editor: this is its console. */
+	project?: ProjectSlots;
 }) {
 	/** The program put in the editor, which reads its text only when it is made: the starting one, or the solution. */
 	const [loaded, setLoaded] = useState({ text: initial, count: 0 });
@@ -189,15 +196,16 @@ export function Workbench({
 
 	const execute = async () => {
 		const mine = ++turn.current;
-		const runtime = runtimeFor(language);
+		const program = project ? project.job() : { language, source: code.current, files: undefined };
+		if (!program) return close('Apri un file che si può eseguire: un programma in Python, C, C++ o JavaScript.');
+		const runtime = runtimeFor(program.language);
 		settle(runtime.ready ? 'running' : 'loading');
 		void runtime.load().then((ok) => {
 			if (ok && mine === turn.current) setPhase((now) => (now === 'loading' ? 'running' : now));
 		});
 		const { outcome, ms } = await runtime.run(
 			{
-				language,
-				source: code.current,
+				...program,
 				inputs: inputs.current,
 				seed: seed.current,
 				clock: clock.current
@@ -209,17 +217,18 @@ export function Workbench({
 			}
 		);
 		if (mine !== turn.current) return;
-		const note = closing(outcome, ms, language);
+		const note = closing(outcome, ms, program.language);
 		if (note) pending.current.push({ kind: 'note', text: note });
 		// the last lines and the end of the run reach the screen together
 		flush();
 		settle(outcome === 'input' ? 'waiting' : 'idle');
 	};
 
+	/** The run of now, for who starts it from outside: it reads the files as they are when it is called. */
+	const start = useRef(() => {});
 	const run = () => {
 		inputs.current = [];
-		seed.current = Math.floor(Math.random() * 2 ** 31);
-		clock.current = Date.now();
+		[seed.current, clock.current] = firstRun();
 		clear();
 		void execute();
 	};
@@ -236,7 +245,9 @@ export function Workbench({
 	const check = async () => {
 		if (!tests) return;
 		const mine = ++turn.current;
-		const runtime = runtimeFor(language);
+		const program = project ? project.job() : { language, source: code.current, files: undefined };
+		if (!program) return;
+		const runtime = runtimeFor(program.language);
 		clear();
 		settle('checking');
 		const results: Verdict[] = [];
@@ -245,8 +256,7 @@ export function Workbench({
 			let errors = '';
 			const { outcome } = await runtime.run(
 				{
-					language,
-					source: code.current,
+					...program,
 					inputs: test.input === '' ? [] : test.input.replace(/\n$/, '').split('\n'),
 					seed: 1,
 					clock: Date.now(),
@@ -318,6 +328,16 @@ export function Workbench({
 		};
 	}, []);
 
+	// Ctrl+Enter in the project's editor runs the program
+	useEffect(() => {
+		start.current = run;
+	});
+	const register = project?.register;
+	useEffect(() => {
+		register?.(() => start.current());
+	}, [register]);
+
+	const fill = project?.layout === 'explorer';
 	const busy = phase === 'loading' || phase === 'running' || phase === 'checking';
 
 	const passed = verdicts?.filter((v) => v.passed).length ?? 0;
@@ -329,14 +349,14 @@ export function Workbench({
 				<p className="ml-auto text-sm text-fg-subtle" role="status">
 					{status || STATUS[phase]}
 				</p>
-				{edited && phase === 'idle' && (
-					<Button variant="ghost" size="sm" onClick={() => put(initial)} title="Rimetti il programma di partenza">
+				{(project ? project.edited : edited) && phase === 'idle' && (
+					<Button variant="ghost" size="sm" onClick={() => (project ? project.reset() : put(initial))} title="Rimetti il programma di partenza">
 						<RotateCcw className="size-3.5" aria-hidden="true" />
 						<span className="max-sm:sr-only">Ripristina</span>
 					</Button>
 				)}
-				{solution && phase === 'idle' && loaded.text !== solution && (
-					<Button variant="ghost" size="sm" onClick={() => put(solution)} title="Metti la soluzione nell’editor">
+				{(project ? project.solve : solution && loaded.text !== solution) && phase === 'idle' && (
+					<Button variant="ghost" size="sm" onClick={() => (project ? project.solve?.() : put(solution!))} title="Metti la soluzione nell’editor">
 						<Lightbulb className="size-3.5" aria-hidden="true" />
 						<span className="max-sm:sr-only">Soluzione</span>
 					</Button>
@@ -347,7 +367,7 @@ export function Workbench({
 						Ferma
 					</Button>
 				)}
-				{!compact && (
+				{(!compact || fill) && (
 					<Button variant="ghost" size="sm" onClick={() => setSettings((now) => !now)} aria-pressed={settings} title={settings ? 'Torna alla console' : 'Impostazioni dell’editor'} className={cn(settings && 'bg-surface-3 text-fg-strong')}>
 						<Settings className="size-3.5" aria-hidden="true" />
 						<span className="sr-only">Impostazioni dell’editor</span>
@@ -364,22 +384,23 @@ export function Workbench({
 					</Button>
 				)}
 			</div>
-			<Split
-				stacked={compact}
-				left={
+			<Layout
+				project={project}
+				compact={compact}
+				code={
 					<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : 'h-[20rem] lg:h-[32rem] lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
 						<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" minimap={!compact} onChange={edit} onRun={run} />
 					</div>
 				}
-				right={
+				output={
 					<>
-						{settings && <SettingsPanel className="lg:h-[32rem]" />}
+						{settings && <SettingsPanel className={fill ? 'h-full' : 'lg:h-[32rem]'} />}
 						<div
 							ref={log}
 							role="log"
 							aria-label="Console"
 							// the console stays under the settings: a run goes on, and its canvas keeps its drawing
-							className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', compact ? 'max-h-[26rem] min-h-[4.5rem]' : 'h-[16rem] lg:h-[32rem]', settings && 'hidden')}
+							className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', fill ? 'h-full' : compact ? 'max-h-[26rem] min-h-[4.5rem]' : 'h-[16rem] lg:h-[32rem]', settings && 'hidden')}
 							onClick={() => field.current?.focus()}
 						>
 							{drawing && <TurtleCanvas onStage={attach} />}
@@ -450,5 +471,26 @@ export function Workbench({
 				}
 			/>
 		</section>
+	);
+}
+
+/** Where the code and its output go: side by side or one above the other, or, in a project, beside the list of its files. */
+export function Layout({ project, compact, code, output }: { project?: ProjectSlots; compact: boolean; code: ReactNode; output: ReactNode }) {
+	if (project?.layout === 'explorer') return <Panes files={project.chooser} editor={project.editor} output={output} />;
+	return (
+		<Split
+			stacked={compact}
+			left={
+				project ? (
+					<>
+						{project.chooser}
+						{project.editor}
+					</>
+				) : (
+					code
+				)
+			}
+			right={output}
+		/>
 	);
 }
