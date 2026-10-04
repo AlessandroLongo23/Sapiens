@@ -91,6 +91,64 @@ Valgono per tutti i capitoli, perché le lezioni si richiamano a vicenda.
   cifre, griglie di pixel. Niente `pattern=` (node-tikzjax non lo disegna) e niente riempimenti bianchi per
   cancellare. Si guardano con `node scripts/figure/anteprima.mjs <cartella di uscita> <file della lezione>`.
 - Nel primo anno non c'è programmazione: niente blocchi `codice` e niente figure interattive in questo lotto.
+
+### Programmazione
+
+Scelte del 5 ottobre 2026, per le prime lezioni di programmazione (secondo anno), da confermare.
+
+- **Linguaggi.** Ogni programma è scritto in Python e in C++, in due blocchi `codice` uno dopo l'altro: lo studente
+  sceglie la linguetta, e la scelta vale per tutta la pagina. Il testo attorno parla del concetto con parole che
+  valgono per tutti e due ("la variabile", "il ciclo", "la condizione"); quello che cambia da un linguaggio
+  all'altro (i tipi dichiarati in C++, i due punti e il rientro in Python, il punto e virgola) sta in un riquadro
+  `ad-note` subito dopo il programma. Le parole del linguaggio in codice in linea: `` `while` ``, `` `int` ``.
+- **Programmi da eseguire e da modificare.** Un esempio è un blocco `codice` che lo studente esegue; il testo
+  prima dice che cosa fa, quello dopo che cosa provare a cambiare. In C++ sempre `#include <iostream>` e
+  `using namespace std;`, come nei libri del biennio. Rientro di quattro spazi nei due linguaggi.
+- **Esercizi.** Con `%% prova` e `%% stampa`, scritte nel blocco Python e valide anche per il C++. Il programma di
+  partenza legge i dati e ha un commento dove scrivere; `%% soluzione` c'è sempre, in tutti e due i linguaggi. Nelle
+  prove il programma C++ non scrive domande prima di leggere (Python non le stampa, il C++ sì): quindi i programmi
+  degli esercizi leggono senza domanda. Ogni soluzione si controlla con `scripts/codice/verifica.mts`.
+- **Diagrammi di flusso.** In TikZ, con le forme dei libri: ovale per inizio e fine, parallelogramma per leggere e
+  scrivere, rettangolo per un'istruzione, rombo per una condizione, con "sì" e "no" sui due rami. node-tikzjax non
+  ha `shapes.geometric`: parallelogramma e rombo sono disegnati come percorsi dalle due macro qui sotto, e le
+  frecce che li toccano partono da coordinate scritte a mano (il rombo è largo 3,2 e alto 1,2, il parallelogramma
+  largo 3 e alto 0,7). Nel diagramma si scrive in italiano e in notazione matematica, non nel linguaggio:
+  "leggi $n$", "$s \leftarrow s + i$", "$n \geq 0$?". Larghezza massima 9 cm, perché stia in un telefono.
+
+````
+```tikz
+% nome: diagramma-flusso-segno
+% alt: Diagramma di flusso: dopo l'inizio si legge n; un rombo chiede se n è maggiore o uguale a zero; il ramo sì porta a scrivere "positivo", il ramo no a scrivere "negativo"; i due rami si riuniscono alla fine
+\begin{tikzpicture}
+\tikzset{
+  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
+  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
+  testo/.style={font=\small, align=center},
+  freccia/.style={-{Stealth}, thick}
+}
+% ingresso o uscita: parallelogramma largo 3 e alto 0.7, centrato in (x,y)
+\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
+% scelta: rombo largo 3.2 e alto 1.2, centrato in (x,y)
+\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
+\node[estremo] (inizio) at (0,0) {inizio};
+\dati{0}{-1.2}{leggi $n$}
+\scelta{0}{-2.6}{$n \geq 0$?}
+\node[azione] (si) at (-2.8,-4.0) {scrivi ``positivo''};
+\node[azione] (no) at (2.8,-4.0) {scrivi ``negativo''};
+\node[estremo] (fine) at (0,-5.3) {fine};
+\draw[freccia] (inizio) -- (0,-0.85);
+\draw[freccia] (0,-1.55) -- (0,-2.0);
+\draw[freccia] (-1.6,-2.6) -| node[pos=0.25, above, font=\footnotesize] {sì} (si.north);
+\draw[freccia] (1.6,-2.6) -| node[pos=0.25, above, font=\footnotesize] {no} (no.north);
+\draw[freccia] (si.south) |- (fine.west);
+\draw[freccia] (no.south) |- (fine.east);
+\end{tikzpicture}
+```
+````
+
+  Un ciclo si disegna con la freccia che dal fondo del corpo risale al rombo, passando a lato dei blocchi senza
+  attraversarli.
+- **Anteprima.** Con il sito in sviluppo: `/prova-grafico/lezione?file=informatica/riscritte/NN-slug.md`.
 - Esercizi: un generatore per lezione, con id uguale allo slug della lezione, secondo
   `scripts/exercises/README.md`. Le lezioni di conto (basi, complemento a due, dimensione di un'immagine o di un
   suono, formule del foglio) hanno esercizi costruiti all'indietro; quelle di concetto (hardware e software,
