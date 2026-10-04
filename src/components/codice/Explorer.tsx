@@ -2,7 +2,7 @@
 
 import { useRef, useState, type FormEvent } from 'react';
 import { Braces, Check, FileCode, FilePlus, FileText, Image as ImageIcon, ImagePlus, Pencil, Play, Trash2, X } from 'lucide-react';
-import { IMAGE_TYPES, kindOf, type FileKind } from '@/lib/codice/progetto';
+import { IMAGE_TYPES, kindOf, targetOf, type FileKind } from '@/lib/codice/progetto';
 import { cn } from '@/lib/utils/cn';
 
 const ICON: Partial<Record<FileKind, typeof FileCode>> = { image: ImageIcon, text: FileText, markdown: FileText, json: Braces };
@@ -20,6 +20,7 @@ export function Explorer({
 	target,
 	editable,
 	onOpen,
+	onAim,
 	onCreate,
 	onRename,
 	onDelete,
@@ -32,6 +33,8 @@ export function Explorer({
 	target: string | null;
 	editable: boolean;
 	onOpen: (path: string) => void;
+	/** Makes a program the one "Esegui" runs. */
+	onAim: (path: string) => void;
 	onCreate: (path: string) => string | null;
 	onRename: (from: string, to: string) => string | null;
 	onDelete: (path: string) => void;
@@ -143,7 +146,7 @@ export function Explorer({
 					) : naming?.of === row.path ? (
 						<li key={row.path}>{field}</li>
 					) : (
-						<FileRow key={row.path} path={row.path!} depth={row.depth} active={row.path === active} target={row.path === target} editable={editable} asked={asked === row.path} onOpen={onOpen} onRename={(path) => (setError(null), setNaming({ of: path, text: path }))} onAsk={setAsked} onDelete={onDelete} />
+						<FileRow key={row.path} path={row.path!} depth={row.depth} active={row.path === active} target={row.path === target} editable={editable} runnable={row.path !== target && targetOf(row.path!, paths) === 'program'} asked={asked === row.path} onOpen={onOpen} onAim={onAim} onRename={(path) => (setError(null), setNaming({ of: path, text: path }))} onAsk={setAsked} onDelete={onDelete} />
 					)
 				)}
 			</ul>
@@ -157,8 +160,10 @@ function FileRow({
 	active,
 	target,
 	editable,
+	runnable,
 	asked,
 	onOpen,
+	onAim,
 	onRename,
 	onAsk,
 	onDelete
@@ -168,8 +173,11 @@ function FileRow({
 	active: boolean;
 	target: boolean;
 	editable: boolean;
+	/** A program that is not the one "Esegui" runs, and can be made it. */
+	runnable: boolean;
 	asked: boolean;
 	onOpen: (path: string) => void;
+	onAim: (path: string) => void;
 	onRename: (path: string) => void;
 	onAsk: (path: string | null) => void;
 	onDelete: (path: string) => void;
@@ -183,6 +191,11 @@ function FileRow({
 				<span className={cn('truncate', active ? 'font-semibold text-fg-strong' : 'text-fg')}>{name}</span>
 				{target && <Play className="size-3 shrink-0 text-accent-fg" aria-label="è il file avviato" />}
 			</button>
+			{runnable && !asked && (
+				<button type="button" onClick={() => onAim(path)} aria-label={`Avvia da ${path}`} title="Fai partire il programma da questo file" className={cn(SMALL, 'opacity-0 group-focus-within/file:opacity-100 group-hover/file:opacity-100 max-lg:opacity-100')}>
+					<Play className="size-3.5" aria-hidden="true" />
+				</button>
+			)}
 			{editable &&
 				(asked ? (
 					<button type="button" onClick={() => onDelete(path)} onBlur={() => onAsk(null)} autoFocus className="mr-1 h-6 shrink-0 rounded-md bg-accent px-2 text-xs font-medium text-white focus-ring">

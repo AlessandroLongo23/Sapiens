@@ -10,7 +10,7 @@ Nel menu accanto al linguaggio trovi alcuni programmi di esempio, da eseguire co
 
 ## L'editor come lo vuoi tu
 
-Tra il codice e la console c'è una maniglia (in un progetto ce ne sono due): trascinala per dare più spazio all'uno o all'altra, e con un doppio clic torna a metà. Il tasto con l'ingranaggio apre le impostazioni al posto della console; premilo di nuovo per tornare indietro. Lì scegli i colori del codice tra quattro temi, la dimensione del testo in pixel, quanti spazi vale un rientro (cambia anche nel codice già scritto), e se vuoi la minimappa, i numeri di riga, l'a capo automatico e la chiusura automatica delle parentesi. Le scelte restano su questo dispositivo e valgono anche per i programmi dentro le lezioni.
+Il tasto con le due frecce porta l'editor a schermo intero, e Esc lo riporta nella pagina. Tra il codice e la console c'è una maniglia (in un progetto ce ne sono di più): trascinala per dare più spazio all'uno o all'altra, e con un doppio clic torna a metà. Il tasto con l'ingranaggio apre le impostazioni al posto della console; premilo di nuovo per tornare indietro. Lì scegli i colori del codice tra quattro temi, la dimensione del testo in pixel (da 10 a 20), quanti spazi vale un rientro (cambia anche nel codice già scritto), e se vuoi la minimappa, i numeri di riga, l'a capo automatico e la chiusura automatica delle parentesi. Le scelte restano su questo dispositivo e valgono anche per i programmi dentro le lezioni.
 
 ## Rispondere alle domande del programma
 
@@ -68,11 +68,13 @@ Questo JavaScript non ha una pagina: `document` non esiste. Per lavorare con una
 
 ## Progetti: più file insieme
 
-Con "Progetto" l'editor diventa quello di un programma vero: a sinistra l'elenco dei file, accanto il codice, e sotto il codice quello che esce quando lo esegui. Le due maniglie cambiano la larghezza dell'elenco e l'altezza dell'uscita.
+Con "Progetto" l'editor diventa quello di un programma vero: a sinistra l'elenco dei file, accanto il codice, e sotto il codice quello che il programma stampa. Le maniglie cambiano la larghezza dell'elenco e l'altezza dell'uscita, che un tasto nella barra nasconde del tutto.
+
+Ogni file che apri diventa una scheda sopra il codice. Le schede si chiudono, si trascinano per cambiarne l'ordine, e con il tasto in fondo alla barra delle schede si spostano in una seconda colonna, per avere due file uno accanto all'altro.
 
 Nell'elenco crei un file con il primo tasto, e passando sopra un file compaiono la matita per rinominarlo e il cestino per eliminarlo. Il nome può avere una cartella davanti, come `css/stile.css`. Le estensioni accettate sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`, `md`, `json`, `txt` e `csv`. Il secondo tasto aggiunge un'immagine dal tuo dispositivo: viene rimpicciolita e resta dentro il progetto.
 
-"Esegui" avvia il programma, o mostra la pagina, che hai aperto per ultimo: nell'elenco ha un triangolino accanto al nome. Così puoi aprire un modulo o un foglio di stile, modificarlo, e premere "Esegui" senza tornare al file principale.
+"Esegui" avvia sempre lo stesso programma, quello con il triangolino accanto al nome nell'elenco: puoi aprire un modulo, modificarlo e premere "Esegui" senza tornare al file principale. Per far partire il programma da un altro file, passa sopra il suo nome e premi il triangolino. In un sito "Esegui" mostra la pagina che hai aperto per ultima.
 
 - **Python**: gli altri file `.py` sono moduli, e si importano con il loro nome (`import geometria` per `geometria.py`). Un file di testo o un `.json` si apre con `open("dati.txt")`.
 - **C e C++**: tutti i file `.c`, o tutti i `.cpp`, vengono compilati insieme, e i `.h` si includono con `#include "frazione.h"`.
@@ -80,7 +82,7 @@ Nell'elenco crei un file con il primo tasto, e passando sopra un file compaiono 
 
 ## Pagine web: HTML, CSS e JavaScript
 
-Una pagina web è un progetto: tra gli esempi di "Progetto" ne trovi uno con `index.html`, `style.css` e `script.js`, e uno con due pagine che si richiamano. Finché il progetto non ha script, l'anteprima si aggiorna da sola mentre scrivi; quando c'è del JavaScript si aggiorna con "Esegui", così un `alert()` non si apre a ogni pausa.
+Una pagina web è un progetto: tra gli esempi di "Progetto" ne trovi uno con `index.html`, `style.css` e `script.js`, e uno con due pagine che si richiamano. La pagina si vede nella scheda "Anteprima", che all'inizio sta accanto al codice: puoi chiuderla per dare tutto lo spazio al codice, o tenere solo lei. "Esegui" la riapre. Finché il progetto non ha script, l'anteprima si aggiorna da sola mentre scrivi; quando c'è del JavaScript si aggiorna con "Esegui", così un `alert()` non si apre a ogni pausa.
 
 I file si collegano come in un sito vero. Nella `head` della pagina va la riga che carica il foglio di stile, prima di `</body>` quella che carica lo script, e un'immagine si mostra con il suo percorso:
 
@@ -93,7 +95,7 @@ Un file non collegato non fa niente
 Se scrivi in `style.css` ma la pagina non ha il `<link>`, lo stile non viene applicato: succede lo stesso con un sito vero. L'editor te lo ricorda sotto l'anteprima, e ti dice anche quando una pagina nomina un file che nel progetto non c'è.
 ```
 
-Sotto l'anteprima compaiono quello che gli script scrivono con `console.log()` e i loro errori, con il file e la riga. Nell'anteprima i link verso altri siti non si aprono, i moduli non vengono inviati e gli script non possono scaricare dati da altri siti; le immagini prese dal web con un indirizzo `https` si vedono.
+Quello che gli script scrivono con `console.log()` e i loro errori, con il file e la riga, compaiono nella fascia sotto il codice, che si apre da sola quando c'è un errore. Nell'anteprima i link verso altri siti non si aprono, i moduli non vengono inviati e gli script non possono scaricare dati da altri siti; le immagini prese dal web con un indirizzo `https` si vedono.
 
 ## Salvare i programmi
 

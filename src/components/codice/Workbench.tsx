@@ -2,7 +2,8 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Check, Lightbulb, ListChecks, Play, RotateCcw, Settings, Square, X } from 'lucide-react';
+import { Check, Lightbulb, ListChecks, Maximize2, Minimize2, PanelBottom, Play, RotateCcw, Settings, Square, X } from 'lucide-react';
+import { frame as frameClass, useFullscreen } from './fullscreen';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
 import { tidy, type Test } from '@/lib/codice/blocco';
@@ -227,6 +228,8 @@ export function Workbench({
 	/** The run of now, for who starts it from outside: it reads the files as they are when it is called. */
 	const start = useRef(() => {});
 	const run = () => {
+		// what the program prints is under the code: shown, if it was hidden
+		project?.output.show();
 		inputs.current = [];
 		[seed.current, clock.current] = firstRun();
 		clear();
@@ -338,12 +341,13 @@ export function Workbench({
 	}, [register]);
 
 	const fill = project?.layout === 'explorer';
+	const { root, full, toggle: toggleFull } = useFullscreen();
 	const busy = phase === 'loading' || phase === 'running' || phase === 'checking';
 
 	const passed = verdicts?.filter((v) => v.passed).length ?? 0;
 
 	return (
-		<section className="not-prose overflow-hidden rounded-2xl border border-edge bg-surface shadow-paper" aria-label={`Editor di ${LANGUAGES[language]}`}>
+		<section ref={root} className={frameClass(full)} aria-label={`Editor di ${LANGUAGES[language]}`}>
 			<div className="relative flex flex-wrap items-center gap-2 border-b border-edge px-3 py-2">
 				{toolbar ?? <span className="label-mono px-1 text-fg-subtle">{LANGUAGES[language]}</span>}
 				<p className="ml-auto text-sm text-fg-subtle" role="status">
@@ -373,6 +377,19 @@ export function Workbench({
 						<span className="sr-only">Impostazioni dell’editor</span>
 					</Button>
 				)}
+				{fill && (
+					<Button variant="ghost" size="sm" onClick={project!.output.toggle} aria-pressed={project!.output.open} title={project!.output.open ? 'Nascondi l’uscita' : 'Mostra l’uscita'} className={cn(project!.output.open && 'bg-surface-3 text-fg-strong')}>
+						<PanelBottom className="size-3.5" aria-hidden="true" />
+						<span className="sr-only">Uscita sotto il codice</span>
+						
+					</Button>
+				)}
+				{(!compact || fill) && (
+					<Button variant="ghost" size="sm" onClick={toggleFull} aria-pressed={full} title={full ? 'Esci dallo schermo intero' : 'Schermo intero'}>
+						{full ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
+						<span className="sr-only">Schermo intero</span>
+					</Button>
+				)}
 				<Button variant={tests ? 'secondary' : 'primary'} size="sm" onClick={run} disabled={busy} title="Ctrl+Invio, o ⌘+Invio sul Mac">
 					<Play className="size-3.5" aria-hidden="true" />
 					Esegui
@@ -387,20 +404,21 @@ export function Workbench({
 			<Layout
 				project={project}
 				compact={compact}
+				full={full}
 				code={
-					<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : 'h-[20rem] lg:h-[32rem] lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
+					<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : full ? 'h-[20rem] lg:h-full lg:border-b-0' : 'h-[20rem] lg:h-[32rem] lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
 						<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" minimap={!compact} onChange={edit} onRun={run} />
 					</div>
 				}
 				output={
 					<>
-						{settings && <SettingsPanel className={fill ? 'h-full' : 'lg:h-[32rem]'} />}
+						{settings && <SettingsPanel className={fill || full ? 'h-full' : 'lg:h-[32rem]'} />}
 						<div
 							ref={log}
 							role="log"
 							aria-label="Console"
 							// the console stays under the settings: a run goes on, and its canvas keeps its drawing
-							className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', fill ? 'h-full' : compact ? 'max-h-[26rem] min-h-[4.5rem]' : 'h-[16rem] lg:h-[32rem]', settings && 'hidden')}
+							className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', fill ? 'h-full' : compact ? 'max-h-[26rem] min-h-[4.5rem]' : full ? 'h-[16rem] lg:h-full' : 'h-[16rem] lg:h-[32rem]', settings && 'hidden')}
 							onClick={() => field.current?.focus()}
 						>
 							{drawing && <TurtleCanvas onStage={attach} />}
@@ -475,11 +493,12 @@ export function Workbench({
 }
 
 /** Where the code and its output go: side by side or one above the other, or, in a project, beside the list of its files. */
-export function Layout({ project, compact, code, output }: { project?: ProjectSlots; compact: boolean; code: ReactNode; output: ReactNode }) {
-	if (project?.layout === 'explorer') return <Panes files={project.chooser} editor={project.editor} output={output} />;
+export function Layout({ project, compact, full = false, code, output, preview = null }: { project?: ProjectSlots; compact: boolean; full?: boolean; code: ReactNode; output: ReactNode; /** In a project of pages: what the tab of the page shows. */ preview?: ReactNode }) {
+	if (project?.layout === 'explorer') return <Panes files={project.chooser} editor={project.area(preview)} output={project.output.open ? output : null} full={full} />;
 	return (
 		<Split
 			stacked={compact}
+			full={full}
 			left={
 				project ? (
 					<>

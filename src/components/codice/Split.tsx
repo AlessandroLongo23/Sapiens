@@ -100,7 +100,7 @@ export function Handle({
  * one of the student's settings, so every editor opens as the last was left. On a narrow screen, and in a lesson
  * (`stacked`), the two are one above the other and there is no handle.
  */
-export function Split({ left, right, stacked = false }: { left: ReactNode; right: ReactNode; stacked?: boolean }) {
+export function Split({ left, right, stacked = false, full = false }: { left: ReactNode; right: ReactNode; stacked?: boolean; /** The editor has the whole screen: the two take all its height. */ full?: boolean }) {
 	const { split } = useEditorSettings();
 	const box = useRef<HTMLDivElement>(null);
 
@@ -113,7 +113,7 @@ export function Split({ left, right, stacked = false }: { left: ReactNode; right
 		);
 
 	return (
-		<div ref={box} className="flex flex-col lg:flex-row" style={{ '--split': `${split * 100}%` } as CSSProperties}>
+		<div ref={box} className={cn('flex flex-col lg:flex-row', full && 'min-h-0 flex-1 max-lg:overflow-auto')} style={{ '--split': `${split * 100}%` } as CSSProperties}>
 			<div className="min-w-0 lg:w-[var(--split)] lg:shrink-0">{left}</div>
 			<Handle box={box} upright value={split} min={SPLIT_MIN} max={SPLIT_MAX} label="Larghezza del codice" onChange={(share) => saveSettings({ split: share })} onReset={() => saveSettings({ split: DEFAULTS.split })} />
 			<div className="min-w-0 flex-1">{right}</div>
@@ -124,20 +124,25 @@ export function Split({ left, right, stacked = false }: { left: ReactNode; right
 /**
  * A project, laid out as in an editor of programs: the list of files at the left, the code beside it with most of
  * the room, and under the code what comes of running it. Two handles: one for the width of the list, one for the
- * height of the output. On a narrow screen the three are one above the other.
+ * height of the output. Without `output` the code has the whole column. On a narrow screen the three are one above
+ * the other.
  */
-export function Panes({ files, editor, output }: { files: ReactNode; editor: ReactNode; output: ReactNode }) {
+export function Panes({ files, editor, output, full = false }: { files: ReactNode; editor: ReactNode; output: ReactNode | null; full?: boolean }) {
 	const { explorer, output: height } = useEditorSettings();
 	const box = useRef<HTMLDivElement>(null);
 	const column = useRef<HTMLDivElement>(null);
 	return (
-		<div ref={box} className="flex flex-col lg:h-[38rem] lg:flex-row" style={{ '--explorer': `${explorer * 100}%`, '--output': `${height * 100}%` } as CSSProperties}>
+		<div ref={box} className={cn('flex flex-col lg:flex-row', full ? 'min-h-0 flex-1 max-lg:overflow-auto' : 'lg:h-[38rem]')} style={{ '--explorer': `${explorer * 100}%`, '--output': `${height * 100}%` } as CSSProperties}>
 			<div className="max-h-44 min-w-0 overflow-auto border-b border-edge lg:max-h-none lg:w-[var(--explorer)] lg:shrink-0 lg:border-b-0">{files}</div>
 			<Handle box={box} upright value={explorer} min={EXPLORER_MIN} max={EXPLORER_MAX} label="Larghezza dell’elenco dei file" onChange={(share) => saveSettings({ explorer: share })} onReset={() => saveSettings({ explorer: DEFAULTS.explorer })} />
 			<div ref={column} className="flex min-w-0 flex-1 flex-col">
-				<div className="h-[20rem] min-h-0 border-b border-edge lg:h-auto lg:flex-1 lg:border-b-0">{editor}</div>
-				<Handle box={column} upright={false} from="end" value={height} min={OUTPUT_MIN} max={OUTPUT_MAX} label="Altezza dell’uscita" onChange={(share) => saveSettings({ output: share })} onReset={() => saveSettings({ output: DEFAULTS.output })} />
-				<div className="h-[16rem] min-h-0 lg:h-[var(--output)] lg:shrink-0">{output}</div>
+				<div className="min-h-0 border-b border-edge lg:flex-1 lg:border-b-0">{editor}</div>
+				{output !== null && (
+					<>
+						<Handle box={column} upright={false} from="end" value={height} min={OUTPUT_MIN} max={OUTPUT_MAX} label="Altezza dell’uscita" onChange={(share) => saveSettings({ output: share })} onReset={() => saveSettings({ output: DEFAULTS.output })} />
+						<div className="h-[16rem] min-h-0 lg:h-[var(--output)] lg:shrink-0">{output}</div>
+					</>
+				)}
 			</div>
 		</div>
 	);

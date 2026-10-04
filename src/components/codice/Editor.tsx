@@ -52,7 +52,8 @@ export default function Editor({
 	label,
 	minimap = false,
 	onChange,
-	onRun
+	onRun,
+	onFocus
 }: {
 	initial: string;
 	language: Syntax;
@@ -60,6 +61,7 @@ export default function Editor({
 	minimap?: boolean;
 	onChange: (code: string) => void;
 	onRun: () => void;
+	onFocus?: () => void;
 }) {
 	const host = useRef<HTMLDivElement>(null);
 	const settings = useEditorSettings();
@@ -142,5 +144,5 @@ export default function Editor({
 		}
 	}, [settings, minimap]);
 
-	return <div ref={host} className="h-full min-h-0 overflow-auto" />;
+	return <div ref={host} onFocus={onFocus} className="h-full min-h-0 overflow-auto" />;
 }

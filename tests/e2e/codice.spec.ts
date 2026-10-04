@@ -9,6 +9,8 @@ const log = (page: Page) => page.getByRole('log', { name: 'Console' });
 const run = (page: Page) => page.getByRole('button', { name: 'Esegui' });
 const answer = (page: Page) => page.getByLabel('Risposta al programma');
 /** A file in the list of a project's files. */
+/** The button of a project's bar that shows and hides the output under the code. */
+const output = (page: Page) => page.getByRole('button', { name: 'Uscita sotto il codice' });
 const file = (page: Page, path: string) => page.getByRole('navigation', { name: 'File del progetto' }).getByTitle(path, { exact: true });
 
 async function open(page: Page, example?: string, language?: 'C' | 'C++' | 'JavaScript' | 'Progetto') {
@@ -305,6 +307,9 @@ test.describe('projects: web pages', () => {
 		await shown(page).locator('#piu').click();
 		await shown(page).locator('#meno').click();
 		await expect(shown(page).locator('#numero')).toHaveText('1');
+		// what a page prints is under the code, behind its button until there is an error to read
+		await expect(log(page)).toHaveCount(0);
+		await output(page).click();
 		await expect(log(page)).toContainText('Il contatore vale 2\nIl contatore vale 1');
 
 		// with a script the page waits for Esegui
@@ -403,6 +408,61 @@ test.describe('projects: more files', () => {
 	});
 });
 
+test.describe('projects: the layout', () => {
+	const shown = (page: Page) => page.frameLocator('iframe[title="Anteprima della pagina"]');
+	const tabs = (page: Page) => page.getByRole('tab').allInnerTexts();
+
+	test('files open as tabs, the page is one more tab, beside the code or closed and opened again', async ({ page, isMobile }) => {
+		await open(page, 'Un sito di due pagine', 'Progetto');
+		expect(await tabs(page)).toEqual(['index.html', 'Anteprima']);
+		await file(page, 'css/stile.css').click();
+		await file(page, 'chi-sono.html').click();
+		expect(await tabs(page)).toEqual(['index.html', 'stile.css', 'chi-sono.html', 'Anteprima']);
+		await expect(shown(page).locator('h1')).toHaveText('Chi sono');
+
+		await page.getByRole('button', { name: 'Chiudi stile.css' }).click();
+		expect(await tabs(page)).toEqual(['index.html', 'chi-sono.html', 'Anteprima']);
+
+		// the page closed: the code has all the room; Esegui opens it again
+		await page.getByRole('button', { name: 'Chiudi Anteprima' }).click();
+		await expect(page.locator('iframe[title="Anteprima della pagina"]')).toHaveCount(0);
+		await run(page).click();
+		await expect(shown(page).locator('h1')).toHaveText('Chi sono');
+
+		if (!isMobile) {
+			// a tab moved to the other column, where the page is
+			await page.getByRole('tab', { name: 'index.html' }).click();
+			await page.getByRole('button', { name: 'Sposta la scheda nell’altra colonna' }).first().click();
+			await expect(page.getByRole('tablist')).toHaveCount(2);
+			await expect(page.getByRole('tablist').last().getByRole('tab')).toHaveText(['Anteprima', 'index.html']);
+		}
+	});
+
+	test('the output under the code is hidden by its button, a run shows it; the editor takes the whole screen', async ({ page }) => {
+		await open(page, 'Python con un modulo', 'Progetto');
+		await expect(log(page)).toBeVisible();
+		await output(page).click();
+		await expect(log(page)).toHaveCount(0);
+		await run(page).click();
+		await expect(log(page)).toContainText('raggio 10.0: area 314.16', { timeout: 90_000 });
+
+		// a module is a program too: the one to run is chosen in the list
+		await file(page, 'geometria.py').click();
+		await run(page).click();
+		await expect(log(page)).toContainText('raggio 10.0: area 314.16');
+		await page.getByRole('button', { name: 'Avvia da geometria.py' }).click();
+		await run(page).click();
+		await expect(log(page)).toContainText('Programma finito');
+		await expect(log(page)).not.toContainText('raggio');
+
+		const bench = page.locator('section[aria-label^="Editor"]');
+		await page.getByRole('button', { name: 'Schermo intero' }).click();
+		await expect.poll(() => bench.evaluate((section) => section.getBoundingClientRect().height >= window.innerHeight - 1)).toBe(true);
+		await page.getByRole('button', { name: 'Schermo intero' }).click();
+		await expect.poll(() => bench.evaluate((section) => section.getBoundingClientRect().height < window.innerHeight)).toBe(true);
+	});
+});
+
 test.describe('the editor as the student wants it', () => {
 	const setting = (page: Page, name: string, value: string) => page.getByRole('radiogroup', { name }).getByRole('radio', { name: value, exact: true }).click();
 	const codeWidth = (page: Page) => page.locator('.cm-editor').evaluate((editor) => Math.round(editor.getBoundingClientRect().width));
@@ -442,16 +502,16 @@ test.describe('the editor as the student wants it', () => {
 		const modern = await keyword();
 		await page.getByRole('radio', { name: /^GitHub/ }).click();
 		await expect.poll(keyword).not.toBe(modern);
-		// the size is a whole number of pixels between 10 and 28: typed, stepped, and put right when it is neither
+		// the size is a whole number of pixels between 10 and 20: typed, stepped, and put right when it is neither
 		const size = page.getByLabel('Dimensione del testo in pixel');
 		await size.fill('17');
 		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '17px');
 		await size.fill('99');
 		await size.blur();
-		await expect(size).toHaveValue('28');
+		await expect(size).toHaveValue('20');
 		await expect(page.getByRole('button', { name: 'Testo più grande' })).toBeDisabled();
 		await size.fill('16.6');
-		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '28px');
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '20px');
 		await size.blur();
 		await expect(size).toHaveValue('17');
 		await page.getByRole('button', { name: 'Testo più piccolo' }).click();
@@ -490,7 +550,7 @@ test.describe('the editor as the student wants it', () => {
 		await expect(page.locator('.cm-lineNumbers')).toHaveCount(0);
 		await page.getByRole('button', { name: 'Impostazioni dell’editor' }).click();
 		await page.getByRole('region', { name: 'Impostazioni dell’editor' }).getByRole('button', { name: 'Ripristina' }).click();
-		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '15px');
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '13px');
 		await expect(page.locator('.cm-lineNumbers')).toHaveCount(1);
 	});
 });
@@ -758,6 +818,7 @@ test.describe('a program and the account of who runs it', () => {
 			].join('\n')
 		);
 		await run(page).click();
+		await output(page).click();
 		await expect(log(page)).toContainText('fine');
 		const shown = await log(page).innerText();
 		expect(shown).toContain('origine: null');

@@ -14,6 +14,13 @@ Nelle lezioni il blocco dice quale delle due è, come il blocco del plotter dich
 
 Il progetto nello strumento è disposto come un editor di programmi: l'elenco dei file a sinistra, il codice accanto con più spazio, e sotto il codice una fascia con l'uscita, che non è un terminale. Due maniglie: una tra l'elenco e il resto, una tra il codice e l'uscita.
 
+## Precisazioni di Alessandro, la sera stessa
+- La fascia sotto il codice è per l'uscita dei programmi (Python, C, C++), non per le pagine web: una pagina va in una scheda sua, da aprire accanto al codice o al suo posto.
+- I file aperti sono schede: più di una aperta, da riordinare, da dividere in due colonne.
+- L'uscita si nasconde del tutto con un tasto nella barra.
+- L'editor va a schermo intero, come il grafico.
+- La dimensione del testo va da 10 a 20, 13 di partenza.
+
 ## Perché
 Parole di Alessandro: una lezione di sviluppo web chiede "diverse pagine HTML, si linkano l'una all'altra, sono diversi file CSS o JavaScript", e con un solo file per tipo non si fa. Deve restare flessibile, non solo per il web, e sicuro.
 
@@ -24,10 +31,10 @@ Parole di Alessandro: una lezione di sviluppo web chiede "diverse pagine HTML, s
 - La vecchia "Pagina web" a tre linguette diventa un progetto di tre file.
 
 ## Scelte di Claude non discusse
-- "Esegui" vale per l'ultimo programma o l'ultima pagina aperti, non per il file che si sta guardando.
+- Tra i programmi "Esegui" avvia quello scelto nell'elenco con il triangolino, non il file che si sta guardando: anche un modulo Python è un programma, e aprirlo non deve cambiare che cosa parte. Tra le pagine vale l'ultima aperta.
+- La console di una pagina sta nella fascia sotto il codice, chiusa finché non c'è un errore o una nota.
 - Nelle lezioni un progetto ha una linguetta per file; l'elenco a sinistra compare solo se il blocco lascia creare file.
 - L'estensione `.h` (e `.hpp`) è tra quelle accettate, perché il C a più file ne ha bisogno; `.csv` anche.
-- Nei progetti web l'anteprima sta nella fascia sotto il codice, come l'uscita di un programma.
 
 ## Sicurezza
 Il confine è quello di [[2026-10-04 I programmi dell'editor girano in un iframe senza l'origine del sito]]: i file passano ai due iframe isolati come dati, le immagini come data URL. Niente di ciò che lo studente carica viene servito dal sito.

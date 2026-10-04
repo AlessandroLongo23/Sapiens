@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Check, Lightbulb, ListChecks, Play, RotateCcw, Settings, X } from 'lucide-react';
+import { Check, Lightbulb, ListChecks, Maximize2, Minimize2, PanelBottom, Play, RotateCcw, Settings, X } from 'lucide-react';
+import { frame as frameClass, useFullscreen } from './fullscreen';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
 import type { Check as PageCheck } from '@/lib/codice/blocco';
@@ -54,7 +55,7 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 	/** The editor's settings are shown in the place of the page. */
 	const [settings, setSettings] = useState(false);
 
-	const holder = useRef<HTMLDivElement>(null);
+	const holder = useRef<HTMLDivElement | null>(null);
 	const frame = useRef<HTMLIFrameElement | null>(null);
 	const pause = useRef(0);
 	/** Who waits for the page to load, and for the answer to the checks sent with a number. */
@@ -77,7 +78,9 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 		element.title = 'Anteprima della pagina';
 		element.className = 'block size-full border-0 bg-white';
 		frame.current = element;
-		holder.current?.append(element);
+		// with its tab closed the page is nowhere, and is not loaded
+		if (!holder.current) return Promise.resolve(false);
+		holder.current.append(element);
 		return new Promise<boolean>((resolve) => {
 			const timer = window.setTimeout(() => done(false), LOADING);
 			const done = (ok: boolean) => {
@@ -120,6 +123,8 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 			else if (message.type === 'loaded') onLoaded.current?.(true);
 			else if (message.type === 'navigate') latest.current.navigate(message.path);
 			else if (message.type === 'chunk') {
+				// an error or a note is not to be missed under a hidden console; what the page prints only lights the button
+				if (message.kind !== 'out') latest.current.output.show();
 				setLines((shown) => {
 					const last = shown[shown.length - 1];
 					return last && last.kind === message.kind && message.kind !== 'note' ? [...shown.slice(0, -1), { kind: last.kind, text: last.text + message.text }] : [...shown, { kind: message.kind, text: message.text }];
@@ -127,14 +132,24 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 			} else if (message.type === 'verdicts' && onVerdicts.current?.id === message.id) onVerdicts.current.done(message.verdicts);
 		};
 		window.addEventListener('message', receive);
-		void mount();
 		return () => {
 			window.removeEventListener('message', receive);
 			window.clearTimeout(pause.current);
-			frame.current?.remove();
-			frame.current = null;
 		};
-	}, [mount]);
+	}, []);
+
+	/** Where the page is shown. The place can go and come back (its tab is closed, or moved beside the code): the page is loaded each time it has one. */
+	const attach = useCallback(
+		(node: HTMLDivElement | null) => {
+			holder.current = node;
+			if (node) void mount();
+			else {
+				frame.current?.remove();
+				frame.current = null;
+			}
+		},
+		[mount]
+	);
 
 	// a file changed: a project without scripts is shown again after a pause, one with scripts waits for Esegui
 	useEffect(
@@ -151,16 +166,37 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 		[show]
 	);
 
+	/** "Esegui": the page shown again, in its tab, which is opened if it was closed. */
+	const run = async () => {
+		if (!holder.current) {
+			project.showPreview();
+			// the tab is there after the next render, and loads the page by itself
+			await new Promise((resolve) => setTimeout(resolve, 50));
+			setStale(false);
+			setLines([]);
+			return new Promise<boolean>((resolve) => {
+				const timer = window.setTimeout(() => resolve(false), LOADING);
+				onLoaded.current = (ok) => {
+					window.clearTimeout(timer);
+					onLoaded.current = null;
+					resolve(ok);
+				};
+			});
+		}
+		return show();
+	};
+
 	// Ctrl+Enter in the project's editor, and the opening of another page, show the page
 	useEffect(() => {
-		project.register(() => void show());
+		project.register(() => void run());
 	});
 
 	/** Loads the page again and asks it about each check. */
 	const check = async () => {
 		if (!checks) return;
 		setChecking(true);
-		const ok = await show();
+		project.output.show();
+		const ok = await run();
 		const id = ++ids.current;
 		const answers = ok
 			? await new Promise<CheckVerdict[] | null>((resolve) => {
@@ -181,10 +217,11 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 	};
 
 	const fill = project.layout === 'explorer';
+	const { root, full, toggle: toggleFull } = useFullscreen();
 	const passed = verdicts?.filter((v) => v.passed).length ?? 0;
 
 	return (
-		<section className="not-prose overflow-hidden rounded-2xl border border-edge bg-surface shadow-paper" aria-label="Editor di una pagina web">
+		<section ref={root} className={frameClass(full)} aria-label="Editor di una pagina web">
 			<div className="relative flex flex-wrap items-center gap-2 border-b border-edge px-3 py-2">
 				{toolbar ?? <span className="label-mono px-1 text-fg-subtle">Pagina web</span>}
 				<p className="ml-auto text-sm text-fg-subtle" role="status">
@@ -208,7 +245,20 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 						<span className="sr-only">Impostazioni dell’editor</span>
 					</Button>
 				)}
-				<Button variant={checks ? 'secondary' : 'primary'} size="sm" onClick={() => void show()} disabled={checking} title="Ctrl+Invio, o ⌘+Invio sul Mac">
+				{fill && (
+					<Button variant="ghost" size="sm" onClick={project!.output.toggle} aria-pressed={project!.output.open} title={project!.output.open ? 'Nascondi l’uscita' : 'Mostra l’uscita'} className={cn(project!.output.open && 'bg-surface-3 text-fg-strong')}>
+						<PanelBottom className="size-3.5" aria-hidden="true" />
+						<span className="sr-only">Uscita sotto il codice</span>
+						{!project.output.open && lines.length > 0 && <span className="size-1.5 rounded-full bg-accent" aria-label="C’è qualcosa nella console" />}
+					</Button>
+				)}
+				{(!compact || fill) && (
+					<Button variant="ghost" size="sm" onClick={toggleFull} aria-pressed={full} title={full ? 'Esci dallo schermo intero' : 'Schermo intero'}>
+						{full ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
+						<span className="sr-only">Schermo intero</span>
+					</Button>
+				)}
+				<Button variant={checks ? 'secondary' : 'primary'} size="sm" onClick={() => void run()} disabled={checking} title="Ctrl+Invio, o ⌘+Invio sul Mac">
 					<Play className="size-3.5" aria-hidden="true" />
 					Esegui
 				</Button>
@@ -222,15 +272,19 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 			<Layout
 				project={project}
 				compact={compact}
+				full={full}
 				code={null}
+				preview={<div ref={attach} className="size-full bg-white" />}
 				output={
 					<>
-						{settings && <SettingsPanel className={fill ? 'h-full' : 'lg:h-[32rem]'} />}
+						{settings && <SettingsPanel className={fill || full ? 'h-full' : 'lg:h-[32rem]'} />}
 						{/* the page stays under the settings: it is not loaded again when they close */}
-						<div className={cn('flex min-w-0 flex-col', fill ? 'h-full' : !compact && 'lg:h-[32rem]', settings && 'hidden')}>
-							<div ref={holder} className={cn('min-h-0 bg-white', fill ? 'flex-1' : compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />
+						<div className={cn('flex min-w-0 flex-col', fill ? 'h-full bg-surface-2' : full ? 'lg:h-full' : !compact && 'lg:h-[32rem]', settings && 'hidden')}>
+							{/* in a project of the tool the page is a tab of its own, and here is only its console */}
+							{!fill && <div ref={attach} className={cn('min-h-0 bg-white', compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />}
+							{fill && lines.length === 0 && !verdicts && <p className="m-0 px-4 py-3 text-sm text-fg-faint">Quello che gli script della pagina scrivono con console.log compare qui, con i loro errori.</p>}
 							{(lines.length > 0 || verdicts) && (
-								<div role="log" aria-label="Console" className={cn(fill ? 'max-h-[45%]' : !compact && 'max-h-56', 'shrink-0 overflow-auto border-t border-edge bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg')}>
+								<div role="log" aria-label="Console" className={cn(fill ? 'min-h-0 flex-1' : !compact && 'max-h-56', 'shrink-0 overflow-auto border-t border-edge bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg')}>
 									{lines.map((line, i) => (
 										<span key={i} className={LINE[line.kind]}>
 											{line.text}

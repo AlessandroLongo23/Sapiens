@@ -9,7 +9,7 @@ export const THEMES = { modern: 'Modern', github: 'GitHub', one: 'One', solarize
 export type ThemeId = keyof typeof THEMES;
 /** The size of the code's text, in pixels: a whole number between these two. */
 export const SIZE_MIN = 10;
-export const SIZE_MAX = 28;
+export const SIZE_MAX = 20;
 export const TABS = [2, 4, 8] as const;
 
 export interface EditorSettings {
@@ -46,7 +46,7 @@ export function reindent(text: string, to: number): string {
 	return text.replace(/^ +(?=\S)/gm, (spaces) => ' '.repeat((spaces.length / unit) * to));
 }
 
-export const DEFAULTS: EditorSettings = { theme: 'modern', size: 15, tab: 4, minimap: true, wrap: false, numbers: true, pairs: true, split: 0.5, explorer: 0.2, output: 0.34 };
+export const DEFAULTS: EditorSettings = { theme: 'modern', size: 13, tab: 4, minimap: true, wrap: false, numbers: true, pairs: true, split: 0.5, explorer: 0.2, output: 0.34 };
 /** The code and its output each keep at least this share of the width. */
 export const SPLIT_MIN = 0.25;
 export const SPLIT_MAX = 0.75;
