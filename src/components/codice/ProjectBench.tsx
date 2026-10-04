@@ -165,6 +165,14 @@ export function ProjectBench({
 	const listeners = useRef(new Set<() => void>());
 	const actions = useRef<{ run?: () => void }>({});
 	const dragged = useRef<{ group: number; tab: string } | null>(null);
+	/** A tab is being dragged: the columns show where it can be dropped. */
+	const [dragging, setDragging] = useState(false);
+	/**
+	 * Where the tab being dragged would go if it were dropped now, to show it before it happens: among the tabs of a
+	 * group, before one of them or after the last; over a column, into it; over a half of the only column, into a new
+	 * column on that side.
+	 */
+	const [landing, setLanding] = useState<{ group: number; before: string | null } | { column: number } | { side: 0 | 1 } | null>(null);
 	const area = useRef<HTMLDivElement>(null);
 	const { split } = useEditorSettings();
 
@@ -344,17 +352,63 @@ export function ProjectBench({
 		return <Editor key={`${group.count}:${path}`} initial={group.text} language={kind ?? 'text'} label={path} minimap={explorer} onChange={(text) => changed({ ...files.current, [path]: text })} onRun={() => actions.current.run?.()} onFocus={() => setFocus(at)} />;
 	};
 
-	const drop = (event: DragEvent, to: number, before: string | null) => {
+	const over = () => {
+		dragged.current = null;
+		setDragging(false);
+		setLanding(null);
+	};
+
+	/** The tab dragged over the tabs of a group: it would go before the tab under the pointer, or after it past its middle. */
+	const among = (event: DragEvent<HTMLElement>, at: number, tab: string | null) => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (!dragged.current) return;
+		let before = tab;
+		if (tab) {
+			const box = event.currentTarget.getBoundingClientRect();
+			const tabs = groups[at].tabs;
+			if (event.clientX > box.left + box.width / 2) before = tabs[tabs.indexOf(tab) + 1] ?? null;
+		}
+		setLanding((now) => (now && 'group' in now && now.group === at && now.before === before ? now : { group: at, before }));
+	};
+
+	/** The tab dragged over the code: into the column under it, or, with one column, into a new one on the half it is over. */
+	const onto = (event: DragEvent<HTMLElement>, at: number) => {
+		event.preventDefault();
+		const tab = dragged.current;
+		if (!tab) return;
+		if (groups.length > 1) return setLanding((now) => (now && 'column' in now && now.column === at ? now : { column: at }));
+		// a column of one tab cannot be divided
+		if (groups[0].tabs.length < 2) return setLanding(null);
+		const box = event.currentTarget.getBoundingClientRect();
+		const side = event.clientX > box.left + box.width / 2 ? 1 : 0;
+		setLanding((now) => (now && 'side' in now && now.side === side ? now : { side }));
+	};
+
+	const drop = (event: DragEvent) => {
 		event.preventDefault();
 		event.stopPropagation();
 		const tab = dragged.current;
-		dragged.current = null;
-		if (tab && !(tab.group === to && tab.tab === before)) move(tab.group, tab.tab, to, before);
+		const where = landing;
+		over();
+		if (!tab || !where) return;
+		if ('group' in where) {
+			if (!(tab.group === where.group && tab.tab === where.before)) move(tab.group, tab.tab, where.group, where.before);
+		} else if ('column' in where) {
+			if (where.column !== tab.group) move(tab.group, tab.tab, where.column, null);
+		} else {
+			// a new column for the tab, at the right or at the left of the one there is
+			const rest = groups[0].tabs.filter((other) => other !== tab.tab);
+			const left = inView(rest, groups[0].active === tab.tab ? rest[0] : groups[0].active, files.current, groups[0].count + 1);
+			const made = inView([tab.tab], tab.tab, files.current, groups[0].count + 2);
+			setGroups(where.side === 1 ? [left, made] : [made, left]);
+			setFocus(where.side);
+		}
 	};
 
 	/** The tabs of a group of the explorer: closed, dragged to another place or to the other group, moved beside. */
 	const bar = (group: Group, at: number) => (
-		<div role="tablist" aria-label={groups.length > 1 ? `File aperti, colonna ${at + 1}` : 'File aperti'} onDragOver={(event) => event.preventDefault()} onDrop={(event) => drop(event, at, null)} className="flex shrink-0 items-stretch overflow-x-auto border-b border-edge bg-surface-2">
+		<div role="tablist" aria-label={groups.length > 1 ? `File aperti, colonna ${at + 1}` : 'File aperti'} onDragOver={(event) => among(event, at, null)} onDrop={drop} className="flex shrink-0 items-stretch overflow-x-auto border-b border-edge bg-surface-2">
 			{group.tabs.map((tab) => {
 				const name = NAMES[tab] ?? tab.split('/').pop();
 				const chosen = group.active === tab;
@@ -366,10 +420,15 @@ export function ProjectBench({
 							dragged.current = { group: at, tab };
 							event.dataTransfer.effectAllowed = 'move';
 							event.dataTransfer.setData('text/plain', name ?? '');
+							// after the browser has taken the picture of the tab: the layer over the columns would be in it
+							setTimeout(() => setDragging(true));
 						}}
-						onDragOver={(event) => event.preventDefault()}
-						onDrop={(event) => drop(event, at, tab)}
-						className={cn('group/tab flex shrink-0 items-center border-r border-edge', chosen ? 'bg-surface' : 'hover:bg-surface-3/60')}
+						onDragEnd={over}
+						onDragOver={(event) => among(event, at, tab)}
+						onDrop={drop}
+						// the line at its left edge is where the dragged tab would go
+						data-landing={landing && 'group' in landing && landing.group === at && landing.before === tab ? '' : undefined}
+						className={cn('group/tab relative flex shrink-0 items-center border-r border-edge', chosen ? 'bg-surface' : 'hover:bg-surface-3/60', landing && 'group' in landing && landing.group === at && landing.before === tab && 'before:absolute before:inset-y-0 before:left-0 before:z-10 before:w-0.5 before:bg-accent')}
 					>
 						<button
 							type="button"
@@ -392,6 +451,8 @@ export function ProjectBench({
 					</div>
 				);
 			})}
+			{/* after the last tab */}
+			{landing && 'group' in landing && landing.group === at && landing.before === null && <span data-landing="" className="w-0.5 shrink-0 self-stretch bg-accent" aria-hidden="true" />}
 			{group.active && group.tabs.length > 1 && (
 				<button type="button" onClick={() => move(at, group.active!, groups.length > 1 ? 1 - at : 1, null)} aria-label="Sposta la scheda nell’altra colonna" title="Sposta la scheda nell’altra colonna" className="ml-auto flex w-8 shrink-0 items-center justify-center text-fg-muted hover:bg-surface-3 hover:text-fg-strong focus-ring max-lg:hidden">
 					<Columns2 className="size-3.5" aria-hidden="true" />
@@ -427,7 +488,16 @@ export function ProjectBench({
 				{groups.map((group, at) => (
 					<div key={at} className={cn('flex min-h-0 min-w-0 flex-col max-lg:h-[20rem] max-lg:border-b max-lg:border-edge', groups.length > 1 && at === 0 ? 'lg:w-[var(--split)] lg:shrink-0' : 'flex-1')} onPointerDown={() => setFocus(at)}>
 						{bar(group, at)}
-						<div className="min-h-0 flex-1 overflow-auto">{content(group, at, preview)}</div>
+						<div className="relative min-h-0 flex-1">
+							<div className="h-full overflow-auto">{content(group, at, preview)}</div>
+							{/* while a tab is dragged a layer is over the code and the page, which would take the drag for themselves; on it, the place the tab would take */}
+							{dragging && (
+								<div className="absolute inset-0 z-20" onDragOver={(event) => onto(event, at)} onDragLeave={() => setLanding(null)} onDrop={drop}>
+									{landing && 'column' in landing && landing.column === at && <div data-landing="" className="pointer-events-none absolute inset-0 bg-accent/15 outline-2 -outline-offset-2 outline-accent/50" />}
+									{landing && 'side' in landing && <div data-landing="" className={cn('pointer-events-none absolute inset-y-0 w-1/2 bg-accent/15 outline-2 -outline-offset-2 outline-accent/50', landing.side === 1 ? 'right-0' : 'left-0')} />}
+								</div>
+							)}
+						</div>
 					</div>
 				)).flatMap((column, at) => (at === 0 && groups.length > 1 ? [column, <Handle key="handle" box={area} upright value={split} min={SPLIT_MIN} max={SPLIT_MAX} label="Larghezza della prima colonna" onChange={(share) => saveSettings({ split: share })} onReset={() => saveSettings({ split: DEFAULTS.split })} />] : [column]))}
 			</div>

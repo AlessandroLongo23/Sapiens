@@ -438,6 +438,47 @@ test.describe('projects: the layout', () => {
 		}
 	});
 
+	test('a dragged tab shows where it will go: a line among the tabs, a shade on the half it would take', async ({ page, isMobile, browserName }) => {
+		test.skip(isMobile || browserName !== 'chromium', 'tabs are dragged with a mouse, and the test drives the drag as Chromium does');
+		await open(page, 'Python con un modulo', 'Progetto');
+		await file(page, 'geometria.py').click();
+		await file(page, 'raggi.txt').click();
+		const tab = (name: string) => page.getByRole('tab', { name });
+		const bench = page.locator('section[aria-label^="Editor"]');
+		/** How many places for the dragged tab are marked: the line among the tabs, the shade over the code. */
+		const marks = () => bench.locator('[data-landing]').count();
+		const drag = async (name: string, x: number, y: number) => {
+			const from = (await tab(name).boundingBox())!;
+			await page.mouse.move(from.x + 20, from.y + 10);
+			await page.mouse.down();
+			await page.mouse.move(x, y, { steps: 8 });
+		};
+
+		// to another place among the tabs
+		const main = (await tab('main.py').boundingBox())!;
+		await drag('raggi.txt', main.x + 6, main.y + 10);
+		await expect.poll(marks).toBe(1);
+		await page.mouse.up();
+		await expect(page.getByRole('tab')).toHaveText(['raggi.txt', 'main.py', 'geometria.py']);
+		await expect.poll(marks).toBe(0);
+
+		// onto the right half of the code: a column of its own
+		const code = (await page.locator('.cm-editor').first().boundingBox())!;
+		await drag('geometria.py', code.x + code.width * 0.8, code.y + 120);
+		await expect.poll(marks).toBe(1);
+		await page.mouse.up();
+		await expect(page.getByRole('tablist')).toHaveCount(2);
+		await expect(page.getByRole('tablist').last().getByRole('tab')).toHaveText(['geometria.py']);
+
+		// and back, onto the other column
+		const first = (await page.locator('.cm-editor').first().boundingBox())!;
+		await drag('geometria.py', first.x + 80, first.y + 120);
+		await expect.poll(marks).toBe(1);
+		await page.mouse.up();
+		await expect(page.getByRole('tablist')).toHaveCount(1);
+		await expect(page.getByRole('tab')).toHaveText(['raggi.txt', 'main.py', 'geometria.py']);
+	});
+
 	test('the output under the code is hidden by its button, a run shows it; the editor takes the whole screen', async ({ page }) => {
 		await open(page, 'Python con un modulo', 'Progetto');
 		await expect(log(page)).toBeVisible();
