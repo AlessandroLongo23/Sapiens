@@ -47,6 +47,7 @@ La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni d
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-04 I programmi dell'editor girano in un iframe senza l'origine del sito]]
 - [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]
 - [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]
 - [[2026-10-03 I grafici del plotter si salvano con nome e si mettono nelle note]]

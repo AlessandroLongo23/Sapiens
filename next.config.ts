@@ -57,7 +57,7 @@ const CSP = [
 	"font-src 'self' data: https://tikzjax.com",
 	`connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://tikzjax.com https://s3.us-east-2.amazonaws.com/tikzjax.com/ https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
 	"worker-src 'self' blob: https://tikzjax.com",
-	"frame-src https://js.stripe.com https://checkout.stripe.com",
+	"frame-src 'self' https://js.stripe.com https://checkout.stripe.com",
 	"object-src 'none'",
 	"base-uri 'self'",
 	"form-action 'self'",
@@ -81,7 +81,12 @@ const config: NextConfig = {
 	images: { formats: ['image/avif', 'image/webp'] },
 	async headers() {
 		return [
-			{ source: '/(.*)', headers: SECURITY_HEADERS },
+			// Every address but the code editor's sandbox, which has a policy of its own: the headers given here would
+			// replace the ones its route sets (src/app/codice-sandbox/route.ts).
+			{ source: '/((?!codice-sandbox$).*)', headers: SECURITY_HEADERS },
+			// The code editor's sandbox is a page without the site's origin (src/app/codice-sandbox/route.ts): the files of
+			// the languages are public, and it may read them.
+			{ source: '/:folder(codice|pyodide|clang)/:path*', headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }] },
 			// An old service worker kept by the browser cache would keep serving old pages; every visit checks for a new one.
 			{ source: '/sw.js', headers: [{ key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' }] }
 		];

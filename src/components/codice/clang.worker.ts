@@ -1,6 +1,6 @@
 /**
  * The C and C++ compiler in the browser: Clang and LLD built for WebAssembly (@yowasp/clang), served from /clang on
- * this origin (scripts/codice/clang.mjs). It only compiles, to a WebAssembly program for WASI; wasi.worker.ts runs
+ * the site (scripts/codice/clang.mjs). It only compiles, to a WebAssembly program for WASI; wasi.worker.ts runs
  * the program, so a loop that never ends is stopped without losing the compiler, which is slow to load.
  *
  * C++ is compiled without exceptions: the C++ library of this toolchain is built without them, so try, catch and
@@ -43,7 +43,7 @@ async function compile(clang: Clang, language: 'c' | 'cpp', source: string) {
 }
 
 const loading: Promise<Clang> = (async () => {
-	const clang = (await import(/* webpackIgnore: true */ `${self.location.origin}/clang/bundle.js`)) as Clang;
+	const clang = (await import(/* webpackIgnore: true */ `${new URL(import.meta.url).origin}/clang/bundle.js`)) as Clang;
 	// the first compilation downloads the compiler and its headers: done here, so that 'ready' means ready
 	const { wasm, diagnostics } = await compile(clang, 'c', 'int main(void) { return 0; }\n');
 	if (!wasm) throw new Error(diagnostics);
