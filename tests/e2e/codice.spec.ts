@@ -326,6 +326,98 @@ test.describe('web pages', () => {
 	});
 });
 
+test.describe('the editor as the student wants it', () => {
+	const setting = (page: Page, name: string, value: string) => page.getByRole('radiogroup', { name }).getByRole('radio', { name: value, exact: true }).click();
+	const codeWidth = (page: Page) => page.locator('.cm-editor').evaluate((editor) => Math.round(editor.getBoundingClientRect().width));
+
+	test('the handle gives the code more or less of the width, and the next visit finds it there', async ({ page, isMobile }) => {
+		test.skip(isMobile, 'on a phone the code is above its output');
+		await open(page);
+		const handle = page.getByRole('separator', { name: 'Larghezza del codice' });
+		const before = await codeWidth(page);
+		const box = (await handle.boundingBox())!;
+		await page.mouse.move(box.x, box.y + 80);
+		await page.mouse.down();
+		await page.mouse.move(box.x + 150, box.y + 90, { steps: 4 });
+		await page.mouse.up();
+		await expect.poll(() => codeWidth(page)).toBeGreaterThan(before + 120);
+		const dragged = await codeWidth(page);
+
+		await handle.focus();
+		await page.keyboard.press('ArrowLeft');
+		await expect.poll(() => codeWidth(page)).toBeLessThan(dragged);
+
+		await open(page);
+		await expect.poll(() => codeWidth(page)).toBeGreaterThan(before + 80);
+		await page.getByRole('separator', { name: 'Larghezza del codice' }).dblclick();
+		await expect.poll(() => codeWidth(page)).toBe(before);
+	});
+
+	test('the settings take the place of the output, change the open editor and are kept', async ({ page, isMobile }) => {
+		await open(page);
+		await write(page, 'for i in range(2):\n    if i:\n        print("resto qui")\n');
+		const gear = page.getByRole('button', { name: 'Impostazioni dell’editor' });
+		await gear.click();
+		await expect(page.getByRole('region', { name: 'Impostazioni dell’editor' })).toBeVisible();
+		await expect(log(page)).toBeHidden();
+
+		const keyword = () => page.locator('.cm-line span').first().evaluate((token) => getComputedStyle(token).color);
+		const modern = await keyword();
+		await page.getByRole('radio', { name: /^GitHub/ }).click();
+		await expect.poll(keyword).not.toBe(modern);
+		// the size is a whole number of pixels between 10 and 28: typed, stepped, and put right when it is neither
+		const size = page.getByLabel('Dimensione del testo in pixel');
+		await size.fill('17');
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '17px');
+		await size.fill('99');
+		await size.blur();
+		await expect(size).toHaveValue('28');
+		await expect(page.getByRole('button', { name: 'Testo più grande' })).toBeDisabled();
+		await size.fill('16.6');
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '28px');
+		await size.blur();
+		await expect(size).toHaveValue('17');
+		await page.getByRole('button', { name: 'Testo più piccolo' }).click();
+		await page.getByRole('button', { name: 'Testo più grande' }).click();
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '17px');
+		await setting(page, 'Numeri di riga', 'No');
+		await expect(page.locator('.cm-lineNumbers')).toHaveCount(0);
+		if (!isMobile) {
+			await expect(page.locator('.cm-minimap-gutter')).toHaveCount(1);
+			await setting(page, 'Minimappa', 'No');
+			await expect(page.locator('.cm-minimap-gutter')).toHaveCount(0);
+		}
+		// the width of an indentation changes the lines already written
+		const lines = () => page.locator('.cm-line').allTextContents();
+		await setting(page, 'Larghezza del rientro', '2');
+		await expect.poll(lines).toEqual(['for i in range(2):', '  if i:', '    print("resto qui")', '']);
+		await setting(page, 'Larghezza del rientro', '8');
+		await expect.poll(lines).toEqual(['for i in range(2):', '        if i:', '                print("resto qui")', '']);
+		await setting(page, 'Larghezza del rientro', '2');
+
+		// and Enter after a colon indents by two
+		await page.locator('.cm-content').click();
+		await page.keyboard.press('ControlOrMeta+End');
+		await page.keyboard.type('if True:\nx = 1');
+		await expect(page.locator('.cm-line').last()).toHaveText('  x = 1');
+
+		// back to the console, where the program runs
+		await gear.click();
+		await expect(log(page)).toBeVisible();
+		await run(page).click();
+		await expect(log(page)).toContainText('resto qui', { timeout: 90_000 });
+
+		// another visit: the same editor
+		await open(page);
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '17px');
+		await expect(page.locator('.cm-lineNumbers')).toHaveCount(0);
+		await page.getByRole('button', { name: 'Impostazioni dell’editor' }).click();
+		await page.getByRole('region', { name: 'Impostazioni dell’editor' }).getByRole('button', { name: 'Ripristina' }).click();
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '15px');
+		await expect(page.locator('.cm-lineNumbers')).toHaveCount(1);
+	});
+});
+
 test.describe('saved programs', () => {
 	let user: TestUser | null = null;
 	test.beforeAll(async () => {

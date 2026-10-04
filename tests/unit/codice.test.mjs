@@ -12,6 +12,7 @@ const { assemble, hasScript } = await jiti.import('../../src/components/codice/w
 const { guardLoops, guardInline } = await jiti.import('../../src/components/codice/loop-guard.ts');
 const { environment, format, random } = await jiti.import('../../src/components/codice/js-environment.ts');
 const { readProgramFiles } = await jiti.import('../../src/lib/codice/salvati.ts');
+const { reindent } = await jiti.import('../../src/components/codice/settings.ts');
 
 test('a block is read into its program, its solution and its tests', () => {
 	const { variant, tests, errors } = parseCodeFence('python', ['n = int(input())', '# scrivi qui', '', '%% soluzione', 'n = int(input())', 'print(n * 2)', '%% prova', '4', '%% stampa', '8', '%% prova', '%% stampa', 'ciao', ''].join('\n'));
@@ -164,6 +165,19 @@ test('a saved program has exactly the files of its language', () => {
 	assert.equal(readProgramFiles('python', { main: 'x', html: 'y' }), null);
 	assert.equal(readProgramFiles('web', { html: 1 }), null);
 	assert.equal(readProgramFiles('c', { main: 'x'.repeat(200_001) }), null);
+});
+
+test('a program takes the width of indentation that is asked, whatever it was written with', () => {
+	const four = 'def f():\n    if x:\n        return 1\n\n    return 2\n';
+	const two = 'def f():\n  if x:\n    return 1\n\n  return 2\n';
+	assert.equal(reindent(four, 2), two);
+	assert.equal(reindent(two, 4), four);
+	assert.equal(reindent(reindent(four, 8), 4), four);
+	assert.equal(reindent(four, 4), four);
+	// nothing to go by: tabs, no indentation, lines aligned by one space
+	assert.equal(reindent('a\n\tb\n', 2), 'a\n\tb\n');
+	assert.equal(reindent('a\nb\n', 2), 'a\nb\n');
+	assert.equal(reindent('f(a,\n  b,\n   c)\n', 4), 'f(a,\n  b,\n   c)\n');
 });
 
 const pyodide = await loadPyodide();

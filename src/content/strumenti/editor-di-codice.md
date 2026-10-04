@@ -8,6 +8,10 @@ La prima volta che esegui un programma il browser scarica il linguaggio: Python 
 
 Nel menu accanto al linguaggio trovi alcuni programmi di esempio, da eseguire così come sono e poi da cambiare. La scorciatoia per eseguire è Ctrl+Invio, oppure ⌘+Invio sul Mac.
 
+## L'editor come lo vuoi tu
+
+Tra il codice e la console c'è una maniglia: trascinala per dare più spazio all'uno o all'altra, e con un doppio clic torna a metà. Il tasto con l'ingranaggio apre le impostazioni al posto della console; premilo di nuovo per tornare indietro. Lì scegli i colori del codice tra quattro temi, la dimensione del testo in pixel, quanti spazi vale un rientro (cambia anche nel codice già scritto), e se vuoi la minimappa, i numeri di riga, l'a capo automatico e la chiusura automatica delle parentesi. Le scelte restano su questo dispositivo e valgono anche per i programmi dentro le lezioni.
+
 ## Rispondere alle domande del programma
 
 Quando il programma chiede un dato, con `input()` in Python, con `scanf` in C o con `cin` in C++, la console si ferma in quel punto e ti lascia scrivere: scrivi la risposta e premi Invio, come in un terminale.

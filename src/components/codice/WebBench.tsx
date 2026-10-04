@@ -2,12 +2,14 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Check, Lightbulb, ListChecks, Play, RotateCcw, X } from 'lucide-react';
+import { Check, Lightbulb, ListChecks, Play, RotateCcw, Settings, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
 import { PAGE_FILES, type Check as PageCheck, type Page, type PageFile } from '@/lib/codice/blocco';
 import { guardInline, guardLoops } from './loop-guard';
 import type { FromPage, ToPage } from './pagina';
+import { SettingsPanel } from './SettingsPanel';
+import { Split } from './Split';
 import { FILE_NAMES, hasScript } from './web-assemble';
 import type { CheckVerdict } from './web-checks';
 
@@ -28,7 +30,11 @@ interface Line {
 	text: string;
 }
 
-const LINE: Record<Line['kind'], string> = { out: '', err: 'text-danger-fg', note: 'block font-sans text-fg-subtle italic' };
+const LINE: Record<Line['kind'], string> = {
+	out: '',
+	err: 'text-danger-fg',
+	note: 'block font-sans text-fg-subtle italic'
+};
 
 /**
  * A web page and what it looks like, side by side: three files (index.html, style.css, script.js) and the page they
@@ -60,7 +66,10 @@ export function WebBench({
 	/** The files put in the editor, which reads its text only when it is made. */
 	const [loaded, setLoaded] = useState({ files: initial, count: 0 });
 	/** The file in the editor, with its text as it was when its tab was opened. */
-	const [view, setView] = useState<{ tab: PageFile; text: string }>({ tab: 'html', text: initial.html });
+	const [view, setView] = useState<{ tab: PageFile; text: string }>({
+		tab: 'html',
+		text: initial.html
+	});
 	const { tab } = view;
 	const [lines, setLines] = useState<Line[]>([]);
 	const [verdicts, setVerdicts] = useState<CheckVerdict[] | null>(null);
@@ -68,6 +77,8 @@ export function WebBench({
 	/** The files have changed and the preview still shows the page of before. */
 	const [stale, setStale] = useState(false);
 	const [edited, setEdited] = useState(false);
+	/** The editor's settings are shown in the place of the page. */
+	const [settings, setSettings] = useState(false);
 
 	const files = useRef(initial);
 	const holder = useRef<HTMLDivElement>(null);
@@ -75,7 +86,10 @@ export function WebBench({
 	const pause = useRef(0);
 	/** Who waits for the page to load, and for the answer to the checks sent with a number. */
 	const onLoaded = useRef<((ok: boolean) => void) | null>(null);
-	const onVerdicts = useRef<{ id: number; done: (verdicts: CheckVerdict[]) => void } | null>(null);
+	const onVerdicts = useRef<{
+		id: number;
+		done: (verdicts: CheckVerdict[]) => void;
+	} | null>(null);
 	const ids = useRef(0);
 
 	/** A new iframe for the page as the files are now: whatever the old page was doing ends with it. */
@@ -116,7 +130,13 @@ export function WebBench({
 			if (message.type === 'ready') {
 				const { html, css, js } = files.current;
 				// the iframe's origin has no name to address it by; the window is the one this page made
-				target.postMessage({ type: 'page', page: { html: guardInline(html), css, js: guardLoops(js) } } satisfies ToPage, '*');
+				target.postMessage(
+					{
+						type: 'page',
+						page: { html: guardInline(html), css, js: guardLoops(js) }
+					} satisfies ToPage,
+					'*'
+				);
 			} else if (message.type === 'loaded') onLoaded.current?.(true);
 			else if (message.type === 'chunk') {
 				setLines((shown) => {
@@ -176,7 +196,13 @@ export function WebBench({
 				})
 			: null;
 		onVerdicts.current = null;
-		setVerdicts(answers ?? checks.map(() => ({ passed: false, why: 'La pagina non si è caricata.' })));
+		setVerdicts(
+			answers ??
+				checks.map(() => ({
+					passed: false,
+					why: 'La pagina non si è caricata.'
+				}))
+		);
 		setChecking(false);
 	};
 
@@ -201,6 +227,12 @@ export function WebBench({
 						<span className="max-sm:sr-only">Soluzione</span>
 					</Button>
 				)}
+				{!compact && (
+					<Button variant="ghost" size="sm" onClick={() => setSettings((now) => !now)} aria-pressed={settings} title={settings ? 'Torna alla pagina' : 'Impostazioni dell’editor'} className={cn(settings && 'bg-surface-3 text-fg-strong')}>
+						<Settings className="size-3.5" aria-hidden="true" />
+						<span className="sr-only">Impostazioni dell’editor</span>
+					</Button>
+				)}
 				<Button variant={checks ? 'secondary' : 'primary'} size="sm" onClick={() => void show()} disabled={checking} title="Ctrl+Invio, o ⌘+Invio sul Mac">
 					<Play className="size-3.5" aria-hidden="true" />
 					Esegui
@@ -212,58 +244,73 @@ export function WebBench({
 					</Button>
 				)}
 			</div>
-			<div className={cn('grid', !compact && 'lg:grid-cols-2')}>
-				<div className={cn('flex min-w-0 flex-col border-b border-edge', compact ? 'max-h-[26rem]' : 'h-[20rem] lg:h-[32rem] lg:border-r lg:border-b-0')}>
-					<div role="tablist" aria-label="File della pagina" className="flex shrink-0 gap-1 border-b border-edge bg-surface-2 px-2 pt-1.5">
-						{PAGE_FILES.map((file) => (
-							<button
-								key={file}
-								type="button"
-								role="tab"
-								aria-selected={tab === file}
-								onClick={() => setView({ tab: file, text: files.current[file] })}
-								className={cn('rounded-t-lg border border-b-0 px-3 py-1.5 font-mono text-[0.8125rem] focus-ring', tab === file ? 'border-edge bg-surface text-fg-strong' : 'border-transparent text-fg-muted hover:text-fg-strong')}
-							>
-								{FILE_NAMES[file]}
-							</button>
-						))}
-					</div>
-					<div className="min-h-0 flex-1 overflow-auto">
-						<Editor key={`${loaded.count}:${tab}`} initial={view.text} language={tab} label={FILE_NAMES[tab]} minimap={!compact} onChange={(text) => edit(tab, text)} onRun={() => void show()} />
-					</div>
-				</div>
-				<div className={cn('flex min-w-0 flex-col', !compact && 'lg:h-[32rem]')}>
-					<div ref={holder} className={cn('min-h-0 bg-white', compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />
-					{(lines.length > 0 || verdicts) && (
-						<div role="log" aria-label="Console" className={cn(!compact && 'max-h-56', 'shrink-0 overflow-auto border-t border-edge bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg')}>
-							{lines.map((line, i) => (
-								<span key={i} className={LINE[line.kind]}>
-									{line.text}
-								</span>
+			<Split
+				stacked={compact}
+				left={
+					<div className={cn('flex min-w-0 flex-col border-b border-edge', compact ? 'max-h-[26rem]' : 'h-[20rem] lg:h-[32rem] lg:border-b-0')}>
+						<div role="tablist" aria-label="File della pagina" className="flex shrink-0 gap-1 border-b border-edge bg-surface-2 px-2 pt-1.5">
+							{PAGE_FILES.map((file) => (
+								<button
+									key={file}
+									type="button"
+									role="tab"
+									aria-selected={tab === file}
+									onClick={() => setView({ tab: file, text: files.current[file] })}
+									className={cn('rounded-t-lg border border-b-0 px-3 py-1.5 font-mono text-[0.8125rem] focus-ring', tab === file ? 'border-edge bg-surface text-fg-strong' : 'border-transparent text-fg-muted hover:text-fg-strong')}
+								>
+									{FILE_NAMES[file]}
+								</button>
 							))}
-							{verdicts && checks && (
-								<div className="font-sans whitespace-normal" aria-label="Esito dei controlli">
-									<p className={cn('m-0! mb-3! font-semibold', passed === checks.length ? 'text-ok-fg' : 'text-fg-strong')}>
-										{passed === checks.length ? (checks.length === 1 ? 'Controllo superato.' : `Tutti i ${checks.length} controlli superati.`) : passed === 1 ? `1 controllo superato su ${checks.length}.` : `${passed} controlli superati su ${checks.length}.`}
-									</p>
-									{/* not a list element: the lesson's own list styles would number it */}
-									<div role="list" className="flex flex-col gap-2">
-										{verdicts.map((verdict, i) => (
-											<div role="listitem" key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
-												<p className={cn('m-0! flex items-start gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
-													{verdict.passed ? <Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" /> : <X className="mt-0.5 size-4 shrink-0" aria-hidden="true" />}
-													{checks[i].description}
-												</p>
-												{!verdict.passed && <p className="m-0! mt-1! text-sm text-fg">{verdict.why}</p>}
+						</div>
+						<div className="min-h-0 flex-1 overflow-auto">
+							<Editor key={`${loaded.count}:${tab}`} initial={view.text} language={tab} label={FILE_NAMES[tab]} minimap={!compact} onChange={(text) => edit(tab, text)} onRun={() => void show()} />
+						</div>
+					</div>
+				}
+				right={
+					<>
+						{settings && <SettingsPanel className="lg:h-[32rem]" />}
+						{/* the page stays under the settings: it is not loaded again when they close */}
+						<div className={cn('flex min-w-0 flex-col', !compact && 'lg:h-[32rem]', settings && 'hidden')}>
+							<div ref={holder} className={cn('min-h-0 bg-white', compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />
+							{(lines.length > 0 || verdicts) && (
+								<div role="log" aria-label="Console" className={cn(!compact && 'max-h-56', 'shrink-0 overflow-auto border-t border-edge bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg')}>
+									{lines.map((line, i) => (
+										<span key={i} className={LINE[line.kind]}>
+											{line.text}
+										</span>
+									))}
+									{verdicts && checks && (
+										<div className="font-sans whitespace-normal" aria-label="Esito dei controlli">
+											<p className={cn('m-0! mb-3! font-semibold', passed === checks.length ? 'text-ok-fg' : 'text-fg-strong')}>
+												{passed === checks.length
+													? checks.length === 1
+														? 'Controllo superato.'
+														: `Tutti i ${checks.length} controlli superati.`
+													: passed === 1
+														? `1 controllo superato su ${checks.length}.`
+														: `${passed} controlli superati su ${checks.length}.`}
+											</p>
+											{/* not a list element: the lesson's own list styles would number it */}
+											<div role="list" className="flex flex-col gap-2">
+												{verdicts.map((verdict, i) => (
+													<div role="listitem" key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
+														<p className={cn('m-0! flex items-start gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
+															{verdict.passed ? <Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" /> : <X className="mt-0.5 size-4 shrink-0" aria-hidden="true" />}
+															{checks[i].description}
+														</p>
+														{!verdict.passed && <p className="m-0! mt-1! text-sm text-fg">{verdict.why}</p>}
+													</div>
+												))}
 											</div>
-										))}
-									</div>
+										</div>
+									)}
 								</div>
 							)}
 						</div>
-					)}
-				</div>
-			</div>
+					</>
+				}
+			/>
 		</section>
 	);
 }

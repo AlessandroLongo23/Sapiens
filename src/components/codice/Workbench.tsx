@@ -2,12 +2,14 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Check, Lightbulb, ListChecks, Play, RotateCcw, Square, X } from 'lucide-react';
+import { Check, Lightbulb, ListChecks, Play, RotateCcw, Settings, Square, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
 import { tidy, type Test } from '@/lib/codice/blocco';
 import { LANGUAGES, TIME_LIMIT, type Chunk, type Language, type Outcome } from './runtime';
 import { retain, runtimeFor } from './runtimes';
+import { SettingsPanel } from './SettingsPanel';
+import { Split } from './Split';
 import type { Stage } from './turtle';
 import { TurtleCanvas } from './TurtleCanvas';
 
@@ -118,6 +120,8 @@ export function Workbench({
 	const [drawing, setDrawing] = useState(false);
 	const [verdicts, setVerdicts] = useState<Verdict[] | null>(null);
 	const [edited, setEdited] = useState(false);
+	/** The editor's settings are shown in the place of the console. */
+	const [settings, setSettings] = useState(false);
 
 	const code = useRef(initial);
 	/** The lines typed at the program's input in this run, and what makes each rerun repeat the first. */
@@ -191,7 +195,13 @@ export function Workbench({
 			if (ok && mine === turn.current) setPhase((now) => (now === 'loading' ? 'running' : now));
 		});
 		const { outcome, ms } = await runtime.run(
-			{ language, source: code.current, inputs: inputs.current, seed: seed.current, clock: clock.current },
+			{
+				language,
+				source: code.current,
+				inputs: inputs.current,
+				seed: seed.current,
+				clock: clock.current
+			},
 			{
 				onChunk: receive,
 				onStatus: (text) => mine === turn.current && setStatus(text),
@@ -234,7 +244,14 @@ export function Workbench({
 			let printed = '';
 			let errors = '';
 			const { outcome } = await runtime.run(
-				{ language, source: code.current, inputs: test.input === '' ? [] : test.input.replace(/\n$/, '').split('\n'), seed: 1, clock: Date.now(), batch: true },
+				{
+					language,
+					source: code.current,
+					inputs: test.input === '' ? [] : test.input.replace(/\n$/, '').split('\n'),
+					seed: 1,
+					clock: Date.now(),
+					batch: true
+				},
 				{
 					onChunk: ({ kind, text }) => {
 						if (kind === 'out') printed += text;
@@ -330,6 +347,12 @@ export function Workbench({
 						Ferma
 					</Button>
 				)}
+				{!compact && (
+					<Button variant="ghost" size="sm" onClick={() => setSettings((now) => !now)} aria-pressed={settings} title={settings ? 'Torna alla console' : 'Impostazioni dell’editor'} className={cn(settings && 'bg-surface-3 text-fg-strong')}>
+						<Settings className="size-3.5" aria-hidden="true" />
+						<span className="sr-only">Impostazioni dell’editor</span>
+					</Button>
+				)}
 				<Button variant={tests ? 'secondary' : 'primary'} size="sm" onClick={run} disabled={busy} title="Ctrl+Invio, o ⌘+Invio sul Mac">
 					<Play className="size-3.5" aria-hidden="true" />
 					Esegui
@@ -341,82 +364,91 @@ export function Workbench({
 					</Button>
 				)}
 			</div>
-			<div className={cn('grid', !compact && 'lg:grid-cols-2')}>
-				<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : 'h-[20rem] lg:h-[32rem] lg:border-r lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
-					<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" minimap={!compact} onChange={edit} onRun={run} />
-				</div>
-				<div
-					ref={log}
-					role="log"
-					aria-label="Console"
-					className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', compact ? 'max-h-[26rem] min-h-[4.5rem]' : 'h-[16rem] lg:h-[32rem]')}
-					onClick={() => field.current?.focus()}
-				>
-					{drawing && <TurtleCanvas onStage={attach} />}
-					{chunks.length === 0 && !drawing && !verdicts && phase === 'idle' && (
-						<span className="font-sans text-fg-faint">{tests ? 'Esegui per provare il programma, Verifica per controllarlo sulle prove.' : 'Quello che il programma stampa compare qui.'}</span>
-					)}
-					{chunks.map((chunk, i) =>
-						chunk.kind === 'image' ? (
-							// eslint-disable-next-line @next/next/no-img-element -- a figure made in the browser, as a data URL
-							<img key={i} src={`data:image/png;base64,${chunk.text}`} alt="Grafico disegnato dal programma" className="my-2 block max-w-full rounded-lg border border-edge bg-white" />
-						) : (
-							<span key={i} className={cn(CHUNK[chunk.kind])}>
-								{chunk.text}
-							</span>
-						)
-					)}
-					{phase === 'waiting' && (
-						<form className="inline" onSubmit={answer}>
-							<input
-								ref={field}
-								autoFocus
-								aria-label="Risposta al programma"
-								autoCapitalize="off"
-								autoCorrect="off"
-								autoComplete="off"
-								spellCheck={false}
-								enterKeyHint="send"
-								className="w-48 max-w-full border-0 border-b border-edge-strong bg-transparent p-0 font-semibold text-fg-strong outline-none focus:border-accent focus:ring-0 max-sm:text-base"
-							/>
-						</form>
-					)}
-					{verdicts && tests && (
-						<div className="font-sans whitespace-normal" aria-label="Esito delle prove">
-							{phase === 'idle' && (
-								<p className={cn('m-0! mb-3! font-semibold', passed === tests.length ? 'text-ok-fg' : 'text-fg-strong')}>
-									{passed === tests.length ? `Tutte le ${tests.length} prove superate.` : passed === 1 ? `1 prova superata su ${tests.length}.` : `${passed} prove superate su ${tests.length}.`}
-								</p>
+			<Split
+				stacked={compact}
+				left={
+					<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : 'h-[20rem] lg:h-[32rem] lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
+						<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" minimap={!compact} onChange={edit} onRun={run} />
+					</div>
+				}
+				right={
+					<>
+						{settings && <SettingsPanel className="lg:h-[32rem]" />}
+						<div
+							ref={log}
+							role="log"
+							aria-label="Console"
+							// the console stays under the settings: a run goes on, and its canvas keeps its drawing
+							className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', compact ? 'max-h-[26rem] min-h-[4.5rem]' : 'h-[16rem] lg:h-[32rem]', settings && 'hidden')}
+							onClick={() => field.current?.focus()}
+						>
+							{drawing && <TurtleCanvas onStage={attach} />}
+							{chunks.length === 0 && !drawing && !verdicts && phase === 'idle' && (
+								<span className="font-sans text-fg-faint">{tests ? 'Esegui per provare il programma, Verifica per controllarlo sulle prove.' : 'Quello che il programma stampa compare qui.'}</span>
 							)}
-							{/* not a list element: the lesson's own list styles would number it */}
-							<div role="list" className="flex flex-col gap-2">
-								{verdicts.map((verdict, i) => (
-									<div role="listitem" key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
-										<p className={cn('m-0! flex items-center gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
-											{verdict.passed ? <Check className="size-4" aria-hidden="true" /> : <X className="size-4" aria-hidden="true" />}
-											Prova {i + 1}: {verdict.passed ? 'superata' : 'non superata'}
+							{chunks.map((chunk, i) =>
+								chunk.kind === 'image' ? (
+									// eslint-disable-next-line @next/next/no-img-element -- a figure made in the browser, as a data URL
+									<img key={i} src={`data:image/png;base64,${chunk.text}`} alt="Grafico disegnato dal programma" className="my-2 block max-w-full rounded-lg border border-edge bg-white" />
+								) : (
+									<span key={i} className={cn(CHUNK[chunk.kind])}>
+										{chunk.text}
+									</span>
+								)
+							)}
+							{phase === 'waiting' && (
+								<form className="inline" onSubmit={answer}>
+									<input
+										ref={field}
+										autoFocus
+										aria-label="Risposta al programma"
+										autoCapitalize="off"
+										autoCorrect="off"
+										autoComplete="off"
+										spellCheck={false}
+										enterKeyHint="send"
+										className="w-48 max-w-full border-0 border-b border-edge-strong bg-transparent p-0 font-semibold text-fg-strong outline-none focus:border-accent focus:ring-0 max-sm:text-base"
+									/>
+								</form>
+							)}
+							{verdicts && tests && (
+								<div className="font-sans whitespace-normal" aria-label="Esito delle prove">
+									{phase === 'idle' && (
+										<p className={cn('m-0! mb-3! font-semibold', passed === tests.length ? 'text-ok-fg' : 'text-fg-strong')}>
+											{passed === tests.length ? `Tutte le ${tests.length} prove superate.` : passed === 1 ? `1 prova superata su ${tests.length}.` : `${passed} prove superate su ${tests.length}.`}
 										</p>
-										{!verdict.passed && (
-											<dl className="m-0! mt-2! grid gap-x-3 gap-y-1 text-sm sm:grid-cols-[auto_1fr] [&>dd]:m-0 [&>dt]:m-0">
-												{tests[i].input !== '' && (
-													<>
-														<dt className="text-fg-subtle">Ingresso</dt>
-														<dd className="font-mono whitespace-pre-wrap text-fg">{tests[i].input.trimEnd()}</dd>
-													</>
+									)}
+									{/* not a list element: the lesson's own list styles would number it */}
+									<div role="list" className="flex flex-col gap-2">
+										{verdicts.map((verdict, i) => (
+											<div role="listitem" key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
+												<p className={cn('m-0! flex items-center gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
+													{verdict.passed ? <Check className="size-4" aria-hidden="true" /> : <X className="size-4" aria-hidden="true" />}
+													Prova {i + 1}: {verdict.passed ? 'superata' : 'non superata'}
+												</p>
+												{!verdict.passed && (
+													<dl className="m-0! mt-2! grid gap-x-3 gap-y-1 text-sm sm:grid-cols-[auto_1fr] [&>dd]:m-0 [&>dt]:m-0">
+														{tests[i].input !== '' && (
+															<>
+																<dt className="text-fg-subtle">Ingresso</dt>
+																<dd className="font-mono whitespace-pre-wrap text-fg">{tests[i].input.trimEnd()}</dd>
+															</>
+														)}
+														<dt className="text-fg-subtle">Atteso</dt>
+														<dd className="font-mono whitespace-pre-wrap text-fg">{tidy(tests[i].output)}</dd>
+														<dt className="text-fg-subtle">Ottenuto</dt>
+														<dd className="font-mono whitespace-pre-wrap text-fg">{verdict.got || '(niente)'}</dd>
+													</dl>
 												)}
-												<dt className="text-fg-subtle">Atteso</dt>
-												<dd className="font-mono whitespace-pre-wrap text-fg">{tidy(tests[i].output)}</dd>
-												<dt className="text-fg-subtle">Ottenuto</dt>
-												<dd className="font-mono whitespace-pre-wrap text-fg">{verdict.got || '(niente)'}</dd>
-											</dl>
-										)}
+											</div>
+										))}
 									</div>
-								))}
-							</div>
+								</div>
+							)}
 						</div>
-					)}
-				</div>
-			</div>
+					</>
+				}
+			/>
 		</section>
 	);
 }

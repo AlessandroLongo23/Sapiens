@@ -3,59 +3,206 @@ import { Prec, RangeSetBuilder, type Extension } from '@codemirror/state';
 import { Decoration, EditorView, ViewPlugin, type DecorationSet, type ViewUpdate } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 
+import type { ThemeId } from './settings';
+
+interface Colors {
+	fg: string;
+	keyword: string;
+	storage: string;
+	function: string;
+	type: string;
+	variable: string;
+	string: string;
+	escape: string;
+	number: string;
+	comment: string;
+	gutter: string;
+	gutterActive: string;
+	selection: string;
+	cursor: string;
+	bracket1: string;
+	bracket2: string;
+	bracket3: string;
+}
+
 /**
- * The colours of VS Code's default themes, read from Cursor's own theme files (extensions/theme-defaults/themes,
- * 3 October 2026): Dark Modern in the site's dark theme, Light Modern, its light twin, in the light one. Dark Modern
- * takes its token colours from Dark+ and Dark (VS), Light Modern from Light+ and Light (VS). The background stays the
- * site's paper.
+ * The colours of each theme, for the site's light theme and for its dark one. The background is always the site's
+ * paper: a theme is the colours of the code on it.
+ *
+ * Modern, the default, is VS Code's own: Light Modern and Dark Modern, read from Cursor's theme files
+ * (extensions/theme-defaults/themes, 3 October 2026). The token colours of Dark Modern come from Dark+ and Dark (VS),
+ * those of Light Modern from Light+ and Light (VS). GitHub, One (Atom's One Light and One Dark) and Solarized are
+ * written from their published palettes; a few colours are darker or lighter than the original so that comments
+ * and selections can be seen on the site's paper.
  */
-const PALETTE = {
-	light: {
-		fg: '#3B3B3B',
-		keyword: '#AF00DB', // keyword.control
-		storage: '#0000FF', // storage.type (def, class, lambda), constant.language, variable.language
-		function: '#795E26', // entity.name.function, support.function
-		type: '#267F99', // entity.name.class, support.type
-		variable: '#001080', // variable, meta.definition.variable.name
-		string: '#A31515',
-		escape: '#EE0000',
-		number: '#098658',
-		comment: '#008000',
-		gutter: '#6E7681',
-		gutterActive: '#171184',
-		selection: '#ADD6FF',
-		cursor: '#000000',
-		bracket1: '#0431FA', // editorBracketHighlight.foreground1-3
-		bracket2: '#319331',
-		bracket3: '#7B3814'
+const PALETTES: Record<ThemeId, { light: Colors; dark: Colors }> = {
+	modern: {
+		light: {
+			fg: '#3B3B3B',
+			keyword: '#AF00DB', // keyword.control
+			storage: '#0000FF', // storage.type (def, class, lambda), constant.language, variable.language
+			function: '#795E26', // entity.name.function, support.function
+			type: '#267F99', // entity.name.class, support.type
+			variable: '#001080', // variable, meta.definition.variable.name
+			string: '#A31515',
+			escape: '#EE0000',
+			number: '#098658',
+			comment: '#008000',
+			gutter: '#6E7681',
+			gutterActive: '#171184',
+			selection: '#ADD6FF',
+			cursor: '#000000',
+			bracket1: '#0431FA', // editorBracketHighlight.foreground1-3
+			bracket2: '#319331',
+			bracket3: '#7B3814'
+		},
+		dark: {
+			fg: '#CCCCCC',
+			keyword: '#C586C0',
+			storage: '#569CD6',
+			function: '#DCDCAA',
+			type: '#4EC9B0',
+			variable: '#9CDCFE',
+			string: '#CE9178',
+			escape: '#D7BA7D',
+			number: '#B5CEA8',
+			comment: '#6A9955',
+			gutter: '#6E7681',
+			gutterActive: '#CCCCCC',
+			selection: '#264F78',
+			cursor: '#AEAFAD',
+			bracket1: '#FFD700',
+			bracket2: '#DA70D6',
+			bracket3: '#179FFF'
+		}
 	},
-	dark: {
-		fg: '#CCCCCC',
-		keyword: '#C586C0',
-		storage: '#569CD6',
-		function: '#DCDCAA',
-		type: '#4EC9B0',
-		variable: '#9CDCFE',
-		string: '#CE9178',
-		escape: '#D7BA7D',
-		number: '#B5CEA8',
-		comment: '#6A9955',
-		gutter: '#6E7681',
-		gutterActive: '#CCCCCC',
-		selection: '#264F78',
-		cursor: '#AEAFAD',
-		bracket1: '#FFD700',
-		bracket2: '#DA70D6',
-		bracket3: '#179FFF'
+	github: {
+		light: {
+			fg: '#24292F',
+			keyword: '#CF222E',
+			storage: '#CF222E',
+			function: '#8250DF',
+			type: '#953800',
+			variable: '#24292F',
+			string: '#0A3069',
+			escape: '#0550AE',
+			number: '#0550AE',
+			comment: '#6E7781',
+			gutter: '#8C959F',
+			gutterActive: '#24292F',
+			selection: '#B6E3FF',
+			cursor: '#24292F',
+			bracket1: '#0550AE',
+			bracket2: '#1A7F37',
+			bracket3: '#953800'
+		},
+		dark: {
+			fg: '#C9D1D9',
+			keyword: '#FF7B72',
+			storage: '#FF7B72',
+			function: '#D2A8FF',
+			type: '#FFA657',
+			variable: '#C9D1D9',
+			string: '#A5D6FF',
+			escape: '#79C0FF',
+			number: '#79C0FF',
+			comment: '#8B949E',
+			gutter: '#6E7681',
+			gutterActive: '#C9D1D9',
+			selection: '#1F4273',
+			cursor: '#C9D1D9',
+			bracket1: '#79C0FF',
+			bracket2: '#56D364',
+			bracket3: '#E3B341'
+		}
+	},
+	one: {
+		light: {
+			fg: '#383A42',
+			keyword: '#A626A4',
+			storage: '#A626A4',
+			function: '#4078F2',
+			type: '#C18401',
+			variable: '#E45649',
+			string: '#50A14F',
+			escape: '#0184BC',
+			number: '#986801',
+			comment: '#8A8B91',
+			gutter: '#9D9D9F',
+			gutterActive: '#383A42',
+			selection: '#D3D5DC',
+			cursor: '#526FFF',
+			bracket1: '#4078F2',
+			bracket2: '#A626A4',
+			bracket3: '#C18401'
+		},
+		dark: {
+			fg: '#ABB2BF',
+			keyword: '#C678DD',
+			storage: '#C678DD',
+			function: '#61AFEF',
+			type: '#E5C07B',
+			variable: '#E06C75',
+			string: '#98C379',
+			escape: '#56B6C2',
+			number: '#D19A66',
+			comment: '#7F848E',
+			gutter: '#636D83',
+			gutterActive: '#ABB2BF',
+			selection: '#3E4451',
+			cursor: '#528BFF',
+			bracket1: '#61AFEF',
+			bracket2: '#C678DD',
+			bracket3: '#E5C07B'
+		}
+	},
+	solarized: {
+		light: {
+			fg: '#586E75',
+			keyword: '#859900',
+			storage: '#268BD2',
+			function: '#268BD2',
+			type: '#B58900',
+			variable: '#586E75',
+			string: '#2AA198',
+			escape: '#CB4B16',
+			number: '#D33682',
+			comment: '#839496',
+			gutter: '#93A1A1',
+			gutterActive: '#586E75',
+			selection: '#DDD6C1',
+			cursor: '#586E75',
+			bracket1: '#268BD2',
+			bracket2: '#859900',
+			bracket3: '#B58900'
+		},
+		dark: {
+			fg: '#93A1A1',
+			keyword: '#859900',
+			storage: '#268BD2',
+			function: '#268BD2',
+			type: '#B58900',
+			variable: '#93A1A1',
+			string: '#2AA198',
+			escape: '#CB4B16',
+			number: '#D33682',
+			comment: '#657B83',
+			gutter: '#586E75',
+			gutterActive: '#93A1A1',
+			selection: '#0A4A5A',
+			cursor: '#93A1A1',
+			bracket1: '#268BD2',
+			bracket2: '#859900',
+			bracket3: '#B58900'
+		}
 	}
 };
 
-const vars = (colors: Record<string, string>) => Object.fromEntries(Object.entries(colors).map(([name, value]) => [`--code-${name}`, value]));
-const v = (name: keyof typeof PALETTE.light) => `var(--code-${name})`;
+const vars = (colors: Colors) => Object.fromEntries(Object.entries(colors).map(([name, value]) => [`--code-${name}`, value]));
+const v = (name: keyof Colors) => `var(--code-${name})`;
 
 const chrome = EditorView.theme({
-	'&': { ...vars(PALETTE.light), color: v('fg'), backgroundColor: 'transparent', fontSize: '0.9375rem', height: '100%' },
-	'.dark &': vars(PALETTE.dark),
+	'&': { color: v('fg'), backgroundColor: 'transparent', height: '100%' },
 	'&.cm-focused': { outline: 'none' },
 	'.cm-scroller': { fontFamily: 'var(--font-mono)', lineHeight: '1.65' },
 	'.cm-content': { padding: '0.75rem 0', caretColor: v('cursor') },
@@ -143,4 +290,13 @@ const extras = ViewPlugin.fromClass(
 );
 
 /** Highest precedence draws these marks inside the highlighter's, so their colour wins over the token's. */
-export const vscodeTheme: Extension = [chrome, syntaxHighlighting(highlight), Prec.highest(extras)];
+export const editorLook: Extension = [chrome, syntaxHighlighting(highlight), Prec.highest(extras)];
+
+/** The colours of one theme: every colour above is a variable, and this gives them their values. */
+export const themeColors = (theme: ThemeId): Extension => EditorView.theme({ '&': vars(PALETTES[theme].light), '.dark &': vars(PALETTES[theme].dark) });
+
+/** The size of the code's text, in pixels at the browser's own text size: it grows with it. */
+export const textSize = (size: number): Extension => EditorView.theme({ '&': { fontSize: `${size / 16}rem` } });
+
+/** A theme's colours for the picture of it in the settings. */
+export const themeSample = (theme: ThemeId) => PALETTES[theme];
