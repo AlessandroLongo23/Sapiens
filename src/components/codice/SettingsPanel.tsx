@@ -94,7 +94,8 @@ function Size({ value }: { value: number }) {
 					if (typed !== null && Number.isFinite(size) && typed.trim() !== '') saveSettings({ size: Math.min(SIZE_MAX, Math.max(SIZE_MIN, size)) });
 					setTyped(null);
 				}}
-				className="h-9 w-16 rounded-lg border border-edge-strong bg-surface px-2 text-center text-sm text-fg-strong tabular-nums focus-ring max-sm:text-base"
+				// without the browser's own arrows: the two buttons beside it step the number
+				className="h-9 w-16 rounded-lg border border-edge-strong bg-surface px-2 text-center text-sm text-fg-strong tabular-nums focus-ring max-sm:text-base [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 			/>
 			<button type="button" onClick={() => step(1)} disabled={value >= SIZE_MAX} aria-label="Testo più grande" className={BUTTON}>
 				<Plus className="size-4" aria-hidden="true" />
