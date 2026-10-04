@@ -455,6 +455,18 @@ test.describe('projects: the layout', () => {
 		await expect(log(page)).toContainText('Programma finito');
 		await expect(log(page)).not.toContainText('raggio');
 
+		// the settings are a tab among the files', beside the code, and the output stays where it is
+		const gear = page.getByRole('button', { name: 'Impostazioni dell’editor' });
+		await gear.click();
+		await expect(page.getByRole('tab', { name: 'Impostazioni' })).toHaveAttribute('aria-selected', 'true');
+		await expect(page.getByRole('region', { name: 'Impostazioni dell’editor' })).toBeVisible();
+		await expect(log(page)).toBeVisible();
+		await page.getByLabel('Dimensione del testo in pixel').fill('18');
+		await expect(page.locator('.cm-editor').first()).toHaveCSS('font-size', '18px');
+		await page.getByRole('region', { name: 'Impostazioni dell’editor' }).getByRole('button', { name: 'Ripristina' }).click();
+		await gear.click();
+		await expect(page.getByRole('tab', { name: 'Impostazioni' })).toHaveCount(0);
+
 		const bench = page.locator('section[aria-label^="Editor"]');
 		await page.getByRole('button', { name: 'Schermo intero' }).click();
 		await expect.poll(() => bench.evaluate((section) => section.getBoundingClientRect().height >= window.innerHeight - 1)).toBe(true);

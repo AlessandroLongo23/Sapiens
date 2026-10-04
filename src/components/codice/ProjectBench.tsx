@@ -2,11 +2,12 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useRef, useState, type DragEvent, type ReactNode } from 'react';
-import { Columns2, Globe, X } from 'lucide-react';
+import { Columns2, Globe, Settings, X } from 'lucide-react';
 import type { Check, Language, Test } from '@/lib/codice/blocco';
 import { MAX_FILES, MAX_PROJECT_SIZE, isImage, kindOf, pathProblem, sortedPaths, targetOf, type ProjectFiles } from '@/lib/codice/progetto';
 import { cn } from '@/lib/utils/cn';
 import { Explorer } from './Explorer';
+import { SettingsPanel } from './SettingsPanel';
 import { SPLIT_MAX, SPLIT_MIN, DEFAULTS, saveSettings, useEditorSettings } from './settings';
 import { Handle } from './Split';
 import { WebBench } from './WebBench';
@@ -31,6 +32,8 @@ export interface ProjectSlots {
 	output: { open: boolean; toggle: () => void; show: () => void };
 	/** Opens the tab of the page, when "Esegui" is pressed and it was closed. */
 	showPreview: () => void;
+	/** With `explorer` the editor's settings are a tab among the files': whether it is open, and the gear's action. */
+	settings: { open: boolean; toggle: () => void };
 	/** The program "Esegui" runs, with the files around it; null when the project has none. */
 	job: () => { language: Language; source: string; files: ProjectFiles } | null;
 	/** The page "Esegui" shows. */
@@ -80,6 +83,11 @@ const weight = (files: ProjectFiles) => Object.values(files).reduce((sum, text) 
 
 /** The tab of the page "Esegui" shows, among the tabs of the files. */
 const PREVIEW = ':anteprima';
+/** The tab of the editor's settings. */
+const SETTINGS = ':impostazioni';
+/** A tab that is not a file. */
+const special = (tab: string | null) => tab !== null && tab.startsWith(':');
+const NAMES: Record<string, string> = { [PREVIEW]: 'Anteprima', [SETTINGS]: 'Impostazioni' };
 
 /** Files open side by side: each group has its tabs, and one of them in view. `text` is that file as it was when it came into view (the editor reads it once), `count` makes the editor anew. */
 interface Group {
@@ -89,7 +97,7 @@ interface Group {
 	count: number;
 }
 
-const inView = (tabs: string[], active: string | null, files: ProjectFiles, count = 0): Group => ({ tabs, active, text: active && active !== PREVIEW ? (files[active] ?? '') : '', count });
+const inView = (tabs: string[], active: string | null, files: ProjectFiles, count = 0): Group => ({ tabs, active, text: active && !special(active) ? (files[active] ?? '') : '', count });
 /** A group left without tabs goes away, unless it is the only one. */
 const tidy = (groups: Group[]) => (groups.length > 1 ? groups.filter((group) => group.tabs.length > 0) : groups);
 
@@ -191,7 +199,7 @@ export function ProjectBench({
 	const show = (path: string) => {
 		const at = groups.findIndex((group) => group.tabs.includes(path));
 		const used = Math.min(focus, groups.length - 1);
-		const where = at >= 0 ? at : groups[used].active === PREVIEW && groups.length > 1 ? 1 - used : used;
+		const where = at >= 0 ? at : special(groups[used].active) && groups.length > 1 ? 1 - used : used;
 		setGroups((now) => now.map((group, i) => (i === where ? inView(group.tabs.includes(path) ? group.tabs : [...group.tabs, path], path, files.current, group.count + 1) : group)));
 		setFocus(where);
 		// a page that is opened is the page shown; among programs the one to run is chosen in the list, since a module is a program too
@@ -237,7 +245,7 @@ export function ProjectBench({
 	const put = (next: ProjectFiles, isSolution: boolean) => {
 		files.current = next;
 		const now = groups[Math.min(focus, groups.length - 1)]?.active;
-		const start = starting(next, now && now !== PREVIEW && now in next ? now : listed(next)[0]);
+		const start = starting(next, now && !special(now) && now in next ? now : listed(next)[0]);
 		targetNow.current = start.run;
 		setTarget(start.run);
 		setPaths(listed(next));
@@ -327,6 +335,7 @@ export function ProjectBench({
 	const content = (group: Group, at: number, preview: ReactNode | null) => {
 		const path = group.active;
 		if (path === null) return <p className="p-4 text-sm text-fg-subtle">Apri un file dall’elenco.</p>;
+		if (path === SETTINGS) return <SettingsPanel className="h-full" />;
 		if (path === PREVIEW) return preview ?? <p className="p-4 text-sm text-fg-subtle">Apri una pagina del progetto per vederla qui.</p>;
 		const kind = kindOf(path);
 		if (kind === 'image')
@@ -347,7 +356,7 @@ export function ProjectBench({
 	const bar = (group: Group, at: number) => (
 		<div role="tablist" aria-label={groups.length > 1 ? `File aperti, colonna ${at + 1}` : 'File aperti'} onDragOver={(event) => event.preventDefault()} onDrop={(event) => drop(event, at, null)} className="flex shrink-0 items-stretch overflow-x-auto border-b border-edge bg-surface-2">
 			{group.tabs.map((tab) => {
-				const name = tab === PREVIEW ? 'Anteprima' : tab.split('/').pop();
+				const name = NAMES[tab] ?? tab.split('/').pop();
 				const chosen = group.active === tab;
 				return (
 					<div
@@ -366,7 +375,7 @@ export function ProjectBench({
 							type="button"
 							role="tab"
 							aria-selected={chosen}
-							title={tab === PREVIEW ? 'La pagina del progetto, come in un browser' : tab}
+							title={tab === PREVIEW ? 'La pagina del progetto, come in un browser' : tab === SETTINGS ? 'Le impostazioni dell’editor' : tab}
 							onClick={() => {
 								setGroups((now) => now.map((other, i) => (i === at ? inView(other.tabs, tab, files.current, other.count + 1) : other)));
 								setFocus(at);
@@ -374,6 +383,7 @@ export function ProjectBench({
 							className={cn('flex items-center gap-1.5 py-1.5 pr-1 pl-3 font-mono text-[0.8125rem] focus-ring', chosen ? 'text-fg-strong' : 'text-fg-muted')}
 						>
 							{tab === PREVIEW && <Globe className="size-3.5" aria-hidden="true" />}
+							{tab === SETTINGS && <Settings className="size-3.5" aria-hidden="true" />}
 							{name}
 						</button>
 						<button type="button" onClick={() => close(at, tab)} aria-label={`Chiudi ${name}`} title="Chiudi" className={cn('mr-1 flex size-5 items-center justify-center rounded text-fg-muted hover:bg-surface-3 hover:text-fg-strong focus-ring', !chosen && 'opacity-0 group-hover/tab:opacity-100 focus-visible:opacity-100')}>
@@ -424,6 +434,16 @@ export function ProjectBench({
 		),
 		output: { open: output, toggle: () => setOutput((now) => !now), show: () => setOutput(true) },
 		showPreview: () => setGroups((now) => withPreview(now, true)),
+		settings: {
+			open: groups.some((group) => group.tabs.includes(SETTINGS)),
+			// beside the code, so a change is seen as it is made: in the second column, which is made if there is none
+			toggle: () =>
+				setGroups((now) => {
+					const at = now.findIndex((group) => group.tabs.includes(SETTINGS));
+					if (at >= 0) return tidy(now.map((group, i) => (i === at ? inView(group.tabs.filter((tab) => tab !== SETTINGS), group.active === SETTINGS ? (group.tabs.find((tab) => tab !== SETTINGS) ?? null) : group.active, files.current, group.count + 1) : group)));
+					return now.length === 1 ? [...now, inView([SETTINGS], SETTINGS, files.current)] : now.map((group, i) => (i === now.length - 1 ? inView([...group.tabs, SETTINGS], SETTINGS, files.current, group.count + 1) : group));
+				})
+		},
 		job: () => {
 			const path = targetNow.current;
 			const language = path ? kindOf(path) : null;

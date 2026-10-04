@@ -240,7 +240,7 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 					</Button>
 				)}
 				{(!compact || fill) && (
-					<Button variant="ghost" size="sm" onClick={() => setSettings((now) => !now)} aria-pressed={settings} title={settings ? 'Torna alla pagina' : 'Impostazioni dell’editor'} className={cn(settings && 'bg-surface-3 text-fg-strong')}>
+					<Button variant="ghost" size="sm" onClick={() => (fill ? project!.settings.toggle() : setSettings((now) => !now))} aria-pressed={fill ? project!.settings.open : settings} title={settings ? 'Torna alla pagina' : 'Impostazioni dell’editor'} className={cn((fill ? project!.settings.open : settings) && 'bg-surface-3 text-fg-strong')}>
 						<Settings className="size-3.5" aria-hidden="true" />
 						<span className="sr-only">Impostazioni dell’editor</span>
 					</Button>
