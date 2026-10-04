@@ -29,7 +29,8 @@ Al secondo anno, in quattro capitoli di fila: "Algoritmi e diagrammi di flusso" 
 - **La lunghezza.** Le lezioni hanno tra 327 e 480 righe contro le 120-200 del brief. Il testo da leggere è di 40-70 righe; il resto sono i programmi nei due linguaggi e i diagrammi, che in TikZ ripetono ogni volta stili e macro. Va deciso se il limite conta solo il testo.
 - **I nomi delle variabili** non sono uniformi tra le lezioni (una lettera in tre, nomi interi in due).
 - Le domande per Andrea sono in [[Domande per Andrea]], nella sezione del 5 ottobre.
-- Le lezioni non sono pubblicate, e le altre quindici dei quattro capitoli non sono scritte: quelle di oggi richiamano in due righe quello che verrebbe prima.
+- Le cinque lezioni sono state pubblicate la sera del 5 ottobre, su richiesta di Alessandro, per vederle al loro posto nel programma. Le altre quindici dei quattro capitoli non sono scritte: quelle di oggi richiamano in due righe quello che verrebbe prima.
+- Alessandro ha proposto un diagramma di flusso interattivo, modificabile ed eseguibile: [[Diagrammi di flusso eseguibili]].
 
 ## Collegamenti
 - [[Editor di codice]], [[Pipeline lezioni]], [[Programma ministeriale]], [[Domande per Andrea]]
