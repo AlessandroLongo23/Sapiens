@@ -93,8 +93,8 @@ def run_blocks(text, inputs, limit=5000):
                 out.append(m.group(1))
             elif m := re.fullmatch(r"dì (\w+)", s):
                 out.append(str(env[m.group(1)]))
-            elif m := re.fullmatch(r"ripeti (\d+) volte \((.*)\)", s):
-                for _ in range(int(m.group(1))):
+            elif m := re.fullmatch(r"ripeti (\w+) volte \((.*)\)", s):
+                for _ in range(val(m.group(1))):
                     run(m.group(2), ",")
             elif m := re.fullmatch(r"ripeti fino a quando (\w+) (≥|=) (\w+) \((.*)\)", s):
                 while not cond(m.group(1), m.group(2), m.group(3)):
@@ -185,4 +185,6 @@ def check(sample):
             errors.append("the options are not charts")
         if (sample["answer"]["kind"] == "chart") != (level == 5):
             errors.append("only level 5 asks for a chart")
+        if level == 5 and not all(params["tests"]):
+            errors.append("a chart to build reads something")
     return errors, params["case"]

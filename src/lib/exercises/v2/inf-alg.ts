@@ -660,30 +660,34 @@ const MOVES = [
 	{ id: 'scala', a: 'sali', b: 'riposa' }
 ] as const;
 
-/** "Ripeti N volte" with the counter in sight (the square of lesson 50). Nothing is read. */
-export function repeat(rng: Rng): Algo {
+/**
+ * "Ripeti N volte" with the counter in sight (the square of lesson 50). Nothing is read, unless `asked`: then the
+ * number of turns is read, for the level that asks to build the chart, so that its lines cannot be put in by hand.
+ */
+export function repeat(rng: Rng, asked = false): Algo {
 	const m = rng.pick(MOVES);
 	const n = rng.int(3, 9);
-	const make = (i: number, cond: string, rows: string[], after = ['scrivi "fatto"']) => lines(`i = ${i}`, `finché ${cond}`, ...body(rows), ...after);
+	const to = asked ? 'n' : String(n);
+	const make = (i: number, cond: string, rows: string[], after = ['scrivi "fatto"']) => lines(...(asked ? ['leggi n'] : []), `i = ${i}`, `finché ${cond}`, ...body(rows), ...after);
 	const moves = [`scrivi "${m.a}"`, `scrivi "${m.b}"`];
 	return {
 		family: 'ripeti',
 		structure: 'iterazione',
 		k: { ctx: m.id, n },
 		story: '',
-		task: `ripete ${n} volte queste due mosse: scrive "${m.a}" e poi "${m.b}"; alla fine scrive "fatto", una volta sola`,
-		idea: `Il blocco "ripeti ${n} volte" conta i giri da solo; nel diagramma il conto si scrive: i parte da 1, cresce di uno a ogni giro, e si resta nel giro finché i ≤ ${n}.`,
-		source: make(1, `i <= ${n}`, [...moves, 'i = i + 1']),
+		task: `${asked ? 'legge un numero n e ripete n' : `ripete ${n}`} volte queste due mosse: scrive "${m.a}" e poi "${m.b}"; alla fine scrive "fatto", una volta sola`,
+		idea: `Il blocco "ripeti ${to} volte" conta i giri da solo; nel diagramma il conto si scrive: i parte da 1, cresce di uno a ogni giro, e si resta nel giro finché i ≤ ${to}.`,
+		source: make(1, `i <= ${to}`, [...moves, 'i = i + 1']),
 		wrong: [
-			['un giro in meno', make(1, `i < ${n}`, [...moves, 'i = i + 1'])],
-			['un giro in più', make(0, `i <= ${n}`, [...moves, 'i = i + 1'])],
-			['parola nel giro', make(1, `i <= ${n}`, [...moves, 'scrivi "fatto"', 'i = i + 1'], [])],
-			['selezione', lines('i = 1', `se i <= ${n}`, ...body([...moves, 'i = i + 1']), 'scrivi "fatto"')],
-			['una mossa fuori dal giro', make(1, `i <= ${n}`, [moves[0], 'i = i + 1'], [moves[1], 'scrivi "fatto"'])],
-			['mosse scambiate', make(1, `i <= ${n}`, [moves[1], moves[0], 'i = i + 1'])]
+			['un giro in meno', make(1, `i < ${to}`, [...moves, 'i = i + 1'])],
+			['un giro in più', make(0, `i <= ${to}`, [...moves, 'i = i + 1'])],
+			['parola nel giro', make(1, `i <= ${to}`, [...moves, 'scrivi "fatto"', 'i = i + 1'], [])],
+			['selezione', lines(...(asked ? ['leggi n'] : []), 'i = 1', `se i <= ${to}`, ...body([...moves, 'i = i + 1']), 'scrivi "fatto"')],
+			['una mossa fuori dal giro', make(1, `i <= ${to}`, [moves[0], 'i = i + 1'], [moves[1], 'scrivi "fatto"'])],
+			['mosse scambiate', make(1, `i <= ${to}`, [moves[1], moves[0], 'i = i + 1'])]
 		],
-		tests: [[], []],
-		blocks: `ripeti ${n} volte (dì "${m.a}", dì "${m.b}"); dì "fatto"`
+		tests: asked ? [[n], [n > 5 ? n - 2 : n + 2]] : [[], []],
+		blocks: `${asked ? 'chiedi quante volte e mettilo in n; ' : ''}ripeti ${to} volte (dì "${m.a}", dì "${m.b}"); dì "fatto"`
 	};
 }
 

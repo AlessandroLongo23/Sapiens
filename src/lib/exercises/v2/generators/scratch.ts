@@ -214,7 +214,8 @@ function level4(rng: Rng): Built {
 }
 
 function level5(rng: Rng): Built {
-	const a = rng.pick(BLOCKS)(rng);
+	// the "ripeti" reads how many times, as every other program of this level reads something
+	const a = rng.pick([(r: Rng) => repeat(r, true), ...BLOCKS.slice(1)])(rng);
 	const first = a.tests[0];
 	return {
 		prompt: 'Costruisci il diagramma di flusso.',

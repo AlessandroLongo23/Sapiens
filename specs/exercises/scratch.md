@@ -24,7 +24,9 @@ solo a chi risponde bene), `sblocco`, `risparmio`, `somma in giù`, e per il liv
    ingresso? Quello che doveva scrivere è sempre tra le opzioni sbagliate. Esempio: conto alla rovescia con i due
    blocchi del giro scambiati, con 3 → 2, 1, 0, via.
 4. **Dai blocchi al diagramma.** Un programma a blocchi a parole; opzioni: quattro diagrammi.
-5. **Costruire il diagramma di un programma a blocchi.** Risposta aperta eseguita sulle prove; a scelta multipla,
+5. **Costruire il diagramma di un programma a blocchi.** Qui il "ripeti" legge quante volte (`chiedi quante volte e
+   mettilo in n; ripeti n volte (…)`), come gli altri programmi del livello leggono qualcosa: le righe non si
+   mettono a mano, e il diagramma deve avere il ciclo o la selezione della soluzione. Risposta aperta eseguita sulle prove; a scelta multipla,
    come il livello 4.
 
 ## Distrattori

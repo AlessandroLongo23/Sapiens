@@ -26,12 +26,15 @@ lezione, un carattere alla volta (`print("*", end="")` e `print()`, `cout << "*"
    virgola. Distrattori: il disegno capovolto, il rettangolo al posto del triangolo, tutto su una riga (l'a capo
    tolto), un carattere per riga (l'a capo nel ciclo interno), una riga o un carattere in più o in meno.
 5. **I due cicli di una tabella.** Una consegna a parole (`tavola` e `aree` scrivono i prodotti, `dadi` e `menu` le
-   somme), con due dimensioni diverse tra 2 e 7. Le opzioni sono quattro programmi con due `while`: solo con il
+   somme). Le due dimensioni m e n si leggono; sono diverse, tra 2 e 7, e le prove sono due: m e n, poi n e m. Così
+   la tabella non si può scrivere a mano, una riga per blocco. Le opzioni sono quattro programmi con due `while`: solo con il
    `while` si può sbagliare come dice il primo riquadro della lezione, mettendo `j = 1` prima del ciclo esterno.
    Altri distrattori: le due dimensioni scambiate, il passo di `i` nel corpo interno, la scrittura fuori dal ciclo
-   interno, i cicli scambiati. Risposta aperta: il diagramma con i due cicli, eseguito (non legge niente, una prova).
+   interno, i cicli scambiati. Risposta aperta: il diagramma con i due cicli, eseguito sulle due prove; deve avere
+   un ciclo dentro un altro (`needs: annidati`).
 6. **Scrivere due cicli annidati.** Casi `prodotti`, `somme` (con `j` fino a `i`), `rettangolo`, `triangolo`,
-   `quadrato`. Risposta aperta: il programma, su due ingressi. A scelta multipla: quattro programmi con due `for`.
+   `quadrato`. Risposta aperta: il programma, su due ingressi; deve avere un ciclo dentro un altro, e la pagina lo
+   dice prima (un triangolo fatto con un ciclo solo e `"*" * i` scrive giusto e non passa). A scelta multipla: quattro programmi con due `for`.
 
 ## Scelte da sapere
 
