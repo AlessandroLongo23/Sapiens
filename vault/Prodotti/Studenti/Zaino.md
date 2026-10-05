@@ -71,6 +71,6 @@ Nella modalità Semplice la nota è un foglio a larghezza fissa, uguale su ogni 
 - Sul telefono il foglio intero si legge ma si scrive piccolo: il revisore ha proposto di passare al 100% quando si tocca il testo. Per ora c'è il comando "Scrivi più grande", in linea con [[2026-09-24 Le note sono fogli a larghezza fissa]]. Da decidere.
 - Carta predefinita per le nuove note ("Usa per le nuove note", come in Notability e OneNote): non fatta.
 - Gli [[Adesivi]] guadagnati si attaccano sulle copertine dei quaderni (vedi [[2026-09-24 Adesivi dopo la beta, premiano impegno e padronanza]]): dove si mettono e se coprono il colore.
-- Condivisione di quaderni tra compagni o con il tutor?
+- Condivisione di quaderni tra compagni o con il tutor? Idea del 4 ottobre 2026: [[Note condivise e lavori di gruppo]].
 - Foto degli appunti cartacei dentro una nota (vedi [[Foto e soluzione]])?
 - Nella pagina del quaderno non si possono ancora cambiare nome e colore: si fa dalla mensola. Da decidere se aggiungerlo.

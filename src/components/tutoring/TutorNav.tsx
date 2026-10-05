@@ -1,31 +1,27 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Inbox, LayoutDashboard, UserPen } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
+import { CalendarDays, Inbox, LayoutDashboard, MessageCircle, UserPen, Users } from 'lucide-react';
+import { SideNav } from '@/components/ui/SideNav';
 
 const LINKS = [
-	{ href: '/dashboard', label: 'Riepilogo', icon: LayoutDashboard },
-	{ href: '/leads', label: 'Richieste', icon: Inbox },
-	{ href: '/profile-editor', label: 'Profilo', icon: UserPen }
-];
+	{ href: '/dashboard', label: 'Riepilogo', icon: LayoutDashboard, badge: null },
+	{ href: '/studenti', label: 'Studenti', icon: Users, badge: null },
+	{ href: '/calendario', label: 'Calendario', icon: CalendarDays, badge: 'proposals' },
+	{ href: '/messaggi', label: 'Messaggi', icon: MessageCircle, badge: 'unread' },
+	{ href: '/leads', label: 'Richieste', icon: Inbox, badge: 'requests' },
+	{ href: '/profile-editor', label: 'Profilo', icon: UserPen, badge: null }
+] as const;
 
-/** The tutor area's sections; before a profile exists, only the editor. */
-export function TutorNav({ hasProfile }: { hasProfile: boolean }) {
-	const pathname = usePathname();
-	const links = hasProfile ? LINKS : [{ href: '/profile-editor', label: 'Crea il profilo', icon: UserPen }];
-	return (
-		<nav aria-label="Area tutor" className="flex gap-1 rounded-xl border border-edge bg-surface p-1">
-			{links.map(({ href, label, icon: Icon }) => {
-				const active = pathname === href;
-				return (
-					<Link key={href} href={href} aria-current={active ? 'page' : undefined} className={cn('inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors', active ? 'bg-accent text-white' : 'text-fg-muted hover:bg-surface-3')}>
-						<Icon className="size-4" aria-hidden="true" />
-						{label}
-					</Link>
-				);
-			})}
-		</nav>
-	);
+export interface TutorBadges {
+	unread: number;
+	proposals: number;
+	requests: number;
+}
+
+/** The tutor area's sections, with the number of what waits for an answer. Before a profile exists, only the editor. */
+export function TutorNav({ hasProfile, badges }: { hasProfile: boolean; badges?: TutorBadges }) {
+	const items = hasProfile
+		? LINKS.map(({ badge, ...link }) => ({ ...link, count: badge && badges ? badges[badge] : 0 }))
+		: [{ href: '/profile-editor', label: 'Crea il profilo', icon: UserPen }];
+	return <SideNav label="Area tutor" items={items} />;
 }

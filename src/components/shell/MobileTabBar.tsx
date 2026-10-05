@@ -31,7 +31,7 @@ export function MobileTabBar() {
 	const closeMenu = useCallback(() => setMenuOpen(false), []);
 	const { user, openModal } = useAuth();
 	const account = accountUrl(user);
-	const accountActive = ['/account', '/subscription', '/admin', '/richieste', '/dashboard', '/leads', '/profile-editor'].some((p) => pathname.startsWith(p));
+	const accountActive = ['/account', '/subscription', '/admin', '/richieste', '/il-mio-tutor', '/dashboard', '/leads', '/profile-editor', '/studenti', '/calendario', '/messaggi'].some((p) => pathname.startsWith(p));
 	const diario = { href: DIARIO_ROOT, label: 'Diario', icon: NotebookPen, active: pathname === DIARIO_ROOT || pathname.startsWith('/errori') };
 	const tabs = [
 		app || user ? diario : { href: '/', label: 'Home', icon: House, active: pathname === '/' },

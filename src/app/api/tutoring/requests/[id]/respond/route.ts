@@ -2,6 +2,7 @@ import { currentUser } from '@/lib/server/auth';
 import { getOwnTutor, respondToRequest, userEmail } from '@/lib/server/tutoring-admin';
 import { mailRequestAcceptedToStudent, mailRequestAcceptedToTutor, mailRequestDeclined } from '@/lib/server/tutoring-mail';
 import { fail, guarded, isUuid, json, readJson } from '@/lib/server/http';
+import { linkFromRequest } from '@/lib/server/tutor-agenda';
 
 /**
  * The tutor answers a pending request. On acceptance both sides receive the
@@ -25,6 +26,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 		const tutorEmail = tutor.contact_email ?? user.email ?? null;
 		const studentEmail = row.contact_email ?? (await userEmail(row.student_id));
 		if (action === 'accept') {
+			// The student joins the tutor's list (vault/Prodotti/Tutor/Agenda tutor.md); nothing is shared until they say so.
+			await linkFromRequest(tutor.id, row);
 			await Promise.all([mailRequestAcceptedToStudent(studentEmail, tutor, row, origin), mailRequestAcceptedToTutor(tutorEmail, tutor.first_name, row, origin)]);
 		} else {
 			await mailRequestDeclined(studentEmail, tutor.first_name, row, origin);

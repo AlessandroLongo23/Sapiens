@@ -21,5 +21,6 @@ Niente. Gli [[Esercizi]] della biblioteca sono la materia prima.
 Un sistema che valuta i risultati dell'apprendimento è ad alto rischio per l'AI Act. Anche con il docente che decide servono documentazione, supervisione umana e registrazione degli eventi. Vedi [[AI Act]].
 
 ## Domande aperte
+- La verifica fatta a schermo, con il resto del computer bloccato e la correzione immediata delle risposte multiple: vedi [[Verifiche digitali in modalità bloccata]] (idea del 4 ottobre 2026).
 - Correzione di compiti scritti a mano: scansione e riconoscimento della scrittura?
 - Un piano per il singolo docente prima dell'adozione della scuola (vedi [[Docente]])?

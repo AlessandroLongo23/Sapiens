@@ -113,3 +113,11 @@ export function mailRequestDeclined(to: string | null, tutorFirstName: string, r
 		<p style="margin:0"><a href="${esc(origin)}/ripetizioni?materia=${encodeURIComponent(req.subject)}&livello=${encodeURIComponent(req.level)}" style="color:#e11d48">Trova un altro tutor</a></p>`;
 	return send(to, `La richiesta a ${tutorFirstName} non è andata a buon fine`, layout('Richiesta non accettata', body));
 }
+
+/** A notice of the agenda (a lesson asked, answered, an assignment): one paragraph and a link, never contacts. */
+export function mailAgenda(to: string | null, subject: string, title: string, text: string, link: { href: string; label: string }): Promise<void> {
+	const body = `
+		<p style="margin:0 0 16px;color:#3f3f46">${esc(text)}</p>
+		<p style="margin:0"><a href="${esc(link.href)}" style="color:#e11d48">${esc(link.label)}</a></p>`;
+	return send(to, subject, layout(title, body));
+}

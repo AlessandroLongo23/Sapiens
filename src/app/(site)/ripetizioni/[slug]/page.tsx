@@ -5,9 +5,13 @@ import { ArrowLeft, BadgeCheck, Clock, GraduationCap, MapPin, Monitor } from 'lu
 import { SITE_NAME, TUTORING_ROOT } from '@/lib/config/site';
 import { metadataOr404, pageMetadata } from '@/lib/seo/page-metadata';
 import { getTutorBySlug } from '@/lib/server/tutoring';
+import { getAvailability, tutorReviews } from '@/lib/server/tutor-agenda';
+import { Availability } from '@/components/tutoring/agenda/Availability';
+import { Reviews } from '@/components/tutoring/agenda/Reviews';
 import { formatRate, levelName, subjectName, tutorDisplayName, whereLine } from '@/lib/tutoring/config';
 import { Breadcrumb, HOME_CRUMB, TUTORING_CRUMB } from '@/components/content/Breadcrumb';
 import { Page } from '@/components/content/PageHeader';
+import { buttonClass } from '@/components/ui/Button';
 import { TutorAvatar } from '@/components/tutoring/TutorAvatar';
 import { RequestForm } from '@/components/tutoring/RequestForm';
 
@@ -44,6 +48,7 @@ export default async function TutorPage(props: Params) {
 	const tutor = await load(props);
 	const name = tutorDisplayName(tutor);
 	const rate = formatRate(tutor.hourly_rate);
+	const [slots, reviews] = await Promise.all([getAvailability(tutor.id), tutorReviews(tutor.id)]);
 	const onlineOnly = tutor.modes.includes('online') && !tutor.modes.includes('in_person');
 	const Where = onlineOnly ? Monitor : MapPin;
 	const paragraphs = tutor.bio.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
@@ -88,6 +93,7 @@ export default async function TutorPage(props: Params) {
 									<span className="ml-1 text-sm text-fg-subtle">prezzo indicativo, da concordare con il tutor</span>
 								</p>
 							)}
+							<a href="#chiedi-aiuto" className={buttonClass('primary', 'md', 'lg:hidden')}>Chiedi aiuto a {tutor.first_name}</a>
 						</div>
 					</header>
 					<section aria-labelledby="materie" className="space-y-3">
@@ -107,12 +113,14 @@ export default async function TutorPage(props: Params) {
 							</div>
 						</section>
 					)}
+					<Availability slots={slots} />
+					<Reviews reviews={reviews} />
 					<Link href={TUTORING_ROOT} className="inline-flex items-center gap-2 text-sm text-fg-muted transition-colors hover:text-accent-fg">
 						<ArrowLeft className="size-4" aria-hidden="true" />
 						Tutti i tutor
 					</Link>
 				</article>
-				<aside className="space-y-4 rounded-2xl border border-edge bg-surface p-5 sm:p-6 lg:sticky lg:top-6" aria-labelledby="chiedi-aiuto">
+				<aside className="scroll-mt-6 space-y-4 rounded-2xl border border-edge bg-surface p-5 sm:p-6 lg:sticky lg:top-6" aria-labelledby="chiedi-aiuto">
 					<div>
 						<h2 id="chiedi-aiuto" className="text-xl font-semibold text-fg">Chiedi aiuto a {name}</h2>
 						<p className="mt-1 text-sm text-fg-muted">Il tutor riceve il messaggio, non i tuoi contatti, e ha 48 ore per accettare.</p>
