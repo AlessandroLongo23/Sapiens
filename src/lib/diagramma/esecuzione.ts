@@ -23,6 +23,8 @@ export type Run = {
 	/** The line walked to get here, as `from-branch`. */
 	taken: string | null;
 	waiting: boolean;
+	/** Why the value typed for a "leggi" was not taken. */
+	refused: string | null;
 	done: boolean;
 	error: string | null;
 	variables: Record<string, Value>;
@@ -39,7 +41,7 @@ export type Run = {
 export const MAX_STEPS = 2000;
 
 export function startRun(): Run {
-	return { at: 0, taken: null, waiting: false, done: false, error: null, variables: {}, reads: [], written: null, output: [], event: { kind: 'start' }, asked: 0, steps: 0 };
+	return { at: 0, taken: null, waiting: false, refused: null, done: false, error: null, variables: {}, reads: [], written: null, output: [], event: { kind: 'start' }, asked: 0, steps: 0 };
 }
 
 export const canAdvance = (run: Run) => !run.done && !run.error;
@@ -50,8 +52,11 @@ export function advance(chart: Chart, run: Run, typed = ''): Run {
 	const here = chart.nodes[run.at];
 	if (run.waiting) {
 		if (here.stmt?.kind !== 'input' || !typed.trim()) return run;
-		const value = readValue(typed);
-		return { ...run, waiting: false, variables: { ...run.variables, [here.stmt.name]: value }, written: here.stmt.name, event: { kind: 'input', name: here.stmt.name, value }, asked: run.asked + 1 };
+		const value = here.stmt.type === 'str' ? typed.trim() : readValue(typed);
+		const wanted = here.stmt.type === 'int' ? 'un numero intero' : 'un numero';
+		// a "leggi" that asks for a number does not take anything else: the student types again
+		if (here.stmt.type && here.stmt.type !== 'str' && (typeof value !== 'number' || (here.stmt.type === 'int' && !Number.isInteger(value)))) return { ...run, refused: `${here.stmt.name} vuole ${wanted}` };
+		return { ...run, refused: null, waiting: false, variables: { ...run.variables, [here.stmt.name]: value }, written: here.stmt.name, event: { kind: 'input', name: here.stmt.name, value }, asked: run.asked + 1 };
 	}
 	const branch = here.shape === 'decision' ? (run.event.kind === 'cond' && run.event.value ? 'yes' : 'no') : 'next';
 	const node = chart.nodes[here[branch]!];
@@ -91,7 +96,7 @@ export function runAll(chart: Chart, inputs: string[]): Run {
 	while (canAdvance(run)) {
 		if (run.waiting && run.asked >= inputs.length) return { ...run, error: 'mancano dei valori da leggere' };
 		const next = advance(chart, run, run.waiting ? inputs[run.asked] : '');
-		if (next === run) return { ...run, error: 'un valore da leggere è vuoto' };
+		if (next === run || next.refused) return { ...run, error: next.refused ?? 'un valore da leggere è vuoto' };
 		run = next;
 	}
 	return run;

@@ -257,6 +257,15 @@ scrivi s
   sinistra e "no" a destra; una selezione a una via e un ciclo tengono "sì" sotto il rombo e portano "no" a destra;
   il ciclo risale a sinistra.
 - Non ci sono salti: ogni diagramma che si può scrivere ha un programma in Python e in C++ che fa lo stesso.
+- `leggi x: intero`, `: decimale` o `: testo` dice che cosa si legge, e un valore di altro tipo viene chiesto di
+  nuovo. Senza, si legge un numero quando quello che è scritto lo è, altrimenti un testo.
+- Accanto al diagramma c'è il suo programma in Python e in C++, scritto dalla pagina: la riga del blocco in corso è
+  accesa. Il tipo di ogni variabile, che il C++ vuole, è dedotto dai valori che prende (e per un "leggi" dal tipo
+  dichiarato o dal valore di `% ingresso:`). Controlla che il codice generato sia quello che la lezione mostra nei
+  blocchi `codice`: se differisce per un tipo, dichiaralo nel `leggi`.
+- Con "Modifica" lo studente cambia il diagramma: aggiunge un blocco in un punto, riscrive o elimina un blocco, e il
+  codice segue. `% modifica: sì` apre il diagramma già pronto da modificare, per un esercizio che chiede di
+  costruirlo; in quel caso il programma può essere vuoto, o avere una selezione o un ciclo ancora senza corpo.
 - `scripts/lezioni/check.mts` legge ogni blocco e lo esegue con i valori di `% ingresso:`: un diagramma che non si
   legge, che si ferma per un errore o che non finisce entro 2000 passi è un errore della lezione.
 

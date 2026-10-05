@@ -11,7 +11,7 @@ export type Value = number | string | boolean;
 
 export type Token = { kind: 'number' | 'text' | 'name' | 'operator' | 'word' | 'open' | 'close'; text: string };
 
-export type Expr = { kind: 'value'; value: Value } | { kind: 'name'; name: string } | { kind: 'unary'; operator: '-' | 'non'; operand: Expr } | { kind: 'binary'; operator: string; left: Expr; right: Expr };
+export type Expr = { kind: 'value'; value: Value; decimal?: boolean } | { kind: 'name'; name: string } | { kind: 'unary'; operator: '-' | 'non'; operand: Expr } | { kind: 'binary'; operator: string; left: Expr; right: Expr };
 
 /** A mistake in a chart, in words for whoever is reading it. */
 export class ChartError extends Error {}
@@ -78,7 +78,7 @@ export function parseExpression(tokens: Token[]): Expr {
 	const primary = (): Expr => {
 		const token = tokens[at++] as Token | undefined;
 		if (!token) throw new ChartError("l'espressione è incompleta");
-		if (token.kind === 'number') return { kind: 'value', value: Number(token.text) };
+		if (token.kind === 'number') return token.text.includes('.') ? { kind: 'value', value: Number(token.text), decimal: true } : { kind: 'value', value: Number(token.text) };
 		if (token.kind === 'text') return { kind: 'value', value: token.text };
 		if (token.kind === 'name') return { kind: 'name', name: token.text };
 		if (token.kind === 'word' && (token.text === 'vero' || token.text === 'falso')) return { kind: 'value', value: token.text === 'vero' };
@@ -247,6 +247,21 @@ export function showExpression(tokens: Token[], variables?: Record<string, Value
 		else parts.push({ text: space + text });
 	});
 	return parts;
+}
+
+const WRITTEN: Record<string, string> = { e: 'E', o: 'O', non: 'NON' };
+
+/** The expression as it is written in a block of a lesson, from its tokens: what `tokenize` reads back the same. */
+export function sourceOf(tokens: Token[]): string {
+	let sign = false;
+	return tokens
+		.map((token, i) => {
+			const before = tokens[i - 1];
+			const space = before && before.kind !== 'open' && token.kind !== 'close' && !sign ? ' ' : '';
+			sign = token.kind === 'operator' && token.text === '-' && (!before || before.kind === 'operator' || before.kind === 'word' || before.kind === 'open');
+			return space + (token.kind === 'text' ? `"${token.text}"` : token.kind === 'word' ? (WRITTEN[token.text] ?? token.text) : token.text);
+		})
+		.join('');
 }
 
 export const textOf = (parts: Part[]) => parts.map((p) => p.text).join('');

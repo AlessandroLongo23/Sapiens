@@ -1,5 +1,6 @@
 import { labelOf, type Stmt } from './blocco';
 import { textOf, type Part } from './espressione';
+import { inside, placeOf } from './modifica';
 
 /**
  * The drawing of a flowchart: its blocks, where each one sits, and the lines between them. The program is
@@ -15,16 +16,20 @@ export type Branch = 'next' | 'yes' | 'no';
 type Point = [number, number];
 
 /** `x` is the centre of the block, `y` its top. */
-export type ChartNode = { id: number; shape: Shape; x: number; y: number; w: number; h: number; label: Part[]; stmt: Stmt | null; next?: number; yes?: number; no?: number };
+export type ChartNode = { id: number; shape: Shape; x: number; y: number; w: number; h: number; label: Part[]; stmt: Stmt | null; place?: string; next?: number; yes?: number; no?: number };
 export type EdgeLabel = { text: string; x: number; y: number; anchor: 'start' | 'end' };
 /** `arrows` are the points of the line that carry an arrowhead, coming from the point before. */
 export type ChartEdge = { from: number; branch: Branch; to: number; points: Point[]; arrows: number[]; label?: EdgeLabel };
-export type Chart = { nodes: ChartNode[]; edges: ChartEdge[]; width: number; height: number };
+/** A gap where a block can be added, on a chart that is being changed. `place` is as in modifica.ts. */
+export type ChartSlot = { place: string; x: number; y: number };
+export type Chart = { nodes: ChartNode[]; edges: ChartEdge[]; slots: ChartSlot[]; width: number; height: number };
 
 /** A line that has left its block and not yet reached the next one. */
 type Dangling = { from: number; branch: Branch; points: Point[]; arrows: number[]; label?: EdgeLabel };
 
 const GAP = 28;
+/** Between two blocks of a chart that is being changed, where the button that adds a block sits. */
+const EDIT_GAP = 46;
 const PAD = 12;
 const AROUND = 28;
 /** The width of a character of the labels (14 px, see .flowchart in globals.css): an estimate, on the wide side. */
@@ -75,9 +80,12 @@ function extent(stmts: Stmt[]): { left: number; right: number } {
 	return { left, right };
 }
 
-export function buildChart(program: Stmt[]): Chart {
+/** `edit` draws the chart to be changed: more room between the blocks, and a gap to add a block wherever one can go. */
+export function buildChart(program: Stmt[], edit = false): Chart {
 	const nodes: ChartNode[] = [];
 	const edges: ChartEdge[] = [];
+	const slots: ChartSlot[] = [];
+	const gap = edit ? EDIT_GAP : GAP;
 
 	const add = (shape: Shape, label: Part[], stmt: Stmt | null, x: number, y: number): ChartNode => {
 		const node: ChartNode = { id: nodes.length, shape, x, y, label, stmt, ...sizeOf(shape, label) };
@@ -93,12 +101,14 @@ export function buildChart(program: Stmt[]): Chart {
 		}
 	};
 
-	const place = (stmts: Stmt[], x: number, top: number, arriving: Dangling[]): { y: number; out: Dangling[] } => {
+	const place = (stmts: Stmt[], x: number, top: number, arriving: Dangling[], key: string): { y: number; out: Dangling[] } => {
 		let y = top;
 		let incoming = arriving;
-		for (const stmt of stmts) {
-			y += GAP;
+		for (const [index, stmt] of stmts.entries()) {
+			if (edit) slots.push({ place: placeOf(key, index), x, y: y + gap / 2 });
+			y += gap;
 			const node = add(shapeOf(stmt), labelOf(stmt), stmt, x, y);
+			node.place = placeOf(key, index);
 			arrive(incoming, node);
 			const bottom = y + node.h;
 			if (stmt.kind !== 'if' && stmt.kind !== 'while') {
@@ -108,7 +118,7 @@ export function buildChart(program: Stmt[]): Chart {
 			}
 			const dw = node.w / 2;
 			const cy = y + node.h / 2;
-			const down: Dangling = { from: node.id, branch: 'yes', points: [[x, bottom]], arrows: [], label: { text: 'sì', x: x + 7, y: bottom + 15, anchor: 'start' } };
+			const down: Dangling = { from: node.id, branch: 'yes', points: [[x, bottom]], arrows: [], label: { text: 'sì', x: x + (edit ? 15 : 7), y: bottom + 15, anchor: 'start' } };
 			const aside = (r: number, to: number): Dangling => ({
 				from: node.id,
 				branch: 'no',
@@ -123,9 +133,9 @@ export function buildChart(program: Stmt[]): Chart {
 			});
 			if (stmt.kind === 'while') {
 				const body = extent(stmt.body);
-				const inner = place(stmt.body, x, bottom, [down]);
+				const inner = place(stmt.body, x, bottom, [down], inside(key, index, 'b'));
 				const left = x - Math.max(body.left, dw) - AROUND;
-				const join = y - GAP / 2;
+				const join = y - (edit ? 9 : GAP / 2);
 				// the way back: under the body, up the left side, and into the line that enters the condition
 				for (const line of inner.out) {
 					line.points.push([x, inner.y + 14], [left, inner.y + 14], [left, join], [x, join]);
@@ -136,7 +146,7 @@ export function buildChart(program: Stmt[]): Chart {
 				incoming = [aside(Math.max(body.right, dw) + AROUND, y)];
 			} else if (!stmt.else) {
 				const body = extent(stmt.then);
-				const inner = place(stmt.then, x, bottom, [down]);
+				const inner = place(stmt.then, x, bottom, [down], inside(key, index, 't'));
 				y = inner.y + 14;
 				incoming = [...inner.out, aside(Math.max(body.right, dw) + AROUND, y)];
 			} else {
@@ -161,13 +171,18 @@ export function buildChart(program: Stmt[]): Chart {
 					arrows: [],
 					label: { text: 'no', x: x + dw + 5, y: cy - 6, anchor: 'start' }
 				};
-				const then = place(stmt.then, x - off.left, cy + 8, [yes]);
-				const otherwise = place(stmt.else, x + off.right, cy + 8, [no]);
-				y = Math.max(then.y, otherwise.y) + 18;
+				const then = place(stmt.then, x - off.left, cy + 8, [yes], inside(key, index, 't'));
+				const otherwise = place(stmt.else, x + off.right, cy + 8, [no], inside(key, index, 'e'));
+				y = Math.max(then.y, otherwise.y, bottom - 4) + 18;
 				for (const line of then.out) line.points.push([x - off.left, y], [x, y]);
 				for (const line of otherwise.out) line.points.push([x + off.right, y], [x, y]);
 				incoming = [...then.out, ...otherwise.out];
 			}
+		}
+		// after the last block of the run there is room for one more
+		if (edit) {
+			slots.push({ place: placeOf(key, stmts.length), x, y: y + gap / 2 });
+			y += gap;
 		}
 		return { y, out: incoming };
 	};
@@ -175,10 +190,10 @@ export function buildChart(program: Stmt[]): Chart {
 	const reach = extent(program);
 	const x = Math.round(Math.max(reach.left, 42) + PAD);
 	const start = add('terminal', [{ text: 'inizio' }], null, x, PAD);
-	const body = place(program, x, PAD + start.h, [{ from: start.id, branch: 'next', points: [[x, PAD + start.h]], arrows: [] }]);
-	const end = add('terminal', [{ text: 'fine' }], null, x, body.y + GAP);
+	const body = place(program, x, PAD + start.h, [{ from: start.id, branch: 'next', points: [[x, PAD + start.h]], arrows: [] }], '');
+	const end = add('terminal', [{ text: 'fine' }], null, x, body.y + (edit ? 0 : GAP));
 	arrive(body.out, end);
-	return { nodes, edges, width: Math.round(x + Math.max(reach.right, 42) + PAD), height: end.y + end.h + PAD };
+	return { nodes, edges, slots, width: Math.round(x + Math.max(reach.right, 42) + PAD), height: end.y + end.h + PAD };
 }
 
 const escape = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -209,19 +224,28 @@ function line(edge: ChartEdge, taken: boolean): string {
 	return `<g class="fc-line${taken ? ' fc-taken' : ''}" data-edge="${edge.from}-${edge.branch}"><polyline class="fc-edge" points="${edge.points.map((p) => p.join(',')).join(' ')}"/>${heads}${label}</g>`;
 }
 
-export type ChartMark = { at?: number; taken?: string | null; wrong?: boolean };
+/** `picked` is the place of the block, or of the gap, that is being changed (modifica.ts). */
+export type ChartMark = { at?: number; taken?: string | null; wrong?: boolean; picked?: { kind: 'block' | 'slot'; place: string } | null };
 
 /**
  * The chart as SVG, the same on the server (the lesson as it is published, and printed) and in the page while the
- * chart runs: `at` is the block the run is on, `taken` the line it came by.
+ * chart runs: `at` is the block the run is on, `taken` the line it came by. A chart built to be changed has its
+ * blocks and its gaps as buttons, which the page listens to (components/diagramma/LessonChart.tsx).
  */
 export function chartSvg(chart: Chart, alt: string, mark: ChartMark = {}): string {
 	const key = (edge: ChartEdge) => `${edge.from}-${edge.branch}`;
+	const edit = chart.slots.length > 0;
 	const lines = [...chart.edges].sort((a, b) => Number(key(a) === mark.taken) - Number(key(b) === mark.taken)).map((edge) => line(edge, key(edge) === mark.taken));
 	const blocks = chart.nodes.map((node) => {
 		const text = node.label.map((part) => (part.name ? `<tspan font-style="italic">${escape(part.text)}</tspan>` : escape(part.text))).join('');
 		const on = node.id === mark.at ? (mark.wrong ? ' fc-on fc-wrong' : ' fc-on') : '';
-		return `<g class="fc-node fc-${node.shape}${on}" data-node="${node.id}">${shape(node)}<text x="${node.x}" y="${node.y + node.h / 2}" text-anchor="middle" dominant-baseline="central">${text}</text></g>`;
+		const picked = mark.picked?.kind === 'block' && mark.picked.place === node.place;
+		const button = edit && node.place ? ` data-place="${node.place}" role="button" tabindex="0" aria-pressed="${picked}" aria-label="Modifica il blocco ${escape(textOf(node.label))}"` : '';
+		return `<g class="fc-node fc-${node.shape}${on}${picked ? ' fc-picked' : ''}" data-node="${node.id}"${button}>${shape(node)}<text x="${node.x}" y="${node.y + node.h / 2}" text-anchor="middle" dominant-baseline="central">${text}</text></g>`;
 	});
-	return `<svg class="flowchart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chart.width} ${chart.height}" width="${chart.width}" height="${chart.height}" role="img" aria-label="${escape(alt)}">${lines.join('')}${blocks.join('')}</svg>`;
+	const slots = chart.slots.map((slot) => {
+		const picked = mark.picked?.kind === 'slot' && mark.picked.place === slot.place;
+		return `<g class="fc-slot${picked ? ' fc-picked' : ''}" data-slot="${slot.place}" role="button" tabindex="0" aria-pressed="${picked}" aria-label="Aggiungi un blocco qui"><circle cx="${slot.x}" cy="${slot.y}" r="10"/><path d="M${slot.x - 5},${slot.y}h10M${slot.x},${slot.y - 5}v10"/></g>`;
+	});
+	return `<svg class="flowchart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chart.width} ${chart.height}" width="${chart.width}" height="${chart.height}" role="img" aria-label="${escape(alt)}">${lines.join('')}${blocks.join('')}${slots.join('')}</svg>`;
 }

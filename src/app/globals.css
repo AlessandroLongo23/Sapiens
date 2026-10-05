@@ -1013,6 +1013,41 @@ body {
 .flowchart .fc-taken .fc-head {
 	fill: var(--accent);
 }
+.flowchart [role='button'] {
+	cursor: pointer;
+	outline: none;
+}
+.flowchart .fc-node[role='button']:hover .fc-shape,
+.flowchart .fc-node[role='button']:focus-visible .fc-shape {
+	stroke: var(--fg-strong);
+	stroke-width: 2.5;
+}
+.flowchart .fc-picked .fc-shape {
+	stroke: var(--accent);
+	stroke-width: 3;
+}
+.flowchart .fc-slot circle {
+	fill: var(--surface);
+	stroke: var(--edge-strong);
+	stroke-width: 1.5;
+}
+.flowchart .fc-slot path {
+	fill: none;
+	stroke: var(--fg-muted);
+	stroke-width: 1.8;
+	stroke-linecap: round;
+}
+.flowchart .fc-slot:hover circle,
+.flowchart .fc-slot:focus-visible circle,
+.flowchart .fc-slot.fc-picked circle {
+	fill: var(--accent);
+	stroke: var(--accent);
+}
+.flowchart .fc-slot:hover path,
+.flowchart .fc-slot:focus-visible path,
+.flowchart .fc-slot.fc-picked path {
+	stroke: #fff;
+}
 .flowchart .fc-taken .fc-label {
 	fill: var(--accent-fg);
 	font-weight: 600;

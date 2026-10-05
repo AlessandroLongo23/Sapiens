@@ -85,3 +85,11 @@ leggi d
 q = 10 / d
 scrivi q
 ```
+
+## Da costruire
+
+```diagramma
+% nome: prova-da-costruire
+% alt: Un diagramma di flusso vuoto, da costruire
+% modifica: sì
+```

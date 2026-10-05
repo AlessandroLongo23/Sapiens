@@ -2,9 +2,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createJiti } from 'jiti';
+import { loadPyodide } from 'pyodide';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
-const { parseChartBlock, labelOf } = await jiti.import('../../src/lib/diagramma/blocco.ts');
+const { parseChartBlock, parseProgram, programText, labelOf } = await jiti.import('../../src/lib/diagramma/blocco.ts');
+const { codeOf, codeText, typesOf } = await jiti.import('../../src/lib/diagramma/codice.ts');
+const { blockAt, insertBlock, newBlock, removeBlock, replaceBlock, rewriteBlock } = await jiti.import('../../src/lib/diagramma/modifica.ts');
 const { buildChart, chartSvg } = await jiti.import('../../src/lib/diagramma/disegno.ts');
 const { advance, runAll, startRun, MAX_STEPS } = await jiti.import('../../src/lib/diagramma/esecuzione.ts');
 const { evaluate, parseExpression, readValue, showExpression, showValue, textOf, tokenize } = await jiti.import('../../src/lib/diagramma/espressione.ts');
@@ -168,4 +171,147 @@ test('the drawing marks the block of the run and the line it came by, and escape
 	assert.equal(svg.match(/fc-on/g).length, 1);
 	assert.match(svg, /class="fc-line fc-taken" data-edge="0-next"/);
 	assert.match(svg, /<tspan font-style="italic">x<\/tspan> ← 1/);
+});
+
+const programOf = (lines) => parseProgram(lines.join('\n'), true).program;
+const code = (lines, language, samples) => codeText(codeOf(programOf(lines), language, samples));
+
+test('a "leggi" can say what it takes, and refuses the rest', () => {
+	const chart = buildChart(programOf(['leggi n: intero', 'leggi nome: testo', 'scrivi nome, n']));
+	let run = advance(chart, startRun());
+	const refused = advance(chart, run, '2,5');
+	assert.equal(refused.waiting, true);
+	assert.match(refused.refused, /n vuole un numero intero/);
+	run = advance(chart, advance(chart, refused, '2'));
+	assert.equal(run.refused, null);
+	// a text stays a text, even when it reads as a number
+	run = advance(chart, run, '12');
+	assert.equal(run.variables.nome, '12');
+	assert.match(read(['leggi n: lungo']).errors[0], /intero, decimale o testo/);
+	assert.match(runAll(chart, ['x', 'y']).error, /numero intero/);
+});
+
+test('a chart is written back as the lines it was read from', () => {
+	const lines = ['leggi n: intero', 's = 0', 'finché n != 0 E NON (s > 100)', '    se n % 2 == 0', '        s = s + -n * 2.5', '    altrimenti', '        scrivi "dispari", n', '    leggi n', 'scrivi s'];
+	const text = programText(programOf(lines));
+	assert.equal(text, lines.join('\n') + '\n');
+	// a body with nothing in it yet is read back loosely
+	const empty = programOf(['se x > 0', 'altrimenti', 'finché x > 0']);
+	assert.deepEqual([empty[0].then, empty[0].else, empty[1].body], [[], [], []]);
+	assert.equal(programText(empty), 'se x > 0\naltrimenti\nfinché x > 0\n');
+	assert.match(read(['finché x > 0']).errors[0], /servono delle istruzioni rientrate/);
+	assert.equal(parseChartBlock('% nome: a\n% alt: b\n% modifica: sì').block.edit, true);
+});
+
+test('a block is added, rewritten and removed where its place says', () => {
+	const program = programOf(['leggi n', 'finché n > 0', '    se n > 5', '        scrivi "grande"', '    n = n - 1']);
+	const added = insertBlock(program, '1b.0t:1', programOf(['scrivi n'])[0]);
+	assert.equal(programText(added), 'leggi n\nfinché n > 0\n    se n > 5\n        scrivi "grande"\n        scrivi n\n    n = n - 1\n');
+	// the program given is left as it was
+	assert.equal(program[1].body[0].then.length, 1);
+	assert.equal(blockAt(added, '1b.0t:1').kind, 'output');
+	assert.equal(blockAt(added, '1b.0e:0'), null);
+	const loop = rewriteBlock(blockAt(program, ':1'), 'finché n >= 1');
+	assert.equal(loop.error, null);
+	assert.equal(programText(replaceBlock(program, ':1', loop.stmt)).split('\n')[1], 'finché n >= 1');
+	assert.equal(loop.stmt.body.length, 2);
+	assert.match(rewriteBlock(blockAt(program, ':1'), 'finché n >').error, /incompleta/);
+	assert.equal(programText(removeBlock(program, '1b:0')), 'leggi n\nfinché n > 0\n    n = n - 1\n');
+	assert.equal(programText(insertBlock([], ':0', newBlock('while', []))), 'finché x > 0\n');
+	// a new block starts from the names the chart has
+	assert.equal(programText([newBlock('input', program)]), 'leggi x\n');
+	assert.equal(programText([newBlock('output', program)]), 'scrivi n\n');
+});
+
+test('the gaps of a chart being changed are where a block can go', () => {
+	const chart = buildChart(programOf(['leggi n', 'se n > 0', 'altrimenti', 'finché n > 0']), true);
+	assert.deepEqual(chart.slots.map((slot) => slot.place).sort(), [':0', ':1', ':2', ':3', '1e:0', '1t:0', '2b:0'].sort());
+	assert.equal(chart.nodes.find((node) => node.shape === 'data').place, ':0');
+	const svg = chartSvg(chart, 'x', { picked: { kind: 'slot', place: '2b:0' } });
+	assert.match(svg, /class="fc-slot fc-picked" data-slot="2b:0"/);
+	assert.match(svg, /data-place=":1" role="button"/);
+	assert.equal(buildChart(programOf(['leggi n'])).slots.length, 0);
+	// a chart with empty branches still runs
+	assert.equal(runAll(buildChart(programOf(['leggi n', 'se n > 0', 'altrimenti', 'finché n > 3', 'scrivi n'])), ['2']).output[0], '2');
+});
+
+test('the chart is written in Python', () => {
+	assert.equal(
+		code(['leggi n', 's = 0', 'finché n != 0 E NON (s > 100)', '    se n % 2 == 0', '        s = s + n // 2', '    altrimenti', '        scrivi "dispari", n', '    leggi n', 'scrivi s, vero'], 'python'),
+		['n = int(input())', 's = 0', 'while n != 0 and not s > 100:', '    if n % 2 == 0:', '        s = s + n // 2', '    else:', '        print("dispari", n)', '    n = int(input())', 'print(s, True)', ''].join('\n')
+	);
+	assert.equal(code(['se x > 0', 'finché x > 0'], 'python'), 'if x > 0:\n    pass\nwhile x > 0:\n    pass\n');
+	assert.equal(code(['x = (a + b) * -(c - 1) - (d - e)'], 'python'), 'x = (a + b) * -(c - 1) - (d - e)\n');
+	assert.equal(code(['leggi nome', 'se nome == "Anna"', '    scrivi "ciao"'], 'python').split('\n')[0], 'nome = input()');
+	assert.equal(code(['leggi p'], 'python', ['2.5']), 'p = float(input())\n');
+	assert.equal(code([], 'python'), '\n');
+});
+
+test('the chart is written in C++, with a type for every variable', () => {
+	assert.deepEqual(typesOf(programOf(['leggi n', 'leggi nome: testo', 'm = n / 2', 'k = n // 2', 'ok = n > 0', 't = 0', 'finché n > 0', '    t = t + m'])), { n: 'int', nome: 'str', m: 'float', k: 'int', ok: 'bool', t: 'float' });
+	assert.equal(
+		code(['leggi n', 's = 0', 'finché n > 0 O NON (s == 0)', '    q = n / 2', '    se q > 1.5', '        s = s + n', '    n = n - 1', 'scrivi "Somma:", s, n + 1'], 'cpp'),
+		[
+			'#include <iostream>',
+			'using namespace std;',
+			'',
+			'int main() {',
+			'    double q;',
+			'    int n;',
+			'    cin >> n;',
+			'    int s = 0;',
+			'    while (n > 0 || !(s == 0)) {',
+			'        q = (double) n / 2;',
+			'        if (q > 1.5) {',
+			'            s = s + n;',
+			'        }',
+			'        n = n - 1;',
+			'    }',
+			'    cout << "Somma:" << " " << s << " " << n + 1 << endl;',
+			'    return 0;',
+			'}',
+			''
+		].join('\n')
+	);
+	const text = code(['leggi nome', 'leggi x', 'scrivi nome == "Anna", x % 2', 'se x > 0', 'altrimenti'], 'cpp', ['Anna', '2,5']);
+	assert.match(text, /#include <string>\n#include <cmath>/);
+	assert.match(text, /string nome;\n    cin >> nome;\n    double x;/);
+	assert.match(text, /cout << \(nome == "Anna"\) << " " << fmod\(x, 2\) << endl;/);
+	assert.match(text, /if \(x > 0\) {\n    } else {\n    }/);
+});
+
+test('each line of the code knows its block', () => {
+	const program = programOf(['leggi n', 'finché n > 0', '    n = n - 1']);
+	const lines = codeOf(program, 'cpp');
+	assert.equal(lines.find((line) => line.text.includes('while')).stmt, program[1]);
+	assert.equal(lines.find((line) => line.text.includes('cin')).stmt, program[0]);
+	assert.equal(lines.find((line) => line.text === '    int n;').stmt, undefined);
+	assert.equal(codeOf(program, 'python')[2].stmt, program[1].body[0]);
+});
+
+test('the Python written from a chart prints what the chart prints', async () => {
+	const pyodide = await loadPyodide();
+	const cases = [
+		[['leggi n', 's = 0', 'i = 1', 'finché i <= n', '    s = s + i', '    i = i + 1', 'scrivi "Somma:", s'], ['10']],
+		[['leggi n', 'finché n > 0', '    se n % 3 == 0 O n == 7', '        scrivi n, "sì"', '    altrimenti', '        se NON (n > 4) E n != 2', '            scrivi n, -n // 2, -n % 3', '    n = n - 1', 'scrivi "via!"'], ['9']],
+		[
+			['leggi nome', 'leggi anni', 'se nome == "Anna" E anni >= 18', '    scrivi "ciao " + nome', 'altrimenti', '    scrivi (anni + 2) * 3 - (anni - 1)'],
+			['Anna', '15']
+		]
+	];
+	for (const [lines, inputs] of cases) {
+		const program = programOf(lines);
+		const expected = runAll(buildChart(program), inputs);
+		assert.equal(expected.error, null);
+		const printed = [];
+		const typed = [...inputs];
+		pyodide.setStdin({ stdin: () => typed.shift() });
+		pyodide.setStdout({ batched: (line) => printed.push(line) });
+		pyodide.runPython(codeText(codeOf(program, 'python', inputs)));
+		// the chart writes the minus of a negative number as a typographic sign
+		assert.deepEqual(
+			printed,
+			expected.output.map((line) => line.replaceAll('−', '-'))
+		);
+	}
 });
