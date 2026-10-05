@@ -55,33 +55,16 @@ In Python `range(1, 6)` elenca i valori che `i` prende, da $1$ compreso a $6$ es
 
 I due programmi hanno lo stesso diagramma di flusso, perché il computer fa gli stessi passi nello stesso ordine: cambia solo il modo di scriverli.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-contare-da-uno-a-cinque
 % alt: Diagramma di flusso di un ciclo con contatore: dopo l'inizio, i prende il valore 1; un rombo chiede se i è minore o uguale a 5; il ramo sì scende a scrivi i e poi a i prende i più 1, da cui una freccia risale sul lato sinistro fino a sopra il rombo; il ramo no esce a destra e scende alla fine
-% svg: diagramma-flusso-contare-da-uno-a-cinque-d2f82b93.svg 186x317
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\node[azione] (parti) at (0,-1.1) {$i \leftarrow 1$};
-\scelta{0}{-2.9}{$i \leq 5$?}
-\dati{0}{-4.4}{scrivi $i$}
-\node[azione] (passo) at (0,-5.6) {$i \leftarrow i + 1$};
-\node[estremo] (fine) at (0,-7.6) {fine};
-\draw[freccia] (inizio) -- (parti);
-\draw[freccia] (parti) -- (0,-2.3);
-\draw[freccia] (0,-3.5) -- node[right, font=\footnotesize] {sì} (0,-4.05);
-\draw[freccia] (0,-4.75) -- (passo);
-\draw[freccia] (passo.south) -- (0,-6.3) -- (-2.4,-6.3) -- (-2.4,-1.9) -- (0,-1.9);
-\draw[freccia] (1.6,-2.9) -- node[above, font=\footnotesize] {no} (2.4,-2.9) -- (2.4,-6.8) -- (0,-6.8) -- (fine);
-\end{tikzpicture}
+i = 1
+finché i <= 5
+    scrivi i
+    i = i + 1
 ```
+
+Eseguilo un blocco alla volta: il rettangolo $i \leftarrow i + 1$ è il passo. Il codice accanto al diagramma è scritto con `while`, cioè nel primo dei due modi, con il passo in una riga sua.
 
 Nel `for` il passo non si vede dentro il corpo, ma viene eseguito lo stesso, dopo l'ultima istruzione del corpo e prima del nuovo controllo. Cambia il $6$ in $11$ in Python, o il $5$ in $10$ in C++, e i giri diventano dieci.
 
@@ -135,38 +118,17 @@ Un giro in più o in meno
 
 "Noto in partenza" non vuol dire scritto nel programma: il numero dei giri deve essere noto quando il ciclo comincia. Questo programma legge $n$ e somma i numeri da $1$ a $n$: a ogni giro aggiunge a `s` il valore del contatore.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-somma-da-uno-a-n
 % alt: Diagramma di flusso: dopo l'inizio si legge n, poi s prende il valore 0 e i prende il valore 1; un rombo chiede se i è minore o uguale a n; il ramo sì scende a s prende s più i e poi a i prende i più 1, da cui una freccia risale sul lato sinistro fino a sopra il rombo; il ramo no esce a destra e scende a scrivi s e alla fine
-% svg: diagramma-flusso-somma-da-uno-a-n-09d1a41c.svg 186x438
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.1}{leggi $n$}
-\node[azione] (zero) at (0,-2.2) {$s \leftarrow 0$};
-\node[azione] (parti) at (0,-3.3) {$i \leftarrow 1$};
-\scelta{0}{-5.1}{$i \leq n$?}
-\node[azione] (somma) at (0,-6.6) {$s \leftarrow s + i$};
-\node[azione] (passo) at (0,-7.7) {$i \leftarrow i + 1$};
-\dati{0}{-9.6}{scrivi $s$}
-\node[estremo] (fine) at (0,-10.8) {fine};
-\draw[freccia] (inizio) -- (0,-0.75);
-\draw[freccia] (0,-1.45) -- (zero);
-\draw[freccia] (zero) -- (parti);
-\draw[freccia] (parti) -- (0,-4.5);
-\draw[freccia] (0,-5.7) -- node[right, font=\footnotesize] {sì} (somma);
-\draw[freccia] (somma) -- (passo);
-\draw[freccia] (passo.south) -- (0,-8.4) -- (-2.4,-8.4) -- (-2.4,-4.1) -- (0,-4.1);
-\draw[freccia] (1.6,-5.1) -- node[above, font=\footnotesize] {no} (2.4,-5.1) -- (2.4,-8.9) -- (0,-8.9) -- (0,-9.25);
-\draw[freccia] (0,-9.95) -- (fine);
-\end{tikzpicture}
+% ingresso: 4
+leggi n
+s = 0
+i = 1
+finché i <= n
+    s = s + i
+    i = i + 1
+scrivi s
 ```
 
 ```codice python
@@ -194,7 +156,7 @@ int main() {
 }
 ```
 
-Questa è la tabella di traccia con $n = 4$: una riga per giro, con il valore del contatore e quello di `s` prima e dopo.
+Segui il diagramma con "Passo" e $n = 4$, e confronta i valori della tabella accanto con questa tabella di traccia: una riga per giro, con il valore del contatore e quello di `s` prima e dopo.
 
 | Giro | `i` | `s` prima | `s` dopo |
 |---|---|---|---|

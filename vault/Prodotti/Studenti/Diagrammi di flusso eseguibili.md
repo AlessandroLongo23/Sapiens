@@ -1,5 +1,5 @@
 ---
-stato: in sviluppo
+stato: in produzione
 release:
 aggiornato: 2026-10-05
 tag: [prodotto]
@@ -9,7 +9,7 @@ tag: [prodotto]
 Nelle lezioni di programmazione il diagramma di flusso si esegue un blocco alla volta, con la tabella delle variabili accanto.
 
 ## Stato attuale
-Costruito il 5 ottobre 2026 su proposta di Alessandro, in due passi (esecuzione, poi modifica e codice), sul `master` locale: non è in produzione.
+Costruito il 5 ottobre 2026 su proposta di Alessandro, in due passi (esecuzione, poi modifica e codice). In produzione dalla sera del 5 ottobre (PR #37).
 
 - Un blocco `diagramma` in una lezione contiene un programma di poche righe (`leggi`, `scrivi`, assegnamento, `se` con `altrimenti`, `finché`). La pagina lo disegna con le quattro forme dei libri e lo esegue. La sintassi è in `docs/lezioni/README.md`, sezione "Il diagramma di flusso da eseguire".
 - Comandi: "Esegui" (va avanti da solo e si ferma a ogni "leggi"), "Passo", "Indietro", "Ricomincia".
@@ -26,7 +26,8 @@ Costruito il 5 ottobre 2026 su proposta di Alessandro, in due passi (esecuzione,
 - Le modifiche dello studente non si salvano: ricaricando la pagina torna il diagramma della lezione.
 - Il disegno è calcolato dal programma, nessuno posiziona i blocchi. La pagina pubblicata lo contiene già come SVG, per la stampa e per chi non ha JavaScript.
 - L'esecuzione è un interprete scritto da noi (`src/lib/diagramma/`), senza `eval`: il contenuto di un blocco non arriva mai al JavaScript della pagina.
-- Le cinque lezioni di programmazione hanno i loro dodici diagrammi in questa forma nei file di `docs/lezioni/informatica/riscritte/`. In produzione ci sono ancora le figure in TikZ: le lezioni si ripubblicano dopo il deploy del codice, altrimenti il sito mostrerebbe il blocco come testo.
+- Le cinque lezioni di programmazione usano il blocco e sono pubblicate: dodici diagrammi da eseguire e uno da costruire ("Pari o dispari", in fondo a "I diagrammi di flusso"). Il testo dice cosa fare con ogni diagramma. Nei due esercizi in cui il programma va scritto guardando il diagramma, il codice accanto è tolto con `% codice: no`.
+- Sul sito vero è stato eseguito fino in fondo il primo diagramma di ognuna delle cinque pagine, su Chromium.
 - Prove: `tests/unit/diagramma.test.mjs` (21, una esegue con Pyodide il Python generato e lo confronta con il diagramma), `tests/e2e/diagramma.spec.ts` (10, solo Chromium in sviluppo, con il mouse). Il C++ generato è stato compilato a mano su quattro programmi, con la stessa uscita del diagramma; non c'è una prova automatica. Lo script di controllo delle lezioni esegue ogni diagramma con i valori di `% ingresso:`.
 
 Codice: `src/lib/diagramma/` (`espressione.ts`, `blocco.ts`, `disegno.ts`, `esecuzione.ts`, `modifica.ts`, `codice.ts`), `src/components/diagramma/LessonChart.tsx`, `src/lib/utils/chart-figure.ts`.
@@ -46,6 +47,8 @@ Quello che manca dell'idea, non deciso:
 
 ## Domande aperte
 - Le figure in TikZ comparivano in Google Immagini; un SVG nel testo no. Da decidere se conta.
+- Nella pagina di una lezione la colonna del testo è stretta (circa 650 px con indice e Sapiens AI aperti): al diagramma restano circa 350 px, e quelli più larghi scorrono di lato dentro il loro riquadro. Da decidere se sotto una certa larghezza della colonna il codice deve andare sotto il diagramma.
+- Un diagramma costruito dallo studente non ha una verifica automatica, come ce l'hanno i programmi con "Verifica".
 - Non provato su Safari, Firefox e su un telefono vero. Il trascinamento con il dito non è stato provato: su un blocco il dito trascina il blocco e non fa scorrere la pagina.
 - Trascinare un blocco fuori dal diagramma non lo elimina: lo fa solo il cestino. Alessandro aveva indicato tutti e due i modi, preferendo il cestino.
 - I tipi dedotti per il C++ possono non essere quelli che lo studente si aspetta (una variabile che parte da 0 e poi prende un decimale è `double` dall'inizio). Da guardare con Andrea.

@@ -19,35 +19,17 @@ Il negozio dell'inizio toglie $10$ euro a chi ne spende almeno $50$. Il programm
 
 Nel diagramma di flusso la condizione sta nel rombo, da cui escono due frecce, una per il sì e una per il no. Qui il ramo del no non contiene niente e scende dritto al punto in cui i due rami si riuniscono.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-sconto-una-via
 % alt: Diagramma di flusso della selezione a una via: dopo l'inizio si legge la spesa; un rombo chiede se la spesa è maggiore o uguale a 50; il ramo sì porta a scrivere "sconto di 10 euro" e a togliere 10 dalla spesa; il ramo no scende dritto; i due rami si riuniscono prima di scrivere la spesa e della fine
-% svg: diagramma-flusso-sconto-una-via-47b158b7.svg 296x339
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi $\mathit{spesa}$}
-\scelta{0}{-2.6}{$\mathit{spesa} \geq 50$?}
-\draw[thick, fill=orange!20] (2.05,-4.35) -- (6.05,-4.35) -- (5.75,-3.65) -- (1.75,-3.65) -- cycle; \node[testo] at (3.9,-4.0) {scrivi ``sconto di 10 euro''};
-\node[azione] (togli) at (3.9,-5.2) {$\mathit{spesa} \leftarrow \mathit{spesa} - 10$};
-\dati{0}{-7.0}{scrivi $\mathit{spesa}$}
-\node[estremo] (fine) at (0,-8.2) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (0,-2.0);
-\draw[freccia] (1.6,-2.6) -| node[pos=0.25, above, font=\footnotesize] {sì} (3.9,-3.65);
-\draw[freccia] (3.9,-4.35) -- (togli.north);
-\draw[freccia] (togli.south) |- (0,-6.1);
-\draw[freccia] (0,-3.2) -- node[pos=0.12, right, font=\footnotesize] {no} (0,-6.65);
-\draw[freccia] (0,-7.35) -- (fine.north);
-\end{tikzpicture}
+% ingresso: 80
+leggi spesa
+se spesa >= 50
+    spesa = spesa - 10
+scrivi spesa
 ```
+
+Esegui il diagramma con $80$ e poi con $30$, un blocco alla volta. Arrivato al rombo, la frase accanto riscrive la condizione con il numero al posto del nome, e nella tabella è segnata la variabile che si sta confrontando: così vedi perché si prende un ramo o l'altro.
 
 Nel programma la prima riga legge un numero intero dalla tastiera e lo mette nella variabile `spesa`, l'ultima scrive il risultato; in mezzo c'è la selezione, che comincia con la parola `if` ("se") seguita dalla condizione.
 
@@ -108,31 +90,15 @@ Spesso c'è qualcosa da fare anche quando la risposta è no. Un esame è superat
 
 Nel diagramma i due rami del rombo hanno ciascuno il proprio blocco e si riuniscono prima della fine.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-promosso-due-vie
 % alt: Diagramma di flusso della selezione a due vie: dopo l'inizio si legge il voto; un rombo chiede se il voto è maggiore o uguale a 6; il ramo sì porta a scrivere "promosso", il ramo no a scrivere "bocciato"; i due rami si riuniscono alla fine
-% svg: diagramma-flusso-promosso-due-vie-23904509.svg 334x229
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi $\mathit{voto}$}
-\scelta{0}{-2.6}{$\mathit{voto} \geq 6$?}
-\dati{-2.7}{-4.0}{scrivi ``promosso''}
-\dati{2.7}{-4.0}{scrivi ``bocciato''}
-\node[estremo] (fine) at (0,-5.3) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (0,-2.0);
-\draw[freccia] (-1.6,-2.6) -| node[pos=0.25, above, font=\footnotesize] {sì} (-2.7,-3.65);
-\draw[freccia] (1.6,-2.6) -| node[pos=0.25, above, font=\footnotesize] {no} (2.7,-3.65);
-\draw[freccia] (-2.7,-4.35) |- (fine.west);
-\draw[freccia] (2.7,-4.35) |- (fine.east);
-\end{tikzpicture}
+% ingresso: 7
+leggi voto
+se voto >= 6
+    scrivi "promosso"
+altrimenti
+    scrivi "bocciato"
 ```
 
 ```codice python
@@ -161,6 +127,8 @@ int main() {
     return 0;
 }
 ```
+
+Prova il diagramma con $6$, il valore di confine: la condizione diventa "6 ≥ 6", che è vera.
 
 In Python `else` si scrive allineato all'`if`, seguito dai due punti, e il suo blocco è rientrato come l'altro; in C++ sta tra la graffa che chiude il primo blocco e quella che apre il secondo. Esegui il programma con $8$, con $4$ e con $6$. Poi aggiungi una seconda istruzione al blocco dell'`else`, per esempio la scritta "ripassa e riprova", e controlla che compaia solo con i voti insufficienti. È la stessa scelta che nel foglio di calcolo fa la funzione `SE`, che hai incontrato in [Condizioni e funzioni logiche](/materiale/scuola-superiore/informatica/il-foglio-di-calcolo/condizioni-e-funzioni-logiche): una condizione, che cosa scrivere se è vera, che cosa scrivere se è falsa.
 
