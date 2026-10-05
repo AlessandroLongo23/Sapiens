@@ -225,10 +225,11 @@ function line(edge: ChartEdge, taken: boolean): string {
 }
 
 /**
- * `picked` is the place (modifica.ts) of the block that is being written or moved. `gaps` shows where a block can
+ * `picked` is the place (modifica.ts) of the block that is being written or moved; `writing` the one whose text
+ * the page is showing as fields, so the drawing leaves it out. `gaps` shows where a block can
  * go, while one is being carried or has been chosen, and `hot` is the gap it would land in.
  */
-export type ChartMark = { at?: number; taken?: string | null; wrong?: boolean; picked?: string | null; gaps?: boolean; hot?: string | null };
+export type ChartMark = { at?: number; taken?: string | null; wrong?: boolean; picked?: string | null; writing?: string | null; gaps?: boolean; hot?: string | null };
 
 /**
  * The chart as SVG, the same on the server (the lesson as it is published, and printed) and in the page while the
@@ -244,7 +245,7 @@ export function chartSvg(chart: Chart, alt: string, mark: ChartMark = {}): strin
 		const on = node.id === mark.at ? (mark.wrong ? ' fc-on fc-wrong' : ' fc-on') : '';
 		const picked = mark.picked !== undefined && mark.picked === node.place;
 		const button = edit && node.place ? ` data-place="${node.place}" role="button" tabindex="0" aria-label="Modifica il blocco ${escape(textOf(node.label))}"` : '';
-		return `<g class="fc-node fc-${node.shape}${on}${picked ? ' fc-picked' : ''}" data-node="${node.id}"${button}>${shape(node)}<text x="${node.x}" y="${node.y + node.h / 2}" text-anchor="middle" dominant-baseline="central">${text}</text></g>`;
+		return `<g class="fc-node fc-${node.shape}${on}${picked ? ' fc-picked' : ''}${mark.writing != null && mark.writing === node.place ? ' fc-writing' : ''}" data-node="${node.id}"${button}>${shape(node)}<text x="${node.x}" y="${node.y + node.h / 2}" text-anchor="middle" dominant-baseline="central">${text}</text></g>`;
 	});
 	const gaps = !mark.gaps
 		? []

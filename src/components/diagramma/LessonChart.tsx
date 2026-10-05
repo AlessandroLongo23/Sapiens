@@ -67,7 +67,8 @@ const KINDS: Record<BlockKind, { shape: Shape; text: string }> = {
 	while: { shape: 'decision', text: 'ciclo' }
 };
 
-const WRITE = 'min-w-0 rounded border-0 border-b border-edge-strong bg-transparent px-0.5 text-center text-sm text-fg-strong outline-none focus:border-accent';
+/** A field of a block being written: the text of the block itself, with a line under it and nothing around. */
+const WRITE = 'min-w-0 appearance-none rounded-none border-0 border-b-2 border-fg-faint bg-transparent p-0 text-center text-sm leading-5 text-fg-strong shadow-none !outline-none !ring-0 focus:border-accent';
 
 /**
  * A block being written, in its place on the chart: the fields stand where its text was. What is typed becomes the
@@ -106,7 +107,7 @@ function BlockEditor({ stmt, node, onChange, onDone }: { stmt: Stmt; node: Chart
 			autoCapitalize="off"
 			spellCheck={false}
 			className={cn(WRITE, stmt.kind === 'input' || (stmt.kind === 'assign' && which === 'first') ? 'italic' : '')}
-			style={{ width: `${Math.max(value.length + 1, 3)}ch` }}
+			style={{ width: `${Math.max(value.length, 2) + 0.5}ch` }}
 		/>
 	);
 	const pressed = (event: KeyboardEvent) => {
@@ -121,7 +122,7 @@ function BlockEditor({ stmt, node, onChange, onDone }: { stmt: Stmt; node: Chart
 
 	return (
 		<div ref={box} data-editor={stmt.kind} onKeyDown={pressed} onBlur={left} onPointerDown={(event) => event.stopPropagation()} className="absolute z-10 -translate-x-1/2 -translate-y-1/2" style={{ left: node.x, top: node.y + node.h / 2 }}>
-			<div className="flex items-baseline gap-1.5 whitespace-nowrap rounded-lg border-2 border-accent bg-surface px-2 py-1 text-sm text-fg-strong shadow-paper">
+			<div className="flex items-baseline gap-1 whitespace-nowrap text-sm text-fg-strong">
 				{stmt.kind === 'input' && <span>leggi</span>}
 				{stmt.kind === 'output' && <span>scrivi</span>}
 				{field(first, setFirst, 'first', { input: 'Variabile da leggere', assign: 'Variabile', output: 'Cosa scrivere', if: 'Condizione', while: 'Condizione' }[stmt.kind])}
@@ -130,7 +131,7 @@ function BlockEditor({ stmt, node, onChange, onDone }: { stmt: Stmt; node: Chart
 				{(stmt.kind === 'if' || stmt.kind === 'while') && <span aria-hidden="true">?</span>}
 			</div>
 			{(error || stmt.kind === 'input' || stmt.kind === 'if') && (
-				<div className="absolute left-1/2 top-full mt-1 flex w-max max-w-64 -translate-x-1/2 flex-col gap-1 rounded-lg border border-edge bg-surface px-2 py-1.5 text-xs text-fg-muted shadow-paper">
+				<div className="absolute left-1/2 flex w-max max-w-64 -translate-x-1/2 flex-col gap-1 rounded-lg border border-edge bg-surface px-2 py-1.5 text-xs text-fg-muted shadow-paper" style={{ top: `calc(50% + ${node.h / 2 + 8}px)` }}>
 					{stmt.kind === 'input' && (
 						<label className="flex items-center gap-1.5">
 							si legge
@@ -153,7 +154,7 @@ function BlockEditor({ stmt, node, onChange, onDone }: { stmt: Stmt; node: Chart
 					)}
 					{stmt.kind === 'if' && (
 						<label className="flex items-center gap-1.5">
-							<input type="checkbox" checked={stmt.else !== null} onChange={(event) => onChange({ ...stmt, else: event.target.checked ? [] : null })} className="size-3.5 accent-[var(--accent)]" />
+							<input type="checkbox" checked={stmt.else !== null} onChange={(event) => onChange({ ...stmt, else: event.target.checked ? [] : null })} className="size-3.5" style={{ accentColor: 'var(--accent)' }} />
 							con il ramo «no»
 						</label>
 					)}
@@ -440,7 +441,7 @@ function Chart({ block }: { block: ChartBlock }) {
 	};
 
 	const names = Object.keys(run.variables);
-	const svg = chartSvg(chart, block.alt, editing ? { picked: carried?.from ?? written, gaps: Boolean(carried || armed), hot } : { at: run.at, taken: run.taken, wrong: Boolean(run.error) });
+	const svg = chartSvg(chart, block.alt, editing ? { picked: carried?.from ?? written, writing: written, gaps: Boolean(carried || armed), hot } : { at: run.at, taken: run.taken, wrong: Boolean(run.error) });
 
 	return (
 		<section className="not-prose overflow-hidden rounded-xl border border-edge bg-surface shadow-paper" aria-label={editing ? 'Diagramma di flusso da modificare' : 'Diagramma di flusso da eseguire'} data-editing={editing || undefined}>

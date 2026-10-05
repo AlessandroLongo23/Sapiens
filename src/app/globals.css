@@ -1034,6 +1034,10 @@ body {
 .flowchart .fc-node[data-place] {
 	touch-action: none;
 }
+/* The text of a block being written is shown by the fields the page lays over it. */
+.flowchart .fc-writing text {
+	visibility: hidden;
+}
 .flowchart .fc-slot circle {
 	fill: var(--surface);
 	stroke: var(--edge-strong);
