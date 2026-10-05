@@ -15,7 +15,7 @@
 import { parseProgram } from '../../diagramma/blocco';
 import { buildChart } from '../../diagramma/disegno';
 import type { ChoiceAnswer, ChoiceOption, Rng, Sample } from './types';
-import { chartAnswer, chartOption, choose, lines, output, plain, shuffle, textOption, writtenOption, wrongPrograms, type Built } from './inf-programmi';
+import { chartAnswer, chartOption, choose, lines, needing, output, plain, shuffle, structure, textOption, writtenOption, wrongPrograms, type Built } from './inf-programmi';
 
 export type Structure = 'sequenza' | 'selezione' | 'iterazione';
 
@@ -971,7 +971,7 @@ export function buildLevel(rng: Rng, a: Algo, prefer: string[] = [], problem = a
 		solution: `Un diagramma che ${a.task}.`,
 		steps: [a.idea, BUILDING[a.structure], `Poi prova il diagramma: ${tried(a)}.`],
 		solutionChart: a.source,
-		answer: chartAnswer(a.source, a.tests),
+		answer: needing(chartAnswer(a.source, a.tests), ...structure(a.source)),
 		choice: choose(rng, chartOption(a.source), mistakes(a, prefer).map(chartOption)),
 		params: paramsOf(a)
 	};

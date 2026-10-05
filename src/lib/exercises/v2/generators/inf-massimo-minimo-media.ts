@@ -11,7 +11,7 @@
  * maximum or of the minimum; 6. write the program for a sequence closed by a value.
  */
 import type { Rng, Sample } from '../types';
-import { chartAnswer, codeOption, codes, lines, makeGenerator, output, plain, programAnswer, textOption, writtenOption, type Built } from '../inf-programmi';
+import { chartAnswer, codeOption, codes, lines, makeGenerator, needing, output, plain, programAnswer, textOption, writtenOption, type Built } from '../inf-programmi';
 import { counted, distinct, fits, forCodes, forOption, inside, listed, options, Retry, retrying, wrongOnes, type Count } from '../inf-iter';
 
 export const ID = 'inf-massimo-minimo-media';
@@ -316,7 +316,7 @@ function level5(rng: Rng): Built {
 			],
 			solutionChart: source,
 			solutionCode: forCodes(source, tests[0]),
-			answer: chartAnswer(source, tests),
+			answer: needing(chartAnswer(source, tests), 'ciclo'),
 			choice: options(
 				rng,
 				forOption(source, tests[0]),
@@ -351,7 +351,7 @@ function level6(rng: Rng): Built {
 			candidates.filter((w) => fits(codes(w, tests[0]))),
 			tests
 		).slice(0, 3);
-		const asked = programAnswer(source, tests, sums ? '' : `leggi ${x.v}\n`);
+		const asked = needing(programAnswer(source, tests, sums ? '' : `leggi ${x.v}\n`), 'ciclo');
 		const what = sums ? 'la loro somma e, sulla riga dopo, quanti sono' : x.best[which];
 		return {
 			prompt: 'Scrivi il programma.',

@@ -8,7 +8,7 @@
  * is written on one line, with a mark on the indented lines (v2/inf-alg.ts).
  */
 import type { Rng } from '../types';
-import { chartAnswer, chartOption, choose, makeGenerator, output, shuffle, textOption, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, choose, makeGenerator, needing, output, shuffle, structure, textOption, type Built } from '../inf-programmi';
 import { byAdding, cheaper, countdown, delivery, discount, divisible, euclid, firstTest, fizz, given, goal, halvings, mistakes, multiples, paramsOf, passes, quiz, repeat, said, savings, sound, sumTo, threshold, writtenChoice, type Algo } from '../inf-alg';
 
 export const ID = 'inf-pseudocodice';
@@ -277,7 +277,7 @@ function level6(rng: Rng): Built {
 			'Scrivendo dentro un blocco, ≤ si batte <=, ≠ si batte !=, e il confronto di uguaglianza vuole due segni, ==.'
 		],
 		solutionChart: a.source,
-		answer: chartAnswer(a.source, a.tests),
+		answer: needing(chartAnswer(a.source, a.tests), ...structure(a.source)),
 		choice: choose(rng, chartOption(a.source), mistakes(a, ['parola nel giro', 'scrive nel ramo', 'il no fuori dal ramo', 'selezione', 'senza altrimenti']).map(chartOption)),
 		params: paramsOf(a)
 	};

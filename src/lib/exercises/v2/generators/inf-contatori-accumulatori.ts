@@ -10,7 +10,7 @@
  * mistakes of the lesson writes; 5. build the flowchart of a total; 6. write the program that counts or adds up.
  */
 import type { Rng, Sample } from '../types';
-import { chartAnswer, chartOption, lines, makeGenerator, output, plain, programAnswer, writtenOption, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, lines, makeGenerator, needing, output, plain, programAnswer, writtenOption, type Built } from '../inf-programmi';
 import { counted, fits, forCodes, forOption, inside, listed, options, Retry, retrying, wrongOnes, type Count } from '../inf-iter';
 
 export const ID = 'inf-contatori-accumulatori';
@@ -333,7 +333,7 @@ function level5(rng: Rng): Built {
 				'La scrittura del risultato va dopo il ciclo, sul ramo "no" del rombo: dentro il giro scriverebbe un risultato parziale a ogni giro.'
 			],
 			solutionChart: t.source,
-			answer: chartAnswer(t.source, t.tests),
+			answer: needing(chartAnswer(t.source, t.tests), 'ciclo'),
 			choice: options(rng, chartOption(t.source), wrong.map(chartOption)),
 			params: { case: t.kind, source: t.source, tests: t.tests }
 		};
@@ -367,7 +367,7 @@ function level6(rng: Rng): Built {
 				`Scrivi ${name} dopo il ciclo.`
 			],
 			solutionCode: forCodes(source, tests[0]),
-			answer: { ...programAnswer(source, tests, 'leggi n\n'), solution: forCodes(source, tests[0]) },
+			answer: needing({ ...programAnswer(source, tests, 'leggi n\n'), solution: forCodes(source, tests[0]) }, 'ciclo'),
 			choice: options(
 				rng,
 				forOption(source, tests[0]),

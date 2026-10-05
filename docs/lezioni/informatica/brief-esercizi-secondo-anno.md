@@ -88,6 +88,13 @@ da eseguire"). Da lì `inf-programmi.ts` ricava il diagramma, il programma in Py
   lezioni 52-64 hanno sia "costruisci il diagramma" (dove la lezione ha un diagramma) sia "scrivi il programma".
 - **Le prove di una risposta aperta.** Almeno due, su ingressi diversi che fanno percorrere rami diversi; un
   programma che non legge niente ha due prove uguali. Gli ingressi stanno in `params.tests`.
+- **Di che cosa è fatta la risposta.** Correggere solo l'uscita lascia passare un `for` dove la consegna chiede un
+  `while`, e sei `print` in fila dove serviva un ciclo. Un livello aperto dichiara i costrutti che la risposta deve
+  contenere: `needing(chartAnswer(…), 'ciclo')`, `'selezione'`, e per un programma anche `'while'` o `'for'` quando
+  la consegna lo nomina; `...structure(source)` chiede i cicli e le selezioni della soluzione, per chi traduce
+  (dallo pseudocodice, dai salti, dai blocchi). Non si chiede un costrutto dove una risposta giusta può farne a
+  meno (una selezione dentro un ciclo che cerca il massimo si può scrivere con `max`). Un livello sui cicli legge
+  il numero a cui si ferma e ha due prove con numeri diversi.
 - **I distrattori che sono programmi** devono essere davvero sbagliati: `wrongPrograms` tiene solo quelli che sulle
   prove scrivono altro dal giusto. Prepara più errori di quanti ne servono (almeno cinque), ognuno un errore diverso
   che uno studente fa.

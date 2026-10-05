@@ -10,7 +10,7 @@
  * flowchart of a program; 5. build the flowchart; 6. write the program.
  */
 import type { Rng } from '../types';
-import { chartAnswer, chartOption, choose, codeOption, codes, makeGenerator, output, programAnswer, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, choose, codeOption, codes, makeGenerator, needing, output, programAnswer, type Built } from '../inf-programmi';
 import { QUESTION_WIDTH, chartWidth, chartable, fits, followed, larger, mistakes, oneWay, paramsOf, parity, program, reading, said, sound, tariff, tt, twoWay, writtenChoice, type Sel } from '../inf-sel';
 
 export const ID = 'inf-selezione-due-vie';
@@ -125,7 +125,7 @@ function level5(rng: Rng): Built {
 		solution: `Un diagramma con la lettura, un rombo con la condizione ${tt(s.conds[0])} e le istruzioni sui rami giusti.`,
 		steps: reasons(s, 'diagramma'),
 		solutionChart: s.source,
-		answer: chartAnswer(s.source, s.tests),
+		answer: needing(chartAnswer(s.source, s.tests), 'selezione'),
 		// four charts where they fit a phone, four programs where the texts on the branches make the charts too wide
 		choice: chartable(s)
 			? choose(rng, chartOption(s.source), mistakes(rng, s, 3, fits).map(chartOption))
@@ -146,7 +146,7 @@ function level6(rng: Rng): Built {
 		solution: `Un programma con la selezione sulla condizione ${tt(s.conds[0])}.`,
 		steps: reasons(s, 'programma'),
 		solutionCode: codes(s.source, s.tests[0]),
-		answer: programAnswer(s.source, s.tests, program(s.reads, [])),
+		answer: needing(programAnswer(s.source, s.tests, program(s.reads, [])), 'selezione'),
 		choice: choose(
 			rng,
 			codeOption(s.source, s.tests[0]),

@@ -49,7 +49,11 @@ sono in `types.ts`. I generatori delle lezioni di programmazione di informatica 
 sola, nel linguaggio dei blocchi `diagramma`, e ne ricavano diagramma, codice in Python e in C++ e prove:
 `src/lib/exercises/v2/inf-programmi.ts`, con `inf-ciclo-while` come riferimento e il brief in
 `docs/lezioni/informatica/brief-esercizi-secondo-anno.md`. Il controllo indipendente esegue ogni programma con
-Python (`checkers/_inf_programmi.py`). I livelli a risposta aperta di questo tipo si dichiarano in `runAnswers`
+Python (`checkers/_inf_programmi.py`). Una risposta aperta si corregge su quello che scrive e poi, dove il livello
+lo dichiara con `needs` (`needing(…, 'ciclo')`, `'selezione'`, `'while'`, `'for'`), su quello di cui è fatta: il
+server cerca il costrutto nel diagramma o nel codice consegnato (`v2/costrutti.ts`) e, se manca, dà sbagliato con
+un messaggio suo. Chi nomina un costrutto nella consegna ("Usa un ciclo while") lo dichiara, e un livello sui cicli
+legge i suoi numeri, così l'uscita non si batte a mano. I livelli a risposta aperta di questo tipo si dichiarano in `runAnswers`
 (`v2/open-answers.ts`). Un esercizio si guarda e si prova, in sviluppo, a
 `/prova-grafico/esercizio?g=<id>&l=<livello>&seed=<seed>` (con `&open=1` a risposta aperta); `review.mts` e
 `width.mts` valgono solo per i campioni in LaTeX.

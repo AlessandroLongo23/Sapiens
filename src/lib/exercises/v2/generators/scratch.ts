@@ -9,7 +9,7 @@
  * not prevent; 4. from the blocks to the chart; 5. build the chart of a program made of blocks.
  */
 import type { Rng } from '../types';
-import { chartAnswer, chartOption, choose, makeGenerator, output, shuffle, textOption, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, choose, makeGenerator, needing, output, shuffle, structure, textOption, type Built } from '../inf-programmi';
 import { countdown, firstTest, given, goal, idOption, mistakes, multiples, paramsOf, quiz, repeat, said, savings, sound, statementLevel, sumDown, sumTo, unlock, writtenChoice, type Algo, type Statement } from '../inf-alg';
 
 export const ID = 'scratch';
@@ -222,7 +222,7 @@ function level5(rng: Rng): Built {
 		solution: 'Un diagramma con gli stessi passi nello stesso ordine, e con dentro il giro o il ramo i blocchi che stavano dentro la C.',
 		steps: [words, how(a), `Poi prova il diagramma: ${first.length ? `${given(first)} deve scrivere` : 'eseguito, deve scrivere'} ${said(output(a.source, first)!)}.`],
 		solutionChart: a.source,
-		answer: chartAnswer(a.source, a.tests),
+		answer: needing(chartAnswer(a.source, a.tests), ...structure(a.source)),
 		choice: choose(rng, chartOption(a.source), mistakes(a, FROM_BLOCKS).map(chartOption)),
 		params: paramsOf(a, { blocks: a.blocks })
 	};

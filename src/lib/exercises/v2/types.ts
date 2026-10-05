@@ -98,6 +98,12 @@ export type SetAnswer = {
 };
 
 /**
+ * What an answer that is a chart or a program must contain, beyond writing the right things (v2/costrutti.ts): a
+ * loop of any kind, a selection, or the loop of a given kind where the exercise names it. A chart has no `for`.
+ */
+export type Construct = 'ciclo' | 'selezione' | 'while' | 'for';
+
+/**
  * A flowchart to build. The student's chart is run on each test's `inputs` (what its "leggi" take, in order) and
  * must write `output`, line by line. `solution` is a chart that does, and `start` what the student begins from
  * (nothing, when left out); both are written as the program of a `diagramma` block.
@@ -107,6 +113,7 @@ export type ChartAnswer = {
 	solution: string;
 	start?: string;
 	tests: { inputs: string[]; output: string[] }[];
+	needs?: Construct[];
 };
 
 /**
@@ -118,6 +125,7 @@ export type ProgramAnswer = {
 	solution: CodeText;
 	start: CodeText;
 	tests: { input: string; output: string }[];
+	needs?: Construct[];
 };
 
 export type Answer = ChoiceAnswer | NumberAnswer | ExpressionAnswer | SetAnswer | ChartAnswer | ProgramAnswer;

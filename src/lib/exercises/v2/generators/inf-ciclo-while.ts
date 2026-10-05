@@ -8,9 +8,13 @@
  *
  * 1. what a program writes; 2. how many times the body runs; 3. the program of a flowchart; 4. the flowchart of
  * a program; 5. build the flowchart; 6. write the program.
+ *
+ * In the two open levels the loop reads the number it stops at (`asked`), and is tried on two of them: what it
+ * writes cannot be typed by hand, one line after the other. The answer must also have a loop, and in level 6 a
+ * `while`, which is what the exercise names (v2/costrutti.ts).
  */
 import type { Rng } from '../types';
-import { chartAnswer, chartOption, choose, codeOption, codes, lines, makeGenerator, output, plain, programAnswer, textOption, writtenOption, wrongPrograms, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, choose, codeOption, codes, lines, makeGenerator, needing, output, plain, programAnswer, textOption, writtenOption, wrongPrograms, type Built } from '../inf-programmi';
 
 export const ID = 'inf-ciclo-while';
 
@@ -80,6 +84,55 @@ function loop(rng: Rng): Loop {
 		return climb(start, start + step * rng.int(2, 4), step);
 	}
 	return sum(rng.int(4, 7));
+}
+
+/** A loop of the same family that reads the number it stops at: what the open levels ask for. */
+interface Asked {
+	task: string;
+	source: string;
+	wrong: string[];
+	/** Two runs, on different numbers. */
+	tests: number[][];
+}
+
+function asked(l: Loop): Asked {
+	const { step } = l;
+	if (l.family === 'rovescia') {
+		const make = (cond: string, body: string[], after = ['scrivi "via"']) => lines('leggi n', `finché ${cond}`, ...body.map((row) => `    ${row}`), ...after);
+		const move = `n = n - ${step}`;
+		return {
+			task: `legge un numero n e scrive i numeri da n in giù${step > 1 ? `, di ${step} in ${step},` : ''} finché restano maggiori di zero, e poi scrive "via"`,
+			source: make('n > 0', ['scrivi n', move]),
+			wrong: [make('n >= 0', ['scrivi n', move]), make('n > 0', [move, 'scrivi n']), make('n > 0', ['scrivi n', `n = n - ${step + 1}`]), make('n > 0', ['scrivi n', move, 'scrivi "via"'], []), make('n > 1', ['scrivi n', move])],
+			// the second number is a multiple of the step, where a loop that goes on to zero writes one line too many
+			tests: [[l.start], [step * (Math.floor(l.start / step) + 1)]]
+		};
+	}
+	if (l.family === 'salita') {
+		const make = (from: number, cond: string, body: string[]) => lines('leggi n', `i = ${from}`, `finché ${cond}`, ...body.map((row) => `    ${row}`));
+		const move = `i = i + ${step}`;
+		return {
+			task: `legge un numero n e scrive i numeri da ${l.start} in su, di ${step} in ${step}, finché non superano n`,
+			source: make(l.start, 'i <= n', ['scrivi i', move]),
+			wrong: [make(l.start, 'i < n', ['scrivi i', move]), make(l.start, 'i <= n', [move, 'scrivi i']), make(l.start + step, 'i <= n', ['scrivi i', move]), make(l.start, 'i <= n', ['scrivi i', `i = i + ${step + 1}`]), make(0, 'i <= n', ['scrivi i', move])],
+			// one number the counter lands on, one it jumps over
+			tests: [[l.limit], [l.limit + step + 1]]
+		};
+	}
+	const make = (total: number, from: number, cond: string, body: string[]) => lines('leggi n', `somma = ${total}`, `i = ${from}`, `finché ${cond}`, ...body.map((row) => `    ${row}`), 'scrivi somma');
+	return {
+		task: 'legge un numero n e scrive la somma dei numeri da 1 a n, calcolata aggiungendo un numero alla volta',
+		source: make(0, 1, 'i <= n', ['somma = somma + i', 'i = i + 1']),
+		wrong: [make(0, 1, 'i < n', ['somma = somma + i', 'i = i + 1']), make(0, 1, 'i <= n', ['i = i + 1', 'somma = somma + i']), make(1, 1, 'i <= n', ['somma = somma + i', 'i = i + 1']), make(0, 1, 'i <= n', ['somma = i', 'i = i + 1']), make(0, 0, 'i < n', ['somma = somma + i', 'i = i + 1'])],
+		tests: [[l.limit], [l.limit + 3]]
+	};
+}
+
+/** Three wrong loops for an open level: each writes something else than the right one on one of its two runs. */
+function askedMistakes(a: Asked): string[] {
+	const wrong = wrongPrograms(a.source, a.wrong, a.tests);
+	if (wrong.length < 3) throw new Error(`${ID}: only ${wrong.length} wrong loops for ${a.source}`);
+	return wrong.slice(0, 3);
 }
 
 /** How many times the body of a loop runs: the lines it writes inside it, counted on a copy that writes one per turn. */
@@ -156,30 +209,31 @@ function level4(rng: Rng): Built {
 
 function level5(rng: Rng): Built {
 	const l = loop(rng);
+	const a = asked(l);
 	return {
 		prompt: 'Costruisci il diagramma di flusso.',
-		problem: `Costruisci il diagramma di un algoritmo che ${l.task}.`,
-		solution: 'Un diagramma con la variabile che parte dal primo valore, un rombo con la condizione e, nel giro, il blocco che la fa cambiare.',
-		steps: ['Dai alla variabile il valore di partenza, prima del ciclo.', 'Metti un ciclo con la condizione che resta vera finché ci sono ancora giri da fare.', 'Nel giro metti prima quello che si fa a ogni giro, poi il blocco che cambia la variabile: senza, il ciclo non finisce.'],
-		solutionChart: l.source,
-		answer: chartAnswer(l.source, [[]]),
-		choice: choose(rng, chartOption(l.source), mistakes(l).map(chartOption)),
-		params: params(l)
+		problem: `Costruisci il diagramma di un algoritmo che ${a.task}.`,
+		solution: 'Un diagramma con la lettura di n, un rombo con la condizione e, nel giro, il blocco che fa cambiare la variabile del ciclo.',
+		steps: ['Prima del ciclo leggi n e dai alle altre variabili il valore di partenza.', 'Metti un ciclo con la condizione che resta vera finché ci sono ancora giri da fare.', 'Nel giro metti prima quello che si fa a ogni giro, poi il blocco che cambia la variabile: senza, il ciclo non finisce.'],
+		solutionChart: a.source,
+		answer: needing(chartAnswer(a.source, a.tests), 'ciclo'),
+		choice: choose(rng, chartOption(a.source), askedMistakes(a).map(chartOption)),
+		params: { family: l.family, source: a.source, tests: a.tests }
 	};
 }
 
 function level6(rng: Rng): Built {
 	const l = loop(rng);
-	// a second test would be the same run: the program reads nothing, so it is asked twice to be sure it ends the same way
+	const a = asked(l);
 	return {
 		prompt: 'Scrivi il programma.',
-		problem: `Scrivi un programma che ${l.task}. Usa un ciclo while.`,
-		solution: 'Un programma con la variabile che parte dal primo valore, il while con la condizione e, nel corpo, la riga che la fa cambiare.',
-		steps: ['Dai alla variabile il valore di partenza, prima del ciclo.', 'Scrivi il while con la condizione che resta vera finché ci sono ancora giri da fare.', 'Nel corpo metti prima quello che si fa a ogni giro, poi la riga che cambia la variabile.'],
-		solutionCode: codes(l.source),
-		answer: programAnswer(l.source, [[], []]),
-		choice: choose(rng, codeOption(l.source), mistakes(l).map((source) => codeOption(source))),
-		params: params(l)
+		problem: `Scrivi un programma che ${a.task}. Usa un ciclo while. La lettura c'è già.`,
+		solution: 'Un programma con il while e la sua condizione e, nel corpo, la riga che fa cambiare la variabile del ciclo.',
+		steps: ['Prima del ciclo dai alle variabili che servono il valore di partenza: n è già letto.', 'Scrivi il while con la condizione che resta vera finché ci sono ancora giri da fare.', 'Nel corpo metti prima quello che si fa a ogni giro, poi la riga che cambia la variabile.'],
+		solutionCode: codes(a.source, a.tests[0]),
+		answer: needing(programAnswer(a.source, a.tests, 'leggi n\n'), 'while'),
+		choice: choose(rng, codeOption(a.source, a.tests[0]), askedMistakes(a).map((source) => codeOption(source, a.tests[0]))),
+		params: { family: l.family, source: a.source, tests: a.tests }
 	};
 }
 
@@ -187,9 +241,10 @@ function level6(rng: Rng): Built {
 const sound = (sample: { params: Record<string, unknown> }) => {
 	const source = String(sample.params.source);
 	const errors: string[] = [];
-	const why = plain(source);
+	const tests = sample.params.tests as number[][];
+	const why = plain(source, tests[0]);
 	if (why) errors.push(`the loop ${why}`);
-	if (!output(source)) errors.push('the loop does not end');
+	if (tests.some((inputs) => !output(source, inputs))) errors.push('the loop does not end');
 	return errors;
 };
 
@@ -198,6 +253,6 @@ export default makeGenerator(ID, 'Il ciclo while', {
 	2: { label: 'Quanti giri fa un ciclo', constraints: ['a loop of at most 6 turns'], build: level2, check: sound },
 	3: { label: 'Dal diagramma al programma', constraints: ['four programs that write different things'], build: level3, check: sound },
 	4: { label: 'Dal programma al diagramma', constraints: ['four charts that write different things'], build: level4, check: sound },
-	5: { label: 'Costruire il diagramma di un ciclo', constraints: ['graded by running the chart'], build: level5, check: sound },
-	6: { label: 'Scrivere un ciclo', constraints: ['graded by running the program'], build: level6, check: sound }
+	5: { label: 'Costruire il diagramma di un ciclo', constraints: ['the loop reads its number', 'graded by running the chart on two numbers', 'needs a loop'], build: level5, check: sound },
+	6: { label: 'Scrivere un ciclo', constraints: ['the loop reads its number', 'graded by running the program on two numbers', 'needs a while'], build: level6, check: sound }
 });

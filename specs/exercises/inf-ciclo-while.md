@@ -27,11 +27,20 @@ parte da 1; l'accumulatore sovrascritto (`somma = i`).
 3. **Dal diagramma al programma.** Il diagramma; opzioni: quattro programmi, di cui uno solo fa quello che fa il
    diagramma.
 4. **Dal programma al diagramma.** Il programma; opzioni: quattro diagrammi.
-5. **Costruire il diagramma di un ciclo.** La consegna a parole ("somma i numeri da 1 a 6 e scrive il risultato").
-   Risposta aperta: lo studente costruisce il diagramma, che viene eseguito e deve scrivere quello che scrive la
-   soluzione. A scelta multipla: come il livello 4, con la consegna al posto del programma.
-6. **Scrivere un ciclo.** La stessa consegna. Risposta aperta: lo studente scrive il programma, in Python o in C++,
-   che viene eseguito e deve stampare quello che stampa la soluzione. A scelta multipla: come il livello 3.
+5. **Costruire il diagramma di un ciclo.** La consegna a parole, con il numero letto ("legge un numero n e scrive
+   la somma dei numeri da 1 a n"). Risposta aperta: lo studente costruisce il diagramma, che viene eseguito su due
+   numeri diversi e deve scrivere quello che scrive la soluzione, e deve contenere un ciclo. A scelta multipla: come
+   il livello 4, con la consegna al posto del programma.
+6. **Scrivere un ciclo.** La stessa consegna, con "Usa un ciclo while"; la lettura di n c'è già. Risposta aperta:
+   lo studente scrive il programma, in Python o in C++, che viene eseguito sui due numeri e deve stampare quello che
+   stampa la soluzione, e deve contenere un `while`: un `for` o la formula scrivono il numero giusto e non passano.
+   A scelta multipla: come il livello 3.
+
+Nei livelli 5 e 6 il ciclo legge il numero a cui si ferma, così quello che scrive non si può battere a mano una riga
+dopo l'altra. Le tre famiglie diventano: da n in giù di passo in passo finché maggiore di zero, poi "via" (provato
+sul valore di partenza e sul multiplo del passo subito sopra, dove `>=` scrive uno zero in più); da un valore fisso
+in su finché non supera n (provato su un n che il contatore tocca e su uno che salta); la somma da 1 a n (provata
+su n e su n + 3).
 
 ## Da evitare
 

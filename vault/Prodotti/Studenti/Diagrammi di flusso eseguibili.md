@@ -29,6 +29,7 @@ Costruito il 5 ottobre 2026 su proposta di Alessandro, in due passi (esecuzione,
 - Le cinque lezioni di programmazione usano il blocco e sono pubblicate: dodici diagrammi da eseguire e uno da costruire ("Pari o dispari", in fondo a "I diagrammi di flusso"). Il testo dice cosa fare con ogni diagramma. Nei due esercizi in cui il programma va scritto guardando il diagramma, il codice accanto è tolto con `% codice: no`.
 - Sul sito vero è stato eseguito fino in fondo il primo diagramma di ognuna delle cinque pagine, su Chromium.
 - Prove: `tests/unit/diagramma.test.mjs` (21, una esegue con Pyodide il Python generato e lo confronta con il diagramma), `tests/e2e/diagramma.spec.ts` (10, solo Chromium in sviluppo, con il mouse). Il C++ generato è stato compilato a mano su quattro programmi, con la stessa uscita del diagramma; non c'è una prova automatica. Lo script di controllo delle lezioni esegue ogni diagramma con i valori di `% ingresso:`.
+- Negli esercizi di informatica (dal 5 ottobre, PR #38) un diagramma si mostra, si sceglie tra quattro e si costruisce come risposta. Il diagramma consegnato viene eseguito dal server sulle prove e poi letto per i costrutti che il livello chiede (un ciclo, una selezione): [[2026-10-05 Secondo anno di informatica]].
 
 Codice: `src/lib/diagramma/` (`espressione.ts`, `blocco.ts`, `disegno.ts`, `esecuzione.ts`, `modifica.ts`, `codice.ts`), `src/components/diagramma/LessonChart.tsx`, `src/lib/utils/chart-figure.ts`.
 

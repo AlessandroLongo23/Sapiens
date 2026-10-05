@@ -11,7 +11,7 @@
  * to build; 6. write the two loops.
  */
 import type { Rng, Sample } from '../types';
-import { chartAnswer, codeOption, lines, makeGenerator, output, plain, programAnswer, textOption, writtenOption, type Built } from '../inf-programmi';
+import { chartAnswer, codeOption, lines, makeGenerator, needing, output, plain, programAnswer, textOption, writtenOption, type Built } from '../inf-programmi';
 import { counted, drawCodes, fits, forCodes, inside, options, Retry, retrying, wrongOnes, type Count } from '../inf-iter';
 import type { ChoiceOption, CodeText } from '../types';
 
@@ -236,7 +236,7 @@ function level5(rng: Rng, build: boolean): Built {
 				'La scrittura sta nel corpo interno, il passo di j in fondo al corpo interno, il passo di i in fondo al corpo esterno, dopo il ciclo interno.'
 			],
 			solutionCode: forCodes(source),
-			...(build ? { solutionChart: source, answer: chartAnswer(source, [[]]), choice } : { answer: choice }),
+			...(build ? { solutionChart: source, answer: needing(chartAnswer(source, [[]]), 'ciclo'), choice } : { answer: choice }),
 			params: { case: table, sum: TABLES[table].sum, m, n, source, tests: [[]] }
 		};
 	});
@@ -351,7 +351,7 @@ function level6(rng: Rng): Built {
 				t.draws ? 'L’istruzione che va a capo sta dopo il ciclo interno, ma dentro quello esterno: una volta per riga.' : 'La scrittura sta nel corpo interno: viene eseguita una volta per ogni coppia di valori dei due contatori.'
 			],
 			solutionCode: code(t.source),
-			answer: { ...programAnswer(t.source, t.tests, lines(...t.reads.map((name) => `leggi ${name}`))), solution: code(t.source) },
+			answer: needing({ ...programAnswer(t.source, t.tests, lines(...t.reads.map((name) => `leggi ${name}`))), solution: code(t.source) }, 'ciclo'),
 			choice: options(rng, option(t.source), wrong.map(option)),
 			params: { case: t.kind, ...t.data, source: t.source, tests: t.tests }
 		};

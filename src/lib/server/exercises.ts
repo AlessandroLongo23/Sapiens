@@ -12,6 +12,7 @@ import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/ex
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
 import type { Answer, ChartAnswer, ChoiceAnswer, CodeText, FigureRef, Generator, OpenGrading, ProgramAnswer, Sample, SceneRef } from '@/lib/exercises/v2/types';
 import { openGrading } from '@/lib/exercises/v2/open-answers';
+import { chartConstructs, codeConstructs, missing, missingMessage } from '@/lib/exercises/v2/costrutti';
 import { figureUrl } from '@/lib/content/figures';
 import { escapeHtml } from '@/lib/utils/escape';
 import { renderMath, renderTex } from '@/lib/content/markdown';
@@ -217,7 +218,8 @@ const sameLines = (a: string, b: string) => tidy(a) === tidy(b);
 /**
  * Grades a flowchart or a program on the tests of the sample. A chart is run here, with the interpreter of the
  * lessons; a program was run in the student's browser on the inputs sent with the question, and what it printed is
- * compared here with what was expected, which the browser never had.
+ * compared here with what was expected, which the browser never had. An answer that writes the right things is then
+ * read for the constructs the level asks for (v2/costrutti.ts).
  */
 function gradeBuild(answer: ChartAnswer | ProgramAnswer, built: BuildResponse): { correct: boolean; message?: string } {
 	if (answer.kind === 'chart') {
@@ -232,7 +234,8 @@ function gradeBuild(answer: ChartAnswer | ProgramAnswer, built: BuildResponse): 
 			if (run.error) return { correct: false, message: `${given} il diagramma si ferma: ${run.error}.` };
 			if (!sameLines(run.output.join('\n'), test.output.join('\n'))) return { correct: false, message: `${given} il diagramma scrive ${run.output.length ? `«${run.output.join(', ')}»` : 'niente'}, e doveva scrivere «${test.output.join(', ')}».` };
 		}
-		return { correct: true };
+		const lacks = missing(answer.needs, chartConstructs(program));
+		return lacks ? { correct: false, message: missingMessage(lacks, 'chart') } : { correct: true };
 	}
 	if (!('outputs' in built) || built.outputs.length !== answer.tests.length) throw new ExerciseError(400, 'Risposta non valida.');
 	for (const [i, test] of answer.tests.entries()) {
@@ -241,7 +244,8 @@ function gradeBuild(answer: ChartAnswer | ProgramAnswer, built: BuildResponse): 
 		if (got.error) return { correct: false, message: `${given} il programma non arriva in fondo: ${got.error.slice(0, 300)}` };
 		if (!sameLines(got.output, test.output)) return { correct: false, message: `${given} il programma scrive ${got.output.trim() ? `«${tidy(got.output).trim().split('\n').join(', ')}»` : 'niente'}, e doveva scrivere «${tidy(test.output).trim().split('\n').join(', ')}».` };
 	}
-	return { correct: true };
+	const lacks = missing(answer.needs, codeConstructs(built.code, built.language));
+	return lacks ? { correct: false, message: missingMessage(lacks, 'program') } : { correct: true };
 }
 
 /** Prose with inline `$…$`, for a sample written as text: the prose is escaped, the formulas typeset. */

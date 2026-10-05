@@ -9,7 +9,7 @@
  * while; 5. build the flowchart of a for; 6. write the for.
  */
 import type { Rng, Sample } from '../types';
-import { chartAnswer, chartOption, codes, lines, makeGenerator, output, plain, programAnswer, textOption, writtenOption, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, codes, lines, makeGenerator, needing, output, plain, programAnswer, textOption, writtenOption, type Built } from '../inf-programmi';
 import { counted, cppOf, fits, forCodes, forOption, inside, options, rangeOf, Retry, retrying, stopOf, wrongOnes, type Count, type Op } from '../inf-iter';
 
 export const ID = 'inf-ciclo-for';
@@ -274,7 +274,7 @@ function level5(rng: Rng): Built {
 			solution: 'Un diagramma con il contatore che prende il valore di partenza, un rombo con la condizione e, in fondo al giro, il blocco del passo.',
 			steps: ['La partenza del contatore è un blocco prima del ciclo.', 'La condizione per fare un altro giro va nel rombo: in Python è il valore di arrivo di range, che è escluso; in C++ è la seconda parte del for.', 'Nel giro vanno prima le istruzioni del corpo e per ultimo il passo, che nel for non si vede nel corpo ma viene eseguito lo stesso.'],
 			solutionChart: t.source,
-			answer: chartAnswer(t.source, t.tests),
+			answer: needing(chartAnswer(t.source, t.tests), 'ciclo'),
 			choice: options(rng, chartOption(t.source), wrong.map(chartOption)),
 			params: taskParams(t)
 		};
@@ -295,7 +295,7 @@ function level6(rng: Rng): Built {
 			solution: 'Un programma con un for: la partenza, il valore di arrivo e il passo del contatore stanno nella riga del ciclo.',
 			steps: ['Chiediti qual è il primo valore del contatore, qual è l’ultimo e di quanto cambia a ogni giro.', 'Scrivi la riga del for: in Python il valore di arrivo di range è escluso, quindi per arrivare a un valore compreso si va un passo oltre; in C++ la condizione dice fino a quando si fa un altro giro.', 'Nel corpo metti solo quello che si fa a ogni giro: il passo lo fa il for.'],
 			solutionCode: forCodes(t.source, t.tests[0]),
-			answer: { ...programAnswer(t.source, t.tests, 'leggi n\n'), solution: forCodes(t.source, t.tests[0]) },
+			answer: needing({ ...programAnswer(t.source, t.tests, 'leggi n\n'), solution: forCodes(t.source, t.tests[0]) }, 'for'),
 			choice: options(
 				rng,
 				forOption(t.source, t.tests[0]),
