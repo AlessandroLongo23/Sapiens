@@ -18,6 +18,9 @@ import { parse as parseLatex } from '@cortex-js/compute-engine/latex-syntax';
 import { parsePlotBlock, readPlotBlock } from '../../src/lib/grafico/blocco';
 import { cleanLatex, type Json } from '../../src/lib/grafico/formula';
 import { codeFences, parseCodeBlock } from '../../src/lib/codice/blocco';
+import { parseChartBlock } from '../../src/lib/diagramma/blocco';
+import { buildChart } from '../../src/lib/diagramma/disegno';
+import { runAll } from '../../src/lib/diagramma/esecuzione';
 
 const katex = ((katexModule as unknown as { default?: typeof katexModule }).default ?? katexModule) as typeof katexModule;
 
@@ -86,7 +89,15 @@ for (const file of process.argv.slice(2)) {
 	// A program: its language and its parts must be read. Whether a solution passes its tests is for scripts/codice/verifica.mts.
 	for (const group of codeFences(text)) for (const e of parseCodeBlock(group.fences).errors) err(`codice: ${e}`);
 	// Inline code is not prose and holds no formulas: a dollar there is a dollar (a spreadsheet's `$B$2`).
-	const noTikz = text.replace(/```(tikz|interattivo|grafico|codice)[\s\S]*?```/g, '').replace(/`[^`\n]+`/g, ' ');
+	// A flowchart must be read, and with the values of "% ingresso" it must run to its end.
+	for (const m of text.matchAll(/```diagramma\n([\s\S]*?)```/g)) {
+		const { block, errors } = parseChartBlock(m[1]);
+		for (const e of errors) err(`diagramma: ${e}`);
+		if (!block) continue;
+		const run = runAll(buildChart(block.program), block.inputs);
+		if (run.error) err(`diagramma ${block.name}: ${run.error}`);
+	}
+	const noTikz = text.replace(/```(tikz|interattivo|grafico|codice|diagramma)[\s\S]*?```/g, '').replace(/`[^`\n]+`/g, ' ');
 
 	// Math: display first, then inline, each parsed by KaTeX.
 	let rest = noTikz.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex: string) => {

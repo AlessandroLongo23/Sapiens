@@ -135,31 +135,14 @@ Con `int a = 7, b = 2;` l'istruzione `double media = (a + b) / 2;` mette in `med
 
 Un programma utile lavora su dati che arrivano da chi lo usa. Quello che si scrive sulla tastiera è sempre una fila di caratteri, cioè un testo: per farci dei conti bisogna convertirlo in un numero. Il programma legge il prezzo di un quaderno e quanti quaderni compri, calcola il totale e lo scrive: tre passi uno dopo l'altro, cioè una sequenza.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-totale-quaderni
 % alt: Diagramma di flusso in sequenza: dopo l'inizio si legge prezzo, poi si legge quantita, poi un rettangolo assegna a totale il prodotto di prezzo per quantita, poi si scrive totale e si arriva alla fine
-% svg: diagramma-flusso-totale-quaderni-327a6755.svg 147x256
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-% ingresso o uscita: parallelogramma largo 3 e alto 0.7, centrato in (x,y)
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi \textit{prezzo}}
-\dati{0}{-2.4}{leggi \textit{quantita}}
-\node[azione] (calcolo) at (0,-3.6) {$\textit{totale} \leftarrow \textit{prezzo} \cdot \textit{quantita}$};
-\dati{0}{-4.8}{scrivi \textit{totale}}
-\node[estremo] (fine) at (0,-6.0) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (0,-2.05);
-\draw[freccia] (0,-2.75) -- (calcolo.north);
-\draw[freccia] (calcolo.south) -- (0,-4.45);
-\draw[freccia] (0,-5.15) -- (fine);
-\end{tikzpicture}
+% ingresso: 2.5, 4
+leggi prezzo
+leggi quantita
+totale = prezzo * quantita
+scrivi totale
 ```
 
 ```codice python

@@ -8,6 +8,8 @@ import { parse as parseLatex } from '@cortex-js/compute-engine/latex-syntax';
 import { parsePlotBlock, readPlotBlock } from '@/lib/grafico/blocco';
 import { cleanLatex, type Json } from '@/lib/grafico/formula';
 import { codeFences, parseCodeBlock } from '@/lib/codice/blocco';
+import { parseChartBlock } from '@/lib/diagramma/blocco';
+import { buildChart, chartSvg } from '@/lib/diagramma/disegno';
 
 /**
  * Lesson markdown → HTML, on the server only. Math is typeset with KaTeX at
@@ -57,6 +59,10 @@ function protect(markdown: string) {
 		codes.push(codeFigure(group.fences));
 		text = `${text.slice(0, group.index)}\n\n<div data-code="${codes.length - 1}"></div>\n\n${text.slice(group.index + group.length)}`;
 	}
+	text = text.replace(/```diagramma\n([\s\S]+?)```/g, (_, code: string) => {
+		codes.push(chartFigure(code));
+		return `\n\n<div data-code="${codes.length - 1}"></div>\n\n`;
+	});
 	text = text.replace(/```tikz\n([\s\S]+?)```/g, (_, code: string) => {
 		tikz.push(code);
 		return `\n\n<div data-tikz="${tikz.length - 1}"></div>\n\n`;
@@ -223,6 +229,17 @@ function codeFigure(fences: { info: string; body: string }[]): string {
 	const pre = `<pre tabindex="0"><code>${escapeHtml(shown)}</code></pre>`;
 	if (!block) return pre;
 	return `<figure class="code-figure my-6" data-codice="${escapeHtml(JSON.stringify(block))}">${pre}</figure>`;
+}
+
+/**
+ * A flowchart of the lesson (```diagramma, see lib/diagramma/blocco.ts). The figure holds the drawing, which is
+ * what a crawler and a printed page get, and carries the block for the chart that runs, which LessonBody puts in
+ * its place (utils/chart-figure.ts). A block that cannot be read is shown as it is written.
+ */
+function chartFigure(source: string): string {
+	const { block } = parseChartBlock(source);
+	if (!block) return `<pre tabindex="0"><code>${escapeHtml(source)}</code></pre>`;
+	return `<figure class="chart-figure my-6" data-diagramma="${escapeHtml(source)}"><div class="flex justify-center overflow-x-auto">${chartSvg(buildChart(block.program), block.alt)}</div></figure>`;
 }
 
 /** ```ad-note / ad-tip / … fences → callout boxes. The first line, when plain, is the title. */

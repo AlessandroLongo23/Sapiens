@@ -8,34 +8,14 @@ Un **ciclo** è un blocco di istruzioni che il programma esegue più volte di se
 
 Il programma qui sotto fa un conto alla rovescia. La variabile `i` parte da $5$; finché è maggiore di $0$ il programma la stampa e poi la diminuisce di $1$.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-conto-alla-rovescia
 % alt: Diagramma di flusso di un ciclo: dopo l'inizio, i prende il valore 5; un rombo chiede se i è maggiore di zero; il ramo sì scende a scrivi i e poi a i prende i meno 1, da cui una freccia risale sul lato sinistro fino a sopra il rombo; il ramo no esce a destra e scende a scrivi "Via!" e alla fine
-% svg: diagramma-flusso-conto-alla-rovescia-3cfbe572.svg 186x358
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\node[azione] (parti) at (0,-1.1) {$i \leftarrow 5$};
-\scelta{0}{-2.9}{$i > 0$?}
-\dati{0}{-4.4}{scrivi $i$}
-\node[azione] (cala) at (0,-5.6) {$i \leftarrow i - 1$};
-\dati{0}{-7.5}{scrivi ``Via!''}
-\node[estremo] (fine) at (0,-8.7) {fine};
-\draw[freccia] (inizio) -- (parti);
-\draw[freccia] (parti) -- (0,-2.3);
-\draw[freccia] (0,-3.5) -- node[right, font=\footnotesize] {sì} (0,-4.05);
-\draw[freccia] (0,-4.75) -- (cala);
-\draw[freccia] (cala.south) -- (0,-6.3) -- (-2.4,-6.3) -- (-2.4,-1.9) -- (0,-1.9);
-\draw[freccia] (1.6,-2.9) -- node[above, font=\footnotesize] {no} (2.4,-2.9) -- (2.4,-6.8) -- (0,-6.8) -- (0,-7.15);
-\draw[freccia] (0,-7.85) -- (fine);
-\end{tikzpicture}
+i = 5
+finché i > 0
+    scrivi i
+    i = i - 1
+scrivi "Via!"
 ```
 
 Nel diagramma di flusso il ciclo si riconosce dalla freccia che risale: dopo l'ultima istruzione del corpo si torna sopra il rombo, e la condizione viene controllata di nuovo. Dal rombo si esce una volta sola, dal ramo "no".
@@ -141,36 +121,16 @@ I giri sono cinque, e le altezze $100$, $50$, $25$, $12$, $6$: l'ultimo giro par
 
 Il secondo caso è leggere dei dati finché ne arriva uno speciale, che fa da segnale di fine. Il programma somma i numeri che scrivi, uno alla volta, e si ferma quando scrivi $0$. Per leggere un numero intero e metterlo in `n` si scrive `n = int(input())` in Python e `cin >> n;` in C++.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-somma-fino-a-zero
 % alt: Diagramma di flusso: dopo l'inizio, s prende il valore 0 e si legge n; un rombo chiede se n è diverso da zero; il ramo sì scende a s prende s più n e poi a leggi n, da cui una freccia risale sul lato sinistro fino a sopra il rombo; il ramo no esce a destra e scende a scrivi s e alla fine
-% svg: diagramma-flusso-somma-fino-a-zero-d3b932aa.svg 186x396
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\node[azione] (parti) at (0,-1.1) {$s \leftarrow 0$};
-\dati{0}{-2.2}{leggi $n$}
-\scelta{0}{-4.0}{$n \neq 0$?}
-\node[azione] (somma) at (0,-5.5) {$s \leftarrow s + n$};
-\dati{0}{-6.6}{leggi $n$}
-\dati{0}{-8.5}{scrivi $s$}
-\node[estremo] (fine) at (0,-9.7) {fine};
-\draw[freccia] (inizio) -- (parti);
-\draw[freccia] (parti) -- (0,-1.85);
-\draw[freccia] (0,-2.55) -- (0,-3.4);
-\draw[freccia] (0,-4.6) -- node[right, font=\footnotesize] {sì} (somma);
-\draw[freccia] (somma) -- (0,-6.25);
-\draw[freccia] (0,-6.95) -- (0,-7.3) -- (-2.4,-7.3) -- (-2.4,-3.0) -- (0,-3.0);
-\draw[freccia] (1.6,-4.0) -- node[above, font=\footnotesize] {no} (2.4,-4.0) -- (2.4,-7.8) -- (0,-7.8) -- (0,-8.15);
-\draw[freccia] (0,-8.85) -- (fine);
-\end{tikzpicture}
+% ingresso: 4, 7, 0
+s = 0
+leggi n
+finché n != 0
+    s = s + n
+    leggi n
+scrivi s
 ```
 
 ```codice python

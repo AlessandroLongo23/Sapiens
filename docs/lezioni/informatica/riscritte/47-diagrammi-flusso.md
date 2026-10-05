@@ -60,30 +60,14 @@ I blocchi si possono combinare in tre soli modi, che si chiamano strutture: la s
 
 Nella **sequenza** i blocchi sono uno sotto l'altro e si eseguono tutti, una volta, dall'alto in basso. Il diagramma qui sotto calcola l'area di un rettangolo: legge la base $b$ e l'altezza $h$, calcola l'area $a$ e la scrive.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-sequenza-area
 % alt: Diagramma di flusso in sequenza: inizio, leggi b, leggi h, un rettangolo con a che prende b per h, scrivi a, fine; i blocchi sono uno sotto l'altro, collegati da frecce verso il basso
-% svg: diagramma-flusso-sequenza-area-a1c3fdc7.svg 129x256
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi $b$}
-\dati{0}{-2.4}{leggi $h$}
-\node[azione] (calcolo) at (0,-3.6) {$a \leftarrow b \cdot h$};
-\dati{0}{-4.8}{scrivi $a$}
-\node[estremo] (fine) at (0,-6.0) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (0,-2.05);
-\draw[freccia] (0,-2.75) -- (calcolo.north);
-\draw[freccia] (calcolo.south) -- (0,-4.45);
-\draw[freccia] (0,-5.15) -- (fine.north);
-\end{tikzpicture}
+% ingresso: 4, 3
+leggi b
+leggi h
+a = b * h
+scrivi a
 ```
 
 Qui sotto c'è lo stesso algoritmo scritto come programma. Non devi ancora saper scrivere il codice: ti serve solo riconoscere, riga per riga, i blocchi del diagramma. Eseguilo, e quando te lo chiede scrivi una base e un'altezza.
@@ -127,31 +111,15 @@ Nei programmi la freccia $\leftarrow$ si scrive `=`, ma il significato resta que
 
 Nella **selezione** un rombo divide la strada in due rami, e a ogni esecuzione se ne percorre uno solo. Al cinema chi ha meno di 14 anni paga il biglietto ridotto: il diagramma legge l'età $e$ e sceglie che cosa scrivere. Dopo i due rami le frecce si riuniscono, e da lì in poi la strada è di nuovo una.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-selezione-biglietto
 % alt: Diagramma di flusso con una selezione: dopo l'inizio si legge e; un rombo chiede se e è minore di 14; il ramo sì, a sinistra, porta a scrivere "ridotto", il ramo no, a destra, a scrivere "intero"; i due rami si riuniscono alla fine
-% svg: diagramma-flusso-selezione-biglietto-1a84c6eb.svg 326x229
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi $e$}
-\scelta{0}{-2.6}{$e < 14$?}
-\dati{-2.6}{-4.0}{scrivi ``ridotto''}
-\dati{2.6}{-4.0}{scrivi ``intero''}
-\node[estremo] (fine) at (0,-5.3) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (0,-2.0);
-\draw[freccia] (-1.6,-2.6) -| node[pos=0.25, above, font=\footnotesize] {sì} (-2.6,-3.65);
-\draw[freccia] (1.6,-2.6) -| node[pos=0.25, above, font=\footnotesize] {no} (2.6,-3.65);
-\draw[freccia] (-2.6,-4.35) |- (fine.west);
-\draw[freccia] (2.6,-4.35) |- (fine.east);
-\end{tikzpicture}
+% ingresso: 12
+leggi e
+se e < 14
+    scrivi "ridotto"
+altrimenti
+    scrivi "intero"
 ```
 
 Nel programma il rombo diventa la riga che comincia con `if` ("se"), il ramo "sì" è quello che viene subito dopo, il ramo "no" quello dopo `else` ("altrimenti").
@@ -187,34 +155,15 @@ Eseguilo tre volte, con 10, con 30 e con 14. Con 14 la risposta alla domanda "$e
 
 Nella **ripetizione**, che si chiama anche ciclo, una freccia torna indietro a un rombo già attraversato, e i blocchi compresi nel giro si eseguono più volte. Il diagramma di un conto alla rovescia legge $n$ e, finché $n$ è maggiore di zero, lo scrive e gli toglie uno; quando la risposta diventa no, esce dal giro e scrive "via!".
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-ripetizione-conto-rovescia
 % alt: Diagramma di flusso con una ripetizione: dopo l'inizio si legge n; un rombo chiede se n è maggiore di zero; il ramo sì scende a scrivi n e poi a n che prende n meno 1, da cui una freccia risale sul lato sinistro fino a sopra il rombo; il ramo no passa sul lato destro e scende a scrivi "via!" e alla fine
-% svg: diagramma-flusso-ripetizione-conto-rovescia-63624691.svg 201x339
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi $n$}
-\scelta{0}{-2.8}{$n > 0$?}
-\dati{0}{-4.2}{scrivi $n$}
-\node[azione] (meno) at (0,-5.4) {$n \leftarrow n - 1$};
-\dati{0}{-7.0}{scrivi ``via!''}
-\node[estremo] (fine) at (0,-8.2) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (0,-2.2);
-\draw[freccia] (0,-3.4) -- node[right, font=\footnotesize] {sì} (0,-3.85);
-\draw[freccia] (0,-4.55) -- (meno.north);
-\draw[freccia] (meno.west) -- (-2.6,-5.4) -- (-2.6,-1.9) -- (0,-1.9);
-\draw[freccia] (1.6,-2.8) -- node[above, font=\footnotesize] {no} (2.6,-2.8) -- (2.6,-6.2) -- (0,-6.2) -- (0,-6.65);
-\draw[freccia] (0,-7.35) -- (fine.north);
-\end{tikzpicture}
+% ingresso: 3
+leggi n
+finché n > 0
+    scrivi n
+    n = n - 1
+scrivi "via!"
 ```
 
 Per capire un ciclo conviene seguirlo a mano, con una tabella che ha una riga per ogni blocco eseguito. Con $n = 3$:
@@ -295,32 +244,14 @@ In ogni esercizio il diagramma è completo e il programma no: manca il pezzo ind
 
 Un negozio toglie 10 euro ai prezzi sopra i 50 euro, e lascia gli altri come sono. Qui il ramo "no" è vuoto: la freccia scavalca il rettangolo. Nel programma, quindi, c'è un `if` senza `else`. Mancano il rombo e il rettangolo.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-selezione-sconto
 % alt: Diagramma di flusso con una selezione a un solo ramo: dopo l'inizio si legge p; un rombo chiede se p è maggiore di 50; il ramo sì scende a un rettangolo con p che prende p meno 10; il ramo no passa a destra del rettangolo senza blocchi e si riunisce sotto; poi scrivi p e fine
-% svg: diagramma-flusso-selezione-sconto-8c09ce2c.svg 165x286
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi $p$}
-\scelta{0}{-2.6}{$p > 50$?}
-\node[azione] (sconto) at (0,-4.0) {$p \leftarrow p - 10$};
-\dati{0}{-5.6}{scrivi $p$}
-\node[estremo] (fine) at (0,-6.8) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (0,-2.0);
-\draw[freccia] (0,-3.2) -- node[right, font=\footnotesize] {sì} (sconto.north);
-\draw[freccia] (sconto.south) -- (0,-5.25);
-\draw[freccia] (1.6,-2.6) -- node[above, font=\footnotesize] {no} (2.6,-2.6) -- (2.6,-4.8) -- (0,-4.8);
-\draw[freccia] (0,-5.95) -- (fine.north);
-\end{tikzpicture}
+% ingresso: 80
+leggi p
+se p > 50
+    p = p - 10
+scrivi p
 ```
 
 ```codice python
@@ -384,38 +315,17 @@ int main() {
 
 Il diagramma somma i numeri da $1$ a $n$: $s$ è la somma, che parte da $0$, e $i$ è il numero da aggiungere, che parte da $1$ e cresce di uno a ogni giro. Prima di scrivere, seguilo a mano con $n = 4$: deve uscire $10$. Nel programma manca tutto il ciclo, cioè il rombo e i due rettangoli del giro.
 
-```tikz
+```diagramma
 % nome: diagramma-flusso-ripetizione-somma
 % alt: Diagramma di flusso con una ripetizione: dopo l'inizio si legge n, poi s prende 0 e i prende 1; un rombo chiede se i è minore o uguale a n; il ramo sì scende a s che prende s più i e poi a i che prende i più 1, da cui una freccia risale sul lato sinistro fino a sopra il rombo; il ramo no passa sul lato destro e scende a scrivi s e alla fine
-% svg: diagramma-flusso-ripetizione-somma-401f16dd.svg 201x423
-\begin{tikzpicture}
-\tikzset{
-  estremo/.style={draw, thick, rounded corners=9pt, minimum width=2.2cm, minimum height=0.65cm, fill=green!15, font=\small},
-  azione/.style={draw, thick, minimum width=2.8cm, minimum height=0.7cm, align=center, fill=blue!12, font=\small},
-  testo/.style={font=\small, align=center},
-  freccia/.style={-{Stealth}, thick}
-}
-\newcommand{\dati}[3]{\draw[thick, fill=orange!20] (#1-1.35,#2-0.35) -- (#1+1.65,#2-0.35) -- (#1+1.35,#2+0.35) -- (#1-1.65,#2+0.35) -- cycle; \node[testo] at (#1,#2) {#3};}
-\newcommand{\scelta}[3]{\draw[thick, fill=yellow!25] (#1-1.6,#2) -- (#1,#2+0.6) -- (#1+1.6,#2) -- (#1,#2-0.6) -- cycle; \node[testo] at (#1,#2) {#3};}
-\node[estremo] (inizio) at (0,0) {inizio};
-\dati{0}{-1.2}{leggi $n$}
-\node[azione] (zero) at (0,-2.4) {$s \leftarrow 0$};
-\node[azione] (uno) at (0,-3.5) {$i \leftarrow 1$};
-\scelta{0}{-5.1}{$i \leq n$?}
-\node[azione] (somma) at (0,-6.5) {$s \leftarrow s + i$};
-\node[azione] (passo) at (0,-7.6) {$i \leftarrow i + 1$};
-\dati{0}{-9.2}{scrivi $s$}
-\node[estremo] (fine) at (0,-10.4) {fine};
-\draw[freccia] (inizio) -- (0,-0.85);
-\draw[freccia] (0,-1.55) -- (zero.north);
-\draw[freccia] (zero.south) -- (uno.north);
-\draw[freccia] (uno.south) -- (0,-4.5);
-\draw[freccia] (0,-5.7) -- node[right, font=\footnotesize] {sì} (somma.north);
-\draw[freccia] (somma.south) -- (passo.north);
-\draw[freccia] (passo.west) -- (-2.6,-7.6) -- (-2.6,-4.2) -- (0,-4.2);
-\draw[freccia] (1.6,-5.1) -- node[above, font=\footnotesize] {no} (2.6,-5.1) -- (2.6,-8.4) -- (0,-8.4) -- (0,-8.85);
-\draw[freccia] (0,-9.55) -- (fine.north);
-\end{tikzpicture}
+% ingresso: 4
+leggi n
+s = 0
+i = 1
+finché i <= n
+    s = s + i
+    i = i + 1
+scrivi s
 ```
 
 ```codice python

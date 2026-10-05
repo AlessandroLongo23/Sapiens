@@ -953,6 +953,71 @@ body {
 .cm-editor {
 	font-variant-ligatures: none;
 }
+/* A flowchart (lib/diagramma/disegno.ts): the four shapes with their colours, the block the run is on, the line it came by. */
+.flowchart {
+	max-width: none;
+	flex: none;
+	font-family: var(--font-sans, inherit);
+}
+.flowchart text {
+	white-space: pre;
+	font-size: 14px;
+	fill: var(--fg-strong);
+}
+.flowchart .fc-label {
+	font-size: 12px;
+	fill: var(--fg-muted);
+}
+.flowchart .fc-shape {
+	stroke: var(--fg-muted);
+	stroke-width: 1.5;
+	stroke-linejoin: round;
+	transition: stroke 0.15s, fill 0.15s;
+}
+.flowchart .fc-terminal {
+	--fc: #16a34a;
+}
+.flowchart .fc-action {
+	--fc: #3b82f6;
+}
+.flowchart .fc-data {
+	--fc: #f97316;
+}
+.flowchart .fc-decision {
+	--fc: #eab308;
+}
+.flowchart .fc-shape {
+	fill: color-mix(in oklab, var(--fc) 16%, var(--surface));
+}
+.flowchart .fc-on .fc-shape {
+	fill: color-mix(in oklab, var(--fc) 42%, var(--surface));
+	stroke: var(--fg-strong);
+	stroke-width: 3;
+}
+.flowchart .fc-wrong .fc-shape {
+	stroke: var(--danger);
+}
+.flowchart .fc-edge {
+	fill: none;
+	stroke: var(--fg-muted);
+	stroke-width: 1.5;
+	stroke-linejoin: round;
+}
+.flowchart .fc-head {
+	fill: var(--fg-muted);
+}
+.flowchart .fc-taken .fc-edge {
+	stroke: var(--accent);
+	stroke-width: 3;
+}
+.flowchart .fc-taken .fc-head {
+	fill: var(--accent);
+}
+.flowchart .fc-taken .fc-label {
+	fill: var(--accent-fg);
+	font-weight: 600;
+}
+
 /* Tailwind's prose writes a backtick before and after inline code: in a lesson the code is shown as it is typed. */
 .markdown-content code::before,
 .markdown-content code::after {
