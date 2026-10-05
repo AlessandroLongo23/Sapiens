@@ -260,5 +260,6 @@ export const generators: Record<string, () => Promise<Generator>> = {
 	'word': () => import('./v2/generators/word').then((m) => m.default),
 	'inf-stili-indici': () => import('./v2/generators/inf-stili-indici').then((m) => m.default),
 	'powerpoint': () => import('./v2/generators/powerpoint').then((m) => m.default),
-	'creare-slide': () => import('./v2/generators/creare-slide').then((m) => m.default)
+	'creare-slide': () => import('./v2/generators/creare-slide').then((m) => m.default),
+	'inf-ciclo-while': () => import('./v2/generators/inf-ciclo-while').then((m) => m.default)
 };

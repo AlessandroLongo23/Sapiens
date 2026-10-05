@@ -265,7 +265,8 @@ export const configs: Record<string, LessonExercises> = {
 	'high_school/computer-science/presentazioni/word': { generator: 'word', levels: [1, 2, 3, 4, 5] },
 	'high_school/computer-science/presentazioni/inf-stili-indici': { generator: 'inf-stili-indici', levels: [1, 2, 3, 4, 5, 6] },
 	'high_school/computer-science/presentazioni/powerpoint': { generator: 'powerpoint', levels: [1, 2, 3, 4, 5, 6] },
-	'high_school/computer-science/presentazioni/creare-slide': { generator: 'creare-slide', levels: [1, 2, 3, 4, 5, 6] }
+	'high_school/computer-science/presentazioni/creare-slide': { generator: 'creare-slide', levels: [1, 2, 3, 4, 5, 6] },
+	'high_school/computer-science/inf-iterazione/inf-ciclo-while': { generator: 'inf-ciclo-while', levels: [1, 2, 3, 4, 5, 6] }
 };
 
 /** Questions in one exercise session; the start card and the paywall preview say the same. */

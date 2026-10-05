@@ -1979,6 +1979,14 @@ export const levelNames: Record<string, Record<number, string>> = {
 		5: 'Schema, slide, animazione, transizione',
 		6: 'Le fonti delle immagini',
 	},
+	'inf-ciclo-while': {
+		1: 'Che cosa scrive un ciclo',
+		2: 'Quanti giri fa un ciclo',
+		3: 'Dal diagramma al programma',
+		4: 'Dal programma al diagramma',
+		5: 'Costruire il diagramma di un ciclo',
+		6: 'Scrivere un ciclo',
+	},
 };
 
 /** The name of a level, or null when it has none. */

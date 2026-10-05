@@ -4,11 +4,12 @@
 import 'katex/dist/katex.min.css';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowRight, Check, X } from 'lucide-react';
-import type { ExerciseView, QuestionBlock, SessionView, Verdict } from '@/lib/server/exercises';
+import type { BuildResponse, ExerciseView, QuestionBlock, SessionView, Verdict } from '@/lib/server/exercises';
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
 import { SceneFigure } from './scenes';
 import { OpenAnswer, type OpenState } from './OpenAnswer';
+import { BuildAnswer, CodeLanguageToggle, useCodeLanguage } from './BuildAnswer';
 
 /** A question of a run: not answered yet, answered right, answered wrong. */
 export type Progress = 'unanswered' | 'correct' | 'incorrect';
@@ -39,6 +40,7 @@ export function Block({ block }: { block: QuestionBlock }) {
 	if (block.kind === 'text') return <Html html={block.html} className="math-content mx-auto max-w-xl text-balance text-base leading-relaxed text-fg sm:text-lg" />;
 	if (block.kind === 'ask') return <Html html={block.html} className="math-content text-balance font-display text-xl font-medium text-fg-strong sm:text-2xl" />;
 	if (block.kind === 'figure') return <Html html={block.html} className="flex justify-center px-2" />;
+	if (block.kind === 'code') return <Html html={block.html} className="mx-auto w-full max-w-xl text-left" />;
 	if (block.kind === 'scene') return <SceneFigure scene={block.scene} className="px-2" />;
 	if (block.kind === 'givens')
 		return (
@@ -335,13 +337,13 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 	};
 
 	/** Sends an answer: the option `i`, or with `latex` an open answer (then `i` is -1). */
-	const answer = async (i: number, latex?: string) => {
+	const answer = async (i: number, latex?: string, built?: BuildResponse) => {
 		if (selected !== null || busy || finished) return;
 		setSelected(i);
 		setBusy(true);
 		setError(null);
 		try {
-			const body = latex !== undefined ? { key: exercise.key, latex, activeMs: clock.read() } : { key: exercise.key, choice: i, activeMs: clock.read() };
+			const body = built ? { key: exercise.key, built, activeMs: clock.read() } : latex !== undefined ? { key: exercise.key, latex, activeMs: clock.read() } : { key: exercise.key, choice: i, activeMs: clock.read() };
 			const res = await post<{ verdict: Verdict }>(`/api/esercizi/${exercise.id}`, body);
 			results.current = [...results.current.filter((r) => r.position !== index), { position: index, exercise, choice: i, verdict: res.verdict }];
 			setVerdict(res.verdict);
@@ -426,6 +428,9 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 	}, [short, exercise]);
 
 	const open = exercise.mode === 'open';
+	/** The question or its answers show a program: the student picks the language to read it in. */
+	const coded = exercise.blocks.some((b) => b.kind === 'code') || exercise.options.some((o) => o.html.includes('code-pair'));
+	const codeLanguage = useCodeLanguage();
 	const openState: OpenState = !verdict ? (selected !== null ? 'pending' : 'idle') : verdict.correct ? 'correct' : 'incorrect';
 	const announced = !verdict
 		? ''
@@ -436,7 +441,7 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 				: `Risposta sbagliata. Quella giusta era: ${speakable(exercise.options[verdict.correctIndex]?.text ?? '')}. Sotto c'è come si risolve.`;
 
 	return (
-		<div id="esercizi" className="flex h-full w-full flex-col items-center gap-6 px-4 pb-6 pt-3 sm:gap-10 sm:px-8 sm:pb-10 sm:pt-6 md:px-10">
+		<div id="esercizi" data-code-language={codeLanguage} className="flex h-full w-full flex-col items-center gap-6 px-4 pb-6 pt-3 sm:gap-10 sm:px-8 sm:pb-10 sm:pt-6 md:px-10">
 			<div className="flex w-full max-w-2xl flex-col items-center gap-3">
 				<div className="flex w-full items-center gap-3">
 					<button type="button" onClick={onLeave} aria-label="Esci dalla prova" className="-ml-2 flex size-9 shrink-0 items-center justify-center rounded-lg text-fg-subtle transition-colors hover:bg-surface-3 hover:text-fg focus-ring">
@@ -472,11 +477,24 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 					)}
 				</div>
 				<div className="flex w-full flex-col gap-3">
-					{open && <OpenAnswer state={openState} locked={selected !== null || busy || !!verdict} onSubmit={(latex) => answer(-1, latex)} />}
+					{coded && !exercise.build && (
+						<div className="flex justify-center">
+							<CodeLanguageToggle />
+						</div>
+					)}
+					{open && exercise.build && <BuildAnswer key={exercise.id} build={exercise.build} locked={selected !== null || busy || !!verdict} onSubmit={(built) => answer(-1, undefined, built)} />}
+					{open && exercise.build && verdict?.correct && !verdict.message && <p className="animate-step-in text-center text-sm font-medium text-ok-fg">Giusto: supera tutte le prove.</p>}
+					{open && !exercise.build && <OpenAnswer state={openState} locked={selected !== null || busy || !!verdict} onSubmit={(latex) => answer(-1, latex)} />}
 					{open && verdict?.message && (
 						<p className={cn('animate-step-in text-center text-sm', verdict.correct ? 'text-ok-fg' : 'text-fg-muted')}>{verdict.message}</p>
 					)}
-					{open && verdict && !verdict.correct && verdict.expectedHtml && (
+					{open && verdict && !verdict.correct && verdict.expectedHtml && verdict.built && (
+						<div className="flex animate-step-in flex-col items-center gap-2">
+							<span className="label-mono text-ok-fg">Una soluzione</span>
+							<Html html={verdict.expectedHtml} className="w-full max-w-xl text-left" />
+						</div>
+					)}
+					{open && verdict && !verdict.correct && verdict.expectedHtml && !verdict.built && (
 						<p className="flex animate-step-in flex-wrap items-baseline justify-center gap-x-2 text-base">
 							<span className="label-mono text-ok-fg">Risposta giusta</span>
 							<Html as="span" html={verdict.expectedHtml} className="math-content min-w-0 scroll-x [&_.katex-display]:my-0 [&_.katex-display]:inline-block" />

@@ -663,7 +663,7 @@ function check(sample: Sample): string[] {
 function toChoice(sample: Sample, rng: Rng): ChoiceAnswer {
 	const answer = sample.answer;
 	if (answer.kind === 'choice') return answer;
-	if (answer.kind === 'set') throw new Error(`${ID}: unexpected set answer`);
+	if (answer.kind !== 'number' && answer.kind !== 'expression') throw new Error(`${ID}: unexpected ${answer.kind} answer`);
 	const value = parseSurd(answer.value);
 	const unit = sample.params.unit as Unit;
 	const wrong = ((sample.params.wrong as string[]) ?? []).map(parseSurd);

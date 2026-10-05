@@ -953,6 +953,30 @@ body {
 .cm-editor {
 	font-variant-ligatures: none;
 }
+/* A program in an exercise (lib/server/exercises.ts, codeHtml): written in Python and in C++ one after the other,
+   and shown in the language the box around it names; Python where nothing says. */
+.code-block {
+	margin: 0;
+	padding: 0.6rem 0.8rem;
+	overflow-x: auto;
+	border-radius: 0.5rem;
+	background: var(--surface-2);
+	color: var(--fg-strong);
+	font-family: var(--font-mono);
+	font-size: 13px;
+	line-height: 1.55;
+	text-align: left;
+	white-space: pre;
+	font-variant-ligatures: none;
+}
+.code-pair pre[data-language='cpp'],
+[data-code-language='cpp'] .code-pair pre[data-language='python'] {
+	display: none;
+}
+[data-code-language='cpp'] .code-pair pre[data-language='cpp'] {
+	display: block;
+}
+
 /* A flowchart (lib/diagramma/disegno.ts): the four shapes with their colours, the block the run is on, the line it came by. */
 .flowchart {
 	max-width: none;

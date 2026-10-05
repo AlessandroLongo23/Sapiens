@@ -103,6 +103,7 @@ export function Workbench({
 	toolbar,
 	compact = false,
 	onEdit,
+	hand,
 	project
 }: {
 	language: Language;
@@ -115,6 +116,11 @@ export function Workbench({
 	/** For a program inside a lesson: the console under the editor, each as tall as what it holds. */
 	compact?: boolean;
 	onEdit?: (code: string) => void;
+	/**
+	 * The program is the answer to an exercise: "Consegna" runs it once for each of `inputs` (the lines a run reads)
+	 * and gives back what it printed each time, to be graded by who asked. Handed in once: `locked` when it has been.
+	 */
+	hand?: { inputs: string[]; locked: boolean; onHand: (outputs: { output: string; error?: string }[], code: string) => void };
 	/** The program is a file of a project (ProjectBench.tsx), which has the files and their editor: this is its console. */
 	project?: ProjectSlots;
 }) {
@@ -284,6 +290,45 @@ export function Workbench({
 		settle('idle');
 	};
 
+	/** Runs the program on each input of the exercise and hands in what it printed. */
+	const handIn = async () => {
+		if (!hand || hand.locked) return;
+		const mine = ++turn.current;
+		const program = project ? project.job() : { language, source: code.current, files: undefined };
+		if (!program) return;
+		const runtime = runtimeFor(program.language);
+		clear();
+		settle('checking');
+		const outputs: { output: string; error?: string }[] = [];
+		let broken: string | null = null;
+		for (const input of hand.inputs) {
+			// a program that does not compile, or never ends, would do the same on every input
+			if (broken !== null) {
+				outputs.push({ output: '', error: broken });
+				continue;
+			}
+			let printed = '';
+			let errors = '';
+			const { outcome } = await runtime.run(
+				{ ...program, inputs: input === '' ? [] : input.replace(/\n$/, '').split('\n'), seed: 1, clock: Date.now(), batch: true },
+				{
+					onChunk: ({ kind, text }) => {
+						if (kind === 'out') printed += text;
+						else if (kind === 'err') errors += text;
+					},
+					onStatus: (text) => mine === turn.current && setStatus(text),
+					onStart: () => mine === turn.current && setStatus('')
+				}
+			);
+			if (mine !== turn.current) return;
+			const failure = FAILURE[outcome] ?? (outcome === 'error' ? tidy(errors) || 'Il programma si è fermato con un errore.' : null);
+			outputs.push(failure ? { output: '', error: failure } : { output: printed });
+			if (outcome === 'stopped' || outcome === 'failed' || outcome === 'timeout') broken = failure ?? 'Il programma non è arrivato in fondo.';
+		}
+		settle('idle');
+		hand.onHand(outputs, program.source);
+	};
+
 	/** Ends the run from outside the worker: the program was waiting for a line, so nothing is running there. */
 	const close = (note: string) => {
 		turn.current++;
@@ -390,10 +435,16 @@ export function Workbench({
 						<span className="sr-only">Schermo intero</span>
 					</Button>
 				)}
-				<Button variant={tests ? 'secondary' : 'primary'} size="sm" onClick={run} disabled={busy} title="Ctrl+Invio, o ⌘+Invio sul Mac">
+				<Button variant={tests || hand ? 'secondary' : 'primary'} size="sm" onClick={run} disabled={busy} title="Ctrl+Invio, o ⌘+Invio sul Mac">
 					<Play className="size-3.5" aria-hidden="true" />
 					Esegui
 				</Button>
+				{hand && (
+					<Button size="sm" onClick={handIn} disabled={busy || hand.locked}>
+						<ListChecks className="size-3.5" aria-hidden="true" />
+						Consegna
+					</Button>
+				)}
 				{tests && (
 					<Button size="sm" onClick={check} disabled={busy}>
 						<ListChecks className="size-3.5" aria-hidden="true" />

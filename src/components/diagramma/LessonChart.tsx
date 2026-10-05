@@ -6,7 +6,7 @@ import { Check, ChevronLeft, ChevronRight, Copy, Pause, Pencil, Play, RotateCcw,
 import { Button } from '@/components/ui/Button';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
 import { cn } from '@/lib/utils/cn';
-import { INPUT_TYPES, parseChartBlock, type ChartBlock, type InputType, type Stmt } from '@/lib/diagramma/blocco';
+import { INPUT_TYPES, parseChartBlock, parseProgram, programText, type ChartBlock, type InputType, type Stmt } from '@/lib/diagramma/blocco';
 import { CODE_LANGUAGES, codeOf, codeText, type CodeLanguage } from '@/lib/diagramma/codice';
 import { blockSvg, buildChart, chartSvg, type ChartNode, type Shape } from '@/lib/diagramma/disegno';
 import { advance, canAdvance, startRun, type Run } from '@/lib/diagramma/esecuzione';
@@ -236,7 +236,7 @@ type Carried = { kind: BlockKind; from?: string; html: string };
  * A click in a block writes in it, and the bin at its corner takes it away. The chart is its program
  * (lib/diagramma/modifica.ts), so the code beside it follows every change.
  */
-function Chart({ block }: { block: ChartBlock }) {
+function Chart({ block, onProgram, below = false }: { block: ChartBlock; /** Told the lines of the chart's program, at first and after every change. */ onProgram?: (text: string) => void; /** The column with the code goes under the chart, where the chart has little room beside it. */ below?: boolean }) {
 	// the programs the chart has been, the last one being what is shown: "Annulla" drops it
 	const [programs, setPrograms] = useState<{ program: Stmt[]; by: string }[]>(() => [{ program: block.program, by: '' }]);
 	const [editing, setEditing] = useState(block.edit);
@@ -306,6 +306,12 @@ function Chart({ block }: { block: ChartBlock }) {
 	useEffect(() => {
 		if (run.waiting) field.current?.focus({ preventScroll: true });
 	}, [run.waiting, run.at]);
+
+	useEffect(() => {
+		onProgram?.(programText(program));
+		// told when the chart changes, not when who listens is made again
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [program]);
 
 	// a block still being carried when the chart goes away is let go
 	useEffect(() => () => release.current?.(), []);
@@ -482,7 +488,7 @@ function Chart({ block }: { block: ChartBlock }) {
 					{editing ? 'Prova il diagramma' : 'Modifica'}
 				</Button>
 			</div>
-			<div className="grid gap-x-4 md:grid-cols-[minmax(0,1fr)_19rem]">
+			<div className={cn('grid gap-x-4', !below && 'md:grid-cols-[minmax(0,1fr)_19rem]')}>
 				<div className="min-w-0">
 					{editing && (
 						<div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 border-b border-edge-soft bg-surface-2 px-2 py-2 print:hidden" role="group" aria-label="Blocchi da aggiungere">
@@ -529,7 +535,7 @@ function Chart({ block }: { block: ChartBlock }) {
 						</div>
 					</div>
 				</div>
-				<div className="flex min-w-0 flex-col gap-3 border-edge p-3 text-sm max-md:order-first max-md:border-b md:border-l print:hidden">
+				<div className={cn('flex min-w-0 flex-col gap-3 border-edge p-3 text-sm print:hidden', below ? 'border-t' : 'max-md:order-first max-md:border-b md:border-l')}>
 					{editing ? (
 						<p className="m-0 text-fg-muted" data-edit>
 							{armed ? <>Ora tocca il «+» sulla freccia dove va il blocco.</> : <>Trascina un blocco su una freccia: si accende il punto dove andrà. Clicca dentro un blocco per scriverlo; il cestino al suo angolo lo toglie.</>}
@@ -613,4 +619,13 @@ function Chart({ block }: { block: ChartBlock }) {
 export function LessonChart({ source }: { source: string }) {
 	const block = useMemo(() => parseChartBlock(source).block, [source]);
 	return block ? <Chart block={block} /> : null;
+}
+
+/**
+ * A flowchart built as the answer to an exercise: it opens ready to be changed, from `start`, and `onProgram` is
+ * told the lines of its program at every change, for who hands it in.
+ */
+export function ChartBuilder({ start, onProgram }: { start: string; onProgram: (text: string) => void }) {
+	const block = useMemo<ChartBlock>(() => ({ name: 'esercizio', alt: 'Il diagramma di flusso che stai costruendo', inputs: [], program: parseProgram(start, true).program, edit: true, code: true }), [start]);
+	return <Chart block={block} onProgram={onProgram} below />;
 }
