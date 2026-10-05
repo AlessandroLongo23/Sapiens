@@ -669,6 +669,8 @@ export async function answerExercise(id: string, sealed: string, response: { cho
 export interface LessonProgress {
 	passed: number;
 	total: number;
+	/** The levels passed, for who needs to know about one (a tutor's assignment). */
+	levels: number[];
 }
 
 /**
@@ -694,7 +696,8 @@ export async function lessonProgress(userId: string): Promise<Record<string, Les
 		const past = byGenerator.get(config.generator);
 		if (!past) continue;
 		const { states } = pathState(config.generator, config.levels, past);
-		progress[path] = { passed: states.filter((st) => st.status === 'passed').length, total: config.levels.length };
+		const passed = states.filter((st) => st.status === 'passed').map((st) => st.level);
+		progress[path] = { passed: passed.length, total: config.levels.length, levels: passed };
 	}
 	return progress;
 }

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Backpack, Calculator, ChevronRight, CircleHelp, CreditCard, House, LibraryBig, LogIn, Mail, NotebookPen, UserPlus, UserRound, UsersRound } from 'lucide-react';
+import { Backpack, Calculator, ChevronRight, CircleHelp, CreditCard, GraduationCap, House, LibraryBig, LogIn, Mail, NotebookPen, UserPlus, UserRound, UsersRound } from 'lucide-react';
 import { CONTENT_ROOT, DIARIO_ROOT, TUTORING_ROOT, ZAINO_ROOT } from '@/lib/config/site';
 import { nodePath } from '@/lib/seo/slug';
 import { useAuth } from '@/lib/state/auth';
@@ -100,6 +100,13 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
 						<Link href="/richieste" className={row(pathname.startsWith('/richieste'))}>
 							<Mail className="size-5 shrink-0" aria-hidden="true" />
 							<span className="flex-1">Le tue richieste ai tutor</span>
+							<ChevronRight className="size-4 text-fg-faint" aria-hidden="true" />
+						</Link>
+					)}
+					{!isStaff(user) && (
+						<Link href="/il-mio-tutor" className={row(pathname.startsWith('/il-mio-tutor'))}>
+							<GraduationCap className="size-5 shrink-0" aria-hidden="true" />
+							<span className="flex-1">Il mio tutor</span>
 							<ChevronRight className="size-4 text-fg-faint" aria-hidden="true" />
 						</Link>
 					)}

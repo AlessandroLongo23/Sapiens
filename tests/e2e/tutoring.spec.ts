@@ -27,7 +27,7 @@ test.describe('tutoring marketplace', () => {
 
 		await page.goto('/ripetizioni?livello=university&modalita=online');
 		await expect(page.locator('#filter-level')).toHaveValue('university');
-		await expect(page.getByRole('button', { name: 'Online', exact: true })).toHaveAttribute('aria-pressed', 'true');
+		await expect(page.getByRole('radio', { name: 'Online', exact: true })).toHaveAttribute('aria-checked', 'true');
 		expect(await cards.count()).toBeLessThan(total);
 	});
 

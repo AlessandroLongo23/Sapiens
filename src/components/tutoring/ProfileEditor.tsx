@@ -92,7 +92,8 @@ export function ProfileEditor({ tutor, user }: { tutor: TutorRow | null; user: P
 	return (
 		<div className="max-w-3xl">
 			<header className="mb-6">
-				<h1 className="text-3xl font-bold text-fg">{isNew ? 'Crea il tuo profilo tutor' : 'Il tuo profilo tutor'}</h1>
+				{/* An existing profile has its title in the layout, above the tabs. */}
+				{isNew && <h1 className="text-3xl font-bold text-fg">Crea il tuo profilo tutor</h1>}
 				<p className="mt-1 text-fg-muted">
 					{isNew
 						? 'Sul sito compaiono nome e iniziale del cognome, presentazione, materie, livelli e prezzo indicativo. Telefono ed email restano privati: li ricevono solo gli studenti che accetti.'

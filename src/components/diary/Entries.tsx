@@ -79,13 +79,14 @@ export function EntryList({
 function EntryLine({ entry, today, topicTitle, fresh, onToggle, onEdit }: { entry: DiaryEntry; today: Day; topicTitle?: string; fresh: boolean; onToggle: () => void; onEdit: () => void }) {
 	const subject = entry.subject ? SUBJECT_BY_KEY.get(entry.subject) : undefined;
 	const test = isTest(entry.kind);
-	const teacher = entry.source === 'docente';
+	// A teacher's or a tutor's entry: the student ticks it or hides it, nothing else.
+	const teacher = entry.source !== 'studente';
 	// Tags sit at the start of the pen line, so the box lines up with the handwriting on every entry.
 	const tags = (
 		<>
 			{subject && <span className="label-mono mr-1.5 inline-block rounded-sm bg-tint-soft px-1.5 align-[0.3em] text-[0.6rem] leading-4 text-tint-fg">{subject.label}</span>}
 			{entry.kind !== 'compito' && <span className={cn('label-mono mr-1.5 inline-block align-[0.3em] text-[0.6rem] leading-4', test ? 'text-accent-fg' : 'text-fg-subtle')}>{KIND_LABEL[entry.kind]}</span>}
-			{teacher && <span className="label-mono mr-1.5 inline-block rounded-sm border border-edge-strong px-1 align-[0.3em] text-[0.55rem] leading-4 text-fg-muted">dal docente</span>}
+			{teacher && <span className="label-mono mr-1.5 inline-block rounded-sm border border-edge-strong px-1 align-[0.3em] text-[0.55rem] leading-4 text-fg-muted">{entry.source === 'tutor' ? 'dal tutor' : 'dal docente'}</span>}
 		</>
 	);
 	return (
@@ -268,7 +269,7 @@ function EntrySheet({
 		setShown(entry);
 		if (entry) setDraft(entry);
 	}
-	const teacher = entry?.source === 'docente';
+	const teacher = !!entry && entry.source !== 'studente';
 	const valid = !!draft && draft.text.trim().length > 0 && isDay(draft.day);
 	const chapters = topics.filter((t) => t.kind === 'chapter');
 
@@ -291,7 +292,7 @@ function EntrySheet({
 		<Sheet
 			open={!!entry}
 			onClose={onClose}
-			title={teacher ? 'Voce del docente' : 'Modifica la voce'}
+			title={teacher ? (entry?.source === 'tutor' ? 'Voce del tutor' : 'Voce del docente') : 'Modifica la voce'}
 			footer={
 				draft && (
 					<div className={sheetActions}>

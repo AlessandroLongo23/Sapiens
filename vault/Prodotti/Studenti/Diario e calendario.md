@@ -31,6 +31,7 @@ Deciso il 23 settembre 2026 che entra nella [[Release Beta]]. Lo studente segna 
 
 ## Domande aperte
 - Privacy nella v4: proposta di Claude, la pagina personale non la vedono mai docenti e genitori; l'agenda il genitore solo se lo studente la condivide. Il codice la tratta già così (la pagina dice "solo tua"), ma non è stata decisa.
+- Dal 4 ottobre 2026 `source` accetta anche `tutor`: i compiti e le lezioni di un tutor entrano nel diario con l'etichetta "dal tutor" ([[Agenda tutor]]). Nel codice, non pubblicato; il vincolo sul database è già applicato.
 - Provenienza delle voci: il codice ha già la colonna `source` (studente o docente) e le regole per cui una voce del docente si può solo spuntare o nascondere. Da confermare come decisione.
 - La grafica è da rivedere con Dario: colore della copertina (per ora il rosso del marchio, forse a scelta dello studente), post-it, timbro.
 - Il collegamento automatico all'argomento vale solo per matematica, l'unica materia con esercizi.

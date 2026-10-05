@@ -63,7 +63,7 @@ export async function updateEntry(supabase: SupabaseClient, userId: string, id: 
 	const { data: current, error: readError } = await supabase.from('diary_entries').select('source').eq('id', id).eq('user_id', userId).maybeSingle();
 	if (readError) throw readError;
 	if (!current) throw new DiaryError(404, 'Voce non trovata.');
-	if ((current as { source: string }).source === 'docente' && Object.keys(patch).some((k) => k !== 'done' && k !== 'hidden')) throw new DiaryError(403, 'Le voci del docente si possono solo spuntare o nascondere.');
+	if ((current as { source: string }).source !== 'studente' && Object.keys(patch).some((k) => k !== 'done' && k !== 'hidden')) throw new DiaryError(403, 'Le voci del docente e del tutor si possono solo spuntare o nascondere.');
 	const { data, error } = await supabase.from('diary_entries').update(patch).eq('id', id).eq('user_id', userId).select(ENTRY_COLUMNS).single();
 	if (error) throw error;
 	return data as DiaryEntry;

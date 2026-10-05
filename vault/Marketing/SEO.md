@@ -39,6 +39,7 @@ Prima del lancio si misurano la salute tecnica, la velocità e la domanda di ric
 - 7 capitoli di matematica hanno 106-116 parole: manca un paragrafo introduttivo per capitolo. Le descrizioni dei nodi sono vuote.
 - Una pagina di ricerca `/cerca?q=` con URL propria, da usare come `SearchAction` nei dati strutturati.
 - Sulle ricerche generiche competono YouMath, Matematicamente e Skuola.net; un dominio nuovo parte dalla coda lunga. Indicare chi ha riletto ogni lezione (Andrea, con un profilo) darebbe a Google un responsabile identificabile. Non discusso.
+- Dal 4 ottobre 2026 (Alessandro): tavola periodica, plotter ed editor di codice sono strumenti diversi dagli altri, e devono rispondere alle ricerche che non cercano una lezione: lo studio di funzione, la geometria nel piano, "Python online". Quali ricerche puntare per ciascuno e con che pagina non è stato discusso. Vedi [[2026-10-04 Pensieri sulla visione, tutor docenti e scuole]].
 
 ## Collegamenti
 - [[Azioni SEO]]: la lista delle cose da fare, in ordine
