@@ -13,7 +13,7 @@
 import type { Rng, Sample } from '../types';
 import { chartAnswer, codeOption, lines, makeGenerator, needing, output, plain, programAnswer, textOption, writtenOption, type Built } from '../inf-programmi';
 import { counted, drawCodes, fits, forCodes, inside, options, Retry, retrying, wrongOnes, type Count } from '../inf-iter';
-import type { ChoiceOption, CodeText } from '../types';
+import type { ChoiceOption } from '../types';
 
 export const ID = 'inf-cicli-annidati';
 
@@ -200,10 +200,10 @@ function level4(rng: Rng): Built {
  * that writes two numbers is too wide for an option in C++, inside two loops.
  */
 const TABLES = {
-	tavola: { sum: false, says: (m: number, n: number) => `Serve un algoritmo che scrive una tavola pitagorica ridotta: per ogni $i$ da 1 a ${m} e, per ognuno, per ogni $j$ da 1 a ${n}, il prodotto $i \\cdot j$, una riga per prodotto.` },
-	aree: { sum: false, says: (m: number, n: number) => `Serve un algoritmo che scrive le aree di tutti i rettangoli con la base $i$ da 1 a ${m} e, per ogni base, l'altezza $j$ da 1 a ${n}: una riga per area, cioè per prodotto $i \\cdot j$.` },
-	dadi: { sum: true, says: (m: number, n: number) => `Si lanciano un dado con le facce da 1 a ${m} e uno con le facce da 1 a ${n}. Serve un algoritmo che scrive tutte le somme possibili: per ogni faccia $i$ del primo e, per ognuna, per ogni faccia $j$ del secondo, la somma $i + j$, una riga per somma.` },
-	menu: { sum: true, says: (m: number, n: number) => `Un menù ha ${m} primi, che costano da 1 a ${m} gettoni, e ${n} secondi, che costano da 1 a ${n} gettoni. Serve un algoritmo che scrive il costo di tutti i pasti: per ogni primo $i$ e, per ognuno, per ogni secondo $j$, la somma $i + j$, una riga per pasto.` }
+	tavola: { sum: false, says: 'Serve un algoritmo che legge due numeri $m$ e $n$ e scrive una tavola pitagorica ridotta: per ogni $i$ da 1 a $m$ e, per ognuno, per ogni $j$ da 1 a $n$, il prodotto $i \\cdot j$, una riga per prodotto.' },
+	aree: { sum: false, says: 'Serve un algoritmo che legge due numeri $m$ e $n$ e scrive le aree di tutti i rettangoli con la base $i$ da 1 a $m$ e, per ogni base, l\'altezza $j$ da 1 a $n$: una riga per area, cioè per prodotto $i \\cdot j$.' },
+	dadi: { sum: true, says: 'Si lanciano un dado con le facce da 1 a $m$ e uno con le facce da 1 a $n$. Serve un algoritmo che legge $m$ e $n$ e scrive tutte le somme possibili: per ogni faccia $i$ del primo e, per ognuna, per ogni faccia $j$ del secondo, la somma $i + j$, una riga per somma.' },
+	menu: { sum: true, says: 'Un menù ha $m$ primi, che costano da 1 a $m$ gettoni, e $n$ secondi, che costano da 1 a $n$ gettoni. Serve un algoritmo che legge $m$ e $n$ e scrive il costo di tutti i pasti: per ogni primo $i$ e, per ognuno, per ogni secondo $j$, la somma $i + j$, una riga per pasto.' }
 };
 
 function level5(rng: Rng, build: boolean): Built {
@@ -213,36 +213,41 @@ function level5(rng: Rng, build: boolean): Built {
 		const n = rng.int(2, 7);
 		if (m === n) throw new Retry('the two sizes are the same');
 		const body = [TABLES[table].sum ? 'scrivi i + j' : 'scrivi i * j'];
-		const [outer, inner] = [upTo(1, m), upTo(1, n)];
-		const source = double(outer, inner, body);
-		const candidates = [stale(outer, inner, body), double(upTo(1, n), upTo(1, m), body), hasty(outer, inner, body), double(outer, inner, [], [], [body[0]]), double(outer, inner, [TABLES[table].sum ? 'scrivi i * j' : 'scrivi i + j']), turned(outer, inner, body), double(outer, { ...inner, op: '<' }, body)];
+		// the sizes are read, and the loops are tried on two pairs of them: the table cannot be written by hand
+		const [outer, inner] = [upTo(1, 'm'), upTo(1, 'n')];
+		const reading = (rows: string) => lines('leggi m', 'leggi n') + rows;
+		const tests = [
+			[m, n],
+			[n, m]
+		];
+		const source = reading(double(outer, inner, body));
+		const candidates = [stale(outer, inner, body), double(upTo(1, 'n'), upTo(1, 'm'), body), hasty(outer, inner, body), double(outer, inner, [], [], [body[0]]), double(outer, inner, [TABLES[table].sum ? 'scrivi i * j' : 'scrivi i + j']), turned(outer, inner, body), double(outer, { ...inner, op: '<' }, body)].map(reading);
+		const codeOf = (w: string) => codeOption(w, tests[0]).code!;
 		const wrong = wrongOnes(
 			source,
 			candidates.filter((w) => fits(codeOf(w))),
-			[[]]
+			tests
 		).slice(0, 3);
 		const choice = options(
 			rng,
-			codeOption(source),
-			wrong.map((w) => codeOption(w))
+			codeOption(source, tests[0]),
+			wrong.map((w) => codeOption(w, tests[0]))
 		);
 		return {
 			prompt: build ? 'Costruisci il diagramma di flusso, o riconosci il programma che fa lo stesso.' : 'Scegli i due cicli giusti.',
-			problem: `${TABLES[table].says(m, n)} I due cicli vanno scritti come nel diagramma di flusso, cioè con while: la partenza, la condizione e il passo di ogni contatore sono separati.`,
-			solution: `Il ciclo esterno con i da 1 a ${m}; nel suo corpo j riparte da 1 e il ciclo interno arriva a ${n}; la scrittura sta nel corpo interno.`,
+			problem: `${TABLES[table].says} I due cicli vanno scritti come nel diagramma di flusso, cioè con while: la partenza, la condizione e il passo di ogni contatore sono separati.`,
+			solution: 'Il ciclo esterno con i da 1 a m; nel suo corpo j riparte da 1 e il ciclo interno arriva a n; la scrittura sta nel corpo interno.',
 			steps: [
-				`Il ciclo esterno scorre la prima dimensione: i va da 1 a ${m}. Quello interno scorre la seconda: j va da 1 a ${n}.`,
+				`Il ciclo esterno scorre la prima dimensione: i va da 1 a m. Quello interno scorre la seconda: j va da 1 a n. Con ${m} e ${n} le righe scritte sono ${m} · ${n} = ${m * n}.`,
 				'Il valore di partenza di j si dà dentro il ciclo esterno, prima del ciclo interno: così j riparte da 1 a ogni giro esterno.',
 				'La scrittura sta nel corpo interno, il passo di j in fondo al corpo interno, il passo di i in fondo al corpo esterno, dopo il ciclo interno.'
 			],
-			solutionCode: forCodes(source),
-			...(build ? { solutionChart: source, answer: needing(chartAnswer(source, [[]]), 'ciclo'), choice } : { answer: choice }),
-			params: { case: table, sum: TABLES[table].sum, m, n, source, tests: [[]] }
+			solutionCode: forCodes(source, tests[0]),
+			...(build ? { solutionChart: source, answer: needing(chartAnswer(source, tests), 'annidati'), choice } : { answer: choice }),
+			params: { case: table, sum: TABLES[table].sum, m, n, source, tests }
 		};
 	});
 }
-
-const codeOf = (source: string): CodeText => codeOption(source).code!;
 
 /** Two loops whose number of turns is read: the task of the open level. */
 interface Task {
@@ -351,7 +356,7 @@ function level6(rng: Rng): Built {
 				t.draws ? 'L’istruzione che va a capo sta dopo il ciclo interno, ma dentro quello esterno: una volta per riga.' : 'La scrittura sta nel corpo interno: viene eseguita una volta per ogni coppia di valori dei due contatori.'
 			],
 			solutionCode: code(t.source),
-			answer: needing({ ...programAnswer(t.source, t.tests, lines(...t.reads.map((name) => `leggi ${name}`))), solution: code(t.source) }, 'ciclo'),
+			answer: needing({ ...programAnswer(t.source, t.tests, lines(...t.reads.map((name) => `leggi ${name}`))), solution: code(t.source) }, 'annidati'),
 			choice: options(rng, option(t.source), wrong.map(option)),
 			params: { case: t.kind, ...t.data, source: t.source, tests: t.tests }
 		};
@@ -380,6 +385,6 @@ export default makeGenerator(ID, 'Cicli annidati', {
 	2: { label: 'Che cosa scrive un ciclo doppio', constraints: ['at most 3 turns by 3', 'four different outputs'], build: level2, check: sound },
 	3: { label: 'Il ciclo interno che dipende da quello esterno', constraints: ['the inner loop stops at, or starts from, the outer counter', 'the turns add up'], build: level3, check: sound },
 	4: { label: 'Le righe di un disegno', constraints: ['a rectangle, a triangle, a triangle upside down or a staircase of at most 8 characters a row', 'four different drawings'], build: level4, check: sound },
-	5: { label: 'I due cicli di una tabella', constraints: ['four programs with two while that write different things', 'open: the chart, graded by running it'], build: (rng) => level5(rng, BUILD_CHART), check: sound },
-	6: { label: 'Scrivere due cicli annidati', constraints: ['a program that reads its sizes', 'graded by running the program on two inputs'], build: level6, check: sound }
+	5: { label: 'I due cicli di una tabella', constraints: ['the two sizes are read', 'four programs with two while that write different things', 'open: the chart, graded by running it on two pairs of sizes, with a loop inside another'], build: (rng) => level5(rng, BUILD_CHART), check: sound },
+	6: { label: 'Scrivere due cicli annidati', constraints: ['a program that reads its sizes', 'graded by running the program on two inputs', 'needs a loop inside another'], build: level6, check: sound }
 });

@@ -300,6 +300,7 @@ function level5(rng: Rng): Built {
 			[5, ...sequence(rng, x, 5, which, 'last')],
 			[3, ...sequence(rng, x, 3, which)]
 		];
+		if (new Set(tests.map((t) => String(output(source, t)))).size < 2) throw new Retry('the three runs write the same');
 		const wrong = wrongOnes(
 			source,
 			knownWrong(x.v, which).filter((w) => fits(forCodes(w, tests[0]))),
@@ -345,6 +346,7 @@ function level6(rng: Rng): Built {
 		];
 		const sums = kind === 'somma-conto';
 		const source = sums ? tally(x.v, x.end) : closed.right(x.v, which, x.end);
+		if (new Set(tests.map((t) => String(output(source, t)))).size < 2) throw new Retry('the three runs write the same');
 		const candidates = sums ? [tally(x.v, x.end, { top: true }), tally(x.v, x.end, { count: 1 }), tally(x.v, x.end, { add: `somma = ${x.v}` }), tally(x.v, x.end, { swap: true }), tally(x.v, x.end, { step: `quanti = quanti + ${x.v}` }), tally(x.v, x.end, { add: 'somma = somma + 1' })] : closedWrong(x.v, which, x.end);
 		const wrong = wrongOnes(
 			source,

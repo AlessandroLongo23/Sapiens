@@ -12,7 +12,7 @@ import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/ex
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
 import type { Answer, ChartAnswer, ChoiceAnswer, CodeText, FigureRef, Generator, OpenGrading, ProgramAnswer, Sample, SceneRef } from '@/lib/exercises/v2/types';
 import { openGrading } from '@/lib/exercises/v2/open-answers';
-import { chartConstructs, codeConstructs, missing, missingMessage } from '@/lib/exercises/v2/costrutti';
+import { chartConstructs, codeConstructs, missing, missingMessage, neededText } from '@/lib/exercises/v2/costrutti';
 import { figureUrl } from '@/lib/content/figures';
 import { escapeHtml } from '@/lib/utils/escape';
 import { renderMath, renderTex } from '@/lib/content/markdown';
@@ -39,7 +39,7 @@ export type QuestionBlock =
  * program, from `start` in the language chosen. `inputs` are what each test gives the program to read: the page runs
  * the program on them and sends back what it printed, which only the server can tell from what was expected.
  */
-export type BuildView = { kind: 'chart'; start: string; code: boolean } | { kind: 'program'; start: CodeText; inputs: string[] };
+export type BuildView = { kind: 'chart'; start: string; code: boolean } | { kind: 'program'; start: CodeText; inputs: string[]; needs?: string };
 
 /** What a student hands in for a `BuildView`: the chart as the lines of its program, or the program and what it printed for each test. */
 export type BuildResponse = { chart: string } | { language: 'python' | 'cpp'; code: string; outputs: { output: string; error?: string }[] };
@@ -279,7 +279,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 		id,
 		level,
 		mode: open ? 'open' : 'choice',
-		...(run ? { build: run.kind === 'chart' ? { kind: 'chart' as const, start: run.start ?? '', code: !BEFORE_LANGUAGES.has(s.generatorId) } : { kind: 'program' as const, start: run.start, inputs: run.tests.map((t) => t.input) } } : {}),
+		...(run ? { build: run.kind === 'chart' ? { kind: 'chart' as const, start: run.start ?? '', code: !BEFORE_LANGUAGES.has(s.generatorId) } : { kind: 'program' as const, start: run.start, inputs: run.tests.map((t) => t.input), ...(neededText(run.needs) ? { needs: neededText(run.needs)! } : {}) } } : {}),
 		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
 		options: open

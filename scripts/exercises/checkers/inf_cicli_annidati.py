@@ -5,7 +5,8 @@ Written from the spec. What two nested loops do is worked out here with Python's
 program writes when Python runs it (checkers/_inf_programmi.py):
 - levels 1 and 3: the turns of the inner body, also counted by running the reference with a counter in it;
 - level 2: the lines of a double loop of at most 3 by 3; level 4: the rows of a drawing;
-- level 5: the lines of a table, four programs with two `while`, and a chart to build when it is open;
+- level 5: the lines of a table whose two sizes are read, four programs with two `while`, and a chart to build
+  when it is open, tried on the sizes both ways round;
 - level 6: a program to write, on two inputs.
 """
 import re
@@ -110,13 +111,19 @@ def check(sample):
         m, n = p["m"], p["n"]
         if case not in TABLES or m == n:
             errors.append("a table with two different sizes")
-        want = [str(i + j if case in ("dadi", "menu") else i * j) for i in range(1, m + 1) for j in range(1, n + 1)]
-        if run_chart(source, []) != want:
+        table = lambda a, b: [str(i + j if case in ("dadi", "menu") else i * j) for i in range(1, a + 1) for j in range(1, b + 1)]
+        # the sizes are read, and the table is tried on the two of them and on the two swapped
+        want = [([m, n], table(m, n)), ([n, m], table(n, m))]
+        if p["tests"] != [t for t, _ in want] or not source.startswith("leggi m\nleggi n\n"):
+            errors.append("the two sizes are read, and tried both ways round")
+        if any(run_chart(source, t) != lines for t, lines in want):
             errors.append("the reference does not write the table")
         if not all("code" in o and is_while(o["code"]) for o in choice["options"]):
             errors.append("level 5 offers programs with two while")
         if sample["answer"]["kind"] == "chart":
-            errors += open_tests(sample, [([], want)])
+            errors += open_tests(sample, want)
+            if sample["answer"].get("needs") != ["annidati"]:
+                errors.append("the chart to build must have a loop inside another")
         elif sample["answer"]["kind"] != "choice":
             errors.append("level 5 is a choice or a chart to build")
     if level == 6:
@@ -128,6 +135,8 @@ def check(sample):
             errors.append("two tests that write different things are needed")
         if sample["answer"]["kind"] != "program" or not is_for(sample["answer"]["solution"]):
             errors.append("level 6 asks for a program, solved with two for")
+        elif sample["answer"].get("needs") != ["annidati"]:
+            errors.append("the program to write must have a loop inside another")
         if not all("code" in o and is_for(o["code"]) for o in choice["options"]):
             errors.append("level 6 offers programs with two for")
     return errors, case

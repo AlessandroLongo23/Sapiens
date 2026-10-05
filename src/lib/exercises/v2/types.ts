@@ -99,9 +99,10 @@ export type SetAnswer = {
 
 /**
  * What an answer that is a chart or a program must contain, beyond writing the right things (v2/costrutti.ts): a
- * loop of any kind, a selection, or the loop of a given kind where the exercise names it. A chart has no `for`.
+ * loop of any kind, a selection, the loop of a given kind where the exercise names it, or a loop in the body of
+ * another. A chart has no `for`.
  */
-export type Construct = 'ciclo' | 'selezione' | 'while' | 'for';
+export type Construct = 'ciclo' | 'selezione' | 'while' | 'for' | 'annidati';
 
 /**
  * A flowchart to build. The student's chart is run on each test's `inputs` (what its "leggi" take, in order) and

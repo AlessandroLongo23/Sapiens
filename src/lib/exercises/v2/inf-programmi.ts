@@ -200,6 +200,12 @@ export function makeGenerator(id: string, title: string, defs: Record<number, Le
 				if (missing(answer.needs, chartConstructs(read(answer.solution)))) errors.push('the solution lacks a construct it asks for');
 				if (answer.needs?.includes('for')) errors.push('a chart has no for');
 			}
+			if ((sample.answer.kind === 'chart' || sample.answer.kind === 'program') && sample.answer.needs?.length) {
+				// a construct can be asked for only where the answer cannot be typed by hand: the runs read, and differ
+				const tests: { inputs?: string[]; input?: string; output: string | string[] }[] = sample.answer.tests;
+				if (!tests.every((t) => t.inputs?.length || t.input)) errors.push('an answer that asks for a construct reads nothing');
+				if (new Set(tests.map((t) => String(t.output))).size < 2) errors.push('an answer that asks for a construct writes the same on every run');
+			}
 			if (sample.answer.kind === 'program') {
 				const answer = sample.answer;
 				if (answer.tests.length < 2) errors.push('a program needs at least two tests');

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { createJiti } from 'jiti';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
-const { bare, chartConstructs, codeConstructs, missing } = await jiti.import('../../src/lib/exercises/v2/costrutti.ts');
+const { bare, chartConstructs, codeConstructs, missing, neededText } = await jiti.import('../../src/lib/exercises/v2/costrutti.ts');
 const { parseProgram } = await jiti.import('../../src/lib/diagramma/blocco.ts');
 const { needing, programAnswer, structure } = await jiti.import('../../src/lib/exercises/v2/inf-programmi.ts');
 
@@ -57,4 +57,31 @@ test('an answer keeps what it asks for', () => {
 	// what the editor opens with has no loop yet
 	assert.equal(missing(answer.needs, codeConstructs(answer.start.python, 'python')), 'while');
 	assert.equal('needs' in needing(programAnswer(source, [[3], [5]])), false);
+});
+
+test('a loop in the body of another is told from two loops in a row', () => {
+	const nested = (code, language) => codeConstructs(code, language).has('annidati');
+	assert.equal(nested('for i in range(3):\n    for j in range(2):\n        print(i, j)\n', 'python'), true);
+	assert.equal(nested('i = 0\nwhile i < 3:\n    if i > 0:\n        for j in range(i):\n            print(j)\n    i = i + 1\n', 'python'), true);
+	assert.equal(nested('for i in range(3):\n    print(i)\nfor j in range(2):\n    print(j)\n', 'python'), false);
+	assert.equal(nested('for i in range(3):\n    print("*" * i)\n', 'python'), false);
+	// a comment between the two does not close the outer loop
+	assert.equal(nested('for i in range(3):\n# righe\n    for j in range(2):\n        print(j)\n', 'python'), true);
+	assert.equal(nested('for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 2; j++) {\n        cout << j;\n    }\n}', 'cpp'), true);
+	assert.equal(nested('for (int i = 0; i < 3; i++)\n    for (int j = 0; j < 2; j++)\n        cout << j;', 'cpp'), true);
+	assert.equal(nested('while (i < 3) {\n    if (i > 0) {\n        do { j++; } while (j < i);\n    }\n    i++;\n}', 'cpp'), true);
+	assert.equal(nested('for (int i = 0; i < 3; i++) {\n    cout << i;\n}\nfor (int j = 0; j < 2; j++) {\n    cout << j;\n}', 'cpp'), false);
+	assert.equal(nested('for (int i = 0; i < 3; i++) cout << i;\nfor (int j = 0; j < 2; j++) cout << j;', 'cpp'), false);
+	// the while that closes a do is not a second loop
+	assert.equal(nested('do {\n    i++;\n} while (i < 3);', 'cpp'), false);
+	assert.deepEqual(chart('i = 1\nfinché i < 3\n    j = 1\n    finché j < 3\n        j = j + 1\n    i = i + 1\n').includes('annidati'), true);
+	assert.deepEqual(chart('i = 1\nfinché i < 3\n    i = i + 1\nfinché i < 6\n    i = i + 1\n').includes('annidati'), false);
+});
+
+test('a program is told beforehand what it must contain', () => {
+	assert.equal(neededText(['while']), 'Nel programma deve esserci un ciclo while.');
+	assert.equal(neededText(['ciclo', 'selezione']), 'Nel programma devono esserci un ciclo e una selezione.');
+	assert.equal(neededText(['annidati']), 'Nel programma devono esserci due cicli, uno dentro l’altro.');
+	assert.equal(neededText([]), null);
+	assert.equal(neededText(undefined), null);
 });

@@ -59,9 +59,10 @@ def _sblocco(k, inp):
     return None
 
 
-def _ripeti(k, _):
+def _ripeti(k, inp):
+    # the turns are the number of the exercise, or the number read where the program asks for it
     a, b = MOVES[k["ctx"]]
-    return [a, b] * k["n"] + ["fatto"]
+    return [a, b] * (inp[0] if inp else k["n"]) + ["fatto"]
 
 
 EXPECTED = {

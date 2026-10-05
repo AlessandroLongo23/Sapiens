@@ -80,7 +80,14 @@ Alessandro ha chiesto di chiudere il primo dei limiti segnalati: la correzione g
 - I due livelli aperti del ciclo while ora leggono il numero a cui il ciclo si ferma e sono provati su due numeri: l'uscita non si può più battere a mano.
 - Il controllo indipendente in Python verifica che la soluzione abbia il costrutto chiesto, che il programma di partenza non lo abbia già, e che una consegna che nomina `while` o `for` lo chieda.
 - Verifiche: i 19 generatori con risposte aperte passano su due semi, 500 esercizi per livello; `tests/unit/costrutti.test.mjs` (5); nel browser, in sviluppo, la somma da 1 a n consegnata con la formula e con un `for` viene respinta con il messaggio, con il `while` passa.
-- Limiti che restano: il controllo vede che il costrutto c'è, non che fa il lavoro (un `while` di un giro accanto ai `print` passa dove il livello non legge niente). Senza ingresso restano "Due cicli annidati" della 62, livello 5, e una parte dei diagrammi di Scratch: lì la risposta scritta a mano chiede da 6 a 49 blocchi oltre al ciclo finto. Chi somma da 1 a n con la formula in una lezione sui cicli si vede dire che manca il ciclo. Gli esercizi già salvati nelle sessioni in corso restano corretti alla vecchia maniera.
+- Limiti che restano: chi somma da 1 a n con la formula in una lezione sui cicli si vede dire che manca il ciclo. Gli esercizi già salvati nelle sessioni in corso restano corretti alla vecchia maniera.
+
+Secondo passo, la notte del 5 ottobre, su richiesta di Alessandro ("finisci la task"):
+
+- Nuovo costrutto `annidati`, un ciclo nel corpo di un altro. In un diagramma si legge dall'albero; in Python dal rientro; in C++ dalle graffe, o dall'istruzione che segue il ciclo quando le graffe non ci sono. Lo chiedono i due livelli aperti dei cicli annidati (63): due cicli in fila, o un triangolo fatto con un ciclo solo e `"*" * i`, scrivono giusto e non passano.
+- "I due cicli di una tabella" (63, livello 5) ora legge le due dimensioni ed è provato su m, n e su n, m. Il "ripeti" di Scratch (50, livello 5) legge quante volte. Nessun livello che chiede un costrutto è più senza ingresso, e la regola è controllata: un livello con `needs` che non legge niente, o le cui prove scrivono tutte lo stesso, non passa `check()` né il controllo Python. Questo chiude il `while` finto accanto ai `print`.
+- Sopra l'editor di un programma da scrivere la pagina dice che cosa deve esserci ("Nel programma deve esserci un ciclo while."), così nessuno scopre il vincolo dal verdetto. Per i diagrammi no: lì senza il costrutto non si arriva all'uscita giusta.
+- Un livello aperto è stato provato dentro una sessione vera (`tests/e2e/esercizi-informatica.spec.ts`): con i sei livelli del ciclo while passati, "Ripassa il livello 6" chiede il programma, mostra il vincolo e corregge la consegna.
 
 ## Domande per Andrea
 Ogni nota di lezione ha le sue. Le principali sono riportate in [[Domande per Andrea]], sezione "Informatica, secondo anno".

@@ -48,15 +48,22 @@ export function BuildAnswer({ build, locked, onSubmit }: { build: BuildView; loc
 		);
 
 	return (
-		<div className="w-full overflow-hidden rounded-xl border border-edge text-left" data-build="program">
-			<Workbench
-				key={language}
-				compact
-				language={language}
-				initial={build.start[language]}
-				toolbar={<CodeLanguageToggle />}
-				hand={{ inputs: build.inputs, locked, onHand: (outputs, source) => onSubmit({ language, code: source, outputs }) }}
-			/>
+		<div className="flex w-full flex-col gap-2 text-left">
+			{build.needs && (
+				<p className="text-sm text-fg-muted" data-build-needs>
+					{build.needs}
+				</p>
+			)}
+			<div className="w-full overflow-hidden rounded-xl border border-edge" data-build="program">
+				<Workbench
+					key={language}
+					compact
+					language={language}
+					initial={build.start[language]}
+					toolbar={<CodeLanguageToggle />}
+					hand={{ inputs: build.inputs, locked, onHand: (outputs, source) => onSubmit({ language, code: source, outputs }) }}
+				/>
+			</div>
 		</div>
 	);
 }

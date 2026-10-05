@@ -206,6 +206,8 @@ CONSTRUCTS = {
     "selezione": (r"^\s*se ", r"^\s*if ", r"^\s*if \("),
     "while": (r"^\s*finché ", r"^\s*while ", r"^\s*while \("),
     "for": (None, r"^\s*for ", r"^\s*for \("),
+    # in a solution we wrote the inner loop is indented under the outer one, and in C++ under `main` too
+    "annidati": (r"^ {4,}finché ", r"^ {4,}(while|for) ", r"^ {8,}(while|for) \("),
 }
 
 
@@ -227,6 +229,13 @@ def needs_errors(sample):
                 errors.append(f"the program of the solution has no {need}")
             if has(python, answer["start"]["python"]) or has(cpp, answer["start"]["cpp"]):
                 errors.append(f"the program to start from already has a {need}")
+    if needs:
+        # what is asked for must be needed: the runs read something and do not all write the same
+        tests = answer["tests"]
+        if not all(t.get("inputs") or t.get("input") for t in tests):
+            errors.append("an answer that asks for a construct reads nothing")
+        if len({str(t["output"]) for t in tests}) < 2:
+            errors.append("an answer that asks for a construct writes the same on every run")
     if answer["kind"] == "program":
         for word in ("while", "for"):
             if f"Usa un ciclo {word}" in sample["problem"] and word not in needs:
