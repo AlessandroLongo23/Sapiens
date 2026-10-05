@@ -17,5 +17,5 @@ Niente. Per i minori di 14 anni l'account lo crea il genitore, ma non ha un'area
 
 ## Domande aperte
 - Cosa vede il genitore di un figlio di 17 anni? Privacy dello studente e fiducia verso Sapiens.
-- Il dialogo con i docenti ha senso prima che la scuola usi Sapiens?
+- Il dialogo con i docenti ha senso prima che la scuola usi Sapiens? Idea del 4 ottobre 2026: [[Ricevimenti con i docenti]].
 - Cosa distingue la v3 dal Pro della v2? Oggi le due cose si sovrappongono.

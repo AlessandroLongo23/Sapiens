@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { cn } from '@/lib/utils/cn';
+import { binderLabelClass, binderRowClass, binderTabClass } from '@/components/ui/binder-tabs';
 
 const YEARS = ['Primo', 'Secondo', 'Terzo', 'Quarto', 'Quinto'];
 
@@ -54,7 +54,7 @@ export function YearTabs({ id, years }: { id: string; years: YearPanel[] }) {
 				<h2 id={id} className="pb-3 text-3xl font-semibold text-fg-strong app:max-md:text-2xl">
 					Capitoli
 				</h2>
-				<div role="tablist" aria-label="Anno" className="-mb-px flex items-end gap-1" onKeyDown={onKeyDown}>
+				<div role="tablist" aria-label="Anno" className={binderRowClass} onKeyDown={onKeyDown}>
 					{years.map(({ year, ready, total }, i) => {
 						const active = year === current;
 						return (
@@ -70,13 +70,9 @@ export function YearTabs({ id, years }: { id: string; years: YearPanel[] }) {
 								aria-controls={`anno-${year}`}
 								tabIndex={active ? 0 : -1}
 								onClick={() => choose(year)}
-								className={cn(
-									'group flex items-baseline gap-2 rounded-t-lg border px-3 transition-colors focus-ring sm:px-3.5',
-									// The chosen tab is open towards its chapters; the others close on the line under the title.
-									active ? 'border-edge-strong border-b-page-alt bg-page-alt pb-2.5 pt-2.5' : 'border-edge border-b-edge-strong bg-surface-2 py-1.5 hover:bg-tint-soft'
-								)}
+								className={binderTabClass(active)}
 							>
-								<span className={cn('font-display text-lg font-semibold', active ? 'text-tint-fg' : 'text-fg-muted group-hover:text-tint-fg')}>{year}ª</span>
+								<span className={binderLabelClass(active)}>{year}ª</span>
 								<span className="label-mono hidden text-fg-subtle sm:inline">
 									{ready}/{total}
 									<span className="sr-only"> capitoli pronti</span>

@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-03
+aggiornato: 2026-10-04
 tag: [indice]
 ---
 # Sapiens
@@ -27,6 +27,8 @@ Il 1° ottobre si è decisa e scritta la tavola periodica: tra gli strumenti, a 
 
 Il 3 ottobre è arrivato l'editor di codice per informatica: Python, C e C++ eseguiti nel browser, senza server (C e C++ con Clang in WebAssembly, vedi [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]; Java resta da decidere). È in produzione tra gli strumenti, a `/strumenti/editor-di-codice` (PR #30), e nelle lezioni un blocco `codice` lo monta con una linguetta per linguaggio e la verifica degli esercizi su ingresso e uscita. Vedi [[Editor di codice]] e [[2026-10-03 Editor di codice]]. Lo stesso giorno è scritto e pubblicato il primo lotto di informatica, il primo anno: 32 lezioni senza programmazione, con formulari, flashcard e 32 generatori di esercizi (175 livelli), gratis come fisica e chimica (vedi [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]), in produzione con la PR #31. Vedi [[2026-10-03 Primo lotto di informatica]].
 
+Il 4 ottobre Alessandro ha dettato una visione larga dei lati tutor, docenti, genitori e scuole (sette idee nuove, vedi [[2026-10-04 Pensieri sulla visione, tutor docenti e scuole]]) e ha chiesto di partire dal lato tutor. Lo stesso giorno è scritta l'[[Agenda tutor]], sul modello del suo vecchio progetto AleRipetizioni: il tutor aggiunge gli studenti con un invito, assegna esercizi che entrano nel diario, fissa le lezioni, vede i progressi se lo studente li condivide, e i due si scrivono; il profilo pubblico mostra orari liberi e recensioni. Migrazione applicata, codice non ancora committato né pubblicato. Vedi [[2026-10-04 Agenda tutor]].
+
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
@@ -43,7 +45,7 @@ Il 3 ottobre è arrivato l'editor di codice per informatica: Python, C e C++ ese
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-03 Primo lotto di informatica]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-04 Agenda tutor]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
@@ -168,7 +170,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]]
 
 ## Idee
-Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]], [[Foto e modelli 3D degli elementi]].
+Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]], [[Foto e modelli 3D degli elementi]], [[Verifiche digitali in modalità bloccata]], [[Aula virtuale]], [[Ricevimenti con i docenti]], [[Peer tutoring nelle scuole]], [[Punteggio di attività dei tutor]], [[Note condivise e lavori di gruppo]], [[Tutto dentro Sapiens]].
 
 ## Decisioni aperte più importanti
 Ognuna ha il dettaglio nella nota collegata.

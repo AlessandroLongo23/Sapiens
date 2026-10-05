@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: v2
-aggiornato: 2026-09-23
+aggiornato: 2026-10-05
 tag: [prodotto, tutor]
 ---
 # Marketplace
@@ -16,6 +16,8 @@ Costruito e coperto dai test Playwright (`tests/e2e/tutoring.spec.ts`, `tutor-si
 - Tabelle `tutors`, vista `tutors_public`, `tutor_requests` con scadenza a 48 ore. Codice in `src/lib/server/tutoring*.ts`, API in `/api/tutoring/*`.
 - I tutor presenti sono di prova (`scripts/seed-tutors.mjs`).
 
+Dal 5 ottobre 2026 (pubblicato): accettando una richiesta lo studente entra tra gli studenti del tutor ([[Agenda tutor]]), e il profilo pubblico mostra gli orari liberi e le recensioni degli studenti seguiti.
+
 Mancano: i pagamenti, la verifica del telefono con OTP, i termini per i tutor, un job di scadenza programmato.
 
 ## Obiettivo
@@ -28,4 +30,4 @@ Lancio con la [[Release v2 Tutor]]. Il contatto nasce nel contesto: lo studente 
 
 ## Domande aperte
 - Come si popola il lato offerta prima del lancio? Servono tutor reali in ogni città, o si parte dalle lezioni online?
-- Recensioni dei tutor: chi può scriverle, visto che le lezioni non passano da Sapiens?
+- Recensioni dei tutor: chi può scriverle, visto che le lezioni non passano da Sapiens? Idee del 4 ottobre 2026: le referenze dei docenti in [[Peer tutoring nelle scuole]], l'ordine per attività in [[Punteggio di attività dei tutor]], le lezioni online dentro Sapiens in [[Aula virtuale]].

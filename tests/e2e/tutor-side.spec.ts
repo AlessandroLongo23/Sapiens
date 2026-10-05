@@ -105,7 +105,7 @@ test.describe.serial('tutor side', () => {
 		const row = page.locator(`[data-tutor="${tutorSlug}"]`);
 		await expect(row).toBeVisible();
 		await row.getByRole('button', { name: 'Pubblica' }).click();
-		await page.getByRole('button', { name: /^Pubblicati/ }).click();
+		await page.getByRole('radio', { name: /^Pubblicati/ }).click();
 		await expect(row).toBeVisible();
 		await row.getByRole('button', { name: 'Segna verificato' }).click();
 		await expect(row.getByText('verificato', { exact: true })).toBeVisible();

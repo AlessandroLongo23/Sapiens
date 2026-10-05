@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-03
+aggiornato: 2026-10-05
 tag: [piano, agenda]
 ---
 # Agenda
@@ -31,6 +31,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Onboarding su classe e indirizzo. Lo schermo "Oggi" è deciso ed entra nella beta (vedi [[2026-09-25 Oggi è lo schermo iniziale dell'app]]); la grafica con Dario. Note: [[App mobile]], [[Progressi dello studente]].
 - Torre dei prerequisiti, una per capitolo o per anno, con Dario. Nota: [[Mappa dei prerequisiti]].
 - Adesivi dopo l'MVP: premi agganciati alla serie di giorni della Pratica quotidiana, adesivi per gli utenti Free, "crea il tuo" da modelli. Note: [[Adesivi]], [[Pratica quotidiana]].
+- **Lato tutor** (4 ottobre 2026: Alessandro lo indica come il prossimo da sviluppare per bene). L'agenda è scritta il 4 ottobre, rifatta nell'aspetto il 5 e pubblicata lo stesso giorno (studenti, inviti, compiti, lezioni, calendario, messaggi, orari, recensioni). Da decidere, in ordine: i messaggi con i minorenni (la chat è già online), la moderazione delle recensioni, i guadagni (DAC7), la barra laterale dell'account; poi quello che non è costruito. Gli elenchi completi sono in [[Agenda tutor]], sezioni "Da decidere", "Non ancora costruito" e "Da verificare". Vedi [[2026-10-04 Agenda tutor]]. Poi le idee da valutare: [[Aula virtuale]], [[Punteggio di attività dei tutor]], [[Peer tutoring nelle scuole]]. Note: [[Agenda tutor]], [[2026-10-04 Pensieri sulla visione, tutor docenti e scuole]].
 - Prezzo del contatto per i tutor e regole di qualità. Nota: [[Pay-per-lead]].
 - Come trovare i primi tutor reali. Nota: [[Marketplace]].
 - Dettaglio degli strumenti DSA e consulenza di un esperto. Nota: [[Strumenti DSA]].
@@ -42,6 +43,7 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 - Cosa vuol dire "completa" per la v4. Nota: [[Release v4 Scuole]].
 - ACN, MePA, contratti di trattamento dati, AI Act. Note: [[Contratti con le scuole]], [[AI Act]].
 - Registro elettronico, SIDI, piattaforma Unica. Nota: [[Registro elettronico]].
+- Idee del 4 ottobre 2026 da valutare: [[Verifiche digitali in modalità bloccata]], [[Ricevimenti con i docenti]], [[Note condivise e lavori di gruppo]], [[Tutto dentro Sapiens]].
 - Prezzo per le scuole e condizioni per le scuole partner. Nota: [[Vendita alle scuole]].
 
 ## Chiusi di recente

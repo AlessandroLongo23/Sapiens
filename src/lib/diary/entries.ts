@@ -20,7 +20,7 @@ export const KIND_LABEL: Record<EntryKind, string> = Object.fromEntries(ENTRY_KI
 /** Tests and oral tests: the entries a student prepares for, which Sapiens plans a review for. */
 export const isTest = (kind: EntryKind) => kind === 'verifica' || kind === 'interrogazione';
 
-export type EntrySource = 'studente' | 'docente';
+export type EntrySource = 'studente' | 'docente' | 'tutor';
 
 export interface DiaryEntry {
 	id: string;
