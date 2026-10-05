@@ -597,7 +597,7 @@ function Chart({ block }: { block: ChartBlock }) {
 							</div>
 						</>
 					)}
-					<Code program={program} inputs={block.inputs} at={editing ? writtenBlock : chart.nodes[run.at].stmt} />
+					{block.code && <Code program={program} inputs={block.inputs} at={editing ? writtenBlock : chart.nodes[run.at].stmt} />}
 				</div>
 			</div>
 			{/* The block being carried follows the pointer over the whole page: it hangs from the body, where no box of the lesson clips or shifts it. */}

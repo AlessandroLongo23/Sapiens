@@ -36,7 +36,11 @@ export type InputType = 'int' | 'float' | 'str';
 export const INPUT_TYPES: Record<InputType, string> = { int: 'intero', float: 'decimale', str: 'testo' };
 
 /** `edit` opens the chart ready to be changed (`% modifica: sì`), as an exercise that asks to build one. */
-export type ChartBlock = { name: string; alt: string; inputs: string[]; program: Stmt[]; edit: boolean };
+/**
+ * `code: false` leaves out the program written beside the chart (`% codice: no`), for an exercise that asks the
+ * student to write it.
+ */
+export type ChartBlock = { name: string; alt: string; inputs: string[]; program: Stmt[]; edit: boolean; code: boolean };
 
 const NAME = /^[\p{L}_][\p{L}\d_]*$/u;
 const RESERVED = ['leggi', 'scrivi', 'se', 'altrimenti', 'finché', 'finche', 'vero', 'falso', 'div', 'mod', 'and', 'or', 'not', 'true', 'false'];
@@ -165,7 +169,7 @@ export function parseChartBlock(source: string): { block: ChartBlock | null; err
 	if (!read.program.length && !errors.length && !edit) errors.push('il diagramma è vuoto');
 	if (errors.length) return { block: null, errors };
 	const inputs = meta.ingresso ? meta.ingresso.split(',').map((v) => v.trim()) : [];
-	return { block: { name: meta.nome, alt: meta.alt, inputs, program: read.program, edit }, errors };
+	return { block: { name: meta.nome, alt: meta.alt, inputs, program: read.program, edit, code: !/^no$/i.test(meta.codice ?? '') }, errors };
 }
 
 /** A program as the lines of a block, which `parseProgram` reads back (loosely, when a body is empty). */

@@ -18,7 +18,7 @@ finché i > 0
 scrivi "Via!"
 ```
 
-Nel diagramma di flusso il ciclo si riconosce dalla freccia che risale: dopo l'ultima istruzione del corpo si torna sopra il rombo, e la condizione viene controllata di nuovo. Dal rombo si esce una volta sola, dal ramo "no".
+Nel diagramma di flusso il ciclo si riconosce dalla freccia che risale: dopo l'ultima istruzione del corpo si torna sopra il rombo, e la condizione viene controllata di nuovo. Dal rombo si esce una volta sola, dal ramo "no". Premi "Esegui" e conta quante volte si accende il rombo: sei, cinque con risposta sì e una con risposta no. Nel codice accanto si accende ogni volta la riga del `while`.
 
 ```codice python
 i = 5
@@ -160,6 +160,8 @@ int main() {
     return 0;
 }
 ```
+
+Nel diagramma i numeri proposti sono $4$, $7$ e $0$: eseguilo con "Passo" e guarda `s` crescere nella tabella a ogni giro.
 
 La lettura compare due volte, e tutte e due servono. La prima, fuori dal ciclo, dà a `n` un valore prima che la condizione venga controllata; la seconda, in fondo al corpo, è l'istruzione che cambia `n` e che quindi può far finire il ciclo. Esegui il programma con $4$, $7$, $-2$, $0$: la somma è $9$. Poi scrivi $0$ come primo numero: il ciclo non parte e la somma resta $0$.
 

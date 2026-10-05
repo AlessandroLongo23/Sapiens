@@ -201,6 +201,9 @@ test('a chart is written back as the lines it was read from', () => {
 	assert.equal(programText(empty), 'se x > 0\naltrimenti\nfinché x > 0\n');
 	assert.match(read(['finché x > 0']).errors[0], /servono delle istruzioni rientrate/);
 	assert.equal(parseChartBlock('% nome: a\n% alt: b\n% modifica: sì').block.edit, true);
+	// the code beside the chart is there unless the block says no
+	assert.equal(read(['leggi n']).block.code, true);
+	assert.equal(parseChartBlock('% nome: a\n% alt: b\n% codice: no\nleggi n').block.code, false);
 });
 
 test('a block is added, rewritten and removed where its place says', () => {

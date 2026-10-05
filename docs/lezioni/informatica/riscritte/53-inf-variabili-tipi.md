@@ -169,6 +169,8 @@ int main() {
 }
 ```
 
+Esegui il diagramma con "Passo": i valori proposti sono $2{,}5$ e $4$, e nella tabella accanto vedi le tre variabili prendere il loro valore una dopo l'altra. Nel codice accanto al diagramma il prezzo è letto come numero con la virgola e la quantità come numero intero.
+
 ```ad-note
 Chi fa la conversione
 In Python `input()` restituisce sempre una stringa, e la conversione la chiedi tu: `int(...)` trasforma il testo in un numero intero, `float(...)` in un numero con la virgola. In C++ la fa `cin >>`, che guarda il tipo dichiarato della variabile in cui deve mettere il valore: per questo `prezzo` e `quantita` sono dichiarate prima di leggere.

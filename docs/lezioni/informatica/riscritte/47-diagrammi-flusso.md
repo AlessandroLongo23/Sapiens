@@ -54,6 +54,8 @@ Leggere un diagramma vuol dire eseguirlo a mano, facendo quello che farebbe il c
 3. Se il blocco è un rombo, rispondi alla domanda con i valori che hai sul foglio e prendi la freccia della tua risposta.
 4. Continua finché arrivi all'ovale "fine".
 
+I diagrammi di questa pagina si eseguono proprio così. "Passo" esegue un blocco, che si accende insieme alla freccia appena percorsa; accanto c'è la tabella delle variabili, che fa da foglio, e sotto la tabella quello che il diagramma scrive. "Esegui" va avanti da solo e si ferma quando c'è un valore da leggere.
+
 I blocchi si possono combinare in tre soli modi, che si chiamano strutture: la sequenza, la selezione e la ripetizione. Ognuna ha un disegno che si riconosce a colpo d'occhio.
 
 ## La sequenza
@@ -70,7 +72,9 @@ a = b * h
 scrivi a
 ```
 
-Qui sotto c'è lo stesso algoritmo scritto come programma. Non devi ancora saper scrivere il codice: ti serve solo riconoscere, riga per riga, i blocchi del diagramma. Eseguilo, e quando te lo chiede scrivi una base e un'altezza.
+Premi "Passo" cinque volte: quando il blocco chiede un valore, nel campo c'è già un numero, che puoi cambiare. Dopo il rettangolo, nella tabella compare $a$ con il prodotto degli altri due.
+
+Accanto al diagramma c'è lo stesso algoritmo scritto come programma, e a ogni passo si accende la riga del blocco in corso. Non devi ancora saper scrivere il codice: ti serve solo riconoscere, riga per riga, i blocchi del diagramma. Qui sotto il programma è completo e lo puoi eseguire: quando te lo chiede scrivi una base e un'altezza.
 
 ```codice python
 b = int(input("Base: "))
@@ -122,6 +126,8 @@ altrimenti
     scrivi "intero"
 ```
 
+Eseguilo con 12, poi premi "Ricomincia" e riprova con 30: cambia il ramo che si accende. Arrivato al rombo, la frase accanto riscrive la domanda con il numero al posto della lettera, per esempio "30 < 14: è falsa".
+
 Nel programma il rombo diventa la riga che comincia con `if` ("se"), il ramo "sì" è quello che viene subito dopo, il ramo "no" quello dopo `else` ("altrimenti").
 
 ```codice python
@@ -149,7 +155,7 @@ int main() {
 }
 ```
 
-Eseguilo tre volte, con 10, con 30 e con 14. Con 14 la risposta alla domanda "$e < 14$?" è no, quindi esce "intero": i valori sul confine sono quelli da provare sempre, sul diagramma prima ancora che nel programma. Un ramo può anche essere vuoto, quando in un caso non c'è niente da fare: ne trovi uno nel primo esercizio in fondo.
+Esegui il programma tre volte, con 10, con 30 e con 14. Con 14 la risposta alla domanda "$e < 14$?" è no, quindi esce "intero": i valori sul confine sono quelli da provare sempre, sul diagramma prima ancora che nel programma. Un ramo può anche essere vuoto, quando in un caso non c'è niente da fare: ne trovi uno nel primo esercizio in fondo.
 
 ## La ripetizione
 
@@ -166,7 +172,7 @@ finché n > 0
 scrivi "via!"
 ```
 
-Per capire un ciclo conviene seguirlo a mano, con una tabella che ha una riga per ogni blocco eseguito. Con $n = 3$:
+Per capire un ciclo conviene seguirlo a mano, con una tabella che ha una riga per ogni blocco eseguito. Con $n = 3$ viene la tabella qui sotto: compilala su un foglio premendo "Passo" sul diagramma, una riga per ogni pressione, e poi confronta.
 
 | Passo | Blocco | Valore di $n$ | Sullo schermo |
 |---|---|---|---|
@@ -217,6 +223,8 @@ Il ciclo che non finisce
 Dentro il giro deve esserci un blocco che cambia la variabile della condizione. Senza il rettangolo $n \leftarrow n - 1$ la risposta a "$n > 0$?" resterebbe sì per sempre, e il diagramma scriverebbe 3, 3, 3 senza arrivare mai alla fine. Quando disegni un ciclo, chiediti a ogni giro che cosa fa avvicinare il no.
 ```
 
+Lo puoi vedere succedere. Nel diagramma del conto alla rovescia premi "Modifica", porta il puntatore sul rettangolo $n \leftarrow n - 1$ e toglilo con il cestino che compare al suo angolo; poi premi "Prova il diagramma" ed "Esegui". Il diagramma scrive 3 a ogni giro, finché la pagina lo ferma. "Modifica" e poi "Ripristina" lo riportano com'era.
+
 ## Dal diagramma al programma
 
 Un diagramma si traduce un blocco alla volta, nell'ordine in cui le frecce lo attraversano. Ogni forma ha la sua riga.
@@ -238,7 +246,7 @@ Nel conto alla rovescia in Python la riga `print("via!")` comincia a margine, pe
 
 ## Prova tu
 
-In ogni esercizio il diagramma è completo e il programma no: manca il pezzo indicato dal commento. Trova nel diagramma i blocchi che nel programma non ci sono, scrivili prendendo a modello i programmi della lezione e premi "Verifica".
+Nei primi due esercizi il diagramma è completo e il programma no: manca il pezzo indicato dal commento. Trova nel diagramma i blocchi che nel programma non ci sono, scrivili prendendo a modello i programmi della lezione e premi "Verifica". Nel terzo il diagramma lo costruisci tu.
 
 ### Lo sconto
 
@@ -248,6 +256,7 @@ Un negozio toglie 10 euro ai prezzi sopra i 50 euro, e lascia gli altri come son
 % nome: diagramma-flusso-selezione-sconto
 % alt: Diagramma di flusso con una selezione a un solo ramo: dopo l'inizio si legge p; un rombo chiede se p è maggiore di 50; il ramo sì scende a un rettangolo con p che prende p meno 10; il ramo no passa a destra del rettangolo senza blocchi e si riunisce sotto; poi scrivi p e fine
 % ingresso: 80
+% codice: no
 leggi p
 se p > 50
     p = p - 10
@@ -319,6 +328,7 @@ Il diagramma somma i numeri da $1$ a $n$: $s$ è la somma, che parte da $0$, e $
 % nome: diagramma-flusso-ripetizione-somma
 % alt: Diagramma di flusso con una ripetizione: dopo l'inizio si legge n, poi s prende 0 e i prende 1; un rombo chiede se i è minore o uguale a n; il ramo sì scende a s che prende s più i e poi a i che prende i più 1, da cui una freccia risale sul lato sinistro fino a sopra il rombo; il ramo no passa sul lato destro e scende a scrivi s e alla fine
 % ingresso: 4
+% codice: no
 leggi n
 s = 0
 i = 1
@@ -393,4 +403,17 @@ int main() {
     cout << s << endl;
     return 0;
 }
+```
+
+### Pari o dispari
+
+Costruisci il diagramma che legge un numero intero $n$ e scrive "pari" se $n$ è divisibile per 2, "dispari" altrimenti. Un numero è pari quando il resto della sua divisione per 2 è zero: il resto si scrive `n % 2`, e per chiedere se due valori sono uguali si scrive `==`.
+
+Ti servono tre tipi di blocco: un "leggi", una selezione con il ramo "no" e due "scrivi". Trascina ogni blocco dalla fila in alto sulla freccia dove deve stare, poi clicca dentro il blocco per scriverlo; un testo da scrivere va tra virgolette. Quando hai finito premi "Prova il diagramma" ed eseguilo con 7 e poi con 10: devono uscire "dispari" e "pari". Accanto trovi il programma che corrisponde al tuo diagramma, che cambia a ogni blocco che aggiungi.
+
+```diagramma
+% nome: diagramma-flusso-da-costruire-pari-dispari
+% alt: Un diagramma di flusso da costruire, con i soli blocchi di inizio e di fine: deve leggere n e scrivere pari oppure dispari
+% modifica: sì
+% ingresso: 7
 ```

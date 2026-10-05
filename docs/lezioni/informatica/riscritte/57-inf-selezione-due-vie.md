@@ -29,6 +29,8 @@ se spesa >= 50
 scrivi spesa
 ```
 
+Esegui il diagramma con $80$ e poi con $30$, un blocco alla volta. Arrivato al rombo, la frase accanto riscrive la condizione con il numero al posto del nome, e nella tabella è segnata la variabile che si sta confrontando: così vedi perché si prende un ramo o l'altro.
+
 Nel programma la prima riga legge un numero intero dalla tastiera e lo mette nella variabile `spesa`, l'ultima scrive il risultato; in mezzo c'è la selezione, che comincia con la parola `if` ("se") seguita dalla condizione.
 
 ```codice python
@@ -125,6 +127,8 @@ int main() {
     return 0;
 }
 ```
+
+Prova il diagramma con $6$, il valore di confine: la condizione diventa "6 ≥ 6", che è vera.
 
 In Python `else` si scrive allineato all'`if`, seguito dai due punti, e il suo blocco è rientrato come l'altro; in C++ sta tra la graffa che chiude il primo blocco e quella che apre il secondo. Esegui il programma con $8$, con $4$ e con $6$. Poi aggiungi una seconda istruzione al blocco dell'`else`, per esempio la scritta "ripassa e riprova", e controlla che compaia solo con i voti insufficienti. È la stessa scelta che nel foglio di calcolo fa la funzione `SE`, che hai incontrato in [Condizioni e funzioni logiche](/materiale/scuola-superiore/informatica/il-foglio-di-calcolo/condizioni-e-funzioni-logiche): una condizione, che cosa scrivere se è vera, che cosa scrivere se è falsa.
 

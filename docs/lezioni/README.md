@@ -269,6 +269,8 @@ scrivi s
   tocco sul blocco della fila, poi un tocco sul «+» della freccia. Il codice segue ogni modifica.
   `% modifica: sì` apre il diagramma già pronto da modificare, per un esercizio che chiede di costruirlo; in quel
   caso il programma può essere vuoto, o avere una selezione o un ciclo ancora senza corpo.
+- `% codice: no` toglie il codice accanto al diagramma: serve negli esercizi in cui il programma lo deve scrivere
+  lo studente, guardando il diagramma.
 - `scripts/lezioni/check.mts` legge ogni blocco e lo esegue con i valori di `% ingresso:`: un diagramma che non si
   legge, che si ferma per un errore o che non finisce entro 2000 passi è un errore della lezione.
 

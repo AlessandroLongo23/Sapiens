@@ -64,6 +64,8 @@ finché i <= 5
     i = i + 1
 ```
 
+Eseguilo un blocco alla volta: il rettangolo $i \leftarrow i + 1$ è il passo. Il codice accanto al diagramma è scritto con `while`, cioè nel primo dei due modi, con il passo in una riga sua.
+
 Nel `for` il passo non si vede dentro il corpo, ma viene eseguito lo stesso, dopo l'ultima istruzione del corpo e prima del nuovo controllo. Cambia il $6$ in $11$ in Python, o il $5$ in $10$ in C++, e i giri diventano dieci.
 
 ```ad-warning
@@ -154,7 +156,7 @@ int main() {
 }
 ```
 
-Questa è la tabella di traccia con $n = 4$: una riga per giro, con il valore del contatore e quello di `s` prima e dopo.
+Segui il diagramma con "Passo" e $n = 4$, e confronta i valori della tabella accanto con questa tabella di traccia: una riga per giro, con il valore del contatore e quello di `s` prima e dopo.
 
 | Giro | `i` | `s` prima | `s` dopo |
 |---|---|---|---|
