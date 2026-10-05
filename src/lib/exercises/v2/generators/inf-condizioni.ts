@@ -12,7 +12,7 @@
  * that mislead (= and ==, texts, decimals, True and 1); 5. build the flowchart; 6. write the condition.
  */
 import type { ChoiceOption, ProgramAnswer, Rng } from '../types';
-import { chartAnswer, chartOption, choose, makeGenerator, output, shuffle, textOption, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, choose, makeGenerator, needing, output, shuffle, textOption, type Built } from '../inf-programmi';
 import { FLIP, MIRROR, NEG, OPS, QUESTION_WIDTH, SCENES, chartWidth, fits, followed, holds, inputOption, mistakes, oneWay, orderOf, paramsOf, reading, rule, said, sound, tariff, threshold, trueOrFalse, tt, ttOption, twoWay, type Op, type Sel } from '../inf-sel';
 
 export const ID = 'inf-condizioni';
@@ -370,7 +370,7 @@ function level5(rng: Rng): Built {
 		solution: `Un diagramma con la lettura e un rombo che chiede ${tt(s.conds[0])}, con uno "scrivi" su ogni ramo.`,
 		steps: [s.why, `Controlla con una prova sul confine: ${reading(edge)} il diagramma giusto scrive ${said(output(s.source, edge)!)}.`, 'Sul ramo del sì va quello che si scrive quando la condizione è vera, sul ramo del no l\'altro valore.'],
 		solutionChart: s.source,
-		answer: chartAnswer(s.source, s.tests),
+		answer: needing(chartAnswer(s.source, s.tests), 'selezione'),
 		choice: choose(rng, chartOption(s.source), mistakes(rng, s, 3, fits).map(chartOption)),
 		params: paramsOf(s)
 	};

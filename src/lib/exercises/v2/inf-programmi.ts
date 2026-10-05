@@ -19,7 +19,8 @@ import { parseProgram, type Stmt } from '../../diagramma/blocco';
 import { codeOf, codeText, typesOf } from '../../diagramma/codice';
 import { buildChart } from '../../diagramma/disegno';
 import { runAll } from '../../diagramma/esecuzione';
-import type { ChartAnswer, ChoiceAnswer, ChoiceOption, CodeText, Generator, LevelSpec, ProgramAnswer, Rng, Sample } from './types';
+import { chartConstructs, codeConstructs, missing } from './costrutti';
+import type { ChartAnswer, ChoiceAnswer, ChoiceOption, CodeText, Construct, Generator, LevelSpec, ProgramAnswer, Rng, Sample } from './types';
 
 export const BANNED = /—|piuttosto che/;
 
@@ -143,6 +144,15 @@ export function programAnswer(solution: string, tests: (string | number)[][], gi
 	};
 }
 
+/** The loops and selections of a program: what a chart that does the same, block for block, is made of. */
+export const structure = (source: string): Construct[] => [...chartConstructs(read(source))].filter((c) => c === 'ciclo' || c === 'selezione');
+
+/**
+ * The same answer, graded also on what it is made of: `needing(chartAnswer(…), 'ciclo')`, or with
+ * `...structure(source)` where the answer must have the loops and selections of the solution.
+ */
+export const needing = <A extends ChartAnswer | ProgramAnswer>(answer: A, ...needs: Construct[]): A => (needs.length ? { ...answer, needs } : answer);
+
 /** What a level builds: a sample without what the generator adds (id, level, seed, format). */
 export type Built = Pick<Sample, 'prompt' | 'problem' | 'solution' | 'steps' | 'answer' | 'params'> & Partial<Pick<Sample, 'choice' | 'chart' | 'code' | 'solutionChart' | 'solutionCode'>>;
 
@@ -155,7 +165,8 @@ export interface LevelDef extends LevelSpec {
 /**
  * A generator from its levels. Every sample is text; an answer that is not a choice (a chart to build, a program to
  * write) must come with its multiple choice in `choice`. Checked on every sample: four distinct options, the right
- * one among them, no banned writing, and for a chart or a program that the solution passes its own tests.
+ * one among them, no banned writing, and for a chart or a program that the solution passes its own tests and has the
+ * constructs the level asks for.
  */
 export function makeGenerator(id: string, title: string, defs: Record<number, LevelDef>): Generator {
 	return {
@@ -186,8 +197,17 @@ export function makeGenerator(id: string, title: string, defs: Record<number, Le
 			if (sample.answer.kind === 'chart') {
 				const answer = sample.answer;
 				for (const test of answer.tests) if (JSON.stringify(output(answer.solution, test.inputs)) !== JSON.stringify(test.output)) errors.push('the solution does not pass its test');
+				if (missing(answer.needs, chartConstructs(read(answer.solution)))) errors.push('the solution lacks a construct it asks for');
+				if (answer.needs?.includes('for')) errors.push('a chart has no for');
 			}
-			if (sample.answer.kind === 'program' && sample.answer.tests.length < 2) errors.push('a program needs at least two tests');
+			if (sample.answer.kind === 'program') {
+				const answer = sample.answer;
+				if (answer.tests.length < 2) errors.push('a program needs at least two tests');
+				for (const language of ['python', 'cpp'] as const) {
+					if (missing(answer.needs, codeConstructs(answer.solution[language], language))) errors.push(`the solution in ${language} lacks a construct it asks for`);
+					if (answer.needs?.length && !missing(answer.needs, codeConstructs(answer.start[language], language))) errors.push(`the ${language} to start from already has what is asked for`);
+				}
+			}
 			return [...errors, ...(defs[sample.level]?.check?.(sample) ?? [])];
 		}
 	};

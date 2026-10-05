@@ -14,7 +14,7 @@
  * 5. complete the flowchart; 6. write the program.
  */
 import type { Rng } from '../types';
-import { chartAnswer, choose, codeOption, codes, makeGenerator, output, programAnswer, type Built } from '../inf-programmi';
+import { chartAnswer, choose, codeOption, codes, makeGenerator, needing, output, programAnswer, type Built } from '../inf-programmi';
 import { bands, duel, followed, mistakes, paramsOf, program, reading, said, say, sign, sound, ticket, truth, tt, writtenChoice, type Cascade } from '../inf-sel';
 
 export const ID = 'inf-selezione-multipla';
@@ -157,7 +157,7 @@ function level6(rng: Rng): Built {
 		solution: `Un programma che controlla prima ${tt(s.conds[0])} e poi, nell'else, ${tt(s.conds[1])}.`,
 		steps: reasons(s, 'programma'),
 		solutionCode: codes(s.source, s.tests[0]),
-		answer: programAnswer(s.source, s.tests, program(s.reads, [])),
+		answer: needing(programAnswer(s.source, s.tests, program(s.reads, [])), 'selezione'),
 		choice: programs(rng, s),
 		params: paramsOf(s)
 	};

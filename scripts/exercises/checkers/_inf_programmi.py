@@ -194,6 +194,43 @@ def common(sample):
         for lang in ("python", "cpp"):
             if "scrivi qui" not in answer["start"][lang]:
                 errors.append(f"the {lang} to start from has no place to write")
+    if answer["kind"] in ("chart", "program"):
+        errors += needs_errors(sample)
+    return errors
+
+
+# How each construct an answer may be asked for (src/lib/exercises/v2/costrutti.ts) shows in a solution we wrote: the
+# line of a chart, of a Python program and of a C++ one. Written here again, not taken from the site.
+CONSTRUCTS = {
+    "ciclo": (r"^\s*finché ", r"^\s*(while|for) ", r"^\s*(while|for) \("),
+    "selezione": (r"^\s*se ", r"^\s*if ", r"^\s*if \("),
+    "while": (r"^\s*finché ", r"^\s*while ", r"^\s*while \("),
+    "for": (None, r"^\s*for ", r"^\s*for \("),
+}
+
+
+def needs_errors(sample):
+    """The constructs an open answer asks for: its own solution has them, and what the exercise names is asked."""
+    errors = []
+    answer = sample["answer"]
+    needs = answer.get("needs", [])
+    has = lambda pattern, text: pattern is not None and re.search(pattern, text, re.M) is not None
+    for need in needs:
+        if need not in CONSTRUCTS:
+            errors.append(f"unknown construct {need}")
+            continue
+        chart, python, cpp = CONSTRUCTS[need]
+        if answer["kind"] == "chart" and not has(chart, answer["solution"]):
+            errors.append(f"the chart of the solution has no {need}")
+        if answer["kind"] == "program":
+            if not has(python, answer["solution"]["python"]) or not has(cpp, answer["solution"]["cpp"]):
+                errors.append(f"the program of the solution has no {need}")
+            if has(python, answer["start"]["python"]) or has(cpp, answer["start"]["cpp"]):
+                errors.append(f"the program to start from already has a {need}")
+    if answer["kind"] == "program":
+        for word in ("while", "for"):
+            if f"Usa un ciclo {word}" in sample["problem"] and word not in needs:
+                errors.append(f"the exercise names a {word} and does not ask for it")
     return errors
 
 

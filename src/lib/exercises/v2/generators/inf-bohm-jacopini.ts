@@ -6,7 +6,7 @@
  * to recognise and then to build as a structured chart (v2/inf-alg.ts).
  */
 import type { Rng } from '../types';
-import { chartAnswer, chartOption, choose, makeGenerator, output, type Built } from '../inf-programmi';
+import { chartAnswer, chartOption, choose, makeGenerator, needing, output, structure, type Built } from '../inf-programmi';
 import {
 	byAdding,
 	cheaper,
@@ -207,7 +207,7 @@ function level6(rng: Rng): Built {
 		solution: 'Un diagramma con un\'iterazione al posto dei due salti, e la condizione scritta al contrario di quella del salto in avanti.',
 		steps: jumpSteps(a),
 		solutionChart: a.source,
-		answer: chartAnswer(a.source, a.tests),
+		answer: needing(chartAnswer(a.source, a.tests), ...structure(a.source)),
 		choice: choose(rng, chartOption(a.source), mistakes(a, UNJUMP).map(chartOption)),
 		params: paramsOf(a, { jumps: a.jumps })
 	};

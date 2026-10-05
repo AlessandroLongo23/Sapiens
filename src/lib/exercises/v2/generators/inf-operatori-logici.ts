@@ -12,7 +12,7 @@
  * condition (text); 5. build the flowchart; 6. write the program.
  */
 import type { ChoiceOption, Rng } from '../types';
-import { chartAnswer, choose, codeOption, codes, makeGenerator, output, programAnswer, shuffle, textOption, type Built } from '../inf-programmi';
+import { chartAnswer, choose, codeOption, codes, makeGenerator, needing, output, programAnswer, shuffle, textOption, type Built } from '../inf-programmi';
 import { JOINS, MIRROR, NEG, SCENES, followed, inputChoice, interval, mistakes, named, oneOfTwo, orderOf, outside, pairOf, paramsOf, program, reading, said, say, se, show, sound, threshold, trueOrFalse, truth, tt, ttOption, withOp, writtenChoice, type Cmp, type Compound, type Op, type Sel } from '../inf-sel';
 
 export const ID = 'inf-operatori-logici';
@@ -291,7 +291,7 @@ function level5(rng: Rng): Built {
 		solution: `Un diagramma con un rombo che chiede ${tt(s.conds[0])}.`,
 		steps: reasons(s, 'diagramma'),
 		solutionChart: s.source,
-		answer: chartAnswer(s.source, s.tests),
+		answer: needing(chartAnswer(s.source, s.tests), 'selezione'),
 		// a rhombus with two comparisons is too wide for an option on a phone: the choice is among programs
 		choice: programs(rng, s),
 		params: paramsOf(s)
@@ -306,7 +306,7 @@ function level6(rng: Rng): Built {
 		solution: `Un programma con una selezione sulla condizione ${tt(s.conds[0])}.`,
 		steps: reasons(s, 'programma'),
 		solutionCode: codes(s.source, s.tests[0]),
-		answer: programAnswer(s.source, s.tests, program(s.reads, [])),
+		answer: needing(programAnswer(s.source, s.tests, program(s.reads, [])), 'selezione'),
 		choice: programs(rng, s),
 		params: paramsOf(s)
 	};

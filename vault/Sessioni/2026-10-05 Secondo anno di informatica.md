@@ -72,6 +72,16 @@ Alessandro ha chiesto gli esercizi del secondo anno, con diagrammi di flusso e c
 - La lettera O degli operatori logici somiglia allo zero nel carattere del codice.
 - Niente esercizi su `switch`, `match` ed `elif`.
 
+### I costrutti chiesti nella risposta (sera del 5 ottobre)
+Alessandro ha chiesto di chiudere il primo dei limiti segnalati: la correzione guardava solo l'uscita, quindi un `for` passava dove la consegna chiedeva un `while`, e nei livelli senza ingresso passava anche chi scriveva i numeri a mano con sei `print`.
+
+- Un livello aperto dichiara i costrutti che la risposta deve contenere (`needs`: `ciclo`, `selezione`, `while`, `for`). Il server corregge prima l'uscita; se è giusta, cerca i costrutti nel diagramma o nel codice consegnato (`src/lib/exercises/v2/costrutti.ts`). Per il codice toglie commenti e testi e cerca le parole riservate. Se manca qualcosa la risposta è sbagliata, con un messaggio suo: "Il programma scrive il risultato giusto, ma l'esercizio chiede un ciclo while, e qui non c'è".
+- Chi lo dichiara, su 32 livelli aperti: un ciclo nei cinque generatori dell'iterazione (`while` in "Scrivere un ciclo" della 60, `for` nella 61); una selezione in quelli del capitolo sulla selezione; i cicli e le selezioni della soluzione dove si costruisce un diagramma nel capitolo sugli algoritmi (45-50). Non lo dichiarano i primi programmi (52-55), dove non c'è niente da chiedere, i due livelli "correggi" e quello che parte da un diagramma con il rombo già messo (59, livello 5).
+- I due livelli aperti del ciclo while ora leggono il numero a cui il ciclo si ferma e sono provati su due numeri: l'uscita non si può più battere a mano.
+- Il controllo indipendente in Python verifica che la soluzione abbia il costrutto chiesto, che il programma di partenza non lo abbia già, e che una consegna che nomina `while` o `for` lo chieda.
+- Verifiche: i 19 generatori con risposte aperte passano su due semi, 500 esercizi per livello; `tests/unit/costrutti.test.mjs` (5); nel browser, in sviluppo, la somma da 1 a n consegnata con la formula e con un `for` viene respinta con il messaggio, con il `while` passa.
+- Limiti che restano: il controllo vede che il costrutto c'è, non che fa il lavoro (un `while` di un giro accanto ai `print` passa dove il livello non legge niente). Senza ingresso restano "Due cicli annidati" della 62, livello 5, e una parte dei diagrammi di Scratch: lì la risposta scritta a mano chiede da 6 a 49 blocchi oltre al ciclo finto. Chi somma da 1 a n con la formula in una lezione sui cicli si vede dire che manca il ciclo. Gli esercizi già salvati nelle sessioni in corso restano corretti alla vecchia maniera.
+
 ## Domande per Andrea
 Ogni nota di lezione ha le sue. Le principali sono riportate in [[Domande per Andrea]], sezione "Informatica, secondo anno".
 

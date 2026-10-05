@@ -36,13 +36,26 @@ test.describe('exercises with programs and flowcharts', () => {
 	});
 
 	test('on the trial page a chart is built and a program is written, and each is graded', async ({ page }) => {
-		const response = await page.goto('/prova-grafico/esercizio?g=inf-ciclo-while&l=6&seed=3&open=1');
+		const LEVEL6 = '/prova-grafico/esercizio?g=inf-ciclo-while&l=6&seed=3&open=1';
+		const response = await page.goto(LEVEL6);
 		test.skip(response?.status() === 404, 'the trial page exists in development only');
 		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
-		await page.locator('[data-build="program"] .cm-content').click();
-		await page.keyboard.press('ControlOrMeta+a');
-		await page.keyboard.insertText('print(sum(range(1, 5)))\n');
-		await page.getByRole('button', { name: 'Consegna' }).click();
+		const hand = async (code: string) => {
+			await page.locator('[data-build="program"] .cm-content').click();
+			await page.keyboard.press('ControlOrMeta+a');
+			await page.keyboard.insertText(code);
+			await page.getByRole('button', { name: 'Consegna' }).click();
+		};
+		// the sum from 1 to n by its formula, and with a for: both write the right numbers, neither is the while asked for
+		await hand('n = int(input())\nprint(n * (n + 1) // 2)  # while\n');
+		await expect(page.locator('[data-verdict]')).toHaveAttribute('data-verdict', 'incorrect', { timeout: 120_000 });
+		await expect(page.locator('[data-verdict]')).toContainText('chiede un ciclo while');
+		await page.goto(LEVEL6);
+		await hand('n = int(input())\nsomma = 0\nfor i in range(1, n + 1):\n    somma = somma + i\nprint(somma)\n');
+		await expect(page.locator('[data-verdict]')).toHaveAttribute('data-verdict', 'incorrect', { timeout: 120_000 });
+		await expect(page.locator('[data-verdict]')).toContainText('chiede un ciclo while');
+		await page.goto(LEVEL6);
+		await hand('n = int(input())\nsomma = 0\ni = 1\nwhile i <= n:\n    somma = somma + i\n    i = i + 1\nprint(somma)\n');
 		await expect(page.locator('[data-verdict]')).toHaveAttribute('data-verdict', 'correct', { timeout: 120_000 });
 
 		await page.goto('/prova-grafico/esercizio?g=inf-ciclo-while&l=5&seed=3&open=1');
