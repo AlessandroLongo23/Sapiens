@@ -263,9 +263,12 @@ scrivi s
   accesa. Il tipo di ogni variabile, che il C++ vuole, è dedotto dai valori che prende (e per un "leggi" dal tipo
   dichiarato o dal valore di `% ingresso:`). Controlla che il codice generato sia quello che la lezione mostra nei
   blocchi `codice`: se differisce per un tipo, dichiaralo nel `leggi`.
-- Con "Modifica" lo studente cambia il diagramma: aggiunge un blocco in un punto, riscrive o elimina un blocco, e il
-  codice segue. `% modifica: sì` apre il diagramma già pronto da modificare, per un esercizio che chiede di
-  costruirlo; in quel caso il programma può essere vuoto, o avere una selezione o un ciclo ancora senza corpo.
+- Con "Modifica" lo studente cambia il diagramma: trascina un blocco dalla fila dei blocchi su una freccia, che si
+  accende nel punto dove il blocco andrà; trascina allo stesso modo un blocco del diagramma su un'altra freccia;
+  clicca dentro un blocco per scriverlo, lì dov'è; lo toglie con il cestino al suo angolo. Senza trascinare: un
+  tocco sul blocco della fila, poi un tocco sul «+» della freccia. Il codice segue ogni modifica.
+  `% modifica: sì` apre il diagramma già pronto da modificare, per un esercizio che chiede di costruirlo; in quel
+  caso il programma può essere vuoto, o avere una selezione o un ciclo ancora senza corpo.
 - `scripts/lezioni/check.mts` legge ogni blocco e lo esegue con i valori di `% ingresso:`: un diagramma che non si
   legge, che si ferma per un errore o che non finisce entro 2000 passi è un errore della lezione.
 

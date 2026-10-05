@@ -7,7 +7,7 @@ import { loadPyodide } from 'pyodide';
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
 const { parseChartBlock, parseProgram, programText, labelOf } = await jiti.import('../../src/lib/diagramma/blocco.ts');
 const { codeOf, codeText, typesOf } = await jiti.import('../../src/lib/diagramma/codice.ts');
-const { blockAt, insertBlock, newBlock, removeBlock, replaceBlock, rewriteBlock } = await jiti.import('../../src/lib/diagramma/modifica.ts');
+const { blockAt, insertBlock, moveBlock, newBlock, removeBlock, replaceBlock, rewriteBlock } = await jiti.import('../../src/lib/diagramma/modifica.ts');
 const { buildChart, chartSvg } = await jiti.import('../../src/lib/diagramma/disegno.ts');
 const { advance, runAll, startRun, MAX_STEPS } = await jiti.import('../../src/lib/diagramma/esecuzione.ts');
 const { evaluate, parseExpression, readValue, showExpression, showValue, textOf, tokenize } = await jiti.import('../../src/lib/diagramma/espressione.ts');
@@ -223,12 +223,32 @@ test('a block is added, rewritten and removed where its place says', () => {
 	assert.equal(programText([newBlock('output', program)]), 'scrivi n\n');
 });
 
+test('a block is moved to another gap, with what it holds, and never into itself', () => {
+	const program = programOf(['leggi n', 'finché n > 0', '    scrivi n', '    n = n - 1', 'scrivi "fine"']);
+	// down the same run of blocks: the gap is counted with the block still in its place
+	assert.equal(programText(moveBlock(program, ':0', ':2')), 'finché n > 0\n    scrivi n\n    n = n - 1\nleggi n\nscrivi "fine"\n');
+	assert.equal(programText(moveBlock(program, ':2', ':0')), 'scrivi "fine"\nleggi n\nfinché n > 0\n    scrivi n\n    n = n - 1\n');
+	// into a loop, and a loop with its body out to the end
+	assert.equal(programText(moveBlock(program, ':2', '1b:1')), 'leggi n\nfinché n > 0\n    scrivi n\n    scrivi "fine"\n    n = n - 1\n');
+	assert.equal(programText(moveBlock(program, ':1', ':3')), 'leggi n\nscrivi "fine"\nfinché n > 0\n    scrivi n\n    n = n - 1\n');
+	// the gaps beside a block are where it is; a block does not go inside itself
+	assert.equal(moveBlock(program, ':1', ':1'), program);
+	assert.equal(moveBlock(program, ':1', ':2'), program);
+	assert.equal(moveBlock(program, ':1', '1b:1'), program);
+	assert.equal(moveBlock(program, ':9', ':0'), program);
+	assert.equal(program.length, 3);
+});
+
 test('the gaps of a chart being changed are where a block can go', () => {
 	const chart = buildChart(programOf(['leggi n', 'se n > 0', 'altrimenti', 'finché n > 0']), true);
 	assert.deepEqual(chart.slots.map((slot) => slot.place).sort(), [':0', ':1', ':2', ':3', '1e:0', '1t:0', '2b:0'].sort());
 	assert.equal(chart.nodes.find((node) => node.shape === 'data').place, ':0');
-	const svg = chartSvg(chart, 'x', { picked: { kind: 'slot', place: '2b:0' } });
-	assert.match(svg, /class="fc-slot fc-picked" data-slot="2b:0"/);
+	// the gaps are drawn while a block is carried, and the one it is over has its stretch of line lit
+	assert.doesNotMatch(chartSvg(chart, 'x', { picked: ':1' }), /fc-slot/);
+	const svg = chartSvg(chart, 'x', { gaps: true, hot: '2b:0', picked: ':1' });
+	assert.match(svg, /class="fc-slot fc-hot" data-slot="2b:0"[^>]*><line class="fc-stretch"/);
+	assert.equal(svg.match(/fc-stretch/g).length, 1);
+	assert.match(svg, /fc-decision fc-picked" data-node="\d+" data-place=":1"/);
 	assert.match(svg, /data-place=":1" role="button"/);
 	assert.equal(buildChart(programOf(['leggi n'])).slots.length, 0);
 	// a chart with empty branches still runs

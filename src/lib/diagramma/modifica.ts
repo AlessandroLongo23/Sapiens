@@ -66,6 +66,24 @@ export const removeBlock = (program: Stmt[], place: string): Stmt[] => {
 	return update(program, steps, (list) => list.filter((_, i) => i !== index));
 };
 
+/**
+ * The block at `from` taken to the gap at `to`. A block is not put inside itself, and the program given is left as
+ * it is; when the move cannot be made the same program comes back.
+ */
+export function moveBlock(program: Stmt[], from: string, to: string): Stmt[] {
+	const stmt = blockAt(program, from);
+	if (!stmt) return program;
+	const [fromKey, fromIndex] = from.split(':');
+	const [toKey, toIndex] = to.split(':');
+	const own = `${fromKey ? `${fromKey}.` : ''}${fromIndex}`;
+	if (new RegExp(`^${own.replace(/\./g, '\\.')}[tbe](\\.|$)`).test(toKey)) return program;
+	// in the same run of blocks, the gaps just before and just after the block are where it already is
+	if (fromKey === toKey && (toIndex === fromIndex || Number(toIndex) === Number(fromIndex) + 1)) return program;
+	// the block goes in as a copy, so that the one to take away is still told apart
+	const without = (stmts: Stmt[]): Stmt[] => stmts.filter((s) => s !== stmt).map((s) => (s.kind === 'while' ? { ...s, body: without(s.body) } : s.kind === 'if' ? { ...s, then: without(s.then), else: s.else && without(s.else) } : s));
+	return without(insertBlock(program, to, { ...stmt }));
+}
+
 export type BlockKind = Stmt['kind'];
 export const BLOCK_KINDS: Record<BlockKind, string> = { input: 'Leggi', output: 'Scrivi', assign: 'Assegna', if: 'Selezione', while: 'Ciclo' };
 

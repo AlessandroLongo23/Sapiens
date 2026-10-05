@@ -21,7 +21,7 @@ export type EdgeLabel = { text: string; x: number; y: number; anchor: 'start' | 
 /** `arrows` are the points of the line that carry an arrowhead, coming from the point before. */
 export type ChartEdge = { from: number; branch: Branch; to: number; points: Point[]; arrows: number[]; label?: EdgeLabel };
 /** A gap where a block can be added, on a chart that is being changed. `place` is as in modifica.ts. */
-export type ChartSlot = { place: string; x: number; y: number };
+export type ChartSlot = { place: string; x: number; y: number; from: number; to: number };
 export type Chart = { nodes: ChartNode[]; edges: ChartEdge[]; slots: ChartSlot[]; width: number; height: number };
 
 /** A line that has left its block and not yet reached the next one. */
@@ -105,7 +105,7 @@ export function buildChart(program: Stmt[], edit = false): Chart {
 		let y = top;
 		let incoming = arriving;
 		for (const [index, stmt] of stmts.entries()) {
-			if (edit) slots.push({ place: placeOf(key, index), x, y: y + gap / 2 });
+			if (edit) slots.push({ place: placeOf(key, index), x, y: y + gap / 2, from: y + 3, to: y + gap - 10 });
 			y += gap;
 			const node = add(shapeOf(stmt), labelOf(stmt), stmt, x, y);
 			node.place = placeOf(key, index);
@@ -181,7 +181,7 @@ export function buildChart(program: Stmt[], edit = false): Chart {
 		}
 		// after the last block of the run there is room for one more
 		if (edit) {
-			slots.push({ place: placeOf(key, stmts.length), x, y: y + gap / 2 });
+			slots.push({ place: placeOf(key, stmts.length), x, y: y + gap / 2, from: y + 3, to: y + gap - 3 });
 			y += gap;
 		}
 		return { y, out: incoming };
@@ -224,13 +224,16 @@ function line(edge: ChartEdge, taken: boolean): string {
 	return `<g class="fc-line${taken ? ' fc-taken' : ''}" data-edge="${edge.from}-${edge.branch}"><polyline class="fc-edge" points="${edge.points.map((p) => p.join(',')).join(' ')}"/>${heads}${label}</g>`;
 }
 
-/** `picked` is the place of the block, or of the gap, that is being changed (modifica.ts). */
-export type ChartMark = { at?: number; taken?: string | null; wrong?: boolean; picked?: { kind: 'block' | 'slot'; place: string } | null };
+/**
+ * `picked` is the place (modifica.ts) of the block that is being written or moved. `gaps` shows where a block can
+ * go, while one is being carried or has been chosen, and `hot` is the gap it would land in.
+ */
+export type ChartMark = { at?: number; taken?: string | null; wrong?: boolean; picked?: string | null; gaps?: boolean; hot?: string | null };
 
 /**
  * The chart as SVG, the same on the server (the lesson as it is published, and printed) and in the page while the
  * chart runs: `at` is the block the run is on, `taken` the line it came by. A chart built to be changed has its
- * blocks and its gaps as buttons, which the page listens to (components/diagramma/LessonChart.tsx).
+ * blocks as buttons, which the page listens to (components/diagramma/LessonChart.tsx).
  */
 export function chartSvg(chart: Chart, alt: string, mark: ChartMark = {}): string {
 	const key = (edge: ChartEdge) => `${edge.from}-${edge.branch}`;
@@ -239,13 +242,25 @@ export function chartSvg(chart: Chart, alt: string, mark: ChartMark = {}): strin
 	const blocks = chart.nodes.map((node) => {
 		const text = node.label.map((part) => (part.name ? `<tspan font-style="italic">${escape(part.text)}</tspan>` : escape(part.text))).join('');
 		const on = node.id === mark.at ? (mark.wrong ? ' fc-on fc-wrong' : ' fc-on') : '';
-		const picked = mark.picked?.kind === 'block' && mark.picked.place === node.place;
-		const button = edit && node.place ? ` data-place="${node.place}" role="button" tabindex="0" aria-pressed="${picked}" aria-label="Modifica il blocco ${escape(textOf(node.label))}"` : '';
+		const picked = mark.picked !== undefined && mark.picked === node.place;
+		const button = edit && node.place ? ` data-place="${node.place}" role="button" tabindex="0" aria-label="Modifica il blocco ${escape(textOf(node.label))}"` : '';
 		return `<g class="fc-node fc-${node.shape}${on}${picked ? ' fc-picked' : ''}" data-node="${node.id}"${button}>${shape(node)}<text x="${node.x}" y="${node.y + node.h / 2}" text-anchor="middle" dominant-baseline="central">${text}</text></g>`;
 	});
-	const slots = chart.slots.map((slot) => {
-		const picked = mark.picked?.kind === 'slot' && mark.picked.place === slot.place;
-		return `<g class="fc-slot${picked ? ' fc-picked' : ''}" data-slot="${slot.place}" role="button" tabindex="0" aria-pressed="${picked}" aria-label="Aggiungi un blocco qui"><circle cx="${slot.x}" cy="${slot.y}" r="10"/><path d="M${slot.x - 5},${slot.y}h10M${slot.x},${slot.y - 5}v10"/></g>`;
-	});
-	return `<svg class="flowchart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chart.width} ${chart.height}" width="${chart.width}" height="${chart.height}" role="img" aria-label="${escape(alt)}">${lines.join('')}${blocks.join('')}${slots.join('')}</svg>`;
+	const gaps = !mark.gaps
+		? []
+		: chart.slots.map((slot) => {
+				const hot = mark.hot === slot.place;
+				// the stretch of line a block would take the place of is lit while one is held over it
+				const stretch = hot ? `<line class="fc-stretch" x1="${slot.x}" y1="${slot.from}" x2="${slot.x}" y2="${slot.to}"/>` : '';
+				return `<g class="fc-slot${hot ? ' fc-hot' : ''}" data-slot="${slot.place}" role="button" tabindex="0" aria-label="Metti il blocco qui">${stretch}<circle cx="${slot.x}" cy="${slot.y}" r="10"/><path d="M${slot.x - 5},${slot.y}h10M${slot.x},${slot.y - 5}v10"/></g>`;
+			});
+	return `<svg class="flowchart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chart.width} ${chart.height}" width="${chart.width}" height="${chart.height}" role="img" aria-label="${escape(alt)}">${lines.join('')}${blocks.join('')}${gaps.join('')}</svg>`;
+}
+
+/** One block by itself, as the chart draws it: for the blocks to pick from, and for the one being carried. */
+export function blockSvg(kind: Shape, text: string): string {
+	const node: ChartNode = { id: 0, shape: kind, x: 0, y: 0, label: [{ text }], stmt: null, ...sizeOf(kind, [{ text }]) };
+	node.x = node.w / 2 + 2;
+	node.y = 2;
+	return `<svg class="flowchart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${node.w + 4} ${node.h + 4}" width="${node.w + 4}" height="${node.h + 4}" aria-hidden="true"><g class="fc-node fc-${kind}">${shape(node)}<text x="${node.x}" y="${node.y + node.h / 2}" text-anchor="middle" dominant-baseline="central">${escape(text)}</text></g></svg>`;
 }

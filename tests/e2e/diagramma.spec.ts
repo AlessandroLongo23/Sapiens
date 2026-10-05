@@ -23,10 +23,26 @@ async function chart(page: Page, heading: string, button = 'Passo'): Promise<Loc
 	return figure;
 }
 
-/** Adds a block of `kind` in the gap at `place` (lib/diagramma/modifica.ts) of a chart that is being changed. */
-async function add(figure: Locator, place: string, kind: string) {
+/** Adds a block in the gap at `place` (lib/diagramma/modifica.ts) without carrying it: a tap on the block, a tap on the gap. */
+async function add(figure: Locator, place: string, kind: 'input' | 'output' | 'assign' | 'if' | 'while') {
+	await figure.locator(`[data-block="${kind}"]`).click();
 	await figure.locator(`[data-slot="${place}"]`).click();
-	await figure.getByRole('button', { name: kind, exact: true }).click();
+	await expect(figure.locator(`[data-editor="${kind}"]`)).toBeVisible();
+}
+
+/** The middle of what a locator shows, on the page. */
+async function middle(locator: Locator): Promise<{ x: number; y: number }> {
+	const box = (await locator.boundingBox())!;
+	return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
+
+/** Carries what is at `from` to a point of the page, and holds it there: the test lets go with `page.mouse.up()`. */
+async function carry(page: Page, from: Locator, to: { x: number; y: number }) {
+	const start = await middle(from);
+	await page.mouse.move(start.x, start.y);
+	await page.mouse.down();
+	await page.mouse.move(start.x + 12, start.y + 12, { steps: 3 });
+	await page.mouse.move(to.x, to.y, { steps: 8 });
 }
 
 const step = (figure: Locator) => figure.getByRole('button', { name: 'Passo' }).click();
@@ -114,14 +130,14 @@ test.describe('flowcharts in a lesson', () => {
 		const figure = await chart(page, 'Da costruire', 'Prova il diagramma');
 		const code = figure.locator('[data-code] pre');
 		await expect(code).toContainText('Il programma è ancora vuoto');
-		await add(figure, ':0', 'Leggi');
+		await add(figure, ':0', 'input');
 		await figure.getByLabel('Variabile da leggere').fill('n');
 		await expect(code).toHaveText('n = int(input())');
-		await add(figure, ':1', 'Ciclo');
-		await figure.getByLabel('Condizione: finché è vera si ripete').fill('n > 0');
-		await add(figure, '1b:0', 'Scrivi');
+		await add(figure, ':1', 'while');
+		await figure.getByLabel('Condizione').fill('n > 0');
+		await add(figure, '1b:0', 'output');
 		await figure.getByLabel('Cosa scrivere').fill('n, "giri"');
-		await add(figure, '1b:1', 'Assegna');
+		await add(figure, '1b:1', 'assign');
 		await figure.getByLabel('Variabile', { exact: true }).fill('n');
 		// while a field cannot be read the chart keeps the block it had, and says what is wrong
 		await figure.getByLabel('Valore che prende').fill('n -');
@@ -153,29 +169,77 @@ test.describe('flowcharts in a lesson', () => {
 		await figure.getByLabel('Condizione').fill('spesa >= 100');
 		await expect(figure.locator('.fc-picked')).toContainText('spesa ≥ 100?');
 		await expect(code).toContainText('if spesa >= 100:');
-		await figure.getByLabel('Con il ramo «no» (altrimenti)').check();
+		await figure.getByLabel('con il ramo «no»').check();
 		await expect(code).toContainText('else:    pass');
-		await add(figure, '1e:0', 'Scrivi');
+		await add(figure, '1e:0', 'output');
 		await figure.getByLabel('Cosa scrivere').fill('"niente sconto"');
-		await expect(figure.locator('svg.flowchart')).toContainText('scrivi “niente sconto”');
-		await figure.getByRole('button', { name: 'Elimina il blocco' }).click();
-		await expect(figure.locator('svg.flowchart')).not.toContainText('niente sconto');
+		await expect(figure.locator('svg.flowchart[role="img"]')).toContainText('scrivi “niente sconto”');
+		await figure.getByRole('button', { name: 'Elimina il blocco scrivi “niente sconto”' }).click();
+		await expect(figure.locator('svg.flowchart[role="img"]')).not.toContainText('niente sconto');
 		await figure.getByRole('button', { name: 'Annulla' }).click();
-		await expect(figure.locator('svg.flowchart')).toContainText('niente sconto');
+		await expect(figure.locator('svg.flowchart[role="img"]')).toContainText('niente sconto');
 		await figure.getByRole('button', { name: 'Ripristina' }).click();
 		await expect(code).toContainText('if spesa > 50:');
 		await expect(code).not.toContainText('else');
-		// a block is reached and picked from the keyboard too
+		// from the keyboard too: a block is chosen, then the gap it goes in
+		await figure.getByRole('button', { name: 'Blocco Ciclo' }).focus();
+		await page.keyboard.press('Enter');
 		await figure.locator('[data-slot=":0"]').focus();
 		await page.keyboard.press('Enter');
-		await expect(figure.getByRole('button', { name: 'Ciclo', exact: true })).toBeVisible();
+		await expect(figure.locator('[data-editor="while"]')).toBeVisible();
+		await expect(code).toContainText('while spesa > 0:');
+	});
+
+	test('a block is carried onto a line, which lights up where it will go', async ({ page }) => {
+		test.skip(!(await open(page)), 'the trial page exists in development only');
+		const figure = await chart(page, 'Selezione a una via');
+		await figure.getByRole('button', { name: 'Modifica' }).click();
+		const code = figure.locator('[data-code] pre');
+		const block = (text: string) => figure.locator('svg.flowchart[role="img"] .fc-node', { hasText: text });
+
+		// a new block from the row, held just above "fine"
+		const end = (await block('fine').boundingBox())!;
+		const above = { x: end.x + end.width / 2 + 30, y: end.y - 20 };
+		await carry(page, figure.locator('[data-block="output"]'), above);
+		await expect(figure.locator('.fc-hot')).toHaveAttribute('data-slot', ':3');
+		await expect(figure.locator('.fc-hot .fc-stretch')).toHaveCount(1);
+		// the block follows the pointer
+		const held = await middle(page.locator('[data-carried="output"]'));
+		expect(Math.abs(held.x - above.x) + Math.abs(held.y - above.y)).toBeLessThan(4);
+		await page.mouse.up();
+		// it lands open, with its text taken: typing writes it
+		await expect(figure.locator('[data-editor="output"]')).toBeVisible();
+		await page.keyboard.type('"fatto"');
+		await page.keyboard.press('Enter');
+		await expect(figure.locator('[data-editor]')).toHaveCount(0);
+		await expect(code).toContainText('print(spesa)print("fatto")');
+
+		// a block of the chart is carried to another line: into the branch "sì", before the block that is there
+		const inside = (await block('spesa ← spesa − 10').boundingBox())!;
+		await carry(page, block('“fatto”'), { x: inside.x + inside.width / 2, y: inside.y - 20 });
+		await expect(figure.locator('.fc-hot')).toHaveAttribute('data-slot', '1t:0');
+		await page.mouse.up();
+		await expect(code).toContainText('if spesa > 50:    print("fatto")    spesa = spesa - 10print(spesa)');
+
+		// let go away from every line, a block stays where it was
+		await carry(page, block('“fatto”'), { x: inside.x - 300, y: inside.y });
+		await expect(figure.locator('.fc-hot')).toHaveCount(0);
+		await page.mouse.up();
+		await expect(code).toContainText('if spesa > 50:    print("fatto")');
+
+		// the bin at the corner of the block under the pointer takes it away
+		await block('“fatto”').hover();
+		await figure.getByRole('button', { name: 'Elimina il blocco scrivi “fatto”' }).click();
+		await expect(code).not.toContainText('fatto');
+		await expect(code).toContainText('if spesa > 50:    spesa = spesa - 10print(spesa)');
 	});
 
 	test('a "leggi" that asks for an integer does not take anything else', async ({ page }) => {
 		test.skip(!(await open(page)), 'the trial page exists in development only');
 		const figure = await chart(page, 'Da costruire', 'Prova il diagramma');
-		await add(figure, ':0', 'Leggi');
+		await add(figure, ':0', 'input');
 		await figure.getByLabel('Che cosa si legge').selectOption('int');
+		await expect(figure.locator('[data-code] pre')).toHaveText('x = int(input())');
 		await figure.getByRole('button', { name: 'Prova il diagramma' }).click();
 		await step(figure);
 		await figure.getByLabel('Valore di x').fill('due');
@@ -194,8 +258,7 @@ test.describe('flowcharts in a lesson', () => {
 		expect(await wider()).toBeLessThanOrEqual(0);
 		// being changed, the chart is larger: it scrolls in its own box
 		await figure.getByRole('button', { name: 'Modifica' }).click();
-		await figure.locator('[data-slot=":0"]').click();
-		await expect(figure.getByRole('button', { name: 'Ciclo', exact: true })).toBeVisible();
+		await add(figure, ':0', 'while');
 		expect(await wider()).toBeLessThanOrEqual(0);
 	});
 });

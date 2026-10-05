@@ -1016,6 +1016,11 @@ body {
 .flowchart [role='button'] {
 	cursor: pointer;
 	outline: none;
+	user-select: none;
+	-webkit-user-select: none;
+}
+.flowchart .fc-node[data-place] {
+	cursor: grab;
 }
 .flowchart .fc-node[role='button']:hover .fc-shape,
 .flowchart .fc-node[role='button']:focus-visible .fc-shape {
@@ -1025,6 +1030,9 @@ body {
 .flowchart .fc-picked .fc-shape {
 	stroke: var(--accent);
 	stroke-width: 3;
+}
+.flowchart .fc-node[data-place] {
+	touch-action: none;
 }
 .flowchart .fc-slot circle {
 	fill: var(--surface);
@@ -1039,14 +1047,19 @@ body {
 }
 .flowchart .fc-slot:hover circle,
 .flowchart .fc-slot:focus-visible circle,
-.flowchart .fc-slot.fc-picked circle {
+.flowchart .fc-slot.fc-hot circle {
 	fill: var(--accent);
 	stroke: var(--accent);
 }
 .flowchart .fc-slot:hover path,
 .flowchart .fc-slot:focus-visible path,
-.flowchart .fc-slot.fc-picked path {
+.flowchart .fc-slot.fc-hot path {
 	stroke: #fff;
+}
+.flowchart .fc-stretch {
+	stroke: var(--accent);
+	stroke-width: 5;
+	stroke-linecap: round;
 }
 .flowchart .fc-taken .fc-label {
 	fill: var(--accent-fg);
