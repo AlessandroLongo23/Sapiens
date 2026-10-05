@@ -22,9 +22,18 @@ export interface Rng {
  * ("p/q", radicals) when the option is a value, otherwise labels the generator's checker reads
  * (a statement, a set of letters, a pair).
  */
+/** A program written in the two languages of the lessons: the page shows the one the student has chosen. */
+export type CodeText = { python: string; cpp: string };
+
 export interface ChoiceOption {
 	latex: string;
 	values: string[];
+	/**
+	 * A flowchart as the option, written as the program of a `diagramma` block (src/lib/diagramma/blocco.ts), or a
+	 * program in the two languages: `latex` is then unused, and `text` says what the option is for a screen reader.
+	 */
+	chart?: string;
+	code?: CodeText;
 	/** A drawing instead of the formula (a molecule): `latex` is then unused, `text` says what it is for a screen reader. */
 	figure?: FigureRef;
 	/** Plain-text label of the option, when `latex` is not LaTeX (a sample with `format: 'text'`, or a drawing). */
@@ -88,7 +97,30 @@ export type SetAnswer = {
 	universal?: boolean;
 };
 
-export type Answer = ChoiceAnswer | NumberAnswer | ExpressionAnswer | SetAnswer;
+/**
+ * A flowchart to build. The student's chart is run on each test's `inputs` (what its "leggi" take, in order) and
+ * must write `output`, line by line. `solution` is a chart that does, and `start` what the student begins from
+ * (nothing, when left out); both are written as the program of a `diagramma` block.
+ */
+export type ChartAnswer = {
+	kind: 'chart';
+	solution: string;
+	start?: string;
+	tests: { inputs: string[]; output: string[] }[];
+};
+
+/**
+ * A program to write, in the language the student chooses. It is run in the browser on each test's `input` (the
+ * lines typed at its keyboard) and must print `output`. `start` is what the editor opens with.
+ */
+export type ProgramAnswer = {
+	kind: 'program';
+	solution: CodeText;
+	start: CodeText;
+	tests: { input: string; output: string }[];
+};
+
+export type Answer = ChoiceAnswer | NumberAnswer | ExpressionAnswer | SetAnswer | ChartAnswer | ProgramAnswer;
 
 export interface Sample {
 	generatorId: string;
@@ -112,6 +144,12 @@ export interface Sample {
 	 * text with inline `$…$` formulas, as the chemistry exercises write them.
 	 */
 	format?: 'text';
+	/** A flowchart under the problem, written as the program of a `diagramma` block, and one with the solution. */
+	chart?: string;
+	solutionChart?: string;
+	/** A program under the problem ("che cosa stampa?"), and one with the solution. */
+	code?: CodeText;
+	solutionCode?: CodeText;
 	/** A drawing under the problem. */
 	figure?: FigureRef;
 	/** A drawing with the solution (the main chain numbered, the group coloured). */
@@ -145,8 +183,9 @@ export type AnswerForm = 'expanded' | 'factored' | 'irreducible' | 'simplified' 
  * - `form`: the value and the form: `form` here, or the sample's `answer.form` when this leaves it out. In a level
  *   whose samples mix numbers and expressions, a number is graded on its value: written as a number, it is already
  *   in its simplest form.
+ * - `run`: a flowchart or a program, graded on what it writes for the tests of the sample.
  */
-export type OpenGrading = { grade: 'value'; set?: 'excluded' } | { grade: 'form'; form?: AnswerForm };
+export type OpenGrading = { grade: 'value'; set?: 'excluded' } | { grade: 'form'; form?: AnswerForm } | { grade: 'run' };
 
 export interface Generator {
 	id: string;

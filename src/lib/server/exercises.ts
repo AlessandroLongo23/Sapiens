@@ -10,17 +10,38 @@ import { lessonIndex } from '@/lib/server/lessons';
 import { PRACTICE_LENGTH, practicePlan, practiceSeed, type StartedLesson } from '@/lib/exercises/practice';
 import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/exercises/streak';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
-import type { Answer, ChoiceAnswer, FigureRef, OpenGrading, Sample, SceneRef } from '@/lib/exercises/v2/types';
+import type { Answer, ChartAnswer, ChoiceAnswer, CodeText, FigureRef, Generator, OpenGrading, ProgramAnswer, Sample, SceneRef } from '@/lib/exercises/v2/types';
 import { openGrading } from '@/lib/exercises/v2/open-answers';
 import { figureUrl } from '@/lib/content/figures';
 import { escapeHtml } from '@/lib/utils/escape';
 import { renderMath, renderTex } from '@/lib/content/markdown';
 import { presentProblem, presentStep } from '@/lib/exercises/present';
+import { tidy } from '@/lib/codice/blocco';
+import { parseProgram } from '@/lib/diagramma/blocco';
+import { buildChart, chartSvg } from '@/lib/diagramma/disegno';
+import { runAll } from '@/lib/diagramma/esecuzione';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { adminClient } from '@/lib/server/supabase';
 
 /** A piece of a question, typeset: a paragraph, the question itself as a sentence, a row of givens, a formula on its own. */
-export type QuestionBlock = { kind: 'text' | 'ask'; html: string } | { kind: 'givens'; items: string[] } | { kind: 'math'; html: string } | { kind: 'figure'; html: string } | { kind: 'scene'; scene: SceneRef };
+export type QuestionBlock =
+	| { kind: 'text' | 'ask'; html: string }
+	| { kind: 'givens'; items: string[] }
+	| { kind: 'math'; html: string }
+	| { kind: 'figure'; html: string }
+	/** A program, in the two languages of the lessons: the page shows the one the student has chosen. */
+	| { kind: 'code'; html: string }
+	| { kind: 'scene'; scene: SceneRef };
+
+/**
+ * What an open question asks the student to make, when it is not a formula: a flowchart, from `start`, or a
+ * program, from `start` in the language chosen. `inputs` are what each test gives the program to read: the page runs
+ * the program on them and sends back what it printed, which only the server can tell from what was expected.
+ */
+export type BuildView = { kind: 'chart'; start: string; code: boolean } | { kind: 'program'; start: CodeText; inputs: string[] };
+
+/** What a student hands in for a `BuildView`: the chart as the lines of its program, or the program and what it printed for each test. */
+export type BuildResponse = { chart: string } | { language: 'python' | 'cpp'; code: string; outputs: { output: string; error?: string }[] };
 
 /** One exercise as sent to the browser: typeset, so the client ships no KaTeX, and without the right answer. */
 export interface ExerciseView {
@@ -34,6 +55,8 @@ export interface ExerciseView {
 	mode: QuestionMode;
 	/** `text` is the LaTeX (or the plain label), for the column-count guess and the screen reader; `figure` marks a drawing. */
 	options: { html: string; text: string; figure?: true }[];
+	/** An open question answered with a flowchart or a program, not with a formula. */
+	build?: BuildView;
 	/** The verdict, sealed: the page sends it back with the answer and cannot read it. */
 	key: string;
 }
@@ -46,6 +69,8 @@ export interface Verdict {
 	/** An open answer: the right one, and the one the student wrote, typeset. */
 	expectedHtml?: string;
 	answerHtml?: string;
+	/** The open answer was a flowchart or a program: `expectedHtml` and `answerHtml` are drawings, not formulas. */
+	built?: true;
 	/** An open answer: what the student reads about the form, or that a fraction could be reduced. */
 	message?: string;
 	solutionHtml: string;
@@ -105,8 +130,12 @@ interface Sealed {
 	format?: 'text';
 	figure?: FigureRef;
 	scene?: SceneRef;
+	/** A flowchart or a program that goes with the solution. */
+	drawn?: { chart?: string; code?: CodeText };
 	/** An open question: what the grader needs, and the right answer to show. */
 	open?: { answer: Answer; grading: OpenGrading; prompt: string; problem: string; expected: string };
+	/** An open question answered with a flowchart or a program: its tests and a solution to show. */
+	run?: ChartAnswer | ProgramAnswer;
 }
 
 let sealKey: Buffer | null = null;
@@ -148,6 +177,73 @@ function figureHtml(ref: FigureRef): string {
 /** Molecules are drawn at screen size, a little small next to the answers' text. */
 const FIGURE_SCALE = 1.3;
 
+/**
+ * A flowchart of an exercise, drawn as in the lessons (lib/diagramma/disegno.ts) from the lines of its program. A
+ * chart that cannot be read is a mistake of its generator: the lines are shown as they are.
+ */
+export function chartHtml(source: string, alt = 'Diagramma di flusso'): string {
+	const { program, errors } = parseProgram(source, true);
+	if (errors.length) return `<pre class="code-block">${escapeHtml(source)}</pre>`;
+	// centred when it fits; when it is wider than its place it starts from its left edge and scrolls, with nothing cut off
+	return `<div class="chart-figure max-w-full overflow-x-auto"><div class="mx-auto w-max">${chartSvg(buildChart(program), alt)}</div></div>`;
+}
+
+/**
+ * A program of an exercise in the two languages, one beside the other in the markup: the page shows the one the
+ * student has chosen (`data-code-language` on a box around it, see globals.css).
+ */
+export function codeHtml(code: CodeText): string {
+	const one = (language: 'python' | 'cpp') => `<pre class="code-block" data-language="${language}"><code>${escapeHtml(code[language].replace(/\n+$/, ''))}</code></pre>`;
+	return `<div class="code-pair">${one('python')}${one('cpp')}</div>`;
+}
+
+/**
+ * A text of more lines (pseudocode, what a program prints line by line) keeps its lines and their indentation, set
+ * as code is; null for a text of one line, which is prose.
+ */
+export const listingHtml = (text: string): string | null => (text.includes('\n') ? `<pre class="code-block">${escapeHtml(text.replace(/\n+$/, ''))}</pre>` : null);
+
+/** The lessons before the programming languages: a chart built there has no program in Python and C++ beside it. */
+const BEFORE_LANGUAGES = new Set(['algoritmi', 'inf-problema-algoritmo', 'inf-pseudocodice', 'inf-bohm-jacopini', 'scratch']);
+
+/** What a student handed in for a flowchart or a program, as the page shows it back. */
+const builtHtml = (built: BuildResponse): string => ('chart' in built ? chartHtml(built.chart, 'Il tuo diagramma') : `<pre class="code-block"><code>${escapeHtml(built.code.replace(/\n+$/, ''))}</code></pre>`);
+
+/** A solution of a flowchart or of a program to show after the answer. */
+const solvedHtml = (answer: ChartAnswer | ProgramAnswer): string => (answer.kind === 'chart' ? chartHtml(answer.solution, 'Un diagramma che risolve l’esercizio') : codeHtml(answer.solution));
+
+const sameLines = (a: string, b: string) => tidy(a) === tidy(b);
+
+/**
+ * Grades a flowchart or a program on the tests of the sample. A chart is run here, with the interpreter of the
+ * lessons; a program was run in the student's browser on the inputs sent with the question, and what it printed is
+ * compared here with what was expected, which the browser never had.
+ */
+function gradeBuild(answer: ChartAnswer | ProgramAnswer, built: BuildResponse): { correct: boolean; message?: string } {
+	if (answer.kind === 'chart') {
+		if (!('chart' in built)) throw new ExerciseError(400, 'Risposta non valida.');
+		const { program, errors } = parseProgram(built.chart, true);
+		if (errors.length) throw new ExerciseError(400, 'Risposta non valida.');
+		if (!program.length) return { correct: false, message: 'Il diagramma è vuoto.' };
+		const chart = buildChart(program);
+		for (const test of answer.tests) {
+			const run = runAll(chart, test.inputs);
+			const given = test.inputs.length ? `Con ${test.inputs.join(', ')} in ingresso` : 'Eseguito';
+			if (run.error) return { correct: false, message: `${given} il diagramma si ferma: ${run.error}.` };
+			if (!sameLines(run.output.join('\n'), test.output.join('\n'))) return { correct: false, message: `${given} il diagramma scrive ${run.output.length ? `«${run.output.join(', ')}»` : 'niente'}, e doveva scrivere «${test.output.join(', ')}».` };
+		}
+		return { correct: true };
+	}
+	if (!('outputs' in built) || built.outputs.length !== answer.tests.length) throw new ExerciseError(400, 'Risposta non valida.');
+	for (const [i, test] of answer.tests.entries()) {
+		const got = built.outputs[i];
+		const given = test.input.trim() ? `Con ${test.input.trim().split('\n').join(', ')} in ingresso` : 'Eseguito';
+		if (got.error) return { correct: false, message: `${given} il programma non arriva in fondo: ${got.error.slice(0, 300)}` };
+		if (!sameLines(got.output, test.output)) return { correct: false, message: `${given} il programma scrive ${got.output.trim() ? `«${tidy(got.output).trim().split('\n').join(', ')}»` : 'niente'}, e doveva scrivere «${tidy(test.output).trim().split('\n').join(', ')}».` };
+	}
+	return { correct: true };
+}
+
 /** Prose with inline `$…$`, for a sample written as text: the prose is escaped, the formulas typeset. */
 const textHtml = (text: string) =>
 	text
@@ -164,24 +260,35 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 			: presentProblem(s.problem).map((b): QuestionBlock =>
 					b.kind === 'text' ? { kind: isAsk(b.tex) ? 'ask' : 'text', html: renderMath(b.tex) } : b.kind === 'givens' ? { kind: 'givens', items: b.items.map((t) => renderTex(t, false)) } : { kind: 'math', html: renderTex(b.tex, true) }
 				);
+	if (s.code) blocks.push({ kind: 'code', html: codeHtml(s.code) });
+	if (s.chart) blocks.push({ kind: 'figure', html: chartHtml(s.chart) });
 	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
 	if (s.scene) blocks.push({ kind: 'scene', scene: s.scene });
 	const asks = blocks.some((b) => b.kind === 'ask');
 	const prompt = IMPLIED_PROMPTS.has(s.prompt) || (asks && GENERIC_PROMPTS.has(s.prompt)) ? '' : s.prompt;
-	const open = s.mode === 'open' ? openGrading(s.generatorId, s.level) : null;
+	const made = s.answer.kind === 'chart' || s.answer.kind === 'program';
+	// a question stored as open on a chart or a program is graded by running it, whatever the table says today
+	const open: OpenGrading | null = s.mode === 'open' ? (made ? { grade: 'run' } : openGrading(s.generatorId, s.level)) : null;
+	const run = open?.grade === 'run' && (s.answer.kind === 'chart' || s.answer.kind === 'program') ? s.answer : null;
+	const drawn = { chart: s.solutionChart, code: s.solutionCode };
 	return {
 		id,
 		level,
 		mode: open ? 'open' : 'choice',
+		...(run ? { build: run.kind === 'chart' ? { kind: 'chart' as const, start: run.start ?? '', code: !BEFORE_LANGUAGES.has(s.generatorId) } : { kind: 'program' as const, start: run.start, inputs: run.tests.map((t) => t.input) } } : {}),
 		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
 		options: open
 			? []
 			: s.choice.options.map((o) =>
-			o.figure
+			o.chart !== undefined
+				? { html: chartHtml(o.chart, o.text ?? 'Diagramma di flusso'), text: o.text ?? 'un diagramma di flusso', figure: true as const }
+				: o.code
+					? { html: codeHtml(o.code), text: o.text ?? 'un programma', figure: true as const }
+					: o.figure
 				? { html: figureHtml(o.figure), text: o.text ?? o.figure.alt, figure: true as const }
 				: text
-					? { html: textHtml(o.latex), text: o.text ?? o.latex }
+					? { html: listingHtml(o.latex) ?? textHtml(o.latex), text: o.text ?? o.latex }
 					: { html: renderMath(`$$${o.latex}$$`), text: o.latex }
 		),
 		key: seal({
@@ -194,26 +301,29 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 			format: s.format,
 			figure: s.solutionFigure,
 			scene: s.solutionScene,
-			...(open ? { open: { answer: s.answer, grading: open, prompt: s.prompt, problem: s.problem, expected: expectedLatex(s) } } : {})
+			...(drawn.chart !== undefined || drawn.code ? { drawn } : {}),
+			...(run ? { run } : open ? { open: { answer: s.answer, grading: open, prompt: s.prompt, problem: s.problem, expected: expectedLatex(s) } } : {})
 		})
 	};
 }
 
 /** The right answer of an open question as LaTeX: numbers carry only their value. */
 function expectedLatex(s: Sample): string {
-	if (s.answer.kind !== 'number') return s.answer.kind === 'choice' ? '' : s.answer.latex;
+	if (s.answer.kind === 'choice' || s.answer.kind === 'chart' || s.answer.kind === 'program') return '';
+	if (s.answer.kind !== 'number') return s.answer.latex;
 	const [p, q = '1'] = s.answer.value.split('/');
 	return q === '1' ? p : `${p.startsWith('-') ? '-' : ''}\\frac{${p.replace('-', '')}}{${q}}`;
 }
 
 /** Solution and steps typeset, from the sample or from the sealed key. */
-function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef; scene?: SceneRef }) {
+function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef; scene?: SceneRef; drawn?: { chart?: string; code?: CodeText } }) {
 	const html = w.format === 'text' ? textHtml : (t: string) => renderMath(presentStep(t));
-	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(w.figure ? { figureHtml: figureHtml(w.figure) } : {}), ...(w.scene ? { scene: w.scene } : {}) };
+	const drawing = [w.drawn?.code ? codeHtml(w.drawn.code) : '', w.drawn?.chart !== undefined ? chartHtml(w.drawn.chart) : '', w.figure ? figureHtml(w.figure) : ''].join('');
+	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(drawing ? { figureHtml: drawing } : {}), ...(w.scene ? { scene: w.scene } : {}) };
 }
 
 /** An answered attempt as read back from the database. */
-type AnsweredRow = { id: string; user_id: string; position: number; level: number; correct: boolean; answer: { choice?: number; latex?: string; message?: string }; exercise: Stored };
+type AnsweredRow = { id: string; user_id: string; position: number; level: number; correct: boolean; answer: { choice?: number; latex?: string; message?: string; built?: BuildResponse }; exercise: Stored };
 
 /** An answered attempt as the page shows it again: the exercise as it was asked, the answer, the verdict. */
 function answered(row: AnsweredRow): AnsweredView {
@@ -225,18 +335,20 @@ function answered(row: AnsweredRow): AnsweredView {
 		verdict: {
 			correct: row.correct,
 			correctIndex: s.mode === 'open' ? -1 : s.choice.correct,
-			...(s.mode === 'open'
-				? { expectedHtml: renderTex(expectedLatex(s), true), answerHtml: renderTex(row.answer.latex ?? '', true), ...(row.answer.message ? { message: row.answer.message } : {}) }
-				: {}),
-			...worked({ ...s, figure: s.solutionFigure, scene: s.solutionScene })
+			...(s.mode !== 'open'
+				? {}
+				: s.answer.kind === 'chart' || s.answer.kind === 'program'
+					? { expectedHtml: solvedHtml(s.answer), answerHtml: row.answer.built ? builtHtml(row.answer.built) : '', built: true as const, ...(row.answer.message ? { message: row.answer.message } : {}) }
+					: { expectedHtml: renderTex(expectedLatex(s), true), answerHtml: renderTex(row.answer.latex ?? '', true), ...(row.answer.message ? { message: row.answer.message } : {}) }),
+			...worked({ ...s, figure: s.solutionFigure, scene: s.solutionScene, drawn: { chart: s.solutionChart, code: s.solutionCode } })
 		}
 	};
 }
 
-const verdict = (s: Sealed, correct: boolean, message?: string, latex?: string): Verdict => ({
+const verdict = (s: Sealed, correct: boolean, message?: string, latex?: string, built?: BuildResponse): Verdict => ({
 	correct,
-	correctIndex: s.open ? -1 : s.correct,
-	...(s.open ? { expectedHtml: renderTex(s.open.expected, true), answerHtml: renderTex(latex ?? '', true) } : {}),
+	correctIndex: s.open || s.run ? -1 : s.correct,
+	...(s.run ? { expectedHtml: solvedHtml(s.run), answerHtml: built ? builtHtml(built) : '', built: true as const } : s.open ? { expectedHtml: renderTex(s.open.expected, true), answerHtml: renderTex(latex ?? '', true) } : {}),
 	...(message ? { message } : {}),
 	...worked(s)
 });
@@ -416,6 +528,21 @@ export async function finishedRun(userId: string, dbPath: string, sessionId: str
 	return { session: { id: row.id, kind: row.kind, level: row.level, step: row.step ?? null, length: row.plan.length }, results: ((data ?? []) as AnsweredRow[]).map(answered) };
 }
 
+/**
+ * An exercise outside every run, for the trial page of development (app/(site)/prova-grafico/esercizio): the sample
+ * of a seed, asked as a choice or as an open question, with nothing written to the database. Its answer is graded
+ * by `answerExercise` like any other; who calls leaves the saving out.
+ */
+export function previewExercise(generator: Generator, level: number, seed: number, asked: QuestionMode): ExerciseView {
+	const generatorId = generator.id;
+	const sample = generator.generate(createRng(seed), level);
+	const choice = sample.answer.kind === 'choice' ? sample.answer : generator.toChoice?.(sample, createRng(deriveSeed(seed, level)));
+	if (!choice) throw new Error(`${generatorId}: level ${level} has no multiple-choice form`);
+	const made = sample.answer.kind === 'chart' || sample.answer.kind === 'program';
+	const mode: QuestionMode = asked === 'open' && sample.answer.kind !== 'choice' && (made || openGrading(generatorId, level)) ? 'open' : 'choice';
+	return view('preview', 'preview', level, { ...sample, choice, mode });
+}
+
 /** Writes the exercise at `position` of a run; the same place asked twice returns the row written first. */
 async function issueAt(userId: string, dbPath: string, generatorId: string, sessionId: string, position: number, level: number, asked: QuestionMode = 'choice'): Promise<ExerciseView> {
 	const load = generators[generatorId];
@@ -427,7 +554,10 @@ async function issueAt(userId: string, dbPath: string, generatorId: string, sess
 	const choice = sample.answer.kind === 'choice' ? sample.answer : generator.toChoice?.(sample, createRng(deriveSeed(seed, level)));
 	if (!choice) throw new Error(`${generatorId}: level ${level} has no multiple-choice form`);
 	// open where the run asks for it and the level grades it; a sample born as multiple choice stays one
-	const mode: QuestionMode = asked === 'open' && sample.answer.kind !== 'choice' && openGrading(generatorId, level) ? 'open' : 'choice';
+	const grading = openGrading(generatorId, level);
+	const built = sample.answer.kind === 'chart' || sample.answer.kind === 'program';
+	// a flowchart or a program is asked for only where the level grades by running; a formula only where it grades formulas
+	const mode: QuestionMode = asked === 'open' && sample.answer.kind !== 'choice' && grading && built === (grading.grade === 'run') ? 'open' : 'choice';
 	const exercise: Stored = { ...sample, choice, mode };
 
 	const { data, error } = await db()
@@ -631,13 +761,19 @@ export async function openMistakeCount(userId: string): Promise<number> {
  * responding. The attempt must belong to the user it was issued to and be unanswered, so a retried request keeps
  * the first answer.
  */
-export async function answerExercise(id: string, sealed: string, response: { choice?: number; latex?: string }, activeMs: number | null): Promise<{ verdict: Verdict; save: () => Promise<void> }> {
+export async function answerExercise(id: string, sealed: string, response: { choice?: number; latex?: string; built?: BuildResponse }, activeMs: number | null): Promise<{ verdict: Verdict; save: () => Promise<void> }> {
 	const s = unseal(sealed);
 	if (!s || s.id !== id) throw new ExerciseError(404, 'Esercizio non trovato.');
 	let correct: boolean;
-	let answer: { choice: number } | { latex: string; message?: string };
+	let answer: { choice: number } | { latex: string; message?: string } | { built: BuildResponse; message?: string };
 	let message: string | undefined;
-	if (s.open) {
+	if (s.run) {
+		if (!response.built) throw new ExerciseError(400, 'Risposta non valida.');
+		const graded = gradeBuild(s.run, response.built);
+		correct = graded.correct;
+		message = graded.message;
+		answer = { built: response.built, ...(message ? { message } : {}) };
+	} else if (s.open) {
 		if (typeof response.latex !== 'string') throw new ExerciseError(400, 'Risposta non valida.');
 		const { gradeOpen } = await import('@/lib/exercises/v2/grade/grade');
 		const sample = { answer: s.open.answer, prompt: s.open.prompt, problem: s.open.problem } as Sample;
@@ -652,7 +788,7 @@ export async function answerExercise(id: string, sealed: string, response: { cho
 		answer = { choice };
 	}
 	return {
-		verdict: verdict(s, correct, message, response.latex),
+		verdict: verdict(s, correct, message, response.latex, response.built),
 		save: async () => {
 			const { error } = await db()
 				.from('exercise_attempts')

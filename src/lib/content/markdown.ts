@@ -239,7 +239,7 @@ function codeFigure(fences: { info: string; body: string }[]): string {
 function chartFigure(source: string): string {
 	const { block } = parseChartBlock(source);
 	if (!block) return `<pre tabindex="0"><code>${escapeHtml(source)}</code></pre>`;
-	return `<figure class="chart-figure my-6" data-diagramma="${escapeHtml(source)}"><div class="flex justify-center overflow-x-auto">${chartSvg(buildChart(block.program), block.alt)}</div></figure>`;
+	return `<figure class="chart-figure my-6" data-diagramma="${escapeHtml(source)}"><div class="overflow-x-auto"><div class="mx-auto w-max">${chartSvg(buildChart(block.program), block.alt)}</div></div></figure>`;
 }
 
 /** ```ad-note / ad-tip / … fences → callout boxes. The first line, when plain, is the title. */

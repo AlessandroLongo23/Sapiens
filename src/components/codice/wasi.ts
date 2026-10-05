@@ -29,7 +29,8 @@ class Exit extends Error {
 /** What stopped the program, in words a student can act on. The engines word the same trap differently. */
 function trap(error: unknown): string {
 	const text = String(error);
-	if (/divi(de|sion) by zero/i.test(text)) return 'divisione intera per zero.';
+	// the remainder of a division by zero stops the program the same way, under its own name
+	if (/(divi(de|sion)|remainder) by zero/i.test(text)) return 'divisione intera per zero.';
 	if (/out of bounds|index out of range/i.test(text)) return 'accesso alla memoria fuori dai limiti (un indice sbagliato o un puntatore non valido?).';
 	if (/call stack|too much recursion|stack overflow/i.test(text)) return 'la pila delle chiamate è piena (una ricorsione che non finisce?).';
 	if (/unreachable/i.test(text)) return 'il programma si è interrotto (abort).';

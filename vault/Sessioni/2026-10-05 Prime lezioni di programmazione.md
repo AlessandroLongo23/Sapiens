@@ -31,6 +31,7 @@ Al secondo anno, in quattro capitoli di fila: "Algoritmi e diagrammi di flusso" 
 - Le domande per Andrea sono in [[Domande per Andrea]], nella sezione del 5 ottobre.
 - Le cinque lezioni sono state pubblicate la sera del 5 ottobre, su richiesta di Alessandro, per vederle al loro posto nel programma. Le altre quindici dei quattro capitoli non sono scritte: quelle di oggi richiamano in due righe quello che verrebbe prima.
 - Alessandro ha proposto un diagramma di flusso interattivo, modificabile ed eseguibile. La prima parte è stata costruita la sera stessa: [[Diagrammi di flusso eseguibili]]. I dodici diagrammi delle cinque lezioni sono ora blocchi `diagramma` nei file, non ancora ripubblicati perché il codice non è in produzione. Poi il secondo passo: il diagramma si modifica (blocchi aggiunti nei punti segnati, riscritti o eliminati) e ha accanto il codice in Python e in C++ che lo segue. Il resto dell'idea, dal codice al diagramma, è in [[Diagramma e codice in corrispondenza]].
+- A fine serata tutto il lavoro locale sull'editor di codice e sui diagrammi è andato in produzione con la PR #37, e le cinque lezioni sono state ripubblicate con i diagrammi eseguibili. Dopo la PR #35 niente di questo è stato provato su Safari e Firefox.
 
 ## Collegamenti
 - [[Editor di codice]], [[Pipeline lezioni]], [[Programma ministeriale]], [[Domande per Andrea]]
