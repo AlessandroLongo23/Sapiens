@@ -625,7 +625,7 @@ export function LessonChart({ source }: { source: string }) {
  * A flowchart built as the answer to an exercise: it opens ready to be changed, from `start`, and `onProgram` is
  * told the lines of its program at every change, for who hands it in.
  */
-export function ChartBuilder({ start, onProgram }: { start: string; onProgram: (text: string) => void }) {
-	const block = useMemo<ChartBlock>(() => ({ name: 'esercizio', alt: 'Il diagramma di flusso che stai costruendo', inputs: [], program: parseProgram(start, true).program, edit: true, code: true }), [start]);
+export function ChartBuilder({ start, code = true, onProgram }: { start: string; /** Whether the program of the chart is shown beside it. */ code?: boolean; onProgram: (text: string) => void }) {
+	const block = useMemo<ChartBlock>(() => ({ name: 'esercizio', alt: 'Il diagramma di flusso che stai costruendo', inputs: [], program: parseProgram(start, true).program, edit: true, code }), [start, code]);
 	return <Chart block={block} onProgram={onProgram} below />;
 }

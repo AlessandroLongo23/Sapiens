@@ -1,4 +1,4 @@
-import { chartHtml, codeHtml } from '@/lib/server/exercises';
+import { chartHtml, codeHtml, listingHtml } from '@/lib/server/exercises';
 import 'server-only';
 import { configs } from '@/lib/exercises/config';
 import { generators } from '@/lib/exercises';
@@ -109,7 +109,7 @@ function item(number: number, s: Sample): SheetItem {
 	// An option in words (`\text{I numeri pari} \\ \text{compresi tra 7 e 21}`, maybe in a `gathered`) becomes one
 	// line of prose that wraps: the breaks were made for a button.
 	const option = (o: ChoiceAnswer['options'][number]) =>
-		o.chart !== undefined ? chartHtml(o.chart, o.text ?? 'Diagramma di flusso') : o.code ? codeHtml(o.code) : o.figure ? figureHtml(o.figure) : text ? textHtml(o.latex) : renderMath(presentStep(o.latex.replace(/\\(?:begin|end)\{gathered\}/g, '').replace(/\\\\/g, ' ')));
+		o.chart !== undefined ? chartHtml(o.chart, o.text ?? 'Diagramma di flusso') : o.code ? codeHtml(o.code) : o.figure ? figureHtml(o.figure) : text ? (listingHtml(o.latex) ?? textHtml(o.latex)) : renderMath(presentStep(o.latex.replace(/\\(?:begin|end)\{gathered\}/g, '').replace(/\\\\/g, ' ')));
 	const solution = text ? textHtml(s.solution) : renderMath(presentStep(s.solution));
 	return {
 		number,

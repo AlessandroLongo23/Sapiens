@@ -39,7 +39,7 @@ export function BuildAnswer({ build, locked, onSubmit }: { build: BuildView; loc
 	if (build.kind === 'chart')
 		return (
 			<div className="flex w-full flex-col gap-3 text-left" data-build="chart">
-				<ChartBuilder start={build.start} onProgram={(text) => (chart.current = text)} />
+				<ChartBuilder start={build.start} code={build.code} onProgram={(text) => (chart.current = text)} />
 				<Button onClick={() => onSubmit({ chart: chart.current })} disabled={locked} className="self-center">
 					<Check className="size-4" aria-hidden="true" />
 					Consegna il diagramma

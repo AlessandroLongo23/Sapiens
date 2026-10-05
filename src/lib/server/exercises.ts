@@ -38,7 +38,7 @@ export type QuestionBlock =
  * program, from `start` in the language chosen. `inputs` are what each test gives the program to read: the page runs
  * the program on them and sends back what it printed, which only the server can tell from what was expected.
  */
-export type BuildView = { kind: 'chart'; start: string } | { kind: 'program'; start: CodeText; inputs: string[] };
+export type BuildView = { kind: 'chart'; start: string; code: boolean } | { kind: 'program'; start: CodeText; inputs: string[] };
 
 /** What a student hands in for a `BuildView`: the chart as the lines of its program, or the program and what it printed for each test. */
 export type BuildResponse = { chart: string } | { language: 'python' | 'cpp'; code: string; outputs: { output: string; error?: string }[] };
@@ -184,7 +184,8 @@ const FIGURE_SCALE = 1.3;
 export function chartHtml(source: string, alt = 'Diagramma di flusso'): string {
 	const { program, errors } = parseProgram(source, true);
 	if (errors.length) return `<pre class="code-block">${escapeHtml(source)}</pre>`;
-	return `<div class="chart-figure flex max-w-full justify-center overflow-x-auto">${chartSvg(buildChart(program), alt)}</div>`;
+	// centred when it fits; when it is wider than its place it starts from its left edge and scrolls, with nothing cut off
+	return `<div class="chart-figure max-w-full overflow-x-auto"><div class="mx-auto w-max">${chartSvg(buildChart(program), alt)}</div></div>`;
 }
 
 /**
@@ -195,6 +196,15 @@ export function codeHtml(code: CodeText): string {
 	const one = (language: 'python' | 'cpp') => `<pre class="code-block" data-language="${language}"><code>${escapeHtml(code[language].replace(/\n+$/, ''))}</code></pre>`;
 	return `<div class="code-pair">${one('python')}${one('cpp')}</div>`;
 }
+
+/**
+ * A text of more lines (pseudocode, what a program prints line by line) keeps its lines and their indentation, set
+ * as code is; null for a text of one line, which is prose.
+ */
+export const listingHtml = (text: string): string | null => (text.includes('\n') ? `<pre class="code-block">${escapeHtml(text.replace(/\n+$/, ''))}</pre>` : null);
+
+/** The lessons before the programming languages: a chart built there has no program in Python and C++ beside it. */
+const BEFORE_LANGUAGES = new Set(['algoritmi', 'inf-problema-algoritmo', 'inf-pseudocodice', 'inf-bohm-jacopini', 'scratch']);
 
 /** What a student handed in for a flowchart or a program, as the page shows it back. */
 const builtHtml = (built: BuildResponse): string => ('chart' in built ? chartHtml(built.chart, 'Il tuo diagramma') : `<pre class="code-block"><code>${escapeHtml(built.code.replace(/\n+$/, ''))}</code></pre>`);
@@ -265,7 +275,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 		id,
 		level,
 		mode: open ? 'open' : 'choice',
-		...(run ? { build: run.kind === 'chart' ? { kind: 'chart' as const, start: run.start ?? '' } : { kind: 'program' as const, start: run.start, inputs: run.tests.map((t) => t.input) } } : {}),
+		...(run ? { build: run.kind === 'chart' ? { kind: 'chart' as const, start: run.start ?? '', code: !BEFORE_LANGUAGES.has(s.generatorId) } : { kind: 'program' as const, start: run.start, inputs: run.tests.map((t) => t.input) } } : {}),
 		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
 		options: open
@@ -278,7 +288,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 					: o.figure
 				? { html: figureHtml(o.figure), text: o.text ?? o.figure.alt, figure: true as const }
 				: text
-					? { html: textHtml(o.latex), text: o.text ?? o.latex }
+					? { html: listingHtml(o.latex) ?? textHtml(o.latex), text: o.text ?? o.latex }
 					: { html: renderMath(`$$${o.latex}$$`), text: o.latex }
 		),
 		key: seal({

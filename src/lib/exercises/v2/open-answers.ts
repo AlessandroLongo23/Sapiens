@@ -122,7 +122,25 @@ export const openAnswers: Record<string, Record<number, OpenGrading>> = {
  * formula, so they are kept apart from the table above, which the checks of the formula grader walk.
  */
 export const runAnswers: Record<string, number[]> = {
-	'inf-ciclo-while': [5, 6]
+	'algoritmi': [6],
+	'inf-problema-algoritmo': [6],
+	'diagrammi-flusso': [6],
+	'inf-pseudocodice': [6],
+	'inf-bohm-jacopini': [6],
+	'scratch': [5],
+	'inf-input-output': [4, 5],
+	'inf-variabili-tipi': [5, 6],
+	'inf-espressioni': [5, 6],
+	'inf-errori-debug': [5, 6],
+	'inf-condizioni': [5, 6],
+	'inf-selezione-due-vie': [5, 6],
+	'inf-operatori-logici': [5, 6],
+	'inf-selezione-multipla': [5, 6],
+	'inf-ciclo-while': [5, 6],
+	'inf-ciclo-for': [5, 6],
+	'inf-contatori-accumulatori': [5, 6],
+	'inf-cicli-annidati': [5, 6],
+	'inf-massimo-minimo-media': [5, 6]
 };
 
 /** How a level's open answer is graded, or null when the level stays multiple choice. */

@@ -41,6 +41,37 @@ Sessione del 5 ottobre 2026, seguito di [[2026-10-05 Prime lezioni di programmaz
 - **Niente generatori di esercizi** per il secondo anno: il primo li ha, il secondo no.
 - Non provato su Safari, Firefox e su un telefono vero.
 
+## Gli esercizi (stessa sessione, dopo le lezioni)
+Alessandro ha chiesto gli esercizi del secondo anno, con diagrammi di flusso e codice dentro: a scelta multipla scegliere il diagramma o il programma giusto, a risposta aperta costruire il diagramma o scrivere il programma.
+
+- **Il sistema degli esercizi ora lo sa fare.** Un'opzione può essere un diagramma o un programma (mostrato in Python o in C++, a scelta dello studente); una domanda può mostrarne uno; una risposta aperta può essere un diagramma da costruire o un programma da scrivere.
+  - Il diagramma consegnato lo esegue il server, con l'interprete delle lezioni, sulle prove dell'esercizio.
+  - Il programma gira nel browser dello studente sugli ingressi dell'esercizio; il server confronta le uscite con quelle attese, che il browser non riceve mai.
+  - La correzione guarda solo quello che il programma scrive: un `for` passa dove la consegna dice "usa un while".
+- **32 generatori**, uno per lezione del secondo anno, 187 livelli. Quelli di Internet e sicurezza (33-44, 51) sono a scelta multipla di testo. Quelli di programmazione (45-50, 52-64) hanno 32 livelli a risposta aperta: 19 "costruisci il diagramma" e 13 "scrivi il programma".
+- Un programma di un esercizio è scritto una volta sola, nel linguaggio dei diagrammi: da lì escono il diagramma, il codice nei due linguaggi e le prove (`src/lib/exercises/v2/inf-programmi.ts`). Il controllo indipendente traduce ed esegue ogni programma con Python, senza passare dall'interprete del sito (`scripts/exercises/checkers/_inf_programmi.py`).
+- Brief: `docs/lezioni/informatica/brief-esercizi-secondo-anno.md`. Sette gruppi in parallelo, come per le lezioni.
+- Pagina di prova, solo in sviluppo: `/prova-grafico/esercizio?g=<slug>&l=<livello>&seed=<seed>` e `&open=1` per la risposta aperta.
+
+### Verifiche degli esercizi
+- Ogni generatore: 1000 esercizi per livello con tre semi, verificati dal controllo in Python, dai gruppi; poi tutti e 32 insieme con un quarto seme, 400 per livello: tutti passano.
+- I gruppi hanno piantato errori apposta nei campioni e controllato che venissero bocciati.
+- Nel browser, sulla pagina di prova: i gruppi hanno aperto ogni livello a larghezza di telefono e consegnato risposte giuste e sbagliate nei livelli aperti (non tutti: in due generatori della selezione i diagrammi sono stati solo guardati).
+- Una sessione vera con un account di prova, su "Il ciclo while": la domanda mostra il programma, il selettore cambia linguaggio, la risposta viene corretta e contata. I livelli aperti in una sessione vera non sono stati provati: si aprono solo dopo aver superato i primi quattro.
+
+### Corretto nel sito
+- Un diagramma più largo del suo spazio veniva tagliato da tutti e due i lati, senza poter scorrere a sinistra: ora parte dal bordo sinistro e scorre. Valeva anche per il disegno delle lezioni prima che diventasse interattivo.
+- Un testo su più righe in un'opzione (pseudocodice) tiene le righe e il rientro.
+- Nei capitoli che vengono prima dei linguaggi, il diagramma da costruire non ha il codice accanto.
+
+### Limiti degli esercizi
+- **Lezione 48, pseudocodice.** I livelli sono stati scritti quando il sito non mostrava il testo su più righe: lo pseudocodice intero è su una riga con le barre. Ora si può mostrare bene, e quei due livelli vanno rifatti.
+- **Varietà.** Nei livelli "a consegna" dei primi programmi i programmi davvero diversi sono tra 20 e 58; il generatore di riferimento ne ha 64 per livello.
+- **Diagrammi larghi.** Le cascate di rombi (59) e le condizioni composte (58) non compaiono nelle domande, solo come risposta da costruire; i generatori hanno un interruttore per riaccenderli ora che scorrono.
+- **Lezioni di concetto.** Dove la risposta viene da una tabella di affermazioni, il controllo ha la sua copia: un'affermazione classificata male allo stesso modo dalle due parti la vede solo chi rilegge. Le opzioni sbagliate dei livelli "che cosa fare" vanno lette da una persona.
+- La lettera O degli operatori logici somiglia allo zero nel carattere del codice.
+- Niente esercizi su `switch`, `match` ed `elif`.
+
 ## Domande per Andrea
 Ogni nota di lezione ha le sue. Le principali sono riportate in [[Domande per Andrea]], sezione "Informatica, secondo anno".
 

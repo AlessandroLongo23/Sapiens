@@ -41,6 +41,19 @@ come campione mancante. `verify.py` esce con codice 1 se un campione fallisce, s
 esce dall'intervallo della specifica, e stampa per livello conteggi e seed che non passano. Lo stesso
 seed produce sempre lo stesso esercizio: per riprodurre un errore basta rigenerare quel seed.
 
+## Esercizi con diagrammi di flusso e programmi
+
+Dal 5 ottobre 2026 un esercizio può mostrare un diagramma di flusso o un programma, averne come opzioni, e chiedere
+come risposta aperta un diagramma da costruire (`ChartAnswer`) o un programma da scrivere (`ProgramAnswer`); i tipi
+sono in `types.ts`. I generatori delle lezioni di programmazione di informatica scrivono ogni programma una volta
+sola, nel linguaggio dei blocchi `diagramma`, e ne ricavano diagramma, codice in Python e in C++ e prove:
+`src/lib/exercises/v2/inf-programmi.ts`, con `inf-ciclo-while` come riferimento e il brief in
+`docs/lezioni/informatica/brief-esercizi-secondo-anno.md`. Il controllo indipendente esegue ogni programma con
+Python (`checkers/_inf_programmi.py`). I livelli a risposta aperta di questo tipo si dichiarano in `runAnswers`
+(`v2/open-answers.ts`). Un esercizio si guarda e si prova, in sviluppo, a
+`/prova-grafico/esercizio?g=<id>&l=<livello>&seed=<seed>` (con `&open=1` a risposta aperta); `review.mts` e
+`width.mts` valgono solo per i campioni in LaTeX.
+
 ## Aggiungere un generatore
 
 L'id del generatore è lo slug della lezione nel database (per esempio `monomi-mcm-mcd`). File da
