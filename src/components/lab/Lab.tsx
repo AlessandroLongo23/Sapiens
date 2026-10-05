@@ -165,7 +165,7 @@ function Keys({ locked, mode }: { locked: boolean; mode: Mode }) {
 				</span>
 				{mode === 'guidato' ? (
 					<span>
-						<K>clic</K> o <K>E</K> usa
+						<K>clic</K> usa
 					</span>
 				) : (
 					<>
@@ -176,7 +176,7 @@ function Keys({ locked, mode }: { locked: boolean; mode: Mode }) {
 							<K>clic destro</K> mano destra
 						</span>
 						<span>
-							<K>F</K> usa insieme
+							<K>Q</K> <K>E</K> usa le mani
 						</span>
 					</>
 				)}

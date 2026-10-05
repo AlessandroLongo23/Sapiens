@@ -1,9 +1,10 @@
 import { BoxGeometry, CanvasTexture, Group, Mesh, MeshBasicMaterial, PlaneGeometry, SRGBColorSpace, type Object3D } from 'three';
+import { getDevice, onDevice, tell } from './pad';
 
 /*
- * The lab notebook, in place of an instructions panel: the student raises it in front of the eyes (Q) and lowers it
- * again, as the map in Firewatch. It hangs from the camera and is drawn over the scene; its pages are a canvas
- * written in a handwriting font.
+ * The lab notebook, in place of an instructions panel. It lies on the bench: the student points at it and raises it
+ * in front of the eyes (Q or E, free.ts), and lowers it again, as the map in Firewatch. Raised, it hangs from the
+ * camera and is drawn over the scene; its pages are a canvas written in a handwriting font.
  */
 
 export type NotebookTask = { text: string; state: 'done' | 'now' | 'todo' | 'bad' };
@@ -34,14 +35,19 @@ export class Notebook {
 	private canvas: HTMLCanvasElement;
 	private tex: CanvasTexture;
 	private k = 0;
-	open = false;
+	private isOpen = false;
+	/** Called when it is raised or lowered, by the student or by the work (at the end, with the results). */
+	onToggle: (open: boolean) => void = () => {};
 	private t = 0;
 	private last = '';
+	private page: NotebookPage | null = null;
 
 	constructor(
 		camera: Object3D,
 		private font: string
 	) {
+		// the hint names the inputs: redrawn when the student moves from the keyboard to a controller, or back
+		onDevice(() => this.page && this.draw(this.page));
 		this.canvas = document.createElement('canvas');
 		this.canvas.width = PX;
 		this.canvas.height = PY;
@@ -67,15 +73,29 @@ export class Notebook {
 		camera.add(this.group);
 	}
 
-	toggle() {
-		this.open = !this.open;
+	get open() {
+		return this.isOpen;
+	}
+
+	set open(v: boolean) {
+		if (v === this.isOpen) return;
+		this.isOpen = v;
+		this.onToggle(v);
+	}
+
+	/** Whether it is in front of the eyes, on its way up or down too: the one on the bench is away meanwhile. */
+	get raised() {
+		return this.isOpen || this.group.visible;
 	}
 
 	/** Redraws the pages if they changed. */
 	draw(p: NotebookPage) {
-		const key = JSON.stringify(p);
+		const key = getDevice() + JSON.stringify(p);
 		if (key === this.last) return;
 		this.last = key;
+		this.page = p;
+		// the hint names the inputs of the device in use
+		p = { ...p, hint: tell(p.hint) };
 		const c = this.canvas.getContext('2d')!;
 		const f = (size: number, weight = 500) => `${weight} ${size}px ${this.font}`;
 		// paper, rules, margin, the fold

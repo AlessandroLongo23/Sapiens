@@ -8,7 +8,7 @@ import { LOOK } from './engine/look';
 import { SHAPES } from './engine/grasp';
 import { Notebook } from './engine/notebook';
 import { Esperimento as Work, type EsperimentoSnapshot, type Readout } from './engine/esperimento';
-import { applySettings, Key, loadSettings, Prompt, Settings, type LabSettings } from './hud';
+import { applySettings, Controls, EnterHint, loadSettings, Prompt, Settings, Tip, type LabSettings } from './hud';
 
 const MODEL = '/lab/esperimento.glb';
 
@@ -18,13 +18,12 @@ const noSnap = () => null;
 /**
  * The chemistry lab as a game: the whole copper sulfate experiment at the bench, with the hands. On screen there is
  * the scene, a dot for a crosshair, the prompt in the corner, a line of subtitles and, when it changes, what to do
- * now; the steps and why they are done so are in the notebook (Q). Esc pauses.
+ * now; the steps and why they are done so are in the notebook, which lies on the bench (Q or E on it). Esc pauses.
  */
 /** `model`: the scene to play in; the whole lab (/laboratorio/aula) or the single bench (the default). */
 export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/laboratorio', subtitle }: { model?: string; quality?: 'auto' | 'alta' | 'leggera'; exitHref?: string; subtitle?: string } = {}) {
 	const host = useRef<HTMLDivElement>(null);
 	const sceneRef = useRef<LabScene | null>(null);
-	const notebookRef = useRef<Notebook | null>(null);
 	const [work, setWork] = useState<Work | null>(null);
 	const [progress, setProgress] = useState(0);
 	const [error, setError] = useState('');
@@ -49,17 +48,27 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 		}
 		sceneRef.current = scene;
 		applySettings(scene.player, loadSettings());
-		scene.onLock = setLocked;
+		// a controller's button enters by itself (fps.ts), once the lab is loaded
+		scene.player.canEnter = false;
+		scene.onLock = (on) => {
+			setLocked(on);
+			if (on) setStarted(true);
+		};
 		const family = getComputedStyle(document.documentElement).getPropertyValue('--font-caveat').trim() || 'cursive';
 		Promise.all([scene.load(model, (f) => alive && setProgress(f * 0.95)), document.fonts.load(`40px ${family}`), document.fonts.load(`bold 40px ${family}`)])
 			.then(() => {
 				if (!alive) return;
 				const nb = new Notebook(scene.camera, family);
 				scene.blockers.push(nb.group);
-				notebookRef.current = nb;
+				// raised from the bench by the student (Q or E on it), or by the work at the end
+				nb.onToggle = (open) => {
+					setReading(open);
+					if (open) setTip(false);
+				};
 				const w = new Work(scene, nb);
 				scene.start();
 				if (process.env.NODE_ENV !== 'production') (window as unknown as { __lab: unknown }).__lab = { scene, work: w, free: w.free, notebook: nb, LOOK, SHAPES };
+				scene.player.canEnter = true;
 				setProgress(1);
 				setWork(w);
 			})
@@ -68,26 +77,9 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 			alive = false;
 			scene.dispose();
 			sceneRef.current = null;
-			notebookRef.current = null;
 			setWork(null);
 		};
 	}, [run, model, quality]);
-
-	// Q (or Tab) raises and lowers the notebook
-	useEffect(() => {
-		const onKey = (e: KeyboardEvent) => {
-			if (e.code !== 'KeyQ' && e.code !== 'Tab') return;
-			if (!sceneRef.current?.player.locked) return;
-			e.preventDefault();
-			const nb = notebookRef.current;
-			if (!nb) return;
-			nb.toggle();
-			setReading(nb.open);
-			setTip(false);
-		};
-		window.addEventListener('keydown', onKey);
-		return () => window.removeEventListener('keydown', onKey);
-	}, []);
 
 	useEffect(() => {
 		if (!started) return;
@@ -109,11 +101,7 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 	};
 
 	const paused = started && !locked;
-	// at the end the notebook comes up by itself, with the results
 	const done = !!snap?.done;
-	useEffect(() => {
-		if (done) queueMicrotask(() => setReading(true));
-	}, [done]);
 
 	const playing = started && locked && !!snap;
 
@@ -127,7 +115,7 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 					<div className={`size-[5px] rounded-full bg-white/90 shadow-[0_0_4px_rgba(0,0,0,0.5)] transition-transform ${snap.actions.length ? 'scale-150' : ''}`} />
 				</div>
 			)}
-			{playing && !reading && (snap.target || snap.actions.length > 0) && <Prompt target={snap.target} actions={snap.actions} />}
+			{playing && (snap.target || snap.actions.length > 0) && <Prompt target={snap.target} actions={snap.actions} />}
 			{playing && !reading && (
 				<div className="pointer-events-none absolute left-7 top-6 z-20 flex max-w-[380px] flex-col gap-4">
 					<Objective key={snap.objective} step={snap.step} total={snap.total} title={snap.stepTitle} text={snap.objective} done={snap.done} />
@@ -147,12 +135,7 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 			)}
 
 			{playing && tip && (
-				<div className="pointer-events-none absolute bottom-6 left-1/2 z-20 -translate-x-1/2 text-[13px] tracking-wide text-white/75 [text-shadow:0_1px_3px_rgba(0,0,0,0.7)]">
-					<Key>Q</Key> apri il quaderno <span className="mx-2 text-white/40">·</span> <Key>W</Key>
-					<Key>A</Key>
-					<Key>S</Key>
-					<Key>D</Key> muoviti <span className="mx-2 text-white/40">·</span> <Key>Esc</Key> pausa
-				</div>
+				<Tip />
 			)}
 
 			{paused && <Pause exitHref={exitHref} apply={(st) => sceneRef.current && applySettings(sceneRef.current.player, st)} onResume={() => sceneRef.current?.player.lock()} onRestart={restart} done={done} />}
@@ -233,14 +216,14 @@ function Title({ subtitle, progress, ready, error, onStart }: { subtitle: string
 				{error ? (
 					<p className="max-w-md text-sm text-[#ffe0e0]">{error}</p>
 				) : ready ? (
-					<span className="animate-pulse text-[15px] tracking-wide text-[#fff6e8]/90">Clicca per entrare</span>
+					<EnterHint />
 				) : (
 					<div className="h-[3px] w-56 overflow-hidden rounded-full bg-white/20">
 						<div className="h-full rounded-full bg-[#fff1dc]/85 transition-[width] duration-300" style={{ width: `${Math.round(progress * 100)}%` }} />
 					</div>
 				)}
 			</div>
-			<div className="absolute bottom-6 text-xs text-[#fff1dc]/55">Un prototipo di Sapiens · da computer, con mouse e tastiera</div>
+			<div className="absolute bottom-6 text-xs text-[#fff1dc]/55">Un prototipo di Sapiens · da computer, con mouse e tastiera o con un controller</div>
 		</button>
 	);
 }
@@ -263,22 +246,7 @@ function Pause({ exitHref, apply, onResume, onRestart, done }: { exitHref: strin
 					</Link>
 				</nav>
 				<Settings apply={apply} />
-				<dl className="mt-10 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[13px] text-[#fff1dc]/75">
-					<dt className="font-semibold text-[#fff1dc]/90">W A S D</dt>
-					<dd>muoviti · Shift corri · C abbassati</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Mouse</dt>
-					<dd>guarda intorno · Z avvicina lo sguardo</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Clic sinistro</dt>
-					<dd>la mano sinistra prende, appoggia, gira</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Clic destro</dt>
-					<dd>la mano destra prende, appoggia, gira</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">F</dt>
-					<dd>usa quello che hai in mano su ciò che guardi</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Rotella</dt>
-					<dd>regola: la ghiera, la fiamma, la propipetta</dd>
-					<dt className="font-semibold text-[#fff1dc]/90">Q</dt>
-					<dd>il quaderno</dd>
-				</dl>
+				<Controls uses="usa quello che tiene su ciò che guardi; libera, gira il rubinetto, indossa gli occhiali" wheel="la ghiera, la fiamma, la propipetta" />
 			</div>
 		</div>
 	);

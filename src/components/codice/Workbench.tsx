@@ -2,12 +2,16 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Check, Lightbulb, ListChecks, Play, RotateCcw, Square, X } from 'lucide-react';
+import { Check, Lightbulb, ListChecks, Maximize2, Minimize2, PanelBottom, Play, RotateCcw, Settings, Square, X } from 'lucide-react';
+import { frame as frameClass, useFullscreen } from './fullscreen';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
 import { tidy, type Test } from '@/lib/codice/blocco';
 import { LANGUAGES, TIME_LIMIT, type Chunk, type Language, type Outcome } from './runtime';
 import { retain, runtimeFor } from './runtimes';
+import { SettingsPanel } from './SettingsPanel';
+import { Panes, Split } from './Split';
+import type { ProjectSlots } from './ProjectBench';
 import type { Stage } from './turtle';
 import { TurtleCanvas } from './TurtleCanvas';
 
@@ -70,6 +74,9 @@ const FAILURE: Partial<Record<Outcome, string>> = {
 	failed: 'Il linguaggio non si è caricato.'
 };
 
+/** What makes every rerun of a run repeat the first: a seed for its random numbers, and the time it started. */
+const firstRun = (): [number, number] => [Math.floor(Math.random() * 2 ** 31), Date.now()];
+
 /** Adds pieces to the console, joining a piece to the one before when they are of the same kind. */
 function joined(chunks: Chunk[], more: Chunk[]): Chunk[] {
 	const next = chunks.slice();
@@ -95,7 +102,8 @@ export function Workbench({
 	solution,
 	toolbar,
 	compact = false,
-	onEdit
+	onEdit,
+	project
 }: {
 	language: Language;
 	initial: string;
@@ -107,6 +115,8 @@ export function Workbench({
 	/** For a program inside a lesson: the console under the editor, each as tall as what it holds. */
 	compact?: boolean;
 	onEdit?: (code: string) => void;
+	/** The program is a file of a project (ProjectBench.tsx), which has the files and their editor: this is its console. */
+	project?: ProjectSlots;
 }) {
 	/** The program put in the editor, which reads its text only when it is made: the starting one, or the solution. */
 	const [loaded, setLoaded] = useState({ text: initial, count: 0 });
@@ -118,6 +128,8 @@ export function Workbench({
 	const [drawing, setDrawing] = useState(false);
 	const [verdicts, setVerdicts] = useState<Verdict[] | null>(null);
 	const [edited, setEdited] = useState(false);
+	/** The editor's settings are shown in the place of the console. */
+	const [settings, setSettings] = useState(false);
 
 	const code = useRef(initial);
 	/** The lines typed at the program's input in this run, and what makes each rerun repeat the first. */
@@ -185,13 +197,20 @@ export function Workbench({
 
 	const execute = async () => {
 		const mine = ++turn.current;
-		const runtime = runtimeFor(language);
+		const program = project ? project.job() : { language, source: code.current, files: undefined };
+		if (!program) return close('Apri un file che si può eseguire: un programma in Python, C, C++ o JavaScript.');
+		const runtime = runtimeFor(program.language);
 		settle(runtime.ready ? 'running' : 'loading');
 		void runtime.load().then((ok) => {
 			if (ok && mine === turn.current) setPhase((now) => (now === 'loading' ? 'running' : now));
 		});
 		const { outcome, ms } = await runtime.run(
-			{ language, source: code.current, inputs: inputs.current, seed: seed.current, clock: clock.current },
+			{
+				...program,
+				inputs: inputs.current,
+				seed: seed.current,
+				clock: clock.current
+			},
 			{
 				onChunk: receive,
 				onStatus: (text) => mine === turn.current && setStatus(text),
@@ -199,17 +218,20 @@ export function Workbench({
 			}
 		);
 		if (mine !== turn.current) return;
-		const note = closing(outcome, ms, language);
+		const note = closing(outcome, ms, program.language);
 		if (note) pending.current.push({ kind: 'note', text: note });
 		// the last lines and the end of the run reach the screen together
 		flush();
 		settle(outcome === 'input' ? 'waiting' : 'idle');
 	};
 
+	/** The run of now, for who starts it from outside: it reads the files as they are when it is called. */
+	const start = useRef(() => {});
 	const run = () => {
+		// what the program prints is under the code: shown, if it was hidden
+		project?.output.show();
 		inputs.current = [];
-		seed.current = Math.floor(Math.random() * 2 ** 31);
-		clock.current = Date.now();
+		[seed.current, clock.current] = firstRun();
 		clear();
 		void execute();
 	};
@@ -226,7 +248,9 @@ export function Workbench({
 	const check = async () => {
 		if (!tests) return;
 		const mine = ++turn.current;
-		const runtime = runtimeFor(language);
+		const program = project ? project.job() : { language, source: code.current, files: undefined };
+		if (!program) return;
+		const runtime = runtimeFor(program.language);
 		clear();
 		settle('checking');
 		const results: Verdict[] = [];
@@ -234,7 +258,13 @@ export function Workbench({
 			let printed = '';
 			let errors = '';
 			const { outcome } = await runtime.run(
-				{ language, source: code.current, inputs: test.input === '' ? [] : test.input.replace(/\n$/, '').split('\n'), seed: 1, clock: Date.now(), batch: true },
+				{
+					...program,
+					inputs: test.input === '' ? [] : test.input.replace(/\n$/, '').split('\n'),
+					seed: 1,
+					clock: Date.now(),
+					batch: true
+				},
 				{
 					onChunk: ({ kind, text }) => {
 						if (kind === 'out') printed += text;
@@ -301,25 +331,36 @@ export function Workbench({
 		};
 	}, []);
 
+	// Ctrl+Enter in the project's editor runs the program
+	useEffect(() => {
+		start.current = run;
+	});
+	const register = project?.register;
+	useEffect(() => {
+		register?.(() => start.current());
+	}, [register]);
+
+	const fill = project?.layout === 'explorer';
+	const { root, full, toggle: toggleFull } = useFullscreen();
 	const busy = phase === 'loading' || phase === 'running' || phase === 'checking';
 
 	const passed = verdicts?.filter((v) => v.passed).length ?? 0;
 
 	return (
-		<section className="not-prose overflow-hidden rounded-2xl border border-edge bg-surface shadow-paper" aria-label={`Editor di ${LANGUAGES[language]}`}>
+		<section ref={root} className={frameClass(full)} aria-label={`Editor di ${LANGUAGES[language]}`}>
 			<div className="relative flex flex-wrap items-center gap-2 border-b border-edge px-3 py-2">
 				{toolbar ?? <span className="label-mono px-1 text-fg-subtle">{LANGUAGES[language]}</span>}
 				<p className="ml-auto text-sm text-fg-subtle" role="status">
 					{status || STATUS[phase]}
 				</p>
-				{edited && phase === 'idle' && (
-					<Button variant="ghost" size="sm" onClick={() => put(initial)} title="Rimetti il programma di partenza">
+				{(project ? project.edited : edited) && phase === 'idle' && (
+					<Button variant="ghost" size="sm" onClick={() => (project ? project.reset() : put(initial))} title="Rimetti il programma di partenza">
 						<RotateCcw className="size-3.5" aria-hidden="true" />
 						<span className="max-sm:sr-only">Ripristina</span>
 					</Button>
 				)}
-				{solution && phase === 'idle' && loaded.text !== solution && (
-					<Button variant="ghost" size="sm" onClick={() => put(solution)} title="Metti la soluzione nell’editor">
+				{(project ? project.solve : solution && loaded.text !== solution) && phase === 'idle' && (
+					<Button variant="ghost" size="sm" onClick={() => (project ? project.solve?.() : put(solution!))} title="Metti la soluzione nell’editor">
 						<Lightbulb className="size-3.5" aria-hidden="true" />
 						<span className="max-sm:sr-only">Soluzione</span>
 					</Button>
@@ -328,6 +369,25 @@ export function Workbench({
 					<Button variant="secondary" size="sm" onClick={stop}>
 						<Square className="size-3.5" aria-hidden="true" />
 						Ferma
+					</Button>
+				)}
+				{(!compact || fill) && (
+					<Button variant="ghost" size="sm" onClick={() => (fill ? project!.settings.toggle() : setSettings((now) => !now))} aria-pressed={fill ? project!.settings.open : settings} title={settings ? 'Torna alla console' : 'Impostazioni dell’editor'} className={cn((fill ? project!.settings.open : settings) && 'bg-surface-3 text-fg-strong')}>
+						<Settings className="size-3.5" aria-hidden="true" />
+						<span className="sr-only">Impostazioni dell’editor</span>
+					</Button>
+				)}
+				{fill && (
+					<Button variant="ghost" size="sm" onClick={project!.output.toggle} aria-pressed={project!.output.open} title={project!.output.open ? 'Nascondi l’uscita' : 'Mostra l’uscita'} className={cn(project!.output.open && 'bg-surface-3 text-fg-strong')}>
+						<PanelBottom className="size-3.5" aria-hidden="true" />
+						<span className="sr-only">Uscita sotto il codice</span>
+						
+					</Button>
+				)}
+				{(!compact || fill) && (
+					<Button variant="ghost" size="sm" onClick={toggleFull} aria-pressed={full} title={full ? 'Esci dallo schermo intero' : 'Schermo intero'}>
+						{full ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
+						<span className="sr-only">Schermo intero</span>
 					</Button>
 				)}
 				<Button variant={tests ? 'secondary' : 'primary'} size="sm" onClick={run} disabled={busy} title="Ctrl+Invio, o ⌘+Invio sul Mac">
@@ -341,82 +401,115 @@ export function Workbench({
 					</Button>
 				)}
 			</div>
-			<div className={cn('grid', !compact && 'lg:grid-cols-2')}>
-				<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : 'h-[20rem] lg:h-[32rem] lg:border-r lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
-					<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" onChange={edit} onRun={run} />
-				</div>
-				<div
-					ref={log}
-					role="log"
-					aria-label="Console"
-					className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', compact ? 'max-h-[26rem] min-h-[4.5rem]' : 'h-[16rem] lg:h-[32rem]')}
-					onClick={() => field.current?.focus()}
-				>
-					{drawing && <TurtleCanvas onStage={attach} />}
-					{chunks.length === 0 && !drawing && !verdicts && phase === 'idle' && (
-						<span className="font-sans text-fg-faint">{tests ? 'Esegui per provare il programma, Verifica per controllarlo sulle prove.' : 'Quello che il programma stampa compare qui.'}</span>
-					)}
-					{chunks.map((chunk, i) =>
-						chunk.kind === 'image' ? (
-							// eslint-disable-next-line @next/next/no-img-element -- a figure made in the browser, as a data URL
-							<img key={i} src={`data:image/png;base64,${chunk.text}`} alt="Grafico disegnato dal programma" className="my-2 block max-w-full rounded-lg border border-edge bg-white" />
-						) : (
-							<span key={i} className={cn(CHUNK[chunk.kind])}>
-								{chunk.text}
-							</span>
-						)
-					)}
-					{phase === 'waiting' && (
-						<form className="inline" onSubmit={answer}>
-							<input
-								ref={field}
-								autoFocus
-								aria-label="Risposta al programma"
-								autoCapitalize="off"
-								autoCorrect="off"
-								autoComplete="off"
-								spellCheck={false}
-								enterKeyHint="send"
-								className="w-48 max-w-full border-0 border-b border-edge-strong bg-transparent p-0 font-semibold text-fg-strong outline-none focus:border-accent focus:ring-0 max-sm:text-base"
-							/>
-						</form>
-					)}
-					{verdicts && tests && (
-						<div className="font-sans whitespace-normal" aria-label="Esito delle prove">
-							{phase === 'idle' && (
-								<p className={cn('m-0! mb-3! font-semibold', passed === tests.length ? 'text-ok-fg' : 'text-fg-strong')}>
-									{passed === tests.length ? `Tutte le ${tests.length} prove superate.` : passed === 1 ? `1 prova superata su ${tests.length}.` : `${passed} prove superate su ${tests.length}.`}
-								</p>
+			<Layout
+				project={project}
+				compact={compact}
+				full={full}
+				code={
+					<div className={cn('border-b border-edge', compact ? 'max-h-[26rem] overflow-auto' : full ? 'h-[20rem] lg:h-full lg:border-b-0' : 'h-[20rem] lg:h-[32rem] lg:border-b-0')} onFocus={() => void runtimeFor(language).load()}>
+						<Editor key={loaded.count} initial={loaded.text} language={language} label="Programma" minimap={!compact} onChange={edit} onRun={run} />
+					</div>
+				}
+				output={
+					<>
+						{settings && <SettingsPanel className={fill || full ? 'h-full' : 'lg:h-[32rem]'} />}
+						<div
+							ref={log}
+							role="log"
+							aria-label="Console"
+							// the console stays under the settings: a run goes on, and its canvas keeps its drawing
+							className={cn('overflow-auto bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg', fill ? 'h-full' : compact ? 'max-h-[26rem] min-h-[4.5rem]' : full ? 'h-[16rem] lg:h-full' : 'h-[16rem] lg:h-[32rem]', settings && 'hidden')}
+							onClick={() => field.current?.focus()}
+						>
+							{drawing && <TurtleCanvas onStage={attach} />}
+							{chunks.length === 0 && !drawing && !verdicts && phase === 'idle' && (
+								<span className="font-sans text-fg-faint">{tests ? 'Esegui per provare il programma, Verifica per controllarlo sulle prove.' : 'Quello che il programma stampa compare qui.'}</span>
 							)}
-							{/* not a list element: the lesson's own list styles would number it */}
-							<div role="list" className="flex flex-col gap-2">
-								{verdicts.map((verdict, i) => (
-									<div role="listitem" key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
-										<p className={cn('m-0! flex items-center gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
-											{verdict.passed ? <Check className="size-4" aria-hidden="true" /> : <X className="size-4" aria-hidden="true" />}
-											Prova {i + 1}: {verdict.passed ? 'superata' : 'non superata'}
+							{chunks.map((chunk, i) =>
+								chunk.kind === 'image' ? (
+									// eslint-disable-next-line @next/next/no-img-element -- a figure made in the browser, as a data URL
+									<img key={i} src={`data:image/png;base64,${chunk.text}`} alt="Grafico disegnato dal programma" className="my-2 block max-w-full rounded-lg border border-edge bg-white" />
+								) : (
+									<span key={i} className={cn(CHUNK[chunk.kind])}>
+										{chunk.text}
+									</span>
+								)
+							)}
+							{phase === 'waiting' && (
+								<form className="inline" onSubmit={answer}>
+									<input
+										ref={field}
+										autoFocus
+										aria-label="Risposta al programma"
+										autoCapitalize="off"
+										autoCorrect="off"
+										autoComplete="off"
+										spellCheck={false}
+										enterKeyHint="send"
+										className="w-48 max-w-full border-0 border-b border-edge-strong bg-transparent p-0 font-semibold text-fg-strong outline-none focus:border-accent focus:ring-0 max-sm:text-base"
+									/>
+								</form>
+							)}
+							{verdicts && tests && (
+								<div className="font-sans whitespace-normal" aria-label="Esito delle prove">
+									{phase === 'idle' && (
+										<p className={cn('m-0! mb-3! font-semibold', passed === tests.length ? 'text-ok-fg' : 'text-fg-strong')}>
+											{passed === tests.length ? `Tutte le ${tests.length} prove superate.` : passed === 1 ? `1 prova superata su ${tests.length}.` : `${passed} prove superate su ${tests.length}.`}
 										</p>
-										{!verdict.passed && (
-											<dl className="m-0! mt-2! grid gap-x-3 gap-y-1 text-sm sm:grid-cols-[auto_1fr] [&>dd]:m-0 [&>dt]:m-0">
-												{tests[i].input !== '' && (
-													<>
-														<dt className="text-fg-subtle">Ingresso</dt>
-														<dd className="font-mono whitespace-pre-wrap text-fg">{tests[i].input.trimEnd()}</dd>
-													</>
+									)}
+									{/* not a list element: the lesson's own list styles would number it */}
+									<div role="list" className="flex flex-col gap-2">
+										{verdicts.map((verdict, i) => (
+											<div role="listitem" key={i} className={cn('rounded-lg border px-3 py-2', verdict.passed ? 'border-ok-edge bg-ok-soft' : 'border-danger-edge bg-danger-soft')}>
+												<p className={cn('m-0! flex items-center gap-1.5 text-sm font-semibold', verdict.passed ? 'text-ok-fg' : 'text-danger-fg')}>
+													{verdict.passed ? <Check className="size-4" aria-hidden="true" /> : <X className="size-4" aria-hidden="true" />}
+													Prova {i + 1}: {verdict.passed ? 'superata' : 'non superata'}
+												</p>
+												{!verdict.passed && (
+													<dl className="m-0! mt-2! grid gap-x-3 gap-y-1 text-sm sm:grid-cols-[auto_1fr] [&>dd]:m-0 [&>dt]:m-0">
+														{tests[i].input !== '' && (
+															<>
+																<dt className="text-fg-subtle">Ingresso</dt>
+																<dd className="font-mono whitespace-pre-wrap text-fg">{tests[i].input.trimEnd()}</dd>
+															</>
+														)}
+														<dt className="text-fg-subtle">Atteso</dt>
+														<dd className="font-mono whitespace-pre-wrap text-fg">{tidy(tests[i].output)}</dd>
+														<dt className="text-fg-subtle">Ottenuto</dt>
+														<dd className="font-mono whitespace-pre-wrap text-fg">{verdict.got || '(niente)'}</dd>
+													</dl>
 												)}
-												<dt className="text-fg-subtle">Atteso</dt>
-												<dd className="font-mono whitespace-pre-wrap text-fg">{tidy(tests[i].output)}</dd>
-												<dt className="text-fg-subtle">Ottenuto</dt>
-												<dd className="font-mono whitespace-pre-wrap text-fg">{verdict.got || '(niente)'}</dd>
-											</dl>
-										)}
+											</div>
+										))}
 									</div>
-								))}
-							</div>
+								</div>
+							)}
 						</div>
-					)}
-				</div>
-			</div>
+					</>
+				}
+			/>
 		</section>
+	);
+}
+
+/** Where the code and its output go: side by side or one above the other, or, in a project, beside the list of its files. */
+export function Layout({ project, compact, full = false, code, output, preview = null }: { project?: ProjectSlots; compact: boolean; full?: boolean; code: ReactNode; output: ReactNode; /** In a project of pages: what the tab of the page shows. */ preview?: ReactNode }) {
+	if (project?.layout === 'explorer') return <Panes files={project.chooser} editor={project.area(preview)} output={project.output.open ? output : null} full={full} />;
+	return (
+		<Split
+			stacked={compact}
+			full={full}
+			left={
+				project ? (
+					<>
+						{project.chooser}
+						{project.editor}
+					</>
+				) : (
+					code
+				)
+			}
+			right={output}
+		/>
 	);
 }

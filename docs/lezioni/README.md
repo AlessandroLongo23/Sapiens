@@ -170,6 +170,35 @@ ul > li | quanti = 2
 | `a \| attributo href = pagina.html` | l'attributo ha quel valore |
 | `h1 \| stile color = blue` | lo stile calcolato dal browser; il valore si scrive come in CSS |
 
+Un progetto a più file è un gruppo di blocchi che hanno ciascuno il nome di un file: lo studente li vede con una
+linguetta per file, nell'ordine in cui sono scritti, e il primo è quello aperto. Serve per due pagine che si
+richiamano, per un programma con un modulo, per un C++ con il suo `.h`.
+
+````
+```codice index.html
+<link rel="stylesheet" href="stile.css">
+<a href="contatti.html">Contatti</a>
+```
+
+```codice contatti.html
+<a href="index.html">Home</a>
+```
+
+```codice stile.css
+a { color: teal; }
+```
+````
+
+- I nomi possono avere una cartella (`css/stile.css`); le estensioni sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`,
+  `md`, `json`, `txt`, `csv`. Un'immagine non si scrive in un blocco.
+- "Esegui" avvia il programma, o mostra la pagina, del primo blocco che si può eseguire; poi quello che lo studente
+  apre. In Python gli altri file sono moduli e file da leggere, in C e C++ si compilano insieme, in una pagina si
+  collegano con il loro percorso e un link porta all'altra pagina.
+- L'esercizio si corregge con `%% prova` e `%% stampa` se parte un programma, con `%% controllo` se parte una pagina.
+  `%% soluzione` in un file è la soluzione di quel file.
+- `%% crea`, da solo in fondo a un blocco, dà allo studente l'elenco dei file come nello strumento, con cui creare,
+  rinominare ed eliminare file. Senza, i file sono quelli della lezione e si possono solo modificare.
+
 Un controllo con più regole passa quando passano tutte. `%% soluzione` in un file è la soluzione di quel file; un
 file senza soluzione resta com'è. I controlli sul comportamento (un clic che cambia la pagina) non ci sono ancora.
 
@@ -192,6 +221,62 @@ Controllo automatico (formule KaTeX, link, formato dei riquadri, regole di stile
 ```sh
 node node_modules/jiti/lib/jiti-cli.mjs scripts/lezioni/check.mts docs/lezioni/riscritte/*.md
 ```
+
+## Il diagramma di flusso da eseguire
+
+Un blocco `diagramma` è un programma scritto in poche righe, che la pagina disegna come diagramma di flusso ed esegue
+un blocco alla volta: il blocco in corso è acceso, la freccia appena percorsa è colorata, e accanto c'è la tabella
+delle variabili, dove sono segnate quelle che il blocco legge o cambia. Su un rombo la frase accanto riscrive la
+condizione con i valori al posto dei nomi ("6 ≤ 5: è falsa").
+
+````
+```diagramma
+% nome: somma-da-uno-a-n
+% alt: Diagramma di flusso: si legge n, s parte da 0 e i da 1; finché i è minore o uguale a n si aggiunge i a s e si aumenta i di 1; alla fine si scrive s
+% ingresso: 4
+leggi n
+s = 0
+i = 1
+finché i <= n
+    s = s + i
+    i = i + 1
+scrivi s
+```
+````
+
+- `% nome:` e `% alt:` sono obbligatori, come nelle figure. `% ingresso:` dà i valori già scritti nel campo di ogni
+  "leggi", nell'ordine, separati da virgole: lo studente li può cambiare.
+- Un'istruzione per riga: `leggi x`, `scrivi a, "testo"` (più cose separate da virgole, scritte con uno spazio in
+  mezzo), `x = espressione`, `se condizione` con `altrimenti` facoltativo, `finché condizione`. Il corpo di una
+  selezione o di un ciclo è rientrato sotto la sua riga, come in Python.
+- Espressioni: `+ - * /`, `//` e `%` (o `div` e `mod`) per quoziente e resto tra interi, `== != < <= > >=`, e per
+  unire due condizioni `E`, `O`, `NON` in maiuscolo (`e` e `o` minuscole restano libere come nomi di variabili).
+  I numeri decimali si scrivono con il punto e si vedono con la virgola. `/` è la divisione della calcolatrice:
+  `7 / 2` fa 3,5 anche tra interi, come in Python e non come in C++.
+- Nel disegno l'assegnamento è `s ← s + i`, e `<=`, `!=`, `*` diventano ≤, ≠, ·. Una selezione a due vie ha "sì" a
+  sinistra e "no" a destra; una selezione a una via e un ciclo tengono "sì" sotto il rombo e portano "no" a destra;
+  il ciclo risale a sinistra.
+- Non ci sono salti: ogni diagramma che si può scrivere ha un programma in Python e in C++ che fa lo stesso.
+- `leggi x: intero`, `: decimale` o `: testo` dice che cosa si legge, e un valore di altro tipo viene chiesto di
+  nuovo. Senza, si legge un numero quando quello che è scritto lo è, altrimenti un testo.
+- Accanto al diagramma c'è il suo programma in Python e in C++, scritto dalla pagina: la riga del blocco in corso è
+  accesa. Il tipo di ogni variabile, che il C++ vuole, è dedotto dai valori che prende (e per un "leggi" dal tipo
+  dichiarato o dal valore di `% ingresso:`). Controlla che il codice generato sia quello che la lezione mostra nei
+  blocchi `codice`: se differisce per un tipo, dichiaralo nel `leggi`.
+- Con "Modifica" lo studente cambia il diagramma: trascina un blocco dalla fila dei blocchi su una freccia, che si
+  accende nel punto dove il blocco andrà; trascina allo stesso modo un blocco del diagramma su un'altra freccia;
+  clicca dentro un blocco per scriverlo, lì dov'è; lo toglie con il cestino al suo angolo. Senza trascinare: un
+  tocco sul blocco della fila, poi un tocco sul «+» della freccia. Il codice segue ogni modifica.
+  `% modifica: sì` apre il diagramma già pronto da modificare, per un esercizio che chiede di costruirlo; in quel
+  caso il programma può essere vuoto, o avere una selezione o un ciclo ancora senza corpo.
+- `% codice: no` toglie il codice accanto al diagramma: serve negli esercizi in cui il programma lo deve scrivere
+  lo studente, guardando il diagramma.
+- `scripts/lezioni/check.mts` legge ogni blocco e lo esegue con i valori di `% ingresso:`: un diagramma che non si
+  legge, che si ferma per un errore o che non finisce entro 2000 passi è un errore della lezione.
+
+La pagina pubblicata contiene già il disegno (SVG nel testo), che è quello che resta in stampa e senza JavaScript.
+Il codice è in `src/lib/diagramma/` (linguaggio, disegno, esecuzione) e `src/components/diagramma/`. Per vedere i
+blocchi prima di pubblicare: `/prova-grafico/lezione?file=prove/diagramma.md`.
 
 ## Cosa c'era negli originali
 

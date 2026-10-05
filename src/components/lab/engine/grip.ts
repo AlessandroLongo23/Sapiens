@@ -45,6 +45,12 @@ export type GripSpec = {
 	fingers: number;
 	/** How much the fingers that do not touch curl, 0 to 1. */
 	tuck: number;
+	/**
+	 * On an object with a button only: the wrist turned round the object, degrees, from where the thumb laid out
+	 * straight puts the hand (buttonPlace). The thumb still goes to the button: at 0 the object is between the thumb and
+	 * the palm, at a quarter turn the thumb lies on top of the fist, in line with the forearm.
+	 */
+	turn?: number;
 };
 
 export const DEFAULTS: Record<GripType, Omit<GripSpec, 'type' | 'height'>> = {
@@ -117,6 +123,10 @@ export const VARIANTS: Record<string, { id: string; label: string }[]> = {
 export function autoSpec(name: string): GripSpec | null {
 	const shape = SHAPES[name];
 	if (!shape) return null;
+	// a tool with a button is held in the whole hand, the thumb on the button (buttonPlace). Its handle is thin: the
+	// hand sits back so that it lies under the fingers, which then close round it; under the palm it keeps the whole
+	// hand off
+	if (shape.button) return { type: 'power', height: shape.grip, ...DEFAULTS.power, slide: -(shape.radius(shape.grip) + 0.0175) };
 	const type: GripType = shape.kind === 'pen' || shape.kind === 'pinch' ? 'tripod' : shape.radius(shape.grip) > 0.045 ? 'power' : 'precision';
 	const spec: GripSpec = { type, height: shape.grip, ...DEFAULTS[type] };
 	if (type === 'precision') {
@@ -269,7 +279,8 @@ function placeRound(spec: GripSpec, shape: Shape, hand: HandGeo, phi: number, up
 	const tq = new Quaternion().setFromAxisAngle(N, -spec.tilt * D * up * mirror);
 	F.applyQuaternion(tq);
 	Xs.applyQuaternion(tq);
-	const rq = new Quaternion().setFromAxisAngle(F, spec.roll * D * up);
+	// mirrored for the left hand, as the tilt is: a roll tuned on one hand is the same grip on the other
+	const rq = new Quaternion().setFromAxisAngle(F, spec.roll * D * up * mirror);
 	N = N.applyQuaternion(rq);
 	Xs = Xs.applyQuaternion(rq);
 	F = F.normalize();
@@ -282,6 +293,49 @@ function placeRound(spec: GripSpec, shape: Shape, hand: HandGeo, phi: number, up
 		.addScaledVector(along, spec.slide ?? 0)
 		.setY(spec.height);
 	return { q, P, u, F };
+}
+
+/** The horizontal direction the thumb's pad lands in, for a hand placed round an object (see solveRound). */
+function thumbDir(spec: GripSpec, place: { u: Vector3; F: Vector3 }) {
+	const horiz = place.F.clone().setY(0);
+	if (horiz.lengthSq() < 1e-6) horiz.copy(new Vector3(-place.u.z, 0, place.u.x));
+	horiz.normalize();
+	const tw = spec.thumbWrap * D;
+	return place.u.clone().multiplyScalar(Math.cos(tw)).addScaledVector(horiz, -Math.sin(tw));
+}
+
+/**
+ * The thumb laid out straight beside the index, as on a tool held like a wand: the solver's four numbers (opposition,
+ * abduction, base and middle flexion).
+ */
+const THUMB_ALONG = [8 * D, 0, 6 * D, 10 * D];
+
+/**
+ * Where the hand goes on an object with a button: the thumb's side towards the end of the object the button is
+ * nearer to, and then turned round the object and moved along it until the pad of the thumb, laid out straight, is on
+ * the button. The thumb lies along the tool, in line with the forearm, and the hand sits as far down the handle as
+ * the thumb is long. Null without a button.
+ */
+export function buttonPlace(spec: GripSpec, shape: Shape, hand: HandGeo): { phi: number; up: 1 | -1; height: number } | null {
+	const b = shape.button;
+	if (!b || spec.type === 'tripod') return null;
+	const up = b[1] < (shape.y0 + shape.y1) / 2 ? -1 : 1;
+	const thumb = finger(hand.thumb);
+	const pad = thumb.pad.clone().applyMatrix4(segFrames(thumb.chain, thumbAngles(THUMB_ALONG), true)[2]);
+	let phi = 0;
+	let height = spec.height;
+	// turning the hand round the axis turns the pad by as much, and moving it along the axis moves the pad by as much:
+	// one step would do, but for the palm, which is pushed clear of the surface where it lands
+	for (let it = 0; it < 3; it++) {
+		const at = { ...spec, height };
+		const place = placeRound(at, shape, hand, phi, up);
+		const P = clearPalm(place.q, place.P, place.u, shape, hand, spec.gap);
+		const p = pad.clone().applyMatrix4(boneInObject(P, place.q, hand));
+		phi += Math.atan2(b[2], b[0]) - Math.atan2(p.z, p.x);
+		height += b[1] - p.y;
+	}
+	// then the wrist turned round the object (mirrored for the left hand): the thumb bends to stay on the button
+	return { phi: phi + (spec.turn ?? 0) * D * (hand.side === 'L' ? -1 : 1), up, height };
 }
 
 /** Pushes the palm out along `u` until every palm vertex is at least `gap` off the surface. */
@@ -312,7 +366,10 @@ function clearPalm(q: Quaternion, P: Vector3, u: Vector3, shape: Shape, hand: Ha
 export function solveGrip(name: string, spec: GripSpec, hand: HandGeo, phi: number, up: 1 | -1 = 1): GripResult | null {
 	const shape = SHAPES[name];
 	if (!shape) return null;
-	return spec.type === 'tripod' ? solveTripod(spec, shape, hand, phi) : solveRound(spec, shape, hand, phi, up);
+	if (spec.type === 'tripod') return solveTripod(spec, shape, hand, phi);
+	// a button leaves the hand one place round the object, whatever was asked
+	const fixed = buttonPlace(spec, shape, hand);
+	return fixed ? solveRound({ ...spec, height: fixed.height }, shape, hand, fixed.phi, fixed.up) : solveRound(spec, shape, hand, phi, up);
 }
 
 /** The hand bone's matrix in the object's frame, from the grip's palm point and rotation. */
@@ -324,6 +381,7 @@ function solveRound(spec: GripSpec, shape: Shape, hand: HandGeo, phi: number, up
 	const place = placeRound(spec, shape, hand, phi, up);
 	const P = clearPalm(place.q, place.P, place.u, shape, hand, spec.gap);
 	const toObj = boneInObject(P, place.q, hand);
+	const button = shape.button ? new Vector3(...shape.button) : null;
 	const toHand = toObj.clone().invert();
 	const horiz = place.F.clone().setY(0);
 	if (horiz.lengthSq() < 1e-6) horiz.copy(new Vector3(-place.u.z, 0, place.u.x));
@@ -350,15 +408,15 @@ function solveRound(spec: GripSpec, shape: Shape, hand: HandGeo, phi: number, up
 		angles.f.push(fingerAngles(r.x) as [number, number, number, number]);
 		miss.push(r.miss);
 	});
-	// the thumb, round the other side and a little below the index
+	// the thumb, round the other side and a little below the index; or on the button, just off its face
 	const idx = hand.chains[0].pos[0].clone().applyMatrix4(toObj);
-	const tw = spec.thumbWrap * D;
-	const tdir = place.u.clone().multiplyScalar(Math.cos(tw)).addScaledVector(horiz, -Math.sin(tw));
+	const tdir = thumbDir(spec, place);
 	const ty = idx.y - spec.thumbDrop * Math.sign(new Vector3(1, 0, 0).applyQuaternion(place.q).y * (hand.side === 'L' ? -1 : 1) || 1);
-	const tObj = surface(tdir, ty);
+	const tObj = button ? button.clone().add(new Vector3(button.x, 0, button.z).setLength(SKIN)) : surface(tdir, ty);
 	targets.push(tObj);
 	const tt = tObj.clone().applyMatrix4(toHand);
-	const th = reach(finger(hand.thumb), tt, true, pen);
+	// on a button the thumb stays laid out along the tool: bent round to it from the side is another grip
+	const th = button ? reach(finger(hand.thumb), tt, true, pen, THUMB_ALONG, !spec.turn) : reach(finger(hand.thumb), tt, true, pen);
 	angles.t = thumbAngles(th.x);
 	miss.push(th.miss);
 	const grip: Grip = { p: P, q: place.q, shape, curl: 0 };
@@ -433,7 +491,7 @@ function penetration(shape: Shape, toObj: Matrix4) {
 }
 
 /** Bends a finger (or the thumb) so that its pad reaches `target`, keeping every vertex it carries outside. */
-function reach(fg: Finger, target: Vector3, thumb: boolean, pen: (p: Vector3) => number, start?: number[]) {
+function reach(fg: Finger, target: Vector3, thumb: boolean, pen: (p: Vector3) => number, start?: number[], only = false) {
 	const lo = thumb ? [-30 * D, -15 * D, -30 * D, -20 * D] : [-15 * D, 0, -20 * D];
 	const hi = thumb ? [60 * D, 90 * D, 60 * D, 80 * D] : [95 * D, 110 * D, 20 * D];
 	const x0 = start ?? (thumb ? [20 * D, 20 * D, 10 * D, 20 * D] : [30 * D, 40 * D, 0]);
@@ -452,7 +510,8 @@ function reach(fg: Finger, target: Vector3, thumb: boolean, pen: (p: Vector3) =>
 		return out;
 	};
 	// a few starts, the best solution wins: the surface makes the problem full of local minima
-	const starts = thumb ? [x0, [0, 40 * D, 20 * D, 30 * D], [40 * D, 10 * D, 0, 40 * D], [50 * D, 50 * D, 30 * D, 10 * D]] : [x0, [15 * D, 70 * D, 0], [55 * D, 55 * D, 0], [70 * D, 20 * D, 0], [10 * D, 100 * D, 0]];
+	// (`only`: from the given start alone, to stay near that pose)
+	const starts = only ? [x0] : thumb ? [x0, [0, 40 * D, 20 * D, 30 * D], [40 * D, 10 * D, 0, 40 * D], [50 * D, 50 * D, 30 * D, 10 * D]] : [x0, [15 * D, 70 * D, 0], [55 * D, 55 * D, 0], [70 * D, 20 * D, 0], [10 * D, 100 * D, 0]];
 	let x = x0;
 	let best = Infinity;
 	for (const s0 of starts) {
@@ -517,7 +576,10 @@ export function synthesize(name: string, hand: HandGeo, objectQ: Quaternion, com
 	let bestCost = Infinity;
 	const wq = new Quaternion();
 	const tries = spec.type === 'tripod' ? 24 : 16;
-	for (let k = 0; k < tries; k++) {
+	// a button leaves the hand one place round the object, and so does a tool turned over with the forearm
+	const fixed = buttonPlace(spec, shape, hand) ?? wandPlace(name, hand);
+	if (fixed) best = fixed;
+	for (let k = 0; k < tries && !fixed; k++) {
 		const phi = (k / tries) * Math.PI * 2;
 		for (const up of spec.type === 'tripod' ? ([1] as const) : ([1, -1] as const)) {
 			const q = spec.type === 'tripod' ? tripodFrame(spec, hand, phi) : placeRound(spec, shape, hand, phi, up).q;
@@ -547,12 +609,27 @@ export function revary(choice: GripChoice, hand: HandGeo, rnd: () => number = Ma
 
 function solveVaried(choice: GripChoice, hand: HandGeo, varied: { spec: GripSpec; dphi: number }) {
 	const { name, spec, phi, up } = choice;
-	let r = solveGrip(name, varied.spec, hand, phi + varied.dphi, up);
+	// round an object with a button, or one with a place of its own, the hand does not move
+	let r = solveGrip(name, varied.spec, hand, SHAPES[name]?.button || WAND[name] !== undefined ? phi : phi + varied.dphi, up);
 	if (r && (r.inside > 2 || r.depth > 0.0015)) r = solveGrip(name, spec, hand, phi, up);
 	return r && { ...r, choice };
 }
 
 /** Just the hand's rotation in the object's frame for a tripod at `phi` (for choosing it; the solve does the rest). */
+/**
+ * Where round a tool that is turned over with the forearm (the spatula) the hand sits, for the right hand, radians:
+ * the one place from which the wrist can hold it scoop up with the palm up and roll it over, palm down, without
+ * letting go. Measured in the browser (3 October 2026): from here the hand follows 150° of roll within 2°; held as a
+ * pen, at 70° to the hand, the wrist had about 90° in all.
+ */
+const WAND: Record<string, number> = { Spatula: (270 * Math.PI) / 180 };
+
+function wandPlace(name: string, hand: HandGeo): { phi: number; up: 1 | -1 } | null {
+	const phi = WAND[name];
+	if (phi === undefined) return null;
+	return { phi: hand.side === 'L' ? 2 * Math.PI - phi : phi, up: 1 };
+}
+
 function tripodFrame(spec: GripSpec, hand: HandGeo, phi: number) {
 	const thumbBase = hand.thumb.pos[1].clone().applyMatrix4(new Matrix4().compose(hand.thumb.pos[0], hand.thumb.rot[0], ONE));
 	const sx = Math.sign(thumbBase.x) || 1;

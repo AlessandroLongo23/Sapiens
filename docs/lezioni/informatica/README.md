@@ -91,6 +91,32 @@ Valgono per tutti i capitoli, perché le lezioni si richiamano a vicenda.
   cifre, griglie di pixel. Niente `pattern=` (node-tikzjax non lo disegna) e niente riempimenti bianchi per
   cancellare. Si guardano con `node scripts/figure/anteprima.mjs <cartella di uscita> <file della lezione>`.
 - Nel primo anno non c'è programmazione: niente blocchi `codice` e niente figure interattive in questo lotto.
+
+### Programmazione
+
+Scelte del 5 ottobre 2026, per le prime lezioni di programmazione (secondo anno), da confermare.
+
+- **Linguaggi.** Ogni programma è scritto in Python e in C++, in due blocchi `codice` uno dopo l'altro: lo studente
+  sceglie la linguetta, e la scelta vale per tutta la pagina. Il testo attorno parla del concetto con parole che
+  valgono per tutti e due ("la variabile", "il ciclo", "la condizione"); quello che cambia da un linguaggio
+  all'altro (i tipi dichiarati in C++, i due punti e il rientro in Python, il punto e virgola) sta in un riquadro
+  `ad-note` subito dopo il programma. Le parole del linguaggio in codice in linea: `` `while` ``, `` `int` ``.
+- **Programmi da eseguire e da modificare.** Un esempio è un blocco `codice` che lo studente esegue; il testo
+  prima dice che cosa fa, quello dopo che cosa provare a cambiare. In C++ sempre `#include <iostream>` e
+  `using namespace std;`, come nei libri del biennio. Rientro di quattro spazi nei due linguaggi.
+- **Esercizi.** Con `%% prova` e `%% stampa`, scritte nel blocco Python e valide anche per il C++. Il programma di
+  partenza legge i dati e ha un commento dove scrivere; `%% soluzione` c'è sempre, in tutti e due i linguaggi. Nelle
+  prove il programma C++ non scrive domande prima di leggere (Python non le stampa, il C++ sì): quindi i programmi
+  degli esercizi leggono senza domanda. Ogni soluzione si controlla con `scripts/codice/verifica.mts`.
+- **Diagrammi di flusso.** Il diagramma di un programma è un blocco `diagramma` (vedi `../README.md`, "Il diagramma
+  di flusso da eseguire"): si scrive il programma in poche righe e la pagina lo disegna con le forme dei libri (ovale
+  per inizio e fine, parallelogramma per leggere e scrivere, rettangolo per un'istruzione, rombo per una condizione,
+  con "sì" e "no" sui due rami) e lo esegue un blocco alla volta, con la tabella delle variabili accanto. Nomi delle
+  variabili e ordine dei passi sono quelli del programma `codice` che lo segue. `% ingresso:` porta i valori della
+  tabella che la lezione usa per seguire il programma a mano, così lo studente ritrova gli stessi numeri.
+  Una figura che non è un programma (i quattro blocchi con il loro nome) resta in TikZ: node-tikzjax non ha
+  `shapes.geometric`, e parallelogramma e rombo si disegnano come percorsi, come in `47-diagrammi-flusso.md`.
+- **Anteprima.** Con il sito in sviluppo: `/prova-grafico/lezione?file=informatica/riscritte/NN-slug.md`.
 - Esercizi: un generatore per lezione, con id uguale allo slug della lezione, secondo
   `scripts/exercises/README.md`. Le lezioni di conto (basi, complemento a due, dimensione di un'immagine o di un
   suono, formule del foglio) hanno esercizi costruiti all'indietro; quelle di concetto (hardware e software,

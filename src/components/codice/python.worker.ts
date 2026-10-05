@@ -44,6 +44,35 @@ loading.then(
 	(error: unknown) => post({ type: 'failed', message: String(error) })
 );
 
+/** Where a run's files are, and where the program runs: `open("dati.txt")` and `import modulo` look here. */
+const PROJECT = '/progetto';
+
+/**
+ * Puts the files of the program's project where the program runs, in place of those of the run before. The modules
+ * imported from there are forgotten, so a module that was changed is read again.
+ */
+function place(pyodide: PyodideInterface, files: Record<string, string>) {
+	pyodide.runPython(`import os, shutil\nos.chdir("/")\nshutil.rmtree(${JSON.stringify(PROJECT)}, ignore_errors=True)\nos.makedirs(${JSON.stringify(PROJECT)})`);
+	for (const [path, text] of Object.entries(files)) {
+		const folder = path.split('/').slice(0, -1).join('/');
+		if (folder) pyodide.FS.mkdirTree(`${PROJECT}/${folder}`);
+		// a folder with nothing in it yet
+		if (path.endsWith('/')) continue;
+		// a picture is the data URL of its bytes
+		const data = /^data:[^,]*;base64,(.*)$/.exec(text);
+		pyodide.FS.writeFile(`${PROJECT}/${path}`, data ? Uint8Array.from(atob(data[1]), (c) => c.charCodeAt(0)) : text);
+	}
+	// after the runner's own modules: a file called turtle.py does not take the turtle's place
+	pyodide.runPython(`import importlib, os, sys
+os.chdir(${JSON.stringify(PROJECT)})
+if ${JSON.stringify(PROJECT)} not in sys.path:
+    sys.path.insert(1, ${JSON.stringify(PROJECT)})
+for _name, _module in list(sys.modules.items()):
+    if (getattr(_module, "__file__", None) or "").startswith(${JSON.stringify(`${PROJECT}/`)}):
+        del sys.modules[_name]
+importlib.invalidate_caches()`);
+}
+
 /** The packages of Pyodide's distribution that the program imports, loaded once; matplotlib also builds its font cache here. */
 async function packages(pyodide: PyodideInterface, id: number, source: string) {
 	await pyodide.loadPackagesFromImports(source, {
@@ -62,8 +91,11 @@ self.onmessage = async ({ data }: MessageEvent<ToRunner>) => {
 	const ready = await loading.catch(() => null);
 	if (!ready) return;
 	const { pyodide, esegui } = ready;
-	const { id, source, inputs, seed, batch = false } = data;
-	await packages(pyodide, id, source).catch(() => {});
+	const { id, source, inputs, seed, batch = false, files = {} } = data;
+	// the modules of the project import packages too
+	const sources = [source, ...Object.entries(files).filter(([path]) => path.endsWith('.py')).map(([, text]) => text)];
+	await packages(pyodide, id, sources.join('\n')).catch(() => {});
+	place(pyodide, files);
 	post({ type: 'started', id });
 	const emit = emitter(batch ? 0 : inputs.length, (kind, text) => post({ type: 'chunk', id, kind, text }));
 	const started = performance.now();

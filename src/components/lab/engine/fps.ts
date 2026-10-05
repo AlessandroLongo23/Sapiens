@@ -1,5 +1,6 @@
 import { MathUtils, PerspectiveCamera, Vector3 } from 'three';
 import { spring, springVec, type Spring } from './spring';
+import { PAD, padKind, setDevice } from './pad';
 
 /** Where the student may walk: the floor in front of the bench, inside the room (three.js coordinates). */
 const BOUNDS = { minX: -2.15, maxX: 2.15, minZ: 0.5, maxZ: 3.35 };
@@ -37,12 +38,24 @@ const NECK = { up: 0.1, forward: 0.08, share: 0.7 };
 const BOB = { step: 0.7, up: 0.011, side: 0.006 };
 /** The head leans a little into a sidestep and a turn: radians per m/s and per rad/s, at most `most`. */
 const ROLL = { strafe: 0.012, turn: 0.004, most: 0.025 };
+/**
+ * A controller's sticks: nothing inside `dead` (a stick at rest is never exactly at zero), then the push squared, so
+ * a small push aims finely; the view turns at most `yaw` and `pitch` rad/s. The d-pad stands for the mouse wheel:
+ * a press is a small nudge, and held it runs from `slow` to `fast` wheel units a second (a mouse's notch is 100).
+ */
+const STICK = { dead: 0.14, yaw: 2.8, pitch: 2.0 };
+const DPAD = { nudge: 12, slow: 120, fast: 520, ramp: 1.2 };
 /** Breathing, standing still: a slow nod, radians and meters. */
 const BREATH = { hz: 0.23, pitch: 0.0022, up: 0.0015 };
 
 /**
  * First-person controls, as in a videogame: WASD or the arrows walk, Shift runs, C crouches, the mouse looks around
- * once the pointer is locked, and Z or the middle button zooms. The two main buttons belong to the two hands. The camera never tilts past straight up or down.
+ * once the pointer is locked, and Z or the middle button zooms. The two main buttons belong to the two hands, which
+ * take and put down; Q and E use the left and the right hand. The camera never tilts past straight up or down.
+ *
+ * A controller does the same (pad.ts): the left stick walks and the right one looks, the triggers take and put down,
+ * the bumpers use. A browser does not capture the mouse for a controller's button, so with one the game is entered
+ * and paused without the capture: `locked` then means "playing", by either way in.
  */
 export class FirstPerson {
 	yaw = 0;
@@ -77,14 +90,14 @@ export class FirstPerson {
 	private vel = new Vector3();
 	private acc = new Vector3();
 	private eyeV = 0;
-	private interact = false;
+	/** Presses of Q and E not yet taken: the left and the right hand's use key. */
+	private used: ('L' | 'R')[] = [];
 	/** While the hands are busy (taking, putting down, turning a tap): the body stays, the eyes still look round. */
 	frozen = false;
 	/** The mouse without the operating system's acceleration (see lock). */
 	rawMouse = true;
 	/** A factor on how far the view turns for a movement of the mouse. */
 	sensitivity = 1;
-	private combine = false;
 	/**
 	 * Where the hands hang from, as a view of their own: the eye's position and a yaw and pitch that trail the real
 	 * ones, so what the hands carry lags behind a turn of the head and swings back (holdFrame, hands.ts).
@@ -97,6 +110,19 @@ export class FirstPerson {
 	onLockChange: (locked: boolean) => void = () => {};
 	/** The mouse wheel while the pointer is captured (positive: towards the user, as deltaY). */
 	onWheel: (delta: number) => void = () => {};
+	/** R while the pointer is captured: turns what is about to be put down. */
+	onTurn: (dir?: 1 | -1) => void = () => {};
+	/** A controller's trigger: the left (0) or the right (2) hand takes or puts down, as the mouse buttons. */
+	onPadPress: (button: 0 | 2) => void = () => {};
+	/** Whether a controller's button may enter the game (not while it loads). */
+	canEnter = true;
+	/** A factor on how fast the sticks turn the view. */
+	padSensitivity = 1;
+	/** Playing through the controller, without the mouse captured. */
+	private padPlay = false;
+	private padDown: boolean[] = [];
+	private padHeld = 0;
+	private padMove = { fwd: 0, side: 0, run: false, crouch: false, zoom: false };
 
 	constructor(
 		private camera: PerspectiveCamera,
@@ -116,7 +142,7 @@ export class FirstPerson {
 	}
 
 	lock() {
-		if (this.locked) return;
+		if (document.pointerLockElement === this.el) return;
 		const el = this.el as HTMLElement & { requestPointerLock(o?: { unadjustedMovement?: boolean }): Promise<void> | undefined };
 		const plain = () => el.requestPointerLock?.()?.catch?.(() => {});
 		if (!this.rawMouse) return void plain();
@@ -131,7 +157,21 @@ export class FirstPerson {
 	}
 
 	unlock() {
-		if (this.locked) document.exitPointerLock();
+		if (document.pointerLockElement === this.el) document.exitPointerLock();
+		else if (this.padPlay) this.padLeave();
+	}
+
+	/** Into the game from a controller's button. */
+	private padEnter() {
+		this.padPlay = true;
+		if (this.locked) return;
+		this.locked = true;
+		this.onLockChange(true);
+	}
+
+	private padLeave() {
+		this.padPlay = false;
+		this.sync();
 	}
 
 	/** Back to the starting spot, facing the bench. */
@@ -172,9 +212,12 @@ export class FirstPerson {
 
 	private onKeyDown = (e: KeyboardEvent) => {
 		if (this.typing(e) || e.metaKey || e.ctrlKey) return;
+		setDevice('keys');
+		// Esc frees a captured mouse by itself; playing from the controller there is none to free
+		if (e.code === 'Escape' && this.padPlay && document.pointerLockElement !== this.el) return this.padLeave();
 		this.keys.add(e.code);
-		if (e.code === 'KeyE' && !e.repeat) this.interact = true;
-		if (e.code === 'KeyF' && !e.repeat) this.combine = true;
+		if ((e.code === 'KeyQ' || e.code === 'KeyE') && !e.repeat && this.locked) this.used.push(e.code === 'KeyQ' ? 'L' : 'R');
+		if (e.code === 'KeyR' && this.locked) this.onTurn();
 		// the arrows would otherwise move a focused slider or scroll the page
 		if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
 	};
@@ -188,14 +231,23 @@ export class FirstPerson {
 		this.zoom = false;
 	};
 
+	/** The mouse's capture changed. Losing it (Esc) pauses, also for whoever plays with the controller. */
 	private onLock = () => {
-		this.locked = document.pointerLockElement === this.el;
-		if (!this.locked) this.zoom = false;
-		this.onLockChange(this.locked);
+		if (document.pointerLockElement !== this.el) this.padPlay = false;
+		this.sync();
 	};
 
+	private sync() {
+		const was = this.locked;
+		const captured = document.pointerLockElement === this.el;
+		this.locked = captured || this.padPlay;
+		if (!this.locked) this.zoom = false;
+		if (this.locked !== was) this.onLockChange(this.locked);
+	}
+
 	private onMouseMove = (e: MouseEvent) => {
-		if (!this.locked) return;
+		if (document.pointerLockElement !== this.el) return;
+		if (e.movementX || e.movementY) setDevice('keys');
 		// slower when zoomed, so aiming at a mark stays precise
 		const k = 0.0022 * this.sensitivity * (this.fov / FOV);
 		this.yaw -= e.movementX * k;
@@ -203,6 +255,7 @@ export class FirstPerson {
 	};
 
 	private onMouseDown = (e: MouseEvent) => {
+		setDevice('keys');
 		if (e.button === 1 && this.locked) this.zoom = true;
 	};
 
@@ -212,18 +265,125 @@ export class FirstPerson {
 
 	private onContextMenu = (e: Event) => e.preventDefault();
 
+	/** The last wheel events' sizes, and whether what arrives now is the trackpad's momentum (see coasting). */
+	private wheelLog: number[] = [];
+	private wheelT = 0;
+	private coast = false;
+
+	/**
+	 * A trackpad keeps sending wheel events after the fingers have left it, smaller and smaller, for about a second:
+	 * the system's momentum. What the wheel sets here (a flame, the pipette's filler) must stop with the fingers, so
+	 * those are told apart and dropped. Momentum is a steady run of events that only shrink; fingers on the pad, or a
+	 * mouse wheel's notches, do not shrink five times in a row. It ends when an event is larger than the one before,
+	 * or after a pause: a new gesture.
+	 */
+	private coasting(delta: number, now: number) {
+		const size = Math.abs(delta);
+		const last = this.wheelLog.at(-1) ?? 0;
+		if (now - this.wheelT > 100) {
+			this.wheelLog = [];
+			this.coast = false;
+		} else if (size > last) this.coast = false;
+		this.wheelT = now;
+		this.wheelLog.push(size);
+		if (this.wheelLog.length > 5) this.wheelLog.shift();
+		const l = this.wheelLog;
+		if (l.length === 5 && l[0] > l[4] && l.every((v, i) => i === 0 || v <= l[i - 1])) this.coast = true;
+		return this.coast;
+	}
+
 	private onWheelEvent = (e: WheelEvent) => {
 		if (!this.locked) return;
 		e.preventDefault();
 		// lines (Firefox) as pixels
-		this.onWheel(e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY);
+		const delta = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
+		if (this.coasting(delta, e.timeStamp)) return;
+		setDevice('keys');
+		this.onWheel(delta);
 	};
+
+	/** The first connected controller, preferring one the browser maps to the standard layout. */
+	private gamepad() {
+		const all = typeof navigator !== 'undefined' && navigator.getGamepads ? [...navigator.getGamepads()].filter((g): g is Gamepad => !!g && g.connected) : [];
+		return all.find((g) => g.mapping === 'standard') ?? all[0] ?? null;
+	}
+
+	/** Reads the controller: the sticks into the walk and the view, the buttons into the same calls the keys make. */
+	private pad(dt: number) {
+		const m = this.padMove;
+		const g = this.gamepad();
+		if (!g) {
+			if (this.padPlay) this.padLeave();
+			m.fwd = m.side = 0;
+			m.run = m.crouch = m.zoom = false;
+			this.padDown = [];
+			return;
+		}
+		const down = g.buttons.map((b, i) => (i === PAD.l2 || i === PAD.r2 ? b.value > (this.padDown[i] ? 0.3 : 0.55) || (b.pressed && b.value === 0) : b.pressed));
+		const hit = (i: number) => down[i] && !this.padDown[i];
+		const stick = (x = 0, y = 0) => {
+			const r = Math.hypot(x, y);
+			if (r < STICK.dead) return [0, 0];
+			const k = Math.min(1, (r - STICK.dead) / (1 - STICK.dead)) / r;
+			return [x * k, y * k];
+		};
+		const [mx, my] = stick(g.axes[0], g.axes[1]);
+		const [lx, ly] = stick(g.axes[2], g.axes[3]);
+		if (down.some(Boolean) || mx || my || lx || ly) setDevice(padKind(g.id));
+		if (!this.locked) {
+			// cross (A) or Options enters and resumes
+			if (this.canEnter && (hit(PAD.south) || hit(PAD.start))) this.padEnter();
+			m.fwd = m.side = 0;
+			m.run = m.crouch = m.zoom = false;
+			this.padDown = down;
+			return;
+		}
+		if (hit(PAD.start)) {
+			this.padDown = down;
+			this.unlock();
+			return;
+		}
+		m.fwd = -my;
+		m.side = mx;
+		m.run = down[PAD.l3];
+		m.crouch = down[PAD.east];
+		m.zoom = down[PAD.north] || down[PAD.r3];
+		const aim = Math.hypot(lx, ly);
+		if (aim > 0) {
+			// the push squared; slower when zoomed, as the mouse
+			const k = aim * this.padSensitivity * (this.fov / FOV) * dt;
+			this.yaw -= lx * k * STICK.yaw;
+			this.pitch = MathUtils.clamp(this.pitch - ly * k * STICK.pitch, -1.45, 1.45);
+		}
+		if (hit(PAD.l1)) this.used.push('L');
+		if (hit(PAD.r1)) this.used.push('R');
+		if (hit(PAD.l2)) this.onPadPress(0);
+		if (hit(PAD.r2)) this.onPadPress(2);
+		if (hit(PAD.west) || hit(PAD.right)) this.onTurn(1);
+		if (hit(PAD.left)) this.onTurn(-1);
+		// up is the wheel pushed away (negative, as deltaY)
+		const wheel = (down[PAD.down] ? 1 : 0) - (down[PAD.up] ? 1 : 0);
+		if (wheel) {
+			if (hit(PAD.up) || hit(PAD.down)) {
+				this.padHeld = 0;
+				this.onWheel(wheel * DPAD.nudge);
+			} else {
+				this.padHeld += dt;
+				// a tap is only the nudge: the run starts after a moment
+				if (this.padHeld > 0.22) this.onWheel(wheel * MathUtils.lerp(DPAD.slow, DPAD.fast, Math.min(1, (this.padHeld - 0.22) / DPAD.ramp)) * dt);
+			}
+		}
+		this.padDown = down;
+	}
 
 	update(dt: number) {
 		const k = this.keys;
-		const fwd = (k.has('KeyW') || k.has('ArrowUp') ? 1 : 0) - (k.has('KeyS') || k.has('ArrowDown') ? 1 : 0);
-		const side = (k.has('KeyD') || k.has('ArrowRight') ? 1 : 0) - (k.has('KeyA') || k.has('ArrowLeft') ? 1 : 0);
-		const speed = k.has('ShiftLeft') || k.has('ShiftRight') ? RUN : WALK;
+		this.pad(dt);
+		const pm = this.padMove;
+		// the stick's push sets the pace, the keys are all or nothing
+		const fwd = (k.has('KeyW') || k.has('ArrowUp') ? 1 : 0) - (k.has('KeyS') || k.has('ArrowDown') ? 1 : 0) + pm.fwd;
+		const side = (k.has('KeyD') || k.has('ArrowRight') ? 1 : 0) - (k.has('KeyA') || k.has('ArrowLeft') ? 1 : 0) + pm.side;
+		const speed = k.has('ShiftLeft') || k.has('ShiftRight') || pm.run ? RUN : WALK;
 		const sin = Math.sin(this.yaw);
 		const cos = Math.cos(this.yaw);
 		// forward is -Z at yaw 0
@@ -238,12 +398,12 @@ export class FirstPerson {
 		if (this.frozen) this.eyeV = 0;
 		else {
 			const e: Spring = { x: this.eye, v: this.eyeV };
-			spring(e, k.has('KeyC') ? CROUCH : STAND, CROUCH_SPRING.omega, CROUCH_SPRING.zeta, dt);
+			spring(e, k.has('KeyC') || pm.crouch ? CROUCH : STAND, CROUCH_SPRING.omega, CROUCH_SPRING.zeta, dt);
 			this.eye = e.x;
 			this.eyeV = e.v;
 		}
 		this.position.y = this.eye;
-		const fov = this.zoom || k.has('KeyZ') ? ZOOM_FOV : FOV;
+		const fov = this.zoom || k.has('KeyZ') || pm.zoom ? ZOOM_FOV : FOV;
 		this.fov += (fov - this.fov) * (1 - Math.exp(-dt * 12));
 		this.walkMotion(dt);
 		this.apply();
@@ -348,18 +508,11 @@ export class FirstPerson {
 		}
 	}
 
-	/** True once after each press of F. */
-	takeCombine() {
-		const c = this.combine;
-		this.combine = false;
-		return c;
-	}
-
-	/** True once after each press of E. */
-	takeInteract() {
-		const i = this.interact;
-		this.interact = false;
-		return i;
+	/** The hands whose use key (Q the left, E the right) was pressed since the last call, in order. */
+	takeUses() {
+		const u = this.used;
+		this.used = [];
+		return u;
 	}
 
 	dispose() {

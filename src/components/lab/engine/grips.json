@@ -27,6 +27,20 @@
 		"fingers": 3,
 		"tuck": 0.6
 	},
+	"BunsenCollar": {
+		"type": "tripod",
+		"height": 0.04,
+		"gap": 0,
+		"slide": 0,
+		"tilt": 79,
+		"roll": 0,
+		"wrap": 0,
+		"thumbWrap": 0,
+		"thumbDrop": 0,
+		"fan": 0,
+		"fingers": 2,
+		"tuck": 1
+	},
 	"ConicalFlask": {
 		"type": "precision",
 		"height": 0.064,
@@ -88,7 +102,7 @@
 		"height": 0.162,
 		"gap": 0,
 		"slide": 0,
-		"tilt": 70,
+		"tilt": 25,
 		"roll": 0,
 		"wrap": 0,
 		"thumbWrap": 0,
@@ -102,7 +116,7 @@
 		"height": 0.162,
 		"gap": 0,
 		"slide": 0,
-		"tilt": 70,
+		"tilt": 25,
 		"roll": 0,
 		"wrap": 0,
 		"thumbWrap": 0,
@@ -124,5 +138,20 @@
 		"fan": 0,
 		"fingers": 2,
 		"tuck": 1
+	},
+	"Lighter": {
+		"type": "power",
+		"height": 0.187,
+		"gap": 0,
+		"slide": -0.012,
+		"tilt": -44,
+		"roll": -7,
+		"wrap": 200,
+		"thumbWrap": 120,
+		"thumbDrop": -0.03,
+		"fan": -14,
+		"fingers": 4,
+		"tuck": 1,
+		"turn": -65
 	}
 }

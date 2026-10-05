@@ -11,6 +11,7 @@ import { activate3dModels } from '@/lib/utils/molecule3d';
 import { activateInteractives } from '@/lib/utils/interactive';
 import { activatePlots } from '@/lib/utils/plot-figure';
 import { activateCode } from '@/lib/utils/code-figure';
+import { activateCharts } from '@/lib/utils/chart-figure';
 import type { Prompt } from '@/lib/data/prompts';
 import { FloatingMenu, type MenuPosition } from './FloatingMenu';
 
@@ -85,7 +86,9 @@ export function LessonBody({ html }: { html: string }) {
 		const stopInteractives = activateInteractives(el);
 		const stopPlots = activatePlots(el);
 		const stopCode = activateCode(el);
+		const stopCharts = activateCharts(el);
 		return () => {
+			stopCharts();
 			stopCode();
 			stopPlots();
 			stopInteractives();

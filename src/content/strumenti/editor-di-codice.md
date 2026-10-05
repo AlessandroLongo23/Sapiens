@@ -2,11 +2,15 @@
 
 ## Un editor che esegue i programmi nel browser
 
-Questo strumento è un editor di codice online: scrivi un programma a sinistra, premi "Esegui" e vedi a destra, nella console, quello che il programma stampa. Funziona con Python, C, C++ e JavaScript, più le pagine web in HTML e CSS, e non c'è niente da installare: il programma gira dentro il tuo browser, sul tuo computer, e il codice che scrivi non viene mandato a nessun server.
+Questo strumento è un editor di codice online: scrivi un programma a sinistra, premi "Esegui" e vedi a destra, nella console, quello che il programma stampa. Funziona con Python, C, C++ e JavaScript, e con i progetti a più file, tra cui i siti in HTML e CSS, e non c'è niente da installare: il programma gira dentro il tuo browser, sul tuo computer, e il codice che scrivi non viene mandato a nessun server.
 
 La prima volta che esegui un programma il browser scarica il linguaggio: Python è leggero, mentre per C e C++ il compilatore pesa circa 20 MB e ci vuole un po' di più. Dalla seconda volta è già lì. JavaScript e le pagine web non scaricano niente: li esegue il browser.
 
 Nel menu accanto al linguaggio trovi alcuni programmi di esempio, da eseguire così come sono e poi da cambiare. La scorciatoia per eseguire è Ctrl+Invio, oppure ⌘+Invio sul Mac.
+
+## L'editor come lo vuoi tu
+
+Il tasto con le due frecce porta l'editor a schermo intero, e Esc lo riporta nella pagina. Tra il codice e la console c'è una maniglia (in un progetto ce ne sono di più): trascinala per dare più spazio all'uno o all'altra, e con un doppio clic torna a metà. Il tasto con l'ingranaggio apre le impostazioni al posto della console; premilo di nuovo per tornare indietro. Lì scegli i colori del codice tra quattro temi, la dimensione del testo in pixel (da 10 a 20), quanti spazi vale un rientro (cambia anche nel codice già scritto), e se vuoi la minimappa, i numeri di riga, l'a capo automatico e la chiusura automatica delle parentesi. Le scelte restano su questo dispositivo e valgono anche per i programmi dentro le lezioni.
 
 ## Rispondere alle domande del programma
 
@@ -60,27 +64,42 @@ Leggere un numero
 `prompt()` restituisce sempre un testo: `Number()` lo trasforma in un numero.
 ```
 
-Questo JavaScript non ha una pagina: `document` non esiste. Per lavorare con una pagina scegli "Pagina web".
+Questo JavaScript non ha una pagina: `document` non esiste. Per lavorare con una pagina scegli "Progetto".
+
+## Progetti: più file insieme
+
+Con "Progetto" l'editor diventa quello di un programma vero: a sinistra l'elenco dei file, accanto il codice, e sotto il codice quello che il programma stampa. Le maniglie cambiano la larghezza dell'elenco e l'altezza dell'uscita, che un tasto nella barra nasconde del tutto.
+
+Ogni file che apri diventa una scheda sopra il codice. Le schede si chiudono, si trascinano per cambiarne l'ordine, e con il tasto in fondo alla barra delle schede si spostano in una seconda colonna, per avere due file uno accanto all'altro.
+
+Nell'elenco crei un file con il primo tasto e una cartella con il secondo; passando sopra un file o una cartella compaiono la matita per rinominare e il cestino per eliminare. Un file entra in una cartella trascinandolo sopra, ed esce trascinandolo sulla parte vuota dell'elenco. In Python un modulo in una cartella si importa con `from cartella import modulo`. Le estensioni accettate sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`, `md`, `json`, `txt` e `csv`. Il terzo tasto aggiunge un'immagine dal tuo dispositivo: viene rimpicciolita e resta dentro il progetto.
+
+"Esegui" avvia sempre lo stesso programma, quello con il triangolino accanto al nome nell'elenco: puoi aprire un modulo, modificarlo e premere "Esegui" senza tornare al file principale. Per far partire il programma da un altro file, passa sopra il suo nome e premi il triangolino. In un sito "Esegui" mostra la pagina che hai aperto per ultima.
+
+- **Python**: gli altri file `.py` sono moduli, e si importano con il loro nome (`import geometria` per `geometria.py`). Un file di testo o un `.json` si apre con `open("dati.txt")`.
+- **C e C++**: tutti i file `.c`, o tutti i `.cpp`, vengono compilati insieme, e i `.h` si includono con `#include "frazione.h"`.
+- **Pagine web**: una pagina carica gli altri file con il loro percorso, come in un sito vero, e un link a un'altra pagina del progetto la apre nell'anteprima. Un file `.md` viene mostrato come pagina.
 
 ## Pagine web: HTML, CSS e JavaScript
 
-Con "Pagina web" l'editor ha tre file, `index.html`, `style.css` e `script.js`, e a destra la pagina che ne esce. Finché la pagina non ha script, l'anteprima si aggiorna da sola mentre scrivi; quando c'è del JavaScript si aggiorna con "Esegui", così un `alert()` non si apre a ogni pausa.
+Una pagina web è un progetto: tra gli esempi di "Progetto" ne trovi uno con `index.html`, `style.css` e `script.js`, e uno con due pagine che si richiamano. La pagina si vede nella scheda "Anteprima", che all'inizio sta accanto al codice: puoi chiuderla per dare tutto lo spazio al codice, o tenere solo lei. "Esegui" la riapre. Finché il progetto non ha script, l'anteprima si aggiorna da sola mentre scrivi; quando c'è del JavaScript si aggiorna con "Esegui", così un `alert()` non si apre a ogni pausa.
 
-I tre file si collegano come in una pagina vera. Nella `head` di `index.html` va la riga che carica il foglio di stile, e prima di `</body>` quella che carica lo script:
+I file si collegano come in un sito vero. Nella `head` della pagina va la riga che carica il foglio di stile, prima di `</body>` quella che carica lo script, e un'immagine si mostra con il suo percorso:
 
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <img src="foto.png" alt="Una foto">
 
 ```ad-warning
 Un file non collegato non fa niente
-Se scrivi in `style.css` ma la pagina non ha il `<link>`, lo stile non viene applicato: succede lo stesso con un sito vero. L'editor te lo ricorda sotto l'anteprima.
+Se scrivi in `style.css` ma la pagina non ha il `<link>`, lo stile non viene applicato: succede lo stesso con un sito vero. L'editor te lo ricorda sotto l'anteprima, e ti dice anche quando una pagina nomina un file che nel progetto non c'è.
 ```
 
-Sotto l'anteprima compaiono quello che lo script scrive con `console.log()` e i suoi errori, con la riga di `script.js`. Nell'anteprima i link non si aprono, i moduli non vengono inviati e lo script non può scaricare dati da altri siti; le immagini prese dal web con un indirizzo `https` si vedono.
+Quello che gli script scrivono con `console.log()` e i loro errori, con il file e la riga, compaiono nella fascia sotto il codice, che si apre da sola quando c'è un errore. Nell'anteprima i link verso altri siti non si aprono, i moduli non vengono inviati e gli script non possono scaricare dati da altri siti; le immagini prese dal web con un indirizzo `https` si vedono.
 
 ## Salvare i programmi
 
-Con un account, "I miei programmi" salva quello che hai scritto con un nome e te lo fa ritrovare da ogni dispositivo. "Salva con nome" crea un programma nuovo; "Salva" scrive sopra quello che hai caricato. Di una pagina web vengono salvati i tre file insieme. Anche dagli esercizi delle lezioni puoi salvare il tuo programma, e riaprirlo poi qui.
+Con un account, "I miei programmi" salva quello che hai scritto con un nome e te lo fa ritrovare da ogni dispositivo. "Salva con nome" crea un programma nuovo; "Salva" scrive sopra quello che hai caricato. Di un progetto vengono salvati tutti i file insieme, immagini comprese. Anche dagli esercizi delle lezioni puoi salvare il tuo programma, e riaprirlo poi qui.
 
 ## Quando un programma non finisce
 
@@ -93,4 +112,4 @@ Guarda la condizione del ciclo e chiediti che cosa la fa diventare falsa. Nella 
 
 ## Che cosa non fa
 
-Non è un ambiente di sviluppo completo: un programma è un solo file e una pagina web ne ha tre, non ci sono cartelle, progetti o un terminale, e un programma non può leggere né scrivere file sul tuo computer. Da telefono i programmi si leggono e si eseguono bene, ma per scriverne di lunghi serve una tastiera. Senza un account il programma che scrivi non viene salvato: se ti serve, copialo prima di chiudere la pagina.
+Non è un ambiente di sviluppo completo: non c'è un terminale, non si installano librerie, e un programma non può leggere né scrivere file sul tuo computer. Da telefono i programmi si leggono e si eseguono bene, ma per scriverne di lunghi serve una tastiera. Senza un account il programma che scrivi non viene salvato: se ti serve, copialo prima di chiudere la pagina.

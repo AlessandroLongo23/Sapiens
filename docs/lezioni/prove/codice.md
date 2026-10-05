@@ -1,6 +1,6 @@
 # Prova dei programmi nelle lezioni
 
-Questa pagina prova i blocchi `codice`: un esempio da eseguire, lo stesso programma in tre linguaggi, un esercizio con le prove, un esercizio in JavaScript e una pagina web con i suoi controlli.
+Questa pagina prova i blocchi `codice`: un esempio da eseguire, lo stesso programma in tre linguaggi, un esercizio con le prove, un esercizio in JavaScript, una pagina web con i suoi controlli e due progetti a più file.
 
 ## Un programma da eseguire
 
@@ -231,3 +231,68 @@ h1 {
     color: blue;
 }
 ```
+
+## Un sito di due pagine
+
+Più blocchi con il nome di un file sono un progetto: ogni file ha la sua linguetta, e il primo è quello aperto. Le due pagine si richiamano con un link e usano lo stesso foglio di stile.
+
+```codice index.html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="stile.css">
+</head>
+<body>
+    <h1>Home</h1>
+    <a href="contatti.html">Contatti</a>
+</body>
+</html>
+```
+
+```codice contatti.html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Contatti</title>
+    <link rel="stylesheet" href="stile.css">
+</head>
+<body>
+    <h1>Contatti</h1>
+    <a href="index.html">Torna alla home</a>
+</body>
+</html>
+```
+
+```codice stile.css
+h1 {
+    color: teal;
+}
+```
+
+## Un programma con un modulo
+
+Il programma usa una funzione scritta in un altro file. Completa `doppio` nel modulo `conti.py`.
+
+```codice main.py
+import conti
+
+n = int(input())
+print(conti.doppio(n))
+%% prova
+4
+%% stampa
+8
+```
+
+```codice conti.py
+def doppio(n):
+    # scrivi qui
+    return n
+%% soluzione
+def doppio(n):
+    return n * 2
+```
+

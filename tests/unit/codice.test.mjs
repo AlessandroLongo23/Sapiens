@@ -12,6 +12,8 @@ const { assemble, hasScript } = await jiti.import('../../src/components/codice/w
 const { guardLoops, guardInline } = await jiti.import('../../src/components/codice/loop-guard.ts');
 const { environment, format, random } = await jiti.import('../../src/components/codice/js-environment.ts');
 const { readProgramFiles } = await jiti.import('../../src/lib/codice/salvati.ts');
+const { folderProblem, pathProblem, readProject, resolvePath, sortedPaths, targetOf } = await jiti.import('../../src/lib/codice/progetto.ts');
+const { reindent } = await jiti.import('../../src/components/codice/settings.ts');
 
 test('a block is read into its program, its solution and its tests', () => {
 	const { variant, tests, errors } = parseCodeFence('python', ['n = int(input())', '# scrivi qui', '', '%% soluzione', 'n = int(input())', 'print(n * 2)', '%% prova', '4', '%% stampa', '8', '%% prova', '%% stampa', 'ciao', ''].join('\n'));
@@ -104,20 +106,79 @@ test('a rule is a selector and what must be true of what it finds', () => {
 	assert.match(parseRule('h1 | colore rosso'), /condizione non riconosciuta/);
 });
 
-test('the page takes its style and its script through the tags that link them', () => {
-	const page = { html: '<head><link rel="stylesheet" href="style.css"></head><body><script src="./script.js" defer></script></body>', css: 'h1 { color: red; }', js: 'x()' };
-	const { html, notes } = assemble(page, 'blob:1');
-	assert.equal(html, '<head><style>h1 { color: red; }</style></head><body><script src="blob:1" defer></script></body>');
+test('a page takes its styles, scripts and pictures from the files of its project, by their path', () => {
+	const files = {
+		'index.html': '<head><link rel="stylesheet" href="css/stile.css"></head><body><img src="img/a.png"><script src="./script.js" defer></script><a href="chi.html">chi</a></body>',
+		'css/stile.css': 'h1 { color: red; background: url("../img/a.png"); }',
+		'script.js': 'x()',
+		'img/a.png': 'data:image/png;base64,AAAA',
+		'chi.html': '<link rel="stylesheet" href="css/stile.css"><h1>chi</h1>'
+	};
+	const { html, notes } = assemble(files, 'index.html', files['index.html'], (path) => `blob:${path}`);
+	assert.equal(html, '<head><style>h1 { color: red; background: url("data:image/png;base64,AAAA"); }</style></head><body><img src="data:image/png;base64,AAAA"><script src="blob:script.js" defer></script><a href="chi.html">chi</a></body>');
 	assert.deepEqual(notes, []);
 
-	const loose = assemble({ html: '<h1>Ciao</h1>', css: 'h1 {}', js: 'x()' }, 'blob:1');
-	assert.equal(loose.html, '<h1>Ciao</h1>');
-	assert.equal(loose.notes.length, 2);
-	assert.deepEqual(assemble({ html: '<h1>Ciao</h1>', css: ' ', js: '' }, 'blob:1').notes, []);
+	// what is not linked does nothing, and what is linked and is not there is said
+	const loose = assemble({ 'index.html': '<h1>Ciao</h1><img src="foto.png"><img src="https://example.com/a.png">', 'style.css': 'h1 {}', 'script.js': 'x()' }, 'index.html', '<h1>Ciao</h1><img src="foto.png"><img src="https://example.com/a.png">', () => '');
+	assert.deepEqual(loose.notes.map((note) => note.split(':')[0]), ['foto.png non esiste nel progetto', 'style.css non è collegato alla pagina', 'script.js non è collegato alla pagina']);
+	assert.deepEqual(assemble({ 'index.html': '<h1>Ciao</h1>', 'style.css': ' ' }, 'index.html', '<h1>Ciao</h1>', () => '').notes, []);
+	// from a page in a folder the tag to write climbs out of it
+	assert.match(assemble({ 'pagine/a.html': '<p></p>', 'stile.css': 'p {}' }, 'pagine/a.html', '<p></p>', () => '').notes[0], /href="\.\.\/stile\.css"/);
 
-	assert.equal(hasScript({ html: '<p>a</p>', css: '', js: '' }), false);
-	assert.equal(hasScript({ html: '<p onclick="x()">a</p>', css: '', js: '' }), true);
-	assert.equal(hasScript({ html: '<p>a</p>', css: '', js: 'x()' }), true);
+	assert.equal(hasScript({ 'index.html': '<p>a</p>', 'style.css': 'p {}' }), false);
+	assert.equal(hasScript({ 'index.html': '<p onclick="x()">a</p>' }), true);
+	assert.equal(hasScript({ 'index.html': '<p>a</p>', 'script.js': 'x()' }), true);
+});
+
+test('a project is files with paths: what a path may be, how it is found from another file, what Esegui does with it', () => {
+	assert.equal(pathProblem('css/stile.css'), null);
+	assert.match(pathProblem('virus.exe'), /estensione/);
+	assert.match(pathProblem('../fuori.py'), /solo lettere/);
+	assert.match(pathProblem('a/b/c/d/e.py'), /Troppe cartelle/);
+	assert.equal(resolvePath('pagine/chi.html', '../img/a.png'), 'img/a.png');
+	assert.equal(resolvePath('index.html', 'chi.html#su'), 'chi.html');
+	assert.equal(resolvePath('index.html', '../fuori.html'), null);
+	assert.equal(resolvePath('index.html', 'https://example.com/a.css'), null);
+	assert.deepEqual(sortedPaths({ 'main.py': '', 'css/b.css': '', 'a.py': '', 'css/a.css': '' }), ['css/a.css', 'css/b.css', 'a.py', 'main.py']);
+	assert.equal(targetOf('main.py', ['main.py']), 'program');
+	assert.equal(targetOf('index.html', ['index.html', 'script.js']), 'page');
+	assert.equal(targetOf('script.js', ['index.html', 'script.js']), null);
+	assert.equal(targetOf('script.js', ['script.js']), 'program');
+	assert.equal(targetOf('dati.txt', ['dati.txt']), null);
+	assert.deepEqual(readProject({ 'main.py': 'print(1)', 'foto.png': 'data:image/png;base64,AAAA' }), { 'main.py': 'print(1)', 'foto.png': 'data:image/png;base64,AAAA' });
+	assert.equal(readProject({ 'foto.png': '<script>' }), null);
+	assert.equal(readProject({ 'a.exe': '' }), null);
+	assert.equal(readProject({}), null);
+	assert.deepEqual(readProgramFiles('project', { 'a.py': 'x' }), { 'a.py': 'x' });
+	// a folder with nothing in it yet is a path that ends with a slash
+	assert.deepEqual(readProject({ 'main.py': 'x', 'img/': '' }), { 'main.py': 'x', 'img/': '' });
+	assert.equal(readProject({ 'img/': '' }), null);
+	assert.equal(readProject({ 'main.py': 'x', 'la mia/': '' }), null);
+	assert.equal(readProject({ 'main.py': 'x', 'img/': 'testo' }), null);
+	assert.deepEqual(sortedPaths({ 'main.py': '', 'img/': '' }), ['main.py']);
+	assert.match(folderProblem('a.b'), /solo lettere/);
+	assert.equal(folderProblem('css/temi'), null);
+});
+
+test('blocks named as files are a project: its files, the one to open, its tests or its checks', () => {
+	const { block, errors } = parseCodeBlock([
+		{ info: 'main.py', body: 'import conti\nprint(conti.doppio(int(input())))\n%% prova\n4\n%% stampa\n8' },
+		{ info: 'conti.py', body: 'def doppio(n):\n    return n\n%% soluzione\ndef doppio(n):\n    return n * 2\n%% crea' }
+	]);
+	assert.deepEqual(errors, []);
+	assert.equal(block.project.open, 'main.py');
+	assert.equal(block.project.create, true);
+	assert.deepEqual(Object.keys(block.project.files), ['main.py', 'conti.py']);
+	assert.equal(block.project.solution['conti.py'], 'def doppio(n):\n    return n * 2\n');
+	assert.equal(block.project.solution['main.py'], block.project.files['main.py']);
+	assert.deepEqual(block.project.tests, [{ input: '4\n', output: '8\n' }]);
+
+	const said = (fences) => parseCodeBlock(fences).errors.join(' | ');
+	assert.match(said([{ info: 'main.py', body: 'x' }, { info: 'python', body: 'y' }]), /ogni blocco ha il nome di un file/);
+	assert.match(said([{ info: 'a.py', body: 'x' }, { info: 'a.py', body: 'y' }]), /compare due volte/);
+	assert.match(said([{ info: 'index.html', body: '<p></p>\n%% prova\n%% stampa\n1' }]), /è una pagina/);
+	assert.match(said([{ info: 'main.py', body: 'x\n%% controllo C\'è\np' }]), /è un programma/);
+	assert.match(said([{ info: 'virus.exe', body: 'x' }]), /estensione/);
 });
 
 test('every loop of a page\'s script calls the guard, and no line moves', () => {
@@ -164,6 +225,19 @@ test('a saved program has exactly the files of its language', () => {
 	assert.equal(readProgramFiles('python', { main: 'x', html: 'y' }), null);
 	assert.equal(readProgramFiles('web', { html: 1 }), null);
 	assert.equal(readProgramFiles('c', { main: 'x'.repeat(200_001) }), null);
+});
+
+test('a program takes the width of indentation that is asked, whatever it was written with', () => {
+	const four = 'def f():\n    if x:\n        return 1\n\n    return 2\n';
+	const two = 'def f():\n  if x:\n    return 1\n\n  return 2\n';
+	assert.equal(reindent(four, 2), two);
+	assert.equal(reindent(two, 4), four);
+	assert.equal(reindent(reindent(four, 8), 4), four);
+	assert.equal(reindent(four, 4), four);
+	// nothing to go by: tabs, no indentation, lines aligned by one space
+	assert.equal(reindent('a\n\tb\n', 2), 'a\n\tb\n');
+	assert.equal(reindent('a\nb\n', 2), 'a\nb\n');
+	assert.equal(reindent('f(a,\n  b,\n   c)\n', 4), 'f(a,\n  b,\n   c)\n');
 });
 
 const pyodide = await loadPyodide();

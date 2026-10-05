@@ -1,4 +1,4 @@
-import { BackSide, Color, FrontSide, LatheGeometry, Mesh, MeshPhysicalMaterial, Object3D, Plane, Vector2, Vector3 } from 'three';
+import { BackSide, CircleGeometry, Color, DoubleSide, FrontSide, LatheGeometry, Mesh, MeshPhysicalMaterial, MeshStandardMaterial, Object3D, Plane, Vector2, Vector3 } from 'three';
 
 /**
  * What a vessel holds. Volumes in mL, amounts in mol, the undissolved copper(II) oxide in grams.
@@ -49,6 +49,16 @@ export class Contents {
 		return this.vol > 0.01 ? this.cu / (this.vol / 1000) : 0;
 	}
 }
+
+/**
+ * The undissolved solid, copper(II) oxide. Its grains are 6.31 g/cm³ and push that much liquid up. Settled as a
+ * powder it takes far more room, air or liquid between the grains: 1.5 g/cm³ here, a round figure for a fine oxide
+ * powder (not measured). The first `SOLID_LOOSE` grams are the scattered grains on the bottom (effects.ts); what is
+ * over that lies as a bed.
+ */
+export const SOLID_DENSITY = 6.31;
+export const SOLID_BULK = 1.5;
+export const SOLID_LOOSE = 1.6;
 
 /** A lathed cavity: radius as a function of height, in the vessel's local frame (metres). */
 export class Profile {
@@ -144,6 +154,8 @@ function halton(i: number, b: number) {
 	return r;
 }
 
+const _n = new Vector3();
+const _p = new Vector3();
 const CLEAR = new Color('#a8cbe0');
 const BLUE = new Color('#1f73d0');
 const DEEP = new Color('#0e3f93');
@@ -167,6 +179,15 @@ export class LiquidBody {
 	murk = 0;
 	/** A fixed colour, for the bottles on the shelf. */
 	fixed: Color | null = null;
+	/** Whether solid in it settles as a bed on the bottom (not in a funnel, where the paper holds it). */
+	settles = true;
+	/**
+	 * The settled solid: the cavity cut at the bed's top, and a disc for the top itself. Unlike the liquid it does not
+	 * flow: it keeps its place in the vessel when the vessel tilts.
+	 */
+	private bed: Mesh;
+	private bedCap: Mesh;
+	private bedPlane = new Plane(new Vector3(0, -1, 0), 0);
 	private samples: Float32Array;
 	private ys: Float32Array;
 
@@ -200,6 +221,24 @@ export class LiquidBody {
 		this.mesh.userData.noPick = true;
 		this.mesh.visible = false;
 		node.add(this.mesh);
+		// opaque and a touch inside the liquid's own faces, so the two do not fight for the same depth
+		this.bed = new Mesh(geo, new MeshStandardMaterial({ color: '#131313', roughness: 1, metalness: 0, side: DoubleSide, clippingPlanes: [this.bedPlane] }));
+		this.bed.name = node.name + 'Bed';
+		this.bed.scale.set(0.99, 1, 0.99);
+		this.bed.userData.noPick = true;
+		this.bed.visible = false;
+		this.bed.raycast = () => {};
+		node.add(this.bed);
+		// the cut alone shows the cavity's far wall through it, and the liquid in front of that: the top is a surface
+		this.bedCap = new Mesh(new CircleGeometry(1, 40).rotateX(-Math.PI / 2), new MeshStandardMaterial({ color: '#161616', roughness: 1, metalness: 0 }));
+		this.bedCap.name = node.name + 'BedTop';
+		this.bedCap.userData.noPick = true;
+		this.bedCap.visible = false;
+		this.bedCap.raycast = () => {};
+		// as small as nothing until there is a bed: whatever measures the vessel (its soft shadow on the bench, look.ts)
+		// counts this disc too, and at its own size, a metre, it darkened the whole worktop
+		this.bedCap.scale.setScalar(0.001);
+		node.add(this.bedCap);
 		if (fixed) this.fixed = new Color(fixed);
 		// the point cloud for tilted levels
 		const N = 2048;
@@ -219,10 +258,30 @@ export class LiquidBody {
 		return this.profile.total * 1e6;
 	}
 
-	/** World height of the surface. */
+	/** What the settled solid takes of the cavity, mL: the bed, grains and what is between them. */
+	get bedVol() {
+		return this.settles ? Math.max(0, this.contents.solid - SOLID_LOOSE) / SOLID_BULK : 0;
+	}
+
+	/** What fills the cavity up to the liquid's surface, mL: the liquid and the room the solid's grains take in it. */
+	get filled() {
+		return this.contents.vol + this.contents.solid / SOLID_DENSITY;
+	}
+
+	/** World height of the surface: the solid in the liquid raises it. */
 	level(): number {
+		return this.levelOf(this.filled);
+	}
+
+	/** Local height of the bed's top when upright. */
+	bedTop() {
+		return this.profile.heightFor(this.bedVol * 1e-6);
+	}
+
+	/** World height of the surface of `ml` settled at the bottom of the cavity, however the vessel is tilted. */
+	private levelOf(ml: number): number {
 		const e = this.node.matrixWorld.elements;
-		const vol = this.contents.vol * 1e-6;
+		const vol = ml * 1e-6;
 		if (e[5] > 0.99999) return e[13] + this.profile.heightFor(vol);
 		const s = this.samples;
 		const ys = this.ys;
@@ -241,7 +300,7 @@ export class LiquidBody {
 
 	/** Local height of the surface when upright. */
 	localLevel() {
-		return this.profile.heightFor(this.contents.vol * 1e-6);
+		return this.profile.heightFor(this.filled * 1e-6);
 	}
 
 	update() {
@@ -249,8 +308,20 @@ export class LiquidBody {
 		const show = c.vol > 0.02;
 		this.mesh.visible = show;
 		this.back.visible = show;
+		const bed = this.bedVol > 0.02;
+		this.bed.visible = bed;
+		this.bedCap.visible = bed;
+		if (bed || show) this.node.updateWorldMatrix(true, false);
+		if (bed) {
+			const y = this.bedTop();
+			const r = this.profile.radiusAt(y) * 0.99;
+			this.bedCap.position.y = y;
+			this.bedCap.scale.set(r, 1, r);
+			// cut where the top is, in the vessel's own frame
+			const e = this.node.matrixWorld.elements;
+			this.bedPlane.setFromNormalAndCoplanarPoint(_n.set(-e[4], -e[5], -e[6]).normalize(), _p.set(0, y, 0).applyMatrix4(this.node.matrixWorld));
+		}
 		if (!show) return;
-		this.node.updateWorldMatrix(true, false);
 		this.plane.constant = this.level();
 		const m = this.material;
 		if (this.fixed) {

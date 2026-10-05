@@ -30,7 +30,7 @@ export class Banco {
 		private s: LabScene,
 		private notebook: Notebook
 	) {
-		this.free = new FreeLab(s);
+		this.free = new FreeLab(s, notebook);
 		const grains = s.grains.get('Beaker');
 		if (grains) {
 			grains.grams = CRYSTALS;
@@ -42,7 +42,7 @@ export class Banco {
 		this.steps = [
 			{
 				text: 'Prendi il becher con i cristalli di solfato di rame.',
-				hint: 'Punta il becher: clic sinistro per prenderlo con la mano sinistra, clic destro con la destra.',
+				hint: 'Punta il becher: {L} per prenderlo con la mano sinistra, {R} con la destra.',
 				check: () => has('Beaker')
 			},
 			{
@@ -52,22 +52,22 @@ export class Banco {
 			},
 			{
 				text: 'Mescola finché i cristalli si sciolgono.',
-				hint: 'Con il becher e la bacchetta in mano, premi F per mescolare. Più volte, se serve.',
+				hint: 'Con il becher e la bacchetta in mano, premi {Q} o {E} per mescolare. Più volte, se serve.',
 				check: () => (s.grains.get('Beaker')?.grams ?? 0) < 0.05
 			},
 			{
 				text: 'Appoggia la bacchetta e prendi la beuta.',
-				hint: 'Punta il banco e fai clic con la mano che tiene la bacchetta: la appoggia. Poi prendi la beuta.',
+				hint: 'Punta il banco e {clic con la} mano che tiene la bacchetta: la appoggia. Poi prendi la beuta.',
 				check: () => this.held.beakerFlask
 			},
 			{
 				text: 'Versa la soluzione nella beuta.',
-				hint: 'Con il becher e la beuta in mano, premi F per versare.',
+				hint: 'Con il becher e la beuta in mano, premi il tasto della mano che tiene il becher: {Q} la sinistra, {E} la destra.',
 				check: () => (s.liquids.get('ConicalFlask')?.contents.vol ?? 0) > 40
 			},
 			{
 				text: 'Appoggia tutto sul banco.',
-				hint: 'Punta il banco e fai clic con ciascuna mano.',
+				hint: 'Punta il banco e {clic con} ciascuna mano.',
 				check: () => !s.hands.held('L') && !s.hands.held('R')
 			}
 		];

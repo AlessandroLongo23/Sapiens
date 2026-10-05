@@ -27,7 +27,7 @@ export class Clang implements Runtime {
 	private current: Run | null = null;
 	private ids = 0;
 	/** The last program compiled, and what the compiler said about it. */
-	private built: { language: string; source: string; module: WebAssembly.Module | null; diagnostics: string } | null = null;
+	private built: { language: string; source: string; files: string; module: WebAssembly.Module | null; diagnostics: string } | null = null;
 	private compiled: ((message: Extract<FromCompiler, { type: 'compiled' }>) => void) | null = null;
 	private onProgress: ((percent: number) => void) | null = null;
 
@@ -78,14 +78,15 @@ export class Clang implements Runtime {
 			return this.end('failed');
 		}
 		const language = job.language === 'c' ? 'c' : 'cpp';
-		if (this.built?.source !== job.source || this.built.language !== language) {
+		const files = job.files ? JSON.stringify(job.files) : '';
+		if (this.built?.source !== job.source || this.built.language !== language || this.built.files !== files) {
 			run.onStatus?.('Compilo…');
 			const message = await new Promise<Extract<FromCompiler, { type: 'compiled' }>>((resolve) => {
 				this.compiled = (data) => data.id === run.id && resolve(data);
-				this.compiler!.postMessage({ id: run.id, language, source: job.source } satisfies ToCompiler);
+				this.compiler!.postMessage({ id: run.id, language, source: job.source, files: job.files } satisfies ToCompiler);
 			});
 			const program = message.wasm ? await WebAssembly.compile(message.wasm as BufferSource) : null;
-			this.built = { language, source: job.source, module: program, diagnostics: message.diagnostics };
+			this.built = { language, source: job.source, files, module: program, diagnostics: message.diagnostics };
 			if (this.current !== run) return;
 		}
 		const { module: program, diagnostics } = this.built;

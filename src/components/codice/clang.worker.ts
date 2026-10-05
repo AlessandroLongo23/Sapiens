@@ -9,7 +9,7 @@
 
 import { OUTPUT, compileArgs, compileFiles } from './clang-args';
 
-export type ToCompiler = { id: number; language: 'c' | 'cpp'; source: string };
+export type ToCompiler = { id: number; language: 'c' | 'cpp'; source: string; files?: Record<string, string> };
 export type FromCompiler =
 	| { type: 'ready' }
 	| { type: 'failed'; message: string }
@@ -19,7 +19,7 @@ export type FromCompiler =
 interface Clang {
 	runClang(
 		args: string[],
-		files: Record<string, string>,
+		files: unknown,
 		options: { stdout: (bytes: Uint8Array | null) => void; stderr: (bytes: Uint8Array | null) => void; fetchProgress?: (event: { totalLength: number; doneLength: number }) => void }
 	): Promise<Record<string, Uint8Array | string>>;
 }
@@ -27,14 +27,14 @@ interface Clang {
 const post = (message: FromCompiler) => self.postMessage(message);
 const progress = ({ totalLength, doneLength }: { totalLength: number; doneLength: number }) => post({ type: 'progress', percent: Math.round((100 * doneLength) / totalLength) });
 
-async function compile(clang: Clang, language: 'c' | 'cpp', source: string) {
+async function compile(clang: Clang, language: 'c' | 'cpp', source: string, project?: Record<string, string>) {
 	let diagnostics = '';
 	const decoder = new TextDecoder();
 	const collect = (bytes: Uint8Array | null) => {
 		if (bytes) diagnostics += decoder.decode(bytes, { stream: true });
 	};
 	try {
-		const files = await clang.runClang(compileArgs(language), compileFiles(language, source), { stdout: collect, stderr: collect, fetchProgress: progress });
+		const files = await clang.runClang(compileArgs(language, project), compileFiles(language, source, project), { stdout: collect, stderr: collect, fetchProgress: progress });
 		return { wasm: files[OUTPUT] as Uint8Array, diagnostics };
 	} catch (error) {
 		// a compile error ends Clang with an exit code, and its messages are in `diagnostics`
@@ -59,6 +59,6 @@ self.onmessage = async ({ data }: MessageEvent<ToCompiler>) => {
 	const clang = await loading.catch(() => null);
 	if (!clang) return;
 	const started = performance.now();
-	const { wasm, diagnostics } = await compile(clang, data.language, data.source);
+	const { wasm, diagnostics } = await compile(clang, data.language, data.source, data.files);
 	post({ type: 'compiled', id: data.id, wasm, diagnostics, ms: performance.now() - started });
 };

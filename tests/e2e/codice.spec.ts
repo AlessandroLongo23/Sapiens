@@ -8,8 +8,12 @@ import { createTestUser, deleteTestUser, gotoHydrated, loginViaModal, supabaseAd
 const log = (page: Page) => page.getByRole('log', { name: 'Console' });
 const run = (page: Page) => page.getByRole('button', { name: 'Esegui' });
 const answer = (page: Page) => page.getByLabel('Risposta al programma');
+/** A file in the list of a project's files. */
+/** The button of a project's bar that shows and hides the output under the code. */
+const output = (page: Page) => page.getByRole('button', { name: 'Uscita sotto il codice' });
+const file = (page: Page, path: string) => page.getByRole('navigation', { name: 'File del progetto' }).getByTitle(path, { exact: true });
 
-async function open(page: Page, example?: string, language?: 'C' | 'C++' | 'JavaScript' | 'Pagina web') {
+async function open(page: Page, example?: string, language?: 'C' | 'C++' | 'JavaScript' | 'Progetto') {
 	await page.goto('/strumenti/editor-di-codice');
 	await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
 	await expect(page.locator('.cm-content')).toBeVisible();
@@ -31,7 +35,7 @@ async function reply(page: Page, line: string) {
 
 /** How many pixels of the turtle's canvas are not white. */
 const drawn = (page: Page) =>
-	page.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
+	log(page).locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
 		const { data } = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height);
 		let count = 0;
 		for (let i = 0; i < data.length; i += 4) if (data[i] < 240 || data[i + 1] < 240 || data[i + 2] < 240) count++;
@@ -147,7 +151,7 @@ test.describe('python editor', () => {
 		await write(page, 'import turtle\nturtle.onkey(print, "a")\n');
 		await run(page).click();
 		await expect(log(page)).toContainText('TurtleGraphicsError');
-		await expect(page.locator('canvas')).toHaveCount(0);
+		await expect(log(page).locator('canvas')).toHaveCount(0);
 	});
 
 	test('the page does not scroll sideways', async ({ page }) => {
@@ -272,23 +276,23 @@ test.describe('javascript', () => {
 	});
 });
 
-test.describe('web pages', () => {
+test.describe('projects: web pages', () => {
 	const shown = (page: Page) => page.frameLocator('iframe[title="Anteprima della pagina"]');
 	const colour = (page: Page) => shown(page).locator('h1').evaluate((title) => getComputedStyle(title).color);
 
 	test('the three files make the page, which follows the keys while it has no script', async ({ page }) => {
-		await open(page, undefined, 'Pagina web');
+		await open(page, undefined, 'Progetto');
 		await expect(shown(page).locator('h1')).toHaveText('Ciao, mondo!');
 		expect(await colour(page)).toBe('rgb(194, 65, 12)');
 
-		await page.getByRole('tab', { name: 'style.css' }).click();
+		await file(page, 'style.css').click();
 		await write(page, 'h1 { color: rgb(0, 0, 255); }\n');
 		await expect.poll(() => colour(page)).toBe('rgb(0, 0, 255)');
 
 		// the text of a tab is there when the tab is opened again
-		await page.getByRole('tab', { name: 'index.html' }).click();
+		await file(page, 'index.html').click();
 		await expect(page.locator('.cm-content')).toContainText('<h1>Ciao, mondo!</h1>');
-		await page.getByRole('tab', { name: 'style.css' }).click();
+		await file(page, 'style.css').click();
 		await expect(page.locator('.cm-content')).toContainText('rgb(0, 0, 255)');
 
 		// a file that is not linked does nothing, and the editor says so
@@ -298,15 +302,18 @@ test.describe('web pages', () => {
 	});
 
 	test('the script runs in the page: clicks, the console, an error with its line, a loop that is stopped', async ({ page }) => {
-		await open(page, 'Un contatore', 'Pagina web');
+		await open(page, 'Un contatore', 'Progetto');
 		await shown(page).locator('#piu').click();
 		await shown(page).locator('#piu').click();
 		await shown(page).locator('#meno').click();
 		await expect(shown(page).locator('#numero')).toHaveText('1');
+		// what a page prints is under the code, behind its button until there is an error to read
+		await expect(log(page)).toHaveCount(0);
+		await output(page).click();
 		await expect(log(page)).toContainText('Il contatore vale 2\nIl contatore vale 1');
 
 		// with a script the page waits for Esegui
-		await page.getByRole('tab', { name: 'script.js' }).click();
+		await file(page, 'script.js').click();
 		await write(page, 'document.querySelector("#numero").textContent = "nuovo";\nconst a = 1;\na.b.c = 2;\n');
 		await expect(page.getByText('Esegui per aggiornare la pagina')).toBeVisible();
 		await expect(shown(page).locator('#numero')).toHaveText('1');
@@ -323,6 +330,348 @@ test.describe('web pages', () => {
 		await write(page, 'document.querySelector("#numero").textContent = "vivo";\n');
 		await run(page).click();
 		await expect(shown(page).locator('#numero')).toHaveText('vivo');
+	});
+});
+
+test.describe('projects: more files', () => {
+	const shown = (page: Page) => page.frameLocator('iframe[title="Anteprima della pagina"]');
+	const files = (page: Page) => page.getByRole('navigation', { name: 'File del progetto' });
+
+	test('a link opens the other page of the site, in the preview and in the editor, with the style of a folder', async ({ page }) => {
+		await open(page, 'Un sito di due pagine', 'Progetto');
+		await expect(shown(page).locator('h1')).toHaveText('Benvenuto nel mio sito');
+		await shown(page).getByRole('link', { name: 'Chi sono' }).click();
+		await expect(shown(page).locator('h1')).toHaveText('Chi sono');
+		await expect(shown(page).locator('nav a').first()).toHaveCSS('color', 'rgb(194, 65, 12)');
+		await expect(page.locator('.cm-content')).toContainText('<h1>Chi sono</h1>');
+		await expect(file(page, 'chi-sono.html')).toHaveAttribute('aria-current', 'true');
+
+		// a path that is no file of the project is said
+		await file(page, 'index.html').click();
+		await write(page, '<link rel="stylesheet" href="css/altro.css">\n<h1>Senza stile</h1>\n<img src="foto.png">\n');
+		await expect(log(page)).toContainText('css/altro.css non esiste nel progetto');
+		await expect(log(page)).toContainText('foto.png non esiste nel progetto');
+	});
+
+	test('a Python program imports the modules of its project and opens its files; files are made, renamed, deleted', async ({ page }) => {
+		await open(page, 'Python con un modulo', 'Progetto');
+		await run(page).click();
+		await expect(log(page)).toContainText('raggio 2.5: area 19.63, circonferenza 15.71', { timeout: 90_000 });
+
+		await page.getByRole('button', { name: 'Nuovo file' }).click();
+		await page.getByLabel('Nome del nuovo file').fill('saluti.exe');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await expect(files(page).getByRole('alert')).toContainText('L’estensione deve essere una di queste');
+		await page.getByLabel('Nome del nuovo file').fill('geometria.py');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await expect(files(page).getByRole('alert')).toContainText('C’è già un file con questo nome.');
+		await page.getByLabel('Nome del nuovo file').fill('saluti.py');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await write(page, 'def ciao():\n    return "ciao dal modulo nuovo"\n');
+
+		// main.py is still what Esegui runs: the module was only opened
+		await file(page, 'main.py').click();
+		await write(page, 'import saluti\nprint(saluti.ciao())\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('ciao dal modulo nuovo');
+
+		// a module that was changed is read again, and one that was renamed is not found under its old name
+		await page.getByRole('button', { name: 'Rinomina saluti.py' }).click();
+		await page.getByLabel('Nuovo nome del file').fill('parole.py');
+		await page.getByLabel('Nuovo nome del file').press('Enter');
+		await run(page).click();
+		await expect(log(page)).toContainText("ModuleNotFoundError: No module named 'saluti'");
+
+		await page.getByRole('button', { name: 'Elimina raggi.txt' }).click();
+		await files(page).getByRole('button', { name: 'Elimina', exact: true }).click();
+		await expect(file(page, 'raggi.txt')).toHaveCount(0);
+		await expect(files(page).locator('[data-path]')).toHaveCount(3);
+	});
+
+	test('folders are made in the list, and a file dragged over one goes into it', async ({ page, isMobile, browserName }) => {
+		await open(page, 'Python con un modulo', 'Progetto');
+		const titles = () => files(page).locator('[data-path]').evaluateAll((rows) => rows.map((row) => (row as HTMLElement).dataset.path ?? ''));
+		await page.getByRole('button', { name: 'Nuova cartella' }).click();
+		await page.getByLabel('Nome della nuova cartella').fill('i miei moduli');
+		await page.getByLabel('Nome della nuova cartella').press('Enter');
+		await expect(files(page).getByRole('alert')).toContainText('solo lettere, cifre e trattini');
+		await page.getByLabel('Nome della nuova cartella').fill('moduli');
+		await page.getByLabel('Nome della nuova cartella').press('Enter');
+		// a folder with nothing in it is there, before the files
+		expect(await titles()).toEqual(['moduli/', 'geometria.py', 'main.py', 'raggi.txt']);
+
+		if (!isMobile && browserName === 'chromium') {
+			// dragged over the folder, the folder is marked as the place the file would go
+			const from = (await file(page, 'geometria.py').boundingBox())!;
+			const to = (await file(page, 'moduli/').boundingBox())!;
+			await page.mouse.move(from.x + 30, from.y + 8);
+			await page.mouse.down();
+			await page.mouse.move(to.x + 40, to.y + 8, { steps: 8 });
+			await expect(files(page).locator('[data-taking]')).toHaveCount(1);
+			await page.mouse.up();
+			await expect(files(page).locator('[data-taking]')).toHaveCount(0);
+		} else {
+			await page.getByRole('button', { name: 'Rinomina geometria.py' }).click();
+			await page.getByLabel('Nuovo nome del file').fill('moduli/geometria.py');
+			await page.getByLabel('Nuovo nome del file').press('Enter');
+		}
+		await expect.poll(titles).toEqual(['moduli/', 'moduli/geometria.py', 'main.py', 'raggi.txt']);
+
+		// the module is imported from its folder
+		await file(page, 'main.py').click();
+		await write(page, 'from moduli import geometria\nprint(round(geometria.area_cerchio(1), 2))\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('3.14', { timeout: 90_000 });
+
+		// a new file in the folder, the folder renamed with what is in it, and deleted with it
+		await page.getByRole('button', { name: 'Nuovo file in moduli' }).click();
+		await expect(page.getByLabel('Nome del nuovo file')).toHaveValue('moduli/');
+		await page.getByLabel('Nome del nuovo file').fill('moduli/note.txt');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await page.getByRole('button', { name: 'Rinomina la cartella moduli' }).click();
+		await page.getByLabel('Nuovo nome della cartella').fill('libreria');
+		await page.getByLabel('Nuovo nome della cartella').press('Enter');
+		await expect.poll(titles).toEqual(['libreria/', 'libreria/geometria.py', 'libreria/note.txt', 'main.py', 'raggi.txt']);
+		await expect(page.getByRole('tab', { name: 'note.txt' })).toHaveAttribute('title', 'libreria/note.txt');
+
+		// closed, a folder hides what is in it
+		await file(page, 'libreria/').click();
+		await expect.poll(titles).toEqual(['libreria/', 'main.py', 'raggi.txt']);
+		await file(page, 'libreria/').click();
+
+		if (!isMobile && browserName === 'chromium') {
+			// dragged onto the empty part of the list, a file leaves its folder, which stays
+			const inside = (await file(page, 'libreria/note.txt').boundingBox())!;
+			const list = (await files(page).locator('ul').boundingBox())!;
+			await page.mouse.move(inside.x + 40, inside.y + 8);
+			await page.mouse.down();
+			await page.mouse.move(list.x + list.width / 2, list.y + list.height / 2, { steps: 8 });
+			await page.mouse.up();
+			await expect.poll(titles).toEqual(['libreria/', 'libreria/geometria.py', 'main.py', 'note.txt', 'raggi.txt']);
+		}
+
+		await page.getByRole('button', { name: 'Elimina la cartella libreria' }).click();
+		await files(page).getByRole('button', { name: 'Elimina tutto' }).click();
+		await expect.poll(async () => (await titles()).filter((title) => title.startsWith('libreria'))).toEqual([]);
+	});
+
+	test('a C++ program is compiled from all its sources', async ({ page }) => {
+		await open(page, 'C++ in più file', 'Progetto');
+		await run(page).click();
+		await expect(log(page)).toContainText('1/2 + 1/3 = 5/6', { timeout: 240_000 });
+	});
+
+	test('a picture from the device is a file of the project, shown by the page that names it', async ({ page }) => {
+		await open(page, undefined, 'Progetto');
+		// one pixel
+		const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+		await page.locator('input[type=file]').setInputFiles({ name: 'La mia foto.png', mimeType: 'image/png', buffer: png });
+		await expect(file(page, 'La-mia-foto.png')).toHaveAttribute('aria-current', 'true');
+		await expect(page.getByAltText('L’immagine La-mia-foto.png')).toBeVisible();
+
+		await file(page, 'index.html').click();
+		await write(page, '<h1>Foto</h1>\n<img id="foto" src="La-mia-foto.png" alt="">\n');
+		await expect.poll(() => shown(page).locator('#foto').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(1);
+	});
+});
+
+test.describe('projects: the layout', () => {
+	const shown = (page: Page) => page.frameLocator('iframe[title="Anteprima della pagina"]');
+	const tabs = (page: Page) => page.getByRole('tab').allInnerTexts();
+
+	test('files open as tabs, the page is one more tab, beside the code or closed and opened again', async ({ page, isMobile }) => {
+		await open(page, 'Un sito di due pagine', 'Progetto');
+		expect(await tabs(page)).toEqual(['index.html', 'Anteprima']);
+		await file(page, 'css/stile.css').click();
+		await file(page, 'chi-sono.html').click();
+		expect(await tabs(page)).toEqual(['index.html', 'stile.css', 'chi-sono.html', 'Anteprima']);
+		await expect(shown(page).locator('h1')).toHaveText('Chi sono');
+
+		await page.getByRole('button', { name: 'Chiudi stile.css' }).click();
+		expect(await tabs(page)).toEqual(['index.html', 'chi-sono.html', 'Anteprima']);
+
+		// the page closed: the code has all the room; Esegui opens it again
+		await page.getByRole('button', { name: 'Chiudi Anteprima' }).click();
+		await expect(page.locator('iframe[title="Anteprima della pagina"]')).toHaveCount(0);
+		await run(page).click();
+		await expect(shown(page).locator('h1')).toHaveText('Chi sono');
+
+		if (!isMobile) {
+			// a tab moved to the other column, where the page is
+			await page.getByRole('tab', { name: 'index.html' }).click();
+			await page.getByRole('button', { name: 'Sposta la scheda nell’altra colonna' }).first().click();
+			await expect(page.getByRole('tablist')).toHaveCount(2);
+			await expect(page.getByRole('tablist').last().getByRole('tab')).toHaveText(['Anteprima', 'index.html']);
+		}
+	});
+
+	test('a dragged tab shows where it will go: a line among the tabs, a shade on the half it would take', async ({ page, isMobile, browserName }) => {
+		test.skip(isMobile || browserName !== 'chromium', 'tabs are dragged with a mouse, and the test drives the drag as Chromium does');
+		await open(page, 'Python con un modulo', 'Progetto');
+		await file(page, 'geometria.py').click();
+		await file(page, 'raggi.txt').click();
+		const tab = (name: string) => page.getByRole('tab', { name });
+		const bench = page.locator('section[aria-label^="Editor"]');
+		/** How many places for the dragged tab are marked: the line among the tabs, the shade over the code. */
+		const marks = () => bench.locator('[data-landing]').count();
+		const drag = async (name: string, x: number, y: number) => {
+			const from = (await tab(name).boundingBox())!;
+			await page.mouse.move(from.x + 20, from.y + 10);
+			await page.mouse.down();
+			await page.mouse.move(x, y, { steps: 8 });
+		};
+
+		// to another place among the tabs
+		const main = (await tab('main.py').boundingBox())!;
+		await drag('raggi.txt', main.x + 6, main.y + 10);
+		await expect.poll(marks).toBe(1);
+		await page.mouse.up();
+		await expect(page.getByRole('tab')).toHaveText(['raggi.txt', 'main.py', 'geometria.py']);
+		await expect.poll(marks).toBe(0);
+
+		// onto the right half of the code: a column of its own
+		const code = (await page.locator('.cm-editor').first().boundingBox())!;
+		await drag('geometria.py', code.x + code.width * 0.8, code.y + 120);
+		await expect.poll(marks).toBe(1);
+		await page.mouse.up();
+		await expect(page.getByRole('tablist')).toHaveCount(2);
+		await expect(page.getByRole('tablist').last().getByRole('tab')).toHaveText(['geometria.py']);
+
+		// and back, onto the other column
+		const first = (await page.locator('.cm-editor').first().boundingBox())!;
+		await drag('geometria.py', first.x + 80, first.y + 120);
+		await expect.poll(marks).toBe(1);
+		await page.mouse.up();
+		await expect(page.getByRole('tablist')).toHaveCount(1);
+		await expect(page.getByRole('tab')).toHaveText(['raggi.txt', 'main.py', 'geometria.py']);
+	});
+
+	test('the output under the code is hidden by its button, a run shows it; the editor takes the whole screen', async ({ page }) => {
+		await open(page, 'Python con un modulo', 'Progetto');
+		await expect(log(page)).toBeVisible();
+		await output(page).click();
+		await expect(log(page)).toHaveCount(0);
+		await run(page).click();
+		await expect(log(page)).toContainText('raggio 10.0: area 314.16', { timeout: 90_000 });
+
+		// a module is a program too: the one to run is chosen in the list
+		await file(page, 'geometria.py').click();
+		await run(page).click();
+		await expect(log(page)).toContainText('raggio 10.0: area 314.16');
+		await page.getByRole('button', { name: 'Avvia da geometria.py' }).click();
+		await run(page).click();
+		await expect(log(page)).toContainText('Programma finito');
+		await expect(log(page)).not.toContainText('raggio');
+
+		// the settings are a tab among the files', beside the code, and the output stays where it is
+		const gear = page.getByRole('button', { name: 'Impostazioni dell’editor' });
+		await gear.click();
+		await expect(page.getByRole('tab', { name: 'Impostazioni' })).toHaveAttribute('aria-selected', 'true');
+		await expect(page.getByRole('region', { name: 'Impostazioni dell’editor' })).toBeVisible();
+		await expect(log(page)).toBeVisible();
+		await page.getByLabel('Dimensione del testo in pixel').fill('18');
+		await expect(page.locator('.cm-editor').first()).toHaveCSS('font-size', '18px');
+		await page.getByRole('region', { name: 'Impostazioni dell’editor' }).getByRole('button', { name: 'Ripristina' }).click();
+		await gear.click();
+		await expect(page.getByRole('tab', { name: 'Impostazioni' })).toHaveCount(0);
+
+		const bench = page.locator('section[aria-label^="Editor"]');
+		await page.getByRole('button', { name: 'Schermo intero' }).click();
+		await expect.poll(() => bench.evaluate((section) => section.getBoundingClientRect().height >= window.innerHeight - 1)).toBe(true);
+		await page.getByRole('button', { name: 'Schermo intero' }).click();
+		await expect.poll(() => bench.evaluate((section) => section.getBoundingClientRect().height < window.innerHeight)).toBe(true);
+	});
+});
+
+test.describe('the editor as the student wants it', () => {
+	const setting = (page: Page, name: string, value: string) => page.getByRole('radiogroup', { name }).getByRole('radio', { name: value, exact: true }).click();
+	const codeWidth = (page: Page) => page.locator('.cm-editor').evaluate((editor) => Math.round(editor.getBoundingClientRect().width));
+
+	test('the handle gives the code more or less of the width, and the next visit finds it there', async ({ page, isMobile }) => {
+		test.skip(isMobile, 'on a phone the code is above its output');
+		await open(page);
+		const handle = page.getByRole('separator', { name: 'Larghezza del codice' });
+		const before = await codeWidth(page);
+		const box = (await handle.boundingBox())!;
+		await page.mouse.move(box.x, box.y + 80);
+		await page.mouse.down();
+		await page.mouse.move(box.x + 150, box.y + 90, { steps: 4 });
+		await page.mouse.up();
+		await expect.poll(() => codeWidth(page)).toBeGreaterThan(before + 120);
+		const dragged = await codeWidth(page);
+
+		await handle.focus();
+		await page.keyboard.press('ArrowLeft');
+		await expect.poll(() => codeWidth(page)).toBeLessThan(dragged);
+
+		await open(page);
+		await expect.poll(() => codeWidth(page)).toBeGreaterThan(before + 80);
+		await page.getByRole('separator', { name: 'Larghezza del codice' }).dblclick();
+		await expect.poll(() => codeWidth(page)).toBe(before);
+	});
+
+	test('the settings take the place of the output, change the open editor and are kept', async ({ page, isMobile }) => {
+		await open(page);
+		await write(page, 'for i in range(2):\n    if i:\n        print("resto qui")\n');
+		const gear = page.getByRole('button', { name: 'Impostazioni dell’editor' });
+		await gear.click();
+		await expect(page.getByRole('region', { name: 'Impostazioni dell’editor' })).toBeVisible();
+		await expect(log(page)).toBeHidden();
+
+		const keyword = () => page.locator('.cm-line span').first().evaluate((token) => getComputedStyle(token).color);
+		const modern = await keyword();
+		await page.getByRole('radio', { name: /^GitHub/ }).click();
+		await expect.poll(keyword).not.toBe(modern);
+		// the size is a whole number of pixels between 10 and 20: typed, stepped, and put right when it is neither
+		const size = page.getByLabel('Dimensione del testo in pixel');
+		await size.fill('17');
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '17px');
+		await size.fill('99');
+		await size.blur();
+		await expect(size).toHaveValue('20');
+		await expect(page.getByRole('button', { name: 'Testo più grande' })).toBeDisabled();
+		await size.fill('16.6');
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '20px');
+		await size.blur();
+		await expect(size).toHaveValue('17');
+		await page.getByRole('button', { name: 'Testo più piccolo' }).click();
+		await page.getByRole('button', { name: 'Testo più grande' }).click();
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '17px');
+		await setting(page, 'Numeri di riga', 'No');
+		await expect(page.locator('.cm-lineNumbers')).toHaveCount(0);
+		if (!isMobile) {
+			await expect(page.locator('.cm-minimap-gutter')).toHaveCount(1);
+			await setting(page, 'Minimappa', 'No');
+			await expect(page.locator('.cm-minimap-gutter')).toHaveCount(0);
+		}
+		// the width of an indentation changes the lines already written
+		const lines = () => page.locator('.cm-line').allTextContents();
+		await setting(page, 'Larghezza del rientro', '2');
+		await expect.poll(lines).toEqual(['for i in range(2):', '  if i:', '    print("resto qui")', '']);
+		await setting(page, 'Larghezza del rientro', '8');
+		await expect.poll(lines).toEqual(['for i in range(2):', '        if i:', '                print("resto qui")', '']);
+		await setting(page, 'Larghezza del rientro', '2');
+
+		// and Enter after a colon indents by two
+		await page.locator('.cm-content').click();
+		await page.keyboard.press('ControlOrMeta+End');
+		await page.keyboard.type('if True:\nx = 1');
+		await expect(page.locator('.cm-line').last()).toHaveText('  x = 1');
+
+		// back to the console, where the program runs
+		await gear.click();
+		await expect(log(page)).toBeVisible();
+		await run(page).click();
+		await expect(log(page)).toContainText('resto qui', { timeout: 90_000 });
+
+		// another visit: the same editor
+		await open(page);
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '17px');
+		await expect(page.locator('.cm-lineNumbers')).toHaveCount(0);
+		await page.getByRole('button', { name: 'Impostazioni dell’editor' }).click();
+		await page.getByRole('region', { name: 'Impostazioni dell’editor' }).getByRole('button', { name: 'Ripristina' }).click();
+		await expect(page.locator('.cm-editor')).toHaveCSS('font-size', '13px');
+		await expect(page.locator('.cm-lineNumbers')).toHaveCount(1);
 	});
 });
 
@@ -367,8 +716,8 @@ test.describe('saved programs', () => {
 
 		// a page keeps its three files
 		await page.keyboard.press('Escape');
-		await page.getByLabel('Linguaggio').selectOption({ label: 'Pagina web' });
-		await page.getByRole('tab', { name: 'style.css' }).click();
+		await page.getByLabel('Linguaggio').selectOption({ label: 'Progetto' });
+		await file(page, 'style.css').click();
 		await write(page, 'h1 { color: rgb(0, 128, 0); }\n');
 		await saveAs(page, 'La mia pagina');
 		await expect(library(page)).toContainText('La mia pagina, salvato.');
@@ -392,13 +741,13 @@ test.describe('saved programs', () => {
 		await expect(library(page)).toContainText('Il mio primo, salvato.');
 
 		await library(page).getByRole('button', { name: /^La mia pagina/ }).click();
-		await expect(page.getByLabel('Linguaggio')).toHaveValue('web');
+		await expect(page.getByLabel('Linguaggio')).toHaveValue('project');
 		await expect(page.frameLocator('iframe[title="Anteprima della pagina"]').locator('h1')).toHaveCSS('color', 'rgb(0, 128, 0)');
 
 		const { data } = await supabaseAdmin().from('programs').select('title,language,files').eq('user_id', user!.id).order('title');
 		expect(data).toEqual([
 			{ title: 'Il mio primo', language: 'python', files: { main: 'print("salvato due")\n' } },
-			{ title: 'La mia pagina', language: 'web', files: expect.objectContaining({ css: 'h1 { color: rgb(0, 128, 0); }\n', html: expect.stringContaining('<h1>Ciao, mondo!</h1>') }) }
+			{ title: 'La mia pagina', language: 'project', files: expect.objectContaining({ 'style.css': 'h1 { color: rgb(0, 128, 0); }\n', 'index.html': expect.stringContaining('<h1>Ciao, mondo!</h1>') }) }
 		]);
 
 		await openLibrary(page);
@@ -488,6 +837,29 @@ test.describe('programs in a lesson', () => {
 		await web.getByRole('button', { name: 'Verifica' }).click();
 		await expect(web.getByRole('log')).toContainText('Tutti i 3 controlli superati.');
 	});
+
+	test('a project in a lesson has a tab for each file, and its pages link each other', async ({ page }) => {
+		const response = await page.goto('/prova-grafico/lezione?file=prove/codice.md');
+		test.skip(response?.status() === 404, 'the trial page of lesson files is not in the production build');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+
+		const site = block(page, 5);
+		await site.scrollIntoViewIfNeeded();
+		await expect(site.getByRole('tab')).toHaveText(['index.html', 'contatti.html', 'stile.css']);
+		const shown = site.frameLocator('iframe[title="Anteprima della pagina"]');
+		await shown.getByRole('link', { name: 'Contatti' }).click();
+		await expect(shown.locator('h1')).toHaveText('Contatti');
+		await expect(site.getByRole('tab', { name: 'contatti.html' })).toHaveAttribute('aria-selected', 'true');
+
+		const program = block(page, 6);
+		await program.scrollIntoViewIfNeeded();
+		await program.getByRole('button', { name: 'Verifica' }).click();
+		await expect(program.getByRole('log')).toContainText('0 prove superate su 1', { timeout: 90_000 });
+		await program.getByRole('button', { name: 'Soluzione' }).click();
+		await expect(program.getByRole('tab', { name: 'conti.py' })).toBeVisible();
+		await program.getByRole('button', { name: 'Verifica' }).click();
+		await expect(program.getByRole('log')).toContainText('Prova 1: superata');
+	});
 });
 
 /**
@@ -540,9 +912,9 @@ test.describe('a program and the account of who runs it', () => {
 		expect(printed).not.toContain(user!.id);
 
 		// the script of a web page runs in a page, not in a worker: it must be as far from the account
-		await page.getByLabel('Linguaggio').selectOption({ label: 'Pagina web' });
+		await page.getByLabel('Linguaggio').selectOption({ label: 'Progetto' });
 		await page.getByLabel('Esempio').selectOption({ label: 'Un contatore' });
-		await page.getByRole('tab', { name: 'script.js' }).click();
+		await file(page, 'script.js').click();
 		await write(
 			page,
 			[
@@ -566,6 +938,7 @@ test.describe('a program and the account of who runs it', () => {
 			].join('\n')
 		);
 		await run(page).click();
+		await output(page).click();
 		await expect(log(page)).toContainText('fine');
 		const shown = await log(page).innerText();
 		expect(shown).toContain('origine: null');

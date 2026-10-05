@@ -1,6 +1,6 @@
 ---
 stato: decisa
-aggiornato: 2026-09-30
+aggiornato: 2026-10-02
 tag: [decisione, laboratori, grafica]
 ---
 # I laboratori devono sembrare un videogioco, in uno stile pittorico e morbido
@@ -15,7 +15,7 @@ Claude ha giudicato fattibile l'ambiente e la resa (luce precalcolata, palette, 
 
 ## Conseguenze
 - Si procede per fetta verticale: un banco solo, pochi oggetti, luce precalcolata, mani nuove, interfaccia nel mondo. È `/laboratorio/banco`, accanto al prototipo di prima.
-- Le istruzioni stanno in un quaderno di laboratorio che lo studente alza davanti agli occhi (Q); Esc apre un menu di pausa.
+- Le istruzioni stanno in un quaderno di laboratorio che lo studente alza davanti agli occhi (Q); Esc apre un menu di pausa. Dal 2 ottobre il quaderno è un oggetto sul banco e si legge puntandolo: vedi [[2026-10-02 Nel laboratorio il mouse prende e posa, Q ed E usano le mani]].
 - Da decidere: il ruolo di Dario (moodboard e palette) e il passaggio da prese calcolate a una posa scritta per ogni strumento.
 
 ## Collegamenti
