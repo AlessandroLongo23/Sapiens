@@ -278,6 +278,123 @@ La pagina pubblicata contiene già il disegno (SVG nel testo), che è quello che
 Il codice è in `src/lib/diagramma/` (linguaggio, disegno, esecuzione) e `src/components/diagramma/`. Per vedere i
 blocchi prima di pubblicare: `/prova-grafico/lezione?file=prove/diagramma.md`.
 
+## L'esercizio guidato
+
+Un blocco `guidato` è un esempio svolto che si ferma e chiede: il testo dei passaggi compare un pezzo alla volta, e
+a ogni fermata lo studente risponde e conferma prima di vedere il seguito. Può anche farsi mostrare il passaggio, o
+andare avanti senza rispondere: in quel caso la domanda resta aperta e ci può tornare. Come e dove si scrive sta in
+`stile.md`, sezione "Esercizio guidato"; qui c'è la sintassi.
+
+````
+```guidato
+% nome: esponenziale-decrescente-spostata-in-giu
+% titolo: Un'esponenziale decrescente spostata in giù
+
+Disegna il grafico di $y = \left(\dfrac{1}{3}\right)^x - 3$ e trova i punti in cui incontra gli assi.
+
+Il $-3$ sta fuori dalla potenza: sposta in verticale tutto il grafico, asintoto compreso.
+
+?? cursore: Porta il cursore $k$ al valore che dà la funzione dell'esercizio.
+```grafico
+% nome: esponenziale-decrescente-traslata-cursore
+% alt: Il grafico di y = (1/3) alla x più k con il cursore di k e l'asintoto tratteggiato
+curva: y=\left(\frac{1}{3}\right)^x+k
+curva: y=k | tratteggiata | grigio
+cursore: k = 0 da -6 a 6 passo 1
+finestra: x da -6 a 6, y da -5 a 7
+```
+atteso: k = -3
+errore: k = 3 :: Con $k = 3$ la curva sale. Nella funzione c'è $-3$: il grafico scende.
+aiuto: Guarda la retta tratteggiata, che è l'asintoto $y = k$.
+
+L'asintoto è la retta $y = -3$, e la funzione resta decrescente.
+
+?? scegli: Qual è l'immagine della funzione?
+giusta: $\mathopen{]}-3, +\infty\mathclose{[}$
+sbagliata: $\mathopen{]}0, +\infty\mathclose{[}$ :: È l'immagine prima dello spostamento.
+sbagliata: $\mathbb{R}$ :: I valori minori o uguali a $-3$ non vengono mai assunti.
+
+Un punto sta sull'asse $y$ quando la sua ascissa è $0$.
+
+?? scrivi: Scrivi l'ordinata del punto in cui il grafico incontra l'asse $y$.
+numero: -2
+errore: -3 :: Hai preso $\left(\dfrac{1}{3}\right)^0 = 0$. Una potenza con esponente $0$ vale $1$.
+aiuto: Sostituisci $x = 0$ nella funzione.
+
+Per $x = 0$ si ha $y = 1 - 3 = -2$. Il punto è $A(0, -2)$.
+```
+````
+
+- `% nome:` (minuscole, cifre e trattini, unico nella lezione) e `% titolo:` sono obbligatori. La pagina scrive da sé
+  l'etichetta "Esercizio guidato" sopra il titolo.
+- Il testo tra le fermate è testo della lezione: paragrafi, formule, tabelle, figure `tikz`, anche un piano `grafico`
+  da guardare. Il blocco comincia con la consegna e finisce con il testo che chiude lo svolgimento.
+- Una fermata è un gruppo di righe attaccate, senza righe vuote in mezzo. La prima riga dice che cosa fa lo studente
+  e fa la domanda: `?? scrivi:`, `?? scegli:`, `?? cursore:`. Le altre sono `chiave: valore`. La riga vuota chiude la
+  fermata.
+- I messaggi stanno dopo ` :: ` (spazio, due volte i due punti, spazio) e sono testo della lezione, con le formule
+  tra dollari.
+
+Righe che valgono per ogni fermata:
+
+| Riga | Che cosa fa |
+|---|---|
+| `mostra:` | la risposta come la scrive la lezione, per esempio `$x = 0 \lor x = 2$`. È quello che si legge dopo "Risposta:" nella pagina stampata, senza JavaScript e quando lo studente si fa mostrare il passaggio. Senza, la pagina la ricava dal valore atteso; per `insieme` ed `esclusi` è obbligatoria |
+| `spiegazione:` | una riga detta insieme alla risposta. Il perché lungo va nel testo dopo la fermata |
+| `aiuto:` | una riga aggiunta al messaggio generico, quando l'errore non è tra quelli previsti |
+
+`?? scrivi:` chiede una risposta scritta con la tastiera delle formule, corretta dal correttore degli esercizi
+(`src/lib/exercises/v2/grade/`). Serve una sola riga con la risposta attesa, e il valore si scrive nella sintassi di
+SymPy, come nei generatori: `2*x**2`, `sqrt(3)`, `3/2`, `(1/3)**x`.
+
+| Riga | Risposta attesa | Lo studente può scrivere |
+|---|---|---|
+| `numero: -2` | un numero: intero, frazione `3/2`, decimale `2,5` | `-2`, `y = -2`, `-\frac{4}{2}`; non un conto ancora da fare, come `1 - 3` |
+| `insieme: 0; 2` | le soluzioni, separate da `;`. `vuoto` se non ce ne sono, `R` se vanno bene tutti i numeri | `x = 0 \lor x = 2`, `0; 2`, `S = \{0; 2\}`, "impossibile" |
+| `esclusi: 3` | i valori da togliere da un dominio; `nessuno` se non ce ne sono | `x \neq 3`, `\mathbb{R} \setminus \{3\}` |
+| `espressione: 3*x**2 - 1` | un'espressione, confrontata per valore | qualunque scrittura equivalente |
+| `retta: 2*x + 1` | una retta in forma esplicita | `y = 2x + 1`, `y = 1 + 2x`; `2x - y + 1 = 0` riceve il messaggio sulla forma |
+
+- `forma:` chiede anche la forma, dove la forma è l'esercizio: `sviluppata`, `scomposta`, `irriducibile`,
+  `semplificata`, `razionalizzata`, `esplicita`, `potenza`, `radicale`, `decimale`. A un numero si chiedono solo
+  `decimale` e `irriducibile`.
+- `errore: valore :: messaggio` è una risposta sbagliata prevista, scritta come la risposta attesa. Si riconosce dal
+  valore, comunque lo studente la scriva. Fino a dodici per fermata.
+- Il correttore non legge disequazioni, intervalli e logaritmi: per quelle risposte si usa `?? scegli:`.
+
+`?? scegli:` ha una riga `giusta: testo` e una o più `sbagliata: testo :: messaggio`, nell'ordine in cui lo studente
+le vede. Ogni opzione sbagliata ha il suo messaggio.
+
+`?? cursore:` ha dentro un blocco `grafico`, scritto come sempre (la `domanda:` non serve: la domanda è quella della
+fermata). Lo studente porta i cursori e conferma.
+
+- `atteso: k = -3`: il valore a cui portare il cursore. Per più cursori, una riga ciascuno oppure `h = 2 e k = -3`.
+- `tolleranza: 0,05`: quanto può restare lontano. Senza, serve il valore esatto, che con un passo di `1` o di `0,5`
+  è la scelta giusta; la tolleranza è per i passi fini e deve restare più piccola del passo.
+- `errore: k = 3 :: messaggio`: una posizione sbagliata prevista. Vale anche `k > 0` o `k < -3`, e più condizioni
+  unite da ` e `. Conta la prima che è vera, nell'ordine in cui sono scritte.
+- Il cursore non deve partire dal valore atteso.
+
+Che cosa resta senza JavaScript, per i motori di ricerca e in stampa: l'esercizio per intero, come un esempio svolto,
+con ogni domanda seguita da "Risposta:" e dal testo dopo. Il piano di una fermata `cursore` lì non c'è: se il grafico
+serve a capire lo svolgimento, il testo finale ha la sua figura `tikz`.
+
+La risposta scritta si corregge sul server, con la rotta pubblica `POST /api/lezioni/guidato`: la pagina manda la
+risposta attesa insieme a quella dello studente, e la rotta non legge e non scrive niente nel database. Le scelte e i
+cursori si correggono nel browser. Niente entra nei progressi; dove lo studente è arrivato si ricorda solo per la
+visita, nella scheda del browser.
+
+`scripts/lezioni/check.mts` legge ogni blocco e segnala: le righe che non capisce; una fermata senza risposta attesa;
+una risposta attesa (quella di `mostra:` quando è una formula sola, altrimenti quella ricavata dal valore) che il
+correttore boccia; un errore previsto che il correttore accetta, non riconosce o trova scritto due volte; un valore
+atteso fuori dall'intervallo del cursore o che il suo passo non raggiunge. Le formule del testo e dei messaggi e il
+blocco `grafico` della fermata sono controllati come nel resto della lezione.
+
+Per aggiungere un tipo di fermata: una parola nuova dopo `??` e il suo lettore in `STOPS`
+(`src/lib/guidato/blocco.ts`), il suo pezzo di pagina in `guidedFigure` (`src/lib/content/markdown.ts`) e il suo
+componente in `src/components/guidato/Guided.tsx`. Per vedere un blocco prima di pubblicare:
+`/prova-grafico/lezione?file=riscritte/121-funzioni-esponenziali.md`.
+
 ## Cosa c'era negli originali
 
 - Tre lezioni sono troncate nel database, a metà frase: 04 (Sottoinsiemi e uguaglianza), 05 (Unione

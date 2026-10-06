@@ -48,9 +48,10 @@ export default async function PlotBlockTrial({ searchParams }: { searchParams: P
 	if (html.includes('<script type="text/tikz">')) {
 		const drawn = await figures(path);
 		let next = 0;
-		html = html.replace(/<div class="tikz-container my-6 flex justify-center"><script type="text\/tikz">[\s\S]*?<\/script><\/div>/g, (left) => {
+		// a figure that is the cover of a plane is left to TikZJax, but it is one of the file's figures: it counts
+		html = html.replace(/(<div class="tikz-container my-6 flex justify-center">)?<script type="text\/tikz">[\s\S]*?<\/script>(<\/div>)?/g, (left, alone?: string) => {
 			const figure = drawn[next++];
-			if (!figure) return left;
+			if (!figure || !alone) return left;
 			const width = Math.round(figure.width * SCALE);
 			return `<figure class="tikz-container my-6 flex justify-center"><img src="data:image/svg+xml;base64,${Buffer.from(figure.svg).toString('base64')}" alt="" width="${width}" height="${Math.round(figure.height * SCALE)}" style="width:${width}px"></figure>`;
 		});

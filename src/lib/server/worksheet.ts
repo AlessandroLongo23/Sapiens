@@ -4,6 +4,7 @@ import { configs } from '@/lib/exercises/config';
 import { generators } from '@/lib/exercises';
 import { levelName } from '@/lib/exercises/level-names';
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
+import { drawnScene, sceneOptionHtml } from '@/lib/exercises/v2/piano-svg';
 import type { ChoiceAnswer, Generator, Sample } from '@/lib/exercises/v2/types';
 import { presentProblem, presentStep } from '@/lib/exercises/present';
 import { renderMath, renderTex } from '@/lib/content/markdown';
@@ -100,7 +101,7 @@ function item(number: number, s: Sample): SheetItem {
 	if (s.code) blocks.push({ kind: 'code', html: codeHtml(s.code) });
 	if (s.chart) blocks.push({ kind: 'figure', html: chartHtml(s.chart) });
 	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
-	if (s.scene) blocks.push({ kind: 'scene', scene: s.scene });
+	if (s.scene) blocks.push({ kind: 'scene', scene: drawnScene(s.scene) });
 	const asks = blocks.some((b) => b.kind === 'ask');
 	const prompt = IMPLIED_PROMPTS.has(s.prompt) || (asks && GENERIC_PROMPTS.has(s.prompt)) ? '' : s.prompt;
 
@@ -109,14 +110,14 @@ function item(number: number, s: Sample): SheetItem {
 	// An option in words (`\text{I numeri pari} \\ \text{compresi tra 7 e 21}`, maybe in a `gathered`) becomes one
 	// line of prose that wraps: the breaks were made for a button.
 	const option = (o: ChoiceAnswer['options'][number]) =>
-		o.chart !== undefined ? chartHtml(o.chart, o.text ?? 'Diagramma di flusso') : o.code ? codeHtml(o.code) : o.figure ? figureHtml(o.figure) : text ? (listingHtml(o.latex) ?? textHtml(o.latex)) : renderMath(presentStep(o.latex.replace(/\\(?:begin|end)\{gathered\}/g, '').replace(/\\\\/g, ' ')));
+		o.chart !== undefined ? chartHtml(o.chart, o.text ?? 'Diagramma di flusso') : o.code ? codeHtml(o.code) : o.figure ? figureHtml(o.figure) : o.scene ? sceneOptionHtml(o.scene) : text ? (listingHtml(o.latex) ?? textHtml(o.latex)) : renderMath(presentStep(o.latex.replace(/\\(?:begin|end)\{gathered\}/g, '').replace(/\\\\/g, ' ')));
 	const solution = text ? textHtml(s.solution) : renderMath(presentStep(s.solution));
 	return {
 		number,
 		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
 		optionsHtml: choice ? choice.options.map(option) : null,
-		optionWidth: choice ? optionWidth(choice.options.map((o) => (o.figure || o.chart !== undefined || o.code ? 40 : printedLength(o.latex))), text) : 0,
+		optionWidth: choice ? optionWidth(choice.options.map((o) => (o.scene ? 6 : o.figure || o.chart !== undefined || o.code ? 40 : printedLength(o.latex))), text) : 0,
 		answerHtml: choice ? `<b>${LETTERS[choice.correct]})</b> ${option(choice.options[choice.correct])}` : solution
 	};
 }
@@ -132,7 +133,8 @@ function samples(generator: Generator, base: number, level: number, count: numbe
 		} catch {
 			continue;
 		}
-		const key = `${s.prompt}\n${s.problem}`;
+		// two exercises that ask the same of two different drawings are two exercises
+		const key = `${s.prompt}\n${s.problem}${s.scene ? `\n${JSON.stringify(s.scene.data)}` : ''}`;
 		if (seen.has(key)) continue;
 		seen.add(key);
 		out.push(s);

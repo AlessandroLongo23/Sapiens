@@ -348,5 +348,61 @@ Foglio di calcolo, documenti e presentazioni (lezioni 23-32):
 
 Fatti da verificare (le lezioni sono online dal 3 ottobre 2026; questi sono scritti a memoria dagli agenti, con la fonte nelle note): "First Draft of a Report on the EDVAC" (1945); ASCII (1963, minuscole nel 1967); Unicode 1.0 (1991); IEEE 754 (1985); il teorema del campionamento (Shannon 1949); il CD audio a 44,1 kHz e 16 bit; i prefissi binari IEC (1998); il supercomputer Leonardo del CINECA; i comportamenti dei programmi (nomi degli errori del foglio in italiano, aggiornamento dell'indice e della tabella pivot, `SUBTOTALE`).
 
+## Terzo anno di fisica (6 ottobre 2026)
+Le 49 lezioni del terzo anno (71-119): relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas, primo e secondo principio. Vedi [[2026-10-06 Terzo anno di fisica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione "Domande per Andrea" di ogni nota in `docs/lezioni/fisica/note/71-119` e, raccolte per gruppo, in `docs/lezioni/fisica/rapporti-terzo-anno.md`.
+- [ ] Urti: velocità dopo l'urto $V_1$ e $V_2$ (scelta fatta, come l'Amaldi, da verificare) oppure $v_1'$ e $v_2'$.
+- [ ] Primo principio $\Delta U = Q - W$ con il lavoro compiuto dal sistema (scelta fatta) oppure $\Delta U = Q + W$ con il lavoro subito.
+- [ ] Secondo principio: $T_c$, $T_f$, $Q_c$, $Q_f$ in valore assoluto (scelta fatta) oppure $T_2$, $T_1$, $Q_2$, $Q_1$; $\text{COP}_f$ e $\text{COP}_p$ per frigorifero e pompa di calore.
+- [ ] Microstati $\Omega$ in $S = k_B \ln \Omega$ (scelta fatta, perché $W$ è il lavoro) oppure $W$ come sui libri.
+- [ ] Forza centrifuga $F_{cf}$ (scelta fatta; nella 57 $F_c$ è la centripeta); forze apparenti disegnate tratteggiate; Coriolis senza formula, o con $2\,m\,\omega\,v'$ in un riquadro.
+- [ ] Gittata $L$ nella 76 e $x_G$ nella 56 del biennio: si uniforma il biennio?
+- [ ] $\vec I$ per l'impulso e $I$ per il momento d'inerzia: basta la freccia a distinguerli? Nella 88 $M$ è sia il momento sia la massa della carrucola.
+- [ ] Il coefficiente $c$ in $I = c\,m\,r^2$ (gruppo 35) non è nel README: va bene come lettera?
+- [ ] Il coseno di un angolo ottuso introdotto nella 71 con $\cos(180^\circ - \alpha) = -\cos\alpha$, prima della goniometria: va bene, o il prodotto scalare aspetta?
+- [ ] $\ln$ usato come tasto della calcolatrice nel lavoro dell'isoterma e nell'entropia, con il link alla lezione sui logaritmi: basta?
+- [ ] La forza come opposto della pendenza del grafico di $U$ e l'equilibrio stabile e instabile (78): al terzo anno, prima delle derivate?
+- [ ] Componenti di un vettore scritte $(4;\ 3)$ o $(4, 3)$ nella 71.
+- [ ] Negli esercizi sull'impulso i tempi d'urto sono decine di millisecondi per tenere le forze sotto i 100 N: meglio tempi realistici e forze in kilonewton?
+- [ ] Costanti, dati dei pianeti, viscosità, calori molari, date e fatti storici scritti a memoria: gli elenchi "Da verificare" delle note, soprattutto 92, 93 e 112.
+
+## Terzo anno di chimica (6 ottobre 2026)
+Le 33 lezioni nuove del terzo anno di chimica (file 48-82). Vedi [[2026-10-06 Terzo anno di chimica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione dei dubbi di `docs/lezioni/chimica/note/48-82`.
+- [ ] **Soglie di $\Delta\chi$.** Sotto 0,4 covalente puro, tra 0,4 e 1,9 polare, sopra 1,9 ionico (scelta fatta), oppure 1,7 per lo ionico? Con i dati della tavola del sito restano sotto 1,9 composti ionici veri (KI 1,84, MgCl₂ 1,85, Na₂S 1,65), mentre BF₃, covalente, fa 1,94; con 1,7 il legame H–F (1,78) diventerebbe ionico. Le lezioni 64, 65 e 69 danno la soglia come regola pratica e gli esercizi usano solo coppie in cui soglia e "metallo più non metallo" concordano.
+- [ ] **Ordine di scrittura della configurazione.** $4s^2\,3d^6$, nell'ordine di riempimento come la tavola del sito (scelta fatta), o $3d^6\,4s^2$, per livello? Cambiarlo tocca `elementi.json`, le lezioni 53 e 57 e tre generatori.
+- [ ] **Simboli di Lewis.** Un puntino per lato fino a quattro, poi le coppie (scelta fatta), o prima la coppia dell'$s$? Decide come si disegnano berillio, boro e carbonio, anche nella 67.
+- [ ] **Ottetto o ottetto espanso.** Per H₂SO₄, SO₄²⁻, SO₃ e HClO₄ la 67 mostra tutte e due le formule e negli esercizi usa quella con l'ottetto, i legami dativi e le cariche formali. Quale vuoi come riferimento? E la carica formale si tiene in terza?
+- [ ] **Nomenclatura, i tre nomi.** Sempre nell'ordine tradizionale, Stock, IUPAC (scelta fatta). Per gli ossiacidi la 80 ne dà due, tradizionale e IUPAC, perché il numero romano è già dentro "acido tetraossosolforico(VI)": serve anche una colonna Stock, e come si scrive? Per idracidi e idruri covalenti la 78 dà anche lo Stock ("solfuro di idrogeno"): lì ne bastano due?
+- [ ] **Prefissi IUPAC.** Senza elisione, "pentaossido di difosforo" (scelta fatta), o "pentossido"? Il prefisso mono- solo in "monossido" e solo se l'elemento ha più ossidi (FeO monossido di ferro, CaO ossido di calcio): va bene?
+- [ ] **Nome IUPAC dei sali con più anioni.** "bis[triossonitrato(V)] di calcio", "tris[tetraossosolfato(VI)] di diferro" (scelta fatta), o "tetraossosolfato(VI) di ferro(III)" con il numero romano sul metallo? La forma del Valitutti non è stata controllata sul libro: da verificare.
+- [ ] **Sali acidi.** Nella colonna "tradizionale": idrogenocarbonato (scelta fatta, come nella lezione 47), bicarbonato o carbonato acido?
+- [ ] **Idruri covalenti.** La 78 dice che nel silano l'idrogeno ha $-1$ e che nella fosfina il segno è una convenzione. A scuola si dà $+1$ all'idrogeno in tutti gli idruri covalenti?
+- [ ] **Raggi atomici.** La tavola del sito ha i raggi covalenti (sodio 155 pm); molti libri danno per i metalli il raggio metallico (186 pm). Teniamo i covalenti?
+- [ ] **Affinità elettronica.** Energia liberata, con il segno più, e "nessuna" dove l'anione non è stabile (scelta fatta), o valori negativi come il Valitutti? Stessa domanda per l'energia reticolare, data positiva nella 65.
+- [ ] **Conti che forse sono troppo per una terza.** La carica nucleare efficace come $Z$ meno gli elettroni interni (59); il principio di indeterminazione con $\Delta x \cdot m\,\Delta v \geq \frac{h}{4\pi}$ (51); una mole di fotoni in kJ/mol (48); il bilancio di energia con le energie di legame (62); esponenziali e logaritmi nel tempo di dimezzamento (55); il difetto di massa in joule e non in MeV (56); il debye e la somma dei dipoli con il coseno (69); le frazioni delle particelle nella cella elementare (75).
+- [ ] **Sottolivelli nella 50.** Introdotti dal gradino più piccolo dentro un livello nelle energie di ionizzazione successive e dagli spettri: va bene, o in classe si danno come regola? La formula di Rydberg e i valori in eV mancano nella 49: servono?
+- [ ] **Teoria del legame di valenza e ibridazione.** Nella 70 i lobi hanno due colori per il segno della funzione d'onda; nella 71 l'ibridazione è raccontata in due passi (promozione, mescolamento) e acqua e ammoniaca sono $sp^3$. Va bene?
+- [ ] **Forze intermolecolari.** "Forze di van der Waals" vuol dire dipolo-dipolo più London (scelta fatta nella 72)? Il legame a idrogeno con le parole "donatore" e "accettore" e solo con F, O, N (73)? La tensione di vapore in mmHg (74)? Il diagramma di stato non è in nessuna lezione dell'albero: dove va?
+- [ ] **Radioattività.** La cattura elettronica si tiene (54)? Il carbonio 14 con 5730 anni, come i libri, mentre NUBASE2020 dà $5{,}70 \cdot 10^3$ (55)? Il neutrone a 1,00866 u o 1,00867 (56)?
+- [ ] **Nomi.** "Kripton" come la tavola del sito (scelta fatta il 6 ottobre, corretta anche la lezione 43 che scriveva "cripto"), e "xeno".
+- [ ] **Numeri di ossidazione che mancano nella tavola del sito.** Cloro $+3$, ossigeno $-1$, bromo $+7$, manganese $+6$: le lezioni 76-80 li usano. Li aggiungiamo a `elementi.json`?
+- [ ] **Dati scritti a memoria, da verificare su una fonte.** Energie di ionizzazione successive dei primi venti elementi (50, 59), raggi ionici (59, 65), affinità elettroniche (60), energie e lunghezze di legame (62, 63, 70), energie reticolari (65), momenti dipolari (69), temperature di ebollizione e tensioni di vapore (72-74), righe degli spettri (48). Gli elenchi sono nelle note delle lezioni.
+
+## Terzo anno di fisica (6 ottobre 2026)
+Le 49 lezioni del terzo anno (71-119): relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas, primo e secondo principio. Vedi [[2026-10-06 Terzo anno di fisica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione "Domande per Andrea" di ogni nota in `docs/lezioni/fisica/note/71-119` e, raccolte per gruppo, in `docs/lezioni/fisica/rapporti-terzo-anno.md`.
+- [ ] Urti: velocità dopo l'urto $V_1$ e $V_2$ (scelta fatta, come l'Amaldi, da verificare) oppure $v_1'$ e $v_2'$.
+- [ ] Primo principio $\Delta U = Q - W$ con il lavoro compiuto dal sistema (scelta fatta) oppure $\Delta U = Q + W$ con il lavoro subito.
+- [ ] Secondo principio: $T_c$, $T_f$, $Q_c$, $Q_f$ in valore assoluto (scelta fatta) oppure $T_2$, $T_1$, $Q_2$, $Q_1$; $\text{COP}_f$ e $\text{COP}_p$ per frigorifero e pompa di calore.
+- [ ] Microstati $\Omega$ in $S = k_B \ln \Omega$ (scelta fatta, perché $W$ è il lavoro) oppure $W$ come sui libri.
+- [ ] Forza centrifuga $F_{cf}$ (scelta fatta; nella 57 $F_c$ è la centripeta); forze apparenti disegnate tratteggiate; Coriolis senza formula, o con $2\,m\,\omega\,v'$ in un riquadro.
+- [ ] Gittata $L$ nella 76 e $x_G$ nella 56 del biennio: si uniforma il biennio?
+- [ ] $\vec I$ per l'impulso e $I$ per il momento d'inerzia: basta la freccia a distinguerli? Nella 88 $M$ è sia il momento sia la massa della carrucola.
+- [ ] Il coefficiente $c$ in $I = c\,m\,r^2$ (gruppo 35) non è nel README: va bene come lettera?
+- [ ] Il coseno di un angolo ottuso introdotto nella 71 con $\cos(180^\circ - \alpha) = -\cos\alpha$, prima della goniometria: va bene, o il prodotto scalare aspetta?
+- [ ] $\ln$ usato come tasto della calcolatrice nel lavoro dell'isoterma e nell'entropia, con il link alla lezione sui logaritmi: basta?
+- [ ] La forza come opposto della pendenza del grafico di $U$ e l'equilibrio stabile e instabile (78): al terzo anno, prima delle derivate?
+- [ ] Componenti di un vettore scritte $(4;\ 3)$ o $(4, 3)$ nella 71.
+- [ ] Negli esercizi sull'impulso i tempi d'urto sono decine di millisecondi per tenere le forze sotto i 100 N: meglio tempi realistici e forze in kilonewton?
+- [ ] Costanti, dati dei pianeti, viscosità, calori molari, date e fatti storici scritti a memoria: gli elenchi "Da verificare" delle note, soprattutto 92, 93 e 112.
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

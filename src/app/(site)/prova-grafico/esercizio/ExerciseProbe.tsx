@@ -3,17 +3,18 @@
 import { useState } from 'react';
 import { Html } from '@/components/ui/Html';
 import { cn } from '@/lib/utils/cn';
-import { Block, Solution } from '@/components/content/exercises/RunPlayer';
+import { AnswerButton, Block, Solution, type AnswerState } from '@/components/content/exercises/RunPlayer';
 import { BuildAnswer, CodeLanguageToggle, useCodeLanguage } from '@/components/content/exercises/BuildAnswer';
+import { OpenAnswer } from '@/components/content/exercises/OpenAnswer';
 import type { BuildResponse, ExerciseView, Verdict } from '@/lib/server/exercises';
 
 /** One exercise by itself, as the trial page of development shows it: the question, its answers, the verdict. */
-export function ExerciseProbe({ exercise, grade }: { exercise: ExerciseView; grade: (key: string, response: { choice?: number; built?: BuildResponse }) => Promise<Verdict> }) {
+export function ExerciseProbe({ exercise, grade }: { exercise: ExerciseView; grade: (key: string, response: { choice?: number; latex?: string; built?: BuildResponse }) => Promise<Verdict> }) {
 	const [verdict, setVerdict] = useState<Verdict | null>(null);
 	const [chosen, setChosen] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const language = useCodeLanguage();
-	const answer = async (response: { choice?: number; built?: BuildResponse }) => {
+	const answer = async (response: { choice?: number; latex?: string; built?: BuildResponse }) => {
 		setChosen(response.choice ?? -1);
 		try {
 			setVerdict(await grade(exercise.key, response));
@@ -32,6 +33,24 @@ export function ExerciseProbe({ exercise, grade }: { exercise: ExerciseView; gra
 			<CodeLanguageToggle />
 			{exercise.build ? (
 				<BuildAnswer build={exercise.build} locked={verdict !== null} onSubmit={(built) => answer({ built })} />
+			) : exercise.mode === 'open' ? (
+				// an open answer that is a formula or a number, written in the field of a run
+				<div className="flex w-full flex-col gap-3">
+					<OpenAnswer state={!verdict ? (chosen !== null ? 'pending' : 'idle') : verdict.correct ? 'correct' : 'incorrect'} locked={chosen !== null} onSubmit={(latex) => answer({ latex })} />
+					{verdict && !verdict.correct && verdict.expectedHtml && !verdict.built && <Html html={verdict.expectedHtml} className="math-content" />}
+				</div>
+			) : exercise.options.some((o) => o.scene) ? (
+				// graphs as answers: the buttons of a run, two by two as RunPlayer lays them out
+				<div className="grid w-full auto-rows-fr grid-cols-2 gap-3" role="group" aria-label="Risposte">
+					{exercise.options.map((option, i) => {
+						const state: AnswerState = !verdict ? (chosen === i ? 'pending' : 'idle') : i === verdict.correctIndex ? 'correct' : chosen === i ? 'incorrect' : 'muted';
+						return (
+							<div key={i} className="h-full min-w-0" data-state={state}>
+								<AnswerButton html={option.html} number={i + 1} label={`Risposta ${i + 1}: ${option.text}`} state={state} chosen={chosen === i} locked={chosen !== null} onClick={() => chosen === null && answer({ choice: i })} scene />
+							</div>
+						);
+					})}
+				</div>
 			) : (
 				<div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2" role="group" aria-label="Risposte">
 					{exercise.options.map((option, i) => (

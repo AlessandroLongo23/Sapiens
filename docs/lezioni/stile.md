@@ -44,6 +44,9 @@ Nessuno schema fisso, ma di solito:
    non hanno un punto preciso, vanno in una sezione "Errori frequenti" in fondo.
 6. Un riepilogo breve solo se la lezione è lunga. Niente riepilogo che ripete tutto.
 
+Dopo gli esempi svolti di un argomento può venire un esercizio guidato, in cui lo studente fa una parte dei
+passaggi: vedi la sezione "Esercizio guidato".
+
 ## Formato
 
 - La prima riga è `# Titolo della lezione`, la seconda è vuota: il sito le scarta, perché la pagina ha
@@ -84,6 +87,69 @@ Nessuno schema fisso, ma di solito:
   "fondamentale", "cruciale", "essenziale" come riempitivi; domande retoriche per aprire una
   sezione; "semplicemente", "basta" quando il passaggio non è semplice per chi legge; emoji.
 - Niente frasi che annunciano ("In questa lezione vedremo..."): si comincia dal contenuto.
+
+## Esercizio guidato
+
+Tra gli esempi svolti e gli esercizi c'è un salto: un esempio si legge fino in fondo senza accorgersi di non aver
+capito. L'esercizio guidato è un esempio svolto in cui a certi punti la spiegazione si ferma, e lo studente deve
+fare il passaggio e confermare prima di vedere il seguito. Si scrive a mano, con il blocco ` ```guidato ` (la
+sintassi è in `README.md`). Il primo è nella lezione 121.
+
+Dove sta e che cosa svolge:
+
+- Dopo gli esempi svolti dell'argomento a cui si riferisce, fuori dai riquadri, e prima che la lezione passi a un
+  altro argomento. Uno per lezione di solito; due solo se la lezione ha due procedimenti diversi.
+- È un esercizio del tipo che lo studente troverà in verifica e tra gli esercizi della lezione. Non ripete un
+  esempio svolto che sta poco sopra: o prende il suo posto, o ha numeri diversi e almeno una difficoltà in più
+  (un segno, una base minore di $1$, una soluzione da scartare).
+- Il titolo dice che esercizio è ("Un'esponenziale decrescente spostata in giù"), come il titolo di un esempio. La
+  parola "guidato" la mette la pagina.
+
+Come si scrive il testo:
+
+- Comincia dalla consegna, in una frase, come la scriverebbe un libro di esercizi.
+- Ogni passaggio dice che cosa si fa e perché si fa così: è la spiegazione di un insegnante accanto allo studente,
+  non l'elenco delle righe del conto. Valgono le regole di "Come si scrive".
+- Il testo prima di una fermata porta lo studente fino alla domanda, e gli dà quello che serve per rispondere senza
+  dare la risposta. Il testo dopo riparte dalla risposta e la giustifica: deve reggere anche per chi ha sbagliato,
+  per chi si è fatto mostrare il passaggio e per chi è andato avanti senza rispondere.
+- Letto di fila, senza le fermate, deve essere un esempio svolto completo: è così che lo vedono Google, chi stampa
+  la lezione e chi ha JavaScript spento. Se il grafico serve a capire, in fondo ci va una figura `tikz`.
+
+Come si scelgono le fermate:
+
+- Una fermata sta dove gli studenti sbagliano davvero: il verso che si inverte, il segno, la soluzione da scartare,
+  la condizione dimenticata, l'esponente negativo. Per trovarle si parte dai riquadri `ad-warning` della lezione.
+- Da due a quattro per esercizio. Non una a ogni riga: i passaggi di routine si spiegano e basta, altrimenti
+  l'esercizio diventa un modulo da compilare.
+- La domanda chiede una cosa sola, e si capisce senza rileggere tutto: "Scrivi l'ascissa del punto in cui il
+  grafico incontra l'asse $x$", non "Completa".
+- Il tipo segue la risposta. `scrivi` per un numero, le soluzioni di un'equazione, un'espressione, una retta.
+  `scegli` per quello che il correttore non legge (intervalli, disequazioni, logaritmi) e per le decisioni: il
+  verso, quale soluzione si scarta, quale regola si applica. `cursore` quando la risposta si vede su un grafico:
+  portare l'asintoto al suo posto, la retta finché è tangente.
+- L'ultima fermata non è l'ultima riga: dopo c'è sempre il testo che chiude, con il risultato e, se serve, la
+  verifica.
+
+I messaggi di errore:
+
+- Per ogni fermata si scrivono gli errori che uno studente fa davvero, di solito da uno a tre, ognuno con il suo
+  messaggio. Un errore previsto è il risultato di uno sbaglio preciso (ha preso $a^0 = 0$, ha dimenticato di
+  cambiare il verso), non un numero a caso.
+- Il messaggio dice che cosa è andato storto e rimette sulla strada, senza dare la risposta: "Hai sostituito
+  $x = 1$. Sull'asse $y$ l'ascissa è $0$." Una o due frasi.
+- Il tono è quello di chi corregge un compito accanto allo studente: si descrive il passaggio, non lo studente.
+  Niente "Sbagliato!", "Attento!", "Ops", punti esclamativi, e niente "è facile" o "basta".
+- `aiuto:` è la riga per chi sbaglia in un modo non previsto: un indizio su come partire ("Sostituisci $x = 0$
+  nella funzione"), non la soluzione.
+- In una fermata `scegli` le opzioni sbagliate sono gli errori veri, e ognuna ha il suo messaggio; niente opzioni
+  messe per fare numero.
+
+Prima di consegnare: ogni risposta attesa e ogni errore previsto si rifanno con SymPy, come i conti degli esempi;
+`scripts/lezioni/check.mts` deve passare (prova ogni risposta attesa e ogni errore previsto con il correttore vero);
+l'esercizio si fa per intero nel browser, sbagliando apposta almeno una volta per fermata, su `/prova-grafico/lezione`
+a 390 px. Nelle note della lezione va una sezione sull'esercizio guidato: quale esempio, perché quelle fermate,
+quali errori sono previsti.
 
 ## Cosa consegnare
 

@@ -149,6 +149,74 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'equilibrio-termico-due-corpi': () => import('@/components/content/interactive/fisica/EquilibrioTermicoDueCorpi'),
 	'conduzione-sbarra-materiali': () => import('@/components/content/interactive/fisica/ConduzioneSbarra'),
 	'curva-riscaldamento-acqua': () => import('@/components/content/interactive/fisica/CurvaRiscaldamentoAcqua'),
+	// Physics, third year: vector products, projectile, variable force (group 30).
+	'prodotto-scalare-proiezione-segno': () => import('@/components/content/interactive/fisica/ProdottoScalare'),
+	'prodotto-vettoriale-area-verso': () => import('@/components/content/interactive/fisica/ProdottoVettoriale'),
+	'lancio-obliquo-angolo-gittata': () => import('@/components/content/interactive/fisica/LancioObliquo'),
+	'lavoro-area-rettangoli-tratti': () => import('@/components/content/interactive/fisica/LavoroRettangoli'),
+	// Physics, third year: frames of reference (group 31).
+	'autobus-frena-due-osservatori': () => import('@/components/content/interactive/fisica/AutobusFrena'),
+	'trasformazioni-galileo-vagone': () => import('@/components/content/interactive/fisica/VagoneGalileo'),
+	'nave-galileo-sasso': () => import('@/components/content/interactive/fisica/NaveGalileo'),
+	'giostra-coriolis-palla': () => import('@/components/content/interactive/fisica/GiostraCoriolis'),
+	// Physics, third year: conservative forces, momentum, impulse (group 32).
+	'lavoro-due-cammini-peso-attrito': () => import('@/components/content/interactive/fisica/LavoroDueCammini'),
+	'grafico-energia-potenziale-buca': () => import('@/components/content/interactive/fisica/GraficoEnergiaPotenziale'),
+	'rampa-liscia-pavimento-attrito': () => import('@/components/content/interactive/fisica/RampaPavimentoAttrito'),
+	'quantita-moto-due-carrelli': () => import('@/components/content/interactive/fisica/QuantitaMotoCarrelli'),
+	'impulso-tempo-arresto-forza': () => import('@/components/content/interactive/fisica/ImpulsoTempoArresto'),
+	// Physics, third year: collisions and centre of mass (group 33).
+	'carrelli-molla-rinculo': () => import('@/components/content/interactive/fisica/CarrelliMollaRinculo'),
+	'urto-anelastico-energia': () => import('@/components/content/interactive/fisica/UrtoAnelasticoEnergia'),
+	'urto-elastico-masse': () => import('@/components/content/interactive/fisica/UrtoElasticoMasse'),
+	'biliardo-urto-angoli': () => import('@/components/content/interactive/fisica/BiliardoUrtoAngoli'),
+	'centro-massa-urto-carrelli': () => import('@/components/content/interactive/fisica/CentroMassaUrto'),
+	// Physics, third year: rotation, kinematics and dynamics (group 34).
+	'disco-accelerazione-angolare': () => import('@/components/content/interactive/fisica/DiscoAccelerazioneAngolare'),
+	'asta-masse-momento-inerzia': () => import('@/components/content/interactive/fisica/AstaMasseMomentoInerzia'),
+	'carrucola-massa-secchio': () => import('@/components/content/interactive/fisica/CarrucolaMassaSecchio'),
+	// Physics, third year: rotational energy and angular momentum (group 35).
+	'rotolamento-gara-piano-inclinato': () => import('@/components/content/interactive/fisica/GaraRotolamento'),
+	'momento-angolare-moto-rettilineo-braccio': () => import('@/components/content/interactive/fisica/MomentoAngolareRetta'),
+	'momento-angolare-masse-piattaforma': () => import('@/components/content/interactive/fisica/PiattaformaMasse'),
+	// Physics, third year: cosmological systems, Kepler, universal gravitation (group 36).
+	'epiciclo-deferente-cappi': () => import('@/components/content/interactive/fisica/EpicicloDeferente'),
+	'moto-retrogrado-sorpasso': () => import('@/components/content/interactive/fisica/MotoRetrogradoSorpasso'),
+	'orbita-ellittica-aree': () => import('@/components/content/interactive/fisica/OrbitaAree'),
+	'gravitazione-due-masse': () => import('@/components/content/interactive/fisica/GravitazioneDueMasse'),
+	// Physics, third year: gravitational field, satellites, energy (group 37).
+	'campo-gravitazionale-sonda': () => import('@/components/content/interactive/fisica/CampoGravitazionaleSonda'),
+	'cannone-newton-orbita': () => import('@/components/content/interactive/fisica/CannoneNewton'),
+	'lancio-verticale-energia-fuga': () => import('@/components/content/interactive/fisica/LancioVerticaleFuga'),
+	// Physics, third year: fluid dynamics (group 38).
+	'tubo-continuita-diametro': () => import('@/components/content/interactive/fisica/TuboContinuita'),
+	'bernoulli-tubo-barre': () => import('@/components/content/interactive/fisica/BernoulliTubo'),
+	'serbatoio-foro-getto': () => import('@/components/content/interactive/fisica/SerbatoioGetto'),
+	'sferette-glicerina-velocita-limite': () => import('@/components/content/interactive/fisica/SferetteViscose'),
+	// Physics, third year: gas laws (group 39).
+	'boyle-pistone-pesetti': () => import('@/components/content/interactive/fisica/BoylePistonePesetti'),
+	'termometro-gas-zero-assoluto': () => import('@/components/content/interactive/fisica/TermometroGasZeroAssoluto'),
+	'gas-perfetto-piano-pv': () => import('@/components/content/interactive/fisica/GasPerfettoPianoPV'),
+	// Physics, third year: kinetic theory and internal energy (group 40).
+	'gas-scatola-urti-pressione': () => import('@/components/content/interactive/fisica/GasScatolaPressione'),
+	'maxwell-velocita-temperatura': () => import('@/components/content/interactive/fisica/MaxwellVelocita'),
+	'compressione-lenta-e-brusca': () => import('@/components/content/interactive/fisica/CompressioneLentaBrusca'),
+	'espansione-libera-gas': () => import('@/components/content/interactive/fisica/EspansioneLibera'),
+	// Physics, third year: work, first law, transformations (group 41).
+	'pistone-lavoro-cammini': () => import('@/components/content/interactive/fisica/PistoneLavoroCammini'),
+	'primo-principio-bilancio': () => import('@/components/content/interactive/fisica/PrimoPrincipioBilancio'),
+	'trasformazioni-gas-bilancio': () => import('@/components/content/interactive/fisica/TrasformazioniGasBilancio'),
+	// Physics, third year: molar heats and adiabatic (group 42).
+	'calori-molari-due-cilindri': () => import('@/components/content/interactive/fisica/CaloriMolariCilindri'),
+	'adiabatica-isoterma-pistone': () => import('@/components/content/interactive/fisica/AdiabaticaIsoterma'),
+	// Physics, third year: heat engines and Carnot (group 43).
+	'macchina-termica-flussi': () => import('@/components/content/interactive/fisica/MacchinaTermicaFlussi'),
+	'equivalenza-kelvin-clausius': () => import('@/components/content/interactive/fisica/EquivalenzaEnunciati'),
+	'ciclo-carnot-temperature': () => import('@/components/content/interactive/fisica/CicloCarnot'),
+	// Physics, third year: refrigerators and entropy (group 44).
+	'frigorifero-cop-temperature': () => import('@/components/content/interactive/fisica/FrigoriferoCop'),
+	'entropia-universo-due-sorgenti': () => import('@/components/content/interactive/fisica/EntropiaDueSorgenti'),
+	'molecole-due-meta-microstati': () => import('@/components/content/interactive/fisica/MolecoleDueMeta'),
 	// Chemistry, first two years: measurements (group 21).
 	'lettura-menisco': () => import('@/components/content/interactive/chimica/LetturaMenisco'),
 	// Chemistry, first two years: matter 1 (group 22).
@@ -189,6 +257,59 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'orbitali-livelli-stessa-scala': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.LivelliStessaScala })),
 	'orbitali-2p-in-moto': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.OrbitaliInMoto })),
 	'orbitali-esplora': () => import('@/components/orbitali/OrbitalViewer'),
+	// Chemistry, third year: light, Bohr, levels, wave-particle (group A).
+	'luce-lunghezza-onda-fotone': () => import('@/components/content/interactive/chimica/LuceLunghezzaOnda'),
+	'luce-spettri-righe-elementi': () => import('@/components/content/interactive/chimica/LuceSpettriRighe'),
+	'bohr-livelli-salto-riga': () => import('@/components/content/interactive/chimica/BohrLivelliSalto'),
+	'livelli-ionizzazioni-successive': () => import('@/components/content/interactive/chimica/LivelliIonizzazioni'),
+	'livelli-sottolivelli-idrogeno-altri': () => import('@/components/content/interactive/chimica/LivelliSottolivelliOrdine'),
+	'onda-particella-de-broglie': () => import('@/components/content/interactive/chimica/OndaDeBroglie'),
+	'onda-particella-indeterminazione': () => import('@/components/content/interactive/chimica/OndaIndeterminazione'),
+	// Chemistry, third year: configuration, groups and blocks, Lewis symbols (group B).
+	'configurazione-caselle-riempi': () => import('@/components/content/interactive/chimica/ConfigurazioneCaselle'),
+	'gruppi-periodi-elettrone-casella': () => import('@/components/content/interactive/chimica/GruppiPeriodiCasella'),
+	'lewis-simboli-gruppo': () => import('@/components/content/interactive/chimica/LewisSimboliGruppo'),
+	// Chemistry, third year: nucleus and radioactivity (group C).
+	'radioattivita-carta-nuclidi': () => import('@/components/content/interactive/chimica/RadioattivitaCartaNuclidi'),
+	'dimezzamento-campione-nuclei': () => import('@/components/content/interactive/chimica/DimezzamentoCampioneNuclei'),
+	'fissione-fusione-curva-energia': () => import('@/components/content/interactive/chimica/FissioneFusioneCurva'),
+	// Chemistry, third year: periodic properties (group D).
+	'raggio-ionizzazione-andamenti': () => import('@/components/content/interactive/chimica/RaggioIonizzazioneAndamenti'),
+	'raggio-atomo-ione-confronto': () => import('@/components/content/interactive/chimica/RaggioAtomoIone'),
+	'elettronegativita-andamenti': () => import('@/components/content/interactive/chimica/ElettronegativitaAndamenti'),
+	'metalli-tavola-classi': () => import('@/components/content/interactive/chimica/MetalliTavolaClassi'),
+	// Chemistry, third year: bonds 1 (group E).
+	'energia-legame-curva-distanza': () => import('@/components/content/interactive/chimica/EnergiaLegameCurva'),
+	'ottetto-elettroni-gas-nobile': () => import('@/components/content/interactive/chimica/OttettoElettroni'),
+	'legame-covalente-condividi-coppie': () => import('@/components/content/interactive/chimica/LegameCovalenteCondividi'),
+	'legame-polare-delta-chi-nube': () => import('@/components/content/interactive/chimica/LegamePolareDeltaChi'),
+	// Chemistry, third year: bonds 2 (group F).
+	'ionico-formula-ioni-neutro': () => import('@/components/content/interactive/chimica/IonicoFormulaIoni'),
+	'ionico-energia-reticolare-ioni': () => import('@/components/content/interactive/chimica/IonicoEnergiaReticolare'),
+	'metallico-mare-elettroni-pila': () => import('@/components/content/interactive/chimica/MetallicoMareElettroni'),
+	'metallico-colpo-martello-ionico': () => import('@/components/content/interactive/chimica/MetallicoColpoMartello'),
+	'formule-lewis-costruisci': () => import('@/components/content/interactive/chimica/FormuleLewisCostruisci'),
+	// Chemistry, third year: polarity, valence bond, hybridisation (group G).
+	'polarita-somma-dipoli': () => import('@/components/content/interactive/chimica/PolaritaSommaDipoli'),
+	'polarita-sostituisci-atomi': () => import('@/components/content/interactive/chimica/PolaritaSostituisciAtomi'),
+	'legame-valenza-sovrapposizione': () => import('@/components/content/interactive/chimica/LegameValenzaSovrapposizione'),
+	'legame-valenza-ordine-rotazione': () => import('@/components/content/interactive/chimica/LegameValenzaOrdineRotazione'),
+	'ibridazione-forma-ibrido': () => import('@/components/content/interactive/chimica/IbridazioneFormaIbrido'),
+	'ibridazione-mescola-orbitali': () => import('@/components/content/interactive/chimica/IbridazioneMescolaOrbitali'),
+	// Chemistry, third year: intermolecular forces and condensed states (group H).
+	'forze-ebollizione-scegli-molecola': () => import('@/components/content/interactive/chimica/ForzeEbollizioneMolecola'),
+	'legame-idrogeno-chi-con-chi': () => import('@/components/content/interactive/chimica/LegameIdrogenoCoppie'),
+	'liquido-tensione-vapore-ebollizione': () => import('@/components/content/interactive/chimica/LiquidoTensioneVapore'),
+	'solidi-tipo-particelle-conduce': () => import('@/components/content/interactive/chimica/SolidiTipoConduce'),
+	// Chemistry, third year: nomenclature 1 (group I).
+	'ossidazione-calcola-atomo-per-atomo': () => import('@/components/content/interactive/chimica/NumeroOssidazioneCalcola'),
+	'ossidi-costruisci-formula-nomi': () => import('@/components/content/interactive/chimica/OssidiCostruisci'),
+	'idruri-idracidi-scegli-elemento': () => import('@/components/content/interactive/chimica/IdruriIdracidiScegli'),
+	'idrossidi-costruisci-formula-nomi': () => import('@/components/content/interactive/chimica/IdrossidiCostruisci'),
+	// Chemistry, third year: nomenclature 2 (group J).
+	'ossiacidi-anidride-piu-acqua': () => import('@/components/content/interactive/chimica/OssiacidiAnidrideAcqua'),
+	'sali-binari-bilancia-cariche': () => import('@/components/content/interactive/chimica/SaliBinariBilanciaCariche'),
+	'sali-ternari-acido-metallo': () => import('@/components/content/interactive/chimica/SaliTernariAcidoMetallo'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {

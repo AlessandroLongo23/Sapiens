@@ -78,6 +78,51 @@ gruppi, perché le lezioni si richiamano a vicenda.
   traccia), ma non un piano cartesiano generico: quello arriverà nel kit. Negli esercizi i grafici si disegnano
   con la scena `grafico-dati` (`exercises/scenes/GraficoDati.tsx`), che ha assi con le tacche numerate.
 
+## Notazioni del terzo anno
+
+Scelte del 6 ottobre 2026 prima del lotto del terzo anno (lezioni 71-119, brief in `brief-terzo-anno.md`), da
+confermare con Andrea; valgono per tutti i gruppi. Dove un simbolo del biennio c'è già (densità, sezione, momento
+di una forza, angolo del moto circolare) resta quello delle lezioni del biennio.
+
+- Prodotti di vettori: scalare $\vec a \cdot \vec b = a\,b\cos\alpha$, vettoriale $\vec a \times \vec b$ con modulo
+  $a\,b\sin\alpha$ e verso dato dalla regola della mano destra. Un vettore che esce dal foglio è $\odot$, uno che
+  entra $\otimes$.
+- Sistemi di riferimento $S$ e $S'$; $\vec V$ è la velocità di $S'$ rispetto a $S$ e $\vec v = \vec v\,' + \vec V$.
+  In un sistema con accelerazione $\vec A$ la forza apparente è $\vec F_{app} = -m\,\vec A$; la forza centrifuga ha
+  modulo $m\,\omega^2 r$.
+- Lancio obliquo: velocità iniziale $v_0$, angolo di lancio $\alpha$ sull'orizzontale, componenti
+  $v_{0x} = v_0\cos\alpha$ e $v_{0y} = v_0\sin\alpha$, tempo di volo $t_v$, altezza massima $h_{max}$, gittata $L$.
+- Energia: come nel secondo anno ($W$, $K$, $U$, $E$). Lavoro delle forze non conservative $W_{nc} = \Delta E$.
+- Quantità di moto $\vec p = m\,\vec v$, totale $\vec p_{tot}$; impulso $\vec I = \vec F\,\Delta t$ sempre con la
+  freccia o con il pedice della componente ($I_x$). Negli urti le velocità prima sono $v_1$ e $v_2$, quelle dopo
+  $V_1$ e $V_2$, come l'Amaldi (da verificare); nell'urto completamente anelastico la velocità comune è $V$. Centro
+  di massa: $x_{cm}$, $\vec v_{cm}$.
+- Rotazioni: angolo $\theta$ in radianti, velocità angolare $\omega$, accelerazione angolare $\alpha$ (nelle lezioni
+  86-91 gli angoli tra vettori si chiamano $\varphi$ o $\beta$), momento d'inerzia $I$ in $\text{kg}\cdot\text{m}^2$
+  (senza freccia: non si confonde con l'impulso), momento di una forza $M$ come nel primo anno, $M = I\,\alpha$,
+  energia cinetica di rotazione $K_{rot} = \tfrac{1}{2} I\,\omega^2$, momento angolare $\vec L = \vec r \times \vec p$
+  e $L = I\,\omega$.
+- Gravitazione: $G = 6{,}67 \cdot 10^{-11}\,\text{N}\cdot\text{m}^2/\text{kg}^2$, massa della Terra
+  $M_T = 5{,}97 \cdot 10^{24}\,\text{kg}$, raggio della Terra $R_T = 6{,}37 \cdot 10^6\,\text{m}$, massa del Sole
+  $M_S = 1{,}99 \cdot 10^{30}\,\text{kg}$, distanza media Terra-Sole $1{,}50 \cdot 10^{11}\,\text{m}$. Distanza tra
+  i centri $r$, quota $h$, semiasse maggiore $a$, terza legge $T^2/a^3 = \text{costante}$, campo $\vec g$,
+  $U = -G\,\frac{m_1 m_2}{r}$, velocità di fuga $v_f$.
+- Fluidi in moto: portata $q$ in $\text{m}^3/\text{s}$, sezione $S$, densità $d$, equazione di Bernoulli
+  $p + \tfrac{1}{2} d\,v^2 + d\,g\,h = \text{costante}$, viscosità $\eta$ in $\text{Pa}\cdot\text{s}$, forza di
+  Stokes $F_v = 6\pi\,\eta\,r\,v$, velocità limite $v_l$.
+- Gas: pressione $p$, volume $V$, temperatura assoluta $T$ in kelvin e $t$ in gradi Celsius, numero di moli $n$,
+  numero di molecole $N$, $R = 8{,}31\,\text{J/(mol}\cdot\text{K)}$, $k_B = 1{,}38 \cdot 10^{-23}\,\text{J/K}$,
+  $N_A = 6{,}02 \cdot 10^{23}\,\text{mol}^{-1}$, $1\,\text{atm} = 1{,}01 \cdot 10^5\,\text{Pa}$,
+  $0\,^\circ\text{C} = 273\,\text{K}$ (273,15 solo dove serve). Velocità quadratica media $v_{qm}$, energia cinetica
+  media di una molecola $K_m = \tfrac{3}{2} k_B T$.
+- Termodinamica: primo principio $\Delta U = Q - W$, con $Q$ positivo se il sistema lo assorbe e $W$ positivo se il
+  sistema lo compie (come l'Amaldi). $U$ qui è l'energia interna. Stati $A$, $B$, $C$, $D$ nel piano
+  pressione-volume, con $V$ in ascissa. Calori molari $C_V$ e $C_p$, $\gamma = C_p/C_V$.
+- Secondo principio: sorgente calda a $T_c$ e fredda a $T_f$, calore assorbito $Q_c$ e ceduto $Q_f$ presi in valore
+  assoluto, lavoro $W = Q_c - Q_f$, rendimento $\eta = W/Q_c$ (stessa lettera della viscosità, in un altro
+  capitolo), coefficiente di prestazione $\text{COP}$, entropia $S$ in $\text{J/K}$, $\Delta S = Q/T$ a temperatura
+  costante.
+
 ## Incertezze e cifre significative
 
 Fissate nelle lezioni 04-08 (primo lotto, 29 settembre 2026) e valide per tutta la fisica:

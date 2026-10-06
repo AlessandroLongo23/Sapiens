@@ -36,6 +36,28 @@ import CurvaTemperaturaTempo from './CurvaTemperaturaTempo';
 import Cromatogramma from './Cromatogramma';
 import ManometroAperto from './ManometroAperto';
 import ParticelleRiquadri from './ParticelleRiquadri';
+import PianoCartesiano from './PianoCartesiano';
+import LancioObliquo from './LancioObliquo';
+import GraficoForzaSpostamento from './GraficoForzaSpostamento';
+import GraficoSpezzata from './GraficoSpezzata';
+import MasseAsse from './MasseAsse';
+import RotolamentoPiano from './RotolamentoPiano';
+import ParticellaPolo from './ParticellaPolo';
+import OrbitaEllisse from './OrbitaEllisse';
+import ElongazionePianeta from './ElongazionePianeta';
+import OrbitaPerielioAfelio from './OrbitaPerielioAfelio';
+import MasseAllineate from './MasseAllineate';
+import OrbitaPianeta from './OrbitaPianeta';
+import TuboSezioni from './TuboSezioni';
+import SerbatoioForo from './SerbatoioForo';
+import CilindroPistone from './CilindroPistone';
+import MolecoleVelocita from './MolecoleVelocita';
+import PianoPV from './PianoPV';
+import CurvePV from './CurvePV';
+import MacchinaTermica from './MacchinaTermica';
+import CicloCarnotPV from './CicloCarnotPV';
+import SorgentiFlussi from './SorgentiFlussi';
+import ScatolaMolecole from './ScatolaMolecole';
 
 /**
  * The drawings of the exercises that change with the numbers (a block on an incline at the exercise's angle): each
@@ -96,6 +118,42 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	// Physics, second year: heat (group 20).
 	'lastra-conduzione': LastraConduzione,
 	'curva-riscaldamento': CurvaRiscaldamento,
+	// Physics, third year: vector products, projectile, variable force (group 30).
+	'lancio-obliquo': LancioObliquo,
+	'grafico-forza-spostamento': GraficoForzaSpostamento,
+	// Physics, third year: frames of reference (group 31).
+	// Physics, third year: conservative forces, momentum, impulse (group 32).
+	'grafico-spezzata': GraficoSpezzata,
+	// Physics, third year: collisions and centre of mass (group 33).
+	// Physics, third year: rotation, kinematics and dynamics (group 34).
+	'masse-asse': MasseAsse,
+	// Physics, third year: rotational energy and angular momentum (group 35).
+	'rotolamento-piano': RotolamentoPiano,
+	'particella-polo': ParticellaPolo,
+	'orbita-ellisse': OrbitaEllisse,
+	// Physics, third year: cosmological systems, Kepler, universal gravitation (group 36).
+	'elongazione-pianeta': ElongazionePianeta,
+	'orbita-perielio-afelio': OrbitaPerielioAfelio,
+	'masse-allineate': MasseAllineate,
+	// Physics, third year: gravitational field, satellites, energy (group 37).
+	'orbita-pianeta': OrbitaPianeta,
+	// Physics, third year: fluid dynamics (group 38).
+	'tubo-sezioni': TuboSezioni,
+	'serbatoio-foro': SerbatoioForo,
+	// Physics, third year: gas laws (group 39).
+	'cilindro-pistone': CilindroPistone,
+	// Physics, third year: kinetic theory and internal energy (group 40).
+	'molecole-velocita': MolecoleVelocita,
+	// Physics, third year: work, first law, transformations (group 41).
+	'piano-pv': PianoPV,
+	// Physics, third year: molar heats and adiabatic (group 42).
+	'curve-pv': CurvePV,
+	// Physics, third year: heat engines and Carnot (group 43).
+	'macchina-termica': MacchinaTermica,
+	'ciclo-carnot': CicloCarnotPV,
+	// Physics, third year: refrigerators and entropy (group 44).
+	'sorgenti-calore': SorgentiFlussi,
+	'scatola-molecole': ScatolaMolecole,
 	// Chemistry, first two years: measurements (group 21).
 	// Chemistry, first two years: matter 1 (group 22).
 	'particelle-riquadri': ParticelleRiquadri,
@@ -109,6 +167,8 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	// Chemistry, first two years: the mole (group 27).
 	// Chemistry, first two years: the atom (group 28).
 	// Chemistry, first two years: water (group 29).
+	// Maths: the Cartesian plane, also as an option of a multiple choice (src/lib/exercises/v2/piano.ts).
+	'piano-cartesiano': PianoCartesiano,
 };
 
 export function SceneFigure({ scene, className }: { scene: SceneRef; className?: string }) {

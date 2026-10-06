@@ -97,7 +97,7 @@ La tavola di oggi è ordinata per numero atomico crescente. Ha sette righe, i **
 
 ```tikz
 % nome: mendeleev-tavola-moderna-quattro-periodi
-% alt: I primi quattro periodi della tavola periodica moderna, con i gruppi numerati da 1 a 18 in alto e i periodi da 1 a 4 a sinistra. Ogni casella ha il numero atomico e il simbolo. Il primo periodo ha idrogeno ed elio agli estremi; il secondo e il terzo hanno otto elementi, due a sinistra e sei a destra; il quarto è completo, dal potassio al cripto
+% alt: I primi quattro periodi della tavola periodica moderna, con i gruppi numerati da 1 a 18 in alto e i periodi da 1 a 4 a sinistra. Ogni casella ha il numero atomico e il simbolo. Il primo periodo ha idrogeno ed elio agli estremi; il secondo e il terzo hanno otto elementi, due a sinistra e sei a destra; il quarto è completo, dal potassio al kripton
 % svg: mendeleev-tavola-moderna-quattro-periodi-afee5d40.svg 360x109
 \begin{tikzpicture}[x=0.5cm, y=0.62cm]
 \foreach \g in {1,...,18} \node at (\g,-0.25) {\tiny \g};

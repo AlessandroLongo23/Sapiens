@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-05
+aggiornato: 2026-10-06
 tag: [piano, agenda]
 ---
 # Agenda
@@ -27,6 +27,22 @@ Ordine deciso il 24 settembre 2026: vedi [[2026-09-24 Si lavora a lotti completi
 15. **Orbitali atomici** (in produzione dal 1° ottobre: lo strumento `/strumenti/orbitali-atomici` e la lezione "Orbitali e numeri quantici"; non è nella beta). Restano la prova su un telefono vero, le domande per Andrea (i nodi come chiave dei numeri quantici), i link alle altre lezioni del capitolo quando saranno scritte, un link dalla scheda della tavola periodica alla configurazione dell'elemento. Note: [[Orbitali atomici interattivi]], [[2026-10-01 Gli orbitali hanno una lezione dedicata e un visualizzatore in tre dimensioni]].
 16. **Editor di codice** (in produzione dal 3 ottobre, PR #30; non è nella beta). Python, C e C++ eseguiti nel browser, a `/strumenti/editor-di-codice` e nelle lezioni con il blocco `codice` (vedi [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]). Da decidere: Java, e come si scrivono per tre linguaggi le 44 lezioni di programmazione. Da fare: una prova su un computer di scuola e su un telefono vero. Note: [[Editor di codice]], [[2026-10-03 Editor di codice]].
 17. **Informatica, primo anno** (pubblicato il 3 ottobre; non è nella beta). 32 lezioni complete, gratis come fisica e chimica (vedi [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]). Da fare: i fatti da verificare e le domande in [[Domande per Andrea]], un solo disegno del foglio di calcolo negli esercizi, i prerequisiti. Poi il secondo anno, dove comincia la programmazione e serve l'[[Editor di codice]]. Nota: [[2026-10-03 Primo lotto di informatica]].
+21. **Fisica, terzo anno** (6 ottobre 2026; non è nella beta, si pubblica gratis come il biennio). 49 lezioni (71-119) complete di formulari, flashcard, 53 figure interattive e 49 generatori (283 livelli), scritte, verificate e in produzione dal 6 ottobre (PR #43). Restano: le formule troppo larghe sul telefono, la scena `piano-pv`, lo zero ambiguo nel generatore della 76, la coerenza tra lezioni vicine scritte in parallelo, i fatti da verificare. Poi un giro sul kit (assi con le tacche, quota, cilindro con pistone, freccia curva: terza richiesta) e il quarto anno. L'elenco da spuntare di quello che non va è in [[Fisica terzo anno, da sistemare]]. Domande in [[Domande per Andrea]]. Nota: [[2026-10-06 Terzo anno di fisica]].
+
+22. **Terzo anno di chimica, cose da sistemare** (6 ottobre 2026; non è nella beta). Le 33 lezioni sono scritte e pubblicate, ma restano aperti questi punti, da spuntare qui man mano. Dettagli in [[2026-10-06 Terzo anno di chimica]], sezione "Limiti", e nelle note `docs/lezioni/chimica/note/48-82`.
+    - [ ] Verificare su una fonte i dati scritti a memoria: energie di ionizzazione successive (50, 59), raggi ionici (59, 65), affinità elettroniche (60), energie e lunghezze di legame (62, 63, 70), energie reticolari (65), momenti dipolari (69), temperature di ebollizione e tensioni di vapore (72-74), righe degli spettri (48), date e nomi. Poi metterli in un file solo (`elementi.json` o un file accanto): oggi stanno in tre posti, figura, generatore e controllo.
+    - [ ] Le risposte di Andrea alla sezione "Terzo anno di chimica" di [[Domande per Andrea]]: per prime la soglia dello ionico (1,9 o 1,7), la forma dei nomi IUPAC di ossiacidi e sali (da controllare sul Valitutti), ottetto o ottetto espanso negli ossiacidi, "kripton" o "cripto".
+    - [ ] Risposta aperta fuori dalla matematica: `open-answers.mts` accetta solo lezioni di matematica, e va provato se il correttore legge un numero con il segno ("+6"). Le 19 righe proposte dai gruppi sono nella nota di sessione; oggi tutti i 187 livelli sono a scelta multipla.
+    - [ ] Scene per gli esercizi: diagrammi a caselle, simboli e formule di Lewis tra le opzioni. Oggi nessun esercizio del lotto mostra un disegno.
+    - [ ] Allargare i livelli con poche domande: il 4 di `chim-tempo-dimezzamento` (otto), il 5 di `chim-idruri-idracidi` (cinque idracidi), i livelli a domande fisse di 65, 66, 74 e 75, i gruppi piccoli di 80-82; aggiungere un livello sull'attività in becquerel.
+    - [ ] Provare a mano le 43 figure interattive, su un telefono vero e su Safari: finora sono state viste solo in screenshot. In particolare i cursori di `liquido-tensione-vapore-ebollizione` (74), il tocco sui legami di `formule-lewis-costruisci` (67), `metallico-mare-elettroni-pila` (66), le caselle piccole delle tavole di 57 e 58.
+    - [ ] Rileggere per intero le lezioni 48-51 e 54-56, che i gruppi non hanno riletto dall'inizio.
+    - [ ] Aggiungere a `elementi.json` i numeri di ossidazione che le lezioni 76-80 usano e la tavola non ha: cloro $+3$, ossigeno $-1$, bromo $+7$, manganese $+6$ (dopo la conferma di Andrea).
+    - [ ] Contenuti che mancano: N₂O₃ nella 67, una figura dell'etino nella 71, l'avviso sui sali che non esistono nella figura della 82, i rimandi dalla 02 e dalla 52 alle lezioni nuove del loro capitolo, una stessa definizione di orbitale nella 51 e nella 52.
+    - [ ] Prerequisiti di chimica: oggi sono una riga in ogni nota di lezione, perché `docs/lezioni/prerequisiti.md` e il grafo sono della sola matematica.
+    - [ ] Esercizio guidato: ogni nota indica l'esempio adatto e le fermate; si scrive quando il blocco esiste.
+    - [ ] `scripts/figure/anteprima-interattivo.mjs` va in timeout con la macchina carica, perché aspetta la rete ferma: farlo aspettare l'`<svg>` della figura.
+    - [ ] I test unitari non sono stati eseguiti sul lotto.
 ## Prima della v1.0 e della v2
 - Onboarding su classe e indirizzo. Lo schermo "Oggi" è deciso ed entra nella beta (vedi [[2026-09-25 Oggi è lo schermo iniziale dell'app]]); la grafica con Dario. Note: [[App mobile]], [[Progressi dello studente]].
 - Torre dei prerequisiti, una per capitolo o per anno, con Dario. Nota: [[Mappa dei prerequisiti]].

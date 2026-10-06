@@ -57,7 +57,7 @@ export function Block({ block }: { block: QuestionBlock }) {
 }
 
 /** How an answer looks: waiting, chosen and being checked, the right one (chosen or revealed after a mistake), the wrong one chosen, or set aside. */
-type AnswerState = 'idle' | 'pending' | 'correct' | 'incorrect' | 'muted';
+export type AnswerState = 'idle' | 'pending' | 'correct' | 'incorrect' | 'muted';
 
 const ANSWER_CLASS: Record<AnswerState, string> = {
 	idle: 'border-edge bg-surface shadow-paper hover:-translate-y-px hover:border-edge-strong hover:shadow-lift active:translate-y-0 active:bg-surface-2',
@@ -98,9 +98,10 @@ export function speakable(latex: string): string {
 /**
  * Fills its grid cell, so every answer of a question is the same size; a formula wider than the cell scrolls inside
  * it. The answer chosen and right swells once; the right one revealed after a mistake turns green a beat after the
- * wrong one shakes, so the eye goes from the mistake to the answer.
+ * wrong one shakes, so the eye goes from the mistake to the answer. A graph (`scene`) takes the whole button, with
+ * the number in the corner above it: four of them stand two by two on a phone.
  */
-function AnswerButton({ html, label, number, state, chosen, locked, onClick }: { html: string; label: string; number: number; state: AnswerState; chosen: boolean; locked: boolean; onClick: () => void }) {
+export function AnswerButton({ html, label, number, state, chosen, locked, onClick, scene = false }: { html: string; label: string; number: number; state: AnswerState; chosen: boolean; locked: boolean; onClick: () => void; scene?: boolean }) {
 	return (
 		<button
 			type="button"
@@ -110,7 +111,8 @@ function AnswerButton({ html, label, number, state, chosen, locked, onClick }: {
 			aria-disabled={locked || undefined}
 			aria-keyshortcuts={String(number)}
 			className={cn(
-				'relative flex h-full min-h-[64px] w-full min-w-0 items-center justify-center break-words rounded-xl border px-12 py-3 text-base font-medium text-fg-strong transition-[transform,box-shadow,background-color,border-color,opacity] ease-out focus-ring sm:text-lg',
+				'relative flex h-full min-h-[64px] w-full min-w-0 items-center justify-center break-words rounded-xl border text-base font-medium text-fg-strong transition-[transform,box-shadow,background-color,border-color,opacity] ease-out focus-ring sm:text-lg',
+				scene ? 'px-2 pb-2 pt-11' : 'px-12 py-3',
 				ANSWER_CLASS[state],
 				state === 'pending' ? 'duration-75' : 'duration-200',
 				state === 'correct' && chosen && 'animate-answer-pop',
@@ -119,10 +121,14 @@ function AnswerButton({ html, label, number, state, chosen, locked, onClick }: {
 			)}
 		>
 			{/* The key that picks this answer, in a box to tick: it becomes the tick or the cross. The label already says which answer this is. */}
-			<span className={cn('absolute left-3 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-md border font-mono text-xs font-medium transition-colors', BADGE_CLASS[state], state === 'pending' ? 'duration-75' : 'duration-200', state === 'correct' && !chosen && 'delay-150')} aria-hidden="true">
+			<span className={cn('absolute flex size-7 items-center justify-center rounded-md border font-mono text-xs font-medium transition-colors', scene ? 'left-2 top-2' : 'left-3 top-1/2 -translate-y-1/2', BADGE_CLASS[state], state === 'pending' ? 'duration-75' : 'duration-200', state === 'correct' && !chosen && 'delay-150')} aria-hidden="true">
 				{state === 'correct' ? <Check className={cn('size-4 animate-badge-pop', !chosen && '[animation-delay:150ms]')} strokeWidth={3} /> : state === 'incorrect' ? <X className="size-4 animate-badge-pop" strokeWidth={3} /> : number}
 			</span>
-			<Html as="span" data-answer-content html={html} className="math-content block max-w-full scroll-x px-1 py-1 [&_.katex-display]:overflow-visible [&_.katex]:text-inherit" aria-hidden="true" />
+			{scene ? (
+				<Html as="span" data-answer-content html={html} className="mx-auto block w-full max-w-64 [&_svg]:w-full" aria-hidden="true" />
+			) : (
+				<Html as="span" data-answer-content html={html} className="math-content block max-w-full scroll-x px-1 py-1 [&_.katex-display]:overflow-visible [&_.katex]:text-inherit" aria-hidden="true" />
+			)}
 		</button>
 	);
 }
@@ -506,7 +512,7 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 							return (
 								// An odd last answer takes the whole row instead of leaving a hole.
 								<div key={i} className="h-full min-w-0 animate-step-in [&:nth-child(odd):last-child]:col-span-full" style={{ animationDelay: `${40 + i * 30}ms` }}>
-									<AnswerButton html={option.html} number={i + 1} label={`Risposta ${i + 1}: ${speakable(option.text)}`} state={state} chosen={selected === i} locked={selected !== null || busy} onClick={() => answer(i)} />
+									<AnswerButton html={option.html} number={i + 1} label={`Risposta ${i + 1}: ${speakable(option.text)}`} state={state} chosen={selected === i} locked={selected !== null || busy} onClick={() => answer(i)} scene={option.scene} />
 								</div>
 							);
 						})}

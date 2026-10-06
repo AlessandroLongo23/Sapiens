@@ -156,7 +156,7 @@ async function main(): Promise<number> {
 				expectRight(reference, 'reference');
 				for (const w of writings(s, grading)) expectRight(w, 'writing');
 				const choice = s.choice ?? gen.toChoice?.(s, createRng(deriveSeed(seed, level)));
-				if (choice) choice.options.forEach((o, k) => k !== choice.correct && !o.figure && expectWrong(o.latex, 'distractor'));
+				if (choice) choice.options.forEach((o, k) => k !== choice.correct && !o.figure && !o.scene && expectWrong(o.latex, 'distractor'));
 				const copyCounts = grading.grade === 'form' || s.answer.kind === 'number';
 				// "Scomponi, se possibile": a polynomial that does not factor is its own answer
 				const isItsOwnAnswer = s.answer.kind === 'expression' && (s.answer.latex.replace(/\s/g, '') === s.problem.replace(/\s/g, '') || /irriducibil/i.test(s.answer.latex));

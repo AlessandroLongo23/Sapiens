@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-04
+aggiornato: 2026-10-06
 tag: [indice]
 ---
 # Sapiens
@@ -29,6 +29,10 @@ Il 3 ottobre è arrivato l'editor di codice per informatica: Python, C e C++ ese
 
 Il 4 ottobre Alessandro ha dettato una visione larga dei lati tutor, docenti, genitori e scuole (sette idee nuove, vedi [[2026-10-04 Pensieri sulla visione, tutor docenti e scuole]]) e ha chiesto di partire dal lato tutor. Lo stesso giorno è scritta l'[[Agenda tutor]], sul modello del suo vecchio progetto AleRipetizioni: il tutor aggiunge gli studenti con un invito, assegna esercizi che entrano nel diario, fissa le lezioni, vede i progressi se lo studente li condivide, e i due si scrivono; il profilo pubblico mostra orari liberi e recensioni. Migrazione applicata, codice non ancora committato né pubblicato. Vedi [[2026-10-04 Agenda tutor]].
 
+Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas e i due principi della termodinamica, con 221 figure TikZ, 53 figure interattive, 926 flashcard e 49 generatori (283 livelli, 21 scene nuove). Pubblicato lo stesso giorno; quello che resta da correggere è in [[Fisica terzo anno, da sistemare]]. Vedi [[2026-10-06 Terzo anno di fisica]].
+
+Il 6 ottobre è scritto il terzo anno di chimica: 33 lezioni nuove (struttura elettronica, nucleo e radioattività, sistema periodico, legami, forma delle molecole, forze intermolecolari, nomenclatura), che con le due già scritte fanno le 35 dell'albero, con 651 flashcard, 119 figure TikZ, 43 figure interattive e 33 generatori (187 livelli). In produzione dal 6 ottobre (PR #45 e #46); i punti ancora aperti sono in [[Agenda]]. Vedi [[2026-10-06 Terzo anno di chimica]].
+
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
@@ -36,7 +40,7 @@ Il 4 ottobre Alessandro ha dettato una visione larga dei lati tutor, docenti, ge
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
-- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]], [[Domande per Andrea]]
+- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]], [[Domande per Andrea]], [[Fisica terzo anno, da sistemare]]
 - **Business:** [[Piani e prezzi]], [[Margini per cliente]], [[Vendita alle scuole]]
 - **Marketing:** [[Piano di acquisizione]], [[Creator]], [[SEO]], [[Social]], [[Stagionalità]]
 - **Legale:** [[GDPR e minori]], [[Consulenze IDA]], [[Contratti con le scuole]], [[AI Act]], [[Società e IVA]], [[Tutela del consumatore]], [[Accordi del team]]
@@ -45,7 +49,7 @@ Il 4 ottobre Alessandro ha dettato una visione larga dei lati tutor, docenti, ge
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-04 Agenda tutor]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-06 Terzo anno di chimica]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
