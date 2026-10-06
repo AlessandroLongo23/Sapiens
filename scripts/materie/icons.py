@@ -9,7 +9,7 @@ ARGS = sys.argv[sys.argv.index('--') + 1:]
 OUT, MODE, ONLY = ARGS[0], ARGS[1], ARGS[2:]
 SIZE, FRAME_SIZE, FRAMES = 720, 480, 75  # the loop: 75 frames at 30 a second
 
-PAPER, YELLOW, INK, GREY, PEN = '#ECE4D2', '#FFCB2E', '#27304D', '#C3CAD8', '#E11D48'
+PAPER, YELLOW, INK, GREY = '#ECE4D2', '#FFCB2E', '#27304D', '#C3CAD8'
 TONES = {
 	'math': ('#C22445', '#F2B4BF', '#7C1029'),
 	'physics': ('#2B66C2', '#AFC9F3', '#173F7C'),

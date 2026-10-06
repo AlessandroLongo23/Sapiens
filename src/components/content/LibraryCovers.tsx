@@ -45,28 +45,6 @@ const LEVELS: Record<string, { who: string; blurb: string }> = {
 	university: { who: 'Primi esami', blurb: 'Analisi, fisica e informatica dei primi anni di ingegneria e delle facoltà scientifiche.' }
 };
 
-/** The subjects whose object has a film of it moving (see SubjectObject), keyed like SUBJECTS. */
-const LOOPS = new Set([
-	'high_school/chemistry',
-	'high_school/computer-science',
-	'high_school/math',
-	'high_school/physics',
-	'middle_school/math',
-	'middle_school/science',
-	'middle_school/technology',
-	'university/agenti-ia',
-	'university/analisi-1',
-	'university/analisi-2',
-	'university/deep-learning',
-	'university/fisica-1',
-	'university/fisica-2',
-	'university/fondamenti-informatica',
-	'university/ia-classica',
-	'university/ia-responsabile',
-	'university/machine-learning',
-	'university/modelli-linguistici'
-]);
-
 /** The areas the courses of the university are filtered by, each with the tone that colours it, in the order of the tabs. */
 export const AREAS: { tone: string; label: string }[] = [
 	{ tone: 'math', label: 'Matematica' },
@@ -80,8 +58,8 @@ export function subjectShort(level: ContentNode, subject: ContentNode): string {
 	return SUBJECTS[`${level.slug}/${subject.slug}`]?.short ?? plainTitle(subject.title);
 }
 
-/** How a card is laid out: the object over the text, beside it, or a row with a list (the chapters) at its end. */
-export type CardLayout = 'stack' | 'side' | 'row';
+/** How a card is laid out: the object over the text, or beside it. */
+export type CardLayout = 'stack' | 'side';
 
 interface ObjectCardProps {
 	href: string;
@@ -89,8 +67,6 @@ interface ObjectCardProps {
 	tone: string;
 	/** The object's files in public/materie, without the extension. */
 	object: string;
-	/** Whether the object has a film of it moving. */
-	loop?: boolean;
 	eyebrow?: string;
 	title: ReactNode;
 	text?: string;
@@ -98,8 +74,6 @@ interface ObjectCardProps {
 	chips?: { tone: string; label: string }[];
 	/** The counts at the foot of the card. */
 	meta: string[];
-	/** For the row: what the card holds, listed at its end. */
-	list?: string[];
 	layout?: CardLayout;
 }
 
@@ -114,11 +88,10 @@ export const subjectLayout = (count: number): CardLayout => (count === 2 || coun
 /**
  * A level or a subject, as a card: its object (a render, see scripts/materie/icons.py)
  * on a wash of its colour, the title, what is inside and the counts. Under a mouse the
- * object comes forward (`subject-object` in globals.css) and, where it has a film, moves
- * (SubjectObject). On a phone every layout is the same row, object on the left, so a
- * screen holds several cards.
+ * object comes forward (`subject-object` in globals.css) and moves (SubjectObject). On a
+ * phone both layouts are the same row, object on the left, so a screen holds several cards.
  */
-export function ObjectCard({ href, tone, object, loop = false, eyebrow, title, text, chips, meta, list, layout = 'stack' }: ObjectCardProps) {
+export function ObjectCard({ href, tone, object, eyebrow, title, text, chips, meta, layout = 'stack' }: ObjectCardProps) {
 	const stack = layout === 'stack';
 	const arrow = (
 		<span className="grid size-9 shrink-0 place-items-center rounded-full bg-tint-soft text-tint-fg transition-colors duration-300 ease-out-soft group-hover:bg-tint-cover group-hover:text-tint-cover-fg max-sm:hidden" aria-hidden="true">
@@ -150,8 +123,8 @@ export function ObjectCard({ href, tone, object, loop = false, eyebrow, title, t
 		</>
 	);
 	return (
-		// In the stack and beside the text the object rises over the card's edge: the room above the card is for that.
-		<div data-subject={tone} className={cn('subject-card group h-full max-sm:pt-0', stack && 'pt-12', layout === 'side' && 'pt-8')}>
+		// The object rises over the card's edge: the room above the card is for that.
+		<div data-subject={tone} className={cn('subject-card group h-full max-sm:pt-0', stack ? 'pt-12' : 'pt-8')}>
 			<Link
 				href={href}
 				className={cn(
@@ -163,28 +136,28 @@ export function ObjectCard({ href, tone, object, loop = false, eyebrow, title, t
 				<span
 					className={cn(
 						'absolute inset-0 -z-10 rounded-[inherit] from-tint-soft to-transparent max-sm:bg-linear-to-r max-sm:to-70%',
-						stack ? 'bg-linear-to-b to-70%' : layout === 'side' ? 'bg-linear-to-l to-75%' : 'bg-linear-to-r to-45%'
+						stack ? 'bg-linear-to-b to-70%' : 'bg-linear-to-l to-75%'
 					)}
 					aria-hidden="true"
 				/>
 				<span
 					className={cn(
 						'grid-paper absolute inset-0 -z-10 rounded-[inherit] [--grid:color-mix(in_oklab,var(--tint)_13%,transparent)] max-sm:hidden',
-						stack ? '[mask-image:linear-gradient(black,transparent_62%)]' : layout === 'side' ? '[mask-image:linear-gradient(to_left,black,transparent_60%)]' : '[mask-image:linear-gradient(to_right,black,transparent_38%)]'
+						stack ? '[mask-image:linear-gradient(black,transparent_62%)]' : '[mask-image:linear-gradient(to_left,black,transparent_60%)]'
 					)}
 					aria-hidden="true"
 				/>
 				<span
 					className={cn(
 						'absolute -z-10 size-44 rounded-full bg-tint opacity-0 blur-3xl transition-opacity duration-500 ease-out-soft group-hover:opacity-30 max-sm:hidden',
-						stack ? 'left-1/2 top-2 -translate-x-1/2' : layout === 'side' ? 'right-6 top-0' : 'left-0 top-1/2 -translate-y-1/2'
+						stack ? 'left-1/2 top-2 -translate-x-1/2' : 'right-6 top-0'
 					)}
 					aria-hidden="true"
 				/>
 				{stack && (
 					<>
 						<div className="-mt-12 flex justify-center max-sm:mt-0 max-sm:shrink-0 max-sm:pl-2">
-							<SubjectObject id={object} loop={loop} className={cn(OBJECT, '-mb-3 size-60 max-sm:mb-0 max-sm:size-24')} />
+							<SubjectObject id={object} className={cn(OBJECT, '-mb-3 size-60 max-sm:mb-0 max-sm:size-24')} />
 						</div>
 						<div className="flex min-w-0 flex-1 flex-col px-6 pb-5 max-sm:px-3 max-sm:py-4">
 							{words}
@@ -195,7 +168,7 @@ export function ObjectCard({ href, tone, object, loop = false, eyebrow, title, t
 						</div>
 					</>
 				)}
-				{layout === 'side' && (
+				{!stack && (
 					<>
 						<div className="flex min-w-0 flex-1 flex-col justify-center py-6 pl-7 max-sm:order-2 max-sm:px-3 max-sm:py-4">
 							{words}
@@ -205,33 +178,8 @@ export function ObjectCard({ href, tone, object, loop = false, eyebrow, title, t
 							</div>
 						</div>
 						<div className="-mr-2 -mt-8 flex w-[46%] shrink-0 items-center justify-center max-sm:order-1 max-sm:m-0 max-sm:w-auto max-sm:pl-2">
-							<SubjectObject id={object} loop={loop} className={cn(OBJECT, 'aspect-square w-full max-w-72 max-sm:size-24')} />
+							<SubjectObject id={object} className={cn(OBJECT, 'aspect-square w-full max-w-72 max-sm:size-24')} />
 						</div>
-					</>
-				)}
-				{layout === 'row' && (
-					<>
-						<div className="flex shrink-0 items-center pl-3 max-sm:pl-2">
-							<SubjectObject id={object} loop={loop} className={cn(OBJECT, 'size-40 max-sm:size-24')} />
-						</div>
-						<div className="flex min-w-0 flex-1 flex-col justify-center py-5 pl-2 pr-6 max-sm:px-3 max-sm:py-4">
-							{words}
-							<div className="pt-3 max-sm:pt-2">{counts}</div>
-						</div>
-						{list && (
-							<ol className="flex w-[34%] shrink-0 flex-col justify-center gap-1 border-l border-edge py-5 pl-6 pr-4 max-lg:hidden">
-								{list.slice(0, 4).map((item, i) => (
-									<li key={item} className="flex gap-3 text-sm text-fg">
-										<span className="label-mono w-5 shrink-0 pt-0.5 text-tint-fg">{String(i + 1).padStart(2, '0')}</span>
-										<span className="truncate">
-											<Latex content={item} />
-										</span>
-									</li>
-								))}
-								{list.length > 4 && <li className="label-mono pl-8 pt-1 text-fg-faint">e altri {list.length - 4}</li>}
-							</ol>
-						)}
-						<div className="flex items-center pr-6 max-sm:hidden">{arrow}</div>
 					</>
 				)}
 			</Link>
@@ -240,7 +188,7 @@ export function ObjectCard({ href, tone, object, loop = false, eyebrow, title, t
 }
 
 /** A subject, as a card (pass its `level`). */
-export function SubjectCard({ level, subject, href, layout = subjectLayout(level?.children.length ?? 0) }: { level: ContentNode | undefined; subject: ContentNode; href: string; layout?: CardLayout }) {
+export function SubjectCard({ level, subject, href }: { level: ContentNode | undefined; subject: ContentNode; href: string }) {
 	const id = `${level?.slug}/${subject.slug}`;
 	const c = countByType(subject.children);
 	return (
@@ -248,18 +196,16 @@ export function SubjectCard({ level, subject, href, layout = subjectLayout(level
 			href={href}
 			tone={toneFor(subject)}
 			object={id.replace('/', '-')}
-			loop={LOOPS.has(id)}
 			title={<Latex content={subject.title} />}
 			text={SUBJECTS[id]?.inside}
 			meta={[plural(c.chapter, 'capitolo', 'capitoli'), plural(c.topic, 'lezione', 'lezioni')]}
-			list={subject.children.map((chapter) => chapter.title)}
-			layout={layout}
+			layout={subjectLayout(level?.children.length ?? 0)}
 		/>
 	);
 }
 
 /** A level, as a card: who it is for, what it holds, and its subjects in their colours. */
-export function LevelCard({ level, href, layout }: { level: ContentNode; href: string; layout?: CardLayout }) {
+export function LevelCard({ level, href }: { level: ContentNode; href: string }) {
 	const about = LEVELS[level.slug];
 	const c = countByType(level.children);
 	return (
@@ -267,14 +213,11 @@ export function LevelCard({ level, href, layout }: { level: ContentNode; href: s
 			href={href}
 			tone="ink"
 			object={`level-${level.slug}`}
-			loop
 			eyebrow={about?.who}
 			title={<Latex content={level.title} />}
 			text={about?.blurb}
 			chips={level.children.map((subject) => ({ tone: toneFor(subject), label: subjectShort(level, subject) }))}
 			meta={[plural(c.subject, ...subjectNoun(level)), plural(c.chapter, 'capitolo', 'capitoli'), plural(c.topic, 'lezione', 'lezioni')]}
-			list={level.children.map((subject) => subject.title)}
-			layout={layout}
 		/>
 	);
 }

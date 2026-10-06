@@ -10,7 +10,7 @@ Sessione del 6 ottobre 2026. Alessandro non era più contento delle copertine a 
 - Le materie e i livelli sono schede con un oggetto reso in Blender (`scripts/materie/icons.py`, `scripts/materie/export.py`, file in `public/materie/`): 18 materie e 3 livelli, ciascuno con un'immagine ferma e un filmato che gira al passaggio del mouse.
 - Una sola scheda (`ObjectCard` in `LibraryCovers.tsx`) con tre disposizioni; i livelli in colonna, le materie affiancate quando sono due o quattro.
 - L'università dice corsi e filtra per area (`CourseAreas.tsx`).
-- Eliminati `CoverFigures.tsx`, `LevelSheet.tsx`, `SheetCycle.tsx`. Resta nel CSS il blocco `level-sheet`, da togliere.
+- Eliminati `CoverFigures.tsx`, `LevelSheet.tsx`, `SheetCycle.tsx`. Il 7 ottobre, su richiesta di Alessandro, tolto anche il resto: la pagina di prova `/prova-schede`, la disposizione a riga della scheda, il CSS di `level-sheet` e le formule scritte a mano dei fogli dei livelli (`hero-ink.ts` passa da 82 a 25 KB, ed è caricato dalla home).
 - Ricerca sui corsi da aggiungere: [[Corsi universitari da aggiungere]].
 
 ## Cosa ha bocciato Alessandro, e perché
@@ -21,7 +21,6 @@ Sessione del 6 ottobre 2026. Alessandro non era più contento delle copertine a 
 ## Rimasto da fare
 - Provare i filmati su Safari (HEVC con alfa) e su Firefox.
 - Commit e pubblicazione, quando Alessandro dà il via: i file di `public/materie/` pesano circa 12 MB.
-- Togliere la pagina di prova `/prova-schede` quando non serve più, e il CSS di `level-sheet`.
 - La riga degli argomenti per i sei corsi di intelligenza artificiale.
 - Decidere con Dario se questi oggetti diventano il linguaggio delle illustrazioni del sito.
 - Decidere quali corsi universitari aggiungere, le aree nuove e i loro colori.

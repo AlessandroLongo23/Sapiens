@@ -662,22 +662,6 @@
 	}
 	[data-paused] .sk-sheet * { animation-play-state: paused; }
 }
-/* The library's level sheets (LevelSheet): only the working of the subject in
-   `data-active` shows (showing it again restarts its strokes, so the pen writes
-   it again), and that subject's divider stands up. */
-.level-sheet [data-w] { display: none; }
-.level-sheet[data-active='0'] [data-w='0'],
-.level-sheet[data-active='1'] [data-w='1'],
-.level-sheet[data-active='2'] [data-w='2'],
-.level-sheet[data-active='3'] [data-w='3'],
-.level-sheet[data-active='4'] [data-w='4'],
-.level-sheet[data-active='5'] [data-w='5'] { display: inline; }
-.level-sheet[data-active='0'] [data-tabbar='0'],
-.level-sheet[data-active='1'] [data-tabbar='1'],
-.level-sheet[data-active='2'] [data-tabbar='2'],
-.level-sheet[data-active='3'] [data-tabbar='3'],
-.level-sheet[data-active='4'] [data-tabbar='4'],
-.level-sheet[data-active='5'] [data-tabbar='5'] { height: calc(var(--spacing) * 7); }
 @keyframes sk-draw {
 	from { stroke-dashoffset: 1.01; }
 }

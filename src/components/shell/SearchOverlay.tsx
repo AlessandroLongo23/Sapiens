@@ -318,7 +318,7 @@ function Hit({ row, index, active, stems, onOpen, onHover }: { row: Row; index: 
 				className="subject-card group relative isolate flex h-full items-center gap-1 overflow-hidden rounded-2xl border border-edge bg-surface pr-4 no-underline shadow-paper transition-[translate,box-shadow,border-color] duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-tint-edge hover:shadow-lift focus-ring data-active:-translate-y-0.5 data-active:border-tint-edge data-active:shadow-lift"
 			>
 				<span className="absolute inset-0 -z-10 bg-linear-to-r from-tint-soft to-transparent to-60%" aria-hidden="true" />
-				<SubjectObject id={level ? `level-${node.slug}` : `${parent.slug}-${node.slug}`} loop className="subject-object pointer-events-none size-24 shrink-0 select-none" />
+				<SubjectObject id={level ? `level-${node.slug}` : `${parent.slug}-${node.slug}`} className="subject-object pointer-events-none size-24 shrink-0 select-none" />
 				<span className="flex min-w-0 flex-1 flex-col gap-0.5 py-3">
 					<span className="label-mono truncate text-tint-fg">{level ? 'Livello' : `${one} · ${titleOf(parent)}`}</span>
 					<span className="font-display text-xl font-semibold leading-tight tracking-tight text-fg-strong">

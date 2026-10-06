@@ -6,13 +6,13 @@ import { useEffect, useRef, useState } from 'react';
 const VERSION = 9;
 
 /**
- * The object on a subject card: a still, and for the subjects in `loop` a short film of
- * it moving, which starts and ends on the still. The film is fetched the first time the
+ * The object on a card of the library: a still, and a short film of it moving, which
+ * starts and ends on the still. The film is fetched the first time the
  * card is under a mouse and plays while it stays there; when the mouse leaves, the loop
  * runs to its end and the still comes back, so the object never jumps. Chrome and
  * Firefox get VP9 with alpha, Safari HEVC with alpha (see scripts/materie/export.py).
  */
-export function SubjectObject({ id, loop, className }: { id: string; loop: boolean; className?: string }) {
+export function SubjectObject({ id, className }: { id: string; className?: string }) {
 	const box = useRef<HTMLSpanElement>(null);
 	const film = useRef<HTMLVideoElement>(null);
 	const over = useRef(false);
@@ -28,7 +28,7 @@ export function SubjectObject({ id, loop, className }: { id: string; loop: boole
 
 	useEffect(() => {
 		const card = box.current?.closest('.subject-card');
-		if (!loop || !card || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		if (!card || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		const enter = (e: Event) => {
 			if ((e as PointerEvent).pointerType !== 'mouse') return;
 			over.current = true;
@@ -46,7 +46,7 @@ export function SubjectObject({ id, loop, className }: { id: string; loop: boole
 			card.removeEventListener('pointerenter', enter);
 			card.removeEventListener('pointerleave', leave);
 		};
-	}, [id, loop]);
+	}, [id]);
 
 	const end = () => {
 		const v = film.current;
