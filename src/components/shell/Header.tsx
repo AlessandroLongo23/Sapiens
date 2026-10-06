@@ -21,6 +21,8 @@ import { AppBackButton } from './AppBackButton';
 
 // The tools' registry holds every tool's metadata, too much to pull into the header for one path.
 const TOOLS_ROOT = '/strumenti';
+// The labs are for a computer (a mouse and a keyboard, or a controller): the link is in the desktop bar only.
+const LAB_ROOT = '/laboratorio';
 
 /** `nav-mark` (globals.css) is the highlighter: faint on hover, full (`data-on`) on the current section and on an open level menu. */
 const navLink = (active: boolean) => cn('nav-mark rounded font-medium transition-colors focus-ring', active ? 'text-fg-strong' : 'text-fg-muted hover:text-fg');
@@ -93,6 +95,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 	const inZaino = pathname.startsWith(ZAINO_ROOT);
 	const inDiario = pathname === DIARIO_ROOT || pathname.startsWith('/errori');
 	const inTools = pathname.startsWith(TOOLS_ROOT);
+	const inLab = pathname.startsWith(LAB_ROOT);
 
 	return (
 		<header
@@ -181,6 +184,7 @@ export function Header({ hidden = false, immersive = false, bare = false }: { hi
 						{user && <NavLink href={DIARIO_ROOT} active={inDiario}>Diario</NavLink>}
 						<NavLink href={ZAINO_ROOT} active={inZaino}>Zaino</NavLink>
 						<NavLink href={TOOLS_ROOT} active={inTools}>Strumenti</NavLink>
+						<NavLink href={LAB_ROOT} active={inLab}>Laboratorio</NavLink>
 					</nav>
 					</div>
 				</div>

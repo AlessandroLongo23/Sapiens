@@ -402,7 +402,7 @@ function Worksheet({ exp }: { exp: Experiment }) {
 				<TapedPhoto
 					src={exp.photo}
 					alt={`Il banco pronto per l'esperimento: ${exp.title.toLowerCase()}`}
-					caption="il banco, prima di cominciare"
+					caption={exp.caption ?? 'il banco, prima di cominciare'}
 					tilt={-1.5}
 					tape="corners"
 					ratio="aspect-[16/7]"

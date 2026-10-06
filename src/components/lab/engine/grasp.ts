@@ -57,6 +57,8 @@ export const SHAPES: Record<string, Shape> = {
 	Thermometer: cyl(0.0035, 0, 0.3, 0.22, 'pen'),
 	Pipette: { radius: (y) => (y < 0.26 ? 0.0096 : 0.0035), y0: 0.26, y1: 0.46, grip: 0.425, kind: 'pinch' },
 	Spatula: cyl(0.0045, 0.03, 0.2, 0.15, 'pen'),
+	WireLoop: cyl(0.0042, 0.082, 0.2, 0.15, 'pen'),
+	Indicator: cyl(0.014, 0, 0.05, 0.026),
 	Lighter: { ...cyl(0.0125, 0.12, 0.215, 0.168), button: [0, 0.135, 0.023] },
 	Funnel: cyl(0.0036, -0.07, 0, -0.03, 'pinch'),
 	BunsenCollar: cyl(0.0078, 0.021, 0.04, 0.03, 'pinch')
@@ -66,6 +68,7 @@ export const HOLDS: Record<string, FixedHold> = {
 	EvapDish: { p: [0.056, 0.022, 0], f: [0, -0.35, -1], n: [-1, 0, 0], curl: 0.5 },
 	FilterPaper: { p: [0.045, 0.012, 0], f: [-1, 0, 0], n: [0, -1, 0], curl: 0.25 },
 	Goggles: { p: [0.088, 0.035, -0.045], f: [0, 0, -1], n: [-1, 0, 0], curl: 0.55 },
+	CobaltGlass: { p: [0.03, 0.009, 0], f: [-1, 0, 0], n: [0, -1, 0], curl: 0.3 },
 	GasTapHandle: { p: [0.052, 0.024, 0], f: [1, 0, 0], n: [0, -1, 0], curl: 0.35 }
 };
 
@@ -194,6 +197,117 @@ export function segFrames(chain: Chain, angles: number[], thumb: boolean) {
 		out.push(m.clone());
 	}
 	return out;
+}
+
+// ---------------------------------------------------------------------------------------------
+// a flat thing pinched at a corner
+
+/**
+ * Flat, thin things held as a card is: by a corner, the thumb on the face towards the eyes and the index and the
+ * middle finger behind, the other two fingers closed out of the way. Half the side and the thickness, metres; the
+ * thing lies in its local XZ plane, from Y = 0 to its thickness.
+ */
+export const PINCHED: Record<string, { half: number; thick: number }> = { CobaltGlass: { half: 0.025, thick: 0.003 } };
+
+/** How far in from the corner, along the diagonal, the fingers hold it. */
+const PINCH_IN = 0.013;
+const PINCH_FINGERS: [number, number, number, number][] = [
+	[34 * D, 78 * D, 30 * D, -4 * D],
+	[42 * D, 80 * D, 30 * D, 0],
+	[84 * D, 96 * D, 56 * D, 2 * D],
+	[88 * D, 98 * D, 58 * D, 0]
+];
+
+/**
+ * The pad of the thumb's last segment: where it is and where it faces, in the hand's frame. `side` is which way of
+ * the segment's own Z the pad is (+1 or -1): the bones' frames do not say, and the search tries both.
+ */
+function thumbPad(chain: Chain, frames: Matrix4[], side: number) {
+	const m = frames[2];
+	const local = new Vector3(0, chain.tip * 0.6, 0.006 * side);
+	// on the glove itself, where its vertices are known: the outermost ones of that side, in the middle of the segment
+	const vs = (chain.verts?.[2] ?? []).filter((v) => v.y > chain.tip * 0.3 && v.y < chain.tip * 0.9);
+	if (vs.length > 8) {
+		const top = [...vs].sort((a, b) => (b.z - a.z) * side).slice(0, Math.max(3, Math.floor(vs.length * 0.15)));
+		local.set(0, 0, 0);
+		for (const v of top) local.add(v);
+		local.multiplyScalar(1 / top.length);
+	}
+	return { p: local.applyMatrix4(m), n: new Vector3(0, 0, side).transformDirection(m) };
+}
+
+const pinches = new WeakMap<Chain, { grip: Grip; angles: FingerAngles }>();
+
+/**
+ * The pinch of a flat thing for a hand, as a card is held up to look at it: the forearm half turned, the back of the
+ * hand outwards, the thumb towards the eyes. The index and the middle finger are curled side by side behind the
+ * thing, which stands in the plane the fingers bend in, against the index's thumb side; the thumb lies on its near
+ * face. The fingers' pose is fixed; the thumb's five angles are searched until its pad is on the thing over the
+ * index's last segment, facing it (they depend on the hand's own bones). From the corner held, the thing goes on
+ * away from the hand: half towards the fingertips' side, half out of the palm.
+ */
+export function pinchGrip(name: string, chains: Chain[], thumb: Chain, palm: Vector3): { grip: Grip; angles: FingerAngles } | null {
+	const flat = PINCHED[name];
+	if (!flat) return null;
+	const done = pinches.get(thumb);
+	if (done) return done;
+	// which way along the hand's X the thumb is: the right hand's one way, the left's the other
+	const side = Math.sign(thumb.pos[0].x - chains[1].pos[0].x) || 1;
+	const out = new Vector3(side, 0, 0);
+	// the index as bent: how far its last two segments come towards the thumb, and where its last one is
+	const frames = segFrames(chains[0], PINCH_FINGERS[0], false);
+	let x0 = -Infinity;
+	const at = new Vector3();
+	let n = 0;
+	for (const seg of [1, 2])
+		for (const v of chains[0].verts?.[seg] ?? []) {
+			const w = v.clone().applyMatrix4(frames[seg]);
+			x0 = Math.max(x0, w.x * side);
+			if (seg === 2) {
+				at.add(w);
+				n++;
+			}
+		}
+	if (n) at.multiplyScalar(1 / n);
+	else {
+		at.set(0, chains[0].tip * 0.5, 0).applyMatrix4(frames[2]);
+		x0 = at.x * side + 0.008;
+	}
+	// on the thing's far face, over the middle of the index's last segment
+	at.x = (x0 + 0.0005) * side;
+	const want = at.clone().addScaledVector(out, flat.thick + 0.001);
+	let best: ThumbAngles = [...RELAXED.t] as ThumbAngles;
+	let cost = Infinity;
+	for (let opp = -20; opp <= 90; opp += 10)
+		for (let abd = 0; abd <= 70; abd += 10)
+			for (let f1 = 0; f1 <= 40; f1 += 10)
+				for (let f2 = 0; f2 <= 50; f2 += 10)
+					for (let f3 = 0; f3 <= 40; f3 += 20) {
+						const t: ThumbAngles = [opp * D, f1 * D, f2 * D, f3 * D, abd * D];
+						const tf = segFrames(thumb, t, true);
+						for (const s of [1, -1]) {
+							const pad = thumbPad(thumb, tf, s);
+							// on the near face, and flat on it
+							const c = pad.p.distanceTo(want) + 0.008 * (1 + pad.n.dot(out));
+							if (c < cost) {
+								cost = c;
+								best = t;
+							}
+						}
+					}
+	// the thing's axes in the hand's frame: its normal from the thumb to the fingers, its sides along the fingers and
+	// out of the palm, the corner held towards the wrist and the back of the hand
+	const a = out.clone().negate();
+	const u = new Vector3(0, 1, 1).normalize();
+	const v = new Vector3().crossVectors(a, u);
+	const x = u.clone().add(v).normalize();
+	const z = new Vector3().crossVectors(x, a);
+	const origin = at.clone().addScaledVector(u, flat.half * Math.SQRT2 - PINCH_IN);
+	const inv = new Matrix4().makeBasis(x, a, z).setPosition(origin).invert();
+	const grip: Grip = { p: palm.clone().applyMatrix4(inv), q: new Quaternion().setFromRotationMatrix(inv), shape: null, curl: 0 };
+	const result = { grip, angles: { f: PINCH_FINGERS.map((f) => [...f] as [number, number, number, number]), t: best } };
+	pinches.set(thumb, result);
+	return result;
 }
 
 /** A fixed amount of curl, for holds without a surface model. */

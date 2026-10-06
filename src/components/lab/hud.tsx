@@ -132,7 +132,7 @@ export function Tip() {
 		return (
 			<div className={cls}>
 				<Key>Q</Key>
-				<Key>E</Key> usa la mano sinistra e la destra {dot} il quaderno è sul banco {dot} <Key>W</Key>
+				<Key>E</Key> usa la mano sinistra e la destra {dot} <Key>B</Key> quaderno {dot} <Key>W</Key>
 				<Key>A</Key>
 				<Key>S</Key>
 				<Key>D</Key> muoviti {dot} <Key>Esc</Key> pausa
@@ -176,7 +176,7 @@ export function Controls({ uses, wheel }: { uses: string; wheel?: string }) {
 					['Clic destro', 'la mano destra prende o appoggia'],
 					['Q · E', `la mano sinistra · la destra ${uses}`],
 					wheel ? ['Rotella', `regola: ${wheel} · con R, ${turn}`] : ['Rotella · R', turn],
-					['Quaderno', 'è sul banco: puntalo e premi Q o E per leggerlo'],
+					['B', 'il quaderno: strumenti, passi, pagine da compilare e appunti. Per scriverci servono le mani libere'],
 					['Controller', 'premi un suo tasto per usarlo: PlayStation o Xbox']
 				]
 			: (() => {
@@ -189,7 +189,7 @@ export function Controls({ uses, wheel }: { uses: string; wheel?: string }) {
 						[n.R, 'la mano destra prende o appoggia'],
 						[`${n.Q} · ${n.E}`, `la mano sinistra · la destra ${uses}`],
 						['Croce direzionale', `${wheel ? `su e giù regola: ${wheel} · ` : ''}sinistra e destra, o ${ps ? 'quadrato' : 'X'}, ${turn}`],
-						['Quaderno', `è sul banco: puntalo e premi ${n.Q} o ${n.E} per leggerlo`],
+						[ps ? 'Share' : 'View', `il quaderno · ${n.Q} e ${n.E} sfogliano, la croce passa da un campo all'altro e cambia i valori`],
 						[ps ? 'Options' : 'Menu', `pausa · per riprendere, ancora ${ps ? 'Options o croce' : 'Menu o A'}`]
 					] as [string, string][];
 				})();

@@ -3,11 +3,14 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Flame, Thermometer, FlaskRound } from 'lucide-react';
-import { LabScene } from './engine/scene';
+import { LabScene, type Kit } from './engine/scene';
 import { LOOK } from './engine/look';
 import { SHAPES } from './engine/grasp';
 import { Notebook } from './engine/notebook';
 import { Esperimento as Work, type EsperimentoSnapshot, type Readout } from './engine/esperimento';
+import { Saggi } from './engine/saggi';
+import { Titolazione } from './engine/titolazione';
+import { Quaderno } from './quaderno/Quaderno';
 import { applySettings, Controls, EnterHint, loadSettings, Prompt, Settings, Tip, type LabSettings } from './hud';
 
 const MODEL = '/lab/esperimento.glb';
@@ -18,13 +21,35 @@ const noSnap = () => null;
 /**
  * The chemistry lab as a game: the whole copper sulfate experiment at the bench, with the hands. On screen there is
  * the scene, a dot for a crosshair, the prompt in the corner, a line of subtitles and, when it changes, what to do
- * now; the steps and why they are done so are in the notebook, which lies on the bench (Q or E on it). Esc pauses.
+ * now; the steps, the instruments and the pages to fill in are in the notebook, which B brings up. Esc pauses.
  */
-/** `model`: the scene to play in; the whole lab (/laboratorio/aula) or the single bench (the default). */
-export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/laboratorio', subtitle }: { model?: string; quality?: 'auto' | 'alta' | 'leggera'; exitHref?: string; subtitle?: string } = {}) {
+/**
+ * The experiments the lab can play. Each is a class over the free lab that gives the page the same snapshot; one whose
+ * pieces are not in the rooms' own files names its kit in the catalog (lib/lab/catalog.ts).
+ */
+const EXPERIMENTS: Record<string, { uses: string; wheel: string }> = {
+	'solfato-di-rame': { uses: 'usa quello che tiene su ciò che guardi; libera, gira il rubinetto, indossa gli occhiali', wheel: 'la ghiera, la fiamma, la propipetta' },
+	'saggi-alla-fiamma': { uses: 'usa quello che tiene su ciò che guardi; libera, gira il rubinetto, indossa gli occhiali', wheel: 'la ghiera, la fiamma, la risposta sul cartellino' },
+	titolazione: { uses: 'usa quello che tiene su ciò che guardi; libera, agita la beuta, dà una goccia, legge la buretta', wheel: 'il rubinetto della buretta, la propipetta' }
+};
+
+type AnyWork = Work | Saggi | Titolazione;
+
+/**
+ * `model`: the scene to play in; the whole lab (/laboratorio/aula) or the single bench (the default). `experiment`:
+ * which one (the copper sulfate crystals if not given), with its `kit` if it has one.
+ */
+export function Esperimento({
+	model = MODEL,
+	quality = 'auto',
+	exitHref = '/laboratorio',
+	subtitle,
+	experiment = 'solfato-di-rame',
+	kit
+}: { model?: string; quality?: 'auto' | 'alta' | 'leggera'; exitHref?: string; subtitle?: string; experiment?: string; kit?: Kit } = {}) {
 	const host = useRef<HTMLDivElement>(null);
 	const sceneRef = useRef<LabScene | null>(null);
-	const [work, setWork] = useState<Work | null>(null);
+	const [work, setWork] = useState<AnyWork | null>(null);
 	const [progress, setProgress] = useState(0);
 	const [error, setError] = useState('');
 	const [started, setStarted] = useState(false);
@@ -32,6 +57,8 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 	const [run, setRun] = useState(0);
 	const [tip, setTip] = useState(true);
 	const [reading, setReading] = useState(false);
+	const [book, setBook] = useState<Notebook | null>(null);
+	const [hand, setHand] = useState('cursive');
 	const snap = useSyncExternalStore<EsperimentoSnapshot | null>(work?.subscribe ?? noSub, work?.getSnapshot ?? noSnap, noSnap);
 
 	useEffect(() => {
@@ -55,17 +82,21 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 			if (on) setStarted(true);
 		};
 		const family = getComputedStyle(document.documentElement).getPropertyValue('--font-caveat').trim() || 'cursive';
-		Promise.all([scene.load(model, (f) => alive && setProgress(f * 0.95)), document.fonts.load(`40px ${family}`), document.fonts.load(`bold 40px ${family}`)])
+		Promise.all([scene.load(model, (f) => alive && setProgress(f * 0.95), kit), document.fonts.load(`40px ${family}`), document.fonts.load(`bold 40px ${family}`)])
 			.then(() => {
 				if (!alive) return;
-				const nb = new Notebook(scene.camera, family);
-				scene.blockers.push(nb.group);
-				// raised from the bench by the student (Q or E on it), or by the work at the end
+				const nb = new Notebook();
+				// brought up by the student (B), or by the work at the end: the mouse is a cursor while it is up
 				nb.onToggle = (open) => {
 					setReading(open);
 					if (open) setTip(false);
+					scene.player.suspend(open);
 				};
-				const w = new Work(scene, nb);
+				setBook(nb);
+				setHand(family);
+				// the unknown samples of the flame tests: different at each run, or the ones of `?seme=` (for the tests)
+				const seed = Number(new URLSearchParams(window.location.search).get('seme')) || Math.floor(Math.random() * 1e9) + 1;
+				const w: AnyWork = experiment === 'saggi-alla-fiamma' ? new Saggi(scene, nb, family, seed) : experiment === 'titolazione' ? new Titolazione(scene, nb, seed) : new Work(scene, nb);
 				scene.start();
 				if (process.env.NODE_ENV !== 'production') (window as unknown as { __lab: unknown }).__lab = { scene, work: w, free: w.free, notebook: nb, LOOK, SHAPES };
 				scene.player.canEnter = true;
@@ -78,8 +109,9 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 			scene.dispose();
 			sceneRef.current = null;
 			setWork(null);
+			setBook(null);
 		};
-	}, [run, model, quality]);
+	}, [run, model, quality, experiment, kit]);
 
 	useEffect(() => {
 		if (!started) return;
@@ -110,12 +142,12 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 			<div ref={host} className="absolute inset-0" aria-label="Laboratorio in 3D" />
 			{snap?.goggles && <div className="pointer-events-none absolute inset-0 z-10 rounded-[56px] shadow-[inset_0_0_70px_18px_rgba(120,170,210,0.22)]" />}
 
-			{playing && (
+			{playing && !reading && (
 				<div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
 					<div className={`size-[5px] rounded-full bg-white/90 shadow-[0_0_4px_rgba(0,0,0,0.5)] transition-transform ${snap.actions.length ? 'scale-150' : ''}`} />
 				</div>
 			)}
-			{playing && (snap.target || snap.actions.length > 0) && <Prompt target={snap.target} actions={snap.actions} />}
+			{playing && !reading && (snap.target || snap.actions.length > 0) && <Prompt target={snap.target} actions={snap.actions} />}
 			{playing && !reading && (
 				<div className="pointer-events-none absolute left-7 top-6 z-20 flex max-w-[380px] flex-col gap-4">
 					<Objective key={snap.objective} step={snap.step} total={snap.total} title={snap.stepTitle} text={snap.objective} done={snap.done} />
@@ -124,10 +156,10 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 			)}
 			{playing && snap.lens && <Lens {...snap.lens} />}
 
-			{playing && snap.message && (
-				<div key={snap.message.text} className="pointer-events-none absolute bottom-[9%] left-1/2 z-20 max-w-[640px] -translate-x-1/2 text-center">
+			{playing && !reading && snap.message && (
+				<div key={snap.message.text} className={`pointer-events-none absolute left-1/2 z-20 max-w-[640px] -translate-x-1/2 text-center ${reading ? 'top-[3%]' : 'bottom-[9%]'}`}>
 					<span
-						className={`inline-block rounded-md px-3 py-1.5 text-[15px] leading-relaxed [text-shadow:0_1px_2px_rgba(0,0,0,0.6)] ${snap.message.kind === 'warn' ? 'bg-[#5a1f26]/70 text-[#ffe3e5]' : 'bg-[#1d1a28]/55 text-[#fbf3e4]'}`}
+						className={`inline-block rounded-md px-3 py-1.5 text-[15px] leading-relaxed [text-shadow:0_1px_2px_rgba(0,0,0,0.6)] ${snap.message.kind === 'warn' ? 'bg-[#5a1f26]/70 text-[#ffe3e5]' : 'bg-[#1d1a28]/55 text-[#fbf3e4]'} ${reading ? 'relative z-40' : ''}`}
 					>
 						{snap.message.text}
 					</span>
@@ -138,7 +170,9 @@ export function Esperimento({ model = MODEL, quality = 'auto', exitHref = '/labo
 				<Tip />
 			)}
 
-			{paused && <Pause exitHref={exitHref} apply={(st) => sceneRef.current && applySettings(sceneRef.current.player, st)} onResume={() => sceneRef.current?.player.lock()} onRestart={restart} done={done} />}
+			{playing && reading && book && <Quaderno book={book} font={hand} message={snap.message?.text} onClose={book.close} />}
+
+			{paused && <Pause legend={EXPERIMENTS[experiment] ?? EXPERIMENTS['solfato-di-rame']} exitHref={exitHref} apply={(st) => sceneRef.current && applySettings(sceneRef.current.player, st)} onResume={() => sceneRef.current?.player.lock()} onRestart={restart} done={done} />}
 			{!started && <Title subtitle={subtitle ?? 'cristalli di solfato di rame'} progress={progress} ready={!!work} error={error} onStart={enter} />}
 		</div>
 	);
@@ -228,7 +262,7 @@ function Title({ subtitle, progress, ready, error, onStart }: { subtitle: string
 	);
 }
 
-function Pause({ exitHref, apply, onResume, onRestart, done }: { exitHref: string; apply: (s: LabSettings) => void; onResume: () => void; onRestart: () => void; done: boolean }) {
+function Pause({ legend, exitHref, apply, onResume, onRestart, done }: { legend: { uses: string; wheel: string }; exitHref: string; apply: (s: LabSettings) => void; onResume: () => void; onRestart: () => void; done: boolean }) {
 	const item = 'block w-full rounded-lg px-4 py-2 text-left font-display text-2xl text-[#fff6e8]/90 transition hover:bg-white/10 hover:text-white';
 	return (
 		<div className="absolute inset-0 z-30 flex items-center bg-[linear-gradient(90deg,rgba(28,24,40,0.82)_0%,rgba(28,24,40,0.55)_45%,rgba(28,24,40,0.15)_100%)] px-[8vw]">
@@ -246,7 +280,7 @@ function Pause({ exitHref, apply, onResume, onRestart, done }: { exitHref: strin
 					</Link>
 				</nav>
 				<Settings apply={apply} />
-				<Controls uses="usa quello che tiene su ciò che guardi; libera, gira il rubinetto, indossa gli occhiali" wheel="la ghiera, la fiamma, la propipetta" />
+				<Controls uses={legend.uses} wheel={legend.wheel} />
 			</div>
 		</div>
 	);

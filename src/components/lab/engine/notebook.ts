@@ -1,14 +1,20 @@
-import { BoxGeometry, CanvasTexture, Group, Mesh, MeshBasicMaterial, PlaneGeometry, SRGBColorSpace, type Object3D } from 'three';
-import { getDevice, onDevice, tell } from './pad';
+import { onDevice } from './pad';
 
 /*
- * The lab notebook, in place of an instructions panel. It lies on the bench: the student points at it and raises it
- * in front of the eyes (Q or E, free.ts), and lowers it again, as the map in Firewatch. Raised, it hangs from the
- * camera and is drawn over the scene; its pages are a canvas written in a handwriting font.
+ * The lab notebook. It is not an object on the bench: B brings it up wherever the student is, the mouse becomes a
+ * cursor again, and its pages can be turned and written in (components/lab/quaderno draws it, as a page over the
+ * scene). This file is what it holds, with no drawing: the pages an experiment gives it, what the student has
+ * written in their fields, and what the experiment says of each value.
+ *
+ * Pages are A5 (560 by 792 px at full size), shown two at a time. What is written is plain data (`toJSON`), so it can
+ * be saved as a lab report.
+ *
+ * To write, both hands must be free; with something in a hand it opens to be read only (free.ts decides).
  */
 
 export type NotebookTask = { text: string; state: 'done' | 'now' | 'todo' | 'bad' };
 
+/** The steps' spread, as the experiment writes it: the step in hand, or at the end the results. */
 export type NotebookPage = {
 	/** A pencil line above the title (where the work is up to). */
 	kicker?: string;
@@ -21,56 +27,112 @@ export type NotebookPage = {
 	done: string | null;
 	/** The right page's heading ('Procedimento' if not given). */
 	steps?: string;
+	/** The tasks done are not struck through: what they say is still needed (the colours seen so far). */
+	keep?: boolean;
 	/** Results, as a table under the intro. */
 	rows?: [string, string][];
+	/** Every step of the experiment, for the index on the left page. */
+	outline?: { title: string; state: 'done' | 'now' | 'todo' }[];
 };
 
-const W = 0.34;
-const H = 0.222;
-const PX = 1600;
-const PY = Math.round((PX * H) / W);
+/** A blank the student fills in. */
+export type FieldDef = {
+	id: string;
+	kind: 'number' | 'text' | 'choice';
+	/** Written after a number. */
+	unit?: string;
+	/** A number's step for the wheel and the controller, and how many decimals it is shown with. */
+	step?: number;
+	decimals?: number;
+	/** What a choice offers; `color` (CSS) draws a swatch beside the word. */
+	options?: { value: string; label: string; color?: string }[];
+	placeholder?: string;
+	/** Its width, in characters. */
+	width?: number;
+	/** The field an empty number starts from when it is stepped (a final reading from the initial one). */
+	seed?: string;
+};
+
+export type Block =
+	| { type: 'text'; text: string }
+	| { type: 'heading'; text: string }
+	/** A table: a cell is a printed word or a blank. */
+	| { type: 'table'; head: string[]; rows: (string | FieldDef)[][] }
+	/** Blanks one under the other, each with what it asks. */
+	| { type: 'fields'; items: { label: string; field: FieldDef }[] }
+	/** A scale of colours to compare with what is seen. */
+	| { type: 'swatches'; title: string; items: { label: string; color: string; note?: string }[] }
+	/** The burette's scale at the meniscus, live (the titration). */
+	| { type: 'burette' }
+	/** Ruled lines to write on freely. */
+	| { type: 'lines'; id: string; rows: number; placeholder?: string };
+
+/** Something on the bench, in the notebook's first pages. */
+export type KitItem = {
+	name: string;
+	/** Its photo (public/lab/strumenti). */
+	image: string;
+	formula?: string;
+	text: string;
+};
+
+export type BookPage =
+	| { kind: 'kit'; title: string; items: KitItem[] }
+	/** The spread the experiment writes as it goes: every step on the left, the one in hand on the right. */
+	| { kind: 'steps' }
+	| { kind: 'form'; id: string; tab: string; title: string; blocks: Block[] }
+	| { kind: 'free'; id: string; title: string };
+
+/** What the experiment says of a value: right, or wrong with a word of help; null for a field it does not judge. */
+export type Verdict = { ok: boolean; hint?: string } | null;
+export type Mark = 'ok' | 'wrong';
+
+export type NotebookSnapshot = { open: boolean; readOnly: boolean; version: number };
 
 export class Notebook {
-	readonly group = new Group();
-	private canvas: HTMLCanvasElement;
-	private tex: CanvasTexture;
-	private k = 0;
 	private isOpen = false;
-	/** Called when it is raised or lowered, by the student or by the work (at the end, with the results). */
+	/** Opened with something in a hand: it can be read, not written in. */
+	readOnly = false;
+	/** Called when it comes up or goes away, by the student or by the work (at the end, with the results). */
 	onToggle: (open: boolean) => void = () => {};
-	private t = 0;
-	private last = '';
-	private page: NotebookPage | null = null;
+	steps: NotebookPage | null = null;
+	pages: BookPage[] = [{ kind: 'steps' }];
+	/** What the student has written, by field. */
+	readonly values: Record<string, string> = {};
+	readonly marks: Record<string, Mark> = {};
+	/** The fields the experiment has taken: written in ink, not changed again. */
+	readonly inked = new Set<string>();
+	/** The last word of help, shown at the foot of the page. */
+	hint = '';
+	/** The field being written in, not judged yet; and the spread the student was last on. */
+	private pending: string | null = null;
+	lastSpread: number | null = null;
+	/** Where to open: a page's id ('steps', a form's, a free page's), and the field to put the cursor in. */
+	goto: { page: string; field?: string } | null = null;
+	/** What the experiment says of a value written in a field. */
+	verify: (id: string, value: string) => Verdict = () => null;
+	/** Whether a field can be written in now, or why not. */
+	blocked: (id: string) => string = () => '';
+	/** Live values a page draws from the bench (the burette's level, or why it cannot be read). */
+	live: { burette?: () => { level: number } | { why: string }; warn?: () => string } = {};
+	private listeners = new Set<() => void>();
+	private snap: NotebookSnapshot = { open: false, readOnly: false, version: 0 };
 
-	constructor(
-		camera: Object3D,
-		private font: string
-	) {
-		// the hint names the inputs: redrawn when the student moves from the keyboard to a controller, or back
-		onDevice(() => this.page && this.draw(this.page));
-		this.canvas = document.createElement('canvas');
-		this.canvas.width = PX;
-		this.canvas.height = PY;
-		this.tex = new CanvasTexture(this.canvas);
-		this.tex.colorSpace = SRGBColorSpace;
-		this.tex.anisotropy = 4;
-		const over = { depthTest: false, depthWrite: false, transparent: true };
-		const cover = new Mesh(new BoxGeometry(W + 0.014, H + 0.012, 0.006), new MeshBasicMaterial({ color: '#2f6f73', ...over }));
-		cover.position.z = -0.006;
-		cover.renderOrder = 1000;
-		// the pages bow up from the spine
-		const g = new PlaneGeometry(W, H, 48, 1);
-		const pos = g.attributes.position;
-		for (let i = 0; i < pos.count; i++) {
-			const x = pos.getX(i);
-			pos.setZ(i, 0.01 * Math.sin((Math.PI * Math.abs(x)) / (W / 2)) + 0.004 * (Math.abs(x) / (W / 2)));
-		}
-		g.computeVertexNormals();
-		const pages = new Mesh(g, new MeshBasicMaterial({ map: this.tex, color: '#f4efe6', ...over }));
-		pages.renderOrder = 1001;
-		this.group.add(cover, pages);
-		this.group.visible = false;
-		camera.add(this.group);
+	constructor() {
+		// the hints name the inputs: redrawn when the student moves from the keyboard to a controller, or back
+		onDevice(() => this.emit());
+	}
+
+	subscribe = (fn: () => void) => {
+		this.listeners.add(fn);
+		return () => this.listeners.delete(fn);
+	};
+
+	getSnapshot = () => this.snap;
+
+	private emit() {
+		this.snap = { open: this.isOpen, readOnly: this.readOnly, version: this.snap.version + 1 };
+		for (const fn of this.listeners) fn();
 	}
 
 	get open() {
@@ -79,163 +141,114 @@ export class Notebook {
 
 	set open(v: boolean) {
 		if (v === this.isOpen) return;
+		// what was being typed is not lost with the page: it is judged as if the cursor had left the field
+		if (!v) this.settle();
 		this.isOpen = v;
+		this.hint = '';
+		if (!v) this.readOnly = false;
+		this.emit();
 		this.onToggle(v);
 	}
 
-	/** Whether it is in front of the eyes, on its way up or down too: the one on the bench is away meanwhile. */
-	get raised() {
-		return this.isOpen || this.group.visible;
+	/** Opens it at a page, with the cursor in a field; `readOnly` when a hand is not free (free.ts, openBook). */
+	show(page: string, field?: string, readOnly = false) {
+		this.goto = { page, field };
+		this.readOnly = readOnly;
+		if (this.isOpen) this.emit();
+		else this.open = true;
 	}
 
-	/** Redraws the pages if they changed. */
+	/** B, Esc or the cross: it goes away. */
+	close = () => {
+		this.open = false;
+	};
+
+	/** Where it was asked to open, once: the page drawn takes it. */
+	take() {
+		const g = this.goto;
+		this.goto = null;
+		return g;
+	}
+
+	/** The experiment's pages: after the steps come what it adds, and two blank pages at the end. */
+	setPages(pages: BookPage[]) {
+		this.pages = pages;
+		this.emit();
+	}
+
+	/** The steps' spread, rewritten by the experiment as the work moves on. */
 	draw(p: NotebookPage) {
-		const key = getDevice() + JSON.stringify(p);
-		if (key === this.last) return;
-		this.last = key;
-		this.page = p;
-		// the hint names the inputs of the device in use
-		p = { ...p, hint: tell(p.hint) };
-		const c = this.canvas.getContext('2d')!;
-		const f = (size: number, weight = 500) => `${weight} ${size}px ${this.font}`;
-		// paper, rules, margin, the fold
-		c.fillStyle = '#f6efdf';
-		c.fillRect(0, 0, PX, PY);
-		const half = PX / 2;
-		c.strokeStyle = 'rgba(96, 140, 190, 0.28)';
-		c.lineWidth = 2;
-		for (let y = 150; y < PY - 30; y += 52) {
-			c.beginPath();
-			c.moveTo(20, y);
-			c.lineTo(PX - 20, y);
-			c.stroke();
-		}
-		c.strokeStyle = 'rgba(214, 90, 90, 0.35)';
-		for (const x of [90, half + 90]) {
-			c.beginPath();
-			c.moveTo(x, 0);
-			c.lineTo(x, PY);
-			c.stroke();
-		}
-		const fold = c.createLinearGradient(half - 60, 0, half + 60, 0);
-		fold.addColorStop(0, 'rgba(0,0,0,0)');
-		fold.addColorStop(0.5, 'rgba(60,40,20,0.18)');
-		fold.addColorStop(1, 'rgba(0,0,0,0)');
-		c.fillStyle = fold;
-		c.fillRect(half - 60, 0, 120, PY);
-
-		const ink = '#27386b';
-		const pencil = '#6b6b70';
-		// left page: title and what the work is about
-		if (p.kicker) {
-			c.fillStyle = pencil;
-			c.font = f(36);
-			c.fillText(p.kicker, 110, 56);
-		}
-		c.fillStyle = ink;
-		c.font = f(64, 700);
-		c.fillText(p.title, 110, 118);
-		c.font = f(40);
-		let ly = 196 + 52 * wrap(c, p.intro, 110, 196, half - 170, 52);
-		if (p.rows) {
-			ly += 30;
-			c.font = f(38);
-			for (const [k, v] of p.rows) {
-				c.fillStyle = ink;
-				c.fillText(k, 110, ly);
-				c.font = f(38, 700);
-				const w = c.measureText(v).width;
-				c.fillText(v, half - 60 - w, ly);
-				c.font = f(38);
-				ly += 52;
-			}
-		}
-		if (p.done) {
-			c.fillStyle = '#1f6b4a';
-			c.font = f(44, 700);
-			c.fillText('Fatto!', 110, PY - 290);
-			c.font = f(38);
-			wrap(c, p.done, 110, PY - 238, half - 170, 52);
-		}
-		// right page: the steps, ticked in ink
-		const x0 = half + 110;
-		c.fillStyle = ink;
-		c.font = f(50, 700);
-		c.fillText(p.steps ?? 'Procedimento', x0, 110);
-		let y = 196;
-		p.tasks.forEach((t, i) => {
-			c.strokeStyle = t.state === 'todo' ? 'rgba(39,56,107,0.45)' : ink;
-			c.lineWidth = 3;
-			c.strokeRect(x0, y - 30, 30, 30);
-			if (t.state === 'bad') {
-				c.strokeStyle = '#b3313f';
-				c.lineWidth = 6;
-				c.beginPath();
-				c.moveTo(x0 + 4, y - 26);
-				c.lineTo(x0 + 28, y - 2);
-				c.moveTo(x0 + 28, y - 26);
-				c.lineTo(x0 + 4, y - 2);
-				c.stroke();
-			}
-			if (t.state === 'done') {
-				c.strokeStyle = '#1f6b4a';
-				c.lineWidth = 6;
-				c.beginPath();
-				c.moveTo(x0 + 4, y - 16);
-				c.lineTo(x0 + 13, y - 4);
-				c.lineTo(x0 + 36, y - 40);
-				c.stroke();
-			}
-			c.fillStyle = t.state === 'todo' ? 'rgba(39,56,107,0.55)' : ink;
-			c.font = f(40, t.state === 'now' ? 700 : 500);
-			const lines = wrap(c, `${i + 1}. ${t.text}`, x0 + 48, y, half - 210, 50);
-			if (t.state === 'done') {
-				c.strokeStyle = 'rgba(39,56,107,0.5)';
-				c.lineWidth = 2.5;
-				c.beginPath();
-				c.moveTo(x0 + 48, y - 12);
-				c.lineTo(x0 + 48 + Math.min(half - 210, c.measureText(`${i + 1}. ${t.text}`).width), y - 12);
-				c.stroke();
-			}
-			y += 52 * lines + 12;
-		});
-		if (p.hint && !p.done) {
-			c.fillStyle = pencil;
-			c.font = f(36);
-			wrap(c, p.hint, x0, Math.max(y + 40, PY - 170), half - 170, 46);
-		}
-		this.tex.needsUpdate = true;
+		this.steps = p;
+		this.emit();
 	}
 
-	update(dt: number) {
-		this.t += dt;
-		const target = this.open ? 1 : 0;
-		this.k += (target - this.k) * Math.min(1, dt * 9);
-		if (Math.abs(this.k - target) < 0.001) this.k = target;
-		this.group.visible = this.k > 0.01;
-		if (!this.group.visible) return;
-		const s = this.k * this.k * (3 - 2 * this.k);
-		const bob = Math.sin(this.t * 1.3) * 0.0025;
-		this.group.position.set(0, -0.44 + (0.44 - 0.055) * s + bob, -0.33);
-		this.group.rotation.set(-1.1 * (1 - s) - 0.2, 0, 0.03 * Math.sin(this.t * 0.7));
+	/** While the student types: kept, not judged yet. */
+	type(id: string, value: string) {
+		if (this.inked.has(id) || this.readOnly) return;
+		this.values[id] = value;
+		delete this.marks[id];
+		this.pending = id;
+		this.hint = '';
+		this.emit();
 	}
+
+	/** Judges the field last typed in, if it has not been yet (the page is turned, the notebook closed). */
+	settle() {
+		if (this.pending) this.commit(this.pending);
+	}
+
+	/** The student has finished a field (Enter, or the cursor elsewhere): the experiment has its say. */
+	commit(id: string) {
+		if (this.pending === id) this.pending = null;
+		if (this.inked.has(id) || this.readOnly) return;
+		const value = (this.values[id] ?? '').trim();
+		if (!value) {
+			delete this.marks[id];
+			return this.emit();
+		}
+		const why = this.blocked(id);
+		if (why) {
+			this.hint = why;
+			delete this.values[id];
+			return this.emit();
+		}
+		const v = this.verify(id, value);
+		if (v) {
+			this.marks[id] = v.ok ? 'ok' : 'wrong';
+			if (v.ok) this.inked.add(id);
+			this.hint = v.hint ?? '';
+		}
+		this.emit();
+	}
+
+	/** The experiment takes a value back (a reading that no longer holds). */
+	clear(id: string) {
+		delete this.values[id];
+		delete this.marks[id];
+		this.inked.delete(id);
+		this.emit();
+	}
+
+	/** A value the experiment has taken as right, as a number (a comma or a point for the decimals). */
+	number(id: string): number | null {
+		if (this.marks[id] !== 'ok') return null;
+		return parseNumber(this.values[id]);
+	}
+
+	/** What the student has written, to be saved as a lab report. */
+	toJSON() {
+		return { values: { ...this.values }, marks: { ...this.marks } };
+	}
+
+	/** Kept for the experiments' frame loop: the page over the scene moves by itself. */
+	update(_dt: number) {}
 }
 
-function wrap(c: CanvasRenderingContext2D, text: string, x: number, y: number, max: number, lh: number) {
-	const words = text.split(' ');
-	let line = '';
-	let n = 0;
-	for (const w of words) {
-		const test = line ? `${line} ${w}` : w;
-		if (c.measureText(test).width > max && line) {
-			c.fillText(line, x, y + n * lh);
-			n++;
-			line = w;
-		} else line = test;
-	}
-	if (line) {
-		c.fillText(line, x, y + n * lh);
-		n++;
-	}
-	return n;
+/** A number as a student writes it: "12,35", "12.35", "0,0522 mol/L". */
+export function parseNumber(text: string | undefined): number | null {
+	if (!text) return null;
+	const m = /-?(?:\d+(?:[.,]\d+)?|[.,]\d+)/.exec(text.replace(/\s/g, ''));
+	if (!m) return null;
+	const n = Number(m[0].replace(',', '.').replace(/^(-?)\./, '$10.'));
+	return Number.isFinite(n) ? n : null;
 }

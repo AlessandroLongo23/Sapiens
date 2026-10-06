@@ -13,6 +13,8 @@ export type Experiment = {
 	status: LabStatus;
 	/** A photo from the game (public/lab/copertine); without one the menu draws a sketch. */
 	photo?: string;
+	/** What the photo shows, handwritten under it on the card (the bench before starting, if not given). */
+	caption?: string;
 	/** One line: what the student does. */
 	summary: string;
 	/** For the card: the class year it belongs to, what it teaches. */
@@ -23,7 +25,15 @@ export type Experiment = {
 	/** Hazards, as the notebook states them before starting. */
 	safety?: string[];
 	steps?: number;
+	/**
+	 * Its pieces, when they are a file of their own and not part of the rooms': the page loads the room, takes out the
+	 * pieces named in `drop` and adds these (scripts/lab/build_fiamma.py).
+	 */
+	kit?: { url: string; drop: string[] };
 };
+
+/** What the rooms' own kit (the copper sulfate experiment's) has that the flame tests do not use. */
+const COPPER_ONLY = ['Tripod', 'Beaker', 'AcidBeaker', 'AcidBottle', 'Pipette', 'CuOJar', 'CuOLid', 'Spatula', 'GlassRod', 'Thermometer', 'ConicalFlask', 'Funnel', 'FilterPaper', 'EvapDish'];
 
 export type Lab = {
 	slug: string;
@@ -57,8 +67,34 @@ export const LABS: Lab[] = [
 				safety: ['Occhiali di protezione', 'Acido solforico 1 M, corrosivo', 'Vetreria calda'],
 				steps: 11
 			},
-			{ slug: 'saggi-alla-fiamma', title: 'Saggi alla fiamma', status: 'soon', summary: 'Riconosci i metalli dal colore che danno alla fiamma del becco Bunsen.' },
-			{ slug: 'titolazione', title: 'Titolazione acido-base', status: 'soon', summary: "Trova la concentrazione di un acido con la buretta e un indicatore." },
+			{
+				slug: 'saggi-alla-fiamma',
+				title: 'Saggi alla fiamma',
+				status: 'ready',
+				photo: '/lab/copertine/kit-fiamma.webp',
+				caption: 'il cloruro di rame nella fiamma',
+				summary: 'Porta sette sali nella fiamma del becco Bunsen con un’ansa al nichel-cromo, impara il colore di ogni metallo e riconosci due campioni incogniti.',
+				years: 'Biennio',
+				skills: ['Saggi alla fiamma', 'Colori di emissione', 'Riconoscimento di un catione', 'Lavorare senza contaminare'],
+				equipment: ['Becco Bunsen', 'Ansa al nichel-cromo', 'Sette cloruri e due campioni incogniti', 'Acido cloridrico 2 M', 'Vetro al cobalto'],
+				safety: ['Occhiali di protezione', 'Fiamma libera: capelli raccolti', 'Ansa rovente dopo la fiamma', 'Acido cloridrico 2 M, irritante', 'Cloruro di bario, tossico se ingerito; cloruro di rame, nocivo'],
+				steps: 7,
+				kit: { url: '/lab/kit/saggi-alla-fiamma.glb', drop: COPPER_ONLY }
+			},
+			{
+				slug: 'titolazione',
+				title: 'Titolazione acido-base',
+				status: 'ready',
+				photo: '/lab/copertine/kit-titolazione.webp',
+				caption: 'il viraggio: rosa pallido nella beuta 2',
+				summary: 'Trova la concentrazione di una soluzione di acido cloridrico: buretta di NaOH 0,100 mol/L, fenolftaleina, una prova e due titolazioni goccia a goccia.',
+				years: 'Triennio',
+				skills: ['Titolazione', 'Uso di buretta e pipetta tarata', 'Punto di viraggio', 'Calcolo di una concentrazione'],
+				equipment: ['Buretta da 25 mL sul sostegno', 'Pipetta tarata da 25 mL', 'Tre beute da 250 mL', 'NaOH 0,100 mol/L e campione di HCl', 'Fenolftaleina'],
+				safety: ['Occhiali di protezione', 'Idrossido di sodio 0,100 mol/L e acido cloridrico diluito: possono irritare occhi e pelle', 'Fenolftaleina in etanolo: lontano dalle fiamme, non va toccata né ingerita'],
+				steps: 7,
+				kit: { url: '/lab/kit/titolazione.glb', drop: [...COPPER_ONLY, 'Bunsen', 'GasHose', 'Lighter', 'HeatMat'] }
+			},
 			{ slug: 'pila-daniell', title: 'Pila Daniell', status: 'soon', summary: 'Costruisci una pila con zinco, rame e un ponte salino, e misura la tensione.' },
 			{ slug: 'libero', title: 'Laboratorio libero', status: 'soon', summary: 'Tutti i reagenti e gli strumenti, senza una traccia: le reazioni seguono le regole vere.' }
 		]

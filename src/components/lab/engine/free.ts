@@ -19,7 +19,7 @@ import type { Notebook } from './notebook';
  * pipette in the acid, the lighter on the burner), or a free hand on a control (the gas tap, the goggles). With a
  * thing in each hand and both of them able to act on the other, Q is the left one's action and E the right one's
  * (two containers: Q pours the left into the right, E the right into the left); when only one action is possible
- * (a rod and a container), either key does it. The notebook lies on the bench: Q or E on it raises it to read.
+ * (a rod and a container), either key does it. B brings the notebook up, wherever the student is.
  *
  * Everything moves the hands (hands.ts); objects hang from them.
  */
@@ -126,8 +126,12 @@ export class FreeLab {
 		s.onUse = (side) => this.key(side);
 		s.onWheel = (d) => this.wheel(d);
 		s.onTurn = (dir = 1) => this.turn((dir * Math.PI) / 4);
-		// the body stays still while the hands work
-		s.handsBusy = () => this.busy;
+		s.onBook = () => this.toggleBook();
+		// the body stays still while the hands work, and while the eyes are on the notebook
+		s.handsBusy = () => this.busy || !!this.notebook?.open;
+		// the notebook is not on the bench any more: B brings it up (the rooms' files still have its model)
+		const book = s.nodes.get(BOOK);
+		if (book) book.visible = false;
 		s.onUpdate = (dt) => this.update(dt);
 		// only what a free hand can take, or what can be used, now is highlighted
 		s.canHover = (o) => this.takeable(o) !== null || (!this.busy && this.usesAt(o).length > 0);
@@ -384,7 +388,7 @@ export class FreeLab {
 		this.ghost.hide();
 		this.offered = [];
 		this.placing = null;
-		if (!this.busy && this.s.player.locked) {
+		if (!this.busy && this.s.player.locked && !this.notebook?.open) {
 			const uses = this.usesAt(hovered);
 			const exclusive = uses.some((u) => u.exclusive);
 			// what the two hands' things do together goes on the keys the crosshair leaves free
@@ -428,6 +432,26 @@ export class FreeLab {
 		}
 	}
 
+	/**
+	 * B: the notebook comes up, or goes away. To write in it both hands must be free; with something in a hand it
+	 * opens to be read only, and says so.
+	 */
+	toggleBook() {
+		const nb = this.notebook;
+		if (!nb) return;
+		if (nb.open) return void (nb.open = false);
+		if (this.busy) return this.say('info', 'Un momento: finisci prima quello che stai facendo.');
+		const full = (['L', 'R'] as Side[]).filter((side) => this.hands.held(side));
+		nb.readOnly = full.length > 0;
+		nb.open = true;
+		if (full.length) this.say('info', `Il quaderno si può solo leggere: per scriverci posa quello che hai ${full.length === 2 ? 'in mano' : full[0] === 'L' ? 'nella mano sinistra' : 'nella mano destra'}.`);
+	}
+
+	/** The work brings the notebook up at a page (the results at the end): to be read only if a hand is not free. */
+	openBook(page: string, field?: string) {
+		this.notebook?.show(page, field, (['L', 'R'] as Side[]).some((side) => this.hands.held(side)));
+	}
+
 	say(kind: 'info' | 'warn' | 'ok', text: string) {
 		this.message = { kind, text: tell(text) };
 		this.msgT = kind === 'warn' ? 8 : 6;
@@ -448,10 +472,7 @@ export class FreeLab {
 	 * work on top offers.
 	 */
 	private usesAt(hovered: Object3D | null): Use[] {
-		const nb = this.notebook;
-		const label = (this.s.nodes.get(BOOK)?.userData.label as string) ?? 'Quaderno';
-		if (nb?.open) return KEYS.map((input) => ({ input, verb: 'read', text: 'Chiudi il quaderno', target: label, exclusive: true, run: () => void (nb.open = false) }));
-		if (nb && hovered?.name === BOOK) return KEYS.map((input) => ({ input, verb: 'read', text: 'Leggi', run: () => void (nb.open = true) }));
+		if (this.notebook?.open) return [];
 		return this.uses(hovered);
 	}
 
@@ -513,6 +534,7 @@ export class FreeLab {
 
 	/** A mouse button: its hand takes what the crosshair points at, or puts down what it holds. */
 	private press(side: Side, target: Object3D | null) {
+		if (this.notebook?.open) return;
 		if (this.busy) {
 			this.queued = { input: side, target, age: 0 };
 			return;
@@ -584,9 +606,6 @@ export class FreeLab {
 			if (q.input === 'L' || q.input === 'R') this.press(q.input, q.target);
 			else this.key(q.input === 'Q' ? 'L' : 'R');
 		}
-		// the notebook on the bench is the one in front of the eyes: it leaves the bench while it is up
-		const book = this.s.nodes.get(BOOK);
-		if (book && this.notebook) book.visible = !this.notebook.raised;
 		this.aimAt();
 		if (this.msgT > 0 && (this.msgT -= dt) <= 0) {
 			this.message = null;
@@ -600,6 +619,7 @@ export class FreeLab {
 	/** Q or E: the left or the right hand uses what it holds, or works what the crosshair points at. */
 	private key(side: Side) {
 		const input = keyOf(side);
+		if (this.notebook?.open) return;
 		if (this.busy) {
 			this.queued = { input, target: null, age: 0 };
 			return;
@@ -813,10 +833,10 @@ export class FreeLab {
 	 * Pours from one hand's container into another: the one in the other hand, which comes to the middle, or one
 	 * standing on the bench (a funnel, a dish on the gauze). The pouring one goes over it and tips towards it by
 	 * turning the forearm; liquid flows only once its tilted surface rises above the lip, with the pose the wrist
-	 * actually reaches, and goes on until the container is empty. `keep` stops it with that much left; `receive`
-	 * takes what flows, when the receiver is not a plain vessel.
+	 * actually reaches, and goes on until the container is empty. `keep` stops it with that much left, `stop` when it
+	 * says so; `receive` takes what flows, when the receiver is not a plain vessel.
 	 */
-	async pour(fromSide: Side, to: Object3D, opts: { keep?: number; receive?: (c: Contents) => void; mouth?: { y: number; r: number } } = {}): Promise<number> {
+	async pour(fromSide: Side, to: Object3D, opts: { keep?: number; receive?: (c: Contents) => void; mouth?: { y: number; r: number }; stop?: () => boolean } = {}): Promise<number> {
 		const h = this.hands;
 		const toSide: Side | null = h.held('L') === to ? 'L' : h.held('R') === to ? 'R' : null;
 		const from = h.held(fromSide)!;
@@ -930,7 +950,7 @@ export class FreeLab {
 			this.s.stream.set(flow > 0 ? lip : null, dirW, dst.level(), flow / dt, color, src.material.opacity);
 			// fully tipped, it stays there while liquid still comes out
 			if (tilt >= max) held = flow > 0 ? 0 : held + dt;
-			return src.contents.vol <= keep + 0.001 || held > 0.6 || dst.contents.vol >= dst.capacity * 0.95;
+			return src.contents.vol <= keep + 0.001 || held > 0.6 || dst.contents.vol >= dst.capacity * 0.95 || !!opts.stop?.();
 		});
 		this.s.stream.set(null, dirW, 0, 0, color, 0);
 		const back = tilt;

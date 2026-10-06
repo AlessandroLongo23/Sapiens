@@ -117,6 +117,8 @@ export class Flame {
 	reach = 0;
 	/** How bright it is drawn: in a bright room a real flame's faintness would make it vanish. */
 	boost = 1;
+	/** How big it is drawn, against the one that fits under the tripod's gauze. */
+	size = 1;
 
 	constructor(clip: Plane[], private spreadAt: () => number | null) {
 		const make = (core: number) => {
@@ -178,8 +180,8 @@ export class Flame {
 		this.flare = Math.max(0, this.flare - dt * 2.5);
 		const g = this.gas;
 		const a = this.air;
-		const H = (0.035 + 0.1 * (1 - a) + 0.035 * a) * (0.45 + 0.55 * g) * (1 + this.flare * 0.6);
-		const W = (0.011 + 0.02 * (1 - a)) * (0.6 + 0.4 * g) * (1 + this.flare * 0.8);
+		const H = (0.035 + 0.1 * (1 - a) + 0.035 * a) * (0.45 + 0.55 * g) * (1 + this.flare * 0.6) * this.size;
+		const W = (0.011 + 0.02 * (1 - a)) * (0.6 + 0.4 * g) * (1 + this.flare * 0.8) * this.size;
 		this.outer.scale.set(W, H, W);
 		this.core.scale.set(W * 0.55, H * 0.36 * (0.6 + 0.4 * a), W * 0.55);
 		for (const u of [this.uOuter, this.uCore]) {
@@ -199,13 +201,118 @@ export class Flame {
 			(this.spread.material as MeshBasicMaterial).color.setRGB(0.3 + 0.7 * (1 - a), 0.35 + 0.2 * (1 - a), 1 - 0.8 * (1 - a));
 			this.spread.scale.setScalar(0.5 + 0.6 * g);
 		} else {
+			// no gauze over it: nothing for the flame to spread under (hidden, or the outline of the burner would draw it)
 			this.reach = 0;
-			(this.spread.material as MeshBasicMaterial).opacity = 0;
+			this.spread.visible = false;
 		}
 	}
 }
 
 const _v = new Vector3();
+
+// ---------------------------------------------------------------------------------------------
+// The coloured flame of a salt on a wire loop
+// ---------------------------------------------------------------------------------------------
+
+const PLUME_VERT = /* glsl */ `
+uniform float time;
+varying vec2 vUv;
+varying vec3 vN;
+varying vec3 vV;
+void main() {
+	vUv = uv;
+	vec3 p = position;
+	float h = p.y;
+	// it leans and licks as it rises, more towards the top
+	p.x += (sin(h * 7.0 - time * 9.0) * 0.16 + sin(time * 21.0 + h * 17.0) * 0.05) * h;
+	p.z += cos(h * 6.0 - time * 7.5) * 0.13 * h;
+	vec4 mv = modelViewMatrix * vec4(p, 1.0);
+	vN = normalMatrix * normal;
+	vV = -mv.xyz;
+	gl_Position = projectionMatrix * mv;
+}`;
+
+const PLUME_FRAG = /* glsl */ `
+uniform float time;
+uniform float power;
+uniform vec3 tint;
+varying vec2 vUv;
+varying vec3 vN;
+varying vec3 vV;
+void main() {
+	float h = vUv.y;
+	float facing = pow(abs(dot(normalize(vN), normalize(vV))), 1.15);
+	float flick = 0.82 + 0.18 * sin(time * 31.0 + h * 11.0) * sin(time * 17.0 + 0.9);
+	float fade = smoothstep(0.0, 0.1, h) * (1.0 - smoothstep(0.45, 1.0, h));
+	// brighter and a little paler where it leaves the wire
+	vec3 col = mix(tint, vec3(1.0), 0.07 * (1.0 - smoothstep(0.0, 0.3, h)) * facing);
+	float a = facing * fade * flick * power;
+	gl_FragColor = vec4(col * a, clamp(a * 0.55, 0.0, 1.0));
+}`;
+
+/**
+ * What a salt on a wire gives the flame: a coloured tongue that rises from the wire, and its light on what is near.
+ * The owner puts `group` where the wire is and sets `color` and `amount` (0 nothing, 1 the whole flame coloured).
+ */
+export class Plume {
+	readonly group = new Group();
+	readonly light: PointLight;
+	readonly color = new Color('#ffffff');
+	/** The colour of its light on what is near, when that is not the colour drawn (seen through a filter). */
+	glow: Color | null = null;
+	amount = 0;
+	/** How bright it is drawn (as the burner's flame: brighter in a bright room). */
+	boost = 1;
+	private shown = 0;
+	private mesh: Mesh;
+	private inner: Mesh;
+	private u: { time: { value: number }; power: { value: number }; tint: { value: Color } }[] = [];
+
+	constructor() {
+		const make = () => {
+			const u = { time: { value: 0 }, power: { value: 0 }, tint: { value: new Color() } };
+			this.u.push(u);
+			const m = new ShaderMaterial({ uniforms: u, vertexShader: PLUME_VERT, fragmentShader: PLUME_FRAG, transparent: true, depthWrite: false, blending: CustomBlending, blendSrc: OneFactor, blendDst: OneMinusSrcAlphaFactor, side: DoubleSide, forceSinglePass: true });
+			const mesh = new Mesh(flameGeometry(), m);
+			mesh.renderOrder = 6;
+			mesh.userData.noPick = true;
+			mesh.raycast = () => {};
+			return mesh;
+		};
+		this.mesh = make();
+		this.inner = make();
+		this.group.add(this.mesh, this.inner);
+		this.light = new PointLight(0xffffff, 0, 0.7, 2);
+		this.light.position.set(0, 0.03, 0);
+		this.group.add(this.light);
+		this.group.visible = false;
+	}
+
+	update(t: number, dt: number) {
+		// it flares up quickly and dies down a little more slowly
+		this.shown += (this.amount - this.shown) * (1 - Math.exp(-dt * (this.amount > this.shown ? 9 : 4)));
+		const k = this.shown;
+		this.group.visible = k > 0.01;
+		if (!this.group.visible) {
+			this.light.intensity = 0;
+			return;
+		}
+		// tall enough to be read from where the student stands, even for a weak colour (potassium's)
+		const H = 0.055 + 0.075 * k;
+		const W = 0.02 + 0.018 * k;
+		this.mesh.scale.set(W, H, W);
+		this.inner.scale.set(W * 0.55, H * 0.7, W * 0.55);
+		this.u.forEach((u, i) => {
+			u.time.value = t + i * 3.1;
+			// not so bright that the colour washes out: a red pushed past white turns pink
+			u.power.value = (i === 0 ? 0.85 : 0.45) * Math.min(1, k * 2.4) * this.boost;
+			u.tint.value.copy(this.color);
+		});
+		// a faint tint on the burner and the bench round it: a flame this small does not light a room
+		this.light.color.copy(this.glow ?? this.color);
+		this.light.intensity = 0.035 * k;
+	}
+}
 
 // ---------------------------------------------------------------------------------------------
 // Steam
