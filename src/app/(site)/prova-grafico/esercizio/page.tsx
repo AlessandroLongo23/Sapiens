@@ -14,7 +14,7 @@ import { ExerciseProbe } from './ExerciseProbe';
  */
 export const metadata: Metadata = { title: 'Prova di un esercizio', robots: { index: false, follow: false } };
 
-async function grade(key: string, response: { choice?: number; built?: BuildResponse }): Promise<Verdict> {
+async function grade(key: string, response: { choice?: number; latex?: string; built?: BuildResponse }): Promise<Verdict> {
 	'use server';
 	if (process.env.NODE_ENV === 'production') notFound();
 	// graded as on the site; the attempt is not saved, there is none

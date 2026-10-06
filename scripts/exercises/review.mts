@@ -14,7 +14,10 @@ import { dirname, join, resolve } from 'node:path';
 import katexModule from 'katex';
 import { getGenerator } from '../../src/lib/exercises/v2/registry';
 import { createRng, deriveSeed } from '../../src/lib/exercises/v2/rng';
-import type { Sample } from '../../src/lib/exercises/v2/types';
+import type { Sample, SceneRef } from '../../src/lib/exercises/v2/types';
+import { PIANO } from '../../src/lib/exercises/v2/piano';
+import { readPlane } from '../../src/lib/exercises/v2/piano-svg';
+import { planeSvg } from '../../src/lib/grafico/statico';
 
 const DEFAULT_OUT = join(tmpdir(), 'review-equazioni.html');
 const KATEX_VERSION = '0.18.7';
@@ -53,7 +56,8 @@ async function main(): Promise<number> {
 		const a = s.answer;
 		if (a.kind === 'set' || a.kind === 'expression') return a.latex;
 		if (a.kind === 'number') return a.value.replace(/^(-?)(\d+)\/(\d+)$/, '$1\\frac{$2}{$3}');
-		return a.options[a.correct].latex;
+		// a graph as the right option has no formula: the solution says which one it is
+		return a.options[a.correct].scene ? s.solution : a.options[a.correct].latex;
 	};
 	const errors: string[] = [];
 	const tex = (latex: string, display = false): string => {
@@ -63,6 +67,18 @@ async function main(): Promise<number> {
 			errors.push(`${(e as Error).message} in: ${latex}`);
 			return `<code>${esc(latex)}</code>`;
 		}
+	};
+
+	// A plane (v2/piano.ts) is drawn as the page draws it; one whose formulas cannot be read is an error like a
+	// formula KaTeX cannot set. The other scenes are drawn in the browser only: here, their description.
+	const graph = (scene: SceneRef, compact = false): string => {
+		if (scene.type !== PIANO) return `<p class="alt">${esc(scene.alt)}</p>`;
+		const { plane, errors: bad } = readPlane(scene);
+		if (!plane) {
+			errors.push(`piano-cartesiano: ${bad.join('; ')}`);
+			return `<code>${esc(bad.join('; '))}</code>`;
+		}
+		return `<div class="graph">${planeSvg(plane, compact)}</div>`;
 	};
 
 	const specPath = resolve('specs/exercises', `${id}.md`);
@@ -82,15 +98,17 @@ async function main(): Promise<number> {
 		.map((s) => {
 			const choice = s.choice
 				? `<h4>Scelta multipla</h4><ol class="choice" type="A">${s.choice.options
-						.map((o, i) => `<li${i === s.choice!.correct ? ' class="ok"' : ''}>${tex(o.latex)}${i === s.choice!.correct ? ' <span class="tag">corretta</span>' : ''}</li>`)
+						.map((o, i) => `<li${i === s.choice!.correct ? ' class="ok"' : ''}>${o.scene ? graph(o.scene, true) : tex(o.latex)}${i === s.choice!.correct ? ' <span class="tag">corretta</span>' : ''}</li>`)
 						.join('')}</ol>`
 				: '';
 			return `<article>
   <header><span class="chip">Livello ${s.level}</span><span class="label">${esc(gen.levels[s.level].label)}</span><span class="meta">seed ${s.seed}${s.params.case ? ` · ${esc(String(s.params.case))}` : ''}</span></header>
   <p class="prompt">${esc(s.prompt)}</p>
   <div class="problem">${tex(s.problem, true)}</div>
+  ${s.scene ? graph(s.scene) : ''}
   <h4>Passaggi</h4>
   <ol class="steps">${s.steps.map((st) => `<li>${tex(st)}</li>`).join('')}</ol>
+  ${s.solutionScene ? graph(s.solutionScene) : ''}
   <h4>Risposta attesa</h4>
   <div class="answer">${tex(answerLatex(s))}</div>
   ${choice}
@@ -159,6 +177,9 @@ summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 pre { font: .78rem/1.5 var(--mono); color: var(--muted); white-space: pre-wrap; margin: 8px 0 0; }
 code { font: .88em var(--mono); }
 .tex.display { display: block; text-align: center; }
+.graph { margin-top: 10px; }
+.graph svg { display: block; max-width: 100%; height: auto; border-radius: 4px; }
+.alt { color: var(--muted); font-size: .9rem; margin-top: 8px; }
 math { font-size: 1.05em; }
 .samples { display: grid; gap: 18px; }
 </style>

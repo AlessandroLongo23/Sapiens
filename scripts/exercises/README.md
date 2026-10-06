@@ -59,6 +59,59 @@ che scrivono cose diverse, così l'uscita non si batte a mano: lo controllano `m
 `/prova-grafico/esercizio?g=<id>&l=<livello>&seed=<seed>` (con `&open=1` a risposta aperta); `review.mts` e
 `width.mts` valgono solo per i campioni in LaTeX.
 
+## Esercizi con i grafici
+
+Dal 6 ottobre 2026 un esercizio di matematica può mostrare il piano cartesiano con una o più curve: sotto il
+problema (`scene`), con la soluzione (`solutionScene`) e come opzione di una scelta multipla (`ChoiceOption.scene`,
+quattro grafici piccoli, due per riga anche sul telefono). Il generatore di riferimento è `funzioni-esponenziali`,
+livelli 6 (dalla funzione al grafico) e 7 (dal grafico alla funzione).
+
+Il generatore non disegna: descrive il piano con `piano()` di `src/lib/exercises/v2/piano.ts`, e il server legge
+le formule e fa il disegno (`v2/piano-svg.ts`, `src/lib/grafico/statico.ts`, con il campionamento del plotter).
+Alla pagina arriva l'SVG finito, quindi nel browser non si carica né il lettore di LaTeX né il campionamento.
+
+```ts
+import { piano } from '../piano';
+
+// sotto il problema: finestra x da -4 a 4 e y da -2 a 6, una curva, un asintoto, due punti da leggere sulla griglia
+const scene = piano(
+	{
+		finestra: [-4, 4, -2, 6],
+		curve: [{ formula: 'y = 2^x + 1' }, { formula: 'y = 1', tratto: 'tratteggiato' }],
+		punti: [{ x: 0, y: 2 }, { x: 1, y: 3 }],
+	},
+	'Una curva che sale da sinistra verso destra, passa per il punto (0, 2) e a sinistra si avvicina alla retta tratteggiata y = 1 da sopra.',
+);
+return { ...sample, scene };
+
+// come opzione: `latex` vuoto, la funzione in `values`, il testo per chi non vede uguale all'alt della scena
+const option: ChoiceOption = { latex: '', values: ['2^x + 1'], scene, text: scene.alt };
+```
+
+- `finestra`: `[x0, x1, y0, y1]`. I due assi hanno la stessa scala, a meno di `forma` (larghezza su altezza). Le
+  quattro opzioni di una domanda hanno la stessa finestra.
+- `curve`: la formula è LaTeX come lo legge il plotter e come nei blocchi `grafico` delle lezioni: `y = …` per una
+  funzione, `x = 2` per una retta verticale, `x^2 + y^2 = 4` per una curva data da un'equazione. Nessun parametro.
+  `tratto: 'tratteggiato'` per asintoti e assi di simmetria (grigi), `colore` per cambiare colore.
+- `punti`: segnati con un pallino; `etichetta` scrive accanto una lettera o le coordinate. Coordinate intere, a
+  mezza unità almeno dal bordo, così si leggono sulla griglia.
+- `passo`: ogni quanto scrivere i numeri sugli assi. Senza, li sceglie il disegno: a ogni unità in grande, più radi
+  in piccolo. `assi`: i nomi degli assi.
+- Il testo alternativo dice com'è fatto il disegno (verso, punti, asintoto), non qual è la funzione.
+
+Regole per i grafici come opzioni: ogni grafico sbagliato è l'errore di uno studente (base reciproca, spostamento
+dal lato opposto, simmetria sbagliata), e due grafici qualsiasi si distinguono in piccolo. Il controllo Python lo
+verifica con `checkers/_grafici.py`, che rilegge le formule per conto suo: `check_plane` (curva nella finestra,
+punti sulla curva e leggibili, asintoto tratteggiato) e `check_graph_options` (il grafico giusto è quello della
+funzione del problema, gli altri sono funzioni diverse e lontane almeno il 15% dell'altezza della finestra). Una
+spaziatura di 1 tra due curve non basta in una finestra alta 10: nel pilota gli spostamenti sono di 2 o di 3.
+
+`review.mts` disegna i piani nella pagina di revisione ed esce con 1 se una formula non si legge; `width.mts` e
+`grade-check.mts` saltano le opzioni che sono grafici. In sviluppo l'esercizio si prova a
+`/prova-grafico/esercizio?g=<id>&l=<livello>&seed=<seed>` (con `&open=1` la risposta aperta, anche un numero o una
+formula). La scheda giornaliera distingue due esercizi con lo stesso testo dal loro disegno. Quello che c'è oggi è
+solo per funzioni e curve da equazione: regioni, punti di una successione e diagrammi a barre non ci sono ancora.
+
 ## Aggiungere un generatore
 
 L'id del generatore è lo slug della lezione nel database (per esempio `monomi-mcm-mcd`). File da

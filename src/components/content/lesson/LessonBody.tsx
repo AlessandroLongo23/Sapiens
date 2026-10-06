@@ -12,6 +12,7 @@ import { activateInteractives } from '@/lib/utils/interactive';
 import { activatePlots } from '@/lib/utils/plot-figure';
 import { activateCode } from '@/lib/utils/code-figure';
 import { activateCharts } from '@/lib/utils/chart-figure';
+import { activateGuided } from '@/lib/utils/guided-figure';
 import type { Prompt } from '@/lib/data/prompts';
 import { FloatingMenu, type MenuPosition } from './FloatingMenu';
 
@@ -87,7 +88,9 @@ export function LessonBody({ html }: { html: string }) {
 		const stopPlots = activatePlots(el);
 		const stopCode = activateCode(el);
 		const stopCharts = activateCharts(el);
+		const stopGuided = activateGuided(el);
 		return () => {
+			stopGuided();
 			stopCharts();
 			stopCode();
 			stopPlots();

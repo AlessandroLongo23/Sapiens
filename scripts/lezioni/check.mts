@@ -21,6 +21,8 @@ import { codeFences, parseCodeBlock } from '../../src/lib/codice/blocco';
 import { parseChartBlock } from '../../src/lib/diagramma/blocco';
 import { buildChart } from '../../src/lib/diagramma/disegno';
 import { runAll } from '../../src/lib/diagramma/esecuzione';
+import { guidedFences, parseGuidedBlock } from '../../src/lib/guidato/blocco';
+import { checkGuided } from '../../src/lib/guidato/correzione';
 
 const katex = ((katexModule as unknown as { default?: typeof katexModule }).default ?? katexModule) as typeof katexModule;
 
@@ -96,6 +98,13 @@ for (const file of process.argv.slice(2)) {
 		if (!block) continue;
 		const run = runAll(buildChart(block.program), block.inputs);
 		if (run.error) err(`diagramma ${block.name}: ${run.error}`);
+	}
+	// A guided exercise: its lines must be read, the grader must pass each expected answer and fail each foreseen
+	// mistake, and a slider must be able to reach its expected value. Its text and its plane are checked with the rest.
+	for (const guided of guidedFences(text)) {
+		const { read, errors } = parseGuidedBlock(guided.body);
+		const name = /^%\s*nome:\s*(\S+)/m.exec(guided.body)?.[1] ?? 'senza nome';
+		for (const e of [...errors, ...checkGuided(read)]) err(`guidato ${name}: ${e}`);
 	}
 	const noTikz = text.replace(/```(tikz|interattivo|grafico|codice|diagramma)[\s\S]*?```/g, '').replace(/`[^`\n]+`/g, ' ');
 
