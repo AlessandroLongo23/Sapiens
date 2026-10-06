@@ -122,7 +122,7 @@ export const ELEMENTS: { sym: string; nome: string }[] = [
 	{ sym: 'As', nome: 'arsenico' },
 	{ sym: 'Se', nome: 'selenio' },
 	{ sym: 'Br', nome: 'bromo' },
-	{ sym: 'Kr', nome: 'cripto' },
+	{ sym: 'Kr', nome: 'kripton' },
 ];
 
 /** The full symbol of a nuclide or an ion: {}^{23}_{11}\mathrm{Na}, {}^{24}_{12}\mathrm{Mg^{2+}}. */

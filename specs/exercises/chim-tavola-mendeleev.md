@@ -36,7 +36,7 @@ numero di gruppi e di periodi.
 Dieci terne di elementi dello stesso gruppo, uno sotto l'altro, in cui la media delle masse dell'elemento sopra e di
 quello sotto sta entro il $3\%$ della massa vera di quello in mezzo: litio-sodio-potassio, potassio-rubidio-cesio,
 berillio-magnesio-calcio, calcio-stronzio-bario, alluminio-gallio-indio, silicio-germanio-stagno,
-fosforo-arsenico-antimonio, zolfo-selenio-tellurio, cloro-bromo-iodio, argon-cripto-xeno. Si stima la massa di quello in
+fosforo-arsenico-antimonio, zolfo-selenio-tellurio, cloro-bromo-iodio, argon-kripton-xeno. Si stima la massa di quello in
 mezzo, al decimo. Distrattori: la somma non dimezzata, metà della differenza, la differenza, la somma divisa per tre.
 
 - "Immagina di non conoscere il germanio ... il silicio, $28{,}09$ ... lo stagno, $118{,}71$ ..." Risposta $73{,}4$.

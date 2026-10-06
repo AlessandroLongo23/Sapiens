@@ -20,7 +20,7 @@ CASE_RANGES = {
 }
 
 SYMBOLS = "H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr".split()
-NAMES = "idrogeno elio litio berillio boro carbonio azoto ossigeno fluoro neon sodio magnesio alluminio silicio fosforo zolfo cloro argon potassio calcio scandio titanio vanadio cromo manganese ferro cobalto nichel rame zinco gallio germanio arsenico selenio bromo cripto".split()
+NAMES = "idrogeno elio litio berillio boro carbonio azoto ossigeno fluoro neon sodio magnesio alluminio silicio fosforo zolfo cloro argon potassio calcio scandio titanio vanadio cromo manganese ferro cobalto nichel rame zinco gallio germanio arsenico selenio bromo kripton".split()
 Z_OF = {s: i + 1 for i, s in enumerate(SYMBOLS)}
 # element -> [(mass number, mass in u, abundance in %)], IUPAC 2021 rounded to hundredths
 REAL = {
