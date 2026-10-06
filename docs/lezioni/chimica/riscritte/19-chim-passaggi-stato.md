@@ -125,6 +125,8 @@ In quale stato si trovano a $25\,^\circ\text{C}$ e alla pressione normale l'ossi
 - Il naftalene fonde a $80\,^\circ\text{C}$: $25\,^\circ\text{C}$ è sotto, quindi è solido. È la sostanza delle palline di naftalina contro le tarme.
 ```
 
+La stessa regola vale per ogni elemento: la [tavola periodica interattiva](/strumenti/tavola-periodica?vista=stato) colora ogni casella secondo lo stato a $25\,^\circ\text{C}$, e spostando la temperatura si vedono gli elementi fondere e bollire uno dopo l'altro.
+
 ```ad-example
 Esempio 2: da $-150$ a $90\,^\circ\text{C}$
 Un campione di etanolo viene scaldato da $-150\,^\circ\text{C}$ a $90\,^\circ\text{C}$. Quali passaggi di stato avvengono?

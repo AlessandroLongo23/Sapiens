@@ -79,6 +79,20 @@ Il grafico di $x$ in funzione di $t$ è una cosinusoide, che si ripete uguale og
 \foreach \x/\l in {1/{T/2}, 2/{T}, 3/{3T/2}, 4/{2T}} \draw (\x,0.07) -- (\x,-0.07) node[below] {\scriptsize $\l$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: legge-oraria-moto-armonico-cursori
+% alt: Il grafico della posizione in funzione del tempo nel moto armonico, una cosinusoide tra le rette tratteggiate x = A e x = -A, con due cursori: l'ampiezza A, da 1 a 8 centimetri, allunga la curva in verticale; il periodo T, da 0,5 a 4 secondi, la allarga in orizzontale; un punto segna la fine della prima oscillazione, all'istante T
+curva: \begin{cases}A\cos\left(\frac{2\pi x}{T}\right) & x\ge0\end{cases}
+curva: y=A | tratteggiata | grigio
+curva: y=-A | tratteggiata | grigio
+curva: \left(T;A\right) | nero
+cursore: A = 5 da 1 a 8 passo 0,5
+cursore: T = 2 da 0,5 a 4 passo 0,1
+finestra: x da -0,4 a 4,3, y da -9 a 9
+forma: 2:1
+assi: t (s), x (cm)
+domanda: All'inizio $A = 5$ cm e $T = 2$ s, come nell'esempio 1 qui sotto, e il punto nero segna la fine della prima oscillazione. Porta $T$ a $4$ s: quante oscillazioni complete stanno in $4$ s? Poi cambia $A$: il punto nero si sposta lungo l'asse dei tempi?
+```
 
 ```ad-example
 Esempio 1: dove si trova il punto

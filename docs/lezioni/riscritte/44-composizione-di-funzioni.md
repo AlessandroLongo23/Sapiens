@@ -410,5 +410,21 @@ Nella figura, $f(x) = 2x + 1$ e la sua inversa $f^{-1}(x) = \dfrac{x - 1}{2}$. I
 \fill (-1,-1) circle (0.07);
 \end{tikzpicture}
 ```
+```grafico
+% nome: funzione-inversa-bisettrice-cursori
+% alt: La retta y = ax + b, la sua inversa y = (x - b)/a e la bisettrice y = x tratteggiata, con i cursori di a e di b; il punto P scorre sulla prima retta con il cursore p e il punto Q, con le coordinate scambiate, sta sulla seconda, dall'altra parte della bisettrice
+curva: y=ax+b
+curva: y=\frac{x-b}{a} | arancione
+curva: y=x | tratteggiata | grigio
+curva: P=\left(p;ap+b\right) | nero
+curva: Q=\left(ap+b;p\right) | nero
+cursore: a = 2 da -3 a 3 passo 0,5
+cursore: b = 1 da -4 a 4 passo 0,5
+cursore: p = 1 da -3 a 3 passo 0,5
+finestra: x da -5 a 5, y da -5 a 5
+valore: P = \left(p;ap+b\right)
+valore: Q = \left(ap+b;p\right)
+domanda: Muovi $p$: i punti $P$ e $Q$ restano uno lo specchio dell'altro? Poi porta $a$ a $-1$: che cosa succede alle due rette? E con $a = 0$?
+```
 
 Anche l'esempio 10 si legge sul grafico: la retta $y = 4 - x$ è perpendicolare alla bisettrice, quindi il suo simmetrico è la retta stessa, e infatti $f$ è l'inversa di sé stessa.

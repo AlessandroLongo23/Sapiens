@@ -155,6 +155,16 @@ I grafici di $y = x^4$ e di $y = x^3$ mostrano il perché. Le soluzioni di $x^n 
 \node[left] at (2.39,-0.55) {\small $-1$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: binomia-esponente-retta-cursori
+% alt: Il grafico di y = x alla n con il cursore dell'esponente n, da 2 a 7, e la retta orizzontale y = k con il cursore di k: con n pari la retta incontra il grafico in due punti se k è positivo e in nessuno se è negativo, con n dispari sempre in un punto solo
+curva: y=x^n
+curva: y=k | rosso
+cursore: n = 4 da 2 a 7 passo 1
+cursore: k = 2 da -4 a 4 passo 0,5
+finestra: x da -4 a 4, y da -4 a 4
+domanda: Con $n = 4$ porta $k$ sotto zero: quanti punti comuni restano? Poi passa a $n = 3$ e rifai lo stesso. Che cosa cambia tra $n$ pari e $n$ dispari?
+```
 
 ```ad-example
 Esempio 5: indice dispari, secondo membro negativo

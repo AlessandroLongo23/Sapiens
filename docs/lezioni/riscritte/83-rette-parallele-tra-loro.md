@@ -100,6 +100,17 @@ $$m_2 = \frac{1}{-m_1} = -\frac{1}{m_1}$$
 \node[red!60!black, below] at (-1.9,0.8) {$y = -\frac{1}{2}x$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: perpendicolari-antireciproco-scelta
+% alt: La retta y = mx con il cursore di m e una seconda retta per l'origine, con il coefficiente angolare scelto tra l'antireciproco, l'opposto e il reciproco di m: solo con l'antireciproco le due rette restano perpendicolari per ogni m
+curva: y=mx
+scelta: -\frac{1}{m} :: y=-\frac{1}{m}x
+scelta: -m :: y=-mx
+scelta: \frac{1}{m} :: y=\frac{1}{m}x
+cursore: m = 2 da -4 a 4 passo 0,25
+finestra: x da -6 a 6, y da -4 a 4
+domanda: Con $-\frac{1}{m}$ muovi il cursore: l'angolo resta retto? Poi scegli $-m$: per quali valori di $m$ l'angolo è retto? E con $\frac{1}{m}$ lo diventa mai?
+```
 
 Con $m_1 = 2$ si ottiene $m_2 = -\dfrac{1}{2}$, e infatti $2 \cdot \left(-\dfrac{1}{2}\right) = -1$. Il ragionamento funziona anche con $m_1$ negativo; non funziona con $m_1 = 0$, perché $0$ non ha reciproco. La perpendicolare a una retta orizzontale è una retta verticale, che non ha coefficiente angolare: le rette $y = k$ e $x = h$ sono sempre perpendicolari, come l'asse $x$ e l'asse $y$, e la condizione $m_1 \cdot m_2 = -1$ non si può usare.
 
@@ -218,6 +229,18 @@ Controllo con $x = 1$: $2 \cdot 1 + 2 = 4$ e $-\dfrac{1}{2} + \dfrac{9}{2} = 4$,
 \node[below right] at (1,4) {$P$};
 \node[blue!70!black, right] at (4.1,5.3) {$r$};
 \end{tikzpicture}
+```
+```grafico
+% nome: parallela-perpendicolare-punto-cursori
+% alt: La retta r di equazione y = 2x - 3 e il punto P, mosso dai cursori delle sue coordinate u e v: per P passano la parallela a r, tratteggiata, e la perpendicolare, rossa, che si spostano con P senza cambiare pendenza
+curva: y=2x-3 | blu
+curva: P=\left(u;v\right) | nero
+curva: y-v=2\left(x-u\right) | blu | tratteggiata
+curva: y-v=-\frac{1}{2}\left(x-u\right) | rosso
+cursore: u = 1 da -4 a 6 passo 0,5
+cursore: v = 4 da -4 a 6 passo 0,5
+finestra: x da -5 a 8, y da -4 a 7
+domanda: I cursori $u$ e $v$ sono le coordinate di $P$. Sposta $P$: le due rette cambiano pendenza? Che cosa succede alla parallela quando $P$ arriva sulla retta $r$, per esempio con $u = 3$ e $v = 3$?
 ```
 ```
 
@@ -351,6 +374,22 @@ che è la stessa retta $y = -2x + 9$.
 \fill (5,4) circle (0.14) node[above right] {$B$};
 \fill (3,3) circle (0.14) node[above right] {$M$};
 \end{tikzpicture}
+```
+```grafico
+% nome: asse-segmento-punto-equidistante
+% alt: Il segmento di estremi A(1; 2) e B(5; 4), il suo asse y = -2x + 9 e un punto P che scorre sull'asse con il cursore della sua ascissa s, unito ad A e a B da due segmenti tratteggiati: sotto il piano sono scritte le distanze PA e PB, sempre uguali tra loro
+curva: \left(1+4t;2+2t\right) | blu | t da 0 a 1
+curva: y=-2x+9 | rosso
+curva: A=\left(1;2\right) | nero
+curva: B=\left(5;4\right) | nero
+curva: P=\left(s;-2s+9\right) | nero
+curva: \left(s+t\left(1-s\right);-2s+9+t\left(2s-7\right)\right) | grigio | tratteggiata | t da 0 a 1
+curva: \left(s+t\left(5-s\right);-2s+9+t\left(2s-5\right)\right) | grigio | tratteggiata | t da 0 a 1
+cursore: s = 2 da 1 a 5 passo 0,25
+finestra: x da -2 a 8, y da -2 a 8
+valore: \overline{PA} = \sqrt{\left(s-1\right)^2+\left(7-2s\right)^2}
+valore: \overline{PB} = \sqrt{\left(s-5\right)^2+\left(5-2s\right)^2}
+domanda: Fai scorrere $P$ lungo l'asse con il cursore $s$, la sua ascissa: le due distanze cambiano, ma restano uguali tra loro? In quale punto sono più piccole?
 ```
 ```
 

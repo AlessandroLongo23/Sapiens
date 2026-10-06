@@ -104,6 +104,16 @@ Nel piano cartesiano le soluzioni di $\sqrt{x + 3} = x - 3$ sono le ascisse dei 
 \node[red!60!black, right] at (3.02,1.76) {\small $y=x-3$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: equazione-irrazionale-retta-cursore
+% alt: Il grafico di y = radice di x + 3, la sua metà simmetrica tratteggiata e la retta y = x - k con il cursore di k: i punti comuni con la curva continua sono soluzioni dell'equazione, quelli con la metà tratteggiata sono soluzioni estranee, e il loro numero cambia con k
+curva: y=\sqrt{x+3}
+curva: y=-\sqrt{x+3} | blu | tratteggiata
+curva: y=x-k | rosso
+cursore: k = 3 da -5 a 8 passo 0,25
+finestra: x da -5 a 9, y da -5 a 5
+domanda: Con $k = 3$ la retta incontra la metà tratteggiata in un punto: la sua ascissa risolve $\sqrt{x + 3} = x - k$? Abbassa $k$ fino a $-3$: quante soluzioni vere ci sono adesso? E con $k = -4$?
+```
 
 ## Radice uguale a un'espressione
 
@@ -526,6 +536,16 @@ L'unione dei due sistemi è $-5 \leq x < 4$, cioè $S = [-5, 4\mathclose{[}$. È
 \fill (-2.00,-1.44) circle (2.5pt);
 \draw[thick] (1.60,-1.44) circle (2.5pt);
 \end{tikzpicture}
+```
+```grafico
+% nome: disequazione-irrazionale-verso-scelta
+% alt: Il grafico di y = radice di x + 5 e la retta y = x - 1, che si incontrano in (4; 3): è colorata la parte di piano dove la radice è maggiore di x - 1, da -5 a 4, oppure quella dove è minore, dopo 4
+curva: y=\sqrt{x+5}
+curva: y=x-1 | rosso
+scelta: > :: \sqrt{x+5}>x-1
+scelta: < :: \sqrt{x+5}<x-1
+finestra: x da -8 a 10, y da -5 a 7
+domanda: Con $>$ è colorato anche il tratto in cui la retta sta sotto l'asse $x$: perché lì la disequazione vale di sicuro? Passa a $<$: perché prima di $-5$ non è colorato niente?
 ```
 ```
 

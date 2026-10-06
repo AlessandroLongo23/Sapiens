@@ -123,6 +123,20 @@ I resti letti dal basso verso l'alto sono $1$, $0$, $1$, $1$, $1$, $0$: quindi $
 \end{tikzpicture}
 ```
 
+Le divisioni successive sono una ripetizione, e si possono far eseguire a una macchina. Lo schema qui sotto è un diagramma di flusso: si legge dall'alto seguendo le frecce, il rombo è una domanda, e finché la risposta è sì si rifà il giro. Nel giro `n mod 2` è il resto della divisione di $n$ per $2$ e `n div 2` è il quoziente. Premi "Passo" per avanzare un blocco alla volta, e al blocco "leggi" conferma il $46$ con "Invio": i resti escono nell'ordine in cui li trovi, quindi il numero binario si legge dall'ultimo al primo. Guarda il rombo quando $n$ vale $1$: la risposta è ancora sì, e il giro che segue dà l'ultimo resto. Poi cambia $46$ in $200$, il numero dell'esempio 5.
+
+```diagramma
+% nome: divisioni-successive-diagramma
+% alt: Diagramma di flusso delle divisioni successive: si legge n; un rombo chiede se n è maggiore di zero; nel giro resto prende il resto di n diviso 2, si scrive resto e n prende il quoziente di n diviso 2, poi una freccia risale al rombo; quando n è zero il diagramma finisce
+% ingresso: 46
+% codice: no
+leggi n
+finché n > 0
+    resto = n % 2
+    scrivi resto
+    n = n // 2
+```
+
 ```ad-example
 Esempio 5: un numero pari, con gli zeri in fondo
 Converti $200$ in binario.

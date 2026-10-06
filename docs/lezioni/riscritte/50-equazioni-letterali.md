@@ -89,6 +89,20 @@ Dividere per il parametro senza pensarci
 Da $ax = 3$ non si scrive $x = \dfrac{3}{a}$ senza aggiungere altro. Per $a = 0$ quella divisione non si può fare, e l'equazione ha un comportamento diverso (qui è impossibile). Ogni volta che dividi per un'espressione con il parametro, devi dire per quali valori la divisione è permessa e trattare a parte gli altri.
 ```
 
+La discussione dell'esempio 2 si vede nel piano cartesiano. I due membri di $ax = 3$ sono due funzioni di $x$: $y = ax$, una [retta per l'origine](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/proporzionalita-diretta-e-inversa), e $y = 3$, una retta orizzontale. La soluzione è l'ascissa del punto $P$ in cui si incontrano.
+
+```grafico
+% nome: equazione-letterale-due-rette
+% alt: La retta y = ax, che ruota intorno all'origine con il cursore di a, la retta orizzontale y = 3 e il punto P in cui si incontrano: sotto il piano è scritta l'ascissa di P, 3/a, la soluzione dell'equazione ax = 3; quando a si avvicina a 0 il punto P si allontana, e con a uguale a 0 le due rette sono parallele e P non esiste
+curva: y=ax
+curva: y=3 | grigio
+curva: P=\left(\frac{3}{a};3\right) | nero
+cursore: a = 1 da -3 a 3 passo 0,25
+finestra: x da -8 a 8, y da -4 a 6
+valore: x = \frac{3}{a}
+domanda: Porta $a$ verso $0$: dove va il punto $P$? E con $a = 0$ le due rette si incontrano?
+```
+
 ```ad-example
 Esempio 3: un caso indeterminato
 Risolvi e discuti $a(x - 2) = 2(x - a) + a^2 - 4$.

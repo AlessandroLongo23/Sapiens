@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode, type RefObject } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode, type RefObject } from 'react';
 import katex from 'katex';
 import { useReducedMotion } from '@/lib/hooks/use-media';
 
@@ -353,7 +353,9 @@ export function Readout({ children }: { children: ReactNode }) {
 
 /** Inline KaTeX for captions, readouts and labels outside the drawing. */
 export function Tex({ children, display = false }: { children: string; display?: boolean }) {
-	return <span dangerouslySetInnerHTML={{ __html: katex.renderToString(children, { displayMode: display, throwOnError: false, output: 'html' }) }} />;
+	// typeset once per formula, not at every frame of a figure that moves
+	const html = useMemo(() => katex.renderToString(children, { displayMode: display, throwOnError: false, output: 'html' }), [children, display]);
+	return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 /** A number the Italian way: 2.5 → "2,5", with at most `digits` decimals and no trailing zeros. */

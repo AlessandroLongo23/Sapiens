@@ -61,8 +61,11 @@ export default function CarrucolaMassaSecchio({ alt }: { alt?: string }) {
 
 	const top = TOP0 - s * S;
 	const c = v(R, top - BH / 2);
-	const spoke = polar(R, 0.75 * Math.PI - s / R_REAL);
-	const accLen = 0.25 + 0.1 * a;
+	// The drawn pulley turns with the drawn rope (s metres are s·S centimetres on a rim of R centimetres), so the rope
+	// does not seem to slip; the angular acceleration in the numbers is the real one, a / R_REAL.
+	const spoke = polar(R, 0.75 * Math.PI - (s * S) / R);
+	// 0,12 cm per m/s²: proportional, so twice the acceleration is twice the arrow.
+	const accLen = 0.12 * a;
 
 	let caption: string;
 	if (M === 0) caption = `Una carrucola senza massa gira senza bisogno di momento: la fune non è tesa e il secchio cade con l'accelerazione di gravità, ${num(G, 1)} m/s².`;

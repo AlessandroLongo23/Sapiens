@@ -152,6 +152,8 @@ La media semplice
 La media semplice delle masse degli isotopi del cloro sarebbe $(34{,}97 + 36{,}97)/2 = 35{,}97$, lontana dal valore vero, $35{,}45$. La media va pesata con le abbondanze: un controllo veloce è che il risultato sia più vicino alla massa dell'isotopo più abbondante.
 ```
 
+Gli isotopi presenti in natura e le loro abbondanze si leggono, per ogni elemento, nella sua scheda della tavola periodica interattiva: quella del [cloro](/strumenti/tavola-periodica?elemento=Cl) riporta i due dell'esempio 3.
+
 Dalla massa atomica si può anche risalire alle abbondanze, quando gli isotopi sono due: se il primo ha abbondanza $x$, come frazione, il secondo ha abbondanza $1 - x$.
 
 ```ad-example

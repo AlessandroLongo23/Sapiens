@@ -39,6 +39,22 @@ La retta della figura, $y = \frac{2}{3}x + \frac{1}{3}$, passa per $A(1, 1)$ e p
 \fill (4,3) circle (0.09) node[above left] {$B$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: coefficiente-angolare-due-punti-cursori
+% alt: La retta y = 2/3 x + 1/3 con due punti A e B che scorrono sulla retta, mossi dai cursori delle loro ascisse u e v, e i due spostamenti da A a B in rosso: sotto il piano sono scritti lo spostamento orizzontale, quello verticale e il loro rapporto, che resta 2/3
+curva: y=\frac{2}{3}x+\frac{1}{3}
+curva: A=\left(u;\frac{2}{3}u+\frac{1}{3}\right) | nero
+curva: B=\left(v;\frac{2}{3}v+\frac{1}{3}\right) | nero
+curva: \left(u+t\left(v-u\right);\frac{2}{3}u+\frac{1}{3}\right) | rosso | t da 0 a 1
+curva: \left(v;\frac{2}{3}u+\frac{1}{3}+\frac{2}{3}t\left(v-u\right)\right) | rosso | t da 0 a 1
+cursore: u = 1 da -4 a 6 passo 0,5
+cursore: v = 4 da -4 a 6 passo 0,5
+finestra: x da -5 a 7, y da -3 a 5
+valore: \Delta x = v-u
+valore: \Delta y = \frac{2}{3}\left(v-u\right)
+valore: \frac{\Delta y}{\Delta x} = \frac{\frac{2}{3}\left(v-u\right)}{v-u}
+domanda: I cursori $u$ e $v$ sono le ascisse di $A$ e di $B$. Allontana i due punti, poi porta $B$ a sinistra di $A$: $\Delta x$ e $\Delta y$ cambiano, e il loro rapporto?
+```
 
 Il motivo è un conto. $A$ e $B$ stanno sulla retta, quindi le loro coordinate rispettano l'equazione: $y_A = mx_A + q$ e $y_B = mx_B + q$. Sottraendo la prima uguaglianza dalla seconda, $q$ se ne va:
 

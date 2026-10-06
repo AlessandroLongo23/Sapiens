@@ -90,6 +90,26 @@ Il **grafico cartesiano** di una tabella è l'insieme dei punti che hanno per co
 }
 \end{tikzpicture}
 ```
+```grafico
+% nome: retta-tra-i-punti-molla-cursore
+% alt: I cinque punti misurati della molla con le loro barre di incertezza e una retta per l'origine che ruota con un cursore: con il cursore a 4 la retta sale di 4 centimetri ogni 100 grammi e passa tra i punti; con valori più piccoli tutti i punti restano sopra la retta, con valori più grandi tutti sotto
+curva: \begin{cases}\frac{k}{100}x & x\ge0\end{cases}
+curva: \left(50;2{,}1+0{,}2t\right) | nero | t da -1 a 1
+curva: \left(100;3{,}9+0{,}2t\right) | nero | t da -1 a 1
+curva: \left(150;6+0{,}2t\right) | nero | t da -1 a 1
+curva: \left(200;8{,}1+0{,}2t\right) | nero | t da -1 a 1
+curva: \left(250;9{,}9+0{,}2t\right) | nero | t da -1 a 1
+curva: \left(50;2{,}1\right) | nero
+curva: \left(100;3{,}9\right) | nero
+curva: \left(150;6\right) | nero
+curva: \left(200;8{,}1\right) | nero
+curva: \left(250;9{,}9\right) | nero
+cursore: k = 4 da 2,5 a 5,5 passo 0,1
+finestra: x da -30 a 290, y da -1 a 11,6
+forma: 4:3
+assi: m (g), Δl (cm)
+domanda: Il cursore $k$ dice di quanti centimetri sale la retta ogni $100$ g. Portalo a $3{,}5$ e poi a $4{,}5$: quanti punti restano sopra la retta e quanti sotto? Intorno a quale valore la retta passa tra i punti?
+```
 
 ### La scala degli assi
 

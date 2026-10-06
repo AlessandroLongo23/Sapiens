@@ -241,3 +241,18 @@ Da generalizzare, senza toccare il comportamento per la matematica:
 Fuori da `tree.mts`, dopo l'applicazione: il testo della pagina della materia
 (`src/lib/content/subject-copy.ts`, voce `high_school/chemistry`) cita ancora chimica ambientale,
 chimica industriale e l'ordine di oggi.
+
+## Aggiunte del 3 ottobre 2026
+
+Dal confronto con gli argomenti dei video del prof. Atzeni (`confronto-atzeni.md`) l'albero ha due
+lezioni in più al quarto anno, applicate al database lo stesso giorno: 29 capitoli e 159 lezioni.
+
+- `chim-ph-miscele`, "Il pH dopo una reazione tra acido e base", in "Idrolisi, tamponi e
+  titolazioni" dopo le soluzioni tampone: il pH quando acido e base reagiscono con uno dei due in
+  eccesso, o senza eccesso.
+- `chim-nernst`, "L'equazione di Nernst", in "L'elettrochimica" dopo la forza elettromotrice. È un
+  approfondimento: risponde in parte alla domanda 6 qui sopra, che resta aperta per la teoria degli
+  orbitali molecolari.
+
+Kp, acidi poliprotici, curve di titolazione e ione in comune non hanno una lezione loro: vanno
+dentro le lezioni indicate in `confronto-atzeni.md`.

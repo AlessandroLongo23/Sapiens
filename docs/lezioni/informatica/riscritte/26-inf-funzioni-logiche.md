@@ -117,6 +117,23 @@ L'ordine delle soglie
 `=SE(B2>=6;"sufficiente";SE(B2>=8;"ottimo";"insufficiente"))` non scrive mai ottimo. Con un $9$ la prima condizione, `B2>=6`, è già vera e il foglio si ferma a sufficiente. Le soglie vanno messe in ordine: dalla più alta alla più bassa con `>=`, dalla più bassa alla più alta con `<`.
 ```
 
+Lo schema qui sotto fa le stesse due domande della formula e si può eseguire. È un diagramma di flusso: si legge dall'alto seguendo le frecce, ogni rombo è una condizione, e da ogni rombo si esce dal ramo "sì" o dal ramo "no". Premi "Passo" per avanzare un blocco alla volta con la media di Anna, $7{,}5$, che al blocco "leggi" trovi già scritta con il punto e confermi con "Invio"; poi prova $9$, $6$ e $5{,}5$. Con "Modifica" puoi scambiare le due soglie, scrivendo $6$ nel primo rombo e $8$ nel secondo: con $9$ lo schema si ferma al primo rombo e non arriva più alla seconda domanda, come dice l'avviso qui sopra.
+
+```diagramma
+% nome: se-annidati-fasce-da-eseguire
+% alt: Diagramma di flusso di due SE annidati: si legge B2; un primo rombo chiede se B2 è maggiore o uguale a 8 e il suo ramo sì scrive "ottimo"; nel ramo no un secondo rombo chiede se B2 è maggiore o uguale a 6, con il ramo sì che scrive "sufficiente" e il ramo no che scrive "insufficiente"
+% ingresso: 7.5
+% codice: no
+leggi B2
+se B2 >= 8
+    scrivi "ottimo"
+altrimenti
+    se B2 >= 6
+        scrivi "sufficiente"
+    altrimenti
+        scrivi "insufficiente"
+```
+
 ```ad-tip
 Contare le parentesi
 Ogni SE apre una parentesi e la deve chiudere: una formula con due SE finisce con due parentesi chiuse, `))`.

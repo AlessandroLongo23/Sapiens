@@ -155,6 +155,14 @@ In UTF-8 un carattere non è sempre un byte
 La parola "più" ha 3 caratteri ma occupa 4 byte. Se un programma legge quei byte credendo che siano Latin-1, un byte per carattere, mostra due caratteri al posto di uno: "perché" diventa "perchÃ©". Quando in una pagina vedi lettere accentate trasformate in coppie di simboli strani, è successo questo.
 ```
 
+Il programma qui sotto, in Python, fa i due conti e poi lo sbaglio. Non serve saper programmare: premi "Esegui" e leggi le tre righe che escono. La prima riga del programma conta i caratteri di "più", la seconda i byte della sua codifica UTF-8, la terza codifica "perché" in UTF-8 e rilegge i byte come Latin-1. Poi cambia le parole tra virgolette: prova con "€", con un'emoji, con una parola senza accenti.
+
+```codice python
+print(len("più"))
+print(len("più".encode("utf-8")))
+print("perché".encode("utf-8").decode("latin-1"))
+```
+
 ## Quanti byte occupa un testo
 
 Per sapere quanto spazio occupa un testo:

@@ -856,6 +856,14 @@
     "chapter": "Idrolisi, tamponi e titolazioni"
   },
   {
+    "id": "db7aef8b-40f9-4c81-9165-037616f7326d",
+    "parent_id": "808c3ba8-690d-49db-9ebd-3db31a517ff2",
+    "title": "Il pH dopo una reazione tra acido e base",
+    "slug": "chim-ph-miscele",
+    "path": "high_school/chemistry/chimica-analitica/chim-ph-miscele",
+    "chapter": "Idrolisi, tamponi e titolazioni"
+  },
+  {
     "id": "fb045035-cf4f-4561-b376-6e10866af40d",
     "parent_id": "808c3ba8-690d-49db-9ebd-3db31a517ff2",
     "title": "Gli indicatori acido-base",
@@ -917,6 +925,14 @@
     "title": "Forza elettromotrice e spontaneità delle redox",
     "slug": "chim-forza-elettromotrice",
     "path": "high_school/chemistry/elettrochimica/chim-forza-elettromotrice",
+    "chapter": "L'elettrochimica"
+  },
+  {
+    "id": "6b680b90-1c11-4048-b6aa-7c443d1e2338",
+    "parent_id": "ebacee57-ad5f-4470-9f9f-0a8fc8e62760",
+    "title": "L'equazione di Nernst",
+    "slug": "chim-nernst",
+    "path": "high_school/chemistry/elettrochimica/chim-nernst",
     "chapter": "L'elettrochimica"
   },
   {

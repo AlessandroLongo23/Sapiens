@@ -189,6 +189,14 @@ $$0{,}1000000000000000055511151231257827\ldots$$
 
 L'errore è piccolissimo, ma si vede appena si fanno dei conti. Sommando $0{,}1$ e $0{,}2$ a 64 bit, il risultato in memoria è $0{,}30000000000000004$, che non è uguale al numero memorizzato per $0{,}3$. Sommando dieci volte $0{,}1$ non si ottiene $1$, ma $0{,}9999999999999999$.
 
+Lo puoi vedere sul tuo computer. Le tre righe qui sotto sono un programma in Python, che lavora a 64 bit: ogni `print` scrive il risultato del conto tra parentesi, i numeri hanno il punto al posto della virgola, e `==` chiede se due numeri sono uguali (`False` vuol dire no). Non serve saper programmare: premi "Esegui" e leggi. Poi cambia i numeri: con `0.5 + 0.25`, due frazioni che hanno per denominatore una potenza di $2$, il risultato è esatto.
+
+```codice python
+print(0.1 + 0.2)
+print(0.1 + 0.2 == 0.3)
+print(0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1)
+```
+
 Anche i numeri interi grandi possono perdere cifre. Nel formato a 32 bit la mantissa contiene 24 cifre binarie, contando l'$1$ che non si scrive: fino a $2^{24} = 16\,777\,216$ tutti i numeri interi sono esatti, ma $16\,777\,217$ non si può scrivere e viene arrotondato a $16\,777\,216$.
 
 ```ad-warning

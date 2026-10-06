@@ -148,6 +148,8 @@ quelle della sezione "Chimica: convenzioni" sopra.
   Lo script compila i blocchi ` ```tikz ` e scrive teoria, formulario e flashcard; i disegni di RDKit (` ```molecola `
   e gli altri) si preparano prima con `pubblica_figure.py` e si caricano con `scripts/chimica/pubblica.mts`, come
   sopra.
+- Confronto degli argomenti: prima di chiudere una lezione si controlla la sua riga in `confronto-atzeni.md`, che
+  elenca gli argomenti dei video del prof. Atzeni. Serve a non dimenticare concetti; non è una fonte.
 - Link: `url.md` (chimica), `../url.md` (matematica), `../fisica/url.md` (fisica). Si rigenera con
   `scripts/fisica/indice.mts --materia chemistry --dir docs/lezioni/chimica`, che scrive anche `originali/index.json`.
   Gli argomenti che la fisica ha già (grandezze, densità, temperatura e calore, cifre significative, passaggi di

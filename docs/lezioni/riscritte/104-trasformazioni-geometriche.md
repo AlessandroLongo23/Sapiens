@@ -473,6 +473,20 @@ Togliendo gli apici, la retta immagine è $r'$: $y = 2x - 6$, parallela a $r$ pe
 \fill (2,-2) circle (1.8pt) node[right] {\small $Q'$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: traslazione-retta-vettore-cursori
+% alt: La retta r di equazione y = 2x + 1 e la sua immagine nella traslazione di vettore (a; b), con i cursori di a e di b: il punto P(0; 1) va nel punto R(a; 1 + b), la retta immagine resta parallela a r, e sotto il piano è scritta la sua ordinata all'origine
+curva: y=2x+1 | blu
+curva: y-b=2\left(x-a\right)+1 | arancione
+curva: P=\left(0;1\right) | nero
+curva: R=\left(a;1+b\right) | nero
+curva: \left(at;1+bt\right) | grigio | t da 0 a 1
+cursore: a = 3 da -5 a 5 passo 1
+cursore: b = -1 da -5 a 5 passo 1
+finestra: x da -6 a 8, y da -5 a 6
+valore: q = 1+b-2a
+domanda: Il punto $R$ è l'immagine di $P$. Cambia il vettore: la retta immagine smette mai di essere parallela a $r$? Prova con $a = 1$ e $b = 2$: dove finisce la retta, e perché?
+```
 ```
 
 ```ad-warning

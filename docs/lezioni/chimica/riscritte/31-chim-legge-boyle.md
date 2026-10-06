@@ -149,6 +149,19 @@ La costante $p \cdot V$ cresce con la temperatura: a temperatura più alta le pa
 \node[right] at (2.4,3.2) {\small $T_1 < T_2 < T_3$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: boyle-isoterma-prodotto-cursore
+% alt: Un'isoterma nel grafico pressione-volume, il ramo di iperbole p uguale a k diviso V, con il cursore di k, il valore del prodotto p per V, da 1 a 6 atmosfere per litro, e l'isoterma della tabella, con k uguale a 3,0, tratteggiata per confronto: quando k cresce, come succede scaldando il gas, la curva si allontana dagli assi. Un punto segna lo stato del gas a 2 litri, e sotto il piano si legge la sua pressione
+curva: y=\frac{k}{x}
+curva: y=\frac{3}{x} | tratteggiata | grigio
+curva: A=\left(2;\frac{k}{2}\right) | nero
+cursore: k = 4,5 da 1 a 6 passo 0,1
+finestra: x da 0 a 6, y da 0 a 5
+forma: 6:5
+assi: V (L), p (atm)
+valore: p_A = \frac{k}{2}
+domanda: Il cursore $k$ è il prodotto $p \cdot V$, che cresce con la temperatura. Portalo da $3$ a $6$: di quanto cambia la pressione nel punto $A$, a $2\,\text{L}$?
+```
 
 Un grafico curvo non si legge bene a occhio: non è facile dire se una curva è proprio un'iperbole. Per controllare una legge di proporzionalità inversa si mette sull'asse orizzontale l'inverso del volume, $1/V$: se $p \cdot V$ è costante, allora $p = \text{costante} \cdot \dfrac{1}{V}$, e i punti stanno su una retta che passa per l'origine.
 

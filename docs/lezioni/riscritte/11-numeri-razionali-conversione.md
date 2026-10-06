@@ -187,6 +187,24 @@ Il resto $8$ si è già presentato: da qui in poi la divisione ripete gli stessi
 
 Nella divisione per un numero $d$ i resti possibili sono solo $0, 1, \ldots, d - 1$: prima o poi il resto è $0$ (decimale limitato) oppure un resto si ripete, e da quel momento si ripetono anche le cifre (decimale periodico). Per questo una frazione non può dare un decimale infinito che non si ripete. Il periodo può però essere lungo: $\dfrac{2}{7} = 0{,}\overline{285714}$.
 
+Il diagramma qui sotto fa la divisione dell'esempio 2 una cifra alla volta: a ogni giro scrive una cifra $c$ dopo la virgola e tiene il resto $r$. Eseguilo un passo alla volta e guarda $r$ nella tabella delle variabili: quando torna un valore già visto, le cifre ricominciano. Poi cambia i due numeri in $2$ e $7$.
+
+```diagramma
+% nome: divisione-cifre-decimali
+% alt: Diagramma di flusso della divisione con la virgola: si leggono n e d, r è il resto di n diviso d e i parte da 1; finché i è minore o uguale a 8, c è il quoziente intero di 10r diviso d, r diventa il resto della stessa divisione, si scrive la cifra c e si aumenta i di 1
+% ingresso: 5, 12
+% codice: no
+leggi n
+leggi d
+r = n % d
+i = 1
+finché i <= 8
+    c = (r * 10) // d
+    r = (r * 10) % d
+    scrivi c
+    i = i + 1
+```
+
 ```ad-tip
 Controlla con il passaggio inverso
 Dopo ogni conversione dividi il numeratore della frazione per il denominatore e confronta il risultato con il decimale di partenza.

@@ -214,6 +214,15 @@ commento del proprio gruppo. Esempio da seguire: `MotoIncontro.tsx` (cursore, bo
 valori sotto la figura). Niente motore fisico: i moti hanno la loro formula, e dove non ce l'hanno basta un passo
 di integrazione scritto a mano.
 
+Fa eccezione la scena della sandbox di fisica (`vault/Prodotti/Studenti/Sandbox di fisica.md`): un sistema di masse,
+piani, fili e carrucole che il motore di `src/lib/sandbox/` risolve da sé, con forze, numeri e grafico accanto. Una
+figura di questo tipo è un file `Scena….tsx` di poche righe che passa a `LessonScene`
+(`src/components/sandbox/LessonScene.tsx`) la scena (una funzione di `src/lib/sandbox/scenes.ts`), i cursori e le
+scelte, e quali pezzi mostrare: il tempo, l'elenco delle forze, un grafico, i valori, la frase e la domanda. I numeri
+di partenza sono quelli di un esempio della lezione. Esempi: `ScenaLampadaDueFili.tsx` (ferma, solo forze),
+`ScenaCarrelloPesetto.tsx` (moto, forze e grafico), `ScenaCassaInSalita.tsx` (moto e grafico). La colonna di una
+lezione è larga 568 px da computer: scena e numeri stanno affiancati da 544 px in su, uno sotto l'altro sul telefono.
+
 Per guardarle serve il sito in sviluppo, acceso durante i lotti (il secondo lotto usa la porta 3001: aggiungi
 `--porta 3001`):
 

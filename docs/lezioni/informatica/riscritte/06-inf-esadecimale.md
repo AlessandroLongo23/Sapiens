@@ -197,6 +197,8 @@ $$
 Il rosso è al massimo, il verde a metà, il blu è spento: è un arancione. Allo stesso modo `#000000` è il nero, con le tre luci spente, e `#FFFFFF` è il bianco, con le tre luci al massimo.
 ```
 
+Nella lezione [La codifica delle immagini: pixel e colori](/materiale/scuola-superiore/informatica/la-codifica-dell-informazione/la-codifica-delle-immagini-pixel-e-colori) c'è un riquadro colorato con `#FF8000`, in cui puoi cambiare le sei cifre e vedere il colore che ne esce.
+
 ```tikz
 % nome: colore-esadecimale-componenti
 % alt: Il codice di colore cancelletto FF8000 diviso in tre coppie di cifre esadecimali: FF per il rosso, 80 per il verde, 00 per il blu; sotto ogni coppia il suo valore in base dieci, cioè 255, 128 e 0
