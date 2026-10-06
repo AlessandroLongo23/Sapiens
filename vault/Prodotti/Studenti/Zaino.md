@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-30
+aggiornato: 2026-10-06
 tag: [prodotto, studenti]
 ---
 # Zaino
@@ -66,7 +66,10 @@ Il quaderno digitale dello studente, integrato con [[Diario e calendario]] e con
 
 Nella modalità Semplice la nota è un foglio a larghezza fissa, uguale su ogni schermo, su cui si attaccano gli [[Adesivi]]. Vedi [[2026-09-24 Le note sono fogli a larghezza fissa]].
 
+Dal 6 ottobre 2026 è deciso che gli appunti e le pagine compilate nei [[Laboratori]] vivranno nello Zaino come relazione di laboratorio, in pagine A5 ad altezza fissa (vedi [[2026-10-06 Le pagine del quaderno di laboratorio sono A5 e finiscono nello Zaino]]). Non è ancora fatto: il quaderno del laboratorio tiene i valori come dati, pronti da salvare.
+
 ## Domande aperte
+- La relazione di laboratorio: come si salva (un tipo di nota a pagine fisse, con i valori dei campi come dati), se conta nel limite del piano gratuito, come si stampa.
 - L'anteprima della modalità Avanzata sul telefono: oggi il foglio intero è molto piccolo. Va progettata un'esperienza apposta, con tutte le funzioni (vedi [[2026-09-27 Gli adesivi si vedono anche nella modalità Avanzata]]).
 - Sul telefono il foglio intero si legge ma si scrive piccolo: il revisore ha proposto di passare al 100% quando si tocca il testo. Per ora c'è il comando "Scrivi più grande", in linea con [[2026-09-24 Le note sono fogli a larghezza fissa]]. Da decidere.
 - Carta predefinita per le nuove note ("Usa per le nuove note", come in Notability e OneNote): non fatta.

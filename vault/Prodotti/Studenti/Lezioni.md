@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-30
+aggiornato: 2026-10-06
 tag: [prodotto, studenti, contenuti]
 ---
 # Lezioni
@@ -10,6 +10,7 @@ La teoria di Sapiens: una lezione per argomento, ordinata come il programma mini
 
 ## Stato attuale
 - 6 ottobre 2026, in produzione (PR #43): il terzo anno di fisica, 49 lezioni (71-119) con formulari, flashcard, 221 figure TikZ, 53 figure interattive e 49 generatori di esercizi collegati al sito. Vedi [[2026-10-06 Terzo anno di fisica]].
+- 6 ottobre 2026, nel codice e non pubblicato: il blocco `guidato`, un esercizio svolto a passi con fermate in cui lo studente scrive, sceglie o muove un cursore e conferma, senza accesso e fuori dai progressi. Pilota nella lezione 121. Vedi [[2026-10-06 Grafici negli esercizi ed esercizio guidato]] e [[2026-10-06 Le lezioni hanno un esercizio guidato, con fermate non fisse]].
 - Matematica delle superiori riorganizzata il 24 settembre 2026 secondo le Indicazioni nazionali e l'ordine dei libri: 39 capitoli e 183 lezioni (104 nel biennio, 79 nel triennio), 18 scritte. L'albero è in `docs/lezioni/albero.md` e si applica con `scripts/lezioni/tree.mts`; 63 vecchi indirizzi reindirizzano ai nuovi (`PATH_ALIASES` in `src/lib/seo/slug.ts`). Vedi [[Programma ministeriale]].
 - Albero livello → materia → capitolo → lezione nella tabella Supabase `content_nodes` (letta da `src/lib/server/content.ts`). La migrazione di questa tabella non è nella repo.
 - 277 nodi: 3 livelli, 10 materie, 76 capitoli, 188 lezioni. Solo 18 lezioni hanno la teoria, tutte di matematica delle superiori; le altre 170 sono pagine vuote in `noindex`. Nessun nodo ha una descrizione (dati del 3 settembre 2026, `SEO-TODO.md`).
@@ -38,6 +39,7 @@ La teoria di Sapiens: una lezione per argomento, ordinata come il programma mini
 - Ordine degli argomenti: da decidere se segue le Indicazioni nazionali o un libro di testo diffuso. Vedi [[Programma ministeriale]].
 
 ## Domande aperte
+- Un esercizio guidato dentro la lezione, tra gli esempi svolti e gli esercizi: vedi [[Esercizio guidato nelle lezioni]] (idea del 5 ottobre 2026).
 - Come si gestiscono le differenze tra indirizzi (liceo scientifico ordinario, scienze applicate, tecnici)?
 - Le lezioni restano tutte gratuite? Oggi sì (piano Free), ed è la base della [[SEO]].
 

@@ -1,7 +1,7 @@
 ---
 stato: bozza
 release: beta
-aggiornato: 2026-09-29
+aggiornato: 2026-10-06
 tag: [contenuti, ai]
 ---
 # Pipeline lezioni
@@ -14,6 +14,8 @@ Come si produce una lezione pronta da pubblicare.
 - 18 lezioni pubblicate, scritte con un altro modello e caricate tutte il 30 novembre 2025.
 - 23 settembre 2026: le 18 lezioni riscritte da Claude (Opus 5.5) con un brief di stile (`docs/lezioni/stile.md`), sei agenti in parallelo, ogni conto verificato con SymPy e ogni lezione riletta. Tempo: circa 10 minuti di esecuzione più la rilettura. Controllo automatico in `scripts/lezioni/check.mts`. Dettagli e decisioni da prendere in `docs/lezioni/README.md`.
 - 24 settembre 2026: formulari e flashcard delle 18 lezioni, cinque agenti in parallelo sulle regole aggiunte a `docs/lezioni/stile.md`, circa 4 minuti di esecuzione. File in `docs/lezioni/formulari/` e `docs/lezioni/flashcard/`, stesso controllo automatico; `scripts/lezioni/publish.mts` pubblica teoria, formulario e flashcard, e non sovrascrive mai un contenuto cambiato nel database dopo l'ultima pubblicazione.
+- 3 ottobre 2026: per la chimica c'è una lista di controllo degli argomenti, `docs/lezioni/chimica/confronto-atzeni.md`, ricavata dai titoli dei video del prof. Atzeni: ogni lezione si confronta con la sua riga prima di chiuderla. Non è una fonte. L'albero di chimica ha due lezioni in più (159). Vedi [[2026-10-03 Video del prof. Atzeni]].
+- 5 ottobre 2026: il terzo anno di matematica, 25 lezioni (file 105-129) con formulari, flashcard e 25 generatori, scritto da sette gruppi in parallelo sul brief `docs/lezioni/brief-terzo-anno.md`, in due fasi (lezioni, poi generatori). Scritto e verificato, non ancora pubblicato. `publish.mts` non ha un filtro per numero: con modifiche di più sessioni nella cartella pubblica tutto quello che trova. Vedi [[2026-10-05 Terzo anno di matematica]].
 - 6 ottobre 2026: il terzo anno di chimica, 33 lezioni (file 48-82) con formulari, flashcard, figure interattive e 33 generatori, scritto da dieci gruppi in parallelo sul brief `docs/lezioni/chimica/brief-terzo-anno.md`; ogni gruppo ha fatto le due fasi di seguito. Pubblicato lo stesso giorno da un worktree pulito di `origin/master`, che lascia fuori le modifiche di altre sessioni. Vedi [[2026-10-06 Terzo anno di chimica]].
 
 ## Obiettivo

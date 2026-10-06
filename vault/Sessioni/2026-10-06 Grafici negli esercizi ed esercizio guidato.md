@@ -37,6 +37,23 @@ Sessione del 6 ottobre 2026, seguito di [[2026-10-05 Terzo anno di matematica]].
 - Niente provato su un telefono vero, su Safari o Firefox, con un lettore di schermo, sulla pagina vera della lezione o su una build di produzione.
 - Stima per scrivere un esercizio guidato: circa un'ora di sessione per lezione; per le altre 24 del terzo anno tre o quattro sessioni in parallelo.
 
+## In produzione dal 6 ottobre
+Alessandro ha chiesto di portare tutto in produzione. Fatto la sera del 6 ottobre, con due PR.
+
+- PR #41: il terzo anno di matematica (lezioni, generatori, specifiche, controlli), i grafici negli esercizi, l'esercizio guidato con il limite di richieste. Unita e in produzione.
+- Le 25 lezioni con formulari e flashcard scritte nel database con `publish.mts --apply`: 75 campi, 130 figure compilate e caricate, nessun errore.
+- PR #42: le copie in `pubblicate/`, le righe `% svg:` e i prerequisiti rigenerati con il terzo anno. Unita e in produzione.
+- Controllato sul sito: le lezioni si aprono con formule, figure e piani; l'esercizio guidato della 121 c'è e la rotta della correzione risponde; la pagina degli esercizi mostra i 9 livelli di `funzioni-esponenziali`; "Prima di cominciare" e "Dove si usa" compaiono.
+
+Come è stato fatto, perché nella cartella di lavoro ci sono modifiche non committate di altre sessioni (terzo anno di fisica e di chimica, laboratorio, piani nelle lezioni del biennio): una copia di lavoro separata, `../Sapiens-terzo-anno`, creata da master, con dentro solo i file e le righe di questa sessione. Nei file condivisi (`config.ts`, `index.ts`, `level-names.ts`, il registro delle scene) sono entrate solo le righe di matematica. La pubblicazione è partita da lì.
+
+Da sapere:
+- La cartella di lavoro principale è rimasta com'era, ed è indietro rispetto a master: i file di questo lotto ci sono ancora come non tracciati o modificati. Un `git pull` lì si ferma finché non vengono allineati. Va fatto a mano e con calma, con le altre sessioni ferme.
+- Le lezioni 87 e 88 hanno su master i piani con i cursori di un'altra sessione, mai pubblicati nel database: sono state tenute fuori da questa pubblicazione.
+- Le modifiche alle note condivise del vault (Home, Agenda, Domande per Andrea, Pipeline lezioni, Lezioni, Esercizi, Piano cartesiano nelle lezioni) non sono nelle PR: restano nella cartella principale, da committare con il resto.
+- Il limite rigido delle richieste sul firewall di Vercel non è stato impostato.
+- Non provato in produzione: una prova vera con accesso sui livelli con i grafici, un telefono vero.
+
 ## Domande per Andrea
 - Nella 121 l'ultima fermata chiede $3 = \left(\frac{1}{3}\right)^{-1}$: va bene lì, o è della 122? Riportata in [[Domande per Andrea]].
 

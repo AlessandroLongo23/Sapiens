@@ -24,3 +24,9 @@ Sessione del 6 ottobre 2026. Alessandro non era più contento delle copertine a 
 - La riga degli argomenti per i sei corsi di intelligenza artificiale.
 - Decidere con Dario se questi oggetti diventano il linguaggio delle illustrazioni del sito.
 - Decidere quali corsi universitari aggiungere, le aree nuove e i loro colori.
+
+## 7 ottobre: in produzione, e la cartella di lavoro riallineata
+- Le schede sono su master con la PR #47 e in produzione dal 7 ottobre (controllato su `sapiens-edu.vercel.app`). I sei branch del terzo anno erano già su master (PR dalla #41 alla #46); cancellati quelli e i due di questo lavoro, in locale e su GitHub, con le due cartelle di lavoro separate che li tenevano aperti.
+- La cartella principale era ferma al master del 5 ottobre, con circa 1.450 file non committati. Prima di toccarla è stata fatta una copia verificata file per file in `../Sapiens-backup-2026-10-07` (archivio, elenco, impronte SHA-256, patch). Poi master è stato portato all'ultima versione senza toccare i file, e le differenze sono state trattate per tipo: 1.147 file erano identici a master; 174 file di master qui mancavano e sono arrivati; 77 erano copie vecchie di file corretti dopo su master, e sono state sostituite; i 7 con modifiche da entrambe le parti sono stati uniti (in sei la copia locale conteneva già tutto master; in `scenes/index.tsx` cambiava solo l'ordine delle righe); in `Agenda.md` due voci erano finite sulla stessa riga e sono state separate.
+- Controllo finale sulla copia: dei 1.450 file salvati, 1.374 sono invariati nella cartella, 74 erano versioni già presenti nella storia di master, 2 sono i file uniti a mano. Niente è andato perso.
+- Resta nella cartella il lavoro in corso vero, circa 230 file: laboratorio, sandbox di fisica, agenda tutor, intelligenza artificiale all'università, strumenti nelle lezioni del biennio, note del vault. Da decidere con Alessandro come committarlo.
