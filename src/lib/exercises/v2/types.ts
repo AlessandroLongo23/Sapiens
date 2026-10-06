@@ -36,6 +36,11 @@ export interface ChoiceOption {
 	code?: CodeText;
 	/** A drawing instead of the formula (a molecule): `latex` is then unused, `text` says what it is for a screen reader. */
 	figure?: FigureRef;
+	/**
+	 * A graph instead of the formula: a plane (v2/piano.ts), drawn small. `latex` is then unused, and `text` (or the
+	 * scene's `alt`) says what the graph looks like for a screen reader.
+	 */
+	scene?: SceneRef;
 	/** Plain-text label of the option, when `latex` is not LaTeX (a sample with `format: 'text'`, or a drawing). */
 	text?: string;
 }

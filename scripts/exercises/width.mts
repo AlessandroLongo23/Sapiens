@@ -56,7 +56,7 @@ for (const id of process.argv.slice(2)) {
 				else if (block.kind === 'givens') problems.push(...block.items);
 			}
 			const choice = x.answer.kind === 'choice' ? x.answer : g.toChoice?.(x, createRng(s + 99));
-			for (const o of choice?.options ?? []) if (!o.figure) options.push(o.latex);
+			for (const o of choice?.options ?? []) if (!o.figure && !o.scene) options.push(o.latex);
 		}
 		const p = await widths(problems, PROBLEM.px);
 		const o = await widths(options, OPTION.px);

@@ -36,6 +36,7 @@ import CurvaTemperaturaTempo from './CurvaTemperaturaTempo';
 import Cromatogramma from './Cromatogramma';
 import ManometroAperto from './ManometroAperto';
 import ParticelleRiquadri from './ParticelleRiquadri';
+import PianoCartesiano from './PianoCartesiano';
 
 /**
  * The drawings of the exercises that change with the numbers (a block on an incline at the exercise's angle): each
@@ -109,6 +110,8 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
 	// Chemistry, first two years: the mole (group 27).
 	// Chemistry, first two years: the atom (group 28).
 	// Chemistry, first two years: water (group 29).
+	// Maths: the Cartesian plane, also as an option of a multiple choice (src/lib/exercises/v2/piano.ts).
+	'piano-cartesiano': PianoCartesiano,
 };
 
 export function SceneFigure({ scene, className }: { scene: SceneRef; className?: string }) {

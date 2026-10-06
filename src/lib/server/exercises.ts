@@ -12,6 +12,7 @@ import { STREAK_MIN_ANSWERS, previousDay, streakOf, type Streak } from '@/lib/ex
 import { createRng, deriveSeed } from '@/lib/exercises/v2/rng';
 import type { Answer, ChartAnswer, ChoiceAnswer, CodeText, FigureRef, Generator, OpenGrading, ProgramAnswer, Sample, SceneRef } from '@/lib/exercises/v2/types';
 import { openGrading } from '@/lib/exercises/v2/open-answers';
+import { drawnScene, sceneOptionHtml } from '@/lib/exercises/v2/piano-svg';
 import { chartConstructs, codeConstructs, missing, missingMessage, neededText } from '@/lib/exercises/v2/costrutti';
 import { figureUrl } from '@/lib/content/figures';
 import { escapeHtml } from '@/lib/utils/escape';
@@ -55,7 +56,7 @@ export interface ExerciseView {
 	/** Multiple choice, or an open answer written in a formula field: `options` is then empty. */
 	mode: QuestionMode;
 	/** `text` is the LaTeX (or the plain label), for the column-count guess and the screen reader; `figure` marks a drawing. */
-	options: { html: string; text: string; figure?: true }[];
+	options: { html: string; text: string; figure?: true; /** A graph: the answers are four small planes, two by two. */ scene?: true }[];
 	/** An open question answered with a flowchart or a program, not with a formula. */
 	build?: BuildView;
 	/** The verdict, sealed: the page sends it back with the answer and cannot read it. */
@@ -267,7 +268,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 	if (s.code) blocks.push({ kind: 'code', html: codeHtml(s.code) });
 	if (s.chart) blocks.push({ kind: 'figure', html: chartHtml(s.chart) });
 	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
-	if (s.scene) blocks.push({ kind: 'scene', scene: s.scene });
+	if (s.scene) blocks.push({ kind: 'scene', scene: drawnScene(s.scene) });
 	const asks = blocks.some((b) => b.kind === 'ask');
 	const prompt = IMPLIED_PROMPTS.has(s.prompt) || (asks && GENERIC_PROMPTS.has(s.prompt)) ? '' : s.prompt;
 	const made = s.answer.kind === 'chart' || s.answer.kind === 'program';
@@ -291,6 +292,8 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 					? { html: codeHtml(o.code), text: o.text ?? 'un programma', figure: true as const }
 					: o.figure
 				? { html: figureHtml(o.figure), text: o.text ?? o.figure.alt, figure: true as const }
+				: o.scene
+					? { html: sceneOptionHtml(o.scene), text: o.text ?? o.scene.alt, figure: true as const, scene: true as const }
 				: text
 					? { html: listingHtml(o.latex) ?? textHtml(o.latex), text: o.text ?? o.latex }
 					: { html: renderMath(`$$${o.latex}$$`), text: o.latex }
@@ -323,7 +326,7 @@ function expectedLatex(s: Sample): string {
 function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef; scene?: SceneRef; drawn?: { chart?: string; code?: CodeText } }) {
 	const html = w.format === 'text' ? textHtml : (t: string) => renderMath(presentStep(t));
 	const drawing = [w.drawn?.code ? codeHtml(w.drawn.code) : '', w.drawn?.chart !== undefined ? chartHtml(w.drawn.chart) : '', w.figure ? figureHtml(w.figure) : ''].join('');
-	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(drawing ? { figureHtml: drawing } : {}), ...(w.scene ? { scene: w.scene } : {}) };
+	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(drawing ? { figureHtml: drawing } : {}), ...(w.scene ? { scene: drawnScene(w.scene) } : {}) };
 }
 
 /** An answered attempt as read back from the database. */
