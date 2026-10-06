@@ -11,11 +11,14 @@ import { useSemanticHits } from '@/lib/hooks/use-semantic-hits';
 import { useMd } from '@/lib/hooks/use-media';
 import { buildIndex, fuse, highlight, search, titleOf, type LessonHit, type PlaceHit, type SearchSection, type SectionHit } from '@/lib/search/rank';
 import { toneFor } from '@/lib/utils/icons';
+import { countByType } from '@/lib/utils/tree';
+import { subjectNoun } from '@/lib/seo/meta';
 import { ZAINO_ROOT } from '@/lib/config/site';
 import type { NoteHit } from '@/lib/zaino/config';
 import { cn } from '@/lib/utils/cn';
 import { NodeIcon } from '@/components/ui/NodeIcon';
 import { PenStroke } from '@/components/content/PageHeader';
+import { SubjectObject } from '@/components/content/SubjectObject';
 import { useFullContentTree } from './ContentTreeContext';
 import { SearchField } from './SearchField';
 
@@ -46,7 +49,11 @@ interface Group {
  * as an index would group them. When the query reads as a question the
  * paragraph that answers it comes first, as a card on squared paper that
  * opens the lesson at that heading; then the other paragraphs, the lessons,
- * subjects and chapters, and the student's notes above all of them.
+ * the levels, subjects and chapters, and the student's notes above all of them.
+ * Each kind of result has its own shape: a level, a subject or a course is a card
+ * with its object, a chapter a numbered line of an index, a lesson a line with the
+ * subject's sticker, a paragraph a line with the section sign, a note a line with
+ * its notebook.
  *
  * The tree is fetched the first time the search or the level menu needs it,
  * so no page ships it. The lessons' sections are fetched on first open too, and the ranking runs
@@ -213,7 +220,7 @@ export function SearchOverlay() {
 								<span className="h-px flex-1 bg-edge" aria-hidden="true" />
 								<span className="tabular-nums text-fg-faint">{group.rows.length}</span>
 							</h2>
-							<ul role="presentation" className={cn('flex', group.id === 'places' ? 'flex-wrap gap-2 pt-2' : 'flex-col')}>
+							<ul role="presentation" className={group.id === 'objects' ? 'grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2' : 'flex flex-col'}>
 								{group.rows.map((row) => {
 									const i = n++;
 									return (
@@ -249,6 +256,13 @@ function arrange(results: ReturnType<typeof search>, notes: NoteHit[]): Group[] 
 	const groups: Group[] = [];
 	const noteRows: Row[] = notes.map((note) => ({ kind: 'note', note, key: `n-${note.id}`, href: `${ZAINO_ROOT}/nota/${note.id}` }));
 	const placeRows: Row[] = results.places.map((hit) => ({ kind: 'place', hit, key: `p-${hit.node.id}`, href: hit.href }));
+	// Levels, subjects and courses are cards with their object; chapters are lines of an index.
+	const objectRows = placeRows.filter((row) => row.kind === 'place' && row.hit.node.type !== 'chapter');
+	const chapterRows = placeRows.filter((row) => row.kind === 'place' && row.hit.node.type === 'chapter');
+	const places = () => {
+		add('objects', 'Livelli, materie e corsi', objectRows);
+		add('chapters', 'Capitoli', chapterRows);
+	};
 	const lessonRows: Row[] = results.lessons.map((hit) => ({ kind: 'lesson', hit, key: `l-${hit.topic.id}`, href: hit.href }));
 	const sectionRows: Row[] = results.sections.map((hit) => ({ kind: 'section', hit, key: `s-${hit.section.topic}-${hit.section.id}`, href: hit.href, section: hit.section.id }));
 	const add = (id: string, label: string, rows: Row[]) => rows.length && groups.push({ id, label, rows });
@@ -260,13 +274,15 @@ function arrange(results: ReturnType<typeof search>, notes: NoteHit[]): Group[] 
 		add('lessons', 'Lezioni', lessonRows);
 		add('sections', 'Anche in questi paragrafi', rest);
 	} else {
-		add('places', 'Materie e capitoli', placeRows);
+		places();
 		add('lessons', 'Lezioni', lessonRows);
 		add('sections', 'Dentro le lezioni', sectionRows);
 	}
-	if (results.question) add('places', 'Materie e capitoli', placeRows);
+	if (results.question) places();
 	return groups;
 }
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 /** A text with the words the query matched run over with the highlighter. */
 function Marked({ text, stems }: { text: string; stems: string[] }) {
@@ -288,15 +304,33 @@ function Marked({ text, stems }: { text: string; stems: string[] }) {
 function Hit({ row, index, active, stems, onOpen, onHover }: { row: Row; index: number; active: boolean; stems: string[]; onOpen: () => void; onHover: () => void }) {
 	const common = { id: `hit-${index}`, href: row.href, onClick: onOpen, onMouseMove: active ? undefined : onHover, role: 'option', 'aria-selected': active, 'data-active': active || undefined };
 
-	if (row.kind === 'place') {
+	if (row.kind === 'place' && row.hit.node.type !== 'chapter') {
+		// A level, a subject or a course: the card of the library, small, with the same object.
 		const { node, parent } = row.hit;
+		const level = node.type === 'level';
+		const c = countByType(node.children);
+		const [one, many] = subjectNoun(parent);
+		const counts = level ? [plural(c.subject, one, many), plural(c.topic, 'lezione', 'lezioni')] : [plural(c.chapter, 'capitolo', 'capitoli'), plural(c.topic, 'lezione', 'lezioni')];
 		return (
-			<Link {...common} data-subject={toneFor(node, parent)} className="group flex items-center gap-2 rounded-full border border-tint-edge bg-tint-soft py-1.5 pl-2 pr-3.5 text-tint-fg no-underline shadow-paper transition-[transform,box-shadow] duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-lift focus-ring data-active:-translate-y-0.5 data-active:shadow-lift">
-				<NodeIcon node={node.type === 'subject' ? node : parent} className="size-4" aria-hidden="true" />
-				<span className="font-medium text-fg-strong">
-					<Marked text={titleOf(node)} stems={stems} />
+			<Link
+				{...common}
+				data-subject={level ? 'ink' : toneFor(node)}
+				className="subject-card group relative isolate flex h-full items-center gap-1 overflow-hidden rounded-2xl border border-edge bg-surface pr-4 no-underline shadow-paper transition-[translate,box-shadow,border-color] duration-300 ease-out-soft hover:-translate-y-0.5 hover:border-tint-edge hover:shadow-lift focus-ring data-active:-translate-y-0.5 data-active:border-tint-edge data-active:shadow-lift"
+			>
+				<span className="absolute inset-0 -z-10 bg-linear-to-r from-tint-soft to-transparent to-60%" aria-hidden="true" />
+				<SubjectObject id={level ? `level-${node.slug}` : `${parent.slug}-${node.slug}`} loop className="subject-object pointer-events-none size-24 shrink-0 select-none" />
+				<span className="flex min-w-0 flex-1 flex-col gap-0.5 py-3">
+					<span className="label-mono truncate text-tint-fg">{level ? 'Livello' : `${one} · ${titleOf(parent)}`}</span>
+					<span className="font-display text-xl font-semibold leading-tight tracking-tight text-fg-strong">
+						<Marked text={titleOf(node)} stems={stems} />
+					</span>
+					<span className="label-mono mt-1 flex flex-wrap gap-x-3 text-fg-subtle">
+						{counts.map((count) => (
+							<span key={count}>{count}</span>
+						))}
+					</span>
 				</span>
-				<span className="label-mono text-tint-fg/80">{titleOf(parent)}</span>
+				<ArrowRight className="size-4 shrink-0 text-fg-faint transition-[transform,color] duration-300 ease-out-soft group-hover:translate-x-1 group-hover:text-tint-fg group-data-active:translate-x-1 group-data-active:text-tint-fg" aria-hidden="true" />
 			</Link>
 		);
 	}
@@ -336,7 +370,18 @@ function Hit({ row, index, active, stems, onOpen, onHover }: { row: Row; index: 
 	let tone: string | undefined;
 	let pencil = false;
 
-	if (row.kind === 'note') {
+	if (row.kind === 'place') {
+		// A chapter: a line of its subject's index, with its number.
+		const { node, parent } = row.hit;
+		tone = toneFor(parent);
+		mark = <span className="flex size-9 shrink-0 items-center justify-center font-mono text-sm tabular-nums text-tint-fg">{String(parent.children.findIndex((chapter) => chapter.id === node.id) + 1).padStart(2, '0')}</span>;
+		title = <Marked text={titleOf(node)} stems={stems} />;
+		meta = (
+			<>
+				Capitolo · {titleOf(parent)} · {plural(node.children.length, 'lezione', 'lezioni')}
+			</>
+		);
+	} else if (row.kind === 'note') {
 		const { note } = row;
 		mark = (
 			<span data-notebook={note.notebook_color} className="flex size-9 shrink-0 rotate-[-4deg] items-center justify-center rounded-lg bg-tint-cover text-tint-cover-fg shadow-paper">
