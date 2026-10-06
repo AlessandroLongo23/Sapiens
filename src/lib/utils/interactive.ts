@@ -257,6 +257,59 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'orbitali-livelli-stessa-scala': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.LivelliStessaScala })),
 	'orbitali-2p-in-moto': () => import('@/components/content/interactive/chimica/orbitali').then((m) => ({ default: m.OrbitaliInMoto })),
 	'orbitali-esplora': () => import('@/components/orbitali/OrbitalViewer'),
+	// Chemistry, third year: light, Bohr, levels, wave-particle (group A).
+	'luce-lunghezza-onda-fotone': () => import('@/components/content/interactive/chimica/LuceLunghezzaOnda'),
+	'luce-spettri-righe-elementi': () => import('@/components/content/interactive/chimica/LuceSpettriRighe'),
+	'bohr-livelli-salto-riga': () => import('@/components/content/interactive/chimica/BohrLivelliSalto'),
+	'livelli-ionizzazioni-successive': () => import('@/components/content/interactive/chimica/LivelliIonizzazioni'),
+	'livelli-sottolivelli-idrogeno-altri': () => import('@/components/content/interactive/chimica/LivelliSottolivelliOrdine'),
+	'onda-particella-de-broglie': () => import('@/components/content/interactive/chimica/OndaDeBroglie'),
+	'onda-particella-indeterminazione': () => import('@/components/content/interactive/chimica/OndaIndeterminazione'),
+	// Chemistry, third year: configuration, groups and blocks, Lewis symbols (group B).
+	'configurazione-caselle-riempi': () => import('@/components/content/interactive/chimica/ConfigurazioneCaselle'),
+	'gruppi-periodi-elettrone-casella': () => import('@/components/content/interactive/chimica/GruppiPeriodiCasella'),
+	'lewis-simboli-gruppo': () => import('@/components/content/interactive/chimica/LewisSimboliGruppo'),
+	// Chemistry, third year: nucleus and radioactivity (group C).
+	'radioattivita-carta-nuclidi': () => import('@/components/content/interactive/chimica/RadioattivitaCartaNuclidi'),
+	'dimezzamento-campione-nuclei': () => import('@/components/content/interactive/chimica/DimezzamentoCampioneNuclei'),
+	'fissione-fusione-curva-energia': () => import('@/components/content/interactive/chimica/FissioneFusioneCurva'),
+	// Chemistry, third year: periodic properties (group D).
+	'raggio-ionizzazione-andamenti': () => import('@/components/content/interactive/chimica/RaggioIonizzazioneAndamenti'),
+	'raggio-atomo-ione-confronto': () => import('@/components/content/interactive/chimica/RaggioAtomoIone'),
+	'elettronegativita-andamenti': () => import('@/components/content/interactive/chimica/ElettronegativitaAndamenti'),
+	'metalli-tavola-classi': () => import('@/components/content/interactive/chimica/MetalliTavolaClassi'),
+	// Chemistry, third year: bonds 1 (group E).
+	'energia-legame-curva-distanza': () => import('@/components/content/interactive/chimica/EnergiaLegameCurva'),
+	'ottetto-elettroni-gas-nobile': () => import('@/components/content/interactive/chimica/OttettoElettroni'),
+	'legame-covalente-condividi-coppie': () => import('@/components/content/interactive/chimica/LegameCovalenteCondividi'),
+	'legame-polare-delta-chi-nube': () => import('@/components/content/interactive/chimica/LegamePolareDeltaChi'),
+	// Chemistry, third year: bonds 2 (group F).
+	'ionico-formula-ioni-neutro': () => import('@/components/content/interactive/chimica/IonicoFormulaIoni'),
+	'ionico-energia-reticolare-ioni': () => import('@/components/content/interactive/chimica/IonicoEnergiaReticolare'),
+	'metallico-mare-elettroni-pila': () => import('@/components/content/interactive/chimica/MetallicoMareElettroni'),
+	'metallico-colpo-martello-ionico': () => import('@/components/content/interactive/chimica/MetallicoColpoMartello'),
+	'formule-lewis-costruisci': () => import('@/components/content/interactive/chimica/FormuleLewisCostruisci'),
+	// Chemistry, third year: polarity, valence bond, hybridisation (group G).
+	'polarita-somma-dipoli': () => import('@/components/content/interactive/chimica/PolaritaSommaDipoli'),
+	'polarita-sostituisci-atomi': () => import('@/components/content/interactive/chimica/PolaritaSostituisciAtomi'),
+	'legame-valenza-sovrapposizione': () => import('@/components/content/interactive/chimica/LegameValenzaSovrapposizione'),
+	'legame-valenza-ordine-rotazione': () => import('@/components/content/interactive/chimica/LegameValenzaOrdineRotazione'),
+	'ibridazione-forma-ibrido': () => import('@/components/content/interactive/chimica/IbridazioneFormaIbrido'),
+	'ibridazione-mescola-orbitali': () => import('@/components/content/interactive/chimica/IbridazioneMescolaOrbitali'),
+	// Chemistry, third year: intermolecular forces and condensed states (group H).
+	'forze-ebollizione-scegli-molecola': () => import('@/components/content/interactive/chimica/ForzeEbollizioneMolecola'),
+	'legame-idrogeno-chi-con-chi': () => import('@/components/content/interactive/chimica/LegameIdrogenoCoppie'),
+	'liquido-tensione-vapore-ebollizione': () => import('@/components/content/interactive/chimica/LiquidoTensioneVapore'),
+	'solidi-tipo-particelle-conduce': () => import('@/components/content/interactive/chimica/SolidiTipoConduce'),
+	// Chemistry, third year: nomenclature 1 (group I).
+	'ossidazione-calcola-atomo-per-atomo': () => import('@/components/content/interactive/chimica/NumeroOssidazioneCalcola'),
+	'ossidi-costruisci-formula-nomi': () => import('@/components/content/interactive/chimica/OssidiCostruisci'),
+	'idruri-idracidi-scegli-elemento': () => import('@/components/content/interactive/chimica/IdruriIdracidiScegli'),
+	'idrossidi-costruisci-formula-nomi': () => import('@/components/content/interactive/chimica/IdrossidiCostruisci'),
+	// Chemistry, third year: nomenclature 2 (group J).
+	'ossiacidi-anidride-piu-acqua': () => import('@/components/content/interactive/chimica/OssiacidiAnidrideAcqua'),
+	'sali-binari-bilancia-cariche': () => import('@/components/content/interactive/chimica/SaliBinariBilanciaCariche'),
+	'sali-ternari-acido-metallo': () => import('@/components/content/interactive/chimica/SaliTernariAcidoMetallo'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {

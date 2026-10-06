@@ -28,7 +28,7 @@ SYMBOL = {
 }
 # names that appear only as wrong answers, with their real symbols
 OTHER = {
-    "neon": "Ne", "nichel": "Ni", "cripto": "Kr", "fluoro": "F", "francio": "Fr", "curio": "Cm", "argon": "Ar",
+    "neon": "Ne", "nichel": "Ni", "kripton": "Kr", "fluoro": "F", "francio": "Fr", "curio": "Cm", "argon": "Ar",
     "polonio": "Po", "platino": "Pt", "stagno": "Sn", "molibdeno": "Mo", "zirconio": "Zr", "indio": "In",
     "iridio": "Ir", "afnio": "Hf", "osmio": "Os",
 }

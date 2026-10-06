@@ -18,7 +18,7 @@ export const ID = 'chim-elementi-composti';
 /** The elements of the lesson's table, with the wrong symbols and names a student gives. */
 export const SYMBOLS: { nome: string; simbolo: string; wrongSym: [string, string, string]; wrongName: [string, string, string] }[] = [
 	{ nome: 'sodio', simbolo: 'Na', wrongSym: ['S', 'So', 'N'], wrongName: ['azoto', 'neon', 'nichel'] },
-	{ nome: 'potassio', simbolo: 'K', wrongSym: ['P', 'Po', 'Pt'], wrongName: ['fosforo', 'calcio', 'cripto'] },
+	{ nome: 'potassio', simbolo: 'K', wrongSym: ['P', 'Po', 'Pt'], wrongName: ['fosforo', 'calcio', 'kripton'] },
 	{ nome: 'ferro', simbolo: 'Fe', wrongSym: ['F', 'Fr', 'Fo'], wrongName: ['fluoro', 'fosforo', 'francio'] },
 	{ nome: 'rame', simbolo: 'Cu', wrongSym: ['Ra', 'R', 'Co'], wrongName: ['cobalto', 'curio', 'calcio'] },
 	{ nome: 'argento', simbolo: 'Ag', wrongSym: ['Ar', 'Au', 'At'], wrongName: ['oro', 'argon', 'alluminio'] },

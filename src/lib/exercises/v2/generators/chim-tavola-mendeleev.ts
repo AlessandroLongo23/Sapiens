@@ -67,7 +67,7 @@ export const TRIADS: [string, number][][] = [
 	[['fosforo', 3097], ['arsenico', 7492], ['antimonio', 12176]],
 	[['zolfo', 3207], ['selenio', 7897], ['tellurio', 12760]],
 	[['cloro', 3545], ['bromo', 7990], ['iodio', 12690]],
-	[['argon', 3995], ['cripto', 8380], ['xeno', 13129]],
+	[['argon', 3995], ['kripton', 8380], ['xeno', 13129]],
 ];
 
 /** "il sodio", "l'argon", "lo zolfo", "lo stagno", "lo iodio", "lo xeno" */
@@ -130,7 +130,7 @@ export const NORMAL: [El, El][] = [
 	[['nichel', 'Ni', 28, 5869], ['rame', 'Cu', 29, 6355]],
 	[['rame', 'Cu', 29, 6355], ['zinco', 'Zn', 30, 6538]],
 	[['selenio', 'Se', 34, 7897], ['bromo', 'Br', 35, 7990]],
-	[['bromo', 'Br', 35, 7990], ['cripto', 'Kr', 36, 8380]],
+	[['bromo', 'Br', 35, 7990], ['kripton', 'Kr', 36, 8380]],
 	[['antimonio', 'Sb', 51, 12176], ['tellurio', 'Te', 52, 12760]],
 	[['iodio', 'I', 53, 12690], ['xeno', 'Xe', 54, 13129]],
 	[['azoto', 'N', 7, 1401], ['ossigeno', 'O', 8, 1600]],

@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-04
+aggiornato: 2026-10-06
 tag: [indice]
 ---
 # Sapiens
@@ -31,6 +31,8 @@ Il 4 ottobre Alessandro ha dettato una visione larga dei lati tutor, docenti, ge
 
 Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas e i due principi della termodinamica, con 221 figure TikZ, 53 figure interattive, 926 flashcard e 49 generatori (283 livelli, 21 scene nuove). Pubblicato lo stesso giorno; quello che resta da correggere è in [[Fisica terzo anno, da sistemare]]. Vedi [[2026-10-06 Terzo anno di fisica]].
 
+Il 6 ottobre è scritto il terzo anno di chimica: 33 lezioni nuove (struttura elettronica, nucleo e radioattività, sistema periodico, legami, forma delle molecole, forze intermolecolari, nomenclatura), che con le due già scritte fanno le 35 dell'albero, con 651 flashcard, 119 figure TikZ, 43 figure interattive e 33 generatori (187 livelli). Verificato in locale, non ancora committato né pubblicato. Vedi [[2026-10-06 Terzo anno di chimica]].
+
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
@@ -47,7 +49,7 @@ Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relativi
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-04 Agenda tutor]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-06 Terzo anno di chimica]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
