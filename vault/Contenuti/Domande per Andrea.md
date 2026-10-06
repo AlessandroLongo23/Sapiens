@@ -348,5 +348,22 @@ Foglio di calcolo, documenti e presentazioni (lezioni 23-32):
 
 Fatti da verificare (le lezioni sono online dal 3 ottobre 2026; questi sono scritti a memoria dagli agenti, con la fonte nelle note): "First Draft of a Report on the EDVAC" (1945); ASCII (1963, minuscole nel 1967); Unicode 1.0 (1991); IEEE 754 (1985); il teorema del campionamento (Shannon 1949); il CD audio a 44,1 kHz e 16 bit; i prefissi binari IEC (1998); il supercomputer Leonardo del CINECA; i comportamenti dei programmi (nomi degli errori del foglio in italiano, aggiornamento dell'indice e della tabella pivot, `SUBTOTALE`).
 
+## Terzo anno di fisica (6 ottobre 2026)
+Le 49 lezioni del terzo anno (71-119): relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas, primo e secondo principio. Vedi [[2026-10-06 Terzo anno di fisica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione "Domande per Andrea" di ogni nota in `docs/lezioni/fisica/note/71-119` e, raccolte per gruppo, in `docs/lezioni/fisica/rapporti-terzo-anno.md`.
+- [ ] Urti: velocità dopo l'urto $V_1$ e $V_2$ (scelta fatta, come l'Amaldi, da verificare) oppure $v_1'$ e $v_2'$.
+- [ ] Primo principio $\Delta U = Q - W$ con il lavoro compiuto dal sistema (scelta fatta) oppure $\Delta U = Q + W$ con il lavoro subito.
+- [ ] Secondo principio: $T_c$, $T_f$, $Q_c$, $Q_f$ in valore assoluto (scelta fatta) oppure $T_2$, $T_1$, $Q_2$, $Q_1$; $\text{COP}_f$ e $\text{COP}_p$ per frigorifero e pompa di calore.
+- [ ] Microstati $\Omega$ in $S = k_B \ln \Omega$ (scelta fatta, perché $W$ è il lavoro) oppure $W$ come sui libri.
+- [ ] Forza centrifuga $F_{cf}$ (scelta fatta; nella 57 $F_c$ è la centripeta); forze apparenti disegnate tratteggiate; Coriolis senza formula, o con $2\,m\,\omega\,v'$ in un riquadro.
+- [ ] Gittata $L$ nella 76 e $x_G$ nella 56 del biennio: si uniforma il biennio?
+- [ ] $\vec I$ per l'impulso e $I$ per il momento d'inerzia: basta la freccia a distinguerli? Nella 88 $M$ è sia il momento sia la massa della carrucola.
+- [ ] Il coefficiente $c$ in $I = c\,m\,r^2$ (gruppo 35) non è nel README: va bene come lettera?
+- [ ] Il coseno di un angolo ottuso introdotto nella 71 con $\cos(180^\circ - \alpha) = -\cos\alpha$, prima della goniometria: va bene, o il prodotto scalare aspetta?
+- [ ] $\ln$ usato come tasto della calcolatrice nel lavoro dell'isoterma e nell'entropia, con il link alla lezione sui logaritmi: basta?
+- [ ] La forza come opposto della pendenza del grafico di $U$ e l'equilibrio stabile e instabile (78): al terzo anno, prima delle derivate?
+- [ ] Componenti di un vettore scritte $(4;\ 3)$ o $(4, 3)$ nella 71.
+- [ ] Negli esercizi sull'impulso i tempi d'urto sono decine di millisecondi per tenere le forze sotto i 100 N: meglio tempi realistici e forze in kilonewton?
+- [ ] Costanti, dati dei pianeti, viscosità, calori molari, date e fatti storici scritti a memoria: gli elenchi "Da verificare" delle note, soprattutto 92, 93 e 112.
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]
