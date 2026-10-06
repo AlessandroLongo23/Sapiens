@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pause, Play, RotateCcw, X } from 'lucide-react';
 import { Tex, useFrameLoop } from '@/components/content/interactive/kit';
 import { Slider } from '@/components/ui/Slider';
@@ -46,7 +46,17 @@ function Sentence({ text }: { text: string }) {
 	return <>{text.split('$').map((part, i) => (i % 2 ? <Tex key={i}>{part}</Tex> : part))}</>;
 }
 
-export default function LessonPlot({ spec, onClose }: { spec: ReadPlotBlock; /** Given, the plane covers a figure: a button in its corner brings the figure back. */ onClose?: () => void }) {
+export default function LessonPlot({
+	spec,
+	onClose,
+	onValues
+}: {
+	spec: ReadPlotBlock;
+	/** Given, the plane covers a figure: a button in its corner brings the figure back. */
+	onClose?: () => void;
+	/** Told where the sliders are, at the start and whenever one moves: a guided exercise checks them (components/guidato). */
+	onValues?: (values: Record<string, number>) => void;
+}) {
 	const start = useMemo(() => Object.fromEntries(spec.sliders.map((s) => [s.name, s.value])), [spec]);
 	const [values, setValues] = useState<Record<string, number>>(start);
 	const [chosen, setChosen] = useState(0);
@@ -57,6 +67,7 @@ export default function LessonPlot({ spec, onClose }: { spec: ReadPlotBlock; /**
 	// the drawing has the block's shape, so the window is the block's whatever the width of the page
 	const home: Camera = useMemo(() => ({ cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, span: x1 - x0, stretch: (x1 - x0) / (y1 - y0) / shape }), [x0, x1, y0, y1, shape]);
 	const [camera, setCamera] = useState(home);
+	useEffect(() => onValues?.(values), [values, onValues]);
 
 	useFrameLoop(playing !== null, (dt) => {
 		if (!playing) return;

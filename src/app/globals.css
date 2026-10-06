@@ -1309,6 +1309,75 @@ body {
 .dark .admonition-red { --adm: var(--color-crimson-400); }
 .dark .admonition-purple { --adm: oklch(0.75 0.12 300); }
 
+/* A guided exercise (```guidato, lib/guidato/blocco.ts): a worked example that stops and asks. It is published
+   whole, which is how paper and a page without JavaScript keep it; on screen the browser holds back what follows
+   a stop (.guided-on and .guided-wait: utils/guided-figure.ts, components/guidato/Guided.tsx). */
+.guided {
+	@apply my-8 rounded-xl border border-edge bg-surface px-4 pt-3 pb-4 sm:px-5;
+	border-left: 3px solid var(--accent);
+	box-shadow: var(--shadow-paper);
+	/* room under it while the keyboard on screen is open, so that its field can come above the keys */
+	margin-bottom: calc(2rem + var(--guided-keyboard, 0px));
+}
+.markdown-content .guided-label {
+	@apply mb-1 flex items-center gap-2;
+	color: var(--accent-fg);
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.dark .markdown-content .guided-label { color: var(--color-crimson-400); }
+.markdown-content .guided-title {
+	@apply mt-0 mb-4 text-xl font-semibold text-fg-strong;
+}
+.guided-body > * + * { margin-top: 1.25rem; }
+.guided-step > :last-child,
+.guided-answer > :last-child { margin-bottom: 0; }
+.guided:focus,
+.guided-step:focus,
+.guided-answer:focus { outline: none; }
+.guided-stop {
+	@apply rounded-xl border border-edge bg-surface-2 p-3 sm:p-4;
+}
+.markdown-content .guided-stop-label {
+	@apply mb-1 text-fg-subtle;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+.markdown-content .guided-question {
+	@apply mb-3 font-medium text-fg-strong;
+}
+.guided-answer {
+	@apply mt-3 rounded-lg border border-edge bg-surface px-3 py-2;
+}
+.markdown-content .guided-answer > p { margin-bottom: 0.25rem; }
+.guided-answer-label { @apply font-semibold text-fg-strong; }
+.guided-verdict:not(:empty) {
+	@apply font-semibold;
+	color: var(--ok-fg);
+}
+.guided-stop[data-state='correct'] .guided-answer {
+	border-color: var(--ok-edge);
+	background: var(--ok-soft);
+}
+@media screen {
+	.guided-on:not([data-ready]) .guided-stop ~ *,
+	.guided-on:not([data-ready]) .guided-answer,
+	.guided-on .guided-wait {
+		display: none;
+	}
+}
+@media print {
+	.guided { box-shadow: none; }
+	.guided-live,
+	.guided-end,
+	.guided-root { display: none; }
+}
+
 /* Phones and tablets: reading sizes, one-column figures, anchors that land under the compact sticky header. */
 @media (max-width: 1023px) {
 	.markdown-content {

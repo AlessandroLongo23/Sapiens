@@ -10,6 +10,8 @@ import { cleanLatex, type Json } from '@/lib/grafico/formula';
 import { codeFences, parseCodeBlock } from '@/lib/codice/blocco';
 import { parseChartBlock } from '@/lib/diagramma/blocco';
 import { buildChart, chartSvg } from '@/lib/diagramma/disegno';
+import { guidedFences, parseGuidedBlock, texNumber, type GuidedData } from '@/lib/guidato/blocco';
+import { answerLatex } from '@/lib/guidato/scrittura';
 
 /**
  * Lesson markdown → HTML, on the server only. Math is typeset with KaTeX at
@@ -54,6 +56,11 @@ function protect(markdown: string) {
 	const plots: { code: string; cover: number | null }[] = [];
 	// Programs first: nothing inside one is a formula or a figure.
 	const codes: string[] = [];
+	// A guided exercise before anything else: its steps are lesson text of their own, with their figures and formulas.
+	for (const guided of guidedFences(markdown).reverse()) {
+		codes.push(guidedFigure(guided.body));
+		markdown = `${markdown.slice(0, guided.index)}\n\n<div data-code="${codes.length - 1}"></div>\n\n${markdown.slice(guided.index + guided.length)}`;
+	}
 	let text = markdown;
 	for (const group of codeFences(markdown).reverse()) {
 		codes.push(codeFigure(group.fences));
@@ -240,6 +247,72 @@ function chartFigure(source: string): string {
 	const { block } = parseChartBlock(source);
 	if (!block) return `<pre tabindex="0"><code>${escapeHtml(source)}</code></pre>`;
 	return `<figure class="chart-figure my-6" data-diagramma="${escapeHtml(source)}"><div class="overflow-x-auto"><div class="mx-auto w-max">${chartSvg(buildChart(block.program), block.alt)}</div></div></figure>`;
+}
+
+/** A piece of lesson text inside a block, with all that lesson text can hold. */
+function fragment(markdown: string): string {
+	const { text, math, tikz, chem, plots, codes } = protect(markdown);
+	return restore(md.render(text), math, tikz, chem, plots, codes);
+}
+
+/** One line of lesson text (a question, a message), without the paragraph around it. */
+function inline(markdown: string): string {
+	const { text, math } = protect(markdown);
+	return restore(md.renderInline(text), math, []);
+}
+
+const GUIDED_ICON = 'M12 20h9 M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z';
+
+/**
+ * A guided exercise of the lesson (```guidato, see lib/guidato/blocco.ts). What is published is the worked example
+ * whole, each stop with its question and its answer: that is what a crawler reads, what a printed page keeps and
+ * what is left without JavaScript. The section carries the stops for the browser, where LessonBody hides what
+ * follows a stop until the student has dealt with it (utils/guided-figure.ts). A block that cannot be read is
+ * shown as it is written.
+ */
+function guidedFigure(source: string): string {
+	const plain = `<pre tabindex="0"><code>${escapeHtml(source)}</code></pre>`;
+	const { block } = parseGuidedBlock(source);
+	if (!block) return plain;
+	const data: GuidedData = { name: block.name, stops: [] };
+	const total = block.parts.filter((p) => p.kind !== 'text').length;
+	const body: string[] = [];
+	for (const part of block.parts) {
+		if (part.kind === 'text') {
+			body.push(`<div class="guided-step" tabindex="-1">${fragment(part.markdown)}</div>`);
+			continue;
+		}
+		let shown = part.shown;
+		const hint = part.hint ? { hint: inline(part.hint) } : {};
+		if (part.kind === 'write') {
+			try {
+				shown ??= `$${answerLatex(part.answer, part.grading)}$`;
+			} catch {
+				return plain;
+			}
+			data.stops.push({ kind: 'write', answer: part.answer, grading: part.grading, errors: part.errors.map((e) => ({ answer: e.answer, html: inline(e.message) })), ...hint });
+		} else if (part.kind === 'choice') {
+			shown ??= part.options.find((o) => o.right)!.text;
+			data.stops.push({ kind: 'choice', options: part.options.map((o) => ({ html: inline(o.text), right: o.right, ...(o.message ? { message: inline(o.message) } : {}) })) });
+		} else {
+			const { plot } = parsePlotBlock(part.plot);
+			const read = plot && readPlotBlock(plot, (latex) => parseLatex(latex) as Json, cleanLatex);
+			if (!read || read.errors.length) return plain;
+			shown ??= `$${part.expected.map((c) => `${c.name} = ${texNumber(c.value)}`).join(',\\ ')}$`;
+			data.stops.push({ kind: 'slider', plot: read.read, expected: part.expected, tolerance: part.tolerance, errors: part.errors.map((e) => ({ when: e.when, html: inline(e.message) })), ...hint });
+		}
+		const explanation = part.explanation ? `<p>${inline(part.explanation)}</p>` : '';
+		body.push(
+			`<div class="guided-stop" data-kind="${part.kind}"><p class="guided-stop-label">Domanda ${data.stops.length} di ${total}</p><p class="guided-question">${inline(part.question)}</p><div class="guided-live"></div>` +
+				`<div class="guided-answer" tabindex="-1"><p><span class="guided-verdict"></span><span class="guided-answer-label">Risposta:</span> ${inline(shown)}</p>${explanation}</div></div>`
+		);
+	}
+	const label = `Esercizio guidato: ${block.title.replace(/\$/g, '')}`;
+	return (
+		`<section class="guided" data-guidato="${escapeHtml(JSON.stringify(data))}" aria-label="${escapeHtml(label)}" tabindex="-1">` +
+		`<p class="guided-label"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="${GUIDED_ICON}"/></svg>Esercizio guidato</p>` +
+		`<h3 class="guided-title">${inline(block.title)}</h3><div class="guided-body">${body.join('')}<div class="guided-end"></div></div><div class="guided-root"></div></section>`
+	);
 }
 
 /** ```ad-note / ad-tip / … fences → callout boxes. The first line, when plain, is the title. */
