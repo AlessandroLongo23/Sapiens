@@ -4,7 +4,7 @@ tag: [sessione, contenuti, chimica]
 ---
 # Terzo anno di chimica
 
-Sessione del 6 ottobre 2026. Alessandro ha chiesto lezioni, esercizi, flashcard e formulari del terzo anno di chimica delle superiori, con le componenti interattive e le figure TikZ. Il terzo anno sono 35 lezioni in sette capitoli; due erano già scritte ("La geometria delle molecole", file 02, e "Orbitali e numeri quantici", file 52). Le altre 33 sono scritte e verificate, con note, formulari, flashcard, figure e generatori di esercizi. Non sono pubblicate né committate: aspettano il via libera di Alessandro.
+Sessione del 6 ottobre 2026. Alessandro ha chiesto lezioni, esercizi, flashcard e formulari del terzo anno di chimica delle superiori, con le componenti interattive e le figure TikZ. Il terzo anno sono 35 lezioni in sette capitoli; due erano già scritte ("La geometria delle molecole", file 02, e "Orbitali e numeri quantici", file 52). Le altre 33 sono scritte e verificate, con note, formulari, flashcard, figure e generatori di esercizi, e sono in produzione dal 6 ottobre 2026 (PR #45 e #46).
 
 ## Cosa si è fatto
 - Brief del lotto: `docs/lezioni/chimica/brief-terzo-anno.md`, con i confini tra le lezioni, le costanti e i simboli del terzo anno, le convenzioni di nomenclatura e le due fasi (lezioni, poi generatori).
@@ -62,14 +62,17 @@ Sono scelte di chi ha scritto, da confermare con Andrea: vedi [[Domande per Andr
 - `scripts/figure/anteprima-interattivo.mjs` aspetta che la rete sia ferma e con la macchina carica va in timeout: tre gruppi hanno usato una copia loro. Da correggere nello script.
 - Niente provato su un telefono vero, su Safari o su Firefox.
 
-## Da sapere prima di pubblicare
-- L'ordine: prima il codice (generatori e figure interattive) su master e in produzione, poi le lezioni con `publish.mts --dir docs/lezioni/chimica --per-slug`.
-- Nella cartella ci sono lezioni di chimica del biennio modificate da un'altra sessione ([[2026-10-05 Strumenti nelle lezioni]]: 19, 22, 31, 32, 42, 43) e non pubblicate: `publish.mts` non ha un filtro e pubblicherebbe anche quelle. La 43 ha in più la correzione di "kripton".
-- Le lezioni del biennio che rimandano al terzo anno (43) trovano ora le lezioni scritte. La 02 e la 52 non rimandano ancora alle lezioni nuove del loro capitolo.
-- Il sito in sviluppo il 6 ottobre rispondeva sulla porta 3131; sulla 3000 girava un altro progetto.
+## Stato
+In produzione dal 6 ottobre 2026. Alessandro ha chiesto di segnare quello che non va e di pubblicare.
+- Il codice è su master con la PR #45, fatta da un worktree pulito di `origin/master` (`../Sapiens-chimica-terzo`) con i soli file del lotto: nella cartella principale ci sono le modifiche non committate di altre sessioni, e master locale era indietro di 11 commit. Controlli della PR e build di anteprima verdi.
+- Le lezioni sono state pubblicate dallo stesso worktree con `publish.mts --dir docs/lezioni/chimica --per-slug --apply`: 100 colonne scritte (teoria, formulario e flashcard delle 33 lezioni, più la teoria della 43 per "kripton") e 130 figure TikZ compilate. Pubblicare dal worktree ha lasciato fuori le lezioni del biennio toccate da [[2026-10-05 Strumenti nelle lezioni]], che restano da pubblicare con la loro sessione. Le righe `% svg:` e le copie in `pubblicate/` sono nella PR #46.
+- Controllate su `sapiens-edu.vercel.app` a 390 px le 35 lezioni del terzo anno: stato 200, nessun errore di KaTeX, nessuna immagine mancante, nessuno scorrimento laterale, figure interattive montate; la pagina degli esercizi di "Il legame ionico" mostra i sei livelli.
+- Su ogni pagina di lezione, anche su quelle vecchie, il browser riceve un 404 dal precaricamento della pagina del capitolo (`...?_rsc=`), mentre la pagina del capitolo aperta direttamente risponde 200. Non viene da questo lotto; da guardare.
+- Quello che resta aperto è il punto "Terzo anno di chimica, cose da sistemare" di [[Agenda]].
+- Nella cartella principale i file del lotto sono ancora non tracciati o modificati, uguali a quelli su master tranne le righe `% svg:`: al prossimo allineamento di master locale vanno tolti o sovrascritti con quelli del repository.
 
 ## Prossimo argomento
-Il via libera di Alessandro per commit, PR e pubblicazione. Poi le risposte di Andrea, a partire dalle soglie di $\Delta\chi$ e dalla nomenclatura IUPAC, e la risposta aperta per le materie diverse dalla matematica. Il quarto anno di chimica sono 45 lezioni (soluzioni, stechiometria, termochimica, cinetica, equilibrio, acidi e basi, redox, elettrochimica).
+Le risposte di Andrea, a partire dalle soglie di $\Delta\chi$ e dalla nomenclatura IUPAC, e la risposta aperta per le materie diverse dalla matematica. Il quarto anno di chimica sono 45 lezioni (soluzioni, stechiometria, termochimica, cinetica, equilibrio, acidi e basi, redox, elettrochimica).
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Domande per Andrea]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]]

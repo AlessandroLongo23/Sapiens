@@ -31,7 +31,7 @@ Il 4 ottobre Alessandro ha dettato una visione larga dei lati tutor, docenti, ge
 
 Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas e i due principi della termodinamica, con 221 figure TikZ, 53 figure interattive, 926 flashcard e 49 generatori (283 livelli, 21 scene nuove). Pubblicato lo stesso giorno; quello che resta da correggere è in [[Fisica terzo anno, da sistemare]]. Vedi [[2026-10-06 Terzo anno di fisica]].
 
-Il 6 ottobre è scritto il terzo anno di chimica: 33 lezioni nuove (struttura elettronica, nucleo e radioattività, sistema periodico, legami, forma delle molecole, forze intermolecolari, nomenclatura), che con le due già scritte fanno le 35 dell'albero, con 651 flashcard, 119 figure TikZ, 43 figure interattive e 33 generatori (187 livelli). Verificato in locale, non ancora committato né pubblicato. Vedi [[2026-10-06 Terzo anno di chimica]].
+Il 6 ottobre è scritto il terzo anno di chimica: 33 lezioni nuove (struttura elettronica, nucleo e radioattività, sistema periodico, legami, forma delle molecole, forze intermolecolari, nomenclatura), che con le due già scritte fanno le 35 dell'albero, con 651 flashcard, 119 figure TikZ, 43 figure interattive e 33 generatori (187 livelli). In produzione dal 6 ottobre (PR #45 e #46); i punti ancora aperti sono in [[Agenda]]. Vedi [[2026-10-06 Terzo anno di chimica]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
