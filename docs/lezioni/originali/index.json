@@ -920,5 +920,205 @@
     "path": "high_school/math/geometria-piano-circonferenza/trasformazioni-geometriche",
     "chapter": "Geometria del piano: circonferenza, aree e similitudine",
     "new": true
+  },
+  {
+    "id": "869fd1ee-9310-47fa-85c4-c3e26d814da5",
+    "title": "Funzioni reali e dominio",
+    "slug": "funzioni-reali-di-variabile-reale",
+    "path": "high_school/math/funzioni-proprieta/funzioni-reali-di-variabile-reale",
+    "chapter": "Funzioni e loro proprietà",
+    "new": true
+  },
+  {
+    "id": "a65bdc8a-fb16-4541-9a94-da3d1a01baaa",
+    "title": "Funzioni pari e dispari",
+    "slug": "funzioni-dispari-pari",
+    "path": "high_school/math/funzioni-proprieta/funzioni-dispari-pari",
+    "chapter": "Funzioni e loro proprietà",
+    "new": true
+  },
+  {
+    "id": "90038a29-fef7-46ff-9773-a63318ac908a",
+    "title": "Funzioni crescenti e decrescenti",
+    "slug": "funzioni-monotone",
+    "path": "high_school/math/funzioni-proprieta/funzioni-monotone",
+    "chapter": "Funzioni e loro proprietà",
+    "new": true
+  },
+  {
+    "id": "007188e7-b5a1-4154-b4ab-49b44b9b7893",
+    "title": "Funzioni periodiche",
+    "slug": "funzioni-periodiche",
+    "path": "high_school/math/funzioni-proprieta/funzioni-periodiche",
+    "chapter": "Funzioni e loro proprietà",
+    "new": true
+  },
+  {
+    "id": "3a5a199e-e7b2-45f7-be5d-90320b3e0cf2",
+    "title": "Trasformazioni dei grafici",
+    "slug": "grafici-trasformazioni",
+    "path": "high_school/math/funzioni-proprieta/grafici-trasformazioni",
+    "chapter": "Funzioni e loro proprietà",
+    "new": true
+  },
+  {
+    "id": "d73e4e09-0a21-4efe-8b08-5c65f2d9bdee",
+    "title": "Successioni numeriche",
+    "slug": "successioni-numeriche",
+    "path": "high_school/math/successioni/successioni-numeriche",
+    "chapter": "Successioni e progressioni",
+    "new": true
+  },
+  {
+    "id": "fb3e3e3b-fe68-43b1-b3a8-4b0fd98329c6",
+    "title": "Progressioni aritmetiche",
+    "slug": "progressioni-aritmetiche",
+    "path": "high_school/math/successioni/progressioni-aritmetiche",
+    "chapter": "Successioni e progressioni",
+    "new": true
+  },
+  {
+    "id": "35f0de70-fd49-41f5-8bb8-b5a7611c8a25",
+    "title": "Progressioni geometriche",
+    "slug": "progressioni-geometriche",
+    "path": "high_school/math/successioni/progressioni-geometriche",
+    "chapter": "Successioni e progressioni",
+    "new": true
+  },
+  {
+    "id": "6b4509ec-3927-4b00-b343-6e1b9fa61c7b",
+    "title": "Principio di induzione",
+    "slug": "principio-induzione",
+    "path": "high_school/math/successioni/principio-induzione",
+    "chapter": "Successioni e progressioni",
+    "new": true
+  },
+  {
+    "id": "ae117910-d0dd-4cd4-857d-081ff79a0925",
+    "title": "Equazione della circonferenza",
+    "slug": "circonferenza-equazione",
+    "path": "high_school/math/coniche/circonferenza-equazione",
+    "chapter": "Circonferenza e coniche",
+    "new": true
+  },
+  {
+    "id": "a66e346d-3564-418a-a384-8faf3480793c",
+    "title": "Circonferenza e rette",
+    "slug": "circonferenza-rette",
+    "path": "high_school/math/coniche/circonferenza-rette",
+    "chapter": "Circonferenza e coniche",
+    "new": true
+  },
+  {
+    "id": "1d2ff962-8ef7-4553-93e2-0c031ee64618",
+    "title": "La parabola nel piano cartesiano",
+    "slug": "parabola-equazione",
+    "path": "high_school/math/coniche/parabola-equazione",
+    "chapter": "Circonferenza e coniche",
+    "new": true
+  },
+  {
+    "id": "24e904f7-0fcd-497d-853f-9565dbfc6a5f",
+    "title": "Parabola e rette",
+    "slug": "parabola-rette",
+    "path": "high_school/math/coniche/parabola-rette",
+    "chapter": "Circonferenza e coniche",
+    "new": true
+  },
+  {
+    "id": "2c98fe6e-05c6-48af-abbd-9ea974b216e5",
+    "title": "Ellisse",
+    "slug": "ellisse",
+    "path": "high_school/math/coniche/ellisse",
+    "chapter": "Circonferenza e coniche",
+    "new": true
+  },
+  {
+    "id": "5b7bb47c-4a3b-469d-aaf8-1088b2b341f5",
+    "title": "Iperbole",
+    "slug": "iperbole",
+    "path": "high_school/math/coniche/iperbole",
+    "chapter": "Circonferenza e coniche",
+    "new": true
+  },
+  {
+    "id": "a799fd31-892b-4d44-93b3-dac4a7bb8bcf",
+    "title": "Iperbole equilatera e funzione omografica",
+    "slug": "iperbole-equilatera",
+    "path": "high_school/math/coniche/iperbole-equilatera",
+    "chapter": "Circonferenza e coniche",
+    "new": true
+  },
+  {
+    "id": "aa90d1b7-38ea-47ad-bb20-3b8c0e721a0e",
+    "title": "Funzione esponenziale",
+    "slug": "funzioni-esponenziali",
+    "path": "high_school/math/esponenziali-logaritmi/funzioni-esponenziali",
+    "chapter": "Esponenziali e logaritmi",
+    "new": true
+  },
+  {
+    "id": "e429d70d-31a4-4eb1-ac8b-2a2cfaf138a1",
+    "title": "Equazioni esponenziali",
+    "slug": "equazioni-esponenziali",
+    "path": "high_school/math/esponenziali-logaritmi/equazioni-esponenziali",
+    "chapter": "Esponenziali e logaritmi",
+    "new": true
+  },
+  {
+    "id": "5cab53eb-73f9-4ab3-b6cd-1b62b2f8eba8",
+    "title": "Disequazioni esponenziali",
+    "slug": "disequazioni-esponenziali",
+    "path": "high_school/math/esponenziali-logaritmi/disequazioni-esponenziali",
+    "chapter": "Esponenziali e logaritmi",
+    "new": true
+  },
+  {
+    "id": "e4592975-f6cb-42f9-9cfb-776ba86a1f8f",
+    "title": "Logaritmi e loro proprietà",
+    "slug": "logaritmi-proprieta",
+    "path": "high_school/math/esponenziali-logaritmi/logaritmi-proprieta",
+    "chapter": "Esponenziali e logaritmi",
+    "new": true
+  },
+  {
+    "id": "7587dd96-143a-4a77-a888-19b565b30199",
+    "title": "Funzione logaritmica",
+    "slug": "funzioni-logaritmiche",
+    "path": "high_school/math/esponenziali-logaritmi/funzioni-logaritmiche",
+    "chapter": "Esponenziali e logaritmi",
+    "new": true
+  },
+  {
+    "id": "bc3307f9-6d9b-4c53-b042-da50866fbc9d",
+    "title": "Equazioni logaritmiche",
+    "slug": "equazioni-logaritmiche",
+    "path": "high_school/math/esponenziali-logaritmi/equazioni-logaritmiche",
+    "chapter": "Esponenziali e logaritmi",
+    "new": true
+  },
+  {
+    "id": "f8ad3b16-8212-4410-8f2f-5200cd0bdcc4",
+    "title": "Disequazioni logaritmiche",
+    "slug": "disequazioni-logaritmiche",
+    "path": "high_school/math/esponenziali-logaritmi/disequazioni-logaritmiche",
+    "chapter": "Esponenziali e logaritmi",
+    "new": true
+  },
+  {
+    "id": "d73f74e9-a444-4010-addd-b6b8fcf7f41f",
+    "title": "Distribuzioni doppie",
+    "slug": "distribuzioni-doppie",
+    "path": "high_school/math/statistica-bivariata/distribuzioni-doppie",
+    "chapter": "Statistica bivariata",
+    "new": true
+  },
+  {
+    "id": "075f3dee-1509-40ab-9750-31977ad7b709",
+    "title": "Regressione e correlazione",
+    "slug": "regressione-correlazione",
+    "path": "high_school/math/statistica-bivariata/regressione-correlazione",
+    "chapter": "Statistica bivariata",
+    "new": true
   }
 ]

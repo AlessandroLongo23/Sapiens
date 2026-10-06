@@ -167,6 +167,46 @@ similitudine <- teorema-di-talete, teorema-di-pitagora
 triangolo-rettangolo-trigonometria <- similitudine, radicali-razionalizzazione
 trasformazioni-geometriche <- equazione-di-una-retta, funzioni-iniettive-suriettive-biettive, similitudine
 
+# Terzo anno
+
+Scritto il 5 ottobre 2026 con il lotto del terzo anno: gli archi sono quelli proposti da chi ha scritto
+ogni lezione, tolti i ridondanti.
+
+## Funzioni e loro proprietà
+funzioni-reali-di-variabile-reale <- dominio-codominio-immagine, valore-assoluto-equazioni
+funzioni-dispari-pari <- funzioni-reali-di-variabile-reale
+funzioni-monotone <- funzioni-reali-di-variabile-reale
+funzioni-periodiche <- funzioni-reali-di-variabile-reale
+grafici-trasformazioni <- trasformazioni-geometriche, funzioni-dispari-pari
+
+## Successioni e progressioni
+successioni-numeriche <- il-piano-cartesiano, equazioni-secondo-grado
+progressioni-aritmetiche <- successioni-numeriche, equazione-di-una-retta
+progressioni-geometriche <- progressioni-aritmetiche
+principio-induzione <- successioni-numeriche, logica-quantificatori
+
+## Circonferenza e coniche
+circonferenza-equazione <- il-piano-cartesiano, circonferenza-cerchio, sistemi-cramer
+circonferenza-rette <- circonferenza-equazione, distanza-punto-retta, retta-fasci, sistemi-secondo-grado
+parabola-equazione <- funzioni-quadratiche, trasformazioni-geometriche
+parabola-rette <- parabola-equazione, sistemi-secondo-grado, retta-fasci
+ellisse <- sistemi-secondo-grado, circonferenza-equazione, retta-fasci
+iperbole <- ellisse
+iperbole-equilatera <- iperbole, distanza-punto-retta, grafici-trasformazioni
+
+## Esponenziali e logaritmi
+funzioni-esponenziali <- radicali-esponente-razionale, funzioni-monotone, grafici-trasformazioni
+equazioni-esponenziali <- funzioni-esponenziali, equazioni-binomie-trinomie
+disequazioni-esponenziali <- equazioni-esponenziali
+logaritmi-proprieta <- funzioni-esponenziali
+funzioni-logaritmiche <- logaritmi-proprieta, composizione-di-funzioni
+equazioni-logaritmiche <- funzioni-logaritmiche, equazioni-esponenziali
+disequazioni-logaritmiche <- equazioni-logaritmiche, disequazioni-esponenziali
+
+## Statistica bivariata
+distribuzioni-doppie <- statistica-medie
+regressione-correlazione <- statistica-variabilita, equazione-di-una-retta
+
 # Dubbi da sciogliere
 - MCD e MCM tra monomi cita MCD e MCM in ℕ, ma l'arco è ridondante (ci si arriva passando per le
   frazioni). Per il ripasso dopo una prova conta proprio quel collegamento: il ripasso dovrà cercare
