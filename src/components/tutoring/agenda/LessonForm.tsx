@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { DURATIONS, durationLabel, isDayString, longDay, weeklyUntilMonthEnd, type Side } from '@/lib/tutoring/agenda';
-import { TUTOR_MODES, type TutorMode } from '@/lib/tutoring/config';
+import { TUTOR_MODES, subjectName, type TutorMode } from '@/lib/tutoring/config';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { CheckboxRow, Hint, Input, Label, Select } from '@/components/ui/Field';
@@ -10,11 +10,30 @@ import { useApi } from './useApi';
 
 /**
  * A new lesson. The tutor's is confirmed at once and can repeat weekly until the month ends; the student's is a
- * proposal. With `students` the tutor picks who it is with (the calendar); otherwise `linkId` says it.
+ * proposal. With `students` the tutor picks who it is with (the calendar); otherwise `linkId` says it. The
+ * subject is the lesson's own, proposed from the student's; the price (`rate`, the tutor's only) is the one of
+ * the profile until changed.
  */
-export function LessonForm({ side, linkId, students, today, day, onDone }: { side: Side; linkId?: string; students?: { id: string; name: string }[]; today: string; /** The day preselected. */ day?: string; onDone: () => void }) {
+export interface LessonChoices {
+	/** The subjects the tutor teaches. */
+	subjects: string[];
+	/** The subject proposed: the student's. */
+	subject?: string | null;
+	/** The tutor's price for an hour; absent on the student's side. */
+	rate?: number | null;
+}
+
+export function LessonForm({ side, linkId, students, today, day, choices, onDone }: { side: Side; linkId?: string; students?: { id: string; name: string; subject?: string | null }[]; today: string; /** The day preselected. */ day?: string; choices: LessonChoices; onDone: () => void }) {
 	const { busy, error, call } = useApi();
 	const [link, setLink] = useState(linkId ?? students?.[0]?.id ?? '');
+	const [subject, setSubject] = useState(choices.subject ?? students?.[0]?.subject ?? '');
+	const [rate, setRate] = useState(choices.rate == null ? '' : String(choices.rate));
+	const options = [...new Set([...choices.subjects, ...(students ?? []).flatMap((s) => (s.subject ? [s.subject] : [])), ...(choices.subject ? [choices.subject] : [])])];
+	const pickStudent = (id: string) => {
+		setLink(id);
+		const own = students?.find((s) => s.id === id)?.subject;
+		if (own) setSubject(own);
+	};
 	const [date, setDate] = useState(day ?? '');
 	const [time, setTime] = useState('16:00');
 	const [durationMin, setDurationMin] = useState(60);
@@ -27,7 +46,7 @@ export function LessonForm({ side, linkId, students, today, day, onDone }: { sid
 
 	const submit = async (event: React.FormEvent) => {
 		event.preventDefault();
-		if (await call('lesson', '/api/tutoring/lessons', 'POST', { as: side, linkId: link, day: date, time, durationMin, mode, place, note, repeat: repeat && series.length > 1 })) onDone();
+		if (await call('lesson', '/api/tutoring/lessons', 'POST', { as: side, linkId: link, day: date, time, durationMin, mode, place, note, subject, hourlyRate: side === 'tutor' ? rate : undefined, repeat: repeat && series.length > 1 })) onDone();
 	};
 
 	return (
@@ -36,11 +55,26 @@ export function LessonForm({ side, linkId, students, today, day, onDone }: { sid
 			{students && (
 				<div>
 					<Label htmlFor="lesson-student">Studente</Label>
-					<Select id="lesson-student" value={link} onChange={(e) => setLink(e.target.value)} required>
+					<Select id="lesson-student" value={link} onChange={(e) => pickStudent(e.target.value)} required>
 						{students.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
 					</Select>
 				</div>
 			)}
+			<div className={side === 'tutor' ? 'grid gap-4 sm:grid-cols-[1fr_minmax(0,9rem)]' : undefined}>
+				<div>
+					<Label htmlFor="lesson-subject">Materia</Label>
+					<Select id="lesson-subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
+						<option value="">Non indicata</option>
+						{options.map((s) => <option key={s} value={s}>{subjectName(s)}</option>)}
+					</Select>
+				</div>
+				{side === 'tutor' && (
+					<div>
+						<Label htmlFor="lesson-rate">Tariffa (€ l&apos;ora)</Label>
+						<Input id="lesson-rate" type="number" inputMode="decimal" min={0} max={500} step={0.5} value={rate} onChange={(e) => setRate(e.target.value)} />
+					</div>
+				)}
+			</div>
 			<div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
 				<div className="col-span-2 sm:col-span-1">
 					<Label htmlFor="lesson-day">Giorno</Label>

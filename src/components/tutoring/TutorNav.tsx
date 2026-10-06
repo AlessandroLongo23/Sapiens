@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, Inbox, LayoutDashboard, MessageCircle, UserPen, Users } from 'lucide-react';
+import { CalendarDays, Inbox, LayoutDashboard, MessageCircle, UserPen, Users, Wallet } from 'lucide-react';
 import { SideNav } from '@/components/ui/SideNav';
 
 const LINKS = [
@@ -8,6 +8,7 @@ const LINKS = [
 	{ href: '/studenti', label: 'Studenti', icon: Users, badge: null },
 	{ href: '/calendario', label: 'Calendario', icon: CalendarDays, badge: 'proposals' },
 	{ href: '/messaggi', label: 'Messaggi', icon: MessageCircle, badge: 'unread' },
+	{ href: '/guadagni', label: 'Guadagni', icon: Wallet, badge: null },
 	{ href: '/leads', label: 'Richieste', icon: Inbox, badge: 'requests' },
 	{ href: '/profile-editor', label: 'Profilo', icon: UserPen, badge: null }
 ] as const;

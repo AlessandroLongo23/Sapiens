@@ -314,8 +314,10 @@ test.describe.serial('tutor agenda', () => {
 
 	test('a lesson repeated weekly fills the month, and the series is cancelled together', async ({ browser }) => {
 		const { day, count } = firstMondayNextMonth();
-		const { ctx, page } = await signedIn(browser, tutorUser!, `/calendario?settimana=${day}`);
-		await page.getByRole('button', { name: 'Fissa una lezione' }).click();
+		const { ctx, page } = await signedIn(browser, tutorUser!, `/calendario?mese=${day.slice(0, 7)}`);
+		// The month has a square a day; its menus jump to any month.
+		await expect(page.getByRole('combobox', { name: 'Vai al mese' })).toBeVisible();
+		await page.getByRole('button', { name: 'Fissa una lezione', exact: true }).click();
 		const dialog = await fillLesson(page, day, '15:00', 'Lezione ricorrente di prova');
 		await dialog.getByRole('checkbox').check();
 		await dialog.getByRole('button', { name: 'Fissa la lezione' }).click();
@@ -451,7 +453,7 @@ test.describe.serial('tutor agenda', () => {
 
 	test('the dashboard counts students, lessons and the hours held', async ({ browser }) => {
 		// A lesson held yesterday, ninety minutes.
-		const { error } = await db.from('tutor_lessons').insert({ tutor_student_id: linkId, tutor_id: tutorId, starts_at: new Date(Date.now() - 26 * 3_600_000).toISOString(), duration_min: 90, status: 'confirmed', note: 'Lezione di ieri' });
+		const { error } = await db.from('tutor_lessons').insert({ tutor_student_id: linkId, tutor_id: tutorId, starts_at: new Date(Date.now() - 26 * 3_600_000).toISOString(), duration_min: 90, status: 'confirmed', note: 'Lezione di ieri', subject: 'fisica', level: 'high_school', hourly_rate: 20, paid: false });
 		expect(error).toBeNull();
 		const { ctx, page } = await signedIn(browser, tutorUser!, '/dashboard');
 		await expect(page.getByText('Profilo: Pubblicato')).toBeVisible();
@@ -465,9 +467,29 @@ test.describe.serial('tutor agenda', () => {
 		await ctx.close();
 	});
 
+	test('the ledger counts what a held lesson is worth, by subject, and the tutor marks it paid', async ({ browser }) => {
+		const { ctx, page } = await signedIn(browser, tutorUser!, '/guadagni');
+		const total = page.getByRole('group', { name: 'In tutto' });
+		await expect(total.getByText('30 €').first()).toBeVisible();
+		await expect(page.getByRole('table', { name: 'Lezioni, ore e guadagni per materia' }).getByRole('row', { name: /Fisica/ })).toContainText('30 €');
+		const owing = page.locator(`[data-owing="${STUDENT_NAME}"]`);
+		await owing.getByRole('button', { name: 'Segna pagata' }).click();
+		await expect(page.getByText('Tutte le lezioni fatte risultano pagate.')).toBeVisible();
+		const { data } = await db.from('tutor_lessons').select('paid, subject').eq('tutor_student_id', linkId).eq('note', 'Lezione di ieri').single();
+		expect(data).toEqual({ paid: true, subject: 'fisica' });
+		// The student never reads prices.
+		const student = await signedIn(browser, studentUser!, `/il-mio-tutor/${linkId}/lezioni`);
+		await student.page.getByText(/Storico delle lezioni/).click();
+		await expect(student.page.locator('[data-lesson]', { hasText: 'Lezione di ieri' })).toContainText('Fisica');
+		await expect(student.page.getByText('30 €')).toHaveCount(0);
+		await expect(student.page.getByRole('button', { name: /pagata/i })).toHaveCount(0);
+		await student.ctx.close();
+		await ctx.close();
+	});
+
 	test('the tutor area fits a phone without scrolling sideways', async ({ browser }) => {
 		const { ctx, page } = await signedIn(browser, tutorUser!, '/dashboard', { width: 390, height: 844 });
-		for (const path of ['/dashboard', '/studenti', `/studenti/${linkId}`, `/studenti/${linkId}/compiti`, `/studenti/${linkId}/lezioni`, `/studenti/${linkId}/appunti`, '/messaggi', `/messaggi/${linkId}`, '/calendario', '/profile-editor/orari']) {
+		for (const path of ['/dashboard', '/studenti', `/studenti/${linkId}`, `/studenti/${linkId}/compiti`, `/studenti/${linkId}/lezioni`, `/studenti/${linkId}/appunti`, '/messaggi', `/messaggi/${linkId}`, '/calendario', '/guadagni', '/profile-editor/orari']) {
 			await page.goto(path);
 			await expect(page.getByRole('navigation', { name: 'Area tutor' })).toBeVisible();
 			expect(await sideways(page), `${path} goes past the right edge`).toEqual([]);

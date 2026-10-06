@@ -11,7 +11,7 @@ export default async function MyTutorLessonsPage({ params }: { params: Promise<{
 	const { link, lessons, today, now } = await tutorFolder(params);
 	return (
 		<section aria-labelledby="lezioni">
-			<SectionTitle id="lezioni" title="Lezioni" count={lessons.length} action={<NewLesson side="student" linkId={link.id} today={today} primary />} />
+			<SectionTitle id="lezioni" title="Lezioni" count={lessons.length} action={<NewLesson side="student" linkId={link.id} today={today} choices={{ subjects: link.tutor.subjects, subject: link.subject }} primary />} />
 			<Lessons lessons={lessons} side="student" now={now} />
 		</section>
 	);

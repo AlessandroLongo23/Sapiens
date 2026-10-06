@@ -65,10 +65,17 @@ test('a student needs a name; subject and level are checked when given', () => {
 
 test('a lesson needs a real day, a time, a sane length and a mode', () => {
 	const ok = { day: '2026-10-08', time: '16:00', durationMin: 60, mode: 'online' };
-	assert.deepEqual(a.parseLessonInput(ok), { ...ok, place: '', note: '', repeat: false });
-	assert.equal(a.parseLessonInput({ ...ok, repeat: true }).repeat, true);
-	assert.equal(a.parseLessonInput({ ...ok, repeat: 'yes' }).repeat, false);
-	for (const bad of [{ day: '2026-13-40' }, { day: '8 ottobre' }, { time: '25:00' }, { time: '9:00' }, { durationMin: 5 }, { durationMin: 1000 }, { durationMin: 'x' }, { mode: 'telefono' }]) assert.equal(typeof a.parseLessonInput({ ...ok, ...bad }), 'string', JSON.stringify(bad));
+	const subjects = new Set(['matematica', 'fisica']);
+	assert.deepEqual(a.parseLessonInput(ok, subjects), { ...ok, place: '', note: '', repeat: false, subject: null, hourlyRate: null });
+	assert.equal(a.parseLessonInput({ ...ok, repeat: true }, subjects).repeat, true);
+	assert.equal(a.parseLessonInput({ ...ok, repeat: 'yes' }, subjects).repeat, false);
+	// The lesson's own subject and price: both optional, both checked.
+	assert.deepEqual([a.parseLessonInput({ ...ok, subject: 'fisica', hourlyRate: '17.5' }, subjects).subject, a.parseLessonInput({ ...ok, subject: 'fisica', hourlyRate: '17.5' }, subjects).hourlyRate], ['fisica', 17.5]);
+	assert.equal(a.parseLessonInput({ ...ok, hourlyRate: '' }, subjects).hourlyRate, null);
+	for (const bad of [{ subject: 'latino' }, { hourlyRate: -1 }, { hourlyRate: 'tanto' }, { hourlyRate: 9999 }]) assert.equal(typeof a.parseLessonInput({ ...ok, ...bad }, subjects), 'string', JSON.stringify(bad));
+	assert.equal(a.lessonFee({ durationMin: 90, hourlyRate: 20 }), 30);
+	assert.equal(a.lessonFee({ durationMin: 60, hourlyRate: null }), 0);
+	for (const bad of [{ day: '2026-13-40' }, { day: '8 ottobre' }, { time: '25:00' }, { time: '9:00' }, { durationMin: 5 }, { durationMin: 1000 }, { durationMin: 'x' }, { mode: 'telefono' }]) assert.equal(typeof a.parseLessonInput({ ...ok, ...bad }, subjects), 'string', JSON.stringify(bad));
 });
 
 test('an assignment needs a lesson and a day; the level is optional', () => {
@@ -105,4 +112,15 @@ test('free hours are sorted, and overlapping stretches of a day are merged', () 
 test('a review is a whole vote from one to five', () => {
 	assert.deepEqual(a.parseReview({ rating: 4, body: ' Brava ' }), { rating: 4, body: 'Brava' });
 	for (const rating of [0, 6, 2.5, 'cinque', undefined]) assert.equal(typeof a.parseReview({ rating }), 'string');
+});
+
+test('a month page is whole weeks from Monday, and months shift across years', () => {
+	const feb = a.monthGrid('2026-02');
+	assert.equal(feb[0], '2026-01-26');
+	assert.equal(feb.at(-1), '2026-03-01');
+	assert.equal(feb.length % 7, 0);
+	// A month that starts on Monday and ends on Sunday shows nothing else.
+	assert.deepEqual([a.monthGrid('2027-02')[0], a.monthGrid('2027-02').at(-1), a.monthGrid('2027-02').length], ['2027-02-01', '2027-02-28', 28]);
+	assert.equal(a.shiftMonth('2026-01', -1), '2025-12');
+	assert.equal(a.shiftMonth('2026-12', 1), '2027-01');
 });

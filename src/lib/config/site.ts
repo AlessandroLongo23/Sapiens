@@ -80,6 +80,7 @@ export const PRIVATE_PATH_PREFIXES = [
 	'/profile-editor',
 	'/studenti',
 	'/calendario',
+	'/guadagni',
 	'/messaggi',
 	'/il-mio-tutor',
 	'/invito-tutor',

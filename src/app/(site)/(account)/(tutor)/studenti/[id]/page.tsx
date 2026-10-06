@@ -28,7 +28,7 @@ export default async function StudentOverviewPage({ params }: { params: Promise<
 			<div className="space-y-10">
 				{link.inviteCode && <InviteBox code={link.inviteCode} name={link.name} />}
 				<section aria-labelledby="prossime-lezioni">
-					<SectionTitle id="prossime-lezioni" title="Prossime lezioni" action={!ended && <NewLesson side="tutor" linkId={link.id} today={today} />} />
+					<SectionTitle id="prossime-lezioni" title="Prossime lezioni" action={!ended && <NewLesson side="tutor" linkId={link.id} today={today} choices={{ subjects: folder.tutor.subjects, subject: link.subject, rate: folder.tutor.hourly_rate }} />} />
 					<Lessons lessons={sheet.lessons} side="tutor" now={now} canAdd={!ended} limit={3} />
 					<MoreLink href={`${base}/lezioni`}>Tutte le lezioni</MoreLink>
 				</section>

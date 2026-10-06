@@ -1,11 +1,11 @@
 import { lessonWhen } from '@/lib/tutoring/agenda';
 import { fail, isUuid, json, readJson } from '@/lib/server/http';
-import { cancelLesson, respondToProposal } from '@/lib/server/tutor-agenda';
+import { cancelLesson, respondToProposal, setLessonMoney } from '@/lib/server/tutor-agenda';
 import { withTutor, withUser } from '@/lib/server/tutor-agenda-http';
 import { userEmail } from '@/lib/server/tutoring-admin';
 import { mailAgenda } from '@/lib/server/tutoring-mail';
 
-/** The tutor accepts or declines a proposal; either side cancels a lesson to come. */
+/** The tutor accepts or declines a proposal and marks a lesson paid; either side cancels a lesson to come. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 	if (!isUuid(id)) return fail('Lezione non trovata.', 404);
@@ -23,6 +23,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 				{ href: `${origin}/il-mio-tutor`, label: 'Apri la pagina del tuo tutor' }
 			);
 			return json({ status: lesson.status });
+		});
+	}
+	if (body.action === 'paid') {
+		if (typeof body.paid !== 'boolean') return fail('Richiesta non valida.', 400);
+		const paid = body.paid;
+		return withTutor('lesson paid', async (tutor) => {
+			await setLessonMoney(tutor.id, id, { paid });
+			return json({ paid });
 		});
 	}
 	if (body.action !== 'cancel') return fail('Azione non valida.', 400);
