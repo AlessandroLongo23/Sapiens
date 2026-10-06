@@ -9,6 +9,7 @@ tag: [prodotto, studenti, contenuti]
 La teoria di Sapiens: una lezione per argomento, ordinata come il programma ministeriale, gratuita e indicizzata da Google.
 
 ## Stato attuale
+- 6 ottobre 2026, nel codice e non pubblicato: il terzo anno di fisica, 49 lezioni (71-119) con formulari, flashcard, 221 figure TikZ, 53 figure interattive e 49 generatori di esercizi collegati al sito. Vedi [[2026-10-06 Terzo anno di fisica]].
 - Matematica delle superiori riorganizzata il 24 settembre 2026 secondo le Indicazioni nazionali e l'ordine dei libri: 39 capitoli e 183 lezioni (104 nel biennio, 79 nel triennio), 18 scritte. L'albero è in `docs/lezioni/albero.md` e si applica con `scripts/lezioni/tree.mts`; 63 vecchi indirizzi reindirizzano ai nuovi (`PATH_ALIASES` in `src/lib/seo/slug.ts`). Vedi [[Programma ministeriale]].
 - Albero livello → materia → capitolo → lezione nella tabella Supabase `content_nodes` (letta da `src/lib/server/content.ts`). La migrazione di questa tabella non è nella repo.
 - 277 nodi: 3 livelli, 10 materie, 76 capitoli, 188 lezioni. Solo 18 lezioni hanno la teoria, tutte di matematica delle superiori; le altre 170 sono pagine vuote in `noindex`. Nessun nodo ha una descrizione (dati del 3 settembre 2026, `SEO-TODO.md`).
