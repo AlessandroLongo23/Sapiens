@@ -4,7 +4,7 @@ tag: [sessione, contenuti, fisica]
 ---
 # Terzo anno di fisica
 
-Sessione del 6 ottobre 2026, seguito di [[2026-09-30 Terzo lotto di fisica]]. Alessandro ha chiesto lezioni, esercizi, flashcard e formulari del terzo anno di fisica delle superiori, con le figure interattive e le figure TikZ. Il lotto è scritto e verificato: 49 lezioni, file 71-119, in nove capitoli. Non è committato né pubblicato: aspetta il via libera di Alessandro.
+Sessione del 6 ottobre 2026, seguito di [[2026-09-30 Terzo lotto di fisica]]. Alessandro ha chiesto lezioni, esercizi, flashcard e formulari del terzo anno di fisica delle superiori, con le figure interattive e le figure TikZ. Il lotto è scritto, verificato e pubblicato lo stesso giorno: 49 lezioni, file 71-119, in nove capitoli. Alessandro ha chiesto di pubblicarlo senza aspettare le correzioni, dopo aver fatto segnare quello che non va in [[Fisica terzo anno, da sistemare]].
 
 - La dinamica e la relatività galileiana (6 lezioni, 71-76)
 - Il lavoro e le forze conservative (3, 77-79)
@@ -66,14 +66,17 @@ Sono scelte di chi ha scritto, da confermare con Andrea: vedi [[Domande per Andr
 - Costanti, dati tabulati, date e fatti storici sono scritti a memoria ed elencati sotto "Da verificare" in ogni nota; la 92 e la 93 ne hanno più delle altre.
 - Nessun livello a risposta aperta, come nel resto della fisica. Niente provato su un telefono vero, su Safari o su Firefox.
 
-## Da sapere prima di pubblicare
+## Stato
+In produzione dal 6 ottobre 2026. Il codice con la PR #43 (generatori, figure, scene, collegamento al sito), preparata in una copia del repo partita da `origin/master` per non portarsi dietro il lavoro non committato delle altre sessioni; poi le lezioni con `publish.mts --dir docs/lezioni/fisica --apply` dalla stessa copia: 49 testi, 49 formulari, 49 mazzi di flashcard e 228 figure compilate, nient'altro. Controllate su `sapiens-edu.vercel.app` a 390 px le 49 lezioni (testo, formule, immagini, figure interattive montate, nessuno scorrimento laterale) e le 49 pagine di esercizi (rispondono tutte; aperta quella del lancio obliquo).
+
+## Da sapere per i prossimi lotti
 - `publish.mts --dir docs/lezioni/fisica` non ha un filtro: nella cartella ci sono anche lezioni del biennio modificate da altre sessioni e non pubblicate.
 - L'ordine: prima il codice (generatori, figure, scene) su master e in produzione, poi le lezioni. Poi `scripts/fisica/indice.mts` per rigenerare `url.md`.
 - Le lezioni rimandano a lezioni di matematica del terzo anno (logaritmi) e di chimica che vanno pubblicate prima o insieme.
 
 ## Prossimo argomento
-Il via libera di Alessandro per commit e pubblicazione. Prima, un giro sui limiti qui sopra (formule larghe, `piano-pv`, zero ambiguo, coerenza tra lezioni vicine). Poi il kit, che è alla terza richiesta degli stessi pezzi, e il quarto anno di fisica (onde, suono, luce, elettricità e magnetismo).
+Il giro sulle voci di [[Fisica terzo anno, da sistemare]] (formule larghe, `piano-pv`, zero ambiguo, coerenza tra lezioni vicine). Poi il kit, che è alla terza richiesta degli stessi pezzi, e il quarto anno di fisica (onde, suono, luce, elettricità e magnetismo).
 
 ## Collegamenti
-- [[Pipeline lezioni]], [[Pipeline esercizi]], [[Lezioni]], [[Domande per Andrea]]
+- [[Pipeline lezioni]], [[Pipeline esercizi]], [[Lezioni]], [[Domande per Andrea]], [[Fisica terzo anno, da sistemare]]
 - [[2026-09-30 Terzo lotto di fisica]], [[2026-09-29 La fisica si pubblica gratis accanto alla beta]], [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]]
