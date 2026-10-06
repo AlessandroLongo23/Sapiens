@@ -129,6 +129,10 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	// Physics, second year: forces and motion (group 16).
 	'piano-inclinato-moto-attrito': () => import('@/components/content/interactive/fisica/PianoInclinatoMoto'),
 	'macchina-atwood-masse': () => import('@/components/content/interactive/fisica/MacchinaAtwood'),
+	// Scenes of the physics sandbox, fixed for a lesson (src/components/sandbox/LessonScene.tsx).
+	'scena-lampada-due-fili': () => import('@/components/content/interactive/fisica/ScenaLampadaDueFili'),
+	'scena-carrello-pesetto': () => import('@/components/content/interactive/fisica/ScenaCarrelloPesetto'),
+	'scena-cassa-in-salita': () => import('@/components/content/interactive/fisica/ScenaCassaInSalita'),
 	'proiettile-tavolo-gittata': () => import('@/components/content/interactive/fisica/ProiettileTavolo'),
 	'forza-centripeta-filo-spezzato': () => import('@/components/content/interactive/fisica/FiloSpezzato'),
 	'pendolo-periodo-ampiezza': () => import('@/components/content/interactive/fisica/PendoloAmpiezza'),
