@@ -78,6 +78,8 @@ export function SubjectMegaMenu({ id, level, pathname, onClose, autoFocus = 0 }:
 		clearTimeout(rest.current);
 		rest.current = setTimeout(() => setChosen(s.id), 150);
 	};
+	// A university has courses where a school has subjects.
+	const noun = level.slug === 'university' ? 'Corsi' : 'Materie';
 	const onRailKey = (e: KeyboardEvent) => {
 		const i = level.children.findIndex((s) => s.id === subject?.id);
 		const next = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: level.children.length - 1 }[e.key];
@@ -92,13 +94,13 @@ export function SubjectMegaMenu({ id, level, pathname, onClose, autoFocus = 0 }:
 		<nav
 			id={id}
 			ref={root}
-			aria-label={`Materie di ${level.title}`}
+			aria-label={`${noun} di ${level.title}`}
 			className={cn('flex w-full animate-drop-in border-y border-edge bg-surface shadow-lift', tall ? 'h-[min(38rem,calc(100dvh-var(--header-h,64px)-3rem))]' : 'max-h-[calc(100dvh-var(--header-h,64px)-3rem)]')}
 		>
 			{!single && (
 				<div className="w-60 shrink-0 overflow-y-auto overscroll-contain border-r border-edge bg-surface-2/60 py-4 2xl:w-72">
 					<p className="label-mono px-5 pb-2 text-fg-subtle" aria-hidden="true">
-						Materie
+						{noun}
 					</p>
 					<ul onKeyDown={onRailKey}>
 						{level.children.map((s, i) => {
@@ -143,7 +145,7 @@ export function SubjectMegaMenu({ id, level, pathname, onClose, autoFocus = 0 }:
 			{subject ? (
 				<SubjectPanel key={subject.id} level={level} subject={subject} inside={subject.id === here.subject?.id} here={subject.id === here.subject?.id ? here.chapter : undefined} pathname={pathname} onClose={onClose} />
 			) : (
-				<p className="flex-1 p-8 text-fg-subtle">Le materie di questo livello sono in arrivo.</p>
+				<p className="flex-1 p-8 text-fg-subtle">{level.slug === 'university' ? 'I corsi' : 'Le materie'} di questo livello sono in arrivo.</p>
 			)}
 		</nav>
 	);

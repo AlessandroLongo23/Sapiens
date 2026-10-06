@@ -105,6 +105,7 @@
 	--animate-nudge: nudge 0.4s ease-in-out;
 	/* Arriving: fast out of the gate, long settle. Used by everything in the Zaino. */
 	--ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-spring: linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1.004 83.8%, 1);
 	--animate-note-in: note-in 0.34s var(--ease-out-soft) both;
 	/* Exercises. The answer chosen and right swells once; the tick or cross in its box lands a beat after. */
 	--animate-answer-pop: answer-pop 0.32s var(--ease-out-soft);
@@ -683,25 +684,13 @@
 @keyframes sk-pop {
 	from { opacity: 0; transform: scale(0.2); }
 }
-/* The figures on the library's covers (CoverFigures): hovering a cover, the pen
-   adds the last strokes, each after its delay (--d), and the pendulum swings.
-   Without hover, or with reduced motion, the drawing is complete and still. */
-.cover-ink {
-	stroke-dasharray: 1 2;
-	stroke-dashoffset: 1.01;
-	transition: stroke-dashoffset 0.25s ease-in;
-}
-.cover-dot { opacity: 0; transition: opacity 0.2s; }
-.group:is(:hover, :focus-visible, :focus-within) .cover-ink {
-	stroke-dashoffset: 0;
-	transition: stroke-dashoffset 0.6s var(--ease-out-soft) var(--d, 0s);
-}
-.group:is(:hover, :focus-visible, :focus-within) .cover-dot { opacity: 1; transition-delay: 0.45s; }
-.cover-swing { transform-box: view-box; transform-origin: 80px 14px; }
-.group:hover .cover-swing { animation: cover-swing 1.8s ease-in-out -0.9s infinite alternate; }
-@keyframes cover-swing {
-	from { transform: rotate(-17deg); }
-	to { transform: rotate(17deg); }
+/* The object on a subject card (LibraryCovers) comes forward on a spring while the card is hovered. */
+.subject-object { transition: transform 0.45s var(--ease-out-soft); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+	.subject-card:hover .subject-object {
+		transform: translateY(-10px) scale(1.08);
+		transition: transform 0.65s var(--ease-spring);
+	}
 }
 /* A segmented control (ToggleGroup): once measured, one raised piece slides
    under the chosen option and the buttons stop drawing their own, hover
@@ -775,11 +764,6 @@
 }
 @keyframes score-stamp {
 	from { opacity: 0; transform: rotate(20deg) scale(1.8); }
-}
-@media (hover: none), (prefers-reduced-motion: reduce) {
-	.cover-ink { stroke-dashoffset: 0; transition: none; }
-	.cover-dot { opacity: 1; transition: none; }
-	.group:hover .cover-swing { animation: none; }
 }
 @utility no-scrollbar {
 	-ms-overflow-style: none;

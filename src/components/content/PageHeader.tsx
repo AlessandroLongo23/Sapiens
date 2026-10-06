@@ -80,7 +80,7 @@ export function PageHeader({
  * items. `layout="grid"` lays out cards; `layout="list"` is a numbered table of
  * contents, in two columns on wide screens.
  */
-export function CardGridSection({ id, title, count, layout = 'grid', children }: { id: string; title: string; count?: number; layout?: 'grid' | 'list'; children: ReactNode }) {
+export function CardGridSection({ id, title, count, layout = 'grid', columns = 3, children }: { id: string; title: string; count?: number; layout?: 'grid' | 'list'; /** How many cards to a row on a wide screen. */ columns?: 2 | 3; children: ReactNode }) {
 	return (
 		<section className="animate-fade-in space-y-6" aria-labelledby={id}>
 			<div className="flex items-end justify-between gap-4 border-b border-edge-strong pb-3">
@@ -90,7 +90,7 @@ export function CardGridSection({ id, title, count, layout = 'grid', children }:
 				{count !== undefined && <span className="label-mono pb-1 text-fg-subtle">{String(count).padStart(2, '0')}</span>}
 			</div>
 			{layout === 'grid' ? (
-				<div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">{children}</div>
+				<div className={cn('grid grid-cols-1 gap-5', columns === 2 ? 'lg:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3')}>{children}</div>
 			) : (
 				<ol className="grid grid-cols-1 gap-x-12 lg:grid-cols-2">{children}</ol>
 			)}

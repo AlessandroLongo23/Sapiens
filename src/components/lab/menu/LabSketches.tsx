@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
 /*
- * Pencil sketches for the labs and experiments that have no photo yet, in the library's line style
- * (CoverFigures.tsx): a 160 × 120 box, strokes in the current colour.
+ * Pencil sketches for the labs and experiments that have no photo yet: line drawings in a
+ * 160 × 120 box, strokes in the current colour.
  */
 
 const SKETCHES: Record<string, ReactNode> = {

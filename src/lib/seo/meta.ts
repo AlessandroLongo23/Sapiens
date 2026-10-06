@@ -26,6 +26,9 @@ const LEVEL_SCHEMA: Record<string, string> = {
 	university: 'Università'
 };
 
+/** What a level calls the things it teaches: a school has subjects, a university has courses. Singular and plural. */
+export const subjectNoun = (level: Pick<ContentNode, 'slug'> | undefined): [string, string] => (level?.slug === 'university' ? ['corso', 'corsi'] : ['materia', 'materie']);
+
 const MAX_TITLE = 60;
 
 export function levelLong(level: ContentNode | undefined): string {
