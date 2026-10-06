@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-26
+aggiornato: 2026-10-06
 tag: [prodotto]
 ---
 # Ricerca
@@ -13,6 +13,7 @@ Rifatta il 26 settembre 2026, nel codice e non ancora pubblicata.
 
 - Si apre dal campo nell'header (con l'indicazione ⌘K / Ctrl K) o con la scorciatoia. L'overlay è una pagina del quaderno: la domanda si scrive in serif su una riga, la penna rossa la sottolinea mentre si apre, i quadretti stanno in alto. Apertura e chiusura animate (`search-in`, `search-out` in `globals.css`).
 - Risultati raggruppati: i propri appunti, materie e capitoli (come etichette colorate per materia), lezioni (con l'adesivo della materia), paragrafi dentro le lezioni (con il simbolo § e l'estratto). Le parole trovate sono passate con l'evidenziatore. Frecce per scegliere, Invio per aprire.
+- Dal 6 ottobre 2026, nel codice e non pubblicato: ogni tipo di risultato ha la sua forma. Livelli, materie e corsi sono schede con lo stesso oggetto in tre dimensioni delle pagine del materiale (due per riga, l'oggetto si muove al passaggio del mouse); i capitoli sono righe d'indice con il loro numero; lezioni, paragrafi e appunti restano le righe di prima. Anche i livelli ora si trovano ("università"), e i luoghi mostrati salgono da 4 a 6. Le etichette colorate per materie e capitoli sono tolte.
 - Se la ricerca è una domanda (comincia con "come", "cosa", "non ho capito", finisce con "?"), il paragrafo migliore va in cima come scheda su carta a quadretti: "La risposta è qui".
 - Un paragrafo apre la lezione con l'ancora (`#minimo-comune-multiplo`): la pagina scorre al titolo e ci passa sopra un evidenziatore disegnato a mano (bordi irregolari, tre tratti diversi, `.marker-hand` in `globals.css`), che poi sbiadisce. Lo stesso tratto evidenzia le parole trovate nei risultati.
 - Senza testo, l'overlay propone quattro ricerche di esempio.

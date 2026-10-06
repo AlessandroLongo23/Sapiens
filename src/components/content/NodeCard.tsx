@@ -5,8 +5,7 @@ import { cn } from '@/lib/utils/cn';
 import { Latex } from '@/components/ui/Latex';
 import { PenStroke } from './PageHeader';
 import { ProgressMeta, type RowProgress } from './ProgressMeta';
-import { SubjectTextbook, subjectShort } from './LibraryCovers';
-import { LevelSheet } from './LevelSheet';
+import { LevelCard, SubjectCard } from './LibraryCovers';
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
@@ -43,11 +42,11 @@ function Row({ node, href, index, progress }: { node: ContentNode; href: string;
 }
 
 /**
- * A level, subject, chapter or lesson on an index page: a level is a sheet, a subject a textbook (pass its `level`),
+ * A level, subject, chapter or lesson on an index page: a level and a subject are cards (pass a subject's `level`),
  * chapters and lessons are numbered rows (render those inside a list). `progress` names what the row can show the student's progress for.
  */
 export function NodeCard({ node, href, index = 0, progress, level }: { node: ContentNode; href: string; index?: number; progress?: RowProgress; level?: ContentNode }) {
-	if (node.type === 'level') return <LevelSheet level={node} href={href} index={index} short={(subject) => subjectShort(node, subject)} />;
-	if (node.type === 'subject') return <SubjectTextbook level={level} subject={node} href={href} />;
+	if (node.type === 'level') return <LevelCard level={node} href={href} />;
+	if (node.type === 'subject') return <SubjectCard level={level} subject={node} href={href} />;
 	return <Row node={node} href={href} index={index} progress={progress} />;
 }

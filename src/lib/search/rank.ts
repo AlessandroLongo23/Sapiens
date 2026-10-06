@@ -53,10 +53,10 @@ export interface SemanticHit {
 	similarity: number;
 }
 
-/** A subject or a chapter whose title the query names: a shortcut to its index page. */
+/** A level, a subject or a chapter whose title the query names: a shortcut to its index page. */
 export interface PlaceHit {
 	node: ContentNode;
-	/** The level for a subject, the subject for a chapter. */
+	/** The level for a subject, the subject for a chapter, the level itself for a level. */
 	parent: ContentNode;
 	href: string;
 	score: number;
@@ -106,7 +106,8 @@ export interface SearchIndex {
 export function buildIndex(tree: ContentNode[], sections: SearchSection[]): SearchIndex {
 	const lessons: PreparedLesson[] = [];
 	const places: PreparedPlace[] = [];
-	for (const level of tree)
+	for (const level of tree) {
+		places.push({ node: level, parent: level, href: nodePath([level]), title: terms(level.title), order: places.length });
 		for (const subject of level.children) {
 			places.push({ node: subject, parent: level, href: nodePath([level, subject]), title: terms(subject.title), order: places.length });
 			for (const chapter of subject.children) {
@@ -124,6 +125,7 @@ export function buildIndex(tree: ContentNode[], sections: SearchSection[]): Sear
 					});
 			}
 		}
+	}
 	const byId = new Map(lessons.map((l) => [l.topic.id, l]));
 	const prepared: PreparedSection[] = [];
 	for (const section of sections) {
@@ -255,7 +257,7 @@ export function search(index: SearchIndex, query: string): Results {
 	}
 	sections.sort((a, b) => b.score - a.score);
 
-	return { places: places.slice(0, 4), lessons: lessons.slice(0, 12), sections: sections.slice(0, 6), question, stems };
+	return { places: places.slice(0, 6), lessons: lessons.slice(0, 12), sections: sections.slice(0, 6), question, stems };
 }
 
 /** A text split into runs, marking the words the query matched. */

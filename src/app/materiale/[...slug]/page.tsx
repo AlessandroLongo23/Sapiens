@@ -13,7 +13,10 @@ import { toneFor } from '@/lib/utils/icons';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { contentCrumbs } from '@/components/content/Breadcrumb';
 import { CardGridSection, Page, PageHeader } from '@/components/content/PageHeader';
+import { subjectNoun } from '@/lib/seo/meta';
 import { NodeCard } from '@/components/content/NodeCard';
+import { AREAS, subjectLayout } from '@/components/content/LibraryCovers';
+import { CourseAreas } from '@/components/content/CourseAreas';
 import { ChapterYears, chaptersByYear } from '@/components/content/ChapterYears';
 import type { RowProgress } from '@/components/content/ProgressMeta';
 import { SubjectGuide } from '@/components/content/SubjectGuide';
@@ -80,6 +83,10 @@ export default async function IndexPage({ params }: Params) {
 	const structured: JsonLdData | undefined =
 		node.type === 'subject' ? courseJsonLd(node, ancestors, seo.description) : node.type === 'chapter' ? learningResourceJsonLd(node, ancestors, { description: seo.description, resourceType: 'Capitolo', free: true }) : undefined;
 	const heading = HEADINGS[node.type];
+	// A university has courses where a school has subjects.
+	const noun = subjectNoun(node.type === 'level' ? node : level)[1];
+	const childrenTitle = node.type === 'level' ? noun[0].toUpperCase() + noun.slice(1) : heading.title;
+	const courses = node.type === 'level' && node.slug === 'university' ? AREAS.map((a) => ({ ...a, count: node.children.filter((child) => toneFor(child) === a.tone).length })).filter((a) => a.count > 0) : null;
 	const rows = node.children.map((child, index) => <NodeCard key={child.id} node={child} index={index} level={level} href={nodePath([...ancestors, child])} progress={rowProgress([...ancestors, child])} />);
 	// A subject whose chapters all have a school year lists them by year.
 	const years = node.type === 'subject' ? chaptersByYear(node.children) : null;
@@ -98,15 +105,18 @@ export default async function IndexPage({ params }: Params) {
 				lead={node.description}
 				stats={STATS[node.type].filter(({ key }) => counts[key] > 0).map(({ key, label }) => (
 					<Stat key={key} value={counts[key]}>
-						{label}
+						{node.type === 'level' && key === 'subject' ? childrenTitle : label}
 					</Stat>
 				))}
 				aside={<CoverStickersButton />}
 			/>
 			{years ? (
 				<ChapterYears id="children-heading" chapters={node.children} years={years} rows={rows} />
+			) : courses ? (
+				// The university has many courses: they are filtered by area.
+				<CourseAreas id="children-heading" title={childrenTitle} areas={courses} courses={node.children.map((child, i) => ({ area: toneFor(child), card: rows[i] }))} />
 			) : node.children.length > 0 ? (
-				<CardGridSection id="children-heading" title={heading.title} count={node.children.length} layout={heading.layout}>
+				<CardGridSection id="children-heading" title={childrenTitle} count={node.children.length} layout={heading.layout} columns={node.type === 'level' && subjectLayout(node.children.length) === 'side' ? 2 : 3}>
 					{rows}
 				</CardGridSection>
 			) : (
