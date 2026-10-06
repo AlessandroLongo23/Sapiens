@@ -314,6 +314,10 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'ossiacidi-anidride-piu-acqua': () => import('@/components/content/interactive/chimica/OssiacidiAnidrideAcqua'),
 	'sali-binari-bilancia-cariche': () => import('@/components/content/interactive/chimica/SaliBinariBilanciaCariche'),
 	'sali-ternari-acido-metallo': () => import('@/components/content/interactive/chimica/SaliTernariAcidoMetallo'),
+	// Artificial intelligence (university): the perceptron and the first networks.
+	'percettrone-separa-a-mano': () => import('@/components/content/interactive/ia/Percettrone').then((m) => ({ default: m.SeparaAMano })),
+	'percettrone-regola-apprendimento': () => import('@/components/content/interactive/ia/Percettrone').then((m) => ({ default: m.Apprendimento })),
+	'rete-xor-strato-nascosto': () => import('@/components/content/interactive/ia/ReteXor'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {
