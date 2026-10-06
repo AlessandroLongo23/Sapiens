@@ -216,9 +216,252 @@
 	"geometria-quadrilateri": [
 		"geometria-perpendicolari-parallele"
 	],
-	"equazioni-secondo-grado": [
-		"equazioni-primo-grado",
-		"scomposizione-raccoglimento",
+	"sistemi-di-equazioni": [
+		"equazioni-fratte",
+		"funzioni-lineari"
+	],
+	"sistemi-cramer": [
+		"sistemi-di-equazioni",
+		"equazioni-letterali"
+	],
+	"sistemi-problemi": [
+		"sistemi-di-equazioni",
+		"equazioni-problemi"
+	],
+	"numeri-reali-irrazionali": [
+		"numeri-razionali-conversione",
+		"numeri-razionali-potenze",
+		"logica-implicazione"
+	],
+	"numeri-reali-radici": [
+		"numeri-reali-irrazionali",
+		"disequazioni-primo-grado"
+	],
+	"radicali-operazioni": [
+		"numeri-reali-radici",
+		"polinomi-prodotti-notevoli"
+	],
+	"radicali-razionalizzazione": [
+		"radicali-operazioni"
+	],
+	"numeri-reali-espressioni": [
+		"radicali-razionalizzazione"
+	],
+	"radicali-esponente-razionale": [
 		"numeri-reali-radici"
+	],
+	"il-piano-cartesiano": [
+		"radicali-operazioni",
+		"definizione-funzione"
+	],
+	"equazione-di-una-retta": [
+		"il-piano-cartesiano",
+		"funzioni-lineari"
+	],
+	"il-coefficiente-angolare": [
+		"equazione-di-una-retta",
+		"sistemi-di-equazioni"
+	],
+	"rette-parallele-tra-loro": [
+		"il-coefficiente-angolare"
+	],
+	"intersezione-tra-due-rette": [
+		"il-coefficiente-angolare"
+	],
+	"distanza-punto-retta": [
+		"rette-parallele-tra-loro",
+		"radicali-razionalizzazione"
+	],
+	"retta-fasci": [
+		"rette-parallele-tra-loro",
+		"intersezione-tra-due-rette",
+		"equazioni-letterali"
+	],
+	"equazioni-secondo-grado": [
+		"scomposizione-raccoglimento",
+		"radicali-operazioni"
+	],
+	"equazioni-secondo-grado-relazioni": [
+		"equazioni-secondo-grado",
+		"scomposizione-trinomio"
+	],
+	"equazioni-parametriche": [
+		"equazioni-secondo-grado-relazioni",
+		"equazioni-letterali",
+		"equazioni-fratte"
+	],
+	"equazioni-secondo-grado-problemi": [
+		"equazioni-secondo-grado",
+		"equazioni-problemi",
+		"equazioni-fratte"
+	],
+	"funzioni-quadratiche": [
+		"il-piano-cartesiano",
+		"equazioni-secondo-grado"
+	],
+	"disequazioni-secondo-grado": [
+		"funzioni-quadratiche",
+		"disequazioni-razionali"
+	],
+	"disequazioni-secondo-grado-fratte": [
+		"disequazioni-secondo-grado",
+		"sistemi-di-disequazioni"
+	],
+	"equazioni-binomie-trinomie": [
+		"scomposizione-ruffini",
+		"disequazioni-secondo-grado"
+	],
+	"valore-assoluto-equazioni": [
+		"disequazioni-secondo-grado-fratte"
+	],
+	"equazioni-irrazionali": [
+		"disequazioni-secondo-grado-fratte"
+	],
+	"sistemi-secondo-grado": [
+		"sistemi-di-equazioni",
+		"equazioni-secondo-grado-relazioni",
+		"funzioni-quadratiche"
+	],
+	"concetti-probabilita": [
+		"insiemi-differenza",
+		"statistica-dati"
+	],
+	"leggi-probabilita": [
+		"concetti-probabilita"
+	],
+	"circonferenza-cerchio": [
+		"geometria-punti-notevoli"
+	],
+	"poligoni-inscritti": [
+		"circonferenza-cerchio",
+		"geometria-quadrilateri"
+	],
+	"equivalenza-aree": [
+		"geometria-quadrilateri"
+	],
+	"circonferenza-lunghezza-area": [
+		"poligoni-inscritti",
+		"equivalenza-aree",
+		"numeri-reali-irrazionali"
+	],
+	"teorema-di-pitagora": [
+		"equivalenza-aree",
+		"radicali-operazioni"
+	],
+	"teorema-di-talete": [
+		"geometria-quadrilateri",
+		"numeri-razionali-proporzioni"
+	],
+	"similitudine": [
+		"teorema-di-talete",
+		"teorema-di-pitagora"
+	],
+	"triangolo-rettangolo-trigonometria": [
+		"similitudine",
+		"radicali-razionalizzazione"
+	],
+	"trasformazioni-geometriche": [
+		"equazione-di-una-retta",
+		"funzioni-iniettive-suriettive-biettive",
+		"similitudine"
+	],
+	"funzioni-reali-di-variabile-reale": [
+		"dominio-codominio-immagine",
+		"valore-assoluto-equazioni"
+	],
+	"funzioni-dispari-pari": [
+		"funzioni-reali-di-variabile-reale"
+	],
+	"funzioni-monotone": [
+		"funzioni-reali-di-variabile-reale"
+	],
+	"funzioni-periodiche": [
+		"funzioni-reali-di-variabile-reale"
+	],
+	"grafici-trasformazioni": [
+		"trasformazioni-geometriche",
+		"funzioni-dispari-pari"
+	],
+	"successioni-numeriche": [
+		"il-piano-cartesiano",
+		"equazioni-secondo-grado"
+	],
+	"progressioni-aritmetiche": [
+		"successioni-numeriche",
+		"equazione-di-una-retta"
+	],
+	"progressioni-geometriche": [
+		"progressioni-aritmetiche"
+	],
+	"principio-induzione": [
+		"successioni-numeriche",
+		"logica-quantificatori"
+	],
+	"circonferenza-equazione": [
+		"il-piano-cartesiano",
+		"circonferenza-cerchio",
+		"sistemi-cramer"
+	],
+	"circonferenza-rette": [
+		"circonferenza-equazione",
+		"distanza-punto-retta",
+		"retta-fasci",
+		"sistemi-secondo-grado"
+	],
+	"parabola-equazione": [
+		"funzioni-quadratiche",
+		"trasformazioni-geometriche"
+	],
+	"parabola-rette": [
+		"parabola-equazione",
+		"sistemi-secondo-grado",
+		"retta-fasci"
+	],
+	"ellisse": [
+		"sistemi-secondo-grado",
+		"circonferenza-equazione",
+		"retta-fasci"
+	],
+	"iperbole": [
+		"ellisse"
+	],
+	"iperbole-equilatera": [
+		"iperbole",
+		"distanza-punto-retta",
+		"grafici-trasformazioni"
+	],
+	"funzioni-esponenziali": [
+		"radicali-esponente-razionale",
+		"funzioni-monotone",
+		"grafici-trasformazioni"
+	],
+	"equazioni-esponenziali": [
+		"funzioni-esponenziali",
+		"equazioni-binomie-trinomie"
+	],
+	"disequazioni-esponenziali": [
+		"equazioni-esponenziali"
+	],
+	"logaritmi-proprieta": [
+		"funzioni-esponenziali"
+	],
+	"funzioni-logaritmiche": [
+		"logaritmi-proprieta",
+		"composizione-di-funzioni"
+	],
+	"equazioni-logaritmiche": [
+		"funzioni-logaritmiche",
+		"equazioni-esponenziali"
+	],
+	"disequazioni-logaritmiche": [
+		"equazioni-logaritmiche",
+		"disequazioni-esponenziali"
+	],
+	"distribuzioni-doppie": [
+		"statistica-medie"
+	],
+	"regressione-correlazione": [
+		"statistica-variabilita",
+		"equazione-di-una-retta"
 	]
 }
