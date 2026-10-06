@@ -248,3 +248,10 @@ Senza attrito sarebbe arrivata a $25 / (2 \cdot 4{,}14) = 3{,}0\,\text{m}$. Da f
 L'attrito sempre verso l'alto
 L'attrito dinamico è sempre opposto alla velocità, non sempre rivolto verso la cima del piano. In discesa punta in su e si sottrae alla componente del peso, $\sin\alpha - \mu_d\cos\alpha$; in salita punta in giù e si somma, $\sin\alpha + \mu_d\cos\alpha$. Chi usa il meno anche in salita trova, nell'esempio 5, una cassa che arriva a $8{,}5\,\text{m}$.
 ```
+
+Nella scena qui sotto lanci la cassa dell'esempio 5 e guardi il grafico della sua velocità lungo la rampa, positiva in salita. La freccia dell'attrito cambia verso quando la cassa inverte il moto, e nel grafico la retta cambia pendenza.
+
+```interattivo
+% nome: scena-cassa-in-salita
+% alt: Una cassa lanciata a 5 metri al secondo su per una rampa con attrito, con le frecce del peso, della reazione della rampa e dell'attrito, e accanto il grafico della sua velocità lungo la rampa nel tempo. Un cursore cambia l'inclinazione da 15 a 40 gradi e un selettore sceglie il coefficiente di attrito statico, 0,50 oppure 0,40. A 25 gradi con 0,50 la cassa si ferma dopo 1,84 metri e resta sulla rampa; quando la tangente dell'angolo supera il coefficiente statico la cassa riscende, più lentamente di come è salita, e il grafico è una spezzata
+```

@@ -1,7 +1,7 @@
 ---
 stato: in uso
 release: beta
-aggiornato: 2026-10-03
+aggiornato: 2026-10-05
 tag: [contenuti, revisione]
 ---
 # Domande per Andrea
@@ -301,6 +301,12 @@ Vedi [[Grafico di funzioni]] e la proposta in [[Geometria analitica nel plotter]
 - [ ] Nel plotter `varianza(a; b; c)` e `devstandard(a; b; c)` dividono per $n$, come nella lezione di statistica. Serve anche la versione campionaria ($n - 1$), con un nome suo?
 - [ ] `casuale(2; 5)` è un numero tra 2 e 5, e per scegliere tra due soli valori servono le graffe: `casuale({2; 5})`. Con tre o più valori le graffe non servono. È chiaro per uno studente, o confonde?
 
+## Confronto con i video di Atzeni (3 ottobre 2026)
+Dal confronto con gli argomenti del canale del prof. Atzeni (`docs/lezioni/chimica/confronto-atzeni.md`, sessione [[2026-10-03 Video del prof. Atzeni]]). Le prime due sono anche per il prof. Magini.
+- [ ] Gluconeogenesi, glicogeno (sintesi e demolizione) e beta-ossidazione degli acidi grassi: al quinto anno del liceo si fanno? Oggi l'albero ha glicolisi, fermentazioni, ciclo di Krebs con la fosforilazione ossidativa e fotosintesi. Serve una lezione sul metabolismo di lipidi e glicogeno, o basta un cenno?
+- [ ] L'equazione di Nernst è stata aggiunta come lezione di approfondimento (`chim-nernst`), anche se il DM chiede solo "cenni di elettrochimica". Va bene tenerla così, o è troppo per il liceo?
+- [ ] "Il pH dopo una reazione tra acido e base" (`chim-ph-miscele`) è una lezione a parte, dopo le soluzioni tampone. È l'ordine giusto, o va prima?
+
 ## Primo lotto di informatica: il primo anno (3 ottobre 2026)
 Dal lotto delle 32 lezioni del primo anno ([[2026-10-03 Primo lotto di informatica]]). Qui le domande che toccano più lezioni o che decidono una convenzione; le altre, lezione per lezione, sono in `docs/lezioni/informatica/note/`. Le convenzioni scelte sono in `docs/lezioni/informatica/README.md`.
 
@@ -348,22 +354,94 @@ Foglio di calcolo, documenti e presentazioni (lezioni 23-32):
 
 Fatti da verificare (le lezioni sono online dal 3 ottobre 2026; questi sono scritti a memoria dagli agenti, con la fonte nelle note): "First Draft of a Report on the EDVAC" (1945); ASCII (1963, minuscole nel 1967); Unicode 1.0 (1991); IEEE 754 (1985); il teorema del campionamento (Shannon 1949); il CD audio a 44,1 kHz e 16 bit; i prefissi binari IEC (1998); il supercomputer Leonardo del CINECA; i comportamenti dei programmi (nomi degli errori del foglio in italiano, aggiornamento dell'indice e della tabella pivot, `SUBTOTALE`).
 
-## Terzo anno di fisica (6 ottobre 2026)
-Le 49 lezioni del terzo anno (71-119): relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas, primo e secondo principio. Vedi [[2026-10-06 Terzo anno di fisica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione "Domande per Andrea" di ogni nota in `docs/lezioni/fisica/note/71-119` e, raccolte per gruppo, in `docs/lezioni/fisica/rapporti-terzo-anno.md`.
-- [ ] Urti: velocità dopo l'urto $V_1$ e $V_2$ (scelta fatta, come l'Amaldi, da verificare) oppure $v_1'$ e $v_2'$.
-- [ ] Primo principio $\Delta U = Q - W$ con il lavoro compiuto dal sistema (scelta fatta) oppure $\Delta U = Q + W$ con il lavoro subito.
-- [ ] Secondo principio: $T_c$, $T_f$, $Q_c$, $Q_f$ in valore assoluto (scelta fatta) oppure $T_2$, $T_1$, $Q_2$, $Q_1$; $\text{COP}_f$ e $\text{COP}_p$ per frigorifero e pompa di calore.
-- [ ] Microstati $\Omega$ in $S = k_B \ln \Omega$ (scelta fatta, perché $W$ è il lavoro) oppure $W$ come sui libri.
-- [ ] Forza centrifuga $F_{cf}$ (scelta fatta; nella 57 $F_c$ è la centripeta); forze apparenti disegnate tratteggiate; Coriolis senza formula, o con $2\,m\,\omega\,v'$ in un riquadro.
-- [ ] Gittata $L$ nella 76 e $x_G$ nella 56 del biennio: si uniforma il biennio?
-- [ ] $\vec I$ per l'impulso e $I$ per il momento d'inerzia: basta la freccia a distinguerli? Nella 88 $M$ è sia il momento sia la massa della carrucola.
-- [ ] Il coefficiente $c$ in $I = c\,m\,r^2$ (gruppo 35) non è nel README: va bene come lettera?
-- [ ] Il coseno di un angolo ottuso introdotto nella 71 con $\cos(180^\circ - \alpha) = -\cos\alpha$, prima della goniometria: va bene, o il prodotto scalare aspetta?
-- [ ] $\ln$ usato come tasto della calcolatrice nel lavoro dell'isoterma e nell'entropia, con il link alla lezione sui logaritmi: basta?
-- [ ] La forza come opposto della pendenza del grafico di $U$ e l'equilibrio stabile e instabile (78): al terzo anno, prima delle derivate?
-- [ ] Componenti di un vettore scritte $(4;\ 3)$ o $(4, 3)$ nella 71.
-- [ ] Negli esercizi sull'impulso i tempi d'urto sono decine di millisecondi per tenere le forze sotto i 100 N: meglio tempi realistici e forze in kilonewton?
-- [ ] Costanti, dati dei pianeti, viscosità, calori molari, date e fatti storici scritti a memoria: gli elenchi "Da verificare" delle note, soprattutto 92, 93 e 112.
+## Informatica, prime lezioni di programmazione (5 ottobre 2026)
+Cinque lezioni del secondo anno scritte come prova: 47 "I diagrammi di flusso", 53 "Variabili, assegnamento e tipi di dato", 57 "La selezione a due vie", 60 "Il ciclo while", 61 "Il ciclo for". Le domande di ogni lezione sono nelle note `docs/lezioni/informatica/note/`; qui quelle che valgono per tutto il blocco di programmazione.
+
+- **Linguaggi.** Ogni programma è in Python e in C++, con due linguette. Va bene questa coppia, o serve anche il C, o un linguaggio solo?
+- **Nomi delle strutture.** "Ripetizione", "iterazione" o "ciclo"? "Selezione a una via e a due vie" o "semplice e doppia"? Una ripetizione del corpo è un "giro" o un'"iterazione"?
+- **Diagrammi di flusso.** L'assegnamento si scrive con la freccia ← o con `=`? Sui rami "sì" e "no" oppure "vero" e "falso"? Basta un parallelogramma unico per leggere e scrivere? Nella selezione a una via il ramo "sì" va a destra o in basso? Il `for` si disegna come il `while` equivalente o con un blocco suo?
+- **Nomi delle variabili.** Una lettera, come nei diagrammi dei libri, o nomi interi (`spesa`, `voto`)? Le lezioni oggi non sono uniformi: 47, 60 e 61 usano una lettera, 53 e 57 nomi interi.
+- **C++.** `string` e `double` da subito? Le graffe sempre, anche con una sola istruzione? `i++` da subito? Il contatore dichiarato dentro il `for`? Il ciclo di base è `i = 0; i < n` oppure `i = 1; i <= n`?
+- **Cosa entra al biennio.** Il `do-while`, almeno nel diagramma? La divisione intera `//` di Python già nelle variabili? Il resto dei numeri negativi, che in Python e in C++ dà risultati diversi?
+- **Parole.** "Numero con la virgola" o "numero reale"? "Bocciato" o "non promosso" negli esempi? La variabile di appoggio dello scambio si chiama `temp`, `aux` o `appoggio`? Lo zero che chiude una lettura ha un nome ("sentinella")? L'errore di un giro in più o in meno ha un nome in classe?
+- **Tabella di traccia.** Una riga per istruzione, una per controllo della condizione o una per giro?
+- **Diagramma che si esegue.** I dodici diagrammi delle cinque lezioni ora si eseguono un blocco alla volta ([[Diagrammi di flusso eseguibili]]). Nel rombo le condizioni composte si uniscono con E, O, NON in maiuscolo: va bene, o servono AND, OR, NOT? Quoziente e resto si vedono come `div` e `mod`: sono le parole giuste al biennio? La divisione `/` dà il numero con la virgola anche tra interi (7 / 2 fa 3,5), come in Python e non come in C++: è la scelta giusta per un diagramma?
+
+## Informatica, secondo anno (5 ottobre 2026)
+Le altre 27 lezioni del secondo anno ([[2026-10-05 Secondo anno di informatica]]). Ogni lezione ha le sue domande nella nota in `docs/lezioni/informatica/note/`; qui quelle che cambiano più lezioni insieme.
+
+- **Pseudocodice (48, 49).** Ha la forma dei blocchi del diagramma: `leggi`, `scrivi`, `←`, `se` / `altrimenti` / `finché` con il rientro, in minuscolo, con `inizio` e `fine`. Va bene, o in classe si usa `SE ... ALLORA ... FINE SE` e `MENTRE ... ESEGUI`?
+- **Nome della terza struttura.** "Ripetizione" e "ciclo" nella 47, "iterazione" nella 49 e nel titolo del capitolo: se ne sceglie uno?
+- **Proprietà dell'algoritmo e fasi (45, 46).** Cinque proprietà (finito, non ambiguo, eseguibile, deterministico, generale) e cinque fasi (analisi, strategia, algoritmo, prova, programma): sono i nomi che usi?
+- **Teorema di Böhm-Jacopini (49).** L'enunciato è alla portata di una seconda? Si nomina il `goto`? Serve il ciclo con la condizione in coda, che i nostri diagrammi non disegnano?
+- **Programmazione a blocchi (50).** Non abbiamo un ambiente a blocchi: la lezione usa i diagrammi modificabili. È un sostituto accettabile, o in classe si usa Scratch e la lezione deve seguirlo?
+- **Primo programma (52).** `string` già dalla prima lettura o prima un numero? `endl` o `"\n"`? `return 0;` sempre? I commenti qui?
+- **Espressioni (54).** Il resto dei numeri negativi si tratta al biennio? `pow` o il prodotto per le potenze in C++? `(double) a / b` o `a * 1.0 / b`? Le forme brevi (`+=`, `i++`) qui o con i cicli?
+- **Errori (55).** I nomi dei tre tipi ("in esecuzione" o "di runtime", "logici" o "semantici")? Gli avvisi del compilatore si trattano? Si usa un debugger?
+- **Condizioni e operatori logici (56, 58).** In C++ un valore vero o falso si stampa come 1 e 0, o si insegna `boolalpha`? Tabelle di verità con vero e falso, V e F, o 1 e 0? De Morgan al secondo anno? Il corto circuito si nomina? In Python si fa usare `1 <= voto <= 10`?
+- **Selezione a più vie (59).** Lo `switch` al secondo anno? E `match` di Python? "A più vie" o "multipla", "annidate" o "nidificate"?
+- **Cicli (62, 63, 64).** "Accumulatore" anche per il prodotto? `totale += punti` dal secondo anno? Il limite di `int` e il fattoriale che sbaglia vanno detti? Massimo e minimo partono dal primo dato o da un valore "impossibile"? "Valore di fine", "sentinella" o "tappo"? Media in C++ con la somma `double` o con il cast?
+- **Internet (33-39).** "Fornitore di accesso" o "provider"? IPv6 con le abbreviazioni o solo che esiste? Le parti dell'URL sono "protocollo, nome del server, percorso" o "schema, host, path"? I cookie stanno nella 36, nella 43 o in nessuna? PEC, POP3 e FTP restano? I social network vanno qui o nella cittadinanza digitale?
+- **Sicurezza (40-44).** Il conto delle combinazioni di una password con le potenze è alla portata di una seconda? Si contraddice "cambia la password ogni tre mesi"? Servono i nomi smishing, vishing, spear phishing? Il cyberbullismo ha una lezione sua? Le norme delle lezioni 43 e 44 vanno rilette con le fonti: l'elenco è nelle due note.
+
+## Informatica, esercizi del secondo anno (5 ottobre 2026)
+I 32 generatori del secondo anno ([[2026-10-05 Secondo anno di informatica]]). Ogni specifica in `specs/exercises/<slug>.md` finisce con le sue domande; qui quelle che decidono più livelli.
+
+- **Scelte di fondo.** Dalla sera del 5 ottobre una risposta aperta deve contenere il costrutto della lezione (deciso da Alessandro): nel capitolo sui cicli chi somma da 1 a n con la formula si vede dire che manca il ciclo. Va bene, o lì la formula deve passare? Nei testi le condizioni composte sono scritte con E, O, NON come nei diagrammi: va bene, o `and` / `or`?
+- **Pseudocodice (48).** Ora il sito mostra un testo su più righe: i livelli vanno rifatti con lo pseudocodice intero, nella forma della lezione?
+- **Classificazioni da rileggere.** Le tabelle di vero e falso e di "che cosa fare" delle lezioni 33-44 e 51; i dodici problemi della 46 con i loro vincoli; i dati di tipo testo e numero della 53; i tre tipi di errore della 55, in particolare il "nome non definito".
+- **Divisione.** Dove serviva una divisione esatta gli esercizi usano `div` o `//` con numeri divisibili, perché `/` dà risultati diversi nei due linguaggi. Va bene?
+- **Cicli.** Metà dei `for` in C++ ha `i < 6` e metà `i <= 5`: una forma sola? Nei cicli annidati le opzioni sono con il `while`: va bene in una lezione che usa solo `for`?
+- **Selezione.** Le fasce della 59 non usano il voto con i giudizi, che è l'esempio della lezione: lo si vuole anche negli esercizi?
+
+## Strumenti montati nelle lezioni (5 ottobre 2026)
+I piani con i cursori, i programmi e i diagrammi aggiunti a 39 lezioni già scritte ([[2026-10-05 Strumenti nelle lezioni]]). Ogni domanda nomina la lezione.
+
+- **Matematica, primo anno.** Nella 16 e nella 50 un'equazione è letta come incontro di due rette, che anticipa i sistemi lineari del secondo anno: va bene al primo? Nella 11 il diagramma della divisione dà solo le cifre dopo la virgola e si ferma a 8: basta? Nella 52 la tariffa è una retta continua, anche se gli ingressi sono numeri naturali. Nella 44, con $a = 0$, il punto $Q$ resta disegnato mentre l'inversa sparisce, e il testo non lo commenta.
+- **Matematica, secondo anno.** Nella 78 c'è un grafico prima della lezione sul piano cartesiano, con un rimando in avanti alla parabola: accettabile, o va tolto? Nella 68 e nella 84, quando le rette coincidono, sotto il piano il punto comune risulta "non esiste", mentre i punti comuni sono infiniti (la domanda porta lo studente a vederlo). Nella 69 il diagramma segue la tabella, quindi nel caso del riquadro "Il caso in cui la tabella sbaglia" risponde "indeterminato"; i coefficienti $a'$, $b'$, $c'$ lì si chiamano `a2`, `b2`, `c2`. Nella 82, 83 e 85 i punti si muovono con cursori chiamati $u$, $v$, $s$, lettere che la lezione non usa. Nella 89 l'asse $y$ si chiama "area" senza unità. Nella 90 e nella 92 (esempio 13) la figura di copertina è composta e il piano ne mostra solo una parte.
+- **Fisica.** Nella 39 il cursore si chiama $h$ e la domanda dice che è $\Delta t$: confonde? Nella 10 la pendenza è in centimetri ogni 100 g, mentre la lezione 11 la scrive $0{,}040$ cm/g. Nella 12 le costanti delle quattro leggi ($0{,}8x$; $0{,}5x + 3$; $12/x$; $0{,}1x^2$) sono scelte per avere numeri puliti, senza unità.
+- **Chimica.** Nella 32 la pressione della figura non è scritta, quindi il cursore è $V_0$: se la lezione dichiara la pressione, il cursore può prendere quel nome. Nella 31 la temperatura della tabella non è scritta, quindi il cursore è il prodotto $p \cdot V$: se si scrive la temperatura, può essere $T$ in kelvin. Nella 19 il rimando alla tavola periodica viene prima della lezione 22, dove arrivano elementi e simboli: va bene lì?
+- **Fisica, scene della sandbox** (20, 54, 55). Le forze hanno i nomi delle lezioni ($P$, $F_v$, $F_s$, $F_d$, $T$): vanno bene anche dove la lezione 55 scrive $m_2\vec{g}$ per il peso? Nella 54 il grafico è la velocità lungo la rampa, positiva in salita, come nell'esempio 4: va detto di più nel testo? Nella 55 il blocco, dopo che il pesetto ha toccato terra, prosegue e si ferma per attrito: è un caso che la lezione non tratta.
+- **Fisica, terzo anno, dalla revisione del 6 ottobre 2026.** Il peso è $mg$ nelle figure delle lezioni 79, 81 e 88 e in `LavoroDueCammini`, $P$ altrove: una sola scrittura? Nella 81 la forza del suolo si chiama $F_s$, che nel corso è l'attrito statico: $F_v$? La quantità di moto è blu nelle lezioni 80, 82, 83 e blu scuro nella 90: quale colore? Nella 82 le forze interne sono arancioni, il colore della risultante. Nella 99 il tubo ha il tratto alto la metà con $v_2$ doppia, mentre con il diametro dimezzato la lezione 98 dà un fattore 4. Nella 97, riga 75, con i numeri scritti viene $7{,}05 \cdot 10^{10}$ J e non $7{,}06$. Sette figure non partono dai numeri di un esempio della lezione (rampa con attrito della 79, vagone di Galileo, lancio obliquo, urto elastico, biliardo, centro di massa, urto anelastico): si cambiano i valori di partenza o gli esempi? Nella figura della 79 le barre dell'energia hanno sempre la stessa altezza totale, anche raddoppiando la massa.
+- **Informatica.** Nella 05 e nella 26 c'è un diagramma di flusso al primo anno, prima della lezione 47, con due righe su come si legge: va bene, o serve un rimando? Nella 09, 10 e 41 c'è un programma in Python per chi non programma ancora, con la frase "non serve saper programmare"; nella 10 compare `.encode("utf-8").decode("latin-1")`, la riga meno leggibile. Nella 36 la lezione ora nomina i tag `<h1>`, `<p>`, `<a href>`: l'HTML non ha una sua lezione nel biennio, è il posto giusto per introdurli?
+
+## Matematica, terzo anno (5 ottobre 2026)
+Dal lotto [[2026-10-05 Terzo anno di matematica]]. Le domande minori sono nelle note `docs/lezioni/note/105-129` e in fondo alle specifiche `specs/exercises/`.
+
+- **Convenzioni di tutto l'anno.** Coordinate con la virgola, $P(2, -3)$, e non intere come frazioni, come nel biennio: resta così, o si passa al punto e virgola dei libri? $\ln x$ per la base $e$ e $\log x$ per la base 10, oppure $\text{Log}$ e $\log$? "Crescente" senza aggiunte vuol dire in senso stretto (lezione 107): è l'uso del libro?
+- **Funzioni (105-109).** Gli intervalli di monotonia hanno l'estremo chiuso nel vertice, "decrescente in $]-\infty, 2]$ e crescente in $[2, +\infty[$": in classe si scrive così o "per $x < 2$"? Le funzioni periodiche prima della goniometria, con $\lfloor x \rfloor$ e $\operatorname{mant}(x)$: il libro le tratta, e con quale notazione? Nelle trasformazioni composte la lezione fa raccogliere il coefficiente in $f(2x - 4)$: è l'ordine che insegni? Negli esercizi sulle trasformazioni si chiede dove va un punto, perché gli esercizi non mostrano grafici: basta?
+- **Successioni (110-113).** Si parte da $a_1$ anche se $0 \in \mathbb{N}$: va bene? Il simbolo di sommatoria non compare mai: va introdotto qui? La somma infinita della progressione geometrica sta in un riquadro, senza "limite" e "serie": resta? Somma dei quadrati e disuguaglianza di Bernoulli sono al livello giusto, e serve l'induzione forte? Gli esercizi sull'induzione chiedono i pezzi (un caso, la tesi, il passo, l'errore): sono quelli giusti?
+- **Circonferenza e parabola (114-117).** La tangente alla parabola in un punto è data con $m = 2ax_0 + b$, senza sdoppiamento; nella 115 lo sdoppiamento è in un riquadro, mentre ellisse e iperbole lo usano come metodo principale: si uniforma? Il segmento parabolico e la formula $\frac{|a| \cdot |x_2 - x_1|^3}{6}$ restano al terzo anno? Fuoco e direttrice si trovano dal vertice aggiungendo e togliendo $\frac{1}{4a}$: va bene? Per le tangenti da un punto esterno gli esercizi chiedono i due coefficienti angolari: bastano?
+- **Ellisse e iperbole (118-120).** $a$ sta sempre sotto $x^2$, anche con i fuochi sull'asse $y$ (ellisse con $b > a$, iperbole con secondo membro $-1$): il libro chiama invece sempre $a$ il semiasse maggiore o trasverso? Il passaggio da $x^2 - y^2 = a^2$ a $xy = k$ usa il prodotto delle distanze dagli asintoti, senza rotazione: va bene? Coniche traslate, area dell'ellisse e funzione omografica per tre punti restano fuori?
+- **Esponenziali (121-123).** Con la base tra 0 e 1 la strada principale è invertire il verso, e riscrivere in base maggiore di 1 è un suggerimento: o il contrario? Nella sostituzione la condizione $t > 0$ si dichiara subito, senza sistema: basta? Il numero $e$ è presentato con $\left(1 + \frac{1}{n}\right)^n$ dall'interesse composto e chiamato "numero di Nepero": è la linea del libro?
+- **Logaritmi (124-127).** Le condizioni di esistenza si scrivono prima, con la verifica finale ammessa come alternativa; nelle disequazioni il sistema tiene sempre tutte e due le condizioni: va bene? L'incognita nella base e il valore assoluto di un logaritmo restano fuori? Una soluzione si lascia come $\log_2 39 - 4$ o si chiede $\log_2 \frac{39}{16}$ o il valore approssimato? Le opzioni delle disequazioni sono scritte solo con gli intervalli: serve anche $2 < x \leq 4$?
+- **Esercizio guidato della 121 (6 ottobre 2026).** L'ultima fermata chiede di riconoscere che $3 = \left(\frac{1}{3}\right)^{-1}$ per trovare lo zero di $y = \left(\frac{1}{3}\right)^x - 3$: va bene nella lezione sulla funzione, o è un passaggio della 122? I messaggi per gli errori previsti delle quattro fermate vanno riletti. Vedi [[2026-10-06 Grafici negli esercizi ed esercizio guidato]].
+- **Statistica bivariata (128-129).** Covarianza e $r$ dividono per $n$, come la varianza della 57. Il chi quadrato è solo nominato: va calcolato nella 128? La seconda retta di regressione manca nella 129: serve? Vanno bene i simboli $f_{ij}$, $r_i$, $c_j$, o si passa a $n_{ij}$? Per $r$ non ci sono soglie (forte, debole), e gli esercizi usano $|r| \leq 0{,}09$ e $|r| \geq 0{,}80$: vanno bene?
+
+## Laboratorio: saggi alla fiamma (5 ottobre 2026)
+Il secondo esperimento del laboratorio di chimica, vedi [[2026-10-05 Saggi alla fiamma]] e [[Laboratori]]. I dati sono in `src/lib/lab/saggi.ts`.
+- [ ] **Colori e nomi.** LiCl rosso carminio, NaCl giallo intenso, KCl lilla, CaCl₂ rosso arancio, SrCl₂ rosso scarlatto, BaCl₂ verde giallo, CuCl₂ verde azzurro: sono i nomi che useresti in classe? Presi dalle tabelle scolastiche, senza una fonte citata: da verificare.
+- [ ] **Attraverso il vetro al cobalto.** Il sodio sparisce e il potassio diventa rosso violaceo; gli altri si attenuano (litio e stronzio restano rossastri, il calcio verdino, il rame blu). Vanno bene, o nel gioco conviene mostrare il vetro solo per sodio e potassio?
+- [ ] **Lunghezze d'onda.** Nel catalogo, non ancora mostrate: Li 671 nm, Na 589 nm, K 766 e 404 nm, Ca 622 e 554 nm, Sr 606 e 461 nm, Ba 524 e 554 nm, Cu 510-555 nm. Da verificare prima di usarle.
+- [ ] **Procedura.** Acido cloridrico 2 M con etichetta "irritante" (a scuola si usa più concentrato?); ansa al nichel-cromo; l'ansa pulita prima in acido e poi in fiamma finché non la colora più; il sale preso con l'ansa bagnata; l'ansa sul bordo della fiamma, poco sopra il cono azzurro. Cambieresti qualcosa?
+- [ ] **Campioni incogniti.** X è un sale bianco tra litio, potassio, calcio, stronzio e bario; Y è sodio, da solo o con il potassio. Distinguere litio, stronzio e calcio è la parte difficile: è giusto chiederlo al biennio?
+- [ ] **Parole.** "Il sale evapora nella fiamma" (non "brucia"), "ansa", "vetrino da orologio", "cartellino": vanno bene?
+- [ ] **Sicurezza nella scheda.** Occhiali, capelli raccolti, ansa rovente, HCl 2 M irritante, cloruro di bario tossico se ingerito, cloruro di rame nocivo: manca qualcosa?
+- [ ] **Prossimi esperimenti.** Titolazione acido-base, pila Daniell e laboratorio libero sono segnaposto nel menu, non scelti con te: quali esperimenti del biennio metteresti per primi?
+
+## Laboratorio: titolazione acido-base (6 ottobre 2026)
+Il terzo esperimento del laboratorio di chimica, vedi [[2026-10-06 Titolazione acido-base]] e [[Laboratori]]. I dati sono in `src/lib/lab/titolazione.ts`.
+- [ ] **Anno.** Nella scheda è indicato il triennio: la titolazione di un acido forte con una base forte la faresti al terzo o al quarto anno, o già al secondo?
+- [ ] **Reagenti e quantità.** NaOH 0,100 mol/L nella buretta, 25,0 mL di HCl tra 0,052 e 0,074 mol/L nella beuta, fenolftaleina all'1% in etanolo, due gocce. Sono i valori che useresti in classe?
+- [ ] **Buretta da 25 mL.** Graduata ogni 0,1 mL, letta a 0,05 mL stimando la metà della divisione. Nel gioco è più corta di una vera (25 mL in 22 cm) perché lo zero resti sotto gli occhi: va detto allo studente?
+- [ ] **Procedura.** Buretta "già avvinata", riempita sopra lo zero con l'imbutino, imbuto tolto, aria fatta uscire dalla punta, menisco tra 0 e 5 mL (non per forza sullo zero); una titolazione di prova e due accurate su beute diverse, la media delle due accurate. Cambieresti qualcosa? L'avvinamento della buretta e della pipetta andrebbe fatto fare allo studente?
+- [ ] **Concordanza.** Due titolazioni accurate "concordano" entro 0,20 mL. A scuola si chiede 0,10 mL: quale soglia vuoi?
+- [ ] **Colore al viraggio.** Scelto per giocare bene, non misurato: una goccia (0,05 mL) oltre l'equivalenza dà un rosa pallido, 0,3 mL un fucsia pieno. Il rosa che compare dove cade la base sparisce agitando, sempre più lentamente vicino alla fine. Corrisponde a quello che si vede davvero?
+- [ ] **Anidride carbonica.** Il rosa pallido che svanisce dopo mezzo minuto per la CO₂ dell'aria non c'è: nel gioco il rosa resta. Va aggiunto o almeno detto?
+- [ ] **Troppo indicatore.** Dalla quinta goccia il quaderno segna che la fenolftaleina "è un acido debole e consuma un po' di base". È detto bene?
+- [ ] **Parole.** "Viraggio", "titolante", "becher degli scarti", "imbutino", "avvinata", "rubinetto della buretta": vanno bene?
+- [ ] **Sicurezza nella scheda.** Occhiali, NaOH 0,1 M irritante, HCl diluito irritante, fenolftaleina in etanolo lontano dalle fiamme. Per la fenolftaleina serve un'avvertenza in più (è classificata come sospetto cancerogeno, da verificare sulla scheda di sicurezza)?
+- [ ] **Smaltimento.** Il quaderno dice che le soluzioni titolate, quasi neutre, vanno nel recipiente dei rifiuti acquosi. Giusto così?
 
 ## Terzo anno di chimica (6 ottobre 2026)
 Le 33 lezioni nuove del terzo anno di chimica (file 48-82). Vedi [[2026-10-06 Terzo anno di chimica]]. Qui le domande che valgono per più lezioni, con la scelta fatta tra parentesi; le altre sono nella sezione dei dubbi di `docs/lezioni/chimica/note/48-82`.

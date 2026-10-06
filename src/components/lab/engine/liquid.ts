@@ -179,6 +179,8 @@ export class LiquidBody {
 	murk = 0;
 	/** A fixed colour, for the bottles on the shelf. */
 	fixed: Color | null = null;
+	/** A colour and an opacity given from outside, by a chemistry of its own (the indicator in a titration). */
+	tint: { color: Color; opacity: number } | null = null;
 	/** Whether solid in it settles as a bed on the bottom (not in a funnel, where the paper holds it). */
 	settles = true;
 	/**
@@ -324,7 +326,10 @@ export class LiquidBody {
 		if (!show) return;
 		this.plane.constant = this.level();
 		const m = this.material;
-		if (this.fixed) {
+		if (this.tint) {
+			m.color.copy(this.tint.color);
+			m.opacity = this.tint.opacity;
+		} else if (this.fixed) {
 			m.color.copy(this.fixed);
 			m.opacity = this.fixed.getHSL({ h: 0, s: 0, l: 0 }).s > 0.3 ? 0.78 : 0.22;
 		} else {

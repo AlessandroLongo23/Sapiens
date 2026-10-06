@@ -241,10 +241,10 @@ export async function acceptInvite(userId: string, code: string, share: boolean)
 	if (updateError) fail('invite accept failed', updateError);
 	if (!updated) throw new TutoringError(409, 'Questo invito è già stato usato.');
 	// Lessons planned before the student joined reach their diary now.
-	const { data: planned, error: plannedError } = await db.from('tutor_lessons').select('id,starts_at,mode').eq('tutor_student_id', row.id).eq('status', 'confirmed').gt('starts_at', new Date().toISOString());
+	const { data: planned, error: plannedError } = await db.from('tutor_lessons').select('id,starts_at,mode,subject').eq('tutor_student_id', row.id).eq('status', 'confirmed').gt('starts_at', new Date().toISOString());
 	if (plannedError) console.error('planned lessons lookup failed:', plannedError.message);
-	for (const lesson of (planned ?? []) as { id: string; starts_at: string; mode: TutorMode }[]) {
-		const entry = await lessonDiaryEntry({ ...row, student_id: userId }, tutor.first_name, lesson.starts_at, lesson.mode);
+	for (const lesson of (planned ?? []) as { id: string; starts_at: string; mode: TutorMode; subject: string | null }[]) {
+		const entry = await lessonDiaryEntry({ ...row, student_id: userId }, tutor.first_name, lesson.starts_at, lesson.mode, lesson.subject);
 		if (entry) await db.from('tutor_lessons').update({ diary_entry_id: entry }).eq('id', lesson.id);
 	}
 	return row.id;
@@ -275,19 +275,19 @@ export async function linkFromRequest(tutorId: string, request: RequestRow): Pro
 export async function listStudentLinks(userId: string): Promise<StudentLink[]> {
 	const { data, error } = await adminClient()
 		.from('tutor_students')
-		.select(`${LINK_COLUMNS}, tutors ( slug, first_name, last_name, headline, status )`)
+		.select(`${LINK_COLUMNS}, tutors ( slug, first_name, last_name, headline, status, subjects )`)
 		.eq('student_id', userId)
 		.eq('status', 'active')
 		.order('joined_at', { ascending: true });
 	if (error) fail('student links query failed', error);
-	return ((data ?? []) as unknown as (LinkRow & { tutors: Record<string, string | null> | null })[]).map((row) => {
-		const t = row.tutors ?? {};
+	return ((data ?? []) as unknown as (LinkRow & { tutors: (Record<string, string | null> & { subjects?: string[] | null }) | null })[]).map((row) => {
+		const t: Record<string, string | null> & { subjects?: string[] | null } = row.tutors ?? {};
 		return {
 			id: row.id,
 			status: row.status,
 			subject: row.subject,
 			progressShared: row.progress_shared,
-			tutor: { slug: t.slug ?? '', firstName: t.first_name ?? 'Tutor', lastInitial: (t.last_name ?? '').charAt(0), headline: t.headline ?? '', published: t.status === 'published' }
+			tutor: { slug: t.slug ?? '', firstName: t.first_name ?? 'Tutor', lastInitial: (t.last_name ?? '').charAt(0), headline: t.headline ?? '', published: t.status === 'published', subjects: t.subjects ?? [] }
 		};
 	});
 }
@@ -339,11 +339,18 @@ interface LessonRow {
 	proposed_by: Side;
 	series_id: string | null;
 	diary_entry_id: string | null;
+	subject: string | null;
+	level: TutorLevel | null;
+	paid: boolean | null;
+	hourly_rate: number | string | null;
 }
 
-const LESSON_COLUMNS = 'id,tutor_student_id,tutor_id,starts_at,duration_min,mode,place,note,status,proposed_by,series_id,diary_entry_id';
+const LESSON_COLUMNS = 'id,tutor_student_id,tutor_id,starts_at,duration_min,mode,place,note,status,proposed_by,series_id,diary_entry_id,subject,level,paid,hourly_rate';
 
-const toLesson = (row: LessonRow, withName: string): AgendaLesson => ({
+/** `money` adds the price and whether it is paid: for the tutor's pages only, never for the student's. */
+const toLesson = (row: LessonRow, withName: string, money = false): AgendaLesson => ({
+	...(money ? { hourlyRate: row.hourly_rate === null ? null : Number(row.hourly_rate), paid: row.paid === true } : {}),
+	subject: row.subject,
 	id: row.id,
 	linkId: row.tutor_student_id,
 	with: withName,
@@ -358,10 +365,10 @@ const toLesson = (row: LessonRow, withName: string): AgendaLesson => ({
 });
 
 /** The reminder a confirmed lesson leaves in the student's diary. */
-async function lessonDiaryEntry(link: LinkRow, tutorFirstName: string, startsAt: string, mode: TutorMode): Promise<string | null> {
+async function lessonDiaryEntry(link: LinkRow, tutorFirstName: string, startsAt: string, mode: TutorMode, subject: string | null): Promise<string | null> {
 	if (!link.student_id) return null;
 	const { day, time } = romeParts(startsAt);
-	return addDiaryEntry(link.student_id, { day, kind: 'promemoria', subject: link.subject, text: `Lezione con ${tutorFirstName} alle ${time}${mode === 'online' ? ', online' : ''}`, topic: null });
+	return addDiaryEntry(link.student_id, { day, kind: 'promemoria', subject: subject ?? link.subject, text: `Lezione con ${tutorFirstName} alle ${time}${mode === 'online' ? ', online' : ''}`, topic: null });
 }
 
 /** The tutor plans a lesson, or one a week until the month ends: confirmed at once. */
@@ -370,6 +377,7 @@ export async function createTutorLessons(tutor: TutorRow, linkId: string, input:
 	if (link.status === 'ended') throw new TutoringError(409, 'Non segui più questo studente.');
 	const days = input.repeat ? weeklyUntilMonthEnd(input.day) : [input.day];
 	const series = days.length > 1 ? randomUUID() : null;
+	const subject = input.subject ?? link.subject;
 	const rows = [];
 	for (const day of days) {
 		const startsAt = romeInstant(day, input.time).toISOString();
@@ -384,7 +392,12 @@ export async function createTutorLessons(tutor: TutorRow, linkId: string, input:
 			status: 'confirmed',
 			proposed_by: 'tutor',
 			series_id: series,
-			diary_entry_id: await lessonDiaryEntry(link, tutor.first_name, startsAt, input.mode)
+			subject,
+			// The level is the student's on the day the lesson is planned: it stays if they change school later.
+			level: link.level,
+			hourly_rate: input.hourlyRate ?? tutor.hourly_rate,
+			paid: false,
+			diary_entry_id: await lessonDiaryEntry(link, tutor.first_name, startsAt, input.mode, subject)
 		});
 	}
 	const { error } = await adminClient().from('tutor_lessons').insert(rows);
@@ -407,7 +420,7 @@ export async function proposeLesson(userId: string, linkId: string, input: Lesso
 	if ((count ?? 0) >= 5) throw new TutoringError(409, 'Hai già cinque proposte in attesa: aspetta la risposta del tutor.');
 	const { data, error } = await db
 		.from('tutor_lessons')
-		.insert({ tutor_student_id: link.id, tutor_id: link.tutor_id, starts_at: startsAt.toISOString(), duration_min: input.durationMin, mode: input.mode, place: input.place, note: input.note, status: 'proposed', proposed_by: 'student' })
+		.insert({ tutor_student_id: link.id, tutor_id: link.tutor_id, starts_at: startsAt.toISOString(), duration_min: input.durationMin, mode: input.mode, place: input.place, note: input.note, status: 'proposed', proposed_by: 'student', subject: input.subject ?? link.subject, level: link.level })
 		.select(LESSON_COLUMNS)
 		.single();
 	if (error) fail('proposal insert failed', error);
@@ -427,10 +440,11 @@ export async function respondToProposal(tutor: TutorRow, lessonId: string, accep
 	if (!row || row.tutor_id !== tutor.id) throw notFound('Lezione');
 	if (row.status !== 'proposed') throw new TutoringError(409, 'Hai già risposto a questa proposta.');
 	const link = await tutorLinkRow(tutor.id, row.tutor_student_id);
-	const entry = accept ? await lessonDiaryEntry(link, tutor.first_name, row.starts_at, row.mode) : null;
+	const entry = accept ? await lessonDiaryEntry(link, tutor.first_name, row.starts_at, row.mode, row.subject) : null;
 	const { data, error } = await adminClient()
 		.from('tutor_lessons')
-		.update({ status: accept ? 'confirmed' : 'declined', diary_entry_id: entry })
+		// An accepted proposal takes the price of the tutor's profile, and is still to be paid.
+		.update({ status: accept ? 'confirmed' : 'declined', diary_entry_id: entry, ...(accept ? { hourly_rate: tutor.hourly_rate, paid: false } : {}) })
 		.eq('id', row.id)
 		.eq('status', 'proposed')
 		.select(LESSON_COLUMNS)
@@ -466,6 +480,19 @@ export async function cancelLesson(by: { tutorId: string } | { userId: string },
 	await dropDiaryEntries((before ?? []).map((r) => (r as { diary_entry_id: string | null }).diary_entry_id));
 }
 
+/** The tutor marks a lesson paid or not, and can correct its price. */
+export async function setLessonMoney(tutorId: string, lessonId: string, patch: { paid?: boolean; hourlyRate?: number | null }): Promise<void> {
+	const row = await lessonRow(lessonId);
+	if (!row || row.tutor_id !== tutorId) throw notFound('Lezione');
+	if (row.status !== 'confirmed') throw new TutoringError(409, 'Solo una lezione confermata si può segnare.');
+	const update: Record<string, unknown> = {};
+	if (patch.paid !== undefined) update.paid = patch.paid;
+	if (patch.hourlyRate !== undefined) update.hourly_rate = patch.hourlyRate;
+	if (Object.keys(update).length === 0) return;
+	const { error } = await adminClient().from('tutor_lessons').update(update).eq('id', row.id);
+	if (error) fail('lesson money update failed', error);
+}
+
 /** The tutor's lessons between two instants, with the student's name. Declined and cancelled ones are left out. */
 export async function tutorLessonsBetween(tutorId: string, from: string, to: string): Promise<AgendaLesson[]> {
 	const { data, error } = await adminClient()
@@ -475,9 +502,17 @@ export async function tutorLessonsBetween(tutorId: string, from: string, to: str
 		.gte('starts_at', from)
 		.lt('starts_at', to)
 		.in('status', ['confirmed', 'proposed'])
-		.order('starts_at');
+		.order('starts_at')
+		.limit(2000);
 	if (error) fail('lessons query failed', error);
-	return ((data ?? []) as unknown as (LessonRow & { tutor_students: { name: string } | null })[]).map((r) => toLesson(r, r.tutor_students?.name ?? 'Studente'));
+	return ((data ?? []) as unknown as (LessonRow & { tutor_students: { name: string } | null })[]).map((r) => toLesson(r, r.tutor_students?.name ?? 'Studente', true));
+}
+
+/** The year of the tutor's first lesson, for the calendar's menu of years. */
+export async function firstLessonYear(tutorId: string): Promise<number | null> {
+	const { data, error } = await adminClient().from('tutor_lessons').select('starts_at').eq('tutor_id', tutorId).order('starts_at').limit(1).maybeSingle();
+	if (error) fail('first lesson lookup failed', error);
+	return data ? Number(romeParts((data as { starts_at: string }).starts_at).day.slice(0, 4)) : null;
 }
 
 /** The proposals a tutor has to answer, soonest first. */
@@ -490,14 +525,14 @@ export async function tutorProposals(tutorId: string): Promise<AgendaLesson[]> {
 		.gte('starts_at', new Date().toISOString())
 		.order('starts_at');
 	if (error) fail('proposals query failed', error);
-	return ((data ?? []) as unknown as (LessonRow & { tutor_students: { name: string } | null })[]).map((r) => toLesson(r, r.tutor_students?.name ?? 'Studente'));
+	return ((data ?? []) as unknown as (LessonRow & { tutor_students: { name: string } | null })[]).map((r) => toLesson(r, r.tutor_students?.name ?? 'Studente', true));
 }
 
 /** Every lesson of a link, newest first: what is planned, what was held, what was turned down. */
-async function linkLessons(linkId: string, withName: string): Promise<AgendaLesson[]> {
-	const { data, error } = await adminClient().from('tutor_lessons').select(LESSON_COLUMNS).eq('tutor_student_id', linkId).order('starts_at', { ascending: false }).limit(200);
+async function linkLessons(linkId: string, withName: string, money = false): Promise<AgendaLesson[]> {
+	const { data, error } = await adminClient().from('tutor_lessons').select(LESSON_COLUMNS).eq('tutor_student_id', linkId).order('starts_at', { ascending: false }).limit(500);
 	if (error) fail('link lessons query failed', error);
-	return ((data ?? []) as LessonRow[]).map((r) => toLesson(r, withName));
+	return ((data ?? []) as LessonRow[]).map((r) => toLesson(r, withName, money));
 }
 
 /* ------------------------------------------------------------ assignments */
@@ -758,7 +793,7 @@ export const studentSheet = cache(async (tutorId: string, linkId: string): Promi
 	const shared = row.status === 'active' && row.student_id && row.progress_shared ? await sharedProgress(row.student_id) : null;
 	const { count, error } = await adminClient().from('tutor_messages').select('id', { count: 'exact', head: true }).eq('tutor_student_id', row.id).eq('sender', 'student').is('read_at', null);
 	if (error) fail('unread count failed', error);
-	const [assignmentRows, lessons, messages] = await Promise.all([linkAssignments(row.id), linkLessons(row.id, row.name), linkMessages(row.id, null)]);
+	const [assignmentRows, lessons, messages] = await Promise.all([linkAssignments(row.id), linkLessons(row.id, row.name, true), linkMessages(row.id, null)]);
 	return { ...agendaClock(), unread: count ?? 0, link: toTutorLink(row), progress: shared?.view ?? null, assignments: await toAssignments(assignmentRows, shared?.byLesson ?? null), lessons, messages };
 });
 
@@ -867,7 +902,7 @@ export async function tutorStats(tutorId: string): Promise<TutorStats> {
 	const db = adminClient();
 	const [links, lessons] = await Promise.all([
 		db.from('tutor_students').select('id,name,subject,status').eq('tutor_id', tutorId),
-		db.from('tutor_lessons').select('tutor_student_id,starts_at,duration_min,status').eq('tutor_id', tutorId).eq('status', 'confirmed').limit(5000)
+		db.from('tutor_lessons').select('tutor_student_id,starts_at,duration_min,status,subject').eq('tutor_id', tutorId).eq('status', 'confirmed').limit(5000)
 	]);
 	if (links.error) fail('stats links failed', links.error);
 	if (lessons.error) fail('stats lessons failed', lessons.error);
@@ -901,7 +936,9 @@ export async function tutorStats(tutorId: string): Promise<TutorStats> {
 	let lessonsThisWeek = 0;
 	let lessonsHeld = 0;
 	let hoursTotal = 0;
-	for (const l of (lessons.data ?? []) as { tutor_student_id: string; starts_at: string; duration_min: number; status: LessonStatus }[]) {
+	const bySubject = new Map<string, number>();
+	const linkSubject = new Map(linkRows.map((l) => [l.id, l.subject]));
+	for (const l of (lessons.data ?? []) as { tutor_student_id: string; starts_at: string; duration_min: number; status: LessonStatus; subject: string | null }[]) {
 		const { day } = romeParts(l.starts_at);
 		if (day >= weekFrom && day <= weekTo) lessonsThisWeek++;
 		if (!isHeld({ startsAt: l.starts_at, durationMin: l.duration_min, status: l.status }, now)) continue;
@@ -912,9 +949,9 @@ export async function tutorStats(tutorId: string): Promise<TutorStats> {
 		if (month) month.hours += hours;
 		weekdays[weekdayOf(day)] += hours;
 		byLink.set(l.tutor_student_id, (byLink.get(l.tutor_student_id) ?? 0) + hours);
+		const subject = l.subject ?? linkSubject.get(l.tutor_student_id);
+		if (subject) bySubject.set(subject, (bySubject.get(subject) ?? 0) + hours);
 	}
-	const bySubject = new Map<string, number>();
-	for (const link of linkRows) if (link.subject && byLink.has(link.id)) bySubject.set(link.subject, (bySubject.get(link.subject) ?? 0) + byLink.get(link.id)!);
 	return {
 		activeStudents: activeIds.length,
 		invited: linkRows.filter((l) => l.status === 'invited').length,
@@ -931,3 +968,88 @@ export async function tutorStats(tutorId: string): Promise<TutorStats> {
 	};
 }
 
+/* ----------------------------------------------------------------- ledger */
+
+/** A sum of lessons held: how many, their hours, what they are worth and how much of it is still to be paid. */
+export interface LedgerSum {
+	lessons: number;
+	hours: number;
+	earned: number;
+	unpaid: number;
+}
+
+export interface TutorLedger {
+	total: LedgerSum;
+	/** Every month from the first lesson to this one, oldest first. */
+	months: (LedgerSum & { month: string })[];
+	subjects: (LedgerSum & { subject: string | null })[];
+	students: (LedgerSum & { linkId: string; name: string })[];
+	levels: (LedgerSum & { level: TutorLevel | null })[];
+	/** Lessons held and not paid yet, oldest first. */
+	unpaid: AgendaLesson[];
+}
+
+const emptySum = (): LedgerSum => ({ lessons: 0, hours: 0, earned: 0, unpaid: 0 });
+
+/**
+ * The tutor's own ledger: hours and money of the lessons held, by month, subject, student and level, and what
+ * is still to be paid. Only the tutor reads it. Nothing is paid through Sapiens: the tutor writes down what
+ * they agreed with the student.
+ */
+export async function tutorLedger(tutorId: string): Promise<TutorLedger> {
+	const { data, error } = await adminClient()
+		.from('tutor_lessons')
+		.select(`${LESSON_COLUMNS}, tutor_students ( name, subject )`)
+		.eq('tutor_id', tutorId)
+		.eq('status', 'confirmed')
+		.order('starts_at')
+		.limit(5000);
+	if (error) fail('ledger query failed', error);
+	const now = Date.now();
+	const total = emptySum();
+	const months = new Map<string, LedgerSum>();
+	const subjects = new Map<string | null, LedgerSum>();
+	const students = new Map<string, LedgerSum & { linkId: string; name: string }>();
+	const levels = new Map<TutorLevel | null, LedgerSum>();
+	const unpaid: AgendaLesson[] = [];
+	for (const row of (data ?? []) as unknown as (LessonRow & { tutor_students: { name: string; subject: string | null } | null })[]) {
+		const lesson = toLesson(row, row.tutor_students?.name ?? 'Studente', true);
+		if (!isHeld(lesson, now)) continue;
+		lesson.subject ??= row.tutor_students?.subject ?? null;
+		const hours = lesson.durationMin / 60;
+		const fee = (lesson.hourlyRate ?? 0) * hours;
+		const owed = lesson.paid ? 0 : fee;
+		if (!lesson.paid && fee > 0) unpaid.push(lesson);
+		const month = romeParts(lesson.startsAt).day.slice(0, 7);
+		if (!months.has(month)) months.set(month, emptySum());
+		if (!subjects.has(lesson.subject)) subjects.set(lesson.subject, emptySum());
+		if (!students.has(lesson.linkId)) students.set(lesson.linkId, { ...emptySum(), linkId: lesson.linkId, name: lesson.with });
+		if (!levels.has(row.level)) levels.set(row.level, emptySum());
+		for (const sum of [total, months.get(month)!, subjects.get(lesson.subject)!, students.get(lesson.linkId)!, levels.get(row.level)!]) {
+			sum.lessons++;
+			sum.hours += hours;
+			sum.earned += fee;
+			sum.unpaid += owed;
+		}
+	}
+	// The months with no lesson are in the row too, so a year reads as twelve columns.
+	const keys = [...months.keys()].sort();
+	const filled: (LedgerSum & { month: string })[] = [];
+	if (keys.length > 0) {
+		const end = romeDate().slice(0, 7);
+		for (let m = keys[0]; m <= end; ) {
+			filled.push({ month: m, ...(months.get(m) ?? emptySum()) });
+			const next = new Date(Date.UTC(Number(m.slice(0, 4)), Number(m.slice(5, 7)), 1));
+			m = next.toISOString().slice(0, 7);
+		}
+	}
+	const byEarned = <T extends LedgerSum>(list: T[]) => list.sort((a, b) => b.earned - a.earned || b.hours - a.hours);
+	return {
+		total,
+		months: filled,
+		subjects: byEarned([...subjects.entries()].map(([subject, sum]) => ({ subject, ...sum }))),
+		students: byEarned([...students.values()]),
+		levels: byEarned([...levels.entries()].map(([level, sum]) => ({ level, ...sum }))),
+		unpaid
+	};
+}

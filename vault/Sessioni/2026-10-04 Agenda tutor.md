@@ -45,3 +45,10 @@ Fatto, tenendo il layout: tolti gli elementi inventati per l'agenda (timbri, pos
 Da decidere con Alessandro e Dario: la barra laterale dell'account è cambiata di conseguenza (prima la sezione corrente aveva un fondo rosa, ora l'evidenziatore giallo). Resta aperto il lavoro vero sul design system: scrivere quali componenti esistono e quando si usa ciascuno, perché oggi la regola è solo nel codice.
 
 Verifiche: 33 test dei flussi, 12 test unitari, tsc ed eslint puliti. I 22 video in `screenshots/agenda-tutor/` sono registrati di nuovo.
+
+## Il 5 ottobre, in serata: i dati di AleRipetizioni
+Supabase ha ripristinato il database di AleRipetizioni. Alessandro ha chiesto se una copia completa era possibile senza perdere niente: non lo era, e ha deciso punto per punto. La materia va sulla lezione. Il livello non si scrive a mano (deciso da Claude su sua domanda: si copia dallo studente alla creazione della lezione, perché nei suoi dati né la materia né lo studente di oggi lo danno giusto). Telefono, città e genere sono dati dell'account dello studente. Guadagni, lezioni non pagate e storico delle ore servono. Il calendario deve essere mensile, a tutta larghezza, con la navigazione veloce.
+
+Fatto: due colonne nuove su `tutor_lessons`, la pagina Guadagni, il calendario mensile, sei materie nuove, e la copia di 50 studenti, 298 lezioni e 11 recensioni sul profilo di Alessandro. Dettagli e scelte in [[Agenda tutor]]. Alessandro aveva proposto account finti per gli studenti (email da un modello, stessa password): non li ho creati, perché tutti i dati si conservano senza, e account con nomi veri e password nota sarebbero stati accessibili a chiunque.
+
+Verifiche: 34 test dei flussi, 13 unitari, tsc ed eslint puliti. Codice non committato e non pubblicato; i dati sono già nel database di produzione.

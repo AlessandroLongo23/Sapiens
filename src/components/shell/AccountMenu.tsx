@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
-import { ChevronDown, CreditCard, GraduationCap, LayoutDashboard, LogOut, Mail, UserRound } from 'lucide-react';
+import { ChevronDown, CreditCard, GraduationCap, LayoutDashboard, LogOut, Mail, Presentation, UserRound } from 'lucide-react';
 import { useAuth } from '@/lib/state/auth';
 import { isStaff } from '@/lib/auth/entitlements';
 import { ACCOUNT_ROOT } from '@/lib/config/site';
@@ -106,7 +106,9 @@ export function AccountMenu() {
 		{ href: ACCOUNT_ROOT, label: 'Il tuo account', icon: UserRound },
 		{ href: `${ACCOUNT_ROOT}/abbonamento`, label: 'Abbonamento', icon: CreditCard },
 		{ href: '/richieste', label: 'Richieste ai tutor', icon: Mail },
-		{ href: '/il-mio-tutor', label: 'Il mio tutor', icon: GraduationCap }
+		{ href: '/il-mio-tutor', label: 'Il mio tutor', icon: GraduationCap },
+		// For who gives lessons: without a profile yet, the page invites to create one.
+		{ href: '/dashboard', label: 'Area tutor', icon: Presentation }
 	];
 
 	return (

@@ -14,7 +14,7 @@ export default async function StudentLessonsPage({ params }: { params: Promise<{
 	const ended = link.status === 'ended';
 	return (
 		<section aria-labelledby="lezioni">
-			<SectionTitle id="lezioni" title="Lezioni" count={lessons.length} action={!ended && <NewLesson side="tutor" linkId={link.id} today={today} primary />} />
+			<SectionTitle id="lezioni" title="Lezioni" count={lessons.length} action={!ended && <NewLesson side="tutor" linkId={link.id} today={today} choices={{ subjects: folder.tutor.subjects, subject: link.subject, rate: folder.tutor.hourly_rate }} primary />} />
 			<Lessons lessons={lessons} side="tutor" now={now} canAdd={!ended} />
 		</section>
 	);

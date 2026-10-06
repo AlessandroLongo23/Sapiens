@@ -137,8 +137,9 @@ export function ToggleGroup<T extends string>({
 					title={compact ? o.label : undefined}
 					onClick={() => onChange(o.value)}
 					className={cn(
-						'relative flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 text-sm font-medium transition-colors duration-200 focus-ring',
-						compact ? 'min-h-8 px-2.5' : 'min-h-[40px] py-1.5',
+						'relative flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg text-sm font-medium transition-colors duration-200 focus-ring',
+						// the full size is Button's `sm`, so that with the group's padding it stands as tall as a `md` button beside it
+						compact ? 'min-h-8 px-2.5' : 'min-h-[36px] px-3 py-1.5',
 						value === o.value ? (compact ? 'bg-surface font-semibold text-fg-strong shadow-paper' : 'bg-accent text-white shadow-sm') : 'text-fg-muted hover:bg-surface-3'
 					)}
 				>

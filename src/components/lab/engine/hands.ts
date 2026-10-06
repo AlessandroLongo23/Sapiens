@@ -1,6 +1,6 @@
 import { Euler, Matrix4, Object3D, Quaternion, Vector3 } from 'three';
 import type { Avatar, PalmFrame } from './avatar';
-import { canHold, chooseGrip, cloneAngles, curled, OPEN, RELAXED, SHAPES, type FingerAngles, type Grip, type Side } from './grasp';
+import { canHold, chooseGrip, cloneAngles, curled, OPEN, PINCHED, pinchGrip, RELAXED, SHAPES, type FingerAngles, type Grip, type Side } from './grasp';
 import { revary, specFor, synthesize, type GripChoice } from './grip';
 import { orient } from './anim';
 import { nextSettle, settlePose, SETTLE, type HandPose } from './settle';
@@ -45,6 +45,10 @@ type HandState = {
 	 * the tool's origin (its tip) is where that frame puts it.
 	 */
 	exact?: boolean;
+	/** After `take` in carry mode: where the object stood, and how far it has come from there to the hand. */
+	ease?: { p: Vector3; q: Quaternion; t: number; dur: number } | null;
+	/** How fast the carried thing glides to a new pose, 1/s (13 if not given). */
+	rate?: number;
 	asked?: PalmFrame | null;
 	fix?: Vector3;
 };
@@ -106,13 +110,16 @@ export class Hands {
 		const objQ = node.getWorldQuaternion(new Quaternion());
 		const want = comfort ?? this.avatar.comfort(side, node.getWorldPosition(new Vector3()));
 		const solved = SHAPES[node.name] ? synthesize(node.name, this.avatar.handGeo(side), objQ, want, '', true) : null;
-		const grip = solved?.grip ?? chooseGrip(node.name, side, objQ, want);
+		// a flat thing is pinched at a corner (grasp.ts, pinchGrip)
+		const geo = PINCHED[node.name] ? this.avatar.handGeo(side) : null;
+		const pinched = geo ? pinchGrip(node.name, geo.chains, geo.thumb, geo.palm) : null;
+		const grip = pinched?.grip ?? solved?.grip ?? chooseGrip(node.name, side, objQ, want);
 		if (!grip) return false;
 		h.motion?.done();
 		h.motion = null;
 		h.grip = grip;
 		h.node = node;
-		h.grasp = solved?.angles ?? curled(grip.curl);
+		h.grasp = pinched?.angles ?? solved?.angles ?? curled(grip.curl);
 		h.choice = solved?.choice ?? null;
 		h.settle = null;
 		h.next = nextSettle();
@@ -121,6 +128,7 @@ export class Hands {
 		h.local = null;
 		h.exact = false;
 		h.fix?.set(0, 0, 0);
+		h.ease = null;
 		h.mode = 'carry';
 		// closed on it from the first frame
 		this.avatar.setFingers(side, h.grasp, 1e4);
@@ -150,6 +158,38 @@ export class Hands {
 		this.rest(side);
 	}
 
+	/**
+	 * A free hand goes to a place and stays there, holding nothing (on a stopcock it works), until `release`. The
+	 * fingers take the pose given.
+	 */
+	async reach(side: Side, to: () => PalmFrame, fingers: FingerAngles = RELAXED, dur = 0.4) {
+		const h = this.h[side];
+		if (h.mode === 'carry') return;
+		this.avatar.setFingers(side, fingers, 9);
+		h.mode = 'free';
+		h.drive = null;
+		await this.move(side, to, dur, 0.02);
+		if (h.mode !== 'free') return;
+		h.mode = 'follow';
+		h.drive = to;
+	}
+
+	/** Whether a hand is at a place it went to with `reach`. */
+	reaching(side: Side) {
+		const h = this.h[side];
+		return h.mode === 'follow' && !h.node;
+	}
+
+	/** The hand that went somewhere with `reach` comes back and hangs again. */
+	async retire(side: Side, dur = 0.3) {
+		const h = this.h[side];
+		if (h.mode === 'carry') return;
+		h.mode = 'free';
+		h.drive = null;
+		await this.move(side, () => this.hold(side), dur);
+		if (h.mode === 'free') this.rest(side);
+	}
+
 	/** The hand empty and on its way back down to the side. */
 	private rest(side: Side) {
 		const h = this.h[side];
@@ -165,6 +205,7 @@ export class Hands {
 		h.motion = null;
 		h.exact = false;
 		h.fix?.set(0, 0, 0);
+		h.ease = null;
 		this.avatar.setTarget(side, null);
 		this.avatar.setFingers(side, RELAXED, 7);
 	}
@@ -207,6 +248,8 @@ export class Hands {
 		await this.move(side, target, 0.24);
 		h.mode = mode;
 		if (mode === 'follow') h.drive = target;
+		// taken where it stood: it comes to the hand as the wrist really holds it over a moment, not at once
+		else h.ease = { p: node.position.clone(), q: node.quaternion.clone(), t: 0, dur: 0.3 };
 		return true;
 	}
 
@@ -301,8 +344,9 @@ export class Hands {
 	}
 
 	/** In carry mode, keep the palm following `drive` (the hold pose if null). */
-	drive(side: Side, drive: (() => PalmFrame) | null) {
+	drive(side: Side, drive: (() => PalmFrame) | null, rate = 13) {
 		this.h[side].drive = drive;
+		this.h[side].rate = rate;
 	}
 
 	/** Where a hand holds what it carries, in the object's frame. */
@@ -361,6 +405,7 @@ export class Hands {
 		h.motion = null;
 		h.exact = false;
 		h.fix?.set(0, 0, 0);
+		h.ease = null;
 		this.avatar.setTarget(side, null);
 		this.avatar.setFingers(side, RELAXED, 7);
 	}
@@ -449,7 +494,7 @@ export class Hands {
 				const local = { p: want.p.clone().applyMatrix4(inv), q: bq.clone().invert().multiply(want.q) };
 				if (!h.local) h.local = h.smooth ? { p: h.smooth.p.clone().applyMatrix4(inv), q: bq.clone().invert().multiply(h.smooth.q) } : local;
 				else {
-					const a = 1 - Math.exp(-dt * 13);
+					const a = 1 - Math.exp(-dt * (h.rate ?? 13));
 					h.local = { p: h.local.p.lerp(local.p, a), q: h.local.q.slerp(local.q, a) };
 				}
 				h.smooth = { p: h.local.p.clone().applyMatrix4(body.matrixWorld), q: bq.multiply(h.local.q) };
@@ -475,6 +520,12 @@ export class Hands {
 			} else fix.multiplyScalar(Math.exp(-this.dt * 6));
 			h.node.position.copy(o.position);
 			h.node.quaternion.copy(o.quaternion);
+			if (h.ease) {
+				const k = minJerk(Math.min(1, (h.ease.t += this.dt) / h.ease.dur));
+				h.node.position.lerpVectors(h.ease.p, o.position, k);
+				h.node.quaternion.slerpQuaternions(h.ease.q, o.quaternion, k);
+				if (k >= 1) h.ease = null;
+			}
 			h.node.updateMatrixWorld(true);
 		}
 	}
@@ -497,6 +548,16 @@ const BUTTON_HOLD = { axis: new Vector3(0.26, -0.75, 0.61), face: new Vector3(-0
  */
 export function toolHold(frame: PalmFrame, side: Side, node: Object3D | null | undefined, grip: Grip | null, yaw: number): PalmFrame {
 	if (!node || !grip) return frame;
+	if (PINCHED[node.name]) {
+		// a flat thing pinched at a corner: its face to the eyes, the corner held low and to the hand's side
+		const m = side === 'L' ? -1 : 1;
+		const yq0 = new Quaternion().setFromAxisAngle(UP, yaw);
+		const d = (v: Vector3) => new Vector3(v.x * m, v.y, v.z).applyQuaternion(yq0).normalize();
+		const a = d(PLATE_HOLD.away);
+		const u = d(PLATE_HOLD.up);
+		u.addScaledVector(a, -u.dot(a)).normalize();
+		return { p: frame.p, q: orient(a, u.clone().sub(new Vector3().crossVectors(a, u))).multiply(grip.q) };
+	}
 	const hold = SHAPES[node.name]?.button ? BUTTON_HOLD : node.name === 'Spatula' ? (node.userData.full ? SPATULA_HOLD.full : SPATULA_HOLD.empty) : null;
 	if (!hold) return frame;
 	const mirror = side === 'L' ? -1 : 1;
@@ -504,6 +565,13 @@ export function toolHold(frame: PalmFrame, side: Side, node: Object3D | null | u
 	const dir = (v: Vector3) => new Vector3(v.x * mirror, v.y, v.z).applyQuaternion(yq);
 	return { p: frame.p, q: orient(dir(hold.axis), dir(hold.face)).multiply(grip.q) };
 }
+
+/**
+ * How a flat thing pinched at a corner is held while it is only held, for the right hand: where its far face looks
+ * (away from the student and down: the near face is tilted up to the eyes), and where it goes on from the corner held
+ * (up and towards the middle).
+ */
+const PLATE_HOLD = { away: new Vector3(0.12, -0.42, -1), up: new Vector3(-1, 1, 0) };
 
 /**
  * How the spatula lies while it is only held, in the same terms: its axis from the scoop back to the handle, and

@@ -26,6 +26,6 @@ La matematica delle superiori è abbastanza uniforme; le differenze stanno sopra
 ## Domande aperte
 - La beta copre il biennio o i cinque anni?
 - Vettori, matrici ed elementi di informatica: si aggiungono più avanti?
-- Università: alberi da rifare, dopo medie e superiori.
+- Università: alberi da rifare, dopo medie e superiori. Un primo elenco di argomenti, per l'intelligenza artificiale, è in [[Programma di intelligenza artificiale]] (5 ottobre 2026), con il sottoinsieme per la quinta.
 - Quando entrano le medie nel prodotto, e da quale materia si comincia a scrivere.
 - Ordine dei capitoli verificato su un indice di un libro diffuso (per ora scritto a memoria).

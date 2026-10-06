@@ -22,7 +22,7 @@ export default async function LabSessionPage({ params, searchParams }: Props) {
 	if (!found || found.experiment.status !== 'ready') notFound();
 	return (
 		<main id="contenuto">
-			<LabSession session={parseSession(await searchParams)} title={found.experiment.title} lab={found.lab.title} />
+			<LabSession session={parseSession(await searchParams)} title={found.experiment.title} lab={found.lab.title} experiment={found.experiment} />
 		</main>
 	);
 }

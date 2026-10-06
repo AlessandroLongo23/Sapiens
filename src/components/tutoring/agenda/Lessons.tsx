@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { Check, MapPin, Monitor, Plus, X } from 'lucide-react';
-import { WEEKDAYS_SHORT, durationLabel, isHeld, longDay, romeParts, weekdayOf, type AgendaLesson, type Side } from '@/lib/tutoring/agenda';
+import { WEEKDAYS_SHORT, durationLabel, euro, isHeld, lessonFee, longDay, romeParts, weekdayOf, type AgendaLesson, type Side } from '@/lib/tutoring/agenda';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Sheet } from '@/components/ui/Sheet';
 import { cn } from '@/lib/utils/cn';
-import { LessonForm } from './LessonForm';
+import { LessonForm, type LessonChoices } from './LessonForm';
+import { subjectName } from '@/lib/tutoring/config';
 import { Badge } from '@/components/ui/Badge';
 import { DayLeaf, Empty } from './Paper';
 import { useApi } from './useApi';
@@ -51,6 +52,7 @@ export function LessonCard({ lesson, side, showWith = false, now }: { lesson: Ag
 				<p className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-fg-muted">
 					<span className="first-letter:uppercase">{longDay(day)}</span>
 					<span className="label-mono">{durationLabel(lesson.durationMin)}</span>
+					{lesson.subject && <span className="font-medium text-fg">{subjectName(lesson.subject)}</span>}
 					<span className="inline-flex items-center gap-1">
 						<Where className="size-3.5 text-fg-faint" aria-hidden="true" />
 						{lesson.mode === 'online' ? 'Online' : 'In presenza'}
@@ -91,10 +93,25 @@ export function LessonCard({ lesson, side, showWith = false, now }: { lesson: Ag
 	);
 }
 
+/** What a held lesson is worth and whether it is paid: the tutor ticks it when the money arrives. */
+export function PaidToggle({ lesson }: { lesson: AgendaLesson }) {
+	const { busy, call } = useApi();
+	const paid = lesson.paid === true;
+	return (
+		<span className="flex items-center gap-2" data-paid={paid}>
+			<span className="tabular-nums text-fg-muted">{euro(lessonFee(lesson))}</span>
+			<Button variant={paid ? 'ghost' : 'secondary'} size="sm" loading={busy === lesson.id} aria-pressed={paid} onClick={() => call(lesson.id, `/api/tutoring/lessons/${lesson.id}`, 'POST', { action: 'paid', paid: !paid })}>
+				{paid && busy !== lesson.id && <Check className="size-4 text-ok-fg" aria-hidden="true" />}
+				{paid ? 'Pagata' : 'Segna pagata'}
+			</Button>
+		</span>
+	);
+}
+
 const MONTH_YEAR = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 /** The lessons behind: a register, a line each, under the name of their month. */
-function History({ lessons, now }: { lessons: AgendaLesson[]; now: number }) {
+function History({ lessons, now, side }: { lessons: AgendaLesson[]; now: number; side: Side }) {
 	const months = new Map<string, AgendaLesson[]>();
 	for (const l of lessons) {
 		const key = romeParts(l.startsAt).day.slice(0, 7);
@@ -111,14 +128,17 @@ function History({ lessons, now }: { lessons: AgendaLesson[]; now: number }) {
 							const state = l.status === 'declined' ? 'Non accettata' : l.status === 'cancelled' ? 'Annullata' : l.status === 'proposed' ? 'Proposta scaduta' : isHeld(l, now) ? 'Fatta' : 'Confermata';
 							const off = l.status !== 'confirmed';
 							return (
-								<li key={l.id} className="grid grid-cols-[4.5rem_3rem_1fr_auto] items-baseline gap-x-3 border-b border-edge py-2 text-sm" data-lesson={l.id}>
+								<li key={l.id} className="grid grid-cols-[4.5rem_3rem_minmax(0,1fr)] items-center gap-x-3 gap-y-1 border-b border-edge py-2 text-sm sm:grid-cols-[4.5rem_3rem_minmax(0,1fr)_auto]" data-lesson={l.id}>
 									<span className="label-mono text-fg-muted"><span className="sr-only">{longDay(day)}</span><span aria-hidden="true">{WEEKDAYS_SHORT[weekdayOf(day)]} {Number(day.slice(8))}</span></span>
 									<span className={cn('font-display font-semibold tabular-nums text-fg-strong', off && 'line-through decoration-fg-faint')}>{time}</span>
-									<span className="min-w-0 truncate">
+									<span className="min-w-0 break-words sm:truncate">
 										<span className="label-mono mr-2 text-fg-subtle">{durationLabel(l.durationMin)}</span>
+										{l.subject && <span className="mr-2 font-medium text-fg">{subjectName(l.subject)}</span>}
 										{l.note && <span className="text-fg-muted">{l.note}</span>}
 									</span>
-									<span className={cn('label-mono', off ? 'text-fg-subtle' : 'text-fg-muted')}>{state}</span>
+									<span className="max-sm:col-span-3 max-sm:justify-self-end">
+										{side === 'tutor' && state === 'Fatta' && l.hourlyRate ? <PaidToggle lesson={l} /> : <span className={cn('label-mono', off ? 'text-fg-subtle' : 'text-fg-muted')}>{state}</span>}
+									</span>
 								</li>
 							);
 						})}
@@ -130,7 +150,7 @@ function History({ lessons, now }: { lessons: AgendaLesson[]; now: number }) {
 }
 
 /** "Fissa una lezione" or "Chiedi una lezione": the button and its sheet. */
-export function NewLesson({ side, linkId, today, primary = false }: { side: Side; linkId: string; today: string; primary?: boolean }) {
+export function NewLesson({ side, linkId, today, choices, primary = false }: { side: Side; linkId: string; today: string; choices: LessonChoices; primary?: boolean }) {
 	const [adding, setAdding] = useState(false);
 	const label = side === 'tutor' ? 'Fissa una lezione' : 'Chiedi una lezione';
 	return (
@@ -140,7 +160,7 @@ export function NewLesson({ side, linkId, today, primary = false }: { side: Side
 				{label}
 			</Button>
 			<Sheet open={adding} onClose={() => setAdding(false)} title={label} align="center" width="md">
-				<LessonForm side={side} linkId={linkId} today={today} onDone={() => setAdding(false)} />
+				<LessonForm side={side} linkId={linkId} today={today} choices={choices} onDone={() => setAdding(false)} />
 			</Sheet>
 		</>
 	);
@@ -160,7 +180,7 @@ export function Lessons({ lessons, side, now, canAdd = true, limit }: { lessons:
 			{!limit && history.length > 0 && (
 				<details open={!canAdd} className="pt-2">
 					<summary className="label-mono cursor-pointer py-2 text-fg-subtle hover:text-fg">Storico delle lezioni ({history.length})</summary>
-					<History lessons={history} now={now} />
+					<History lessons={history} now={now} side={side} />
 				</details>
 			)}
 		</div>

@@ -263,6 +263,31 @@ D uguale a zero non vuol dire impossibile
 Con $D = 0$ la regola di Cramer non si usa, perché si dividerebbe per zero, ma il sistema non è per forza impossibile: bisogna calcolare $D_x$ e $D_y$. Nell'esempio 3 i due sistemi hanno lo stesso $D = 0$, e uno è impossibile, l'altro ha infinite soluzioni.
 ```
 
+La discussione è fatta di due domande in fila, e si può seguire un passo alla volta su un diagramma di flusso. I sei numeri da leggere sono i coefficienti della forma normale, nell'ordine $a$, $b$, $c$ e poi $a'$, $b'$, $c'$, che nel diagramma si chiamano `a2`, `b2`, `c2`. All'inizio ci sono quelli del primo sistema dell'esempio 3: eseguilo, poi cambia il terzo numero da $3$ a $2$ per avere il secondo sistema.
+
+```diagramma
+% nome: discussione-sistema-determinanti
+% alt: Diagramma di flusso della discussione di un sistema con i determinanti: si leggono i sei coefficienti, si calcolano D, Dx e Dy; se D è diverso da zero il sistema è determinato e si scrivono x e y; altrimenti, se Dx e Dy sono tutti e due zero è indeterminato, se no è impossibile
+% ingresso: 2, -4, 3, 1, -2, 1
+% codice: no
+leggi a
+leggi b
+leggi c
+leggi a2
+leggi b2
+leggi c2
+D = a * b2 - b * a2
+Dx = c * b2 - b * c2
+Dy = a * c2 - c * a2
+se D != 0
+    scrivi "determinato: x =", Dx / D, "y =", Dy / D
+altrimenti
+    se Dx == 0 E Dy == 0
+        scrivi "indeterminato"
+    altrimenti
+        scrivi "impossibile"
+```
+
 ```ad-note
 Il caso in cui la tabella sbaglia
 Se tutti e quattro i coefficienti delle incognite sono zero, i tre determinanti valgono zero qualunque siano i termini noti, e il sistema diventa $0 = c$, $0 = c'$. È indeterminato solo se anche $c$ e $c'$ sono zero; se uno dei due non lo è, è impossibile. È l'unico caso in cui $D = D_x = D_y = 0$ non vuol dire indeterminato. Con i numeri non capita quasi mai, ma nei sistemi letterali può capitare per un valore del parametro, come nell'esempio 5.

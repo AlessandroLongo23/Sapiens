@@ -15,7 +15,7 @@ tag: [team]
 Tutti volontari al 23 settembre 2026. Rischi e proposta in [[Accordi del team]].
 
 ## Flussi di lavoro
-- Contenuti: li produce Claude e li rilegge Andrea, che manda ad Alessandro conferme, correzioni e suggerimenti. Dal 27 settembre 2026 rilegge anche Alessandro. Vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]] e [[2026-09-27 I contenuti li rileggono Andrea e Alessandro]].
+- Contenuti: li produce Claude e li rilegge Andrea, che manda ad Alessandro conferme, correzioni e suggerimenti. Dal 27 settembre 2026 rilegge anche Alessandro. Vedi [[2026-09-24 Contenuti scritti da Claude e rivisti da Andrea]] e [[2026-09-27 I contenuti li rileggono Andrea e Alessandro]]. Il corso universitario di intelligenza artificiale lo rilegge solo Alessandro: vedi [[2026-10-05 Le lezioni universitarie di intelligenza artificiale le rilegge Alessandro]].
 - Marketing: Lorena apre gli account social, pubblica i video prodotti dalla pipeline e contatta i creator. Vedi [[2026-09-28 Il marketing parte a ottobre, con Lorena]] e [[Piano di acquisizione]].
 - Dario disegna in Figma; Alessandro implementa il design con l'aiuto degli LLM.
 

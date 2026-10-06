@@ -1,6 +1,6 @@
 ---
 stato: in sviluppo
-aggiornato: 2026-10-02
+aggiornato: 2026-10-05
 tag: [contenuti, lezioni, matematica, fisica, strumenti]
 ---
 # Piano cartesiano nelle lezioni
@@ -19,6 +19,8 @@ Scritto il 2 ottobre 2026 sul branch `grafico-funzioni`, non committato.
 - I primi sette blocchi sono nelle lezioni, in `docs/lezioni/riscritte`, non pubblicati. Nella 87: $y = ax^2$ con $a$; $y = ax^2 + c$ con il vertice; i tre coefficienti con vertice e asse di simmetria, dentro l'esempio 2; i tre coefficienti con $\Delta$, da solo sotto la tabella delle sei parabole, con una frase prima. Nella 88: il segno del trinomio al variare di $c$ e poi di $a$, con la scelta tra positivo (blu) e negativo (rosso) come nelle figure; i quattro versi con $c$, da solo sotto la tabella riassuntiva. Una scelta può avere un colore suo per ogni formula.
 - Le due lezioni non si possono pubblicare prima che questo codice sia in produzione: il sito di oggi non conosce il blocco `grafico` e lo mostrerebbe come codice. L'ordine è: PR su master, poi `scripts/lezioni/publish.mts`.
 - Due test in `tests/unit/grafico.test.mjs`. Provato con Playwright su Chromium a 1280 px e su WebKit a 390 px con il tema scuro. Non provato su un telefono vero.
+
+Dal 5 ottobre 2026 ([[2026-10-05 Strumenti nelle lezioni]]) i blocchi `grafico` sono in altre 31 lezioni, non committati e non pubblicati: 9 nel primo anno di matematica (16, 18, 42, 44, 45, 50, 52), 19 nel secondo (68, 78, 81, 82, 83, 84, 85, 86, 89, 90, 91, 92, 93, 104), 5 in fisica (10, 12, 39, 41, 49), 2 in chimica (31, 32) e uno in informatica (12). Dell'elenco qui sotto restano fuori la 80 e la 17, e in fisica le lezioni che hanno già un `interattivo` con gli stessi cursori (40, 42, 43, 44, 54, 56). I segmenti si disegnano come curve in $t$ con un parametro dentro, quindi distanza, pendenza e asse (82, 83, 85) sono entrati con i cursori al posto dei punti da trascinare. Da correggere nel componente: il bottone "Reset" copre lo zero del piano; `valore:` non ha unità, passa alle frazioni e scrive "non esiste" anche con infinite soluzioni.
 
 Limiti:
 - Nessun oggetto di geometria costruito (retta per due punti da trascinare, distanza): i punti del blocco sono fermi. Servono per le lezioni 80, 82, 83 e 85.
@@ -116,6 +118,17 @@ Due regole che ne vengono:
 
 ## Cosa manca al componente
 I quattro pezzi dell'elenco del 2 ottobre 2026 (blocco, forma compatta, valori, controllo a segmenti) sono fatti. Resta quello che è in "Limiti", e il campo libero dove lo studente scrive una formula sua, il terzo uso previsto il 1° ottobre 2026.
+
+## Cosa è mancato nel terzo anno di matematica
+Dal lotto del 5 ottobre 2026 ([[2026-10-05 Terzo anno di matematica]]): 79 piani in 23 lezioni. Quello che i gruppi avrebbero usato e che il blocco non sa fare, in forma abbreviata.
+
+- **Funzioni (105-109).** punto mobile sull'asse con f(x) e segno; pallino vuoto / punti esclusi; P e simmetrico trascinabili; x1<x2 trascinabili; curve a tratti con dominio limitato; f data per punti; passi intermedi
+- **Successioni (110-113).** curva "punti di f(n) per n da 1 a N"; ricorsione; rette da trascinare; rettangoli; curva con condizione sul cursore; scala log; assi/valore con etichette LaTeX
+- **Circonferenza e parabola (114-117).** tre punti trascinabili (circonferenza/parabola per 3 punti); punto sulla curva con tangente; P esterno trascinabile; segmenti (non rette); area colorata; fuoco trascinabile
+- **Ellisse e iperbole (118-120).** punto trascinabile sulla curva (luogo, tangente, tangenti da P esterno); punti d'intersezione segnati; distanza dall'asintoto; nomi dei punti scelti (F_1, F_2); lettera e riservata
+- **Esponenziali (121-123).** punti isolati (1+1/n)^n; punto trascinabile sulla curva con proiezione; tangente; due scelte/piani impilati; soluzione come segmento sull'asse x; zoom guidato; doppia disequazione
+- **Logaritmi (124-127).** punto trascinabile sulla curva e simmetrico; intersezione calcolata dal plotter; due zone colorate insieme; soluzioni come segmento sull'asse; scala logaritmica
+- **Statistica bivariata (128-129).** punti trascinabili con retta/r aggiornati; residui come segmenti/quadrati; rettangoli covarianza; nuvola generata da r; tabella con casella modificabile
 
 ## Ordine proposto
 1. I blocchi nella 87 e nella 88, che sono nella beta di gennaio 2027: il componente c'è, mancano i blocchi nelle lezioni.

@@ -43,6 +43,16 @@ Con il centro $C(2, 1)$ l'equazione è $y - 1 = m(x - 2)$. Per $m = 0$ ottieni l
 \node[red!60!black, left] at (2,3.6) {$x = 2$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: fascio-proprio-cursore-m
+% alt: Il fascio proprio di centro C(2; 1): la retta y - 1 = m(x - 2) ruota intorno a C al variare del cursore m, e la retta verticale x = 2 è tratteggiata
+curva: y-1=m\left(x-2\right)
+curva: x=2 | tratteggiata | rosso
+curva: C=\left(2;1\right) | nero
+cursore: m = 2 da -8 a 8 passo 0,25 anima
+finestra: x da -3 a 7, y da -4 a 6
+domanda: Fai crescere $m$: la retta si avvicina a quella tratteggiata. La raggiunge per qualche valore di $m$?
+```
 
 ```ad-example
 Esempio 1: la retta del fascio per un punto
@@ -195,6 +205,17 @@ La retta esclusa è $s: x - y - 1 = 0$, cioè $y = x - 1$.
 \node[blue!70!black, right] at (0,3.1) {$r$};
 \node[red!60!black, right] at (4.3,3.2) {$s$};
 \end{tikzpicture}
+```
+```grafico
+% nome: fascio-generato-retta-esclusa
+% alt: Il fascio (1 + k)x + (1 - k)y - 3 - k = 0 con il cursore di k e il coefficiente angolare della retta: la retta ruota intorno al centro C(2; 1) e si avvicina alla retta esclusa x - y - 1 = 0, tratteggiata, senza raggiungerla
+curva: \left(1+k\right)x+\left(1-k\right)y-3-k=0
+curva: x-y-1=0 | tratteggiata | rosso
+curva: C=\left(2;1\right) | nero
+cursore: k = 0 da -20 a 20 passo 0,5 anima
+finestra: x da -3 a 7, y da -4 a 6
+valore: m = -\frac{1+k}{1-k}
+domanda: Fai crescere $k$: la retta raggiunge mai quella tratteggiata? E per $k = 1$, dove $m$ non esiste, che retta è?
 ```
 
 ```ad-warning

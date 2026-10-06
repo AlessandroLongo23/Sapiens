@@ -26,7 +26,7 @@ export default async function MyTutorOverviewPage({ params }: { params: Promise<
 					<MoreLink href={`${base}/compiti`}>Tutti i compiti</MoreLink>
 				</section>
 				<section aria-labelledby="prossime-lezioni">
-					<SectionTitle id="prossime-lezioni" title="Prossime lezioni" action={<NewLesson side="student" linkId={link.id} today={today} />} />
+					<SectionTitle id="prossime-lezioni" title="Prossime lezioni" action={<NewLesson side="student" linkId={link.id} today={today} choices={{ subjects: link.tutor.subjects, subject: link.subject }} />} />
 					<Lessons lessons={sheet.lessons} side="student" now={now} limit={3} />
 					<MoreLink href={`${base}/lezioni`}>Tutte le lezioni</MoreLink>
 				</section>

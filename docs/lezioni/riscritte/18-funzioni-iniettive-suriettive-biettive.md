@@ -264,6 +264,17 @@ A sinistra la retta, incontrata una volta da ogni retta orizzontale; a destra la
 \end{scope}
 \end{tikzpicture}
 ```
+```grafico
+% nome: test-rette-orizzontali-cursore
+% alt: La retta orizzontale y = k, che sale e scende con il cursore di k, sopra un grafico da scegliere: la retta y = 2x + 1, che la incontra sempre una volta; la parabola y = x², che la incontra due volte, una volta o mai; la metà della parabola con x maggiore o uguale a 0, che la incontra al massimo una volta
+scelta: 2x+1 :: y=2x+1
+scelta: x^2 :: y=x^2
+scelta: x^2 \text{ con } x \geq 0 :: y=x^2\left\{x\ge0\right\}
+curva: y=k | tratteggiata | grigio
+cursore: k = 4 da -3 a 5 passo 0,1
+finestra: x da -4 a 4, y da -3 a 5
+domanda: Scegli $x^2$ e muovi $k$: per quali valori la retta $y = k$ incontra il grafico due volte, una volta sola, mai?
+```
 
 ```ad-warning
 Rette orizzontali e rette verticali

@@ -144,7 +144,7 @@ Per esempio il carbonio (carbonium) è $\mathrm{C}$, il calcio (calcium) è $\ma
 | Fosforo | $\mathrm{P}$ | | Mercurio | $\mathrm{Hg}$ (hydrargyrum) |
 | Iodio | $\mathrm{I}$ | | Piombo | $\mathrm{Pb}$ (plumbum) |
 
-Tutti gli elementi, con il loro simbolo, sono ordinati nella tavola periodica, che nacque proprio per metterli in ordine: ne parla la lezione [La tavola periodica di Mendeleev](/materiale/scuola-superiore/chimica/le-particelle-dell-atomo/la-tavola-periodica-di-mendeleev).
+Tutti gli elementi, con il loro simbolo, sono ordinati nella tavola periodica, che nacque proprio per metterli in ordine: ne parla la lezione [La tavola periodica di Mendeleev](/materiale/scuola-superiore/chimica/le-particelle-dell-atomo/la-tavola-periodica-di-mendeleev). Per trovare il simbolo di un elemento, o il nome che sta dietro un simbolo, c'è la [tavola periodica interattiva](/strumenti/tavola-periodica), con la scheda di ognuno dei 118.
 
 ```ad-warning
 Maiuscole e minuscole

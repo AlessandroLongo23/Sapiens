@@ -1,6 +1,6 @@
 ---
 stato: decisa
-aggiornato: 2026-10-03
+aggiornato: 2026-10-06
 tag: [idea, laboratori, chimica, fisica, 3d]
 ---
 # Laboratori
@@ -48,6 +48,77 @@ In fondo alla giornata l'esperimento completo è passato su `/laboratorio`, con 
 Le prese non sono mai uguali due volte: a ogni presa il gioco sceglie una delle prese salvate per quell'oggetto (nel playground si caricano, aggiornano, salvano come alternative ed eliminano, per ogni oggetto e per ogni uso) e la varia un poco: per la presa con i polpastrelli altezza ±6 mm, giro ±15°, inclinazione ±7°, chiusura delle altre dita ±0,25, ventaglio ±5°, intervalli scelti da Alessandro su due tavole del becher. Mentre un oggetto è solo tenuto in mano, ogni 5-12 secondi le dita si assestano: si sollevano appena una dopo l'altra (il pollice per ultimo) e si richiudono su una nuova variazione della stessa presa; il palmo resta fermo e l'oggetto si risistema nella mano (`src/components/lab/engine/settle.ts`).
 
 Da migliorare: le maniche vicino alla camera sono grandi e molto illuminate dal sole; mentre si versa le mani coprono il lavoro; la presa delle dita è ancora calcolata, non una posa scritta per ogni strumento; il banner dei cookie del sito compare sopra la schermata iniziale. Le mani nuove valgono anche per `/laboratorio`.
+
+## Il secondo esperimento: i saggi alla fiamma (5 ottobre 2026)
+Su richiesta di Alessandro il laboratorio di chimica ha un secondo esperimento, `/laboratorio/chimica/saggi-alla-fiamma`, pronto nel menu accanto al solfato di rame. Piano ed esito sono in [[2026-10-05 Saggi alla fiamma]]. Anticipa gli esperimenti rispetto a [[2026-09-29 Il primo traguardo dei laboratori è il motore, in un laboratorio libero senza esperimenti]]: è da confermare con Alessandro. Nel codice locale, non committato.
+
+Cosa fa lo studente, in sette passi: occhiali; becco acceso e fiamma azzurra; ansa al nichel-cromo pulita nell'acido cloridrico e nella fiamma (parte con tracce di sodio, quindi la prima volta la fiamma è gialla); i sette cloruri (litio, sodio, potassio, calcio, stronzio, bario, rame) in qualunque ordine, con il quaderno che scrive il colore accanto a ogni sale visto con l'ansa pulita; la miscela di NaCl e KCl a occhio nudo e attraverso il vetro al cobalto; due campioni incogniti, X (un sale bianco tra litio, potassio, calcio, stronzio e bario) e Y (sodio, da solo o con il potassio), diversi a ogni partita; riordino e risultati.
+
+Come si gioca. L'ansa in una mano agisce su quello che si guarda con il tasto della sua mano: nel becher di HCl si bagna, su un vetrino tocca il sale, sul becco entra nella fiamma e ci resta finché lo stesso tasto non la toglie. Il vetro al cobalto nell'altra mano si alza davanti agli occhi con il suo tasto. La risposta a un incognito si scrive sul cartellino dietro il campione con la rotella e si conferma con Q o E; dopo una risposta sbagliata il campione va rimesso nella fiamma prima di rispondere di nuovo, e dove la fiamma è gialla serve prima il vetro.
+
+La chimica è un modulo senza grafica, `src/lib/lab/saggi.ts`: un catalogo di sette ioni (colore, intensità, tempo nella fiamma, aspetto attraverso il vetro al cobalto) e uno stato in dati semplici che cambia solo con cinque azioni (acido, tocco di un campione, tempo nella fiamma, tempo fuori, campione nuovo), come chiede [[2026-09-29 Il motore dei laboratori è stato serializzabile cambiato solo da azioni]]. L'ansa porta una quantità di ogni ione; l'acido ne toglie l'80% e la bagna; bagnata prende una dose piena, asciutta un quarto; se non è pulita lascia nel campione parte di quello che porta, e il campione resta contaminato finché lo studente non ne chiede uno nuovo. Nella fiamma ogni ione emette con la sua intensità (sodio 5, potassio 0,5, gli altri tra 0,9 e 1,6) e se ne va in 5-9 secondi; il colore è la media pesata, quindi una traccia di sodio copre il potassio. Con la ghiera chiusa i colori non si vedono. Intensità e tempi sono scelti per giocare bene, non misurati; i colori sono quelli delle tabelle scolastiche, da far rileggere ad Andrea ([[Domande per Andrea]]).
+
+I pezzi nuovi sono modellati in Blender da codice (`scripts/lab/build_fiamma.py`): l'ansa con il manico di legno e la punta che diventa rovente, il portacampioni di legno con dieci vetrini da orologio, le targhette, i mucchietti di sale (verde azzurro quello di rame), i due cartellini su cui la pagina scrive la risposta, il vetro al cobalto, il becher e la bottiglia di HCl 2 M.
+
+Il kit è un file a parte, `public/lab/kit/saggi-alla-fiamma.glb` (0,7 MB), nelle coordinate della postazione, che sono le stesse nel banco singolo e nell'aula. La pagina carica la stanza, toglie i pezzi del solfato che non servono (l'elenco è in `src/lib/lab/catalog.ts`) e aggiunge il kit (`load` in `scene.ts`). Così un esperimento nuovo non chiede stanze nuove né cotture della luce. Il kit del solfato resta dentro i GLB delle stanze: separarlo allo stesso modo è un lavoro da fare.
+
+Effetti nuovi: il pennacchio colorato che sale dall'ansa (`Plume` in `effects.ts`), una luce debole del suo colore sulla piastra, la fiamma del becco più alta quando non c'è la reticella sopra, uno sbuffo di vapore se l'ansa rovente entra nell'acido. Mentre l'ansa è nella fiamma lo sguardo si avvicina un poco da solo (`watch` in `fps.ts`): a grandezza naturale il colore occupava meno dell'uno per cento dello schermo. Il vetro al cobalto ha sopra un foglio che moltiplica per il suo blu quello che c'è dietro, e che si accende man mano che il vetro si avvicina agli occhi; dietro il vetro la fiamma prende i colori "attraverso il cobalto" del catalogo (il sodio quasi sparisce, il potassio resta rosso violaceo).
+
+Verifica:
+- `tests/unit/lab-saggi.test.mjs`, 13 test sulla chimica.
+- `scripts/lab/fiamma.mjs` gioca l'esperimento dall'inizio alla fine passando dagli input veri (mirino, tasti del mouse, Q ed E, rotella): 116 controlli su 116 nel banco singolo e nell'aula, con l'ansa in ciascuna mano. Misura dove arriva la punta dell'ansa (entro 1 mm dal punto chiesto nella fiamma, nell'acido e sul sale), il colore a schermo di ogni fiamma, il vetro, i cartellini, una contaminazione e il campione nuovo.
+- Tre giri di revisori critici (due sui fotogrammi, uno su chimica, testi e flusso) hanno trovato, tra l'altro: un sale noto contaminato che bloccava il passo dei sette sali; il controllo del vetro che scattava a potassio già finito; risposte indovinabili a tentativi; il litio troppo simile al potassio visto dal vetro; targhette e cartellini poco leggibili. Tutto corretto.
+- Il solfato di rame funziona ancora: 10 azioni su 10 di `scripts/lab/usi.mjs` sul banco singolo.
+
+Un inciampo da ricordare: nel browser senza schermo i fotogrammi del gioco si fermano a tratti, perché Chrome con la GPU segue lo schermo del Mac. `fiamma.mjs` disegna da sé i fotogrammi (sessanta per ogni secondo di gioco) e parte con `--disable-gpu-vsync --disable-frame-rate-limit`; gli altri script (`usi.mjs`, `versa.mjs`, `imbuto.mjs`, `ossido.mjs`, `pad.mjs`) usano ancora i fotogrammi del browser e possono fermarsi allo stesso modo.
+
+La presa del vetro al cobalto (5 ottobre, dopo due prove di Alessandro, che ha mandato la foto di un foglietto tenuto per un angolo): il vetro si tiene a pinza per un angolo come un cartoncino che si guarda. L'avambraccio è a metà rotazione, con il dorso della mano verso l'esterno e il pollice verso gli occhi; indice e medio stanno piegati e vicini dietro il vetro, il pollice disteso sulla faccia davanti, anulare e mignolo chiusi. Prima stava nel palmo; una prima versione della pinza, con il palmo in su e le due dita distese dietro il vetro, non era naturale. La posa di indice e medio è fissa (`PINCH_FINGERS` in `grasp.ts`); gli angoli del pollice si cercano finché il suo polpastrello sta sul vetro sopra l'ultima falange dell'indice (`pinchGrip`, valida per ogni oggetto piatto elencato in `PINCHED`). A riposo il vetro sta dritto con la faccia verso lo studente (`PLATE_HOLD` in `hands.ts`); alzato davanti agli occhi, la mano pinza l'angolo in basso dal suo lato. Il vetro davanti agli occhi è quello che la mano tiene, a grandezza vera: la mano lo porta a 17 cm dagli occhi, sulla linea dello sguardo, e lo riporta giù (`RAISED` in `saggi.ts`). Nella prima versione era una seconda lastra, più grande, appesa alla camera, che saliva dal basso mentre quella in mano spariva: Alessandro ha visto due vetri a schermo e ha chiesto che fosse la mano a muoversi. Confrontato con la foto sui fotogrammi, con tutte e due le mani; il test completo passa ancora nelle due stanze.
+
+Cambiato anche per il solfato: nella pagina dei risultati del quaderno le righe non sono più barrate, e con il quaderno alzato i sottotitoli stanno in alto.
+
+Da fare: provarlo a mano (tempi, naturalezza delle mani, leggibilità dei rossi su uno schermo vero); regolare nel playground la presa dell'ansa, che oggi è quella della bacchetta; uno spettroscopio, per vedere le righe e non solo il colore (le lunghezze d'onda sono già nel catalogo, non mostrate); i tre esperimenti ancora segnaposto nel menu.
+
+## Il terzo esperimento: la titolazione acido-base (6 ottobre 2026)
+A `/laboratorio/chimica/titolazione`, pronto nel menu, nel banco singolo e nell'aula. Piano e cronaca in [[2026-10-06 Titolazione acido-base]]. Nel codice locale, non committato.
+
+Cosa fa lo studente, in sette passi: occhiali; buretta riempita di NaOH 0,100 mol/L attraverso l'imbutino fin sopra lo zero, imbuto tolto, aria fatta uscire dalla punta nel becher degli scarti, menisco tra 0 e 5 mL; 25,0 mL del campione di HCl in una beuta con la pipetta tarata e due gocce di fenolftaleina; una titolazione di prova, veloce; due titolazioni accurate, ciascuna con la buretta di nuovo piena e una beuta nuova; riordino e risultati. Il campione cambia a ogni partita, tra 0,052 e 0,0742 mol/L (da 13 a 18,55 mL di base).
+
+Come si gioca. Il becher di NaOH in mano versa nella buretta quando si punta la buretta o l'imbuto, e si ferma da sé sopra lo zero. La pipetta è quella del primo esperimento: immersa nel campione, la rotella aspira e una lente mostra il menisco sulla tacca. Il contagocce dà una goccia a ogni pressione. Una beuta o il becher degli scarti in mano vanno "sotto la buretta" puntando la buretta. Sul rubinetto azzurro la rotella apre e chiude (gocce, filo sottile, aperto) e Q o E, con una mano libera, danno una goccia sola o chiudono di colpo. Con la beuta sotto la buretta, Q o E la fanno agitare a una mano, che continua finché lo stesso tasto non la ferma: intanto la rotella lavora il rubinetto e l'altro tasto dà una goccia o chiude, ovunque si guardi. La buretta la legge lo studente: Q o E su di lei aprono una lente con la scala, la rotella scrive il valore a passi di 0,05 mL, Q lo annota. Vale se è entro 0,05 mL dal menisco, e nei conti entra il valore scritto dallo studente.
+
+La chimica è un modulo senza grafica, `src/lib/lab/titolazione.ts`: lo stato è il livello della buretta (con l'aria nella punta), e per ogni beuta il volume, le moli di acido, le moli di base mescolate, quelle appena cadute e le gocce di indicatore; cambia solo con cinque azioni (riempi, fai scendere, campione, indicatore, tempo che passa agitando o no). La base appena caduta è una nuvola rosa che si mescola in fretta se la beuta è agitata, piano se è ferma, e più piano quando resta poco acido: è il segnale che il viraggio è vicino. Oltre l'equivalenza la soluzione è rosa, più carica a ogni goccia. Il pH è quello dei libri (acido e base forti); quanto è carico il rosa e quanto in fretta si mescola sono scelti per giocare bene, non misurati ([[Domande per Andrea]]).
+
+I pezzi nuovi sono modellati in Blender da codice (`scripts/lab/build_titolazione.py`, `public/lab/kit/titolazione.glb`, 1 MB): sostegno con pinza e piastrella bianca, buretta da 25 mL con la scala incisa ogni 0,1 mL e il rubinetto che gira, imbutino, tre beute numerate, i becher di NaOH, del campione e degli scarti, il contagocce, le due bottiglie di scorta. La buretta è più corta di una vera (25 mL in 22 cm) perché lo zero resti sotto gli occhi di chi sta in piedi. Dalla stanza si tolgono i pezzi del solfato, il becco, il tubo, l'accendigas e la piastra.
+
+Cosa è entrato nel motore, e serve anche ai prossimi esperimenti:
+- Un pezzo del kit può dichiarare che si tiene come un altro (`like` nel GLB, `alias` in `grip.ts`): le tre beute e i becher usano le prese già regolate della beuta e dei becher del primo esperimento. La posa di riposo e la scatola per il mirino si ricavano dai dati del pezzo, non da elenchi di nomi.
+- Una mano libera può andare in un punto e restarci senza tenere niente (`reach` e `retire` in `hands.ts`): è la mano sul rubinetto mentre è aperto.
+- Un oggetto si può prendere dove sta, con la mano che ci arriva e poi lo stringe (`take` in modo `carry`, con il passaggio morbido alla posa vera del polso): è la beuta agitata sotto la buretta, che presa "all'istante" volava alla mano e tornava.
+- `free.pour` ha una condizione di arresto; un liquido può ricevere colore e opacità da fuori (`tint` in `liquid.ts`).
+- La lente della buretta è un componente della pagina (`BuretteLens` in `Esperimento.tsx`).
+
+Verifiche:
+- 11 test unitari sulla chimica (`tests/unit/lab-titolazione.test.mjs`).
+- `scripts/lab/titolazione.mjs` gioca tutto l'esperimento dagli input veri e controlla, tra l'altro: il livello disegnato nella buretta contro la scala, i 25,0 mL della pipetta, i blocchi (niente sotto la buretta, lettura iniziale mancante, pipetta nel becher sbagliato), il colore della beuta a schermo, il viraggio preso entro una goccia, le letture scritte con la rotella, la concentrazione entro l'1% dal vero.
+
+## Il quaderno di laboratorio (6 ottobre 2026)
+Rifatto su proposta di Alessandro, vedi [[2026-10-06 Il quaderno del laboratorio si apre con B ed è una pagina in cui si scrive]], [[2026-10-06 Le pagine del quaderno di laboratorio sono A5 e finiscono nello Zaino]] e la sessione [[2026-10-06 Quaderno di laboratorio]]. Nel codice locale, non committato.
+
+Come si usa. B lo apre ovunque (Share o View sul controller); il mouse torna un cursore, il corpo resta fermo e il gioco non va in pausa. B, Esc, la crocetta o un clic fuori lo chiudono, e il mouse torna a muovere lo sguardo. Con qualcosa in mano si apre in sola lettura, con un'etichetta rossa, e il messaggio dice quale mano liberare. Il modello del quaderno sul banco non si vede più.
+
+Com'è fatto. È un livello HTML sopra la scena (`src/components/lab/quaderno/Quaderno.tsx`): due pagine A5 da 560 × 792 px affiancate, ridotte o ingrandite a stare nella finestra, a quadretti. In alto le linguette delle sezioni, ai lati le frecce; riapre dove lo si era lasciato. Quello che contiene sta in `engine/notebook.ts`, senza grafica: le pagine date dall'esperimento, i valori scritti, il giudizio su ciascuno, e `toJSON` per salvarli.
+
+Le pagine:
+- Strumenti e sostanze: una riga per pezzo, quattro per pagina, con la foto attaccata con lo scotch come nel menu dei laboratori e accanto, scritti sulla carta, nome, formula e a cosa serve (`quaderno/pagine.ts`). Le 28 foto sono rese in Blender dagli stessi modelli del gioco, sul banco scuro (`scripts/lab/render_kit.py`, in `public/lab/strumenti/`); anche le sostanze hanno la loro: i sali sono un primo piano dei vetrini del portacampioni, il solfato di rame una capsula con i cristalli.
+- Procedimento: a sinistra tutti i passi con quello in corso, a destra le cose da fare ora; alla fine i risultati.
+- Pagine da compilare, scritte da ogni esperimento: tabelle, campi con unità, scelte con il campione di colore, scale di colore, righe libere. Un campo si giudica quando lo si lascia (Invio, un altro campo, la pagina girata o il quaderno chiuso): giusto, resta a inchiostro e non si cambia più; sbagliato, è sottolineato in rosso con una riga di aiuto in basso. Un campo che non è di turno è chiuso, con il motivo.
+- Due pagine di appunti liberi.
+
+Nei tre esperimenti:
+- Titolazione: le letture della buretta si scrivono nella tabella del quaderno, con la lente della scala nella stessa pagina (Q o E sulla buretta lo aprono lì, con il cursore nella casella giusta). Il NaOH usato, la media e la concentrazione li calcola lo studente, e sono controllati sui numeri che ha scritto lui. L'ultimo passo è "Riordina e calcola". La rotella non scrive più la lettura; su una casella numerica però alza e abbassa il valore di un passo, come la croce del controller.
+- Saggi alla fiamma: una tabella dei sette sali in cui scegliere il colore visto, con la scala dei colori sotto. Non blocca i passi; il quaderno non scrive più da solo il colore accanto al sale.
+- Solfato di rame: moli di acido, ossido stechiometrico, resa teorica e osservazioni. Non blocca i passi.
+
+Non ancora fatto: il salvataggio nello Zaino, le formule con MathLive, le risposte dei campioni incogniti nel quaderno (restano sui cartellini).
 
 ## Animazioni d'uso (3 ottobre 2026)
 Su richiesta di Alessandro ogni animazione in cui la mano usa quello che tiene è stata registrata, misurata e corretta. `scripts/lab/usi.mjs` esegue 14 azioni (pipetta nell'acido, uscita, svuotamento; termometro in un becher sulla reticella e in uno tenuto in mano; accendigas; spatola nel barattolo e sul becher; bacchetta in un becher fermo e in uno tenuto in mano; carta nell'imbuto; tre travasi) con ciascuna mano, salva i fotogrammi e misura dove sta la punta dello strumento.
@@ -201,11 +272,12 @@ Discussa in [[2026-09-29 Laboratori]]. Si fa, e subito:
 - [[2026-09-29 I laboratori sono da computer, per i docenti alla LIM e gli studenti al pc]]
 - [[2026-09-29 Il laboratorio di chimica è un motore modulare su un catalogo ricavato dal programma]]
 - [[2026-09-29 Il primo traguardo dei laboratori è il motore, in un laboratorio libero senza esperimenti]]
-- [[2026-09-29 Il prototipo del laboratorio va su master, fuori dall'indice e senza link]]
+- [[2026-09-29 Il prototipo del laboratorio va su master, fuori dall'indice e senza link]] (superata in parte da [[2026-10-03 Il laboratorio ha il suo link nella navbar]])
 
 ## Domande aperte
 - Il secondo laboratorio dopo la chimica: elettronica, meccanica o ottica. Si decide dopo aver visto la chimica.
 - L'elenco degli esperimenti classici del programma di chimica, da cui ricavare il catalogo.
+- Se il kit di ogni esperimento diventa un file a parte anche per il solfato di rame, con le stanze senza kit (5 ottobre 2026: per i saggi alla fiamma è già così).
 - Se e quando i laboratori entrano in un piano a pagamento o nell'offerta alle scuole.
 - Che cosa mostra la pagina a chi la apre dal telefono.
 

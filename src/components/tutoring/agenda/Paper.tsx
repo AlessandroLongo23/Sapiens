@@ -12,10 +12,10 @@ import { Card } from '@/components/ui/Card';
 /** The colour of a tutor's subject, as the library colours its own: mathematics red, physics blue, and so on. */
 export function subjectTone(subject: string | null): SubjectTone {
 	if (!subject) return 'ink';
-	if (/^(matematica|analisi|algebra|statistica)/.test(subject)) return 'math';
+	if (/^(matematica|analisi|algebra|statistica|logica|ricerca)/.test(subject)) return 'math';
 	if (/^fisica/.test(subject)) return 'physics';
 	if (/^chimica/.test(subject)) return 'chemistry';
-	if (/^(informatica|programmazione|fondamenti|database|sistemi|reti|teoria)/.test(subject)) return 'cs';
+	if (/^(informatica|programmazione|fondamenti|database|sistemi|reti|teoria|algoritmi|ingegneria|computer)/.test(subject)) return 'cs';
 	return 'ink';
 }
 

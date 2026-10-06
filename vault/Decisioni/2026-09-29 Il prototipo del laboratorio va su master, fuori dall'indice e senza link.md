@@ -1,11 +1,13 @@
 ---
-stato: decisa
-aggiornato: 2026-09-29
+stato: superata in parte
+aggiornato: 2026-10-03
 tag: [decisione, laboratori, sito]
 ---
 # Il prototipo del laboratorio va su master, fuori dall'indice e senza link
 
 ## Decisione
+Superata in parte il 3 ottobre 2026: il laboratorio ora ha un link nella navbar, vedi [[2026-10-03 Il laboratorio ha il suo link nella navbar]]. Resta fuori dall'indice di Google.
+
 Il prototipo di `/laboratorio` (i cristalli di solfato di rame, in prima persona) va su master e quindi in produzione, ma resta fuori dall'indice di Google e non ha link da nessuna pagina del sito. Chi ha l'indirizzo lo apre; gli utenti non lo trovano da soli.
 
 ## Perché

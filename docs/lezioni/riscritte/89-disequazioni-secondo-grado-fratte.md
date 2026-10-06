@@ -681,6 +681,20 @@ L'area supera $21\ \text{cm}^2$ quando la base misura più di $3$ cm e meno di $
 Se il problema chiedesse un'area maggiore di $25\ \text{cm}^2$, si arriverebbe a $x^2 - 10x + 25 < 0$, cioè $(x - 5)^2 < 0$, che non è vera per nessun $x$: nessun rettangolo con quel perimetro ha un'area così grande.
 ```
 
+Sul grafico l'area $y = x(10 - x)$ è una parabola rivolta verso il basso e il valore da superare è la retta orizzontale $y = k$: l'area supera $k$ per le basi $x$ in cui la parabola sta sopra la retta.
+
+```grafico
+% nome: area-rettangolo-perimetro-fisso-soglia
+% alt: La parabola y = x(10 - x), l'area del rettangolo di perimetro 20 al variare della base x, e la retta orizzontale y = k con il cursore di k: con k = 21 la parabola sta sopra la retta tra 3 e 7, con k = 25 la tocca solo in 5, con k maggiore non la raggiunge
+curva: y=x\left(10-x\right)
+curva: y=k | rosso
+cursore: k = 21 da 0 a 30 passo 1
+finestra: x da -1 a 11, y da -5 a 30
+forma: 3:2
+assi: x (cm), area
+domanda: Con $k = 21$ la parabola sta sopra la retta tra $3$ e $7$. Alza $k$ fino a $25$: che cosa resta dell'intervallo, e che rettangolo è? Poi scendi a $k = 16$.
+```
+
 ```ad-warning
 Dimenticare le limitazioni
 Le soluzioni della disequazione non sono ancora la risposta: vanno intersecate con le limitazioni dell'incognita. Nell'esempio 9 stanno già tutte tra $0$ e $10$, ma se l'area dovesse essere minore di $16\ \text{cm}^2$ si arriverebbe a $x^2 - 10x + 16 > 0$, cioè $x < 2$ oppure $x > 8$: senza le limitazioni si accetterebbero anche una base negativa, come $x = -1$, o maggiore di $10$. La risposta giusta è $0 < x < 2$ oppure $8 < x < 10$.

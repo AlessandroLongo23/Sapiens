@@ -158,6 +158,7 @@ Generato da `scripts/fisica/indice.mts`: non modificarlo a mano.
 ## Idrolisi, tamponi e titolazioni  /materiale/scuola-superiore/chimica/idrolisi-tamponi-e-titolazioni
 - Neutralizzazione e idrolisi salina: /materiale/scuola-superiore/chimica/idrolisi-tamponi-e-titolazioni/neutralizzazione-e-idrolisi-salina
 - Le soluzioni tampone: /materiale/scuola-superiore/chimica/idrolisi-tamponi-e-titolazioni/le-soluzioni-tampone
+- Il pH dopo una reazione tra acido e base: /materiale/scuola-superiore/chimica/idrolisi-tamponi-e-titolazioni/il-ph-dopo-una-reazione-tra-acido-e-base
 - Gli indicatori acido-base: /materiale/scuola-superiore/chimica/idrolisi-tamponi-e-titolazioni/gli-indicatori-acido-base
 - La titolazione acido-base: /materiale/scuola-superiore/chimica/idrolisi-tamponi-e-titolazioni/la-titolazione-acido-base
 
@@ -170,6 +171,7 @@ Generato da `scripts/fisica/indice.mts`: non modificarlo a mano.
 - Le pile: /materiale/scuola-superiore/chimica/l-elettrochimica/le-pile
 - I potenziali standard di riduzione: /materiale/scuola-superiore/chimica/l-elettrochimica/i-potenziali-standard-di-riduzione
 - Forza elettromotrice e spontaneità delle redox: /materiale/scuola-superiore/chimica/l-elettrochimica/forza-elettromotrice-e-spontaneita-delle-redox
+- L'equazione di Nernst: /materiale/scuola-superiore/chimica/l-elettrochimica/l-equazione-di-nernst
 - Pile e accumulatori di uso comune: /materiale/scuola-superiore/chimica/l-elettrochimica/pile-e-accumulatori-di-uso-comune
 - L'elettrolisi e le leggi di Faraday: /materiale/scuola-superiore/chimica/l-elettrochimica/l-elettrolisi-e-le-leggi-di-faraday
 

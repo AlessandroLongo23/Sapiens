@@ -125,6 +125,20 @@
 		"fingers": 2,
 		"tuck": 0.7
 	},
+	"WireLoop": {
+		"type": "tripod",
+		"height": 0.15,
+		"gap": 0,
+		"slide": 0,
+		"tilt": 80,
+		"roll": 0,
+		"wrap": 0,
+		"thumbWrap": 0,
+		"thumbDrop": 0,
+		"fan": 0,
+		"fingers": 2,
+		"tuck": 0.8
+	},
 	"Thermometer": {
 		"type": "tripod",
 		"height": 0.257,

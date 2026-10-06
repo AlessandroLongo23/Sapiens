@@ -6,6 +6,7 @@ import { LabScene } from './engine/scene';
 import { LOOK } from './engine/look';
 import { SHAPES } from './engine/grasp';
 import { Notebook } from './engine/notebook';
+import { Quaderno } from './quaderno/Quaderno';
 import { Banco as BancoWork, type BancoSnapshot } from './engine/banco';
 import { applySettings, Controls, EnterHint, loadSettings, Prompt, Settings, Tip, type LabSettings } from './hud';
 
@@ -16,7 +17,7 @@ const noSnap = () => null;
 
 /**
  * The vertical slice of the lab as a game: nothing on screen but the scene, a dot for a crosshair, the name of what
- * it points at and a line of subtitles. What to do is in the notebook, which lies on the bench (Q or E on it); Esc
+ * it points at and a line of subtitles. What to do is in the notebook, which B brings up; Esc
  * pauses.
  */
 export function Banco() {
@@ -29,6 +30,7 @@ export function Banco() {
 	const [locked, setLocked] = useState(false);
 	const [run, setRun] = useState(0);
 	const [tip, setTip] = useState(true);
+	const [book, setBook] = useState<{ nb: Notebook; family: string } | null>(null);
 	const snap = useSyncExternalStore<BancoSnapshot | null>(work?.subscribe ?? noSub, work?.getSnapshot ?? noSnap, noSnap);
 
 	useEffect(() => {
@@ -54,10 +56,13 @@ export function Banco() {
 		Promise.all([scene.load(MODEL, (f) => alive && setProgress(f * 0.95)), document.fonts.load(`40px ${family}`), document.fonts.load(`bold 40px ${family}`)])
 			.then(() => {
 				if (!alive) return;
-				const nb = new Notebook(scene.camera, family);
-				scene.blockers.push(nb.group);
-				// raised from the bench by the student (Q or E on it), or by the work at the end
-				nb.onToggle = (open) => open && setTip(false);
+				const nb = new Notebook();
+				// brought up by the student (B): the mouse is a cursor while it is up
+				nb.onToggle = (open) => {
+					if (open) setTip(false);
+					setBook(open ? { nb, family } : null);
+					scene.player.suspend(open);
+				};
 				const w = new BancoWork(scene, nb);
 				scene.start();
 				if (process.env.NODE_ENV !== 'production') (window as unknown as { __lab: unknown }).__lab = { scene, work: w, free: w.free, notebook: nb, LOOK, SHAPES };
@@ -97,6 +102,7 @@ export function Banco() {
 	return (
 		<div className="fixed inset-0 overflow-hidden bg-[#2a2638] select-none">
 			<div ref={host} className="absolute inset-0" aria-label="Laboratorio in 3D" />
+			{started && locked && book && <Quaderno book={book.nb} font={book.family} onClose={book.nb.close} />}
 
 			{started && locked && (
 				<div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">

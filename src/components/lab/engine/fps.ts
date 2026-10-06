@@ -86,6 +86,8 @@ export class FirstPerson {
 	private keys = new Set<string>();
 	private eye = STAND;
 	private zoom = false;
+	/** A field of view the work asks for while there is something small to watch (a flame's colour), or null. */
+	watch: number | null = null;
 	private fov = FOV;
 	private vel = new Vector3();
 	private acc = new Vector3();
@@ -108,6 +110,14 @@ export class FirstPerson {
 	private lagVel = new Vector3();
 	private lagAcc = new Vector3();
 	onLockChange: (locked: boolean) => void = () => {};
+	/** B, or the controller's Share or View: the notebook. */
+	onBook: () => void = () => {};
+	/**
+	 * While the notebook is up: the mouse is a cursor again and the keys write, but the game is not paused (`locked`
+	 * stays true). `suspend` sets it and takes the mouse back when the notebook goes.
+	 */
+	suspended = false;
+	private resuming: ReturnType<typeof setTimeout> | null = null;
 	/** The mouse wheel while the pointer is captured (positive: towards the user, as deltaY). */
 	onWheel: (delta: number) => void = () => {};
 	/** R while the pointer is captured: turns what is about to be put down. */
@@ -161,6 +171,27 @@ export class FirstPerson {
 		else if (this.padPlay) this.padLeave();
 	}
 
+	/** The notebook comes up (the mouse is let go, the game goes on) or goes away (the mouse is captured again). */
+	suspend(on: boolean) {
+		if (on === this.suspended) return;
+		this.suspended = on;
+		this.keys.clear();
+		this.zoom = false;
+		if (this.resuming) clearTimeout(this.resuming);
+		this.resuming = null;
+		if (on) {
+			if (document.pointerLockElement === this.el) document.exitPointerLock();
+			return;
+		}
+		if (this.padPlay) return;
+		// asked for inside the key or the click that closed the notebook; if the browser refuses, the game pauses
+		this.lock();
+		this.resuming = setTimeout(() => {
+			this.resuming = null;
+			this.sync();
+		}, 700);
+	}
+
 	/** Into the game from a controller's button. */
 	private padEnter() {
 		this.padPlay = true;
@@ -211,13 +242,14 @@ export class FirstPerson {
 	}
 
 	private onKeyDown = (e: KeyboardEvent) => {
-		if (this.typing(e) || e.metaKey || e.ctrlKey) return;
+		if (this.typing(e) || e.metaKey || e.ctrlKey || this.suspended) return;
 		setDevice('keys');
 		// Esc frees a captured mouse by itself; playing from the controller there is none to free
 		if (e.code === 'Escape' && this.padPlay && document.pointerLockElement !== this.el) return this.padLeave();
 		this.keys.add(e.code);
 		if ((e.code === 'KeyQ' || e.code === 'KeyE') && !e.repeat && this.locked) this.used.push(e.code === 'KeyQ' ? 'L' : 'R');
 		if (e.code === 'KeyR' && this.locked) this.onTurn();
+		if (e.code === 'KeyB' && !e.repeat && this.locked) this.onBook();
 		// the arrows would otherwise move a focused slider or scroll the page
 		if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
 	};
@@ -233,11 +265,15 @@ export class FirstPerson {
 
 	/** The mouse's capture changed. Losing it (Esc) pauses, also for whoever plays with the controller. */
 	private onLock = () => {
+		// the notebook came up again before the mouse was captured: it stays a cursor
+		if (this.suspended && document.pointerLockElement === this.el) return void document.exitPointerLock();
 		if (document.pointerLockElement !== this.el) this.padPlay = false;
 		this.sync();
 	};
 
 	private sync() {
+		// while the notebook is up, and for a moment after as the mouse is captured again, the game is still on
+		if (this.suspended || (this.resuming && document.pointerLockElement !== this.el)) return;
 		const was = this.locked;
 		const captured = document.pointerLockElement === this.el;
 		this.locked = captured || this.padPlay;
@@ -338,11 +374,19 @@ export class FirstPerson {
 			this.padDown = down;
 			return;
 		}
+		// the notebook reads the controller itself (quaderno/Quaderno.tsx)
+		if (this.suspended) {
+			m.fwd = m.side = 0;
+			m.run = m.crouch = m.zoom = false;
+			this.padDown = down;
+			return;
+		}
 		if (hit(PAD.start)) {
 			this.padDown = down;
 			this.unlock();
 			return;
 		}
+		if (hit(PAD.select)) this.onBook();
 		m.fwd = -my;
 		m.side = mx;
 		m.run = down[PAD.l3];
@@ -403,7 +447,7 @@ export class FirstPerson {
 			this.eyeV = e.v;
 		}
 		this.position.y = this.eye;
-		const fov = this.zoom || k.has('KeyZ') || pm.zoom ? ZOOM_FOV : FOV;
+		const fov = this.zoom || k.has('KeyZ') || pm.zoom ? ZOOM_FOV : (this.watch ?? FOV);
 		this.fov += (fov - this.fov) * (1 - Math.exp(-dt * 12));
 		this.walkMotion(dt);
 		this.apply();
@@ -517,6 +561,7 @@ export class FirstPerson {
 
 	dispose() {
 		this.unlock();
+		if (this.resuming) clearTimeout(this.resuming);
 		window.removeEventListener('keydown', this.onKeyDown);
 		window.removeEventListener('keyup', this.onKeyUp);
 		window.removeEventListener('blur', this.onBlur);

@@ -103,7 +103,7 @@ export default function NaveGalileo({ alt }: { alt?: string }) {
 				{vx > 0 && !done && <Vector f={f} from={s} to={v(s.x + vx * KV, s.y)} color={QTY.velocita} dashed />}
 				{t > 0 && !done && <Vector f={f} from={s} to={v(s.x, s.y + vy * KV)} color={QTY.velocita} dashed={vx > 0} />}
 				{t > 0 && vx > 0 && !done && <Vector f={f} from={s} to={v(s.x + vx * KV, s.y + vy * KV)} color={QTY.velocita} name="v" labelDir={v(1, -0.3)} />}
-				{view === 'riva' && V > 0 && <Vector f={f} from={v(mast - 1.2, DECK + 0.35)} to={v(mast - 1.2 + V * KV * 2, DECK + 0.35)} color={QTY.velocita} name="V" labelAt={0.5} labelDir={v(0, 1)} />}
+				{view === 'riva' && V > 0 && <Vector f={f} from={v(mast - 1.2, DECK + 0.35)} to={v(mast - 1.2 + V * KV, DECK + 0.35)} color={QTY.velocita} name="V" labelAt={0.5} labelDir={v(0, 1)} />}
 			</Drawing>
 
 			<Readout>

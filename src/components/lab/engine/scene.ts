@@ -51,6 +51,8 @@ import { optimizeStatic } from './optimize';
 import { Avatar } from './avatar';
 import { Classroom } from './classroom';
 import { Hands, holdFrame, PEN_PRONATION, penHeld, toolHold } from './hands';
+import { alias } from './grip';
+import { canHold } from './grasp';
 
 /**
  * Makes the glass: a clear coat that only reflects, and goes opaque at grazing angles like real glass. One side at a
@@ -70,9 +72,11 @@ function glassMaterial(tint: Color, base: number, env: Texture | null, side: Sid
 		specularIntensity: 1,
 		ior: 1.5
 	});
+	// how much of its own colour the glass lays over what is behind it: an experiment may change it (saggi.ts)
+	m.userData.base = { value: base };
 	m.onBeforeCompile = (s: WebGLProgramParametersWithUniforms) => {
 		s.uniforms.tint = { value: tint };
-		s.uniforms.base = { value: base };
+		s.uniforms.base = m.userData.base;
 		s.fragmentShader =
 			'uniform vec3 tint;\nuniform float base;\n' +
 			s.fragmentShader.replace(
@@ -86,6 +90,12 @@ function glassMaterial(tint: Color, base: number, env: Texture | null, side: Sid
 	m.customProgramCacheKey = () => 'glass';
 	return m;
 }
+
+/**
+ * An experiment whose pieces are a file of their own (scripts/lab/build_fiamma.py): the room is loaded, the pieces
+ * of the room's own kit named in `drop` are taken out, and the kit's are added, in the same coordinates.
+ */
+export type Kit = { url: string; drop: string[] };
 
 /** The vessels whose contents the experiment computes; the others keep the colour in their extras. */
 const DYNAMIC = new Set(['AcidBeaker', 'Beaker', 'Pipette', 'Funnel', 'ConicalFlask', 'EvapDish']);
@@ -137,6 +147,8 @@ export class LabScene {
 	};
 	/** Q or E: the left or the right hand uses what it holds, or works what the crosshair points at. */
 	onUse: (side: 'L' | 'R') => void = () => {};
+	/** B, while the mouse is captured: the notebook. */
+	onBook: () => void = () => {};
 	/** R, while the mouse is captured: a turn of what is about to be put down. */
 	onTurn: (dir?: 1 | -1) => void = () => {};
 	/** The mouse wheel, while the mouse is captured. */
@@ -201,6 +213,7 @@ export class LabScene {
 		this.player = new FirstPerson(this.camera, r.domElement);
 		this.player.onWheel = (d) => this.onWheel(d);
 		this.player.onTurn = (dir) => this.onTurn(dir);
+		this.player.onBook = () => this.onBook();
 		this.player.onPadPress = (button) => this.press(button);
 		this.player.onLockChange = (locked) => {
 			this.onLock(locked);
@@ -254,7 +267,7 @@ export class LabScene {
 		el.addEventListener('pointerup', this.onPointerUp);
 	}
 
-	async load(url: string, onProgress: (f: number) => void) {
+	async load(url: string, onProgress: (f: number) => void, kit?: Kit) {
 		const loader = new GLTFLoader();
 		// a compressed scene (scripts/lab/compress.py) has meshopt geometry
 		loader.setMeshoptDecoder(MeshoptDecoder);
@@ -263,10 +276,17 @@ export class LabScene {
 			parser.textureLoader = new TextureLoader(parser.options.manager);
 			return { name: 'lab_img_textures' };
 		});
-		const gltf = await loader.loadAsync(url, (e) => {
-			if (e.total) onProgress(e.loaded / e.total);
-		});
+		const [gltf, extra] = await Promise.all([
+			loader.loadAsync(url, (e) => {
+				if (e.total) onProgress(e.loaded / e.total);
+			}),
+			kit ? loader.loadAsync(kit.url) : null
+		]);
 		const root = gltf.scene;
+		if (kit && extra) {
+			for (const name of kit.drop) root.getObjectByName(name)?.removeFromParent();
+			for (const o of [...extra.scene.children]) root.add(o);
+		}
 		this.labRoot = root;
 		this.scene.add(root);
 		root.updateMatrixWorld(true);
@@ -279,6 +299,7 @@ export class LabScene {
 
 		const glassTint = new Color('#dcebf2');
 		const amberTint = new Color('#6a3208');
+		const cobaltTint = new Color('#1a2fb8');
 		const glasses: Mesh[] = [];
 		root.traverse((o) => {
 			this.nodes.set(o.name, o);
@@ -321,7 +342,8 @@ export class LabScene {
 			g.visible = true;
 			const name = (g.material as Material).name;
 			if (!glassMats.has(name)) {
-				const make = (side: Side) => (name === 'GlassAmber' ? glassMaterial(amberTint, 0.32, env, side) : glassMaterial(glassTint, name === 'GlassLens' ? 0.1 : 0.045, env, side));
+				const make = (side: Side) =>
+					name === 'GlassAmber' ? glassMaterial(amberTint, 0.32, env, side) : name === 'GlassCobalt' ? glassMaterial(cobaltTint, 0.42, env, side) : glassMaterial(glassTint, name === 'GlassLens' ? 0.1 : 0.045, env, side);
 				glassMats.set(name, [make(BackSide), make(FrontSide)]);
 			}
 			const [backMat, frontMat] = glassMats.get(name)!;
@@ -351,6 +373,9 @@ export class LabScene {
 			}
 		});
 
+		// a kit's piece held as one of the room's is (its `like` extra)
+		for (const o of this.nodes.values()) if (typeof o.userData.like === 'string') alias(o.name, o.userData.like);
+
 		// the liquids
 		root.traverse((o) => {
 			if (!o.userData.inner) return;
@@ -364,16 +389,23 @@ export class LabScene {
 
 		// thin or hollow tools get an invisible box to click; it lives outside the scene so the outline never draws it
 		const hidden = new MeshBasicMaterial({ visible: false });
-		for (const name of ['Pipette', 'GlassRod', 'Thermometer', 'Spatula', 'Lighter', 'FilterPaper', 'Goggles', 'GasTap', 'Bunsen']) {
+		// and so do the flat ones: a watch glass with its salt, a card
+		const flat = [...this.nodes.values()].filter((o) => o.userData.sample || o.userData.thin).map((o) => o.name);
+		for (const name of ['Pipette', 'GlassRod', 'Thermometer', 'Spatula', 'Lighter', 'FilterPaper', 'Goggles', 'GasTap', 'Bunsen', 'WireLoop', 'CobaltGlass', ...flat]) {
 			const node = this.nodes.get(name);
 			if (!node) continue;
 			// the liquid meshes were just added and have no world matrix yet: without this they count as sitting at the origin
 			node.updateWorldMatrix(true, true);
 			const inv = node.matrixWorld.clone().invert();
 			const box = new Box3();
+			// its own meshes: a part with a name of its own (a burette's stopcock) has its own box
+			const own = (c: Object3D) => {
+				for (let p: Object3D | null = c; p && p !== node; p = p.parent) if (p.userData.label) return false;
+				return true;
+			};
 			node.traverse((c) => {
 				const m = c as Mesh;
-				if (!m.isMesh) return;
+				if (!m.isMesh || !own(m)) return;
 				m.geometry.computeBoundingBox();
 				box.union(m.geometry.boundingBox!.clone().applyMatrix4(new Matrix4().multiplyMatrices(inv, m.matrixWorld)));
 			});
@@ -385,10 +417,12 @@ export class LabScene {
 			this.proxies.push(proxy);
 		}
 
-		for (const name of ['Pipette', 'Beaker', 'AcidBeaker', 'Goggles', 'Thermometer', 'GlassRod', 'Spatula', 'Lighter', 'FilterPaper', 'Funnel', 'ConicalFlask', 'EvapDish', 'CuOJar', 'CuOLid']) {
+		for (const name of ['Pipette', 'Beaker', 'AcidBeaker', 'Goggles', 'Thermometer', 'GlassRod', 'Spatula', 'Lighter', 'FilterPaper', 'Funnel', 'ConicalFlask', 'EvapDish', 'CuOJar', 'CuOLid', 'WireLoop', 'CobaltGlass']) {
 			const n = this.nodes.get(name);
 			if (n) this.rest.set(name, poseOf(n));
 		}
+		// and a kit's own pieces, whatever they are called
+		for (const o of this.nodes.values()) if (o.userData.pick && o.parent === root && canHold(o.name) && !this.rest.has(o.name)) this.rest.set(o.name, poseOf(o));
 		for (const o of [...this.nodes.values()]) if (o.userData.startHidden) o.visible = false;
 
 		// gauze and flame
@@ -409,8 +443,10 @@ export class LabScene {
 		}
 		// a room with its own plan lists every worktop
 		if (lighting?.plan?.benches.length) this.benches = lighting.plan.benches;
-		const clip = [new Plane(new Vector3(0, -1, 0), this.gauzeY + 0.0005)];
-		this.flame = new Flame(clip, () => this.gauzeY);
+		// under a gauze the flame is cut where it meets it and spreads; without one (no tripod on the bench) it is free
+		const gauze = !!(gz && wire);
+		const clip = gauze ? [new Plane(new Vector3(0, -1, 0), this.gauzeY + 0.0005)] : [];
+		this.flame = new Flame(clip, () => (gauze ? this.gauzeY : null));
 		if (this.look) this.flame.boost = 2.4;
 		this.nodes.get('FlameAnchor')?.add(this.flame.group);
 		this.lighterFlame = new Flame([], () => null);
@@ -430,7 +466,7 @@ export class LabScene {
 		}
 		this.scene.add(this.steam.points, this.powder.mesh, this.drops.mesh, this.stream.mesh);
 		if (this.look) {
-			const movable = [...this.nodes.values()].filter((o) => o.userData.pick && o.parent === root);
+			const movable = [...this.nodes.values()].filter((o) => (o.userData.pick || o.userData.blob) && !o.userData.noBlob && o.parent === root);
 			this.look.addBlobs(movable, this.benchY);
 		}
 		// what never moves is merged by material and frozen (optimize.ts), once everything above has read it

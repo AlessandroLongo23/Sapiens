@@ -64,8 +64,9 @@ export default function BernoulliTubo({ alt }: { alt?: string }) {
 			<Drawing f={f} label={alt}>
 				<Liquid f={f} pts={[...upper, ...[...lower].reverse()]} fill={LIQUID.acqua} />
 				<Vessel f={f} paths={[lower, upper]} />
-				<Arrow f={f} from={v(0.5, Y1)} to={v(0.5 + v1 * 0.35, Y1)} color={QTY.velocita} />
-				<Arrow f={f} from={v(X.b + 0.15, y2)} to={v(X.b + 0.15 + Math.min(v2 * 0.35, 1.55), y2)} color={QTY.velocita} />
+				<Arrow f={f} from={v(0.5, Y1)} to={v(0.5 + v1 * 0.19, Y1)} color={QTY.velocita} />
+				{/* one scale for the two speeds, 0,19 cm per m/s, with no ceiling: a faster stream has a longer arrow */}
+				<Arrow f={f} from={v(X.b + 0.15, y2)} to={v(X.b + 0.15 + v2 * 0.19, y2)} color={QTY.velocita} />
 				<Label f={f} at={v(1.0, Y1 - a - 0.05)} dir={v(0, -1)} upright size={14}>
 					1
 				</Label>

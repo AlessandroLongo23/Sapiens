@@ -31,7 +31,7 @@ export interface StudentLink {
 	status: LinkStatus;
 	subject: string | null;
 	progressShared: boolean;
-	tutor: { slug: string; firstName: string; lastInitial: string; headline: string; published: boolean };
+	tutor: { slug: string; firstName: string; lastInitial: string; headline: string; published: boolean; subjects: string[] };
 }
 
 export interface AgendaLesson {
@@ -47,7 +47,18 @@ export interface AgendaLesson {
 	status: LessonStatus;
 	proposedBy: Side;
 	seriesId: string | null;
+	/** What the lesson is on: one student can take more than one subject with the same tutor. */
+	subject: string | null;
+	/** Only the tutor reads these two: the price of an hour and whether the lesson has been paid. */
+	hourlyRate?: number | null;
+	paid?: boolean;
 }
+
+/** What a lesson is worth: its hours by the price of one. */
+export const lessonFee = (lesson: Pick<AgendaLesson, 'durationMin' | 'hourlyRate'>): number => ((lesson.hourlyRate ?? 0) * lesson.durationMin) / 60;
+
+const EURO = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 0 });
+export const euro = (amount: number): string => EURO.format(Math.round(amount * 100) / 100);
 
 export interface AgendaAssignment {
 	id: string;
@@ -151,6 +162,18 @@ export const addDay = shiftDay;
 /** Monday is 0. */
 export const weekdayOf = (day: string): number => (new Date(`${day}T00:00:00Z`).getUTCDay() + 6) % 7;
 
+/** A month (`YYYY-MM`) moved by a number of months. */
+export const shiftMonth = (month: string, by: number): string => new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)) - 1 + by, 1)).toISOString().slice(0, 7);
+
+/** The days a month's page shows: whole weeks, Monday first, from the week of the 1st to the week of the last day. */
+export function monthGrid(month: string): string[] {
+	const first = mondayOf(`${month}-01`);
+	const last = shiftDay(`${shiftMonth(month, 1)}-01`, -1);
+	const days: string[] = [];
+	for (let d = first; d <= last || weekdayOf(d) !== 0; d = shiftDay(d, 1)) days.push(d);
+	return days;
+}
+
 /** The same weekday, week after week, until the month of the first day ends: how the old agenda repeated a lesson. */
 export function weeklyUntilMonthEnd(day: string): string[] {
 	const days = [day];
@@ -206,15 +229,23 @@ export interface LessonInput {
 	place: string;
 	note: string;
 	repeat: boolean;
+	/** Empty: the subject of the student's link. */
+	subject: string | null;
+	/** Empty: the price on the tutor's profile. A student never sets it. */
+	hourlyRate: number | null;
 }
 
-export function parseLessonInput(body: Record<string, unknown>): LessonInput | string {
+export function parseLessonInput(body: Record<string, unknown>, subjects: ReadonlySet<string>): LessonInput | string {
 	if (!isDayString(body.day)) return 'Scegli il giorno.';
 	if (!isTime(body.time)) return "Scegli l'ora.";
 	const durationMin = Number(body.durationMin);
 	if (!Number.isInteger(durationMin) || durationMin < 15 || durationMin > 480) return 'Durata non valida.';
 	if (!isMode(body.mode)) return 'Scegli se online o in presenza.';
-	return { day: body.day, time: body.time, durationMin, mode: body.mode, place: text(body.place, 300), note: text(body.note, 500), repeat: body.repeat === true };
+	const subject = typeof body.subject === 'string' && body.subject ? body.subject : null;
+	if (subject && !subjects.has(subject)) return 'Materia non valida.';
+	const rate = body.hourlyRate === '' || body.hourlyRate == null ? null : Number(body.hourlyRate);
+	if (rate !== null && (!Number.isFinite(rate) || rate < 0 || rate > 500)) return 'Tariffa non valida.';
+	return { day: body.day, time: body.time, durationMin, mode: body.mode, place: text(body.place, 300), note: text(body.note, 500), repeat: body.repeat === true, subject, hourlyRate: rate === null ? null : Math.round(rate * 100) / 100 };
 }
 
 export interface AssignmentInput {

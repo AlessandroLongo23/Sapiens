@@ -1,5 +1,5 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
-import { handQuat, segFrames, SHAPES, type Chain, type FingerAngles, type Grip, type Shape, type Side, type ThumbAngles } from './grasp';
+import { handQuat, HOLDS, segFrames, SHAPES, type Chain, type FingerAngles, type Grip, type Shape, type Side, type ThumbAngles } from './grasp';
 import TABLE from './grips.json';
 
 /*
@@ -118,6 +118,21 @@ export const VARIANTS: Record<string, { id: string; label: string }[]> = {
 	Spatula: [{ id: 'preleva', label: 'per prelevare la polvere' }],
 	Lighter: [{ id: 'accendi', label: 'per accendere' }]
 };
+
+/**
+ * A piece of a kit held as another one is (its `like` extra: a second beaker, a numbered flask): it takes that one's
+ * surface model, its saved grips and their variants.
+ */
+export function alias(name: string, like: string) {
+	if (name === like) return;
+	if (SHAPES[like]) SHAPES[name] = SHAPES[like];
+	if (HOLDS[like]) HOLDS[name] = HOLDS[like];
+	if (VARIANTS[like]) VARIANTS[name] = VARIANTS[like];
+	for (const [key, spec] of Object.entries(saved)) {
+		const m = GRIP_KEY.exec(key);
+		if (m && m[1] === like) saved[gripKey(name, m[2] ?? '', m[3] ? Number(m[3]) : 1)] = spec;
+	}
+}
 
 /** The grip made from the shape alone, before any tuning. */
 export function autoSpec(name: string): GripSpec | null {

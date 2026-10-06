@@ -29,7 +29,13 @@ export const TUTOR_SUBJECTS: TutorSubject[] = [
 	{ id: 'database', name: 'Database', group: 'università' },
 	{ id: 'sistemi-operativi', name: 'Sistemi operativi', group: 'università' },
 	{ id: 'reti', name: 'Reti di calcolatori', group: 'università' },
-	{ id: 'teoria-segnali', name: 'Teoria dei segnali', group: 'università' }
+	{ id: 'teoria-segnali', name: 'Teoria dei segnali', group: 'università' },
+	{ id: 'algoritmi', name: 'Algoritmi e strutture dati', group: 'università' },
+	{ id: 'ingegneria-software', name: 'Ingegneria del software', group: 'università' },
+	{ id: 'computer-graphics', name: 'Computer graphics', group: 'università' },
+	{ id: 'ricerca-operativa', name: 'Ricerca operativa', group: 'università' },
+	{ id: 'logica', name: 'Logica', group: 'università' },
+	{ id: 'fisica-computazionale', name: 'Fisica computazionale', group: 'università' }
 ];
 
 export const TUTOR_LEVELS: { id: TutorLevel; name: string; short: string }[] = [

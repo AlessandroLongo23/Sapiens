@@ -29,18 +29,26 @@ Il 3 ottobre è arrivato l'editor di codice per informatica: Python, C e C++ ese
 
 Il 4 ottobre Alessandro ha dettato una visione larga dei lati tutor, docenti, genitori e scuole (sette idee nuove, vedi [[2026-10-04 Pensieri sulla visione, tutor docenti e scuole]]) e ha chiesto di partire dal lato tutor. Lo stesso giorno è scritta l'[[Agenda tutor]], sul modello del suo vecchio progetto AleRipetizioni: il tutor aggiunge gli studenti con un invito, assegna esercizi che entrano nel diario, fissa le lezioni, vede i progressi se lo studente li condivide, e i due si scrivono; il profilo pubblico mostra orari liberi e recensioni. Migrazione applicata, codice non ancora committato né pubblicato. Vedi [[2026-10-04 Agenda tutor]].
 
-Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas e i due principi della termodinamica, con 221 figure TikZ, 53 figure interattive, 926 flashcard e 49 generatori (283 livelli, 21 scene nuove). Pubblicato lo stesso giorno; quello che resta da correggere è in [[Fisica terzo anno, da sistemare]]. Vedi [[2026-10-06 Terzo anno di fisica]].
+Il 5 ottobre, verificato che il biennio delle quattro materie è completo (277 lezioni con teoria, formulario, flashcard ed esercizi), è scritto il terzo anno di matematica: 25 lezioni su funzioni, successioni e progressioni, coniche, esponenziali e logaritmi, statistica bivariata, con 482 flashcard, 79 piani con i cursori e 25 generatori (169 livelli). In produzione dal 6 ottobre (PR #41 e #42), insieme ai grafici negli esercizi e all'esercizio guidato nelle lezioni, tutti e due con un pilota sulla funzione esponenziale. Vedi [[2026-10-05 Terzo anno di matematica]] e [[2026-10-06 Grafici negli esercizi ed esercizio guidato]].
+
+Sempre il 5 ottobre il laboratorio di chimica ha il secondo esperimento, i saggi alla fiamma: sette sali, una miscela e due campioni incogniti da riconoscere dal colore della fiamma, con un'ansa al nichel-cromo e un vetro al cobalto. Il kit è un file a parte che la pagina aggiunge alla stanza, e la chimica è uno stato cambiato solo da azioni. Nel codice locale, non committato. Vedi [[2026-10-05 Saggi alla fiamma]].
+
+Il 6 ottobre il laboratorio di chimica ha il terzo esperimento, la titolazione acido-base: un acido cloridrico incognito, una buretta di NaOH 0,100 mol/L e la fenolftaleina, con una titolazione di prova e due accurate. La buretta la legge lo studente su una lente, e nei conti entra il valore che scrive lui. Nel codice locale, non committato. Vedi [[2026-10-06 Titolazione acido-base]].
+
+Lo stesso giorno il quaderno del laboratorio è stato rifatto: si apre con B, il mouse torna un cursore, e ha pagine di strumenti, passi, tabelle da compilare e appunti, in formato A5. Nella titolazione letture e calcoli li scrive lo studente. Il salvataggio nello Zaino è da fare. Vedi [[2026-10-06 Quaderno di laboratorio]].
 
 Il 6 ottobre è scritto il terzo anno di chimica: 33 lezioni nuove (struttura elettronica, nucleo e radioattività, sistema periodico, legami, forma delle molecole, forze intermolecolari, nomenclatura), che con le due già scritte fanno le 35 dell'albero, con 651 flashcard, 119 figure TikZ, 43 figure interattive e 33 generatori (187 livelli). In produzione dal 6 ottobre (PR #45 e #46); i punti ancora aperti sono in [[Agenda]]. Vedi [[2026-10-06 Terzo anno di chimica]].
+
+Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas e i due principi della termodinamica, con 221 figure TikZ, 53 figure interattive, 926 flashcard e 49 generatori (283 livelli, 21 scene nuove). Pubblicato lo stesso giorno; quello che resta da correggere è in [[Fisica terzo anno, da sistemare]], [[Matematica terzo anno, da sistemare]]. Vedi [[2026-10-06 Terzo anno di fisica]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]], [[Grafico di funzioni]], [[Editor di codice]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]], [[Grafico di funzioni]], [[Geometria analitica nel plotter]], [[Editor di codice]], [[Sandbox di fisica]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
-- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]], [[Domande per Andrea]], [[Fisica terzo anno, da sistemare]]
+- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]], [[Domande per Andrea]], [[Fisica terzo anno, da sistemare]], [[Programma di intelligenza artificiale]], [[Confronto del programma di intelligenza artificiale con i syllabus universitari]], [[Corsi universitari da aggiungere]]
 - **Business:** [[Piani e prezzi]], [[Margini per cliente]], [[Vendita alle scuole]]
 - **Marketing:** [[Piano di acquisizione]], [[Creator]], [[SEO]], [[Social]], [[Stagionalità]]
 - **Legale:** [[GDPR e minori]], [[Consulenze IDA]], [[Contratti con le scuole]], [[AI Act]], [[Società e IVA]], [[Tutela del consumatore]], [[Accordi del team]]
@@ -49,18 +57,32 @@ Il 6 ottobre è scritto il terzo anno di chimica: 33 lezioni nuove (struttura el
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, l'ultima è [[2026-10-06 Terzo anno di chimica]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, le ultime sono [[2026-10-06 Terzo anno di fisica]] e [[2026-10-06 Schede di livelli e materie]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-06 Le lezioni hanno un esercizio guidato, con fermate non fisse]]
+- [[2026-10-06 Gli esercizi mostrano grafici, dalla funzione al grafico e dal grafico alla funzione]]
+- [[2026-10-06 Il quaderno del laboratorio si apre con B ed è una pagina in cui si scrive]]
+- [[2026-10-06 Le pagine del quaderno di laboratorio sono A5 e finiscono nello Zaino]]
+- [[2026-10-05 Il primo capitolo di intelligenza artificiale sono le reti neurali]]
+- [[2026-10-05 I corsi universitari non hanno una misura fissa]]
+- [[2026-10-05 Ogni blocco dell'intelligenza artificiale è un corso a sé]]
+- [[2026-10-05 Il corso di intelligenza artificiale ha quattro blocchi ordinati da un grafo dei prerequisiti]]
+- [[2026-10-05 Le lezioni universitarie di intelligenza artificiale le rilegge Alessandro]]
+- [[2026-10-05 La sandbox di fisica ha un motore nostro, basato sui vincoli]]
+- [[2026-10-05 La prima sandbox ha corpi che non ruotano, con statica e moto insieme]]
+- [[2026-10-04 L'editor di codice ha i progetti a più file, accanto allo snippet]]
 - [[2026-10-04 I programmi dell'editor si salvano con nome, come i grafici]]
 - [[2026-10-04 L'editor di codice ha anche JavaScript e le pagine web]]
 - [[2026-10-04 I programmi dell'editor girano in un iframe senza l'origine del sito]]
 - [[2026-10-03 L'informatica si pubblica gratis lotto per lotto, come fisica e chimica]]
 - [[2026-10-03 L'editor di codice ha Python, C e C++, tutti eseguiti nel browser]]
+- [[2026-10-03 Il laboratorio ha il suo link nella navbar]]
 - [[2026-10-03 Il laboratorio si gioca anche con il controller]]
 - [[2026-10-02 Nel laboratorio prendere e posare sono istantanei, senza il gesto di avvicinamento]]
 - [[2026-10-02 Nel laboratorio il mouse prende e posa, Q ed E usano le mani]]
+- [[2026-10-02 Nelle lezioni la figura resta e il piano la sostituisce con Prova tu]]
 - [[2026-10-03 I grafici del plotter si salvano con nome e si mettono nelle note]]
 - [[2026-10-03 Il piano di una lezione dichiara cosa è permesso]]
 - [[2026-10-02 Le parole del plotter stanno in un elenco solo, con i nomi italiani]]
@@ -96,12 +118,12 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-29 Nel laboratorio condiviso niente chat, solo segnali]]
 - [[2026-09-29 Il laboratorio condiviso si costruisce insieme al motore]]
 - [[2026-09-29 Il motore dei laboratori è stato serializzabile cambiato solo da azioni]]
-- [[2026-09-29 Il prototipo del laboratorio va su master, fuori dall'indice e senza link]]
+- [[2026-09-29 Il prototipo del laboratorio va su master, fuori dall'indice e senza link]] (superata in parte)
 - [[2026-09-29 Il primo traguardo dei laboratori è il motore, in un laboratorio libero senza esperimenti]]
 - [[2026-09-29 Il laboratorio di chimica è un motore modulare su un catalogo ricavato dal programma]]
 - [[2026-09-29 I laboratori sono da computer, per i docenti alla LIM e gli studenti al pc]]
 - [[2026-09-29 I laboratori 3D partono subito, in parallelo ai lotti]]
-- [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]]
+- [[2026-09-29 Le figure di fisica sono TikZ, le interattive e quelle degli esercizi si disegnano con il kit]] (superata in parte)
 - [[2026-09-29 La fisica si pubblica gratis accanto alla beta]]
 - [[2026-09-29 Niente pagamenti per il marketing prima della registrazione moms]]
 - [[2026-09-28 Il nome si sceglie con una prova a voce, Articolo34 contro Sapiens e Volevasi]]
@@ -174,7 +196,7 @@ Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in
 - [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]]
 
 ## Idee
-Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]], [[Foto e modelli 3D degli elementi]], [[Verifiche digitali in modalità bloccata]], [[Aula virtuale]], [[Ricevimenti con i docenti]], [[Peer tutoring nelle scuole]], [[Punteggio di attività dei tutor]], [[Note condivise e lavori di gruppo]], [[Tutto dentro Sapiens]].
+Idee non ancora valutate, in `Idee/`: [[Passaparola in classe]], [[Pubblicità per chi non paga]], [[Grafici e simulazioni interattive]], [[Mascotte per materia]], [[Foto e soluzione]], [[Video brevi]], [[Video di spiegazione e di esercizi svolti]], [[Ripasso pianificato prima di una verifica]], [[AI sugli appunti]], [[Dettatura e scrittura a mano]], [[Registrazione e riassunto delle lezioni in classe]], [[Mappa dei prerequisiti]], [[Tipi di esercizio sui passaggi]], [[Foto e modelli 3D degli elementi]], [[Verifiche digitali in modalità bloccata]], [[Aula virtuale]], [[Ricevimenti con i docenti]], [[Peer tutoring nelle scuole]], [[Punteggio di attività dei tutor]], [[Note condivise e lavori di gruppo]], [[Tutto dentro Sapiens]], [[Esercizi con i grafici]], [[Esercizio guidato nelle lezioni]], [[Intelligenza artificiale in quinta e all'università]].
 
 ## Decisioni aperte più importanti
 Ognuna ha il dettaglio nella nota collegata.

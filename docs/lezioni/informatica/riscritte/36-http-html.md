@@ -17,6 +17,38 @@ Le parole che servono per parlarne sono poche:
 
 Una pagina web, quando viaggia dal server al browser, è un file di testo scritto in un linguaggio che si chiama HTML (HyperText Markup Language). Il file contiene le parole della pagina insieme a delle indicazioni: qui c'è un titolo, qui comincia un paragrafo, qui va un'immagine che si trova a quest'indirizzo, questa frase è un link che porta a quest'altro indirizzo. Il browser legge le indicazioni e disegna la pagina. Le immagini e i video non stanno dentro il file della pagina: sono file separati, che il browser chiede uno per uno.
 
+Qui sotto ci sono i file di due pagine di un piccolo sito, e sotto i file la pagina come la disegna il browser. Le indicazioni sono le scritte tra `<` e `>`: `<h1>` apre un titolo, `<p>` un paragrafo, `<a href="...">` un link, e la stessa scritta con la barra, come `</h1>`, lo chiude. Fai clic sul link nella pagina: si apre l'altra, che ha il suo file nella seconda linguetta. Poi cambia le parole tra `<h1>` e `</h1>` e premi "Esegui": la pagina viene ridisegnata. Infine scrivi `voti.html` al posto di `orario.html` dentro `href` ed esegui: il link non si apre più, perché nel sito una pagina con quel nome non c'è.
+
+```codice index.html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Classe 2B</title>
+</head>
+<body>
+    <h1>La classe 2B</h1>
+    <p>Siamo in ventiquattro, nell'aula 14.</p>
+    <a href="orario.html">Guarda l'orario</a>
+</body>
+</html>
+```
+
+```codice orario.html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Orario</title>
+</head>
+<body>
+    <h1>L'orario del lunedì</h1>
+    <p>Matematica, italiano, informatica.</p>
+    <a href="index.html">Torna alla classe</a>
+</body>
+</html>
+```
+
 ```ad-warning
 Il browser non è il motore di ricerca
 Il browser è un programma installato sul tuo dispositivo, e serve ad aprire le pagine. Il motore di ricerca è un sito, cioè una pagina tra le tante, che ti aiuta a [trovare le altre](/materiale/scuola-superiore/informatica/internet-e-il-web/cercare-e-valutare-le-informazioni-in-rete). Si confondono perché molti browser si aprono proprio su quella pagina. E il web non è Internet: è uno dei [servizi](/materiale/scuola-superiore/informatica/internet-e-il-web/internet-la-rete-delle-reti) che la usano.

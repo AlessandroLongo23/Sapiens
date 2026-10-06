@@ -1,7 +1,8 @@
 import { ConeGeometry, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 } from 'three';
 import type { LabScene } from './scene';
 import { FreeLab, REACH, keyOf, type FreeSnapshot, type Use } from './free';
-import type { Notebook, NotebookTask } from './notebook';
+import { parseNumber, type BookPage, type Notebook, type NotebookTask, type Verdict } from './notebook';
+import { bookOf } from '../quaderno/pagine';
 import { ease, orient } from './anim';
 import type { Side } from './grasp';
 import { SOLID_BULK, type LiquidBody } from './liquid';
@@ -302,6 +303,7 @@ export class Esperimento {
 				phases: [{ text: 'Lascia riposare la capsula per due giorni.', hint: 'Punta la capsula e premi {Q} o {E}.', check: () => this.rested }]
 			}
 		];
+		this.book();
 		const prev = s.onUpdate;
 		s.onUpdate = (dt) => {
 			prev(dt);
@@ -366,13 +368,51 @@ export class Esperimento {
 		return out;
 	}
 
+	/** The notebook's own page for this experiment: the sums of the yield, and what was seen. */
+	private book() {
+		const forms: BookPage[] = [
+			{
+				kind: 'form',
+				id: 'dati',
+				tab: 'Dati e calcoli',
+				title: 'Dati e calcoli',
+				blocks: [
+					{ type: 'text', text: 'CuO + H₂SO₄ → CuSO₄ + H₂O. Nel becher: 25,0 mL di H₂SO₄ 1,00 mol/L. Masse molari: CuO 79,55 g/mol, CuSO₄·5H₂O 249,68 g/mol.' },
+					{
+						type: 'fields',
+						items: [
+							{ label: 'Moli di H₂SO₄ nel becher', field: { id: 'molAcido', kind: 'number', unit: 'mol', step: 0.001, decimals: 3, width: 7 } },
+							{ label: "CuO che reagisce con tutto l'acido", field: { id: 'massaCuO', kind: 'number', unit: 'g', step: 0.01, decimals: 2, width: 7 } },
+							{ label: 'Resa teorica di CuSO₄·5H₂O', field: { id: 'resaTeorica', kind: 'number', unit: 'g', step: 0.01, decimals: 2, width: 7 } }
+						]
+					},
+					{ type: 'heading', text: 'Osservazioni' },
+					{ type: 'lines', id: 'osservazioni', rows: 13, placeholder: 'Il colore della soluzione, cosa resta sul filtro, come sono i cristalli…' }
+				]
+			}
+		];
+		this.notebook.setPages(bookOf('solfato-di-rame', forms));
+		const right: Record<string, [number, number, string]> = {
+			molAcido: [0.025, 0.0005, 'Moli = concentrazione per volume in litri: 1,00 mol/L · 0,0250 L.'],
+			massaCuO: [0.025 * M_CUO, 0.02, "Una mole di CuO per una di acido: le moli dell'acido per la massa molare di CuO."],
+			resaTeorica: [0.025 * M_PENTA, 0.03, "Da una mole di acido viene una mole di solfato: le moli dell'acido per 249,68 g/mol."]
+		};
+		this.notebook.verify = (id, text): Verdict => {
+			const r = right[id];
+			if (!r) return null;
+			const v = parseNumber(text);
+			if (v === null) return { ok: false, hint: 'Scrivi un numero, con la virgola per i decimali.' };
+			return Math.abs(v - r[0]) <= r[1] ? { ok: true } : { ok: false, hint: r[2] };
+		};
+	}
+
 	/** The notebook's pages: the step, why it is done so, its phases; at the end, the results. */
 	private page() {
 		if (this.report) {
 			this.notebook.draw({
 				kicker: 'Esperimento concluso',
 				title: 'I tuoi cristalli',
-				intro: 'Cristalli azzurri di CuSO₄·5H₂O: ogni unità di sale lega cinque molecole d’acqua, che danno il colore.',
+				intro: "Cristalli azzurri di CuSO₄·5H₂O: ogni unità di sale lega cinque molecole d'acqua. Senza l'acqua di cristallizzazione il sale è bianco.",
 				rows: this.report.rows,
 				steps: 'Come è andata',
 				tasks: this.report.notes.map((n) => ({ text: n.text, state: n.good ? 'done' : 'bad' })),
@@ -389,7 +429,8 @@ export class Esperimento {
 			intro: def.why,
 			tasks,
 			hint: def.phases[this.phase].hint,
-			done: null
+			done: null,
+			outline: this.steps.map((x, i) => ({ title: x.title, state: i < this.step ? 'done' : i === this.step ? 'now' : 'todo' }))
 		});
 	}
 
@@ -1225,7 +1266,7 @@ export class Esperimento {
 		if (moved) {
 			this.page();
 			this.emit();
-			if (this.done) this.notebook.open = true;
+			if (this.done) this.free.openBook('steps');
 		}
 
 		this.emitT += dt;

@@ -109,6 +109,19 @@ Il conto vale solo per le password scelte a caso
 
 Dodici lettere a caso sono robuste ma difficili da ricordare. Un'alternativa è la **frase d'accesso** (in inglese passphrase): alcune parole comuni scelte a caso e scritte di seguito, come `tavolo-nuvola-mirtillo-treno-sette`. Il conto è lo stesso, con le parole al posto dei caratteri: pescando $5$ parole da un elenco di $2000$, le frasi possibili sono $2000^5 = 3{,}2 \cdot 10^{16}$, un numero dello stesso ordine di grandezza di quello delle password di $12$ minuscole, e una frase si ricorda molto meglio. Anche qui conta il caso: il verso di una canzone o un proverbio non sono parole a caso.
 
+Il conto si può rifare con qualunque coppia di numeri. Il programma qui sotto, in Python, calcola le combinazioni e il tempo che serve per provarle tutte a un miliardo di tentativi al secondo, in secondi, in giorni e in anni: `**` è l'elevamento a potenza, e $86\,400$ sono i secondi di un giorno. Non serve saper programmare: premi "Esegui", poi cambia i numeri delle prime due righe ed esegui di nuovo. Prova $k = 62$ con $n = 8$ e $k = 26$ con $n = 12$, le altre due righe della tabella, poi $k = 2000$ con $n = 5$ per la frase di cinque parole.
+
+```codice python
+k = 26
+n = 8
+combinazioni = k ** n
+secondi = combinazioni / 10 ** 9
+print("Combinazioni:", combinazioni)
+print("Secondi:", secondi)
+print("Giorni:", secondi / 86400)
+print("Anni:", secondi / 86400 / 365)
+```
+
 ## Una password diversa per ogni account
 
 Se usi la stessa password per il gioco, la posta e un social, la sicurezza di tutti e tre è quella del sito più trascurato dei tre. Quando a quel sito vengono rubati i dati, chi li ha in mano prova le stesse credenziali altrove, e le trova valide.

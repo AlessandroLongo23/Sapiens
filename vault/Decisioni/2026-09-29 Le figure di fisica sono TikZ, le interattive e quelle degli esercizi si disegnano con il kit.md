@@ -27,6 +27,7 @@ Sulla quantità di figure non c'è una regola: si decide lezione per lezione (Al
 - Ogni grafico che dovrà diventare interattivo ha nel sorgente la riga `% poi-interattivo:` con quello che si potrà fare, così si ritrova. I grafici non usano pgfplots, che pure c'è, perché le lezioni di matematica disegnano i grafici con gli assi e `plot` di TikZ: così hanno lo stesso aspetto (Claude, 29 settembre 2026, scrivendo le convenzioni). Quando arriva il componente, l'SVG statico resta nella cornice della figura per Google e per chi non ha JavaScript, e il componente si monta sopra. Oggi un blocco `interattivo` viene pubblicato come una cornice vuota (`src/lib/utils/interactive.ts`), quindi questo va cambiato.
 - Serve una convenzione di colori per grandezza (forze, velocità, accelerazione, campi), uguale nel TikZ e nel kit: domanda in [[Domande per Andrea]].
 - Aggiornate [[Grafici e simulazioni interattive]], [[Pipeline lezioni]], [[Pipeline esercizi]], [[Agenda]] e `Home.md`.
+- Superata in parte il 5 ottobre 2026: la [[Sandbox di fisica]] ha un motore, scritto da noi ([[2026-10-05 La sandbox di fisica ha un motore nostro, basato sui vincoli]]). Per le figure delle lezioni e per le scene degli esercizi "niente motore fisico" resta valido.
 
 ## Collegamenti
 - [[2026-09-28 Figure interattive nelle lezioni]]

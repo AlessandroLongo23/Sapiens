@@ -31,6 +31,19 @@ Il grafico del volume in funzione della temperatura in gradi Celsius è una rett
 \node[below, red] at (0.42,0) {\small $-273$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: charles-rette-zero-assoluto-cursore
+% alt: La retta del volume in funzione della temperatura in gradi Celsius, con il cursore di V0, il volume a 0 gradi Celsius, da 0,3 a 1,6 litri, e la retta della figura, con V0 uguale a 1,0 litri, tratteggiata per confronto: cambiando V0 la retta cambia pendenza, ma incontra l'asse delle temperature sempre nello stesso punto, a meno 273 gradi Celsius, segnato in rosso
+curva: y=a\left(1+\frac{x}{273}\right)
+curva: y=1+\frac{x}{273} | tratteggiata | grigio
+curva: Z=\left(-273;0\right) | rosso
+cursore: a = 1,4 da 0,3 a 1,6 passo 0,1
+finestra: x da -300 a 210, y da 0 a 1,8
+forma: 4:3
+assi: t (°C), V (L)
+valore: V_0 = a
+domanda: Il cursore $a$ è $V_0$, il volume a $0\,^\circ\text{C}$: a un'altra pressione lo stesso gas ne ha uno diverso. Muovilo: la retta cambia pendenza, ma dove incontra l'asse delle temperature?
+```
 
 ## Lo zero assoluto e la temperatura in kelvin
 

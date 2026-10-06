@@ -175,6 +175,7 @@ confronta capitoli e lezioni separatamente, quindi è ammesso.
 ## chimica-analitica | Idrolisi, tamponi e titolazioni
 - chim-idrolisi | Neutralizzazione e idrolisi salina
 - chim-soluzioni-tampone | Le soluzioni tampone
+- chim-ph-miscele | Il pH dopo una reazione tra acido e base
 - chim-indicatori | Gli indicatori acido-base
 - titolazioni | La titolazione acido-base
 
@@ -187,6 +188,7 @@ confronta capitoli e lezioni separatamente, quindi è ammesso.
 - pile | Le pile
 - chim-potenziali-standard | I potenziali standard di riduzione
 - chim-forza-elettromotrice | Forza elettromotrice e spontaneità delle redox
+- chim-nernst | L'equazione di Nernst
 - chim-pile-accumulatori | Pile e accumulatori di uso comune
 - chim-elettrolisi | L'elettrolisi e le leggi di Faraday
 

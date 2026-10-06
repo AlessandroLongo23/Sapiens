@@ -399,6 +399,20 @@ Se $k$ è negativo o zero le regole dei valori interni ed esterni non servono: s
 | $\lvert x - 3 \rvert > 0$ | $x \neq 3$ | è positivo tranne dove l'argomento è zero |
 | $\lvert x - 3 \rvert \geq 0$ | ogni $x$, $S = \mathbb{R}$ | non è mai negativo |
 
+Tutti i casi, con $k$ positivo, nullo o negativo, si vedono spostando la retta $y = k$ sul grafico di $y = |x - 3|$: la disequazione $|x - 3| < k$ vale per gli $x$ in cui il grafico sta sotto la retta, $|x - 3| > k$ per quelli in cui sta sopra.
+
+```grafico
+% nome: valore-assoluto-retta-k-cursore
+% alt: Il grafico di y = |x - 3|, una V con il vertice in (3; 0), e la retta orizzontale y = k con il cursore di k: è colorata la parte di piano dove |x - 3| è minore di k, oppure quella dove è maggiore; con k negativo o nullo la prima sparisce e la seconda prende tutto il piano, tranne x = 3 quando k = 0
+curva: y=\left|x-3\right|
+curva: y=k | rosso
+scelta: < k :: \left|x-3\right|<k
+scelta: > k :: \left|x-3\right|>k
+cursore: k = 2 da -3 a 6 passo 0,5
+finestra: x da -4 a 10, y da -4 a 7
+domanda: Abbassa $k$ fino a $0$ e poi a $-2$: che cosa resta colorato con $<$? E con $>$? Confronta con le righe della tabella.
+```
+
 ```ad-warning
 Applicare la regola con k negativo
 Da $|2x - 1| < -3$ c'è chi scrive $3 < 2x - 1 < -3$, che non ha senso, oppure risolve un sistema che per caso dà qualche soluzione. La disequazione è impossibile, e lo si vede prima di fare conti: a sinistra c'è un numero positivo o nullo, a destra un negativo.

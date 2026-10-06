@@ -130,7 +130,7 @@ Il peso vale $P = m\,g = 4{,}0\,\text{kg} \cdot 9{,}8\,\text{m/s}^2 = 39{,}2\,\t
 
 $$W = \vec{P} \cdot \vec{s} = P\,s\cos\alpha = 39{,}2\,\text{N} \cdot 2{,}5\,\text{m} \cdot \cos 115^\circ = -41{,}4\ldots\,\text{J} \approx -41\,\text{J}$$
 
-Il lavoro è negativo: il peso si oppone alla salita. Il controllo è immediato: la cassa sale di $h = 2{,}5\,\text{m} \cdot \sin 25^\circ = 1{,}06\,\text{m}$, e $-m\,g\,h = -39{,}2\,\text{N} \cdot 1{,}06\,\text{m} = -41\,\text{J}$.
+Il lavoro è negativo: il peso si oppone alla salita. Il controllo è immediato: la cassa sale di $h = 2{,}5\,\text{m} \cdot \sin 25^\circ = 1{,}057\,\text{m}$, e $-m\,g\,h = -39{,}2\,\text{N} \cdot 1{,}057\,\text{m} = -41{,}4\ldots\,\text{J} \approx -41\,\text{J}$.
 ```
 
 ```ad-warning
