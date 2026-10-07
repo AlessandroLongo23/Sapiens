@@ -172,6 +172,21 @@ Con le rette in forma esplicita $y = mx + q$ e $y = m'x + q'$ il confronto è pi
 
 Due rette con pendenze diverse prima o poi si incontrano; due rette con la stessa pendenza si incontrano solo se partono dallo stesso punto dell'asse $y$, e allora sono la stessa retta. Le rette verticali $x = h$ non hanno forma esplicita e non hanno $m$: due rette verticali sono parallele (o coincidenti, se $h$ è lo stesso), mentre una retta verticale e una non verticale sono sempre incidenti, come nell'esempio 3. Il parallelismo come condizione su $m$ si studia nella lezione [Rette parallele e perpendicolari](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/rette-parallele-e-perpendicolari).
 
+Le tre righe della tabella sono tre posizioni dei cursori. La retta blu è $y = 2x - 1$ e resta ferma; la rossa è $y = mx + q$, e all'inizio è la retta $y = -x + 5$ dell'esempio 1.
+
+```grafico
+% nome: rette-incidenti-parallele-coincidenti-cursori
+% alt: La retta y = 2x - 1 e la retta y = mx + q con i cursori di m e di q e le coordinate del punto comune P: con m diverso da 2 le rette sono incidenti, con m = 2 sono parallele e P non esiste, con m = 2 e q = -1 coincidono
+curva: y=2x-1
+curva: y=mx+q | rosso
+curva: P=\left(\frac{q+1}{2-m};\frac{2\left(q+1\right)}{2-m}-1\right) | nero
+cursore: m = -1 da -4 a 4 passo 0,5
+cursore: q = 5 da -6 a 6 passo 0,5
+finestra: x da -6 a 6, y da -5 a 7
+valore: P = \left(\frac{q+1}{2-m};\frac{2\left(q+1\right)}{2-m}-1\right)
+domanda: Porta $m$ a $2$: dove finisce il punto $P$? Poi porta anche $q$ a $-1$. E se lasci $q = -1$ e cambi $m$, dove si incontrano le due rette?
+```
+
 ```ad-example
 Esempio 4: tre coppie di rette
 a) $r: 2x - 3y + 1 = 0$ e $s: 4x - 6y - 5 = 0$.

@@ -32,6 +32,18 @@ $$d(P, r) = \overline{PH}$$
 \fill (6,-1) circle (0.1) node[below left] {$Q$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: distanza-punto-retta-minimo-cursore
+% alt: Il punto P(4; 3), la retta r di equazione 3x + 4y - 14 = 0 e un punto Q che scorre sulla retta con il cursore della sua ascissa s, unito a P da un segmento tratteggiato: sotto il piano è scritta la lunghezza di PQ, che è più piccola quando PQ è perpendicolare alla retta
+curva: 3x+4y-14=0
+curva: P=\left(4;3\right) | nero
+curva: Q=\left(s;\frac{14-3s}{4}\right) | nero
+curva: \left(4+t\left(s-4\right);3+t\left(\frac{14-3s}{4}-3\right)\right) | rosso | tratteggiata | t da 0 a 1
+cursore: s = 6 da -2 a 8 passo 0,2
+finestra: x da -3 a 9, y da -3 a 6
+valore: \overline{PQ} = \sqrt{\left(s-4\right)^2+\left(\frac{14-3s}{4}-3\right)^2}
+domanda: Fai scorrere $Q$ sulla retta con il cursore $s$, la sua ascissa: qual è il valore più piccolo di $\overline{PQ}$? Come sta il segmento $PQ$ rispetto alla retta in quel momento?
+```
 
 Se $P$ sta sulla retta, $H$ coincide con $P$ e la distanza è $0$. Se $P$ non sta sulla retta, la distanza è un numero positivo.
 
@@ -331,6 +343,21 @@ Con due rette in forma esplicita che hanno lo stesso $m$, per esempio $y = 2x + 
 ```ad-warning
 La differenza delle q non è la distanza
 Tra $y = 2x + 1$ e $y = 2x - 4$ la differenza delle ordinate all'origine è $5$, ma quella è la lunghezza di un segmento verticale tra le due rette, non perpendicolare. La distanza è $\sqrt{5}$, circa $2{,}24$.
+```
+
+Lo vedi cambiando la pendenza delle due rette, $y = mx + 1$ e $y = mx + q$: sotto il piano ci sono la distanza $d$ e la differenza delle ordinate all'origine, cioè il tratto in verticale.
+
+```grafico
+% nome: distanza-parallele-differenza-q
+% alt: Le rette parallele y = mx + 1 e y = mx + q con i cursori di m e di q: sotto il piano sono scritte la distanza tra le due rette e la differenza delle ordinate all'origine, che coincidono solo quando le rette sono orizzontali
+curva: y=mx+1
+curva: y=mx+q | rosso
+cursore: m = 2 da -4 a 4 passo 0,5
+cursore: q = -4 da -6 a 6 passo 0,5
+finestra: x da -7 a 7, y da -6 a 6
+valore: d = \frac{\left|1-q\right|}{\sqrt{m^2+1}}
+valore: \text{in verticale} = \left|1-q\right|
+domanda: Porta $m$ a $0$: i due numeri diventano uguali? Poi aumenta $m$ senza toccare $q$: quale dei due cambia, e perché?
 ```
 
 ## Altezza e area di un triangolo

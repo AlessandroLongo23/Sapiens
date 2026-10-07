@@ -80,6 +80,19 @@ Sono distinte quando $k < \dfrac{3}{2}$, ma bisogna togliere $k = 1$, per cui l'
 La risposta: per $k < \dfrac{3}{2}$ e $k \neq 1$ due soluzioni distinte; per $k = 1$ una sola soluzione, $x = 2$; per $k = \dfrac{3}{2}$ due soluzioni coincidenti, $x = 3$; per $k > \dfrac{3}{2}$ nessuna soluzione reale.
 ```
 
+Gli stessi casi si vedono su un grafico. La curva $y = (k - 1)x^2 - 2kx + k + 3$ è una parabola, che studierai nella lezione [La parabola](/materiale/scuola-superiore/matematica/parabola-e-disequazioni-di-secondo-grado/la-parabola): per ora ti basta sapere che le soluzioni dell'equazione sono le ascisse dei punti in cui la curva incontra l'asse $x$.
+
+```grafico
+% nome: equazione-parametrica-curva-cursore-k
+% alt: La curva y = (k - 1)x² - 2kx + k + 3 con il cursore di k e i valori del discriminante ridotto e del coefficiente a: per k minore di 3/2 taglia l'asse x in due punti, per k = 1 diventa una retta che lo taglia solo in 2, per k = 3/2 lo tocca in 3 e per k maggiore non lo incontra
+curva: y=\left(k-1\right)x^2-2kx+k+3
+cursore: k = 0 da -4 a 4 passo 0,5
+finestra: x da -6 a 10, y da -6 a 8
+valore: \frac{\Delta}{4} = 3-2k
+valore: a = k-1
+domanda: Porta $k$ a $1$: che cosa diventa la curva, e in quanti punti incontra l'asse $x$? Poi porta $k$ a $1{,}5$ e a $2$.
+```
+
 ```ad-warning
 Il meno davanti al prodotto
 In $(-k)^2 - (k - 1)(k + 3)$ il meno cambia segno a tutto il prodotto: prima si svolge $(k - 1)(k + 3) = k^2 + 2k - 3$ tra parentesi, poi si toglie. Scrivere $k^2 - k^2 + 2k - 3$ dà $2k - 3$, con il segno sbagliato.

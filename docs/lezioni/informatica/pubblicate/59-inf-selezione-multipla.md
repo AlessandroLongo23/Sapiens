@@ -65,7 +65,24 @@ In Python un `else` appartiene all'`if` che sta sulla sua stessa colonna: sposta
 
 ## Più strade in fila: `elif` e `else if`
 
-Il registro elettronico trasforma un voto in un giudizio: ottimo da $9$ in su, buono da $7$, sufficiente da $6$, insufficiente sotto il $6$. Le strade sono quattro e i rombi tre, ognuno nel ramo del no di quello prima. Scritto con le selezioni annidate, come il termometro, il programma avrebbe tre livelli di rientro: a ogni caso in più scivola di un passo verso destra, e nel diagramma i rombi scendono in diagonale.
+Il registro elettronico trasforma un voto in un giudizio: ottimo da $9$ in su, buono da $7$, sufficiente da $6$, insufficiente sotto il $6$. Le strade sono quattro e i rombi tre, ognuno nel ramo del no di quello prima. Scritto con le selezioni annidate, come il termometro, il programma avrebbe tre livelli di rientro: a ogni caso in più scivola di un passo verso destra, e nel diagramma i rombi scendono in diagonale. Eseguilo con $7$: il primo rombo risponde no, il secondo sì, e il terzo non si accende. Il diagramma è più largo del suo riquadro: scorrilo verso destra per vedere il terzo rombo.
+
+```diagramma
+% nome: diagramma-flusso-giudizio-tre-rombi
+% alt: Diagramma di flusso con tre selezioni annidate: si legge voto; un primo rombo chiede se voto è maggiore o uguale a 9 e il ramo sì scrive "ottimo"; nel ramo no un secondo rombo chiede se voto è maggiore o uguale a 7 e il ramo sì scrive "buono"; nel suo ramo no un terzo rombo chiede se voto è maggiore o uguale a 6, con il ramo sì che scrive "sufficiente" e il ramo no che scrive "insufficiente"
+% ingresso: 7
+leggi voto
+se voto >= 9
+    scrivi "ottimo"
+altrimenti
+    se voto >= 7
+        scrivi "buono"
+    altrimenti
+        se voto >= 6
+            scrivi "sufficiente"
+        altrimenti
+            scrivi "insufficiente"
+```
 
 Quando la selezione interna sta sempre nel ramo dell'`else`, come qui, i due linguaggi hanno una scrittura che tiene tutte le condizioni sulla stessa colonna: `elif` in Python, `else if` in C++. È la **selezione a più vie**.
 

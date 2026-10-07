@@ -110,4 +110,6 @@ La tavola di oggi è ordinata per numero atomico crescente. Ha sette righe, i **
 \end{tikzpicture}
 ```
 
-Perché le proprietà si ripetono, e perché i periodi hanno $2$, $8$, $8$, $18$ elementi, lo spiega la disposizione degli elettroni, che si studia al terzo anno nella lezione [Gruppi, periodi e blocchi](/materiale/scuola-superiore/chimica/il-sistema-periodico/gruppi-periodi-e-blocchi).
+Tutti e sette i periodi, con le famiglie a colori e la scheda di ogni elemento, sono nella [tavola periodica interattiva](/strumenti/tavola-periodica).
+
+Perché le proprietà si ripetono, e perché i periodi hanno $2$, $8$, $8$, $18$ elementi, lo spiega la disposizione degli elettroni, che si studia al terzo anno nella lezione [Gruppi, periodi e blocchi](/materiale/scuola-superiore/chimica/il-sistema-periodico/gruppi-periodi-e-blocchi). Chi vuole vederla già adesso trova nello strumento [Orbitali atomici](/strumenti/orbitali-atomici) la tabella dei sottolivelli, che si riempie con gli elettroni dell'elemento scelto.

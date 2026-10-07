@@ -86,6 +86,12 @@ Quando le tre componenti sono uguali il pixel è un grigio, più chiaro quanto p
 
 Un colore RGB si scrive spesso in esadecimale, due cifre per componente: `#FF8000` vuol dire R $= \text{FF}_{16} = 255$, G $= 80_{16} = 128$, B $= 0$, cioè un arancione. Le cifre esadecimali sono spiegate nella lezione [Il sistema esadecimale](/materiale/scuola-superiore/informatica/i-sistemi-di-numerazione/il-sistema-esadecimale).
 
+La pagina qui sotto è un solo riquadro, colorato con `#FF8000`. Non serve conoscere il linguaggio in cui è scritta: cambia le sei cifre dopo il cancelletto e premi "Esegui". Prova `#FFFF00`, con rosso e verde al massimo e il blu spento, poi `#808080`, e cerca le cifre del ciano e del magenta della tabella.
+
+```codice index.html
+<div style="background: #FF8000; height: 120px"></div>
+```
+
 ```ad-warning
 Le luci non si mescolano come le tempere
 Con i colori a tempera rosso e verde danno un marrone, e tutti i colori insieme un colore scuro. Con le luci è il contrario: rosso e verde al massimo danno il giallo, e le tre luci al massimo danno il bianco. Il nero è l'assenza di luce, cioè $0$, $0$, $0$.

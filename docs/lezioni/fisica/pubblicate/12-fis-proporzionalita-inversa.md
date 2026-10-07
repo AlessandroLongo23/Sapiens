@@ -230,6 +230,25 @@ Davanti a una tabella di misure, si calcolano per ogni riga le grandezze che una
 
 Un modo veloce per scegliere da quale controllo partire è guardare due righe della tabella in cui $x$ raddoppia, se ci sono. Nella siringa, da $30$ a $60\ \text{cm}^3$ la pressione passa da $100$ a $50$ kPa: si dimezza, e il controllo da fare è il prodotto. Nel carrello, da $1{,}0$ a $2{,}0$ s la distanza passa da $11{,}8$ a $47{,}9$ cm: circa quattro volte, e il controllo da fare è $s/t^2$. Due righe suggeriscono la legge; per confermarla servono tutte.
 
+Prova tu: scegli una legge e sposta il punto $A$ lungo la curva. Il punto $B$ ha sempre la $x$ doppia di quella di $A$.
+
+```grafico
+% nome: se-x-raddoppia-quattro-leggi
+% alt: Un piano cartesiano con una curva da scegliere tra quattro leggi, diretta, lineare, inversa e quadratica, e due punti sulla curva: A, con la x scelta da un cursore tra 1 e 5, e B, con la x doppia. Sotto il piano sono scritte le y dei due punti: nella diretta la y di B è sempre il doppio di quella di A, nell'inversa la metà, nella quadratica il quadruplo, mentre nella lineare il rapporto cambia da un punto all'altro
+scelta: diretta :: f(x)=\begin{cases}0{,}8x & x>0\end{cases}
+scelta: lineare :: f(x)=\begin{cases}0{,}5x+3 & x>0\end{cases}
+scelta: inversa :: f(x)=\begin{cases}\frac{12}{x} & x>0\end{cases}
+scelta: quadratica :: f(x)=\begin{cases}0{,}1x^2 & x>0\end{cases}
+curva: A=\left(a;f(a)\right) | nero
+curva: B=\left(2a;f(2a)\right) | arancione
+cursore: a = 2 da 1 a 5 passo 1
+finestra: x da -1 a 11, y da -1 a 13
+forma: 3:2
+valore: y_A = f(a)
+valore: y_B = f(2a)
+domanda: Il cursore $a$ è la $x$ di $A$. Per ogni legge dividi $y_B$ per $y_A$, poi sposta $A$ e rifai il conto: in quale delle quattro leggi il risultato non resta lo stesso?
+```
+
 Il procedimento con i numeri esatti, senza incertezze, è nella lezione di matematica [Proporzionalità diretta e inversa](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/proporzionalita-diretta-e-inversa).
 
 ## Errori frequenti

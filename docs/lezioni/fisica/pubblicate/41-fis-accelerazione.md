@@ -161,6 +161,17 @@ Anche la lettura sui grafici è la stessa della velocità, spostata di un gradin
 \node[right, orange!90!black] at (4.8,2.5) {\small $\Delta v = 12$ m/s};
 \end{tikzpicture}
 ```
+```grafico
+% nome: retta-velocita-tempo-segni-cursori
+% alt: Il grafico velocità-tempo di un moto con accelerazione costante, una retta che parte dalla velocità iniziale v0 e ha per pendenza l'accelerazione a, con due cursori: v0 da -16 a 16 metri al secondo e a da -5 a 5 metri al secondo quadrato. Con a positiva la retta sale, con a negativa scende; quando si avvicina all'asse dei tempi il corpo frena, quando se ne allontana va sempre più veloce
+curva: \begin{cases}v_0+ax & x\ge0\end{cases}
+cursore: v_0 = 4 da -16 a 16 passo 1
+cursore: a = 2 da -5 a 5 passo 0,5
+finestra: x da -0,6 a 6,5, y da -20 a 20
+forma: 3:2
+assi: t (s), v (m/s)
+domanda: All'inizio la retta è quella dello scooter. Metti $v_0 = -16$ m/s e $a = 4$ m/s²: è il carrello dell'esempio 4, che a $1$ s va a $-12$ m/s e a $3$ s a $-4$ m/s. La retta sale, eppure il carrello frena finché la retta si avvicina all'asse dei tempi: in quale istante si ferma, e che cosa fa dopo? Poi prova $v_0 = -4$ e $a = -2$.
+```
 
 Il grafico velocità-tempo, con le sue pendenze e le sue aree, è l'argomento della lezione [Il grafico velocità-tempo](/materiale/scuola-superiore/fisica/il-moto-rettilineo/il-grafico-velocita-tempo).
 

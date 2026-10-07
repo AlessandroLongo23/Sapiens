@@ -174,6 +174,22 @@ Nel grafico spazio-tempo, quando $t_2$ si avvicina a $t_1$ la secante ruota into
 \fill (2,0.5) circle (2pt) node[above left] {$P$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: secante-diventa-tangente-cursore
+% alt: Il grafico spazio-tempo del carrello con il punto P a 2 secondi e 2 metri e un secondo punto Q, più avanti di un intervallo di tempo h che si cambia con un cursore da 4 a 0,1 secondi: la secante per P e Q, arancione, ruota intorno a P e si avvicina alla tangente tratteggiata, e sotto il piano la velocità media scende da 4 verso 2 metri al secondo
+curva: \begin{cases}\frac{1}{2}x^2 & x\ge0\end{cases}
+curva: 2+2\left(x-2\right) | tratteggiata | grigio
+curva: 2+\left(2+\frac{h}{2}\right)\left(x-2\right) | arancione
+curva: P=\left(2;2\right) | nero
+curva: Q=\left(2+h;\frac{1}{2}\left(2+h\right)^2\right) | arancione
+cursore: h = 4 da 0,1 a 4 passo 0,1 anima
+finestra: x da -0,6 a 7, y da -2 a 20
+forma: 3:2
+assi: t (s), s (m)
+valore: \Delta t = h
+valore: v_m = 2+\frac{h}{2}
+domanda: Il cursore $h$ è l'intervallo $\Delta t$ tra $P$ e $Q$, in secondi. Portalo verso zero: a quale valore, in m/s, si avvicina la velocità media $v_m$? La retta tratteggiata è la tangente in $P$.
+```
 
 ```ad-note
 Il limite e la derivata

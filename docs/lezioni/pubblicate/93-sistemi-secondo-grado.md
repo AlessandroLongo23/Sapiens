@@ -232,6 +232,20 @@ La risolvente ha $\Delta = 9 - 12 = -3$, negativo: non ha soluzioni, e il sistem
 ```
 ```
 
+I tre esempi sono tre posizioni della stessa retta $y = mx + q$. Muovila tu: sotto il piano c'è il discriminante della risolvente $x^2 - (m + 2)x - 3 - q = 0$.
+
+```grafico
+% nome: retta-parabola-secante-tangente-esterna
+% alt: La parabola y = x² - 2x - 3 e la retta y = mx + q con i cursori di m e di q e il discriminante dell'equazione risolvente: con il discriminante positivo la retta è secante, con il discriminante nullo è tangente, con il discriminante negativo è esterna
+curva: y=x^2-2x-3
+curva: y=mx+q | rosso
+cursore: m = 1 da -3 a 5 passo 0,5
+cursore: q = -3 da -10 a 3 passo 0,5
+finestra: x da -5 a 7, y da -9 a 5
+valore: \Delta = \left(m+2\right)^2+4\left(3+q\right)
+domanda: Con $m = 2$ abbassa $q$ finché $\Delta = 0$: in quale punto la retta tocca la parabola? Poi torna a $m = 1$ e scendi fino a $q = -6$.
+```
+
 ```ad-note
 Le rette verticali
 Una retta parallela all'asse $y$, come $x = 1$, incontra la parabola $y = x^2 - 2x - 3$ in un punto solo: sostituendo $x = 1$ si ha $y = 1 - 2 - 3 = -4$, e il sistema ha la sola soluzione $(1, -4)$. La retta però non è tangente: attraversa la parabola. Qui la risolvente non è di secondo grado, e la regola del discriminante non si applica.

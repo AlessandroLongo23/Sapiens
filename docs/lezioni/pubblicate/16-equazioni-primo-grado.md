@@ -243,6 +243,23 @@ $$
 Qualunque numero moltiplicato per $0$ dà $0$, quindi l'uguaglianza è vera per ogni $x$. L'equazione è indeterminata: $S = \mathbb{R}$.
 ```
 
+I tre casi si vedono anche nel piano cartesiano. Ogni membro di un'equazione di primo grado è una [funzione lineare](/materiale/scuola-superiore/matematica/relazioni-e-funzioni/proporzionalita-diretta-e-inversa) di $x$, quindi ha per grafico una retta, e la soluzione è l'ascissa del punto $P$ in cui le due rette si incontrano. Qui sotto la retta fissa è il primo membro dell'esempio 6, $y = 2x + 6$; l'altra è $y = mx + q$, e la cambi con i cursori.
+
+```grafico
+% nome: equazione-due-rette-tre-casi
+% alt: La retta fissa y = 2x + 6 e la retta y = mx + q, con i cursori di m e di q, e il punto P in cui si incontrano: sotto il piano è scritta l'ascissa di P, la soluzione dell'equazione 2x + 6 = mx + q; con m uguale a 2 le rette sono parallele e P non esiste, e se anche q è uguale a 6 le due rette coincidono
+curva: y=2x+6
+curva: y=mx+q
+curva: P=\left(\frac{q-6}{2-m};2\cdot\frac{q-6}{2-m}+6\right) | nero
+cursore: m = 1 da -2 a 4 passo 0,5
+cursore: q = 5 da 0 a 10 passo 0,5
+finestra: x da -8 a 8, y da -4 a 12
+valore: x = \frac{q-6}{2-m}
+domanda: Porta $m$ a $2$: le due rette si incontrano ancora? Poi porta anche $q$ a $6$.
+```
+
+Con $m = 2$ e $q = 5$ hai l'equazione dell'esempio 6: le rette sono parallele, non si incontrano mai e l'equazione è impossibile. Con $m = 2$ e $q = 6$ le due rette coincidono: ogni $x$ è soluzione, e l'equazione è indeterminata.
+
 ```ad-note
 $\mathbb{Q}$ oppure $\mathbb{R}$
 Nel primo anno molti libri scrivono $S = \mathbb{Q}$ per un'equazione indeterminata, perché i numeri reali non sono ancora stati introdotti. Il senso è lo stesso: è soluzione ogni numero dell'insieme in cui stai lavorando.

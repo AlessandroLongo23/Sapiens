@@ -393,6 +393,16 @@ A sinistra la parabola dell'esempio 7: ogni retta verticale la incontra una volt
 \end{scope}
 \end{tikzpicture}
 ```
+```grafico
+% nome: test-rette-verticali-cursore
+% alt: La retta verticale x = k, che si sposta con il cursore di k, sopra una curva da scegliere: la parabola y = x² - 2, che la incontra sempre una volta sola, e la curva y² = x, che la incontra due volte quando k è positivo
+scelta: y = x^2 - 2 :: y=x^2-2
+scelta: y^2 = x :: y^2=x
+curva: x=k | tratteggiata | grigio
+cursore: k = 1 da -3 a 5 passo 0,1
+finestra: x da -4 a 6, y da -5 a 5
+domanda: Scegli $y^2 = x$ e muovi $k$: per quali valori la retta $x = k$ incontra la curva due volte? Può essere il grafico di una funzione?
+```
 
 ```ad-warning
 Rette verticali e rette orizzontali
