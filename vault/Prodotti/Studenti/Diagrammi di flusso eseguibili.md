@@ -1,7 +1,7 @@
 ---
 stato: in produzione
 release:
-aggiornato: 2026-10-05
+aggiornato: 2026-10-07
 tag: [prodotto]
 ---
 # Diagrammi di flusso eseguibili
@@ -30,6 +30,7 @@ Costruito il 5 ottobre 2026 su proposta di Alessandro, in due passi (esecuzione,
 - Sul sito vero è stato eseguito fino in fondo il primo diagramma di ognuna delle cinque pagine, su Chromium.
 - Prove: `tests/unit/diagramma.test.mjs` (21, una esegue con Pyodide il Python generato e lo confronta con il diagramma), `tests/e2e/diagramma.spec.ts` (10, solo Chromium in sviluppo, con il mouse). Il C++ generato è stato compilato a mano su quattro programmi, con la stessa uscita del diagramma; non c'è una prova automatica. Lo script di controllo delle lezioni esegue ogni diagramma con i valori di `% ingresso:`.
 - Negli esercizi di informatica (dal 5 ottobre, PR #38) un diagramma si mostra, si sceglie tra quattro e si costruisce come risposta. Il diagramma consegnato viene eseguito dal server sulle prove e poi letto per i costrutti che il livello chiede (un ciclo, una selezione): [[2026-10-05 Secondo anno di informatica]].
+- Il linguaggio dei blocchi non ha funzioni né vettori. Per questo le 34 lezioni del terzo anno di informatica (65-98, scritte il 7 ottobre 2026 e non pubblicate) non hanno nessun blocco `diagramma`: al suo posto usano le figure a passi del kit di informatica, e gli esercizi usano programmi scritti a mano nei due linguaggi. Vedi [[2026-10-07 Terzo anno di informatica]].
 
 Codice: `src/lib/diagramma/` (`espressione.ts`, `blocco.ts`, `disegno.ts`, `esecuzione.ts`, `modifica.ts`, `codice.ts`), `src/components/diagramma/LessonChart.tsx`, `src/lib/utils/chart-figure.ts`.
 
@@ -55,6 +56,7 @@ Quello che manca dell'idea, non deciso:
 - I tipi dedotti per il C++ possono non essere quelli che lo studente si aspetta (una variabile che parte da 0 e poi prende un decimale è `double` dall'inizio). Da guardare con Andrea.
 - Una tabella con tutti i passi fatti (la tabella di traccia delle lezioni, compilata da sola) non c'è.
 - Le domande per Andrea su parole e divisione sono in [[Domande per Andrea]], sezione del 5 ottobre.
+- Funzioni e vettori nel linguaggio dei diagrammi, per usarli anche dal terzo anno: non discusso.
 
 ## Collegamenti
 - Attori: [[Studente]]
