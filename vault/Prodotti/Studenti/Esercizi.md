@@ -9,7 +9,7 @@ tag: [prodotto, studenti, contenuti]
 Esercizi con correzione immediata, collegati alle lezioni, con i progressi salvati.
 
 ## Stato attuale
-- 7 ottobre 2026, in un worktree (`Sapiens-informatica-terzo`), non committato e non pubblicato: i 34 generatori del terzo anno di informatica, 183 livelli, collegati in `index.ts`, `config.ts` e `level-names.ts`. Novità nel sistema:
+- 7 ottobre 2026, in produzione (PR #51): i 34 generatori del terzo anno di informatica, 183 livelli, collegati in `index.ts`, `config.ts` e `level-names.ts`. Novità nel sistema:
   - il modulo `src/lib/exercises/v2/inf-codice.ts`, con il controllo `scripts/exercises/checkers/_inf_codice.py`, per gli esercizi in cui il programma è scritto a mano nei due linguaggi (il linguaggio dei diagrammi non ha funzioni né vettori): un programma sotto la domanda, programmi come opzioni, mostrati in Python o in C++ a scelta dello studente; il brief è `docs/lezioni/informatica/brief-esercizi-codice.md`;
   - i frammenti `listing` (`ChoiceOption.listing`, `Sample.listing`, `Sample.solutionListing` in `types.ts`): un testo a larghezza fissa di HTML, CSS, JavaScript, JSON o CSV sotto la domanda o come opzione;
   - due costrutti nuovi che un livello aperto può chiedere, `funzione` (definita e chiamata dallo studente) e `vettore`, accanto a `ciclo`, `selezione`, `while`, `for` e `annidati` (`v2/costrutti.ts`);
