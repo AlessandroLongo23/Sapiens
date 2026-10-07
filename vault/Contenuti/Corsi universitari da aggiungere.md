@@ -1,7 +1,7 @@
 ---
 stato: bozza
 release: dopo la v1.0
-aggiornato: 2026-10-06
+aggiornato: 2026-10-07
 tag: [contenuti, programma, università, ricerca]
 ---
 # Corsi universitari da aggiungere
@@ -9,7 +9,7 @@ tag: [contenuti, programma, università, ricerca]
 Il 6 ottobre 2026 Alessandro ha chiesto di cominciare a pensare a quali altri corsi aggiungere all'università, guardando i corsi di matematica, fisica e ingegneria dei maggiori atenei italiani. Questa nota raccoglie la ricerca: è una base per decidere, non una decisione.
 
 ## Stato attuale
-L'università ha 11 corsi in quattro aree: Matematica (Analisi matematica I e II), Fisica (Fisica I e II), Informatica (Fondamenti di informatica), Intelligenza artificiale (sei corsi, vedi [[Programma di intelligenza artificiale]]). Dal 6 ottobre 2026 la pagina dell'università li chiama corsi e li filtra per area.
+Dal 7 ottobre 2026 l'università ha 14 corsi in cinque aree: Matematica (Analisi matematica I e II, Metodi matematici, Geometria e algebra lineare), Fisica (Fisica I e II), Chimica (Chimica), Informatica (Fondamenti di informatica), Intelligenza artificiale (sei corsi, vedi [[Programma di intelligenza artificiale]]). La pagina dell'università li chiama corsi e li filtra per area. Gli otto corsi di base hanno l'albero completo con le lezioni vuote.
 
 ## Cosa è stato controllato
 76 piani di studio di lauree triennali in 13 atenei, letti dalle pagine ufficiali il 6 ottobre 2026 da un agente di ricerca: Politecnico di Milano (Manifesto degli studi, A.A. 2026/27), Politecnico di Torino (pagine "Piano di studi", coorte 2027, anno accademico da verificare), Bologna (A.A. 2026/27), Padova, Pisa, Napoli Federico II, Firenze e Torino (Course Catalogue, A.A. 2025/26), Sapienza (A.A. 2026/27, pagine "in corso di aggiornamento"), Genova (guida della Scuola Politecnica, luglio 2026), Trento e Milano-Bicocca (solo Fisica, A.A. 2025/26). I piani per laurea: Ingegneria informatica, meccanica e gestionale 9 ciascuna, Fisica 9, Ingegneria elettronica e biomedica 8, Informatica 7, Matematica 6, Ingegneria aerospaziale 6, Ingegneria civile 5.
@@ -82,7 +82,38 @@ Otto filtri, tenendo i quattro di oggi:
 
 Economia e organizzazione aziendale resta fuori finché non c'è un'area gestionale.
 
+## Programmi dei corsi di base (7 ottobre 2026)
+Il 7 ottobre 2026 Alessandro ha notato che i cinque corsi esistenti sono segnaposto (da 3 a 8 lezioni ciascuno, tutte vuote) e ha chiesto capitoli e lezioni per gli esami comuni a tutte le ingegnerie. Le proposte, ricavate dai syllabus ufficiali di nove o dieci atenei per corso, sono in note separate:
+
+| Corso | Oggi | Proposta | Nota |
+|---|---|---|---|
+| Analisi matematica I | 5 capitoli, 8 lezioni | 11 capitoli, 98 lezioni | [[Programma di Analisi matematica I e II]] |
+| Analisi matematica II | 3 capitoli, 3 lezioni | 9 capitoli, 62 lezioni | [[Programma di Analisi matematica I e II]] |
+| Metodi matematici | non esiste | 5 capitoli, 35 lezioni | [[Programma di Analisi matematica I e II]] |
+| Fisica I | 4 capitoli, 5 lezioni | 15 capitoli, 126 lezioni | [[Programma di Fisica I e II]] |
+| Fisica II | 3 capitoli, 5 lezioni | 15 capitoli, 120 lezioni | [[Programma di Fisica I e II]] |
+| Geometria e algebra lineare | non esiste | 15 capitoli, 140 lezioni | [[Programma di Geometria e algebra lineare]] |
+| Chimica | non esiste | 17 capitoli, 108 lezioni | [[Programma di Chimica per ingegneria]] |
+| Fondamenti di informatica | 5 capitoli, 5 lezioni | 22 capitoli, 166 lezioni | [[Programma di Fondamenti di informatica]] |
+
+Due errori dell'albero di oggi: Fondamenti di informatica contiene solo logica digitale, che è il programma di Reti logiche (su 31 schede lette le reti combinatorie e sequenziali compaiono in una); la termodinamica sta in Fisica II, mentre in ogni scheda letta sta nel primo esame o in Fisica tecnica.
+
+Decisioni di Alessandro del 7 ottobre 2026:
+- Niente mappa per ateneo dei capitoli che valgono per l'esame: seguire i programmi di ogni ateneo anno per anno è troppo lavoro. Vedi [[2026-10-07 I corsi universitari non hanno una mappa per ateneo]].
+- Analisi II si divide in Analisi II (più variabili, fino ai teoremi integrali) e Metodi matematici (serie di funzioni, di potenze e di Fourier, teoria delle equazioni differenziali e sistemi, trasformata di Laplace).
+- I numeri complessi stanno in Analisi I; Geometria e algebra lineare li dà per prerequisito e tiene solo i polinomi.
+- In Fondamenti di informatica le lezioni di programmazione si scrivono una volta, con il linguaggio a scelta dello studente. Il blocco `codice` ha già una linguetta per linguaggio, con la scelta che vale per tutti i programmi e per le visite successive (vedi [[Editor di codice]]): quello che manca è il testo attorno al codice che cambia con il linguaggio, ed è lì che il blocco va esteso.
+
+Stato del database al 7 ottobre 2026: i cinque corsi esistenti hanno l'albero nuovo, in produzione, con le lezioni vuote (Analisi I 11 capitoli e 98 lezioni, Analisi II 9 e 62, Fisica I 15 e 126, Fisica II 15 e 120, Fondamenti di informatica 22 e 166). I 20 capitoli e le 26 lezioni segnaposto, tutti vuoti, sono stati cancellati; la copia è in `docs/lezioni/backup/content_nodes-universita-2026-10-07.json`. Gli alberi sono in `docs/lezioni/universita/corsi-di-base/alberi/` e si applicano con `scripts/lezioni/tree.mts`.
+
+Lo stesso giorno, su richiesta di Alessandro, sono entrati anche Metodi matematici (5 capitoli, 35 lezioni), Geometria e algebra lineare (15 e 140) e Chimica (17 e 108). Ognuno ha il suo oggetto in tre dimensioni con l'animazione, fatto con `scripts/materie/icons.py` come gli altri: due ruote che disegnano un'onda per Metodi matematici, tre vettori e il parallelepipedo che generano per Geometria e algebra lineare, una beuta per Chimica. Chimica ha un'area sua tra i filtri, con il verde della chimica delle superiori. Nessuno dei tre ha ancora la guida della materia in `subject-copy.ts`, come i corsi di intelligenza artificiale.
+
+I testi dei cinque corsi rifatti (schede in `LibraryCovers.tsx`, guide in `subject-copy.ts`) seguono i capitoli nuovi; la figura della guida di Fisica II è ora la legge di Gauss, perché il ciclo termodinamico appartiene a Fisica I.
+
 ## Domande aperte
+- Metodi matematici: nessun programma dell'esame è stato letto. Analisi complessa e trasformata di Fourier, che di solito ne fanno parte, sono da verificare sui syllabus; va deciso anche se la teoria delle equazioni differenziali resta lì o torna in Analisi II.
+- Fondamenti di informatica: che cosa fare di Java, usato in 5 schede su 30 e non eseguito dall'editor.
+- I tre oggetti nuovi sono una prima versione di Claude: Alessandro non li ha ancora visti.
 - Quali corsi si aggiungono per primi, e quando: i quattro più diffusi sono Algebra lineare e geometria, Chimica, Elettrotecnica, Probabilità e statistica.
 - Per chi sono i corsi: la versione di ingegneria (la più diffusa) o anche quella di Matematica e Fisica.
 - Quali aree, con quali colori: oggi i colori sono quattro (rosso, blu, arancione, inchiostro con il giallo), più il verde della chimica delle superiori.
