@@ -54,6 +54,8 @@ Limiti di oggi:
 
 Comandi del tempo, dal 7 ottobre 2026 (richiesta di Alessandro): solo simboli, nell'ordine da capo, avvia o pausa, un passo; la velocità è un bottone solo che a ogni clic passa a ×1, ×½, ×¼, ×⅛ e ricomincia. Prima erano bottoni con il testo e una scelta tra 1× e ¼×.
 
+Barra del tempo, dal 7 ottobre 2026 (richiesta di Alessandro: la barra andava da 0 al tempo presente, quindi durante il moto il cursore stava sempre in fondo). Ora la barra è lunga quanto dura la scena: l'istante in cui il moto finisce o si ferma, calcolato prima di partire (`useDuration` in `useSim.ts`), oppure 30 secondi per una scena che non finisce, come un pendolo; a 30 secondi la scena si ferma da sola (prima erano 20). Il cursore si riempie mentre il tempo scorre, e si può portare su qualunque istante, anche più avanti di dove il moto è arrivato: la scena viene calcolata fino a lì (`seekTime`). Accanto c'è il tempo sul totale. Alessandro aveva proposto una lunghezza fissa di 30 o 60 secondi; gli esempi durano da 1 a 2 secondi, e su una barra fissa di 30 il cursore si sarebbe mosso di pochi pixel. Le scene nelle lezioni (`LessonScene.tsx`) hanno ancora la barra di prima.
+
 ## Obiettivo
 Come l'ha raccontata Alessandro il 5 ottobre 2026. Una sandbox dove si mettono insieme dei pezzi come in un ambiente LEGO: corde in tensione, piani inclinati, masse, vincoli come pavimenti e soffitti. Lo schermo è diviso, metà scena e metà formule o grafici: si clicca un componente, per esempio una pallina, la si lancia, e a destra si vedono l'altezza e la velocità in funzione del tempo e quello che succede nei numeri e nelle formule. È modulare e cresce con le lezioni di fisica.
 

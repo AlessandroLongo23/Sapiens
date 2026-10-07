@@ -15,7 +15,7 @@ import { atwood, cartAndWeight, incline, inclineAndWeight, lampAndWall, launch, 
 import { BodyPanel } from './panels';
 import { SceneDrawing, sceneFrame } from './SceneDrawing';
 import { LiveChart } from './TimeChart';
-import { usePreview, useSim } from './useSim';
+import { usePreview, useSim, useDuration } from './useSim';
 
 const EXAMPLES: Record<string, { name: string; build: () => Scene }> = {
 	'piano-inclinato': { name: 'Piano inclinato con attrito', build: () => incline({ angle: 30, m: 2, muS: 0.3, muK: 0.2 }) },
@@ -142,6 +142,8 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 	// The course of the scene, for the graph of the selected body; not worked out while nothing is selected.
 	const ahead = usePreview(doc, sel?.type === 'body');
 	const editing = sim.state.t === 0;
+	// The time bar is as long as the scene lasts, known before it starts; a scene that got further than expected stretches it.
+	const length = Math.max(useDuration(doc), sim.state.t, 0.1);
 
 	const svgRef = useRef<SVGSVGElement | null>(null);
 	const drag = useRef<{ move: (p: Vec) => (d: Scene) => Scene; pushed: boolean } | null>(null);
@@ -442,8 +444,10 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 						</button>
 						<label className="flex min-w-40 flex-1 items-center gap-2 text-sm text-fg-muted">
 							Tempo
-							<input type="range" className="slider w-full" style={{ '--fill': `${sim.frames.length > 1 ? (sim.cursor / (sim.frames.length - 1)) * 100 : 0}%` } as CSSProperties} min={0} max={Math.max(1, sim.frames.length - 1)} value={sim.cursor} disabled={sim.frames.length === 1} onChange={(ev) => sim.seek(Number(ev.target.value))} aria-valuetext={`${num(sim.state.t, 2)} secondi`} />
-							<span className="w-14 shrink-0 text-right tabular-nums">{num(sim.state.t, 2)} s</span>
+							<input type="range" className="slider w-full" style={{ '--fill': `${(sim.state.t / length) * 100}%` } as CSSProperties} min={0} max={length} step={0.01} value={sim.state.t} disabled={(sim.still && sim.frames.length === 1) || sim.broken || !doc.bodies.length} onChange={(ev) => sim.seekTime(Number(ev.target.value))} aria-valuetext={`${num(sim.state.t, 2)} secondi su ${num(length, 2)}`} />
+							<span className="shrink-0 text-right tabular-nums">
+								{num(sim.state.t, 2)} / {num(length, 2)} s
+							</span>
 						</label>
 					</div>
 				</div>
