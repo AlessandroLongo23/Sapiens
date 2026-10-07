@@ -29,13 +29,16 @@ export function Rows({ rows }: { rows: { name?: string; symbol: string; value: s
 const WORD = { weight: 'Peso', normal: 'Reazione del piano', tension: 'Tensione' } as const;
 
 /** The forces on a body, one per row, with the names of the lessons. */
-export function ForceRows({ forces, scene, lower = false }: { forces: Force[]; scene: Scene; /** Names without the capital, for a figure inside a sentence of a lesson. */ lower?: boolean }) {
+export function ForceRows({ forces, scene, lower = false, components = false }: { /** Under each force, its components along x and y. */ components?: boolean; forces: Force[]; scene: Scene; /** Names without the capital, for a figure inside a sentence of a lesson. */ lower?: boolean }) {
 	const rows = forces
 		.filter((force) => Math.hypot(force.v.x, force.v.y) >= 5e-7)
-		.map((force) => {
+		.flatMap((force) => {
 			const [letter, subscript] = forceName(force, scene);
 			const word = force.kind === 'friction' ? (force.static ? 'Attrito statico' : 'Attrito dinamico') : WORD[force.kind];
-			return { name: lower ? word.toLowerCase() : word, symbol: `${letter}${subscript ? `_{${subscript}}` : ''}`, value: `${tidy(Math.hypot(force.v.x, force.v.y))}\\,\\text{N}` };
+			const whole = { name: lower ? word.toLowerCase() : word, symbol: `${letter}${subscript ? `_{${subscript}}` : ''}`, value: `${tidy(Math.hypot(force.v.x, force.v.y))}\\,\\text{N}` };
+			if (!components) return [whole];
+			const part = (axis: 'x' | 'y') => ({ name: '', symbol: `${letter}_{${subscript ? `${subscript},` : ''}${axis}}`, value: `${tidy(force.v[axis])}\\,\\text{N}` });
+			return [whole, part('x'), part('y')];
 		});
 	return <Rows rows={rows} />;
 }
@@ -51,17 +54,17 @@ export function Group({ title, children }: { title: string; children: ReactNode 
 }
 
 /** What follows from the forces on a body: their sum by components, the acceleration, the velocity, the energy of the scene. */
-export function Motion({ sum, acc, vel, energy }: { sum: { x: number; y: number }; acc: number; vel: number; energy: number }) {
+export function Motion({ sum, acc, vel, energy, parts }: { sum: { x: number; y: number }; acc: number; vel: number; energy: number; /** Acceleration and velocity by components too. */ parts?: { acc: { x: number; y: number }; vel: { x: number; y: number } } }) {
 	return (
 		<>
 			<Group title="Somma delle forze">
 				<Rows rows={[{ symbol: '\\textstyle\\sum F_x', value: `${tidy(sum.x)}\\,\\text{N}` }, { symbol: '\\textstyle\\sum F_y', value: `${tidy(sum.y)}\\,\\text{N}` }]} />
 			</Group>
 			<Group title="Accelerazione">
-				<Rows rows={[{ symbol: 'a', value: `${tidy(acc)}\\,\\text{m/s}^2` }]} />
+				<Rows rows={[{ symbol: 'a', value: `${tidy(acc)}\\,\\text{m/s}^2` }, ...(parts ? (['x', 'y'] as const).map((k) => ({ symbol: `a_${k}`, value: `${tidy(parts.acc[k])}\\,\\text{m/s}^2` })) : [])]} />
 			</Group>
 			<Group title="Velocità">
-				<Rows rows={[{ symbol: 'v', value: `${tidy(vel)}\\,\\text{m/s}` }]} />
+				<Rows rows={[{ symbol: 'v', value: `${tidy(vel)}\\,\\text{m/s}` }, ...(parts ? (['x', 'y'] as const).map((k) => ({ symbol: `v_${k}`, value: `${tidy(parts.vel[k])}\\,\\text{m/s}` })) : [])]} />
 			</Group>
 			<Group title="Energia meccanica">
 				<Rows rows={[{ symbol: 'E_c + U', value: `${tidy(energy)}\\,\\text{J}` }]} />
@@ -75,7 +78,7 @@ export function Motion({ sum, acc, vel, energy }: { sum: { x: number; y: number 
  * can hand it a new one a few times a second while the scene itself moves at every frame: typesetting a dozen
  * formulas sixty times a second is what made a scene with a body selected run slower than one without.
  */
-export const BodyPanel = memo(function BodyPanel({ scene, state, body }: { scene: Scene; state: State; body: number }) {
+export const BodyPanel = memo(function BodyPanel({ scene, state, body, components = false }: { scene: Scene; state: State; body: number; components?: boolean }) {
 	const solution = useMemo(() => {
 		try {
 			return solve(scene, state);
@@ -90,9 +93,9 @@ export const BodyPanel = memo(function BodyPanel({ scene, state, body }: { scene
 	const e = energy(scene, state);
 	return (
 		<>
-			<ForceRows forces={forces} scene={scene} />
+			<ForceRows forces={forces} scene={scene} components={components} />
 			<div className="flex flex-col gap-2.5 border-t border-edge-soft pt-3">
-				<Motion sum={sum} acc={Math.hypot(acc.x, acc.y)} vel={Math.hypot(vel.x, vel.y)} energy={e.kinetic + e.potential} />
+				<Motion sum={sum} acc={Math.hypot(acc.x, acc.y)} vel={Math.hypot(vel.x, vel.y)} energy={e.kinetic + e.potential} parts={components ? { acc, vel } : undefined} />
 			</div>
 		</>
 	);

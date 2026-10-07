@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode, RefObject } from 'react';
+import { useState, type ReactNode, type RefObject } from 'react';
 import { Drawing, Label, Dot, frame, v, add, sub, scale, len, unit, TINT, THICK, THIN, DASH, type V } from '@/components/content/interactive/kit';
 import { Ball, Block, Ground, Pulley, Thread, VecLabel, Vector, QTY } from '@/components/content/interactive/fisica';
 import { nameBox, segToBox, type NameReq, type Seg } from '@/components/content/interactive/fisica/nomi';
@@ -13,42 +13,68 @@ export function sceneFrame(scene: Scene, maxW = 10, maxH = 8) {
 	return { S, f: frame(x0 * S, x1 * S, y0 * S, y1 * S) };
 }
 
+/** Where a name stands with respect to its arrow: beside it at `t` of its length, on one side, or past its tip. */
+type Slot = { t: number; side: 1 | -1 | 0; extra: number };
+const SLOTS: (Slot & { far: number })[] = [
+	...[0.75, 0.6, 0.9, 0.45, 1].flatMap((t) => ([1, -1] as const).flatMap((side) => [0, 0.15, 0.3, 0.5, 0.75].map((extra) => ({ t, side, extra, far: extra + Math.abs(t - 0.75) * 0.3 })))),
+	...[0, 0.15, 0.3].map((extra) => ({ t: 1, side: 0 as const, extra, far: extra + 0.05 }))
+];
+
+/** For a component, which lies along an axis: past its tip first, where it cannot be taken for the name of another arrow. */
+const TIP_FIRST = [...SLOTS.slice(-3).map((x) => ({ ...x, far: x.extra })), ...SLOTS.slice(0, -3).map((x) => ({ ...x, far: x.far + 0.1 }))];
+
 /**
  * Centres for the names of the arrows, as `placeNames` of the lessons' figures gives them, weighed for a scene full of
  * outlines: a name goes where its box is clear of every line and of the other names, beside its arrow or past its tip,
  * and being clear counts more than being near, so a name leaves a small body instead of sitting on its edge.
+ *
+ * In a scene that moves the best place changes from one frame to the next, and a name that follows it jumps about and
+ * cannot be read. So a name keeps the place it has with respect to its arrow (`memory`, by the arrow's key) and moves
+ * with it; it looks for another only when that one ends up on a line or on another name.
  */
-function placeLabels(f: ReturnType<typeof frame>, segs: Seg[], reqs: NameReq[], keepOut: V[]): V[] {
+function placeLabels(f: ReturnType<typeof frame>, segs: Seg[], reqs: (NameReq & { key: string; tip?: boolean })[], keepOut: V[], memory: Map<string, Slot>): V[] {
 	const placed: { c: V; hw: number; hh: number }[] = [];
-	return reqs.map(({ seg, chars }) => {
+	return reqs.map(({ seg, chars, key, tip }) => {
 		const s = segs[seg];
 		const { w, h } = nameBox(chars);
 		const hw = w / 2, hh = h / 2;
 		const d = sub(s.b, s.a);
 		const L = len(d) || 1;
 		const u = scale(d, 1 / L), n = v(-u.y, u.x);
-		const cands: { c: V; far: number }[] = [];
-		for (const t of [0.75, 0.6, 0.9, 0.45, 1])
-			for (const sgn of [1, -1])
-				for (const extra of [0, 0.15, 0.3, 0.5, 0.75]) cands.push({ c: add(add(s.a, scale(d, t)), scale(n, sgn * (0.1 + extra + Math.abs(n.x) * hw + Math.abs(n.y) * hh))), far: extra + Math.abs(t - 0.75) * 0.3 });
-		for (const extra of [0, 0.15, 0.3]) cands.push({ c: add(s.b, scale(u, 0.12 + extra + Math.abs(u.x) * hw + Math.abs(u.y) * hh)), far: extra + 0.05 });
-		let best = cands[0].c, bestScore = -Infinity;
-		for (const { c, far } of cands) {
+		const centre = ({ t, side, extra }: Slot) =>
+			side ? add(add(s.a, scale(d, t)), scale(n, side * (0.1 + extra + Math.abs(n.x) * hw + Math.abs(n.y) * hh))) : add(s.b, scale(u, 0.12 + extra + Math.abs(u.x) * hw + Math.abs(u.y) * hh));
+		const clearOf = (c: V) => {
 			let clear = Infinity;
 			segs.forEach((o, i) => i !== seg && (clear = Math.min(clear, segToBox(o, c, hw, hh))));
 			for (const p of placed) clear = Math.min(clear, Math.max(Math.abs(c.x - p.c.x) - hw - p.hw, Math.abs(c.y - p.c.y) - hh - p.hh));
 			for (const k of keepOut) clear = Math.min(clear, Math.max(Math.abs(c.x - k.x) - hw - 0.15, Math.abs(c.y - k.y) - hh - 0.12));
-			const out = Math.max(f.x0 - (c.x - hw), c.x + hw - f.x1, f.y0 - (c.y - hh), c.y + hh - f.y1, 0);
-			const score = Math.min(clear, 0.12) * 6 - far * 0.35 - out * 10;
+			return clear;
+		};
+		const outOf = (c: V) => Math.max(f.x0 - (c.x - hw), c.x + hw - f.x1, f.y0 - (c.y - hh), c.y + hh - f.y1, 0);
+
+		const kept = memory.get(key);
+		if (kept) {
+			const c = centre(kept);
+			if (clearOf(c) >= 0.02 && outOf(c) === 0) {
+				placed.push({ c, hw, hh });
+				return c;
+			}
+		}
+		let best: Slot = SLOTS[0], bestScore = -Infinity;
+		for (const slot of tip ? TIP_FIRST : SLOTS) {
+			const c = centre(slot);
+			const score = Math.min(clearOf(c), 0.12) * 6 - slot.far * 0.35 - outOf(c) * 10;
 			if (score > bestScore) {
 				bestScore = score;
-				best = c;
+				best = slot;
 			}
 			// clear, beside its arrow and inside the drawing: no other place can do better
-			if (score >= 0.12 * 6 - 1e-9) break;
+			if (score >= 0.12 * 6 - 1e-9 && slot.far === 0) break;
 		}
-		placed.push({ c: best, hw, hh });
-		return best;
+		memory.set(key, best);
+		const c = centre(best);
+		placed.push({ c, hw, hh });
+		return c;
 	});
 }
 
@@ -114,13 +140,15 @@ export function forceName(force: Force, scene: Scene): [string, string | undefin
  * ropes and bodies, the forces on the bodies chosen in `forces`, and the path the selected body has followed.
  * A click on a body selects it.
  */
-export function SceneDrawing({ scene, state, solution, selected, onSelect, forces, forceScale: kf, velocityScale: kv = 0.25, trail, label, maxW, maxH, grid, svgRef, children }: { /** Centimetres of arrow per m/s for the velocities, fixed like the forces' scale; 0 hides them. */ velocityScale?: number; /** Lines every `grid` metres behind the scene. */ grid?: number; svgRef?: RefObject<SVGSVGElement | null>; /** Drawn above the scene, in the same SVG: the editor's handles. Without `onSelect` the bodies are not clickable here. */ children?: ReactNode; /** Centimetres of arrow per newton: fixed, so an arrow changes length only when its force does. */ forceScale: number; maxW?: number; maxH?: number; scene: Scene; state: State; solution: Solution; selected: number; onSelect?: (i: number) => void; forces: 'all' | 'selected' | 'none'; trail: Vec[]; label: string }) {
+export function SceneDrawing({ scene, state, solution, selected, onSelect, forces, forceScale: kf, velocityScale: kv = 0.25, components = false, trail, label, maxW, maxH, grid, svgRef, children }: { /** The arrows of the selected body are also drawn split along x and y. */ components?: boolean; /** Centimetres of arrow per m/s for the velocities, fixed like the forces' scale; 0 hides them. */ velocityScale?: number; /** Lines every `grid` metres behind the scene. */ grid?: number; svgRef?: RefObject<SVGSVGElement | null>; /** Drawn above the scene, in the same SVG: the editor's handles. Without `onSelect` the bodies are not clickable here. */ children?: ReactNode; /** Centimetres of arrow per newton: fixed, so an arrow changes length only when its force does. */ forceScale: number; maxW?: number; maxH?: number; scene: Scene; state: State; solution: Solution; selected: number; onSelect?: (i: number) => void; forces: 'all' | 'selected' | 'none'; trail: Vec[]; label: string }) {
 	const { S, f } = sceneFrame(scene, maxW, maxH);
+	// where each name stands beside its arrow, kept from one frame to the next (see placeLabels)
+	const [memory] = useState(() => new Map<string, Slot>());
 	const P = (p: Vec): V => v(p.x * S, p.y * S);
 	const up = resting(scene, state.pos);
 
 	// Every arrow of the scene, from the centre of its body: the forces and the velocity, each at its fixed scale.
-	const arrows: { key: string; body: number; from: V; to: V; color: string; name: string; sub?: string }[] = [];
+	const arrows: { key: string; body: number; from: V; to: V; color: string; name: string; sub?: string; /** A component of another arrow, along x or y. */ part?: boolean }[] = [];
 	scene.bodies.forEach((b, i) => {
 		const c = P(state.pos[i]);
 		if (forces === 'all' || (forces === 'selected' && i === selected))
@@ -133,6 +161,19 @@ export function SceneDrawing({ scene, state, solution, selected, onSelect, force
 		const vel = scale(v(state.vel[i].x, state.vel[i].y), kv);
 		if (kv > 0 && len(vel) >= 0.12) arrows.push({ key: `${b.id}-v`, body: i, from: c, to: add(c, vel), color: QTY.velocita, name: 'v' });
 	});
+	// The arrows of the selected body split along the axes: for each one that is not already along an axis, its two
+	// components from the same point, dashed, and the two lines that close the rectangle.
+	const guides: V[][] = [];
+	if (components)
+		for (const a of arrows.filter((x) => x.body === selected)) {
+			const d = sub(a.to, a.from);
+			if (Math.abs(d.x) < 0.12 || Math.abs(d.y) < 0.12) continue;
+			const along = (axis: 'x' | 'y', to: V) => arrows.push({ key: `${a.key}-${axis}`, body: a.body, from: a.from, to, color: a.color, name: a.name, sub: a.sub ? `${a.sub},${axis}` : axis, part: true });
+			const px = add(a.from, v(d.x, 0)), py = add(a.from, v(0, d.y));
+			along('x', px);
+			along('y', py);
+			guides.push([px, a.to], [py, a.to]);
+		}
 	// The outline of each body, as segments the names have to keep clear of, with the ropes and the surfaces.
 	const outline = scene.bodies.flatMap((b, i) => {
 		const c = P(state.pos[i]);
@@ -172,9 +213,10 @@ export function SceneDrawing({ scene, state, solution, selected, onSelect, force
 	const outside = names.flatMap((n, i) => (n && !n.inside ? [{ body: i, a: P(state.pos[i]), b: add(P(state.pos[i]), scale(n.towards, scene.bodies[i].r * S * Math.SQRT2 + 0.1)) }] : []));
 	const placed = placeLabels(
 		f,
-		[...arrows.map((a) => ({ a: a.from, b: reach(a) })), ...outside, ...outline, ...lines],
-		[...arrows.map((a, k) => ({ seg: k, chars: a.sub ? 2 : 1 })), ...outside.map((_, k) => ({ seg: arrows.length + k, chars: 2 }))],
-		names.flatMap((n) => (n?.inside ? [n.at] : []))
+		[...arrows.map((a) => ({ a: a.from, b: reach(a) })), ...outside, ...outline, ...lines, ...guides.map(([a, b]) => ({ a, b }))],
+		[...arrows.map((a, k) => ({ seg: k, chars: a.sub ? (a.part ? 3 : 2) : 1, key: a.key, tip: a.part })), ...outside.map((o, k) => ({ seg: arrows.length + k, chars: 2, key: `name-${scene.bodies[o.body].id}` }))],
+		names.flatMap((n) => (n?.inside ? [n.at] : [])),
+		memory
 	);
 	const spots = placed.slice(0, arrows.length);
 	const nameAt = scene.bodies.map((_, i) => {
@@ -231,7 +273,8 @@ export function SceneDrawing({ scene, state, solution, selected, onSelect, force
 					</g>
 				);
 			})}
-			{arrows.map((a) => <Vector key={a.key} f={f} from={a.from} to={a.to} color={a.color} />)}
+			{guides.length > 0 && <path d={guides.map((g) => f.path(g)).join(' ')} stroke="#808080" strokeWidth={THIN} strokeDasharray={DASH} fill="none" />}
+			{arrows.map((a) => <Vector key={a.key} f={f} from={a.from} to={a.to} color={a.color} dashed={a.part} weight={a.part ? 'thin' : 'thick'} />)}
 			{arrows.map((a, k) => <VecLabel key={a.key} f={f} at={spots[k]} name={a.name} sub={a.sub} color={a.color} />)}
 			{children}
 		</Drawing>

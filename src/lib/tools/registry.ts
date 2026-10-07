@@ -792,6 +792,18 @@ export const TOOLS: ToolMeta[] = [
 		keywords: ['voti in quindicesimi', 'voti in decimi', 'convertire voti', 'ventesimi', 'trentesimi']
 	},
 	{
+		slug: 'sandbox-di-fisica',
+		title: 'Sandbox di fisica',
+		lead: 'Costruisci una scena con masse, piani inclinati, corde e carrucole e guardala muoversi, con le forze su ogni corpo, i loro valori e i grafici nel tempo.',
+		description: 'Simulatore di meccanica online: piano inclinato, macchina di Atwood, carrucole, attrito e pendolo, con il diagramma delle forze, i valori e i grafici. Gratis.',
+		category: 'fisica',
+		lessons: ['high_school/physics/fis-forze-movimento/fis-piano-inclinato', 'high_school/physics/fis-equilibrio-solidi/fis-equilibrio-piano-inclinato', 'high_school/physics/fis-vettori-forze/fis-attrito'],
+		related: ['piano-inclinato', 'moto-uniformemente-accelerato', 'calcolo-energia-cinetica', 'grafico-di-funzione'],
+		sample: '\\sum \\vec{F} = m\\,\\vec{a}',
+		keywords: ['simulatore di fisica', 'simulazione fisica', 'laboratorio virtuale', 'diagramma delle forze', 'corpo libero', 'piano inclinato', 'macchina di atwood', 'carrucola', 'attrito', 'pendolo', 'tensione', 'dinamica', 'meccanica'],
+		ownPage: true
+	},
+	{
 		slug: 'moto-rettilineo-uniforme',
 		title: 'Moto rettilineo uniforme',
 		lead: 'Spazio, velocità o tempo con la legge s = v · t, in m/s o in km/h. Con le conversioni e i passaggi.',
