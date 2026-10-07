@@ -52,6 +52,8 @@ Limiti di oggi:
 - Nelle lezioni le etichette delle forze si toccano quando due frecce sono vicine o corte.
 - La carrucola non ha il sostegno disegnato; le etichette delle forze si sovrappongono quando le frecce sono vicine.
 
+Comandi del tempo, dal 7 ottobre 2026 (richiesta di Alessandro): solo simboli, nell'ordine da capo, avvia o pausa, un passo; la velocità è un bottone solo che a ogni clic passa a ×1, ×½, ×¼, ×⅛ e ricomincia. Prima erano bottoni con il testo e una scelta tra 1× e ¼×.
+
 ## Obiettivo
 Come l'ha raccontata Alessandro il 5 ottobre 2026. Una sandbox dove si mettono insieme dei pezzi come in un ambiente LEGO: corde in tensione, piani inclinati, masse, vincoli come pavimenti e soffitti. Lo schermo è diviso, metà scena e metà formule o grafici: si clicca un componente, per esempio una pallina, la si lancia, e a destra si vedono l'altezza e la velocità in funzione del tempo e quello che succede nei numeri e nelle formule. È modulare e cresce con le lezioni di fisica.
 
