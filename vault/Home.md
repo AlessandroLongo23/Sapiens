@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-06
+aggiornato: 2026-10-07
 tag: [indice]
 ---
 # Sapiens
@@ -48,7 +48,7 @@ Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relativi
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
-- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]], [[Domande per Andrea]], [[Fisica terzo anno, da sistemare]], [[Programma di intelligenza artificiale]], [[Confronto del programma di intelligenza artificiale con i syllabus universitari]], [[Corsi universitari da aggiungere]]
+- **Contenuti:** [[Pipeline lezioni]], [[Pipeline esercizi]], [[Programma ministeriale]], [[Standard di qualità]], [[Domande per Andrea]], [[Fisica terzo anno, da sistemare]], [[Programma di intelligenza artificiale]], [[Confronto del programma di intelligenza artificiale con i syllabus universitari]], [[Corsi universitari da aggiungere]], [[Programma di Analisi matematica I e II]], [[Programma di Fisica I e II]], [[Programma di Geometria e algebra lineare]], [[Programma di Chimica per ingegneria]], [[Programma di Fondamenti di informatica]]
 - **Business:** [[Piani e prezzi]], [[Margini per cliente]], [[Vendita alle scuole]]
 - **Marketing:** [[Piano di acquisizione]], [[Creator]], [[SEO]], [[Social]], [[Stagionalità]]
 - **Legale:** [[GDPR e minori]], [[Consulenze IDA]], [[Contratti con le scuole]], [[AI Act]], [[Società e IVA]], [[Tutela del consumatore]], [[Accordi del team]]
@@ -57,7 +57,7 @@ Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relativi
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, le ultime sono [[2026-10-06 Terzo anno di fisica]] e [[2026-10-06 Schede di livelli e materie]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, le ultime sono [[2026-10-07 Programmi dei corsi di base di ingegneria]] e [[2026-10-06 Schede di livelli e materie]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:

@@ -12,6 +12,8 @@ const SUBJECT_BY_CONTENT_SLUG: Record<string, string> = {
 	'computer-science': 'informatica',
 	'analisi-1': 'analisi-1',
 	'analisi-2': 'analisi-2',
+	'geometria-algebra-lineare': 'algebra-lineare',
+	chimica: 'chimica',
 	'fisica-1': 'fisica-1',
 	'fisica-2': 'fisica-2',
 	'fondamenti-informatica': 'fondamenti-informatica'

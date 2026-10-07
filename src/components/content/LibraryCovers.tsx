@@ -31,11 +31,14 @@ const SUBJECTS: Record<string, { short: string; inside: string }> = {
 	'high_school/physics': { short: 'Fisica', inside: 'Moto, forze, energia, onde, elettromagnetismo' },
 	'high_school/computer-science': { short: 'Informatica', inside: 'Algoritmi, programmazione, web, basi di dati, reti' },
 	'high_school/chemistry': { short: 'Chimica', inside: 'Atomi, legami, reazioni, equilibri, chimica organica' },
-	'university/analisi-1': { short: 'Analisi I', inside: 'Successioni, limiti, derivate, integrali' },
-	'university/analisi-2': { short: 'Analisi II', inside: 'Integrali doppi e tripli, serie di Taylor' },
-	'university/fisica-1': { short: 'Fisica I', inside: 'Cinematica, dinamica, energia, corpo rigido' },
-	'university/fisica-2': { short: 'Fisica II', inside: 'Termodinamica, elettromagnetismo, ottica' },
-	'university/fondamenti-informatica': { short: 'Informatica', inside: 'Logica booleana, porte logiche, reti combinatorie e sequenziali' }
+	'university/analisi-1': { short: 'Analisi I', inside: 'Limiti, derivate, integrali, serie, numeri complessi' },
+	'university/analisi-2': { short: 'Analisi II', inside: 'Funzioni di più variabili, integrali multipli, campi vettoriali' },
+	'university/metodi-matematici': { short: 'Metodi matematici', inside: 'Serie di potenze e di Fourier, sistemi differenziali, Laplace' },
+	'university/geometria-algebra-lineare': { short: 'Geometria', inside: 'Matrici, sistemi lineari, spazi vettoriali, autovalori, coniche' },
+	'university/fisica-1': { short: 'Fisica I', inside: 'Meccanica, corpo rigido, fluidi, termodinamica' },
+	'university/fisica-2': { short: 'Fisica II', inside: 'Elettrostatica, circuiti, magnetismo, onde, ottica' },
+	'university/chimica': { short: 'Chimica', inside: 'Atomi, legami, stechiometria, equilibri, elettrochimica' },
+	'university/fondamenti-informatica': { short: 'Informatica', inside: 'Codifica binaria, algoritmi, programmazione in C e in Python' }
 };
 
 /** A level: who it is for, one line on what it holds. */
@@ -49,6 +52,7 @@ const LEVELS: Record<string, { who: string; blurb: string }> = {
 export const AREAS: { tone: string; label: string }[] = [
 	{ tone: 'math', label: 'Matematica' },
 	{ tone: 'physics', label: 'Fisica' },
+	{ tone: 'chemistry', label: 'Chimica' },
 	{ tone: 'cs', label: 'Informatica' },
 	{ tone: 'ink', label: 'Intelligenza artificiale' }
 ];

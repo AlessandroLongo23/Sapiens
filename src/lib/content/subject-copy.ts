@@ -420,10 +420,10 @@ const guides: Record<string, SubjectGuideContent> = {
 				heading: 'Il programma',
 				style: 'timeline',
 				stops: [
-					{ label: 'Successioni', topics: 'Successioni di numeri reali, serie numeriche e criteri di convergenza.' },
-					{ label: 'Limiti e derivate', topics: '**Limite di funzione**, regole e teoremi sulle derivate.' },
-					{ label: 'Integrali', topics: 'Integrali definiti e indefiniti, teorema fondamentale del calcolo.' },
-					{ label: 'Equazioni differenziali', topics: 'Del primo e del secondo ordine.' }
+					{ label: 'Numeri e funzioni', topics: 'Numeri reali e complessi, funzioni elementari, successioni.' },
+					{ label: 'Limiti e derivate', topics: '**Limite di funzione**, continuità, derivate, formula di Taylor.' },
+					{ label: 'Integrali', topics: 'Teorema fondamentale del calcolo, tecniche di integrazione, integrali impropri.' },
+					{ label: 'Serie ed equazioni', topics: 'Serie numeriche e le prime equazioni differenziali.' }
 				]
 			},
 			{
@@ -442,7 +442,7 @@ const guides: Record<string, SubjectGuideContent> = {
 	'university/analisi-2': {
 		title: 'Analisi matematica II',
 		scribble: 'il calcolo in più variabili',
-		intro: 'Tre capitoli che ==portano gli integrali in più variabili== e mostrano come approssimare una funzione con polinomi. Ogni lezione parte **dall’idea geometrica**: un volume, una massa, un’area.',
+		intro: 'Derivate e integrali ==passano da una a più variabili==: gradienti, massimi e minimi, integrali doppi e tripli, campi vettoriali. Ogni lezione parte **dall’idea geometrica**: un piano tangente, un volume, un flusso.',
 		figure: {
 			alt: 'Il dominio D tra la parabola y = x² e la retta y = x, colorato, con una sezione verticale rossa in corrispondenza di x.',
 			caption: 'prima il dominio, poi i conti'
@@ -454,9 +454,9 @@ const guides: Record<string, SubjectGuideContent> = {
 					heading: 'Il percorso',
 					style: 'path',
 					stops: [
-						{ label: 'Integrali doppi', topics: 'In coordinate cartesiane e polari.' },
-						{ label: 'Integrali tripli', topics: 'Con il cambio di coordinate: cilindriche e sferiche.' },
-						{ label: 'Taylor', topics: 'Serie di Taylor e Maclaurin.', pencil: 'si combinano sviluppi noti' }
+						{ label: 'Più variabili', topics: 'Curve, limiti, gradiente e differenziabilità, massimi e minimi liberi e vincolati.' },
+						{ label: 'Integrali multipli', topics: 'Doppi e tripli, con il cambio di coordinate: polari, cilindriche e sferiche.' },
+						{ label: 'Campi', topics: 'Integrali di linea e di superficie, teoremi di Gauss-Green, della divergenza e di Stokes.', pencil: 'prima il disegno, poi la formula' }
 					]
 				},
 				{ kind: 'figure', tilt: -2 }
@@ -470,15 +470,15 @@ const guides: Record<string, SubjectGuideContent> = {
 						{ wrong: 'dx dy = dρ dθ', right: 'manca lo jacobiano: dx dy = ρ dρ dθ' }
 					]
 				},
-				{ kind: 'postit', heading: 'A memoria', tilt: 2, text: 'Gli sviluppi delle funzioni elementari: quasi ogni esercizio si risolve **componendoli**, non derivando da capo.' }
+				{ kind: 'postit', heading: 'A memoria', tilt: 2, text: 'Gli jacobiani delle coordinate **polari, cilindriche e sferiche**: ρ, ρ e ρ² sen φ.' }
 			]
 		]
 	},
 
 	'university/fisica-1': {
 		title: 'Fisica I',
-		scribble: 'meccanica classica',
-		intro: 'La meccanica del primo anno, ==con il calcolo differenziale==: la velocità è una derivata, il lavoro un integrale, le leggi del moto **equazioni differenziali**.',
+		scribble: 'meccanica e termodinamica',
+		intro: 'La meccanica e la termodinamica del primo anno, ==con il calcolo differenziale==: la velocità è una derivata, il lavoro un integrale, le leggi del moto **equazioni differenziali**.',
 		figure: {
 			alt: 'La traiettoria parabolica di un proiettile; in due punti la velocità in rosso e le sue componenti: v_x sempre uguale, v_y che cambia verso.',
 			caption: 'v_x non cambia mai; v_y sì'
@@ -493,10 +493,10 @@ const guides: Record<string, SubjectGuideContent> = {
 				heading: 'Il percorso',
 				style: 'timeline',
 				stops: [
-					{ label: 'Cinematica', topics: 'Moto in una dimensione, moto di un proiettile.' },
-					{ label: 'Dinamica', topics: 'I principi di Newton, i sistemi di riferimento inerziali.' },
-					{ label: 'Energia', topics: 'Lavoro di una forza, **conservazione dell’energia**.' },
-					{ label: 'Corpo rigido', topics: "Moto rotazionale, momento d'inerzia." }
+					{ label: 'Punto materiale', topics: 'Cinematica, principi di Newton, lavoro e **conservazione dell’energia**.' },
+					{ label: 'Sistemi e corpo rigido', topics: "Quantità di moto, urti, momento angolare, momento d'inerzia." },
+					{ label: 'Oscillazioni, gravitazione, fluidi', topics: 'Moto armonico, forze centrali, statica e dinamica dei fluidi.' },
+					{ label: 'Termodinamica', topics: 'Gas, primo e secondo principio, entropia.' }
 				]
 			},
 			{
@@ -514,11 +514,11 @@ const guides: Record<string, SubjectGuideContent> = {
 
 	'university/fisica-2': {
 		title: 'Fisica II',
-		scribble: 'campi, gas e luce',
-		intro: 'Tre capitoli del secondo corso di fisica, dalle leggi sperimentali ==alla forma con campi, flussi e circuitazioni==.',
+		scribble: 'campi, circuiti e onde',
+		intro: 'L’elettromagnetismo del secondo corso di fisica, dalle leggi sperimentali ==alla forma con campi, flussi e circuitazioni==, fino alle onde e all’ottica.',
 		figure: {
-			alt: 'Un ciclo sul piano pressione-volume: un’isobara da A a B, un’isocora da B a C e un’isoterma da C ad A; l’area rossa racchiusa è il lavoro L.',
-			caption: "il lavoro del ciclo è l'area dentro"
+			alt: 'Una carica positiva q con le linee del campo elettrico che escono a raggiera, e attorno una superficie sferica tratteggiata in rosso che le linee attraversano.',
+			caption: 'il flusso conta solo la carica dentro'
 		},
 		blocks: [
 			{
@@ -526,20 +526,20 @@ const guides: Record<string, SubjectGuideContent> = {
 				heading: 'Tre capitoli',
 				style: 'areas',
 				stops: [
-					{ label: 'Termodinamica', topics: 'Gas perfetti e **principi della termodinamica**.', pencil: 'leggi bene il grafico p–V' },
-					{ label: 'Elettromagnetismo', topics: 'Dalla legge di Coulomb e il campo elettrico fino a Faraday e all’induzione.' },
-					{ label: 'Ottica', topics: 'La propagazione delle onde luminose.' }
+					{ label: 'Elettrostatica e circuiti', topics: 'Campo e potenziale, **legge di Gauss**, condensatori, corrente continua.', pencil: 'cerca prima la simmetria' },
+					{ label: 'Magnetismo e induzione', topics: 'Forza di Lorentz, leggi di Ampère e di Faraday, equazioni di Maxwell.' },
+					{ label: 'Onde e ottica', topics: 'Onde elettromagnetiche, interferenza, diffrazione, polarizzazione.' }
 				]
 			},
 			[
 				{ kind: 'figure', tilt: -1.5 },
 				{
 					kind: 'table',
-					heading: 'Stato o processo?',
+					heading: 'Quale legge, quale simmetria',
 					rows: [
-						['p, V, T', 'grandezze di stato: dipendono solo da dove sei'],
-						['U, S', 'energia interna ed entropia: anche loro di stato'],
-						['L, Q', 'lavoro e calore: dipendono dalla strada fatta']
+						['Gauss', 'carica con simmetria sferica, cilindrica o piana'],
+						['Ampère', 'correnti in fili rettilinei, solenoidi, toroidi'],
+						['Faraday', 'un flusso magnetico che cambia nel tempo']
 					]
 				}
 			],
@@ -557,8 +557,8 @@ const guides: Record<string, SubjectGuideContent> = {
 
 	'university/fondamenti-informatica': {
 		title: 'Fondamenti di Informatica',
-		scribble: 'la logica digitale',
-		intro: 'La logica digitale che apre i corsi di informatica e ingegneria. Ogni lezione passa ==da una rappresentazione all’altra==: **tavola, espressione, circuito**.',
+		scribble: 'dal bit al programma',
+		intro: 'L’esame di informatica del primo anno di ingegneria: come il calcolatore rappresenta i dati e ==come si scrive un programma==, con gli stessi esempi **in C e in Python**.',
 		figure: {
 			alt: 'Una porta AND con ingressi A e B e uscita A ∧ B, accanto alla sua tavola di verità: l’uscita vale 1 solo quando A e B valgono 1.',
 			caption: 'la stessa funzione, due modi di scriverla'
@@ -571,9 +571,9 @@ const guides: Record<string, SubjectGuideContent> = {
 					heading: 'Il percorso',
 					style: 'path',
 					stops: [
-						{ label: 'Booleani', topics: 'Variabili e funzioni booleane, tavole di verità.' },
-						{ label: 'Porte logiche', topics: 'AND, OR, NOT e i circuiti combinatori elementari.' },
-						{ label: 'Memorie', topics: 'I flip-flop, primo passo verso le reti sequenziali.', pencil: 'ogni capitolo usa il precedente' }
+						{ label: 'Le basi', topics: 'Codifica binaria, algebra di Boole, il calcolatore, algoritmi.' },
+						{ label: 'Programmare', topics: 'Variabili, selezione, cicli, funzioni, array, stringhe, ricorsione, file.' },
+						{ label: 'Il linguaggio', topics: 'Puntatori e memoria dinamica in C, collezioni di Python, classi e oggetti.', pencil: 'ogni capitolo usa il precedente' }
 					]
 				},
 				{ kind: 'card', heading: 'Esercizio lampo', tilt: 2, question: 'Quanto vale A ∨ (A ∧ B)?', answer: 'A: è la legge di assorbimento.' }
@@ -582,9 +582,9 @@ const guides: Record<string, SubjectGuideContent> = {
 				kind: 'checklist',
 				heading: "Verso l'esame",
 				items: [
-					'Tavole, semplificazioni e circuiti: ==attività meccaniche, da fare molte volte==.',
-					'Rifai gli esempi e poi **inventa varianti**: cambia una riga o un operatore.',
-					'Per i flip-flop **disegna il diagramma temporale** a ogni fronte di clock.'
+					'Programmare si impara ==scrivendo programmi==: leggere le soluzioni non basta.',
+					'Rifai gli esempi e poi **inventa varianti**: cambia un dato o una condizione.',
+					'Prima di eseguire, **traccia il programma a mano** con una tabella delle variabili.'
 				]
 			},
 			{ kind: 'arrows', heading: 'Aiuta sapere', items: ['Nessun prerequisito universitario.', 'Insiemi e **connettivi logici**, dalla matematica per le superiori.', 'Hardware, software e algoritmi, dall’informatica per le superiori.'] }

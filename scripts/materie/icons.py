@@ -755,6 +755,108 @@ def level_university(t):
 	return anim
 
 
+def arrow(m, r=0.09):
+	"""An arrow from the origin, and the function that points it at a vector: the shaft ends where the head begins."""
+	shaft = tube([(0, 0, 0), (0, 0, 1)], r, m)
+	head = cone(r * 2.6, r * 5.5, (0, 0, 0), m, bevel=0)
+
+	def to(v):
+		v = Vector(v)
+		d = v.normalized()
+		shaft.data.splines[0].points[1].co = (*(v - d * r * 5.5), 1)
+		head.location = v - d * r * 2.75
+		head.rotation_euler = d.to_track_quat('Z', 'Y').to_euler()
+	return [shaft, head], to
+
+
+def basis(t):
+	main, light, dark = t
+	L = 1.45
+	arrows = [arrow(mat(main)), arrow(mat(YELLOW)), arrow(mat(INK))]
+	corners = [(i, j, k) for i in (0, 1) for j in (0, 1) for k in (0, 1)]
+	# the edges of the box the three vectors span, without the three the arrows already draw
+	edges = [(a, b) for a in corners for b in corners if a < b and sum(x != y for x, y in zip(a, b)) == 1 and a != (0, 0, 0)]
+	me = mat(PAPER, 0.4)
+	wires = [tube([(0, 0, 0), (0, 0, 1)], 0.04, me) for _ in edges]
+	far = [c for c in corners if sum(c) >= 2]
+	dots = [sph(0.09, (0, 0, 0), me) for _ in far]
+	origin = sph(0.2, (0, 0, 0), mat(PAPER, 0.3))
+	# the origin is the corner nearest the eye, and the two arrows on the ground open away from it, to the right and to the left
+	e = group([origin] + wires + dots + [o for objs, _ in arrows for o in objs], rot=(0, 0, 1.43), loc=(0, 0, 0.2))
+
+	def anim(u):
+		# a linear map and its inverse: the cube leans into a parallelepiped and comes back
+		a = ease(seg(u, 0.05, 0.42)) - ease(seg(u, 0.56, 0.95))
+		v = [Vector((L * (1 + 0.12 * a), 0, 0)), Vector((0.5 * a * L, L, 0)), Vector((0, -0.32 * a * L, L * (1 - 0.08 * a)))]
+		at = lambda c: c[0] * v[0] + c[1] * v[1] + c[2] * v[2]
+		for (_, to), w in zip(arrows, v):
+			to(w)
+		for w, (p, q) in zip(wires, edges):
+			w.data.splines[0].points[0].co, w.data.splines[0].points[1].co = (*at(p), 1), (*at(q), 1)
+		for d, c in zip(dots, far):
+			d.location = at(c)
+		e.rotation_euler.z = 1.43 + 0.12 * math.sin(2 * math.pi * u)
+	return anim
+
+
+def epicycles(t):
+	main, light, dark = t
+	# a wheel carrying a smaller wheel that turns three times as fast: the point on its rim draws the sum of two sines
+	R1, R2, c = 0.75, 0.25, (-0.95, 0, 1.2)
+	x0, x1, n, k = 0.4, 2.35, 120, 2 * math.pi / 1.7
+	mi = mat(INK)
+	ring2 = torus(R2, 0.07, (0, 0, 0), mat(YELLOW), rot=(math.pi / 2, 0, 0))
+	arm1, arm2 = tube([c, c], 0.065, mi), tube([c, c], 0.055, mi)
+	joint, tip = sph(0.13, (0, 0, 0), mi), sph(0.17, (0, 0, 0), mat(YELLOW))
+	link = tube([c, c], 0.03, mat(GREY, 0.35))
+	xs = [x0 + (x1 - x0) * i / n for i in range(n + 1)]
+	wave = tube([(x, 0, c[2]) for x in xs], 0.1, mat(main))
+	pen = sph(0.18, (x0, 0, c[2]), mat(PAPER, 0.3))
+	e = group([torus(R1, 0.1, c, mat(main), rot=(math.pi / 2, 0, 0)), sph(0.17, c, mi), ring2, arm1, arm2, joint, tip, link, wave, pen], rot=(0, 0, -0.12))
+
+	def anim(u):
+		q = 2 * math.pi * u + 2.0
+		p1 = (c[0] + R1 * math.cos(q), 0, c[2] + R1 * math.sin(q))
+		p2 = (p1[0] + R2 * math.cos(3 * q), 0, p1[2] + R2 * math.sin(3 * q))
+		ring2.location = joint.location = p1
+		tip.location = p2
+		arm1.data.splines[0].points[1].co = (*p1, 1)
+		arm2.data.splines[0].points[0].co, arm2.data.splines[0].points[1].co = (*p1, 1), (*p2, 1)
+		link.data.splines[0].points[0].co, link.data.splines[0].points[1].co = (*p2, 1), (x0, 0, p2[2], 1)
+		pen.location = (x0, 0, p2[2])
+		# the wave runs away from the pen: what it drew a moment ago is a little further along
+		for p, x in zip(wave.data.splines[0].points, xs):
+			w = q - k * (x - x0)
+			p.co = (x, 0, c[2] + R1 * math.sin(w) + R2 * math.sin(3 * w), 1)
+	return anim
+
+
+def flask(t):
+	main, light, dark = t
+	# a conical flask: the liquid is the lower band of the cone, and what it gives off leaves by the neck
+	glass = mat(PAPER, 0.3)
+	parts = [
+		cone(0.95, 0.7, (0, 0, 0.35), mat(main), r2=0.617, bevel=0.05),
+		cone(0.617, 0.75, (0, 0, 1.075), glass, r2=0.26, bevel=0.02),
+		cyl(0.26, 0.7, (0, 0, 1.78), glass, bevel=0.02),
+		torus(0.28, 0.065, (0, 0, 2.13), glass),
+	]
+	body = pivot(parts, (0, 0, 0))
+	sizes = [(0.25, main), (0.17, YELLOW), (0.21, light), (0.15, main)]
+	bubbles = [sph(r, (0, 0, 0), mat(h, 0.3)) for r, h in sizes]
+
+	def anim(u):
+		body.rotation_euler.y = 0.07 * math.sin(2 * math.pi * u)
+		body.rotation_euler.z = 0.5 + 0.25 * math.sin(2 * math.pi * u)
+		for i, b in enumerate(bubbles):
+			# each bubble swells as it leaves the neck, drifts up and is gone; they take turns, so one is always in the air
+			p = (u + (0.38, 0.12, 0.66, 0.9)[i]) % 1
+			s = max(math.sin(math.pi * p) ** 0.6, 0.001) if p < 0.85 else max((1 - p) / 0.15, 0.001) * math.sin(math.pi * 0.85) ** 0.6
+			b.scale = (s, s, s)
+			b.location = (0.16 * math.sin(2 * math.pi * p + 2.1 * i) + 0.1 * (i - 1.5) * p, 0.05 * (i - 1.5), 2.25 + 0.85 * p)
+	return anim
+
+
 ICONS = {
 	'level-middle_school': (level_middle, 'ink'),
 	'level-high_school': (level_high, 'ink'),
@@ -768,8 +870,11 @@ ICONS = {
 	'high_school-chemistry': (benzene, 'chemistry'),
 	'university-analisi-1': (infinity, 'math'),
 	'university-analisi-2': (saddle, 'math'),
+	'university-metodi-matematici': (epicycles, 'math'),
+	'university-geometria-algebra-lineare': (basis, 'math'),
 	'university-fisica-1': (gyro, 'physics'),
 	'university-fisica-2': (magnet, 'physics'),
+	'university-chimica': (flask, 'chemistry'),
 	'university-fondamenti-informatica': (chip, 'cs'),
 	'university-ia-classica': (tree, 'ink'),
 	'university-machine-learning': (scatter, 'ink'),

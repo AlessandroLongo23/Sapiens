@@ -183,21 +183,18 @@ dec/.style={draw,thick,diamond,aspect=2.1,inner sep=1pt,fill=fillred}]
 \draw[->,thick] (5,2.595) -- ++(0,-0.62) node[below] {$v_y$};
 \end{tikzpicture}`,
 
-	// A cycle on the pressure-volume plane: the work is the area inside.
+	// A point charge, its field lines and a Gaussian sphere: the flux counts only the charge inside.
 	'university-fisica-2': String.raw`\begin{tikzpicture}[scale=0.95,line cap=round,ink]
-\fill[fillred,domain=1:4,samples=60] (1,3.2) -- (4,3.2) -- plot[domain=4:1] (\x,{3.2/\x}) -- cycle;
-\draw[->] (-0.2,0) -- (5,0) node[right] {$V$};
-\draw[->] (0,-0.2) -- (0,3.8) node[above] {$p$};
-\draw[very thick,->] (1,3.2) -- (2.6,3.2);
-\draw[very thick] (2.5,3.2) -- (4,3.2);
-\draw[very thick,domain=4:1,samples=60] plot (\x,{3.2/\x});
-\draw[very thick,->] (4,3.2) -- (4,2.0);
-\draw[very thick] (4,2.1) -- (4,0.8);
-\fill (1,3.2) circle (2pt) node[above left] {$A$};
-\fill (4,3.2) circle (2pt) node[above right] {$B$};
-\fill (4,0.8) circle (2pt) node[below right] {$C$};
-\node[pen] at (2.4,2.55) {$L$};
-\node[soft,rotate=-38] at (1.55,1.45) {\small isoterma};
+\foreach \a in {0,45,...,315} {
+\draw[thick] (\a:0.32) -- (\a:2.35);
+\draw[thick,->] (\a:0.32) -- (\a:1.2);
+}
+\draw[pen,very thick,dashed] (0,0) circle (1.6);
+\fill[fillred,draw=ink,very thick] (0,0) circle (0.32);
+\node at (0,0) {$+$};
+\node[pen] at (22:2.0) {$S$};
+\node at (67:2.6) {$\vec E$};
+\node[right] at (2.9,0.5) {$\Phi_S(\vec E)=\frac{q}{\varepsilon_0}$};
 \end{tikzpicture}`,
 
 	// An AND gate and its truth table: the same function in two representations.
