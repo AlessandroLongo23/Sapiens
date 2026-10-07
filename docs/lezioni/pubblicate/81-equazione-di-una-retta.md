@@ -149,6 +149,17 @@ ed è la [funzione lineare](/materiale/scuola-superiore/matematica/relazioni-e-f
 \fill (0,2) circle (0.1) node[above left] {$(0, 2)$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: forma-esplicita-cursori-m-q
+% alt: La retta y = mx + q con i cursori di m e di q, la retta y = mx tratteggiata per confronto e il punto Q(0; q) sull'asse y: cambiando q la retta si sposta in su o in giù senza cambiare pendenza, cambiando m ruota intorno a Q
+curva: y=mx+q
+curva: y=mx | tratteggiata | grigio
+curva: Q=\left(0;q\right) | nero
+cursore: m = 0,5 da -4 a 4 passo 0,25
+cursore: q = 2 da -5 a 5 passo 0,5
+finestra: x da -5 a 5, y da -4 a 6
+domanda: Muovi solo $q$: la pendenza cambia? Poi muovi solo $m$: quale punto resta fermo? Esiste un valore di $m$ che rende la retta verticale?
+```
 
 Le rette già viste sono casi particolari della forma esplicita: con $q = 0$ si ha $y = mx$, una retta per l'origine; con $m = 0$ si ha $y = q$, una retta orizzontale.
 

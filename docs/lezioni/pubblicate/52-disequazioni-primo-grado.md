@@ -448,6 +448,23 @@ Gli ingressi sono numeri naturali, quindi le soluzioni del problema non sono tut
 ```
 ```
 
+Il confronto dell'esempio 8 si vede anche nel piano cartesiano. La tariffa A è la retta orizzontale $y = 40$, la tariffa B è la retta $y = 16 + 3x$: B conviene finché la sua retta sta sotto l'altra, cioè a sinistra del punto $P$ in cui si incontrano. Con i cursori cambi la quota fissa $q$ e il costo $m$ di un ingresso.
+
+```grafico
+% nome: tariffe-due-rette-cursori
+% alt: La retta orizzontale y = 40 della tariffa A e la retta y = q + mx della tariffa B, con i cursori della quota fissa q e del costo m di un ingresso, e il punto P in cui si incontrano: sotto il piano è scritta l'ascissa di P, il numero di ingressi con cui le due tariffe costano uguale, all'inizio 8
+curva: y=40 | grigio
+curva: y=q+mx
+curva: P=\left(\frac{40-q}{m};40\right) | nero
+cursore: q = 16 da 0 a 40 passo 1
+cursore: m = 3 da 1 a 6 passo 0,5
+finestra: x da -1 a 15, y da -5 a 60
+forma: 3:2
+assi: ingressi, euro
+valore: x = \frac{40-q}{m}
+domanda: Porta il costo di un ingresso da $3$ a $4$ euro: fino a quanti ingressi conviene ancora la tariffa B?
+```
+
 ```ad-note
 Dove si usano
 Le disequazioni di primo grado sono il punto di partenza dei [sistemi di disequazioni](/materiale/scuola-superiore/matematica/disequazioni-di-primo-grado/sistemi-di-disequazioni), dove si cercano i numeri che risolvono più disequazioni insieme (e dove si risolvono le doppie disequazioni come $1 < 2x + 3 < 7$), e dello [studio del segno](/materiale/scuola-superiore/matematica/disequazioni-di-primo-grado/studio-del-segno-e-disequazioni-fratte), che serve per le disequazioni con prodotti e frazioni.

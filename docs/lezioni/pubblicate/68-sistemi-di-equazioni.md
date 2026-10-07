@@ -487,6 +487,24 @@ Le due equazioni dell'esempio 7 diventano tutte e due $y = \dfrac{1}{2}x - \dfra
 | impossibile | nessuna | parallele distinte |
 | indeterminato | infinite coppie | coincidenti |
 
+Prova a passare da un caso all'altro. La retta blu è $x + y = 5$ e resta ferma, con $a' = 1$, $b' = 1$, $c' = 5$; la rossa è $ax + 3y = c$, e all'inizio è $2x + 3y = 12$, quella dei quaderni. Sotto il piano ci sono i tre rapporti tra i coefficienti e il punto comune $P$.
+
+```grafico
+% nome: sistema-rette-rapporti-cursori
+% alt: La retta x + y = 5 e la retta ax + 3y = c con i cursori di a e di c, il punto comune P e i tre rapporti tra i coefficienti: con a = 3 le rette sono parallele e il punto comune non esiste, e con c = 15 coincidono
+curva: x+y=5
+curva: ax+3y=c | rosso
+curva: P=\left(\frac{c-15}{a-3};5-\frac{c-15}{a-3}\right) | nero
+cursore: a = 2 da -3 a 6 passo 0,5
+cursore: c = 12 da 0 a 20 passo 1
+finestra: x da -2 a 9, y da -3 a 7
+valore: \frac{a}{a'} = a
+valore: \frac{b}{b'} = 3
+valore: \frac{c}{c'} = \frac{c}{5}
+valore: P = \left(\frac{c-15}{a-3};5-\frac{c-15}{a-3}\right)
+domanda: Porta $a$ a $3$: dove finisce il punto $P$? Poi cerca il valore di $c$ per cui le due rette diventano una sola.
+```
+
 Il grafico aiuta a capire e a controllare, ma non sostituisce il conto: se il punto d'incontro ha coordinate come $\left(\dfrac{5}{3}, \dfrac{7}{3}\right)$, dal disegno non si leggono con precisione. Come si usa il sistema per trovare il punto d'incontro di due rette, e per i problemi con i triangoli, è nella lezione [Intersezione tra due rette](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/intersezione-tra-due-rette).
 
 ## Sistemi fratti

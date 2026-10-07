@@ -126,7 +126,7 @@ La velocità di ogni punto della ruota è la somma di due velocità: quella del 
 ```tikz
 % nome: rotolamento-velocita-punti-ruota
 % alt: Una ruota che rotola verso destra su un piano orizzontale, con il verso di rotazione orario. Il centro ha velocità v con cm, il punto più alto ha una velocità doppia nello stesso verso, il punto di contatto con il terreno ha velocità zero
-% svg: rotolamento-velocita-punti-ruota-c298073c.svg 231x127
+% svg: rotolamento-velocita-punti-ruota-ff553383.svg 231x127
 \begin{tikzpicture}
 \draw[thick] (-2,0) -- (4,0);
 \foreach \x in {-1.85,-1.7,...,4} \draw[thin] (\x,0) -- ++(-0.15,-0.15);

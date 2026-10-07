@@ -154,6 +154,13 @@ $$T = m_2\,(g - a) = 2{,}0\,\text{kg} \cdot (9{,}8 - 1{,}633)\,\text{m/s}^2 = 16
 Controllo con il blocco: $T - \mu_d\,m_1\,g = 16{,}33 - 9{,}8 = 6{,}53\,\text{N}$, e $m_1\,a = 4{,}0 \cdot 1{,}633 = 6{,}53\,\text{N}$.
 ```
 
+La scena qui sotto è il blocco dell'esempio 3, con il suo pesetto. Avviala, poi scegli un corpo per leggere le forze che agiscono su di lui: la tensione è la stessa ai due capi del filo. Senza attrito e con un pesetto di $1{,}0\,\text{kg}$ ritrovi i numeri dell'esempio 2.
+
+```interattivo
+% nome: scena-carrello-pesetto
+% alt: Un blocco di 4 chilogrammi su un tavolo, legato con un filo che passa per una carrucola sul bordo a un pesetto appeso, con le frecce delle forze su tutti e due. Un cursore cambia la massa del pesetto da 0,5 a 3 chilogrammi e un selettore toglie o mette l'attrito sul tavolo. Avviando la scena il pesetto scende e il blocco va verso la carrucola; accanto ci sono le forze sul corpo scelto, l'accelerazione e il grafico della velocità del blocco nel tempo. Con l'attrito e un pesetto di 2 chilogrammi l'accelerazione è 1,63 metri al secondo quadrato e la tensione 16,33 newton; sotto 1,4 chilogrammi il sistema non parte
+```
+
 ## La macchina di Atwood
 
 La **macchina di Atwood** è una carrucola appesa al soffitto, con un filo che porta due masse $m_1$ e $m_2$, una per parte. George Atwood la descrisse nel 1784 per studiare la caduta dei corpi rallentata: la massa più pesante scende, l'altra sale, e l'accelerazione è piccola quando le masse sono quasi uguali.

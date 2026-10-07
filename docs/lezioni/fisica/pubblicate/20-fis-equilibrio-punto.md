@@ -213,6 +213,13 @@ Seno e coseno scambiati
 Se l'angolo è dato con la verticale, come nell'esempio 4, la componente verticale va con il coseno e quella orizzontale con il seno; se è dato con l'orizzontale, il contrario. Prima di scrivere le componenti guarda quale lato ha l'angolo: il coseno va con il cateto adiacente. Un controllo veloce: con un filo quasi verticale la tensione deve reggere quasi tutto il peso.
 ```
 
+Nella scena qui sotto la lampada dell'esempio 4 è già in equilibrio, e le tensioni sono calcolate dalle due equazioni. Cambia l'angolo del filo legato al soffitto e leggi come si dividono il lavoro i due fili.
+
+```interattivo
+% nome: scena-lampada-due-fili
+% alt: La lampada di 20 newton dell'esempio 4, tenuta da un filo inclinato legato al soffitto e da un filo orizzontale legato alla parete, con le frecce del peso P e delle due tensioni T e F. Un cursore cambia l'angolo del filo inclinato con la verticale, da 5 a 60 gradi; accanto sono scritti i moduli delle tre forze e le due componenti di T. A 30 gradi T vale 23,09 newton e F 11,55 newton
+```
+
 ## Un corpo appeso a due fili
 
 Un quadro, un'insegna, un lampione appeso sopra una strada sono spesso tenuti da due fili che salgono da parti opposte. Se i due fili formano lo stesso angolo $\alpha$ con l'orizzontale, per simmetria hanno la stessa tensione $T$. Le componenti orizzontali, $T\cos\alpha$ verso sinistra e $T\cos\alpha$ verso destra, si annullano da sole; le componenti verticali, $T\sin\alpha$ ciascuna, devono insieme reggere il peso:
@@ -309,11 +316,11 @@ La formula $T = \dfrac{P}{2\sin\alpha}$ nasconde una sorpresa. Più i fili sono 
 
 Un filo perfettamente orizzontale, con un peso appeso nel mezzo, dovrebbe avere una tensione infinita: per questo non c'è modo di tendere un filo per stendere così tanto che resti dritto quando ci appendi una maglietta. Il filo si abbassa sempre un po', e se è troppo teso si spezza. Per la stessa ragione i cavi dell'alta tensione non sono mai tesi del tutto, e fanno una curva tra un traliccio e l'altro.
 
-Nella figura qui sotto trascini i punti in cui sono attaccati i due fili, e guardi come cambiano gli angoli e le tensioni.
+Nella figura qui sotto i due fili hanno sempre la stessa lunghezza. Allontana le pareti, oppure trascina i punti in cui i fili sono attaccati: il corpo sale o scende, e con lui cambiano gli angoli e le tensioni.
 
 ```interattivo
 % nome: corpo-due-fili-tensioni
-% alt: Un corpo di 2 chilogrammi appeso a due fili, attaccati a due pareti ai lati; i due punti di attacco si trascinano in su e in giù lungo le pareti, e i fili cambiano inclinazione. Dal corpo partono il peso P e le tensioni dei due fili, disegnate in scala; sotto sono scritti gli angoli dei fili con l'orizzontale e le tensioni, che crescono molto quando i fili si avvicinano all'orizzontale; si possono mostrare le componenti delle tensioni
+% alt: Un corpo di 2 chilogrammi appeso a due fili della stessa lunghezza, 1,85 metri, attaccati a due pareti ai lati. Un cursore cambia la distanza tra le pareti, da 1,6 a 3,65 metri: i fili non cambiano lunghezza, quindi avvicinando le pareti il corpo scende e i fili diventano più ripidi, allontanandole il corpo sale e i fili si tendono. I due punti di attacco si trascinano in su e in giù lungo le pareti. Dal corpo partono il peso P e le tensioni dei due fili, disegnate sempre nella stessa scala; sotto sono scritti gli angoli dei fili con l'orizzontale e le tensioni, che crescono molto quando i fili sono quasi tesi; si possono mostrare le componenti delle tensioni
 ```
 
 ```ad-example
