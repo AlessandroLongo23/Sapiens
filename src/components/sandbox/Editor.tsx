@@ -126,6 +126,7 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 	const [tying, setTying] = useState<{ from?: RopeEnd; pulley?: string; at?: Vec } | null>(null);
 	const [slow, setSlow] = useState<'1' | '0.25'>('1');
 	const [chart, setChart] = useState<Quantity>('v');
+	const [split, setSplit] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [examples, setExamples] = useState(false);
 	const sim = useSim(doc, Number(slow));
@@ -350,7 +351,7 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 				<div className={cn('flex min-w-0 flex-col lg:order-2 lg:flex-1', full && 'min-h-0 flex-1')}>
 					<p className="m-0 border-b border-edge-soft px-3 py-2 text-sm text-fg-muted" aria-live="polite">{hint}</p>
 					<div ref={stage} className={cn('flex min-w-0 flex-1 items-center justify-center', full ? 'm-2 min-h-0 overflow-hidden' : 'p-2')}>
-					<SceneDrawing svgRef={svgRef} grid={0.5} scene={doc} state={sim.state} solution={sim.solution} selected={bi} forces="all" forceScale={FORCE_SCALE} velocityScale={0.4} trail={bi >= 0 ? sim.frames.slice(0, sim.cursor + 1).map((s) => s.pos[bi]) : []} label="La scena della sandbox: i pezzi si trascinano" maxW={canvasW} maxH={canvasH}>
+					<SceneDrawing svgRef={svgRef} grid={0.5} scene={doc} state={sim.state} solution={sim.solution} selected={bi} forces="all" forceScale={FORCE_SCALE} velocityScale={0.4} components={split} trail={bi >= 0 ? sim.frames.slice(0, sim.cursor + 1).map((s) => s.pos[bi]) : []} label="La scena della sandbox: i pezzi si trascinano" maxW={canvasW} maxH={canvasH}>
 						{/* a click on the empty scene lets go of the selection */}
 						<rect x={0} y={0} width={f.W} height={f.H} fill="transparent" onPointerDown={() => setSel(null)} />
 						{doc.surfaces.map((s) => {
@@ -498,7 +499,11 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 						{body && bi >= 0 && (
 							<>
 								<Card title={`Forze su ${body.name ?? 'il corpo'}`}>
-									<BodyPanel scene={doc} state={read} body={bi} />
+									<label className="flex cursor-pointer items-center gap-2 text-sm text-fg">
+										<input type="checkbox" className="size-4 accent-[var(--accent)]" checked={split} onChange={(ev) => setSplit(ev.target.checked)} />
+										Componenti lungo x e y
+									</label>
+									<BodyPanel scene={doc} state={read} body={bi} components={split} />
 								</Card>
 								<Card title="Grafico" action={<Select aria-label="Grandezza del grafico" className="!w-44 py-1 text-sm" value={chart} onChange={(ev) => setChart(ev.target.value as Quantity)}>{Object.entries(QUANTITIES).map(([id, x]) => <option key={id} value={id}>{x.name}</option>)}</Select>}>
 									<div className="flex justify-center">

@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: da decidere
-aggiornato: 2026-10-06
+aggiornato: 2026-10-07
 tag: [prodotto, studenti, strumenti, fisica, lezioni]
 ---
 # Sandbox di fisica
@@ -11,11 +11,13 @@ Lo strumento della fisica: una scena fatta di pezzi (masse, piani inclinati, cor
 ## Stato attuale
 Dal 5 ottobre 2026 c'è la prima fetta, nel codice locale, non committata. Non è nella beta.
 
+Dal 7 ottobre 2026 la sandbox è uno strumento del sito, alla pagina `/strumenti/sandbox-di-fisica`: l'editor in alto, i link alle lezioni sul piano inclinato e sull'attrito, un articolo (`src/content/strumenti/sandbox-di-fisica.md`) e la carta nell'indice degli strumenti, tra quelli di fisica. Il nome è "Sandbox di fisica". La pagina di prova `/prova-fisica/sandbox` è stata tolta; il vecchio visore delle scene fisse (`Sandbox.tsx`, quello di `?fissa=1`) non ha più una pagina che lo usa. Una scena condivisa sta nell'indirizzo dopo `#s=`, come prima. Guardata con Playwright a 1440 e 390 px, senza scorrimento laterale.
+
 - Il motore, `src/lib/sandbox/engine.ts`: punti materiali, superfici fisse dritte con attrito statico e dinamico, corde ideali, carrucole fisse ideali (una per corda), in unità SI. A ogni passo risolve un solo sistema lineare che ha per incognite le accelerazioni e le forze dei vincoli, quindi tensioni, reazioni e attrito sono risultati da leggere. Il passo è $x + vh + \frac{1}{2}ah^2$, tagliato dove l'attrito ferma un corpo, dove un corpo atterra e dove una corda si tende: un sistema con forze costanti segue la legge chiusa fino all'arrotondamento. Una scena è JSON.
 - Le scene, `src/lib/sandbox/scenes.ts`: piano inclinato, macchina di Atwood, piano inclinato con peso appeso, corpo appeso a due fili, lancio da un tavolo, e per le lezioni la lampada tra soffitto e parete e il carrello sul tavolo con il pesetto.
 - I test, `tests/unit/sandbox.test.mjs`: 12, contro le formule chiuse ($a = g \sin\theta$, attrito che tiene fino a $\tan\theta \leq \mu_s$, $a$ e $T$ di Atwood, corpi collegati con e senza attrito, le due tensioni dei fili, tempo di caduta e gittata dal tavolo, distanza di arresto, energia e lunghezza di un pendolo).
 - L'interfaccia, `src/components/sandbox/`: `Sandbox.tsx` (la scena a sinistra; a destra le forze sul corpo scelto con i moduli, $\sum F$, $a$, $v$, l'energia e due grafici nel tempo a scelta tra $x$, $y$, $v$, $v_x$, $v_y$), `SceneDrawing.tsx` (la scena con i pezzi del kit delle lezioni, le forze come frecce, la traiettoria del corpo scelto), `TimeChart.tsx`. Comandi: avvia e pausa, un passo, da capo, tempo a un quarto, il cursore del tempo per tornare indietro, quali forze disegnare. Un clic su un corpo lo sceglie. Con `locked` la scena è fissa, come in una lezione.
-- La pagina di prova, solo in sviluppo: `/prova-fisica/sandbox`, con `?scena=` (`piano-inclinato`, `atwood`, `piano-e-peso`, `due-fili`, `lancio`) e `?fissa=1`.
+- La pagina di prova `/prova-fisica/sandbox` c'è stata fino al 7 ottobre 2026 (vedi sopra).
 - Provata con Playwright su Chromium a 1280 e 390 px, senza errori. Non provata su WebKit, nel tema scuro, su un telefono vero.
 
 Nelle lezioni, dal 5 ottobre 2026 (richiesta di Alessandro dopo aver visto la pagina di prova: lì gli elementi occupano molto più spazio della colonna di una lezione, e va scelto quali servono):
@@ -29,7 +31,7 @@ Nelle lezioni, dal 5 ottobre 2026 (richiesta di Alessandro dopo aver visto la pa
 - Le forze hanno i nomi delle lezioni: $P$, $F_v$ per la reazione, $F_s$ e $F_d$ per l'attrito; una corda può dare il nome alla sua tensione.
 
 L'editor, dal 6 ottobre 2026 (richiesta di Alessandro: uno strumento dove si aggiungono, spostano e tolgono i pezzi, senza niente di macchinoso, con una libreria e l'aggancio tra i pezzi):
-- `src/components/sandbox/Editor.tsx`, alla pagina di prova `/prova-fisica/sandbox` (il vecchio visore delle scene fisse resta con `?fissa=1`). Una cornice sola, come il plotter (richiesta di Alessandro del 6 ottobre 2026, dopo una prima versione a schede separate): in alto la barra con annulla e ripeti a sinistra ed esempi, condividi e svuota a destra; a sinistra il pannello a sezioni che si chiudono (i pezzi della libreria, i valori del pezzo scelto, le forze, il grafico); a destra la scena su una griglia di mezzo metro, con una riga di aiuto sopra e sotto la barra del tempo (avvia, un passo, da capo, velocità, cursore). Sul telefono la scena e il tempo stanno sopra, il pannello sotto. I bottoni della barra sono quelli del plotter (`IconButton` di `PlotterParts.tsx`). Dal 6 ottobre 2026 ha lo schermo intero, come il plotter: quello del browser dove esiste, altrimenti la cornice fissata sopra la pagina; la scena prende lo spazio che c'è, misurato mentre cambia, e Esc esce.
+- `src/components/sandbox/Editor.tsx`, oggi alla pagina `/strumenti/sandbox-di-fisica` (fino al 7 ottobre alla pagina di prova). Una cornice sola, come il plotter (richiesta di Alessandro del 6 ottobre 2026, dopo una prima versione a schede separate): in alto la barra con annulla e ripeti a sinistra ed esempi, condividi e svuota a destra; a sinistra il pannello a sezioni che si chiudono (i pezzi della libreria, i valori del pezzo scelto, le forze, il grafico); a destra la scena su una griglia di mezzo metro, con una riga di aiuto sopra e sotto la barra del tempo (avvia, un passo, da capo, velocità, cursore). Sul telefono la scena e il tempo stanno sopra, il pannello sotto. I bottoni della barra sono quelli del plotter (`IconButton` di `PlotterParts.tsx`). Dal 6 ottobre 2026 ha lo schermo intero, come il plotter: quello del browser dove esiste, altrimenti la cornice fissata sopra la pagina; la scena prende lo spazio che c'è, misurato mentre cambia, e Esc esce.
 - Un clic su un pezzo della libreria lo mette nella scena, già scelto; poi si trascina. Una massa avvicinata a una superficie ci si appoggia e ne prende l'inclinazione; sotto il bordo di una carrucola si allinea, così il filo scende verticale. Quello che è appoggiato a una superficie, o legato a essa, la segue quando la si sposta, la si allunga o se ne cambia l'angolo.
 - La corda: si sceglie Corda, poi si cliccano i due capi (un corpo, un punto di una superficie, un punto qualunque), e in mezzo una carrucola se deve passarci; una linea tratteggiata segue il puntatore. Il verso in cui gira attorno alla carrucola lo decide la scena. Le corde sono sempre tese alla partenza.
 - Gli estremi di una superficie scelta si trascinano: pavimento e soffitto restano orizzontali, la parete verticale, il piano inclinato ruota. Valori nel pannello: massa, velocità iniziale e forma di un corpo; lunghezza, inclinazione e attrito di una superficie; raggio di una carrucola; la carrucola di una corda.
@@ -41,7 +43,7 @@ Limiti di oggi:
 - Un pezzo si aggiunge con un clic, non trascinandolo dalla libreria.
 - Sul telefono la scena è piccola (7,2 m in 340 px): si usa, ma è da computer.
 - Il capo di una corda legato a una superficie è un punto: segue la superficie, non si vede che cosa lo tiene.
-- L'editor non è tra gli strumenti del sito: mancano il nome, l'indirizzo sotto `/strumenti`, l'articolo, la carta dell'indice. Niente blocco per le lezioni e niente scene salvate con nome.
+- Niente blocco per le lezioni e niente scene salvate con nome. Non c'è un pendolo tra gli esempi (il filmato della landing lo costruisce con un link).
 - I grafici sono un disegno semplice del kit, non il piano del plotter.
 - Niente equazioni con i simboli ($m g \sin\theta - \mu N = m a$): solo i numeri.
 - I corpi non si urtano tra loro; l'atterraggio è anelastico e non toglie velocità lungo la superficie; una corda che si tende dà uno strattone anelastico.
@@ -56,6 +58,8 @@ Come l'ha raccontata Alessandro il 5 ottobre 2026. Una sandbox dove si mettono i
 Ha due versioni, come il plotter. Dentro una lezione la scena può essere fissa. Nello strumento c'è l'editor, con cui i professori creano esercizi e materiale e gli studenti studiano.
 
 ## Dettagli
+- Scomposizione dei vettori (7 ottobre 2026): nella scheda "Forze su m" la casella "Componenti lungo x e y" disegna, per il corpo selezionato, le due componenti di ogni forza e della velocità (frecce tratteggiate sottili dallo stesso punto, con le due linee che chiudono il rettangolo) e aggiunge al pannello le componenti di forze, accelerazione e velocità. Un vettore già lungo un asse non viene scomposto. Limite: su un blocco piccolo con tre forze e la velocità le etichette sono fitte, e due componenti sovrapposte sulla stessa retta (T₁y e T₂y nel corpo a due fili) restano difficili da distinguere.
+- Etichette stabili (7 ottobre 2026): il nome di una freccia tiene il posto che ha rispetto alla sua freccia da un fotogramma all'altro (`memory` in `placeLabels`, `SceneDrawing.tsx`) e ne cerca un altro solo quando finisce sopra una linea o un altro nome. Prima sceglieva il posto migliore a ogni fotogramma e nel pendolo saltava di continuo. Misura su 7 secondi di pendolo: nessun salto per T e P; il nome di v cambia posto solo alle inversioni, quando la freccia sparisce e riparte dall'altra parte.
 - Seconda revisione del 7 ottobre 2026, applicata: pavimenti, soffitti e pareti possono essere "senza fine" (campo `endless` della superficie, scelta "Senza fine / Limitata" nell'editor). Sono senza fine il primo pavimento, i soffitti e le pareti nuove, e il pavimento più basso degli esempi; i piani inclinati restano limitati. La freccia della velocità parte dal centro del corpo. Il nome del corpo sta in un angolo scelto in ordine fisso e non salta più al variare della massa. Le formule del pannello sono allineate a sinistra.
 - Fluidità con un corpo selezionato (7 ottobre 2026): i numeri del pannello si aggiornano ogni 6 fotogrammi e il grafico ogni 3 mentre la scena corre, le formule KaTeX sono composte una volta sola per testo (`Tex` in `kit.tsx`), la traccia del corpo non ridisegna i tratti già percorsi (un pendolo ripassava lo stesso arco all'infinito), la libreria dei pezzi è costruita una volta. Misura sul pendolo, Chromium senza interfaccia, server di sviluppo, 3 secondi: script 890 ms con il corpo selezionato e 739 ms senza (prima 1028 e 873), paint 80 ms e 31 ms. Resta un 20% in più con la selezione. Non misurato sulla versione di produzione. Limite noto: l'editor intero si ridisegna a ogni fotogramma; per andare oltre va separato il disegno della scena dal resto.
 - Revisione di Alessandro del 7 ottobre 2026 sull'editor, tutta applicata:
@@ -77,6 +81,7 @@ Ha due versioni, come il plotter. Dentro una lezione la scena può essere fissa.
 - Dove si generano le equazioni con i simboli, e per quali scene.
 - Il nome dello strumento e il suo indirizzo sotto `/strumenti`.
 - Quando entra in una release.
+- Il motore fa da modello anche agli apparati di meccanica del [[Laboratorio di fisica]], con sopra l'errore di misura? Lì si misura, qui resta la legge esatta ([[2026-10-07 Nel laboratorio di fisica si misura, la legge esatta resta alla sandbox]]).
 
 ## Collegamenti
 - Attori: [[Studente]], [[Docente]]

@@ -18,6 +18,18 @@ export const FORZE_CALORE_ART: Record<string, ReactNode> = {
 			</Label>
 		</Art>
 	),
+	'sandbox-di-fisica': (
+		<Art>
+			{/* A pulley under a ceiling with a mass on each side of the rope, and the heavier one going down. */}
+			<Ink d="M20,8 H100" />
+			<Ink d="M60,8 V16" className="stroke-fg-muted" strokeWidth={1} />
+			<circle cx={60} cy={24} r={8} className="fill-accent/10" vectorEffect="non-scaling-stroke" />
+			<Ink d="M52,24 V40 M68,24 V52" />
+			<Fill d="M45,40 H59 V52 H45 Z" />
+			<Fill d="M59,52 H77 V70 H59 Z" />
+			<Accent d="M88,52 V70 M84,65 L88,70 L92,65" />
+		</Art>
+	),
 	'piano-inclinato': (
 		<Art>
 			{/* A block on an inclined plane, and the way it slides down along it. */}
