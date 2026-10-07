@@ -6,6 +6,9 @@
  * this. A chart is read from its statements. A program is read from its words: comments and texts are taken out,
  * and what is left is searched for the reserved words of the language, which can be nothing else there.
  *
+ * A program can also be asked for a function of its own (`funzione`: defined and called, and `main` in C++ does not
+ * count) and for a list or an array (`vettore`). A flowchart has neither.
+ *
  * It tells that a construct is there, not that it does the work: a loop of one turn beside six `print` would pass.
  * So a level that asks for a construct reads its numbers and is tried on runs that write different things
  * (`makeGenerator` checks it): what it writes cannot be typed by hand, one line after the other.
@@ -128,6 +131,72 @@ function nestedCpp(text: string): boolean {
 	return false;
 }
 
+const escaped = (word: string) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Whether a Python program defines a function of its own and calls it: a `def`, and the name followed by a round
+ * bracket somewhere that is not its `def`.
+ */
+function ownFunctionPython(text: string): boolean {
+	for (const m of text.matchAll(/^[ \t]*def[ \t]+([A-Za-z_]\w*)[ \t]*\(/gm)) {
+		const calls = new RegExp(`(?<!\\bdef[ \\t]+)(?<![\\w.])${escaped(m[1])}[ \\t]*\\(`);
+		if (calls.test(text)) return true;
+	}
+	return false;
+}
+
+const CPP_NOT_A_NAME = new Set(['main', 'if', 'while', 'for', 'switch', 'catch', 'return', 'sizeof', 'operator']);
+
+/**
+ * Whether a C++ program defines a function of its own and calls it. A definition is a name outside every brace,
+ * after a type, followed by its round brackets and by the brace of its body; `main` is not one, and a prototype
+ * (round brackets and a semicolon) is not a definition. A call is the name followed by a round bracket inside a
+ * brace: in the body of `main`, of another function, or of the function itself.
+ */
+function ownFunctionCpp(text: string): boolean {
+	// the text outside every brace, and the text inside one, each with the other blanked out
+	let outside = '';
+	let inside = '';
+	let depth = 0;
+	for (const c of text) {
+		if (c === '}') depth = Math.max(0, depth - 1);
+		outside += depth === 0 ? c : ' ';
+		inside += depth === 0 ? ' ' : c;
+		if (c === '{') depth++;
+	}
+	for (const m of outside.matchAll(/[\w>*&\]][\s*&]*?(?<![\w])([A-Za-z_]\w*)\s*\([^(){};]*\)\s*(?:const\s*)?\{/g)) {
+		const name = m[1];
+		if (CPP_NOT_A_NAME.has(name)) continue;
+		if (new RegExp(`(?<![\\w.])${escaped(name)}\\s*\\(`).test(inside)) return true;
+	}
+	return false;
+}
+
+const PYTHON_BEFORE_A_LIST = new Set(['return', 'in', 'and', 'or', 'not', 'if', 'else', 'elif', 'while', 'yield', 'is', 'print']);
+
+/**
+ * Whether a Python program uses a list: a square bracket that opens one (after `=`, a bracket, a comma, `in`,
+ * `return`: not after a name, which would be reading an element, maybe of a text), `list(…)`, or a text split
+ * into its pieces.
+ */
+function listPython(text: string): boolean {
+	if (/(?<![\w.])list\s*\(/.test(text) || /\.split\s*\(/.test(text)) return true;
+	for (const m of text.matchAll(/\[/g)) {
+		const before = text.slice(0, m.index).replace(/[ \t]+$/, '');
+		const last = before[before.length - 1];
+		if (last === undefined || last === '\n' || !/[\w)\]"]/.test(last)) return true;
+		const word = /[A-Za-z_]\w*$/.exec(before)?.[0];
+		if (word && PYTHON_BEFORE_A_LIST.has(word)) return true;
+	}
+	return false;
+}
+
+/** Whether a C++ program uses an array or a `vector`: a variable declared with square brackets after its name, `vector<…>`, `array<…>`. */
+function arrayCpp(text: string): boolean {
+	if (/\b(?:vector|array)\s*</.test(text)) return true;
+	return /\b(?:int|long|short|unsigned|double|float|char|bool|string|auto)\b[\s*&]*\b[A-Za-z_]\w*\s*\[/.test(text);
+}
+
 /** The constructs of a program in Python or in C++. */
 export function codeConstructs(code: string, language: 'python' | 'cpp'): Set<Construct> {
 	const text = bare(code, language);
@@ -137,6 +206,8 @@ export function codeConstructs(code: string, language: 'python' | 'cpp'): Set<Co
 	if (has('for')) found.add('ciclo').add('for');
 	if (has('if') || (language === 'python' ? has('elif') || /^\s*match\b.*:\s*$/m.test(text) : has('switch') || text.includes('?'))) found.add('selezione');
 	if (language === 'python' ? nestedPython(text) : nestedCpp(text)) found.add('annidati');
+	if (language === 'python' ? ownFunctionPython(text) : ownFunctionCpp(text)) found.add('funzione');
+	if (language === 'python' ? listPython(text) : arrayCpp(text)) found.add('vettore');
 	return found;
 }
 
@@ -149,7 +220,15 @@ export function missingMessage(construct: Construct, kind: 'chart' | 'program'):
 	return `Il programma scrive il risultato giusto, ma l’esercizio chiede ${ASKED[construct]}, e qui non ${construct === 'annidati' ? 'ci sono' : 'c’è'}.`;
 }
 
-const ASKED: Record<Construct, string> = { ciclo: 'un ciclo', selezione: 'una selezione', while: 'un ciclo while', for: 'un ciclo for', annidati: 'due cicli, uno dentro l’altro' };
+const ASKED: Record<Construct, string> = {
+	ciclo: 'un ciclo',
+	selezione: 'una selezione',
+	while: 'un ciclo while',
+	for: 'un ciclo for',
+	annidati: 'due cicli, uno dentro l’altro',
+	funzione: 'una funzione definita e chiamata da te',
+	vettore: 'un vettore (in Python, una lista)'
+};
 
 /**
  * What a program to write must contain, told with the question: a program may reach the right numbers another way

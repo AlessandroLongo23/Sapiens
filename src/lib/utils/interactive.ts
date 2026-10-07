@@ -318,6 +318,76 @@ export const FIGURES: Record<string, () => Promise<{ default: ComponentType<{ al
 	'percettrone-separa-a-mano': () => import('@/components/content/interactive/ia/Percettrone').then((m) => ({ default: m.SeparaAMano })),
 	'percettrone-regola-apprendimento': () => import('@/components/content/interactive/ia/Percettrone').then((m) => ({ default: m.Apprendimento })),
 	'rete-xor-strato-nascosto': () => import('@/components/content/interactive/ia/ReteXor'),
+	// Computer science, third year.
+	'inf-ricerca-sequenziale-passi': () => import('@/components/content/interactive/informatica/RicercaSequenzialePassi'),
+	'inf-selection-sort-passi': () => import('@/components/content/interactive/informatica/SelectionSortPassi'),
+	'inf-ricerca-binaria-passi': () => import('@/components/content/interactive/informatica/RicercaBinariaPassi'),
+	'inf-bubble-sort-passi': () => import('@/components/content/interactive/informatica/BubbleSortPassi'),
+	'inf-insertion-sort-passi': () => import('@/components/content/interactive/informatica/InsertionSortPassi'),
+	'inf-scambia-valore-riferimento': () => import('@/components/content/interactive/informatica/ScambiaValoreRiferimento'),
+	'inf-pixel-risoluzione-profondita': () => import('@/components/content/interactive/informatica/PixelRisoluzioneProfondita'),
+	'inf-css-modello-scatola': () => import('@/components/content/interactive/informatica/ModelloScatola'),
+	'inf-kit-campionario': () => import('@/components/content/interactive/informatica/Campionario'),
+	// Computer science, third year: CSS rules and the box model (group 12).
+	'inf-css-selettori': () => import('@/components/content/interactive/informatica/SelettoriCss'),
+	'inf-css-cascata': () => import('@/components/content/interactive/informatica/CascataCss'),
+	'inf-css-scatola-strati': () => import('@/components/content/interactive/informatica/ScatolaStrati'),
+	'inf-css-box-sizing-confronto': () => import('@/components/content/interactive/informatica/ConfrontoBoxSizing'),
+	// Computer science, third year: functions (group 01).
+	'inf-definire-funzione-passi': () => import('@/components/content/interactive/informatica/DefinireFunzionePassi'),
+	'inf-parametri-ritorno-passi': () => import('@/components/content/interactive/informatica/ParametriRitornoPassi'),
+	// Computer science, third year: scope and parameters (group 02).
+	'inf-visibilita-pila': () => import('@/components/content/interactive/informatica/VisibilitaPila'),
+	'inf-passaggio-parametri-pila': () => import('@/components/content/interactive/informatica/PassaggioParametriPila'),
+	'inf-top-down-albero': () => import('@/components/content/interactive/informatica/TopDownAlbero'),
+	// Computer science, third year: arrays (group 03).
+	'inf-vettore-indice-elemento': () => import('@/components/content/interactive/informatica/VettoreIndiceElemento'),
+	'inf-vettore-scorri-passi': () => import('@/components/content/interactive/informatica/VettoreScorriPassi'),
+	'inf-ricerca-sequenziale-posizione': () => import('@/components/content/interactive/informatica/RicercaSequenzialePosizione'),
+	'inf-ricerca-sequenziale-casi': () => import('@/components/content/interactive/informatica/RicercaSequenzialeCasi'),
+	// Computer science, third year: sorting and counting operations (group 06).
+	'inf-bubble-sort-giri': () => import('@/components/content/interactive/informatica/BubbleSortGiri'),
+	'inf-insertion-sort-carte': () => import('@/components/content/interactive/informatica/InsertionSortCarte'),
+	'inf-gara-ordinamenti': () => import('@/components/content/interactive/informatica/GaraOrdinamenti'),
+	'inf-gara-ricerche': () => import('@/components/content/interactive/informatica/GaraRicerche'),
+	// Computer science, third year: binary search and selection sort (group 05).
+	'inf-ricerca-binaria-armadietti': () => import('@/components/content/interactive/informatica/RicercaBinariaArmadietti'),
+	'inf-ricerca-binaria-sequenziale': () => import('@/components/content/interactive/informatica/RicercaBinariaSequenziale'),
+	'inf-selection-sort-imin': () => import('@/components/content/interactive/informatica/SelectionSortImin'),
+	// Computer science, third year: matrices and strings (group 04).
+	'inf-matrice-indici': () => import('@/components/content/interactive/informatica/MatriceIndici'),
+	'inf-matrice-somme': () => import('@/components/content/interactive/informatica/MatriceSomme'),
+	'inf-stringa-vocali': () => import('@/components/content/interactive/informatica/StringaVocali'),
+	'inf-stringa-palindroma': () => import('@/components/content/interactive/informatica/StringaPalindroma'),
+	// Computer science, third year: media formats and compression (group 08).
+	'inf-scegli-formato': () => import('@/components/content/interactive/informatica/ScegliFormato'),
+	'inf-bitmap-vettoriale-zoom': () => import('@/components/content/interactive/informatica/BitmapVettorialeZoom'),
+	'inf-rle-riga': () => import('@/components/content/interactive/informatica/RleRiga'),
+	'inf-compressione-perdita': () => import('@/components/content/interactive/informatica/CompressionePerdita'),
+	// Computer science, third year: audio, video, fonts and markup (group 09).
+	'inf-audio-video-dimensione': () => import('@/components/content/interactive/informatica/AudioVideoDimensione'),
+	'inf-video-fotogrammi-differenza': () => import('@/components/content/interactive/informatica/VideoFotogrammiDifferenza'),
+	'inf-font-bitmap-contorno': () => import('@/components/content/interactive/informatica/FontBitmapContorno'),
+	'inf-markup-testo-albero-pagina': () => import('@/components/content/interactive/informatica/MarkupTestoAlberoPagina'),
+	// Computer science, third year: lists, tables and forms (group 11).
+	'inf-html-celle-unite': () => import('@/components/content/interactive/informatica/CelleUnite'),
+	'inf-html-modulo-inviato': () => import('@/components/content/interactive/informatica/ModuloInviato'),
+	// Computer science, third year: layout and responsive pages (group 13).
+	'inf-css-flexbox': () => import('@/components/content/interactive/informatica/Flexbox'),
+	'inf-media-query-larghezza': () => import('@/components/content/interactive/informatica/MediaQueryLarghezza'),
+	'inf-contrasto-colori': () => import('@/components/content/interactive/informatica/ContrastoColori'),
+	// Computer science, third year: files (group 07).
+	'inf-file-lettura-righe': () => import('@/components/content/interactive/informatica/LetturaRighe'),
+	'inf-csv-campi': () => import('@/components/content/interactive/informatica/CsvCampi'),
+	'inf-albero-xml-json': () => import('@/components/content/interactive/informatica/AlberoXmlJson'),
+	// Computer science, third year: HTML structure and text (group 10).
+	'inf-html-albero-documento': () => import('@/components/content/interactive/informatica/AlberoDocumento'),
+	'inf-html-percorsi-sito': () => import('@/components/content/interactive/informatica/PercorsiSito'),
+	// Computer science, third year: scripts, DOM and form checks (group 14).
+	'inf-script-ordine-lettura': () => import('@/components/content/interactive/informatica/ScriptOrdineLettura'),
+	'inf-js-costrutti-confronto': () => import('@/components/content/interactive/informatica/CostruttiConfronto'),
+	'inf-dom-albero-eventi': () => import('@/components/content/interactive/informatica/DomAlberoEventi'),
+	'inf-modulo-percorso-dato': () => import('@/components/content/interactive/informatica/ModuloPercorsoDato'),
 };
 
 export function activateInteractives(root: HTMLElement): () => void {

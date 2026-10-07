@@ -167,8 +167,8 @@ ul > li | quanti = 2
 | `h1 \| testo = Ciao` | il testo del primo, senza contare gli spazi ripetuti |
 | `p \| testo contiene Ciao` | il testo del primo contiene la parola |
 | `a \| attributo href` | il primo ha l'attributo |
-| `a \| attributo href = pagina.html` | l'attributo ha quel valore |
-| `h1 \| stile color = blue` | lo stile calcolato dal browser; il valore si scrive come in CSS |
+| `a \| attributo href = pagina.html` | l'attributo ha quel valore; per `href`, `src` e `action` due percorsi che portano allo stesso file sono uguali (`./pagina.html`, `pagina.html`) |
+| `h1 \| stile color = blue` | lo stile calcolato dal browser; il valore si scrive come in CSS, anche una scorciatoia (`padding = 4px 8px`) |
 
 Un progetto a più file è un gruppo di blocchi che hanno ciascuno il nome di un file: lo studente li vede con una
 linguetta per file, nell'ordine in cui sono scritti, e il primo è quello aperto. Serve per due pagine che si
@@ -190,7 +190,7 @@ a { color: teal; }
 ````
 
 - I nomi possono avere una cartella (`css/stile.css`); le estensioni sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`,
-  `md`, `json`, `txt`, `csv`. Un'immagine non si scrive in un blocco.
+  `md`, `json`, `txt`, `csv`, `xml`. Un'immagine non si scrive in un blocco.
 - "Esegui" avvia il programma, o mostra la pagina, del primo blocco che si può eseguire; poi quello che lo studente
   apre. In Python gli altri file sono moduli e file da leggere, in C e C++ si compilano insieme, in una pagina si
   collegano con il loro percorso e un link porta all'altra pagina.
@@ -199,8 +199,198 @@ a { color: teal; }
 - `%% crea`, da solo in fondo a un blocco, dà allo studente l'elenco dei file come nello strumento, con cui creare,
   rinominare ed eliminare file. Senza, i file sono quelli della lezione e si possono solo modificare.
 
+### I file che un programma legge e scrive
+
+Un programma in Python, in C o in C++ apre i file che ha accanto: `open("dati.txt")`, `ifstream`, `ofstream`,
+`fstream`, `fopen`. Per dare un file di dati a un programma scritto in più linguaggi, dopo i blocchi dei linguaggi si
+mette un blocco con il nome del file (`txt`, `csv`, `json` o `xml`): è lo stesso per tutti i linguaggi, e lo studente
+lo vede in una linguetta accanto al programma (che si chiama `main.py`, `main.cpp`, `main.c`).
+
+````
+```codice python
+with open("dati.txt") as file:
+    for riga in file:
+        print(riga.strip())
+```
+
+```codice cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    ifstream file("dati.txt");
+    string riga;
+    while (getline(file, riga)) {
+        cout << riga << endl;
+    }
+}
+```
+
+```codice dati.txt
+12
+7
+30
+```
+````
+
+Un file che il programma scrive compare tra le linguette alla fine dell'esecuzione, e la console lo dice ("Il
+programma ha creato il file uscita.txt"). Un esercizio controlla un file scritto con `%% file` e il nome del file,
+dopo la `%% prova`: sotto c'è quello che il file deve contenere quando il programma è finito.
+
+````
+```codice python
+n = int(input())
+with open("uscita.txt", "w") as file:
+    # scrivi qui
+    pass
+%% soluzione
+n = int(input())
+with open("uscita.txt", "w") as file:
+    for i in range(1, n + 1):
+        file.write(str(i) + "\n")
+%% prova
+3
+%% file uscita.txt
+1
+2
+3
+```
+
+```codice cpp
+#include <fstream>
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    ofstream file("uscita.txt");
+    // scrivi qui
+}
+%% soluzione
+#include <fstream>
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    ofstream file("uscita.txt");
+    for (int i = 1; i <= n; i++) {
+        file << i << endl;
+    }
+}
+```
+````
+
+- Una prova ha la sua `%% stampa`, uno o più `%% file`, o le due cose. Senza `%% stampa` quello che il programma
+  stampa non viene confrontato. Il file si confronta come l'uscita: non contano gli spazi in fondo alle righe e le
+  righe vuote alla fine.
+- Ogni esecuzione parte dai file che lo studente vede in quel momento: un programma che accoda (`"a"`, `ios::app`)
+  eseguito due volte accoda due volte, come su un computer. "Ripristina" rimette i file della lezione. Ogni prova di
+  "Verifica" parte dai file dell'editor e non li cambia.
+- Aprire in lettura un file che non c'è fallisce nel modo del linguaggio: in Python `FileNotFoundError`, in C++
+  `if (!file)` è vero, in C `fopen` dà `NULL`.
+- In un blocco senza file di dati e senza nomi di file non c'è un posto dove tenere il file scritto: la console ne
+  mostra il contenuto, e alla prossima esecuzione non c'è più. `%% file` funziona anche lì.
+- Entrano tra i file solo i file di testo con le estensioni dell'elenco sopra: di un file binario, o con un'altra
+  estensione, la console dice che non è stato tenuto. I file si possono mettere in una cartella che c'è già
+  (`dati/voti.csv`).
+- In C++ non ci sono le eccezioni (`file.exceptions(...)` non serve) e `<filesystem>` non è stato provato. In
+  JavaScript un programma non ha file.
+- `scripts/codice/verifica.mts` esegue anche questi blocchi e i progetti, e confronta i `%% file`.
+
 Un controllo con più regole passa quando passano tutte. `%% soluzione` in un file è la soluzione di quel file; un
-file senza soluzione resta com'è. I controlli sul comportamento (un clic che cambia la pagina) non ci sono ancora.
+file senza soluzione resta com'è.
+
+### I controlli sul comportamento di una pagina
+
+Un controllo può fare delle azioni sulla pagina dello studente prima di leggere le regole: sono le righe che
+cominciano con `>`, e vanno tutte prima delle regole. "Verifica" ricarica la pagina per ogni controllo che ha azioni,
+quindi i controlli non si influenzano, e lo script dello studente parte come in una pagina vera (`defer` e
+`DOMContentLoaded` compresi).
+
+````
+```codice html
+<p>Clic: <span id="conta">0</span></p>
+<button id="piu">Aggiungi</button>
+<script src="script.js"></script>
+%% controllo Dopo due clic il contatore segna 2
+> clic #piu
+> clic #piu
+#conta | testo = 2
+```
+
+```codice js
+// scrivi qui
+%% soluzione
+let clic = 0;
+document.querySelector("#piu").addEventListener("click", () => {
+    clic = clic + 1;
+    document.querySelector("#conta").textContent = clic;
+});
+```
+````
+
+| Azione | Cosa fa |
+|---|---|
+| `> clic #piu` | un clic sul primo elemento trovato; su un bottone di invio parte il modulo |
+| `> scrivi #nome \| Anna` | mette il testo nel campo al posto di quello che c'è, con gli eventi `input` e `change`; `> scrivi #nome \|` lo svuota |
+| `> scegli #classe \| Terza` | sceglie l'opzione di una `select`, per il suo testo o per il suo `value` |
+| `> spunta #accetto`, `> togli #accetto` | mette o toglie la spunta a una casella (o sceglie un `radio`) con un clic |
+| `> invia form` | invia il modulo come farebbe il suo bottone: prima il browser controlla `required` e simili |
+| `> premi #cerca \| Enter` | gli eventi `keydown` e `keyup` del tasto sull'elemento; il nome è quello di `evento.key` |
+| `> aspetta 400` | aspetta i millisecondi indicati (al più 3000 in un controllo), per una pagina che risponde con `setTimeout` |
+| `> larghezza 400` | rende l'anteprima larga 400 pixel (da 200 a 2000) fino alla fine del controllo, per le regole dentro una media query |
+
+| Regola | Cosa controlla |
+|---|---|
+| `#msg \| non esiste` | il selettore non trova niente |
+| `.errore \| visibile`, `.errore \| nascosto` | il primo occupa spazio nella pagina (non è `display: none`, `hidden` o `visibility: hidden`), o il contrario |
+| `#msg \| classe ok`, `#msg \| senza classe ok` | il primo ha, o non ha, la classe |
+| `#nome \| valore = Anna` | quello che c'è scritto nel campo; `valore =` da solo vuol dire campo vuoto |
+| `#accetto \| spuntato`, `#accetto \| non spuntato` | lo stato di una casella |
+| `form \| inviato`, `form \| non inviato` | il modulo è partito (c'è stato un `submit` che nessuno ha fermato con `preventDefault()`), oppure no |
+| `@avviso \| testo contiene nome` | il messaggio di un `alert()`, `confirm()` o `prompt()`; anche `@avviso \| quanti = 1` e `@avviso \| non esiste` |
+
+- Un modulo nell'anteprima si comporta come in una pagina vera fino al momento di partire, anche quando lo usa lo
+  studente a mano: il browser controlla i campi (`required`, `type="email"`, `min`, `max`) e mostra i suoi messaggi,
+  l'evento `submit` nasce, gli ascoltatori girano e `preventDefault()` ha effetto. Se nessuno lo ferma, il modulo non
+  va da nessuna parte e la console sotto l'anteprima dice che cosa sarebbe partito: "Modulo inviato con il metodo POST
+  a iscrivi.php: nome=Anna, email=anna@scuola.example." Un campo senza `name` non compare tra i dati.
+- `stile` confronta lo stile calcolato dell'elemento con quello che avrebbe con il valore chiesto, nel punto in cui
+  si trova: `red` e `rgb(255, 0, 0)` sono uguali, `width = 50%` e `margin-bottom = 1em` si misurano lì, una
+  scorciatoia (`border`, `margin`, `padding`, `gap`, `font`) si confronta parte per parte. Lo spessore di un bordo
+  (`border-top-width = 2px`) è giusto solo se il bordo c'è: senza `border-style` il browser lo calcola 0. Dopo
+  un'azione che fa partire una transizione serve un `> aspetta`.
+- Due controlli con `> larghezza` provano una media query sotto e sopra la soglia:
+
+  ````
+  %% controllo Su un telefono le schede sono in colonna
+  > larghezza 400
+  .schede | stile flex-direction = column
+  %% controllo Su un computer sono in riga
+  > larghezza 900
+  .schede | stile flex-direction = row
+  ````
+
+  Lo studente ha tre tasti sopra il codice per vedere l'anteprima larga come un telefono (375 pixel), come un tablet
+  (768) o quanto lo spazio che c'è; su uno schermo stretto i tasti non ci sono.
+- Un link a un punto della pagina (`href="#contatti"`) scorre fino all'elemento con quell'`id`; `pagina.html#contatti`
+  apre l'altra pagina del progetto e scorre al punto. Se nessun elemento ha quell'`id`, la console lo dice.
+- Durante "Verifica" `alert`, `confirm` e `prompt` non si aprono: `confirm` risponde di sì, `prompt` dà una stringa
+  vuota (o il suo valore proposto). I loro messaggi si leggono con `@avviso`.
+- Se un'azione non trova il suo elemento lo studente legge, per esempio, "Per questo controllo provo a premere
+  "#piu", ma nella pagina non lo trovo." Se lo script dà un errore durante le azioni, il controllo lo riporta con il
+  file e la riga.
+- `premi` manda solo gli eventi del tasto: non scrive il carattere nel campo, e Invio non invia il modulo (per
+  quello c'è `invia`). `visibile` non guarda l'opacità né se l'elemento è coperto da un altro.
+- Per controllare due momenti (dopo un clic si vede, dopo il secondo no) servono due controlli, ciascuno con tutte le
+  sue azioni dall'inizio.
+- `scripts/codice/verifica.mts` non esegue i controlli delle pagine: si provano nel browser, con
+  `/prova-grafico/lezione?file=...`, premendo "Soluzione" e poi "Verifica".
 
 Cosa c'è: in Python la libreria standard, `turtle` (ridisegnata per il browser), `numpy` e `matplotlib`; in C la
 libreria standard; in C++ la libreria standard senza le eccezioni (`try`, `catch` e `throw` non compilano). Un

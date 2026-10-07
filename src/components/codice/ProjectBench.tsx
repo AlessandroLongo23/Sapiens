@@ -4,14 +4,15 @@ import dynamic from 'next/dynamic';
 import { useCallback, useRef, useState, type DragEvent, type ReactNode } from 'react';
 import { Columns2, Globe, Settings, X } from 'lucide-react';
 import type { Check, Language, Test } from '@/lib/codice/blocco';
-import { MAX_FILES, MAX_PROJECT_SIZE, folderProblem, isFolder, isImage, kindOf, pathProblem, sortedPaths, targetOf, type ProjectFiles } from '@/lib/codice/progetto';
+import { MAX_FILES, MAX_PROJECT_SIZE, TEXT_EXTENSIONS, folderProblem, isFolder, isImage, kindOf, pathProblem, sortedPaths, targetOf, type ProjectFiles } from '@/lib/codice/progetto';
+import type { Changes } from './runtime';
 import { cn } from '@/lib/utils/cn';
 import { Explorer } from './Explorer';
 import { SettingsPanel } from './SettingsPanel';
 import { SPLIT_MAX, SPLIT_MIN, DEFAULTS, saveSettings, useEditorSettings } from './settings';
 import { Handle } from './Split';
 import { WebBench } from './WebBench';
-import { Workbench } from './Workbench';
+import { Workbench, named } from './Workbench';
 
 const Editor = dynamic(() => import('./Editor'), {
 	ssr: false,
@@ -38,6 +39,11 @@ export interface ProjectSlots {
 	job: () => { language: Language; source: string; files: ProjectFiles } | null;
 	/** The page "Esegui" shows. */
 	page: () => { files: ProjectFiles; path: string } | null;
+	/**
+	 * Takes what a run wrote and removed into the files of the project, where the student sees it; answers with the
+	 * sentences that tell the student, for the console.
+	 */
+	absorb: (changes: Changes) => string[];
 	/** A link in the preview leads to another page of the project. */
 	navigate: (path: string) => void;
 	/** Calls `changed` whenever a file changes; answers with the function that stops it. */
@@ -396,6 +402,66 @@ export function ProjectBench({
 		return null;
 	};
 
+	/**
+	 * The files a program wrote, changed and deleted become the project's: a new file is in the list (in a lesson, a
+	 * new tab), a file that is open is shown as it is now. The file in view stays the one the student chose. What
+	 * cannot be a file of the project is left out, and said.
+	 */
+	const absorb = ({ written, removed }: Changes): string[] => {
+		let next = { ...files.current };
+		const [made, modified, refused]: string[][] = [[], [], []];
+		const gone = removed.filter((path) => path in next);
+		gone.forEach((path) => delete next[path]);
+		for (const [path, text] of Object.entries(written)) {
+			if (isFolder(path)) {
+				if (!folderProblem(path.slice(0, -1)) && Object.keys(next).length < MAX_FILES) next[path] = '';
+				continue;
+			}
+			const problem =
+				text === null
+					? 'non è un file di testo, o è troppo lungo'
+					: pathProblem(path)
+						? `il progetto tiene solo file con queste estensioni: ${TEXT_EXTENSIONS.join(', ')}`
+						: isImage(path)
+							? 'un’immagine scritta da un programma non si tiene'
+							: !(path in next) && Object.keys(next).length >= MAX_FILES
+								? `un progetto ha al più ${MAX_FILES} file`
+								: weight({ ...next, [path]: text }) > MAX_PROJECT_SIZE
+									? 'il progetto diventerebbe troppo pesante'
+									: null;
+			if (problem !== null || text === null) {
+				refused.push(`Il file ${path} non è entrato nel progetto: ${problem}.`);
+				continue;
+			}
+			(path in next ? modified : made).push(path);
+			next[path] = text;
+		}
+		// a project has at least one file: a program that deletes them all deletes none
+		if (listed(next).length === 0) {
+			next = { ...files.current };
+			gone.length = 0;
+		}
+		if (made.length + modified.length + gone.length > 0 || Object.keys(next).length !== Object.keys(files.current).length) {
+			changed(next);
+			refresh(next);
+			follow(next, (path) => (gone.includes(path) ? null : path));
+			// in a lesson every file has its tab; an editor that shows a file the program wrote is made anew
+			setGroups((now) =>
+				now.map((group, at) => {
+					const tabs = explorer || at > 0 ? group.tabs : [...group.tabs, ...made.filter((path) => !group.tabs.includes(path))];
+					return tabs.length !== group.tabs.length || (group.active !== null && modified.includes(group.active)) ? inView(tabs, group.active, next, group.count + 1) : group;
+				})
+			);
+		}
+		const where = explorer ? 'nell’elenco dei file' : 'tra le linguette sopra il codice';
+		const phrase = (paths: string[]) => `${paths.length === 1 ? 'il file' : 'i file'} ${named(paths)}`;
+		const notes: string[] = [];
+		if (made.length) notes.push(`Il programma ha creato ${phrase(made)}: ${made.length === 1 ? 'lo' : 'li'} trovi ${where}.`);
+		if (modified.length) notes.push(`Il programma ha modificato ${phrase(modified)}.`);
+		if (gone.length) notes.push(`Il programma ha eliminato ${phrase(gone)}.`);
+		return [...notes, ...refused];
+	};
+
 	const listen = useCallback((listener: () => void) => {
 		listeners.current.add(listener);
 		return () => void listeners.current.delete(listener);
@@ -586,6 +652,7 @@ export function ProjectBench({
 			return { language, source: files.current[path], files: files.current };
 		},
 		page: () => (targetNow.current ? { files: files.current, path: targetNow.current } : null),
+		absorb,
 		navigate: show,
 		listen,
 		register,

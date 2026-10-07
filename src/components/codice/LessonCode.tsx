@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
-import type { CodeBlock, Language, ProjectBlock } from '@/lib/codice/blocco';
+import { MAIN, type CodeBlock, type Language, type ProjectBlock } from '@/lib/codice/blocco';
 import { webAsProject } from '@/lib/codice/salvati';
 import { ProjectBench } from './ProjectBench';
 import { LANGUAGES } from './runtime';
@@ -88,6 +88,15 @@ function LessonProgram({ block }: { block: CodeBlock }) {
 	/** What is written now, by language: the tab of another language starts from its own program. */
 	const now = useRef<Record<string, string>>({});
 	const { language } = variant;
+	const languages =
+		block.variants.length > 1 ? (
+			<ToggleGroup compact label="Linguaggio" value={language} onChange={saveLanguage} options={block.variants.map((v) => ({ value: v.language, label: LANGUAGES[v.language] }))} />
+		) : (
+			<span className="label-mono px-1 text-fg-subtle">{LANGUAGES[language]}</span>
+		);
+
+	// with files of data beside it the program is a project: its own file, then the data, the same in every language
+	if (block.data) return <LessonData key={language} language={language} code={variant.code} solution={variant.solution} data={block.data} tests={block.tests} toolbar={languages} />;
 
 	return (
 		<Workbench
@@ -100,12 +109,32 @@ function LessonProgram({ block }: { block: CodeBlock }) {
 			onEdit={(code) => (now.current[language] = code)}
 			toolbar={
 				<>
-					{block.variants.length > 1 ? (
-						<ToggleGroup compact label="Linguaggio" value={language} onChange={saveLanguage} options={block.variants.map((v) => ({ value: v.language, label: LANGUAGES[v.language] }))} />
-					) : (
-						<span className="label-mono px-1 text-fg-subtle">{LANGUAGES[language]}</span>
-					)}
+					{languages}
 					<Save program={() => ({ language, files: { main: now.current[language] ?? variant.code } })} />
+				</>
+			}
+		/>
+	);
+}
+
+function LessonData({ language, code, solution, data, tests, toolbar }: { language: Language; code: string; solution: string | null; data: ProjectBlock['files']; tests: ProjectBlock['tests']; toolbar: ReactNode }) {
+	const main = MAIN[language];
+	const [files] = useState(() => ({ [main]: code, ...data }));
+	const [solved] = useState(() => (solution === null ? null : { [main]: solution, ...data }));
+	const now = useRef(files);
+	return (
+		<ProjectBench
+			compact
+			layout="tabs"
+			initial={files}
+			open={main}
+			solution={solved}
+			tests={tests.length ? tests : undefined}
+			onEdit={(edited) => (now.current = edited)}
+			toolbar={
+				<>
+					{toolbar}
+					<Save program={() => ({ language: 'project', files: now.current })} />
 				</>
 			}
 		/>
