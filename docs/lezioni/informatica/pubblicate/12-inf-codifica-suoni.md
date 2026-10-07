@@ -88,6 +88,19 @@ Con $n$ bit per campione i livelli sono $2^n$: con $8$ bit sono $256$, con i $16
 
 Nella figura i livelli sono solo $8$, quelli di $3$ bit. Il suono diventa la sequenza $4$, $6$, $5$, $5$, $4$, $1$, $2$, $3$, $3$, $5$, $7$, $4$, $2$, e ogni numero si scrive con tre bit: $100$, $110$, $101$, e così via.
 
+Nel piano qui sotto la curva grigia tratteggiata è un segnale e quella a gradini è lo stesso segnale dopo la quantizzazione a $n$ bit: in ogni istante vale il livello più vicino. I livelli sono $L = 2^n$. Muovi il cursore di $n$ e guarda quanto i gradini si staccano dalla curva: con $1$ bit i livelli sono due, e del segnale resta solo se è alto o basso.
+
+```grafico
+% nome: quantizzazione-al-variare-dei-bit
+% alt: Un segnale ondulato tratteggiato e la sua versione a gradini, quantizzata con n bit: un cursore cambia n da 1 a 6 e i livelli, che sono 2 alla n, diventano più fitti
+curva: y=2+\sin\left(x\right)+\frac{1}{2}\sin\left(3x\right) | tratteggiata | grigio
+curva: y=\frac{4}{2^n}\left(\left\lfloor\frac{2^n}{4}\left(2+\sin\left(x\right)+\frac{1}{2}\sin\left(3x\right)\right)\right\rfloor+\frac{1}{2}\right)
+cursore: n = 3 da 1 a 6 passo 1
+finestra: x da 0 a 8, y da 0 a 4
+valore: L = 2^n
+domanda: Con quanti bit i gradini non si distinguono più dalla curva? E quanti livelli sono?
+```
+
 ```ad-example
 Esempio 3: livelli e bit
 Quanti livelli ci sono con $12$ bit per campione? E quanti bit servono per avere almeno $1000$ livelli?

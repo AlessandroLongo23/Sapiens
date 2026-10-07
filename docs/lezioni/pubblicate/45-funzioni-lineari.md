@@ -62,6 +62,16 @@ Vale per ogni proporzionalità diretta: il grafico di $y = kx$ è una **retta ch
 \draw[thick, red!60!black] (-2.6,2.6) -- (2.6,-2.6) node[right] {$y = -x$};
 \end{tikzpicture}
 ```
+```grafico
+% nome: retta-per-origine-cursore-k
+% alt: La retta y = kx con il cursore di k, da -3 a 3, e il punto P di ascissa 1 e ordinata k: la retta passa sempre per l'origine, sale con k positivo, scende con k negativo, ed è più ripida quanto più k è lontano da zero
+curva: y=kx
+curva: P=\left(1;k\right) | nero
+cursore: k = 2 da -3 a 3 passo 0,1
+finestra: x da -3 a 3, y da -3 a 3
+valore: P = \left(1;k\right)
+domanda: Porta $k$ sotto zero: cosa fa la retta? C'è un valore di $k$ per cui non passa per l'origine?
+```
 
 ```ad-warning
 Crescere insieme non basta
@@ -107,6 +117,20 @@ Con i punti della tabella e con tutte le velocità intermedie si ottiene una cur
 \draw[thick, blue!70!black, domain=16.5:132, samples=80, smooth] plot (\x, {120/\x});
 \foreach \x/\y in {20/6, 30/4, 40/3, 60/2, 120/1} \fill (\x,\y) ellipse (1.4 and 0.117);
 \end{tikzpicture}
+```
+```grafico
+% nome: proporzionalita-inversa-cursori
+% alt: Il ramo di iperbole t = k/v con il cursore della costante k, all'inizio 120, e un punto P che scorre sulla curva con il cursore p: sotto il piano sono scritte le coordinate di P e il loro prodotto, che resta uguale a k
+curva: y=\frac{k}{x}
+curva: P=\left(p;\frac{k}{p}\right) | nero
+cursore: k = 120 da 40 a 140 passo 10
+cursore: p = 20 da 20 a 120 passo 5
+finestra: x da -5 a 135, y da -0,5 a 7,5
+forma: 3:2
+assi: v (km/h), t (h)
+valore: P = \left(p;\frac{k}{p}\right)
+valore: v \cdot t = p\cdot\frac{k}{p}
+domanda: Porta $p$ da $20$ a $40$: cosa fa l'ordinata di $P$? E il prodotto delle due coordinate?
 ```
 
 Il grafico di $y = \dfrac{k}{x}$, con $k$ positivo e $x > 0$, ha sempre questa forma e si chiama **ramo di iperbole**. Nei problemi concreti ti serve solo questo ramo.
@@ -167,6 +191,20 @@ Sono proporzionali, invece, gli aumenti: ogni chilometro in più costa sempre $1
 \fill (5,9) ellipse (0.14 and 0.23);
 \fill (10,15) ellipse (0.14 and 0.23);
 \end{tikzpicture}
+```
+```grafico
+% nome: funzione-lineare-cursori-m-q
+% alt: La retta y = mx + q con i cursori di m e di q, la retta y = mx tratteggiata per confronto e il punto Q in cui la prima incontra l'asse y: cambiando q la retta sale o scende restando parallela alla tratteggiata, e con q uguale a 0 le due rette coincidono
+curva: y=mx+q
+curva: y=mx | tratteggiata | grigio
+curva: Q=\left(0;q\right) | nero
+cursore: m = 1,2 da -1 a 3 passo 0,1
+cursore: q = 3 da 0 a 8 passo 0,5
+finestra: x da -1 a 11, y da -2 a 18
+forma: 4:3
+assi: x (km), y (euro)
+valore: Q = \left(0;q\right)
+domanda: Muovi $q$: la retta cambia inclinazione? Portalo a $0$: che cosa diventa la funzione?
 ```
 
 La retta e i numeri $m$ e $q$ hanno una lezione tutta loro al secondo anno, [Equazione della retta e casi particolari](/materiale/scuola-superiore/matematica/piano-cartesiano-e-retta/equazione-della-retta-e-casi-particolari): in questa lezione serve solo riconoscere la funzione lineare e distinguerla dalla proporzionalità diretta. Due rette di questo tipo si incontrano, in generale, in un punto: trovarlo vuol dire risolvere un [sistema di due equazioni](/materiale/scuola-superiore/matematica/sistemi-lineari/sistemi-di-due-equazioni-in-due-incognite).

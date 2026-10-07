@@ -202,6 +202,19 @@ Scambiare i valori di due variabili `a` e `b` sembra un lavoro da due istruzioni
 | `a = b` | $8$ | $8$ | $3$ |
 | `b = temp` | $8$ | $3$ | $3$ |
 
+Il diagramma qui sotto fa lo scambio sbagliato, quello della prima tabella. Eseguilo un blocco alla volta con "Passo" e guarda la tabella delle variabili: al terzo blocco il 3 sparisce. Poi premi "Modifica" e aggiusta lo scambio: trascina un blocco "assegna" prima di `a ← b` e scrivici `temp ← a`, e nell'ultimo assegnamento metti `temp` al posto di `a`. Premi "Prova il diagramma": deve scrivere 8 e 3.
+
+```diagramma
+% nome: diagramma-flusso-scambio-sbagliato
+% alt: Diagramma di flusso in sequenza: si leggono a e b, poi a prende b, poi b prende a, e alla fine si scrivono a e b; con 3 e 8 scrive 8 e 8, perché il 3 è stato cancellato
+% ingresso: 3, 8
+leggi a
+leggi b
+a = b
+b = a
+scrivi a, b
+```
+
 ## Prova tu
 
 Il primo programma legge due numeri interi: i punti che hai e il bonus dell'ultima partita. Aggiungi il bonus ai punti, in modo che il programma scriva il nuovo punteggio.
