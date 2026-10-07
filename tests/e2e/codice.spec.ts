@@ -461,6 +461,77 @@ test.describe('projects: more files', () => {
 		await expect(log(page)).toContainText('1/2 + 1/3 = 5/6', { timeout: 240_000 });
 	});
 
+	test('a C++ program reads and writes the files of its project; a file it makes is in the list, and a rerun starts from the files in the editor', async ({ page }) => {
+		await open(page, 'C++ in più file', 'Progetto');
+		await page.getByRole('button', { name: 'Nuova cartella' }).click();
+		await page.getByLabel('Nome della nuova cartella').fill('dati');
+		await page.getByLabel('Nome della nuova cartella').press('Enter');
+		await page.getByRole('button', { name: 'Nuovo file', exact: true }).click();
+		await page.getByLabel('Nome del nuovo file').fill('dati/numeri.txt');
+		await page.getByLabel('Nome del nuovo file').press('Enter');
+		await write(page, '3\n4\n');
+
+		// main.cpp is still what Esegui runs: it reads a file, writes one, appends to one and looks for one that is not there
+		await file(page, 'main.cpp').click();
+		await write(
+			page,
+			[
+				'#include <fstream>',
+				'#include <iostream>',
+				'#include <string>',
+				'#include "frazione.h"',
+				'using namespace std;',
+				'int main() {',
+				'ifstream letto("dati/numeri.txt");',
+				'int n, somma = 0;',
+				'while (letto >> n) somma += n;',
+				'cout << "somma " << somma << endl;',
+				'ifstream manca("manca.txt");',
+				'if (!manca) cout << "manca.txt non si apre" << endl;',
+				'string nome;',
+				'getline(cin, nome);',
+				'ofstream scritto("dati/somma.txt");',
+				'scritto << somma << endl;',
+				'fstream registro("registro.txt", ios::out | ios::app);',
+				'registro << nome << endl;',
+				'cout << "fatto" << endl;',
+				'}',
+				''
+			].join('\n')
+		);
+		await run(page).click();
+		await expect(log(page)).toContainText('manca.txt non si apre', { timeout: 240_000 });
+		await expect(log(page)).toContainText('somma 7');
+		await reply(page, 'Ada');
+		await expect(log(page)).toContainText('Programma finito');
+		await expect(log(page)).toContainText('Il programma ha creato i file dati/somma.txt e registro.txt: li trovi nell’elenco dei file.');
+		await file(page, 'dati/somma.txt').click();
+		await expect(page.locator('.cm-content')).toHaveText('7');
+		// the answer typed at the keyboard ran the program again: the name is there once
+		await file(page, 'registro.txt').click();
+		await expect(page.locator('.cm-content')).toHaveText('Ada');
+
+		// the next run starts from the files in the editor: it appends to what is there, and the open file shows it
+		await run(page).click();
+		await reply(page, 'Bea');
+		await expect(log(page)).toContainText('Il programma ha modificato il file registro.txt.');
+		await expect(log(page)).not.toContainText('creato');
+		await expect(page.locator('.cm-content')).toHaveText('AdaBea');
+	});
+
+	test('a Python program writes files into its project, and what cannot be a file of it is said', async ({ page }) => {
+		await open(page, 'Python con un modulo', 'Progetto');
+		await write(page, 'import os\nwith open("uscita.csv", "w") as f:\n    f.write("a;b\\n")\nopen("foto.bin", "wb").write(bytes([255, 0]))\nos.remove("raggi.txt")\nprint("ok")\n');
+		await run(page).click();
+		await expect(log(page)).toContainText('Programma finito', { timeout: 90_000 });
+		await expect(log(page)).toContainText('Il programma ha creato il file uscita.csv: lo trovi nell’elenco dei file.');
+		await expect(log(page)).toContainText('Il programma ha eliminato il file raggi.txt.');
+		await expect(log(page)).toContainText('Il file foto.bin non è entrato nel progetto');
+		await expect(file(page, 'raggi.txt')).toHaveCount(0);
+		await file(page, 'uscita.csv').click();
+		await expect(page.locator('.cm-content')).toHaveText('a;b');
+	});
+
 	test('a picture from the device is a file of the project, shown by the page that names it', async ({ page }) => {
 		await open(page, undefined, 'Progetto');
 		// one pixel
@@ -859,6 +930,169 @@ test.describe('programs in a lesson', () => {
 		await expect(program.getByRole('tab', { name: 'conti.py' })).toBeVisible();
 		await program.getByRole('button', { name: 'Verifica' }).click();
 		await expect(program.getByRole('log')).toContainText('Prova 1: superata');
+	});
+
+	test('a program in a lesson reads the file beside it and writes files: a new tab, one append for a line typed, a file checked by Verifica', async ({ page }) => {
+		const response = await page.goto('/prova-grafico/lezione?file=prove/codice.md');
+		test.skip(response?.status() === 404, 'the trial page of lesson files is not in the production build');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+
+		for (const [language, main] of [['Python', 'main.py'], ['C++', 'main.cpp']]) {
+			// the file of data is the same for the two languages, in a tab after the program's
+			const read = block(page, 7);
+			await read.scrollIntoViewIfNeeded();
+			await read.getByRole('radio', { name: language }).click();
+			await expect(read.getByRole('tab')).toHaveText([main, 'dati.txt']);
+			await read.getByRole('button', { name: 'Esegui' }).click();
+			await expect(read.getByRole('log')).toContainText("Somma: 49\nmanca.txt non c'è", { timeout: 240_000 });
+			await expect(read.getByRole('log')).not.toContainText('Il programma ha');
+
+			// an exercise on a file: the starting program leaves it empty, the solution writes it
+			const made = block(page, 8);
+			await made.scrollIntoViewIfNeeded();
+			await made.getByRole('button', { name: 'Verifica' }).click();
+			await expect(made.getByRole('log')).toContainText('0 prove superate su 2', { timeout: 90_000 });
+			await expect(made.getByRole('log')).toContainText('Atteso in uscita.txt');
+			await made.getByRole('button', { name: 'Soluzione' }).click();
+			await made.getByRole('button', { name: 'Verifica' }).click();
+			await expect(made.getByRole('log')).toContainText('Tutte le 2 prove superate.');
+
+			// the answer typed at the keyboard runs the program again from the start: it appends once
+			const append = block(page, 9);
+			await append.scrollIntoViewIfNeeded();
+			for (const [name, lines] of [['Luca', 'AdaLuca'], ['Mia', 'AdaLucaMia']]) {
+				await append.getByRole('button', { name: 'Esegui' }).click();
+				await append.getByLabel('Risposta al programma').fill(name);
+				await append.getByLabel('Risposta al programma').press('Enter');
+				await expect(append.getByRole('log')).toContainText('Il programma ha modificato il file registro.txt.');
+				await append.getByRole('tab', { name: 'registro.txt' }).click();
+				await expect(append.locator('.cm-content')).toHaveText(lines);
+				await append.getByRole('tab', { name: main }).click();
+			}
+			// every test starts from the files in the editor and leaves them as they are
+			await append.getByRole('button', { name: 'Ripristina' }).click();
+			await append.getByRole('button', { name: 'Verifica' }).click();
+			await expect(append.getByRole('log')).toContainText('Tutte le 1 prove superate.');
+			await append.getByRole('tab', { name: 'registro.txt' }).click();
+			await expect(append.locator('.cm-content')).toHaveText('Ada');
+		}
+	});
+
+	test('a check of a page acts on it before it looks: clicks, a form that is sent or stopped, the other actions', async ({ page }) => {
+		const response = await page.goto('/prova-grafico/lezione?file=prove/codice.md');
+		test.skip(response?.status() === 404, 'the trial page of lesson files is not in the production build');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+		// a dialog that opens would stop the check, and fails the test
+		let dialogs = 0;
+		page.on('dialog', (dialog) => (dialogs++, void dialog.dismiss()));
+		const put = async (figure: ReturnType<typeof block>, code: string) => {
+			await figure.getByRole('tab', { name: 'script.js' }).click();
+			await figure.locator('.cm-content').click();
+			await page.keyboard.press('ControlOrMeta+a');
+			await page.keyboard.insertText(code);
+		};
+		const verdicts = async (figure: ReturnType<typeof block>) => {
+			await figure.getByRole('button', { name: 'Verifica' }).click();
+			return figure.getByLabel('Esito dei controlli');
+		};
+
+		// no listener: the page as it is loaded is right, the clicks change nothing
+		const counter = block(page, 10);
+		await counter.scrollIntoViewIfNeeded();
+		await expect(await verdicts(counter)).toContainText('1 controllo superato su 3.');
+		await expect(counter.getByLabel('Esito dei controlli')).toContainText('Il testo di "#conta" è "0": dovrebbe essere "1".');
+		// a counter that starts from 1 is wrong before any click, and after each: every check has the page loaded anew
+		const names = 'const conta = document.querySelector("#conta");\nconst piu = document.querySelector("#piu");\n';
+		await put(counter, `${names}let clic = 1;\nconta.textContent = clic;\npiu.addEventListener("click", () => {\nclic = clic + 1;\nconta.textContent = clic;\n});\n`);
+		await expect(await verdicts(counter)).toContainText('0 controlli superati su 3.');
+		await expect(counter.getByLabel('Esito dei controlli')).toContainText('Il testo di "#conta" è "4": dovrebbe essere "3".');
+		// an error of the script while the check clicks is said with the verdict
+		await put(counter, `${names}piu.addEventListener("click", () => {\nconta.textContent = mai;\n});\n`);
+		await expect(await verdicts(counter)).toContainText('Lo script ha dato un errore: ReferenceError: mai is not defined in script.js, riga 4');
+		await counter.getByRole('button', { name: 'Soluzione' }).click();
+		await expect(await verdicts(counter)).toContainText('Tutti i 3 controlli superati.');
+		// the student finds the page as it starts, and it still answers
+		const shown = counter.frameLocator('iframe[title="Anteprima della pagina"]');
+		await expect(shown.locator('#conta')).toHaveText('0');
+		await shown.locator('#piu').click();
+		await expect(shown.locator('#conta')).toHaveText('1');
+
+		const form = block(page, 11);
+		await form.scrollIntoViewIfNeeded();
+		await expect(await verdicts(form)).toContainText('".errore" è nascosto, e dovrebbe vedersi.');
+		const fields = 'const modulo = document.querySelector("#iscrizione");\nconst nome = document.querySelector("#nome");\nconst errore = document.querySelector(".errore");\n';
+		// the error is shown and the form goes all the same
+		await put(form, `${fields}modulo.addEventListener("submit", () => {\nif (nome.value === "") errore.hidden = false;\n});\n`);
+		await expect(await verdicts(form)).toContainText('Il modulo "#iscrizione" è stato inviato lo stesso: l\'invio va fermato con preventDefault().');
+		// stopped always: the form with a name must go
+		await put(form, `${fields}modulo.addEventListener("submit", (evento) => {\nevento.preventDefault();\nerrore.hidden = nome.value !== "";\n});\n`);
+		await expect(await verdicts(form)).toContainText('Il modulo "#iscrizione" non è stato inviato.');
+		await form.getByRole('button', { name: 'Soluzione' }).click();
+		await expect(await verdicts(form)).toContainText('Tutti i 2 controlli superati.');
+		// a form the student sends by hand does not take the preview away
+		const sent = form.frameLocator('iframe[title="Anteprima della pagina"]');
+		await sent.locator('#nome').fill('Ugo');
+		await sent.locator('button').click();
+		await expect(sent.locator('#nome')).toHaveValue('Ugo');
+
+		// a select, a checkbox, a key, a wait, and the message of an alert that does not open
+		const others = block(page, 12);
+		await others.scrollIntoViewIfNeeded();
+		await expect(await verdicts(others)).toContainText('Tutti i 5 controlli superati.');
+		await put(others, 'document.querySelector("#saluta").addEventListener("click", () => alert("Buongiorno"));\n');
+		// only the check of the box that ends without its mark passes on a page that does nothing
+		await expect(await verdicts(others)).toContainText('1 controllo superato su 5.');
+		await expect(others.getByLabel('Esito dei controlli')).toContainText('L\'avviso della pagina dice "Buongiorno": dovrebbe contenere "Ciao".');
+		await expect(others.getByLabel('Esito dei controlli')).toContainText('"#esito" non ha la classe ok.');
+		expect(dialogs).toBe(0);
+	});
+
+	test('in the preview a form is checked and sent as in a real page and goes nowhere; styles, paths, widths and links to a point are checked', async ({ page }) => {
+		const response = await page.goto('/prova-grafico/lezione?file=prove/codice.md');
+		test.skip(response?.status() === 404, 'the trial page of lesson files is not in the production build');
+		await page.getByRole('button', { name: 'Rifiuta' }).click({ timeout: 2000 }).catch(() => {});
+		const preview = (figure: ReturnType<typeof block>) => figure.frameLocator('iframe[title="Anteprima della pagina"]');
+		const verdicts = async (figure: ReturnType<typeof block>) => {
+			await figure.getByRole('button', { name: 'Verifica' }).click();
+			return figure.getByLabel('Esito dei controlli');
+		};
+
+		// a form with no script: the browser checks the fields, then the form is sent and stays where it is
+		const form = block(page, 13);
+		await form.scrollIntoViewIfNeeded();
+		const fields = preview(form);
+		await fields.locator('button').click();
+		await expect(fields.locator('#nome')).toBeFocused();
+		await expect(form.getByRole('log')).toHaveCount(0);
+		await fields.locator('#nome').fill('Anna');
+		await fields.locator('#email').fill('anna@scuola.example');
+		await fields.locator('#email').press('Enter');
+		await expect(form.getByRole('log')).toContainText('Modulo inviato con il metodo POST a iscrivi.php: nome=Anna, email=anna@scuola.example.');
+		await expect(fields.locator('#nome')).toHaveValue('Anna');
+		await expect(await verdicts(form)).toContainText('Tutti i 3 controlli superati.');
+
+		// the width of a border, a shorthand, a media query below and above its threshold, a path written another way
+		const styles = block(page, 14);
+		await styles.scrollIntoViewIfNeeded();
+		await expect(await verdicts(styles)).toContainText('4 controlli superati su 6.');
+		await expect(styles.getByLabel('Esito dei controlli')).toContainText('Lo stile border-top-width di "h1" è 0px: dovrebbe essere 2px.');
+		await expect(styles.getByLabel('Esito dei controlli')).toContainText('Lo stile color di "h1" è rgb(0, 0, 0): dovrebbe essere red.');
+		await styles.getByRole('button', { name: 'Soluzione' }).click();
+		await expect(await verdicts(styles)).toContainText('Tutti i 6 controlli superati.');
+		// the width a check asked for ends with it; the student's own is kept
+		await styles.getByRole('radio', { name: /Telefono/ }).click();
+		await expect.poll(() => preview(styles).locator('body').evaluate(() => innerWidth)).toBe(375);
+		await expect(await verdicts(styles)).toContainText('Tutti i 6 controlli superati.');
+		await expect.poll(() => preview(styles).locator('body').evaluate(() => innerWidth)).toBe(375);
+
+		// a link to a point of another page opens it there
+		const links = block(page, 15);
+		await links.scrollIntoViewIfNeeded();
+		await preview(links).locator('#vai').click();
+		await expect(links.getByRole('tab', { name: 'lunga.html' })).toHaveAttribute('aria-selected', 'true');
+		await expect.poll(() => preview(links).locator('#fondo').evaluate((element) => Math.abs(Math.round(element.getBoundingClientRect().top)))).toBeLessThan(30);
+		await preview(links).locator('#su').click();
+		await expect.poll(() => preview(links).locator('body').evaluate(() => scrollY)).toBeLessThan(30);
 	});
 });
 

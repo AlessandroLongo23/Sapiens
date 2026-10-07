@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Check, Lightbulb, ListChecks, Maximize2, Minimize2, PanelBottom, Play, RotateCcw, Settings, X } from 'lucide-react';
+import { Check, Lightbulb, ListChecks, Maximize2, Minimize2, Monitor, PanelBottom, Play, RotateCcw, Settings, Smartphone, Tablet, X } from 'lucide-react';
 import { frame as frameClass, useFullscreen } from './fullscreen';
 import { Button } from '@/components/ui/Button';
+import { ToggleGroup } from '@/components/ui/ToggleGroup';
 import { cn } from '@/lib/utils/cn';
 import type { Check as PageCheck } from '@/lib/codice/blocco';
 import { kindOf, type ProjectFiles } from '@/lib/codice/progetto';
@@ -25,6 +26,10 @@ const PAUSE = 500;
 /** How long the preview has to say the page has loaded, before a check gives up. */
 const LOADING = 8000;
 
+/** The widths the student can give to the preview, to see a page as a phone or a tablet shows it; `full` is the room there is. */
+const SCREENS = { phone: 375, tablet: 768, full: null } as const;
+type Screen = keyof typeof SCREENS;
+
 interface Line {
 	kind: 'out' | 'err' | 'note';
 	text: string;
@@ -45,6 +50,9 @@ const LINE: Record<Line['kind'], string> = {
  * there and can reach nothing of the site. A project without scripts is shown again a moment after every key; one
  * with scripts waits for "Esegui", so an alert() does not open at every pause. A link to another page of the
  * project opens that page, in the preview and in the editor.
+ *
+ * The preview is as wide as the room it has, or as the student asks (a phone, a tablet), to see what a media query
+ * does; a check can ask for a width of its own (`> larghezza 400`), which lasts for that check.
  */
 export function WebBench({ project, checks, toolbar, compact = false }: { project: ProjectSlots; checks?: PageCheck[]; /** At the left of the bar, before the buttons. */ toolbar?: ReactNode; /** For a page inside a lesson: the preview under the editor. */ compact?: boolean }) {
 	const [lines, setLines] = useState<Line[]>([]);
@@ -62,6 +70,24 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 	const onLoaded = useRef<((ok: boolean) => void) | null>(null);
 	const onVerdicts = useRef<{ id: number; done: (verdicts: CheckVerdict[]) => void } | null>(null);
 	const ids = useRef(0);
+	/** The page is being loaded for a check: its dialogs do not open. */
+	const quiet = useRef(false);
+	/** How wide the student wants the preview, and the width a check asked for while it runs. */
+	const [screen, setScreen] = useState<Screen>('full');
+	const chosen = useRef<number | null>(null);
+	const forced = useRef<number | null>(null);
+	/** The point of the page a link asked for, to show when the page has loaded. */
+	const anchor = useRef('');
+
+	/** Gives the preview its width: the check's, the student's, or all the room. A page wider than the room is scrolled. */
+	const fit = useCallback(() => {
+		const element = frame.current;
+		if (!element) return;
+		const width = forced.current ?? chosen.current;
+		element.style.width = width ? `${width}px` : '';
+		element.style.margin = width ? '0 auto' : '';
+		element.style.boxShadow = width ? '0 0 0 1px var(--color-edge)' : '';
+	}, []);
 	const latest = useRef(project);
 	useEffect(() => {
 		latest.current = project;
@@ -73,11 +99,13 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 		onLoaded.current?.(false);
 		frame.current?.remove();
 		const element = document.createElement('iframe');
-		element.setAttribute('sandbox', 'allow-scripts allow-modals');
+		// the same permissions the page's own policy gives (src/app/codice-sandbox/pagina/route.ts, which says why forms)
+		element.setAttribute('sandbox', 'allow-scripts allow-modals allow-forms');
 		element.src = PAGE_PATH;
 		element.title = 'Anteprima della pagina';
 		element.className = 'block size-full border-0 bg-white';
 		frame.current = element;
+		fit();
 		// with its tab closed the page is nowhere, and is not loaded
 		if (!holder.current) return Promise.resolve(false);
 		holder.current.append(element);
@@ -90,7 +118,7 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 			};
 			onLoaded.current = done;
 		});
-	}, []);
+	}, [fit]);
 
 	/** Shows the page again, with an empty console. */
 	const show = useCallback(() => {
@@ -113,7 +141,8 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 				html = `${MARKDOWN_PAGE}${new MarkdownIt({ html: true, linkify: true }).render(page.files[page.path] ?? '')}`;
 			}
 			// the iframe's origin has no name to address it by; the window is the one this page made
-			target.postMessage({ type: 'page', files, path: page.path, html } satisfies ToPage, '*');
+			target.postMessage({ type: 'page', files, path: page.path, html, quiet: quiet.current, anchor: anchor.current } satisfies ToPage, '*');
+			anchor.current = '';
 		};
 		const receive = (event: MessageEvent<FromPage>) => {
 			const target = frame.current?.contentWindow;
@@ -121,7 +150,13 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 			const message = event.data;
 			if (message.type === 'ready') void send(target);
 			else if (message.type === 'loaded') onLoaded.current?.(true);
-			else if (message.type === 'navigate') latest.current.navigate(message.path);
+			else if (message.type === 'navigate') {
+				anchor.current = message.anchor ?? '';
+				latest.current.navigate(message.path);
+			} else if (message.type === 'width') {
+				forced.current = message.width;
+				fit();
+			}
 			else if (message.type === 'chunk') {
 				// an error or a note is not to be missed under a hidden console; what the page prints only lights the button
 				if (message.kind !== 'out') latest.current.output.show();
@@ -136,7 +171,7 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 			window.removeEventListener('message', receive);
 			window.clearTimeout(pause.current);
 		};
-	}, []);
+	}, [fit]);
 
 	/** Where the page is shown. The place can go and come back (its tab is closed, or moved beside the code): the page is loaded each time it has one. */
 	const attach = useCallback(
@@ -191,28 +226,44 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 		project.register(() => void run());
 	});
 
-	/** Loads the page again and asks it about each check. */
+	/**
+	 * Asks the page about each check. A check with actions changes the page, so it has the page loaded anew for
+	 * itself, and so has the check after it; the checks that only look share a page. At the end the page is loaded
+	 * once more, as "Esegui" does: the student finds it as it starts, not as the last check left it.
+	 */
 	const check = async () => {
 		if (!checks) return;
 		setChecking(true);
 		project.output.show();
-		const ok = await run();
-		const id = ++ids.current;
-		const answers = ok
-			? await new Promise<CheckVerdict[] | null>((resolve) => {
-					const timer = window.setTimeout(() => resolve(null), LOADING);
-					onVerdicts.current = {
-						id,
-						done: (given) => {
-							window.clearTimeout(timer);
-							resolve(given);
-						}
-					};
-					frame.current?.contentWindow?.postMessage({ type: 'checks', id, checks } satisfies ToPage, '*');
-				})
-			: null;
-		onVerdicts.current = null;
-		setVerdicts(answers ?? checks.map(() => ({ passed: false, why: 'La pagina non si è caricata.' })));
+		quiet.current = true;
+		const answers: CheckVerdict[] = [];
+		let fresh = false;
+		for (const one of checks) {
+			// the width a check asked for ends with it
+			forced.current = null;
+			if (!fresh || one.actions) fresh = await run();
+			const id = ++ids.current;
+			const [answer] = fresh
+				? ((await new Promise<CheckVerdict[] | null>((resolve) => {
+						const timer = window.setTimeout(() => resolve(null), LOADING);
+						onVerdicts.current = {
+							id,
+							done: (given) => {
+								window.clearTimeout(timer);
+								resolve(given);
+							}
+						};
+						frame.current?.contentWindow?.postMessage({ type: 'checks', id, checks: [one] } satisfies ToPage, '*');
+					})) ?? [{ passed: false, why: 'La pagina non ha risposto: c’è forse un ciclo che non finisce?' }])
+				: [{ passed: false, why: 'La pagina non si è caricata.' }];
+			onVerdicts.current = null;
+			answers.push(answer);
+			if (one.actions) fresh = false;
+		}
+		quiet.current = false;
+		forced.current = null;
+		if (checks.some((one) => one.actions)) await run();
+		setVerdicts(answers);
 		setChecking(false);
 	};
 
@@ -224,6 +275,25 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 		<section ref={root} className={frameClass(full)} aria-label="Editor di una pagina web">
 			<div className="relative flex flex-wrap items-center gap-2 border-b border-edge px-3 py-2">
 				{toolbar ?? <span className="label-mono px-1 text-fg-subtle">Pagina web</span>}
+				{/* on a phone the preview is a phone's already */}
+				<div className="max-sm:hidden">
+					<ToggleGroup
+						compact
+						iconOnly
+						label="Larghezza dell’anteprima"
+						value={screen}
+						onChange={(next) => {
+							setScreen(next);
+							chosen.current = SCREENS[next];
+							fit();
+						}}
+						options={[
+							{ value: 'phone', label: `Telefono, ${SCREENS.phone} pixel`, icon: Smartphone },
+							{ value: 'tablet', label: `Tablet, ${SCREENS.tablet} pixel`, icon: Tablet },
+							{ value: 'full', label: 'Tutto lo spazio', icon: Monitor }
+						]}
+					/>
+				</div>
 				<p className="ml-auto text-sm text-fg-subtle" role="status">
 					{checking ? 'Verifico…' : stale ? 'Esegui per aggiornare la pagina' : ''}
 				</p>
@@ -274,14 +344,14 @@ export function WebBench({ project, checks, toolbar, compact = false }: { projec
 				compact={compact}
 				full={full}
 				code={null}
-				preview={<div ref={attach} className="size-full bg-white" />}
+				preview={<div ref={attach} className="size-full overflow-x-auto bg-surface-2" />}
 				output={
 					<>
 						{settings && <SettingsPanel className={fill || full ? 'h-full' : 'lg:h-[32rem]'} />}
 						{/* the page stays under the settings: it is not loaded again when they close */}
 						<div className={cn('flex min-w-0 flex-col', fill ? 'h-full bg-surface-2' : full ? 'lg:h-full' : !compact && 'lg:h-[32rem]', settings && 'hidden')}>
 							{/* in a project of the tool the page is a tab of its own, and here is only its console */}
-							{!fill && <div ref={attach} className={cn('min-h-0 bg-white', compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />}
+							{!fill && <div ref={attach} className={cn('min-h-0 overflow-x-auto bg-surface-2', compact ? 'h-72' : 'h-[18rem] lg:h-auto lg:flex-1')} />}
 							{fill && lines.length === 0 && !verdicts && <p className="m-0 px-4 py-3 text-sm text-fg-faint">Quello che gli script della pagina scrivono con console.log compare qui, con i loro errori.</p>}
 							{(lines.length > 0 || verdicts) && (
 								<div role="log" aria-label="Console" className={cn(fill ? 'min-h-0 flex-1' : !compact && 'max-h-56', 'shrink-0 overflow-auto border-t border-edge bg-surface-2 px-4 py-3 font-mono text-[0.9375rem] leading-[1.65] break-words whitespace-pre-wrap text-fg')}>

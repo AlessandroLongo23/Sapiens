@@ -1,6 +1,6 @@
 import type { PyodideInterface } from 'pyodide';
 import type { PyCallable } from 'pyodide/ffi';
-import { emitter, type FromRunner, type RunStatus, type ToRunner } from './runtime';
+import { emitter, type Changes, type FromRunner, type RunStatus, type ToRunner } from './runtime';
 
 /**
  * Python in the browser: Pyodide in a worker, so a program that never ends cannot freeze the page (the page ends the
@@ -17,7 +17,7 @@ const HOME = '/sapiens';
 
 const post = (message: FromRunner) => self.postMessage(message);
 
-const loading: Promise<{ pyodide: PyodideInterface; esegui: PyCallable }> = (async () => {
+const loading: Promise<{ pyodide: PyodideInterface; runner: { esegui: PyCallable; colloca: PyCallable; raccogli: PyCallable } }> = (async () => {
 	// the worker starts from a blob of the sandbox: the site is where this script comes from
 	const origin = new URL(import.meta.url).origin;
 	const base = `${origin}/pyodide/`;
@@ -35,43 +35,13 @@ const loading: Promise<{ pyodide: PyodideInterface; esegui: PyCallable }> = (asy
 	pyodide.FS.mkdirTree(HOME);
 	MODULES.forEach((name, i) => pyodide.FS.writeFile(`${HOME}/${name}`, sources[i]));
 	pyodide.runPython(`import sys; sys.path.insert(0, ${JSON.stringify(HOME)})`);
-	const esegui = pyodide.pyimport('sapiens').esegui as PyCallable;
-	return { pyodide, esegui };
+	return { pyodide, runner: pyodide.pyimport('sapiens') };
 })();
 
 loading.then(
 	() => post({ type: 'ready' }),
 	(error: unknown) => post({ type: 'failed', message: String(error) })
 );
-
-/** Where a run's files are, and where the program runs: `open("dati.txt")` and `import modulo` look here. */
-const PROJECT = '/progetto';
-
-/**
- * Puts the files of the program's project where the program runs, in place of those of the run before. The modules
- * imported from there are forgotten, so a module that was changed is read again.
- */
-function place(pyodide: PyodideInterface, files: Record<string, string>) {
-	pyodide.runPython(`import os, shutil\nos.chdir("/")\nshutil.rmtree(${JSON.stringify(PROJECT)}, ignore_errors=True)\nos.makedirs(${JSON.stringify(PROJECT)})`);
-	for (const [path, text] of Object.entries(files)) {
-		const folder = path.split('/').slice(0, -1).join('/');
-		if (folder) pyodide.FS.mkdirTree(`${PROJECT}/${folder}`);
-		// a folder with nothing in it yet
-		if (path.endsWith('/')) continue;
-		// a picture is the data URL of its bytes
-		const data = /^data:[^,]*;base64,(.*)$/.exec(text);
-		pyodide.FS.writeFile(`${PROJECT}/${path}`, data ? Uint8Array.from(atob(data[1]), (c) => c.charCodeAt(0)) : text);
-	}
-	// after the runner's own modules: a file called turtle.py does not take the turtle's place
-	pyodide.runPython(`import importlib, os, sys
-os.chdir(${JSON.stringify(PROJECT)})
-if ${JSON.stringify(PROJECT)} not in sys.path:
-    sys.path.insert(1, ${JSON.stringify(PROJECT)})
-for _name, _module in list(sys.modules.items()):
-    if (getattr(_module, "__file__", None) or "").startswith(${JSON.stringify(`${PROJECT}/`)}):
-        del sys.modules[_name]
-importlib.invalidate_caches()`);
-}
 
 /** The packages of Pyodide's distribution that the program imports, loaded once; matplotlib also builds its font cache here. */
 async function packages(pyodide: PyodideInterface, id: number, source: string) {
@@ -90,15 +60,19 @@ async function packages(pyodide: PyodideInterface, id: number, source: string) {
 self.onmessage = async ({ data }: MessageEvent<ToRunner>) => {
 	const ready = await loading.catch(() => null);
 	if (!ready) return;
-	const { pyodide, esegui } = ready;
+	const { pyodide, runner } = ready;
 	const { id, source, inputs, seed, batch = false, files = {} } = data;
 	// the modules of the project import packages too
 	const sources = [source, ...Object.entries(files).filter(([path]) => path.endsWith('.py')).map(([, text]) => text)];
 	await packages(pyodide, id, sources.join('\n')).catch(() => {});
-	place(pyodide, files);
+	// the files of the project where the program runs, in place of those of the run before (sapiens.py)
+	runner.colloca(JSON.stringify(files));
 	post({ type: 'started', id });
 	const emit = emitter(batch ? 0 : inputs.length, (kind, text) => post({ type: 'chunk', id, kind, text }));
 	const started = performance.now();
-	const status = esegui(source, inputs, seed, emit, batch) as RunStatus;
-	post({ type: 'done', id, status, ms: performance.now() - started });
+	const status = runner.esegui(source, inputs, seed, emit, batch) as RunStatus;
+	const ms = performance.now() - started;
+	// a run that waits for a line starts again from the same files: what it wrote so far is not the project's yet
+	const changes = status === 'input' ? undefined : (JSON.parse(runner.raccogli() as string) as Changes);
+	post({ type: 'done', id, status, ms, changes });
 };

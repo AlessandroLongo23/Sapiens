@@ -72,12 +72,13 @@ Con "Progetto" l'editor diventa quello di un programma vero: a sinistra l'elenco
 
 Ogni file che apri diventa una scheda sopra il codice. Le schede si chiudono, si trascinano per cambiarne l'ordine, e con il tasto in fondo alla barra delle schede si spostano in una seconda colonna, per avere due file uno accanto all'altro.
 
-Nell'elenco crei un file con il primo tasto e una cartella con il secondo; passando sopra un file o una cartella compaiono la matita per rinominare e il cestino per eliminare. Un file entra in una cartella trascinandolo sopra, ed esce trascinandolo sulla parte vuota dell'elenco. In Python un modulo in una cartella si importa con `from cartella import modulo`. Le estensioni accettate sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`, `md`, `json`, `txt` e `csv`. Il terzo tasto aggiunge un'immagine dal tuo dispositivo: viene rimpicciolita e resta dentro il progetto.
+Nell'elenco crei un file con il primo tasto e una cartella con il secondo; passando sopra un file o una cartella compaiono la matita per rinominare e il cestino per eliminare. Un file entra in una cartella trascinandolo sopra, ed esce trascinandolo sulla parte vuota dell'elenco. In Python un modulo in una cartella si importa con `from cartella import modulo`. Le estensioni accettate sono `py`, `c`, `cpp`, `h`, `js`, `html`, `css`, `md`, `json`, `txt`, `csv` e `xml`. Il terzo tasto aggiunge un'immagine dal tuo dispositivo: viene rimpicciolita e resta dentro il progetto.
 
 "Esegui" avvia sempre lo stesso programma, quello con il triangolino accanto al nome nell'elenco: puoi aprire un modulo, modificarlo e premere "Esegui" senza tornare al file principale. Per far partire il programma da un altro file, passa sopra il suo nome e premi il triangolino. In un sito "Esegui" mostra la pagina che hai aperto per ultima.
 
 - **Python**: gli altri file `.py` sono moduli, e si importano con il loro nome (`import geometria` per `geometria.py`). Un file di testo o un `.json` si apre con `open("dati.txt")`.
-- **C e C++**: tutti i file `.c`, o tutti i `.cpp`, vengono compilati insieme, e i `.h` si includono con `#include "frazione.h"`.
+- **C e C++**: tutti i file `.c`, o tutti i `.cpp`, vengono compilati insieme, e i `.h` si includono con `#include "frazione.h"`. Un file di testo del progetto si apre con `ifstream`, `ofstream`, `fstream` o `fopen`.
+- **File scritti dal programma**: in Python, in C e in C++ un file che il programma crea o modifica compare nell'elenco alla fine dell'esecuzione, e la console lo dice. Ogni esecuzione parte dai file che vedi in quel momento, quindi un programma che aggiunge una riga in fondo a un file ne aggiunge una a ogni esecuzione. Restano nel progetto solo i file di testo con le estensioni dell'elenco.
 - **Pagine web**: una pagina carica gli altri file con il loro percorso, come in un sito vero, e un link a un'altra pagina del progetto la apre nell'anteprima. Un file `.md` viene mostrato come pagina.
 
 ## Pagine web: HTML, CSS e JavaScript

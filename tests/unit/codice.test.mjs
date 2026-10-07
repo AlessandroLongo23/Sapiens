@@ -7,12 +7,13 @@ import { createJiti } from 'jiti';
 import { loadPyodide } from 'pyodide';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
-const { codeFences, parseCodeBlock, parseCodeFence, parseRule, tidy } = await jiti.import('../../src/lib/codice/blocco.ts');
+const { codeFences, grade, parseAction, parseCodeBlock, parseCodeFence, parseRule, tidy } = await jiti.import('../../src/lib/codice/blocco.ts');
+const { disk, ROOT, MAX_FILE } = await jiti.import('../../src/components/codice/wasi-files.ts');
 const { assemble, hasScript } = await jiti.import('../../src/components/codice/web-assemble.ts');
 const { guardLoops, guardInline } = await jiti.import('../../src/components/codice/loop-guard.ts');
 const { environment, format, random } = await jiti.import('../../src/components/codice/js-environment.ts');
 const { readProgramFiles } = await jiti.import('../../src/lib/codice/salvati.ts');
-const { folderProblem, pathProblem, readProject, resolvePath, sortedPaths, targetOf } = await jiti.import('../../src/lib/codice/progetto.ts');
+const { folderProblem, pathProblem, readProject, resolvePath, samePath, sortedPaths, targetOf } = await jiti.import('../../src/lib/codice/progetto.ts');
 const { reindent } = await jiti.import('../../src/components/codice/settings.ts');
 
 test('a block is read into its program, its solution and its tests', () => {
@@ -104,6 +105,69 @@ test('a rule is a selector and what must be true of what it finds', () => {
 	assert.deepEqual(parseRule('a | attributo href = pagina.html'), { selector: 'a', kind: 'attribute', name: 'href', value: 'pagina.html' });
 	assert.deepEqual(parseRule('h1 | stile font-size = 20px'), { selector: 'h1', kind: 'style', property: 'font-size', value: '20px' });
 	assert.match(parseRule('h1 | colore rosso'), /condizione non riconosciuta/);
+});
+
+test('a check may act on the page before its rules: the actions, the rules on what the page has become', () => {
+	assert.deepEqual(parseAction(' clic #piu'), { kind: 'click', selector: '#piu' });
+	assert.deepEqual(parseAction('scrivi form input[name=email] | anna@esempio.it'), { kind: 'type', selector: 'form input[name=email]', text: 'anna@esempio.it' });
+	assert.deepEqual(parseAction('scrivi #nome | a | b'), { kind: 'type', selector: '#nome', text: 'a | b' });
+	assert.deepEqual(parseAction('scrivi #nome |'), { kind: 'type', selector: '#nome', text: '' });
+	assert.deepEqual(parseAction('scegli #classe | Terza'), { kind: 'select', selector: '#classe', text: 'Terza' });
+	assert.deepEqual(parseAction('spunta #accetto'), { kind: 'check', selector: '#accetto' });
+	assert.deepEqual(parseAction('togli #accetto'), { kind: 'uncheck', selector: '#accetto' });
+	assert.deepEqual(parseAction('invia form'), { kind: 'submit', selector: 'form' });
+	assert.deepEqual(parseAction('premi #cerca | Enter'), { kind: 'key', selector: '#cerca', text: 'Enter' });
+	assert.deepEqual(parseAction('aspetta 500'), { kind: 'wait', ms: 500 });
+	assert.match(parseAction('tocca #piu'), /azione non riconosciuta/);
+	assert.match(parseAction('clic'), /senza selettore/);
+	assert.match(parseAction('scrivi #nome'), /vuole il selettore e, dopo " \| ", il testo/);
+	assert.match(parseAction('premi #cerca |'), /vuole il selettore/);
+	assert.match(parseAction('clic #piu | due volte'), /vuole solo il selettore/);
+	assert.match(parseAction('aspetta 60000'), /al più 3000/);
+
+	assert.deepEqual(parseRule('#msg | non esiste'), { selector: '#msg', kind: 'absent' });
+	assert.deepEqual(parseRule('.errore | visibile'), { selector: '.errore', kind: 'visible', visible: true });
+	assert.deepEqual(parseRule('.errore | nascosto'), { selector: '.errore', kind: 'visible', visible: false });
+	assert.deepEqual(parseRule('#msg | classe ok'), { selector: '#msg', kind: 'class', name: 'ok', has: true });
+	assert.deepEqual(parseRule('#msg | senza classe .ok'), { selector: '#msg', kind: 'class', name: 'ok', has: false });
+	assert.deepEqual(parseRule('#nome | valore = Anna'), { selector: '#nome', kind: 'value', value: 'Anna' });
+	assert.deepEqual(parseRule('#nome | valore ='), { selector: '#nome', kind: 'value', value: '' });
+	assert.deepEqual(parseRule('#accetto | non spuntato'), { selector: '#accetto', kind: 'checked', checked: false });
+	assert.deepEqual(parseRule('form | inviato'), { selector: 'form', kind: 'sent', sent: true });
+	assert.deepEqual(parseRule('form | non inviato'), { selector: 'form', kind: 'sent', sent: false });
+	assert.deepEqual(parseRule('@avviso | testo contiene nome'), { selector: '@avviso', kind: 'text', text: 'nome', exact: false });
+
+	const page = (checks) => parseCodeBlock([{ info: 'html', body: `<button id="piu"></button>\n${checks}` }]);
+	const { block, errors } = page('%% controllo Fermo\n#conta | testo = 0\n%% controllo Due clic\n> clic #piu\n>clic #piu\n\n#conta | testo = 2');
+	assert.deepEqual(errors, []);
+	// a check that only looks is as it was, without actions
+	assert.deepEqual(block.page.checks[0], { description: 'Fermo', rules: [{ selector: '#conta', kind: 'text', text: '0', exact: true }] });
+	assert.deepEqual(block.page.checks[1].actions, [{ kind: 'click', selector: '#piu' }, { kind: 'click', selector: '#piu' }]);
+	assert.equal(block.page.checks[1].rules.length, 1);
+	assert.match(page('%% controllo A\n#a\n> clic #piu').errors.join(), /le azioni vanno prima delle regole/);
+	assert.match(page('%% controllo A\n> clic #piu').errors.join(), /non ha regole/);
+	assert.match(page('%% controllo A\n> salta #piu\n#a').errors.join(), /azione non riconosciuta/);
+	assert.match(page('%% controllo A\n> aspetta 2000\n> aspetta 2000\n#a').errors.join(), /aspetta più di 3000/);
+});
+
+test('two paths to the same file are the same link, and a check can ask for a width of the preview', () => {
+	assert.equal(samePath('index.html', './scaletta.html', 'scaletta.html'), true);
+	assert.equal(samePath('index.html', 'scaletta.html ', 'scaletta.html'), true);
+	assert.equal(samePath('pagine/chi.html', '../img/a.png', '/img/a.png'), true);
+	assert.equal(samePath('pagine/chi.html', 'a.html', 'pagine/a.html'), false);
+	assert.equal(samePath('index.html', './concerti.html#giugno', 'concerti.html#giugno'), true);
+	assert.equal(samePath('index.html', 'concerti.html#giugno', 'concerti.html'), false);
+	assert.equal(samePath('index.html', 'altra.html', 'scaletta.html'), false);
+	// a web address and a point of the page are the same only as they are written
+	assert.equal(samePath('index.html', 'https://esempio.it/a', 'https://esempio.it/a'), true);
+	assert.equal(samePath('index.html', 'https://esempio.it/a/', 'https://esempio.it/a'), false);
+	assert.equal(samePath('index.html', '#contatti', '#contatti'), true);
+	assert.equal(samePath('index.html', '#contatti', '#Contatti'), false);
+	assert.equal(samePath('index.html', '../fuori.html', 'fuori.html'), false);
+
+	assert.deepEqual(parseAction('larghezza 400'), { kind: 'width', width: 400 });
+	assert.match(parseAction('larghezza 50'), /da 200 a 2000/);
+	assert.match(parseAction('larghezza stretta'), /vuole i pixel/);
 });
 
 test('a page takes its styles, scripts and pictures from the files of its project, by their path', () => {
@@ -240,11 +304,164 @@ test('a program takes the width of indentation that is asked, whatever it was wr
 	assert.equal(reindent('f(a,\n  b,\n   c)\n', 4), 'f(a,\n  b,\n   c)\n');
 });
 
+test('a test says what a file must hold at the end, with or without what is printed', () => {
+	const { tests, errors } = parseCodeFence('python', ['x', '%% prova', '3', '%% stampa', 'Fatto', '%% file uscita.txt', '1', '2 ', '', '%% file dati/log.csv', '%% prova', '%% file uscita.txt', 'a'].join('\n'));
+	assert.deepEqual(errors, []);
+	assert.deepEqual(tests, [
+		{ input: '3\n', output: 'Fatto\n', files: { 'uscita.txt': '1\n2\n', 'dati/log.csv': '' } },
+		{ input: '', output: null, files: { 'uscita.txt': 'a\n' } }
+	]);
+
+	const said = (body) => parseCodeFence('python', body).errors.join(' | ');
+	assert.match(said('x\n%% file a.txt\n1'), /senza la sua "%% prova"/);
+	assert.match(said('x\n%% prova\n%% file\n1'), /senza il nome del file/);
+	assert.match(said('x\n%% prova\n%% file a.exe\n1'), /estensione/);
+	assert.match(said('x\n%% prova\n%% file a.txt\n1\n%% file a.txt\n2'), /compare due volte nella stessa prova/);
+	assert.match(said('x\n%% prova\n%% stampa\n1\n%% stampa\n2'), /senza la sua "%% prova"/);
+
+	// spaces at the end of a line and empty lines at the end do not count, in a file as in what is printed
+	const [first, second] = tests;
+	assert.equal(grade(first, 'Fatto\n', {}, { written: { 'uscita.txt': '1  \n2\n\n', 'dati/log.csv': '' }, removed: [] }).passed, true);
+	const wrong = grade(first, 'Fatto\n', {}, { written: { 'uscita.txt': '1\n3\n' }, removed: [] });
+	assert.equal(wrong.passed, false);
+	assert.equal(wrong.printed, true);
+	assert.deepEqual(wrong.files, [
+		{ path: 'uscita.txt', expected: '1\n2', got: '1\n3', passed: false },
+		{ path: 'dati/log.csv', expected: '', got: null, passed: false }
+	]);
+	// what is printed is not compared without `%% stampa`; a file the program did not touch is the project's
+	assert.equal(grade(second, 'qualcosa', { 'uscita.txt': 'a\n' }, { written: {}, removed: [] }).passed, true);
+	assert.equal(grade(second, '', { 'uscita.txt': 'a\n' }, { written: {}, removed: ['uscita.txt'] }).passed, false);
+	// a file that is not text is not the file asked for
+	assert.equal(grade(second, '', {}, { written: { 'uscita.txt': null }, removed: [] }).passed, false);
+});
+
+test('files of data after the languages are beside the program in every language', () => {
+	const { block, errors } = parseCodeBlock([
+		{ info: 'python', body: 'print(open("dati.txt").read())\n%% prova\n%% stampa\n1\n\n2' },
+		{ info: 'cpp', body: 'int main() {}' },
+		{ info: 'dati.txt', body: '1\n\n2\n' },
+		{ info: 'voti/primo.csv', body: 'a;b' }
+	]);
+	assert.deepEqual(errors, []);
+	assert.deepEqual(block.variants.map((v) => v.language), ['python', 'cpp']);
+	assert.deepEqual(block.data, { 'dati.txt': '1\n\n2\n', 'voti/primo.csv': 'a;b\n' });
+	assert.equal(block.tests.length, 1);
+	assert.equal(block.project, undefined);
+	assert.equal(parseCodeBlock([{ info: 'python', body: 'x' }]).block.data, undefined);
+
+	const said = (fences) => parseCodeBlock(fences).errors.join(' | ');
+	assert.match(said([{ info: 'python', body: 'x' }, { info: 'a.txt', body: '1' }, { info: 'a.txt', body: '2' }]), /compare due volte/);
+	assert.match(said([{ info: 'python', body: 'x' }, { info: 'a.txt', body: '1\n%% prova\n%% stampa\n1' }]), /non ha parti/);
+	// a module is not data: with a language beside it the group is still a project written badly
+	assert.match(said([{ info: 'python', body: 'x' }, { info: 'conti.py', body: 'y' }]), /ogni blocco ha il nome di un file/);
+});
+
+/** The calls of a program's disk (wasi-files.ts) as the C library makes them, on a memory of its own. */
+function machine(files) {
+	const memory = new WebAssembly.Memory({ initial: 1 });
+	const { calls, changes } = disk(files, () => memory);
+	const view = new DataView(memory.buffer);
+	/** Writes a text in the memory and answers how many bytes it is. */
+	const put = (at, text) => {
+		const bytes = new TextEncoder().encode(text);
+		new Uint8Array(memory.buffer, at).set(bytes);
+		return bytes.length;
+	};
+	const [PATH, IOV, DATA, RESULT] = [0, 512, 1024, 8192];
+	const READ = 2n, WRITE = 64n;
+	return {
+		changes,
+		/** `mode` as fopen's: r, w, a, r+. Answers the descriptor, or minus the error. */
+		open(path, mode = 'r') {
+			const length = put(PATH, path);
+			const oflags = mode === 'w' ? 1 | 8 : mode === 'a' ? 1 : 0;
+			const error = calls.path_open(ROOT, 0, PATH, length, oflags, mode === 'r' ? READ : mode === 'r+' ? READ | WRITE : WRITE, 0n, mode === 'a' ? 1 : 0, RESULT);
+			return error ? -error : view.getUint32(RESULT, true);
+		},
+		write(fd, text) {
+			const length = put(DATA, text);
+			view.setUint32(IOV, DATA, true);
+			view.setUint32(IOV + 4, length, true);
+			return calls.fd_write(fd, IOV, 1, RESULT);
+		},
+		read(fd, most = 4096) {
+			view.setUint32(IOV, DATA, true);
+			view.setUint32(IOV + 4, most, true);
+			const error = calls.fd_read(fd, IOV, 1, RESULT);
+			return error ? -error : new TextDecoder().decode(new Uint8Array(memory.buffer, DATA, view.getUint32(RESULT, true)));
+		},
+		seek: (fd, offset, whence) => calls.fd_seek(fd, BigInt(offset), whence, RESULT) || Number(view.getBigUint64(RESULT, true)),
+		close: (fd) => calls.fd_close(fd),
+		unlink: (path) => calls.path_unlink_file(ROOT, PATH, put(PATH, path)),
+		calls
+	};
+}
+
+test('a compiled program reads, writes and appends the files of its project, and what it wrote is known at the end', () => {
+	const m = machine({ 'dati.txt': 'uno\ndue\n', 'main.cpp': 'int main() {}', 'voti/': '', 'vecchio.txt': 'x' });
+	// the folder of the project is the one folder the program is given
+	assert.equal(m.calls.fd_prestat_get(ROOT, 8192), 0);
+	assert.equal(m.calls.fd_prestat_get(ROOT + 1, 8192), 8);
+
+	const dati = m.open('dati.txt');
+	assert.ok(dati > ROOT);
+	assert.equal(m.read(dati, 4), 'uno\n');
+	assert.equal(m.read(dati), 'due\n');
+	assert.equal(m.read(dati), '');
+	assert.equal(m.seek(dati, -4, 2), 4);
+	assert.equal(m.read(dati), 'due\n');
+	// opened to read: writing is refused
+	assert.equal(m.write(dati, 'x'), 8);
+	assert.equal(m.close(dati), 0);
+	assert.equal(m.close(dati), 8);
+	// the same file by its other names; outside the project there is nothing
+	assert.ok(m.open('./dati.txt') > 0);
+	assert.ok(m.open('/dati.txt') > 0);
+	assert.equal(m.open('../dati.txt'), -76);
+
+	// a file that is not there: "no such file" to read it, made to write it; a folder that is not there is not made
+	assert.equal(m.open('manca.txt'), -44);
+	assert.equal(m.open('nuova/a.txt', 'w'), -44);
+	const out = m.open('voti/uscita.txt', 'w');
+	assert.equal(m.write(out, 'a\n'), 0);
+	assert.equal(m.write(out, 'b\n'), 0);
+	m.close(out);
+	const more = m.open('voti/uscita.txt', 'a');
+	// appending writes at the end wherever the position is
+	m.seek(more, 0, 0);
+	assert.equal(m.write(more, 'c\n'), 0);
+	m.close(more);
+	assert.equal(m.read(m.open('voti/uscita.txt')), 'a\nb\nc\n');
+
+	// written again as it was: not a change; opened to write and left empty: a change
+	const again = m.open('dati.txt', 'w');
+	m.write(again, 'uno\ndue\n');
+	m.close(again);
+	m.close(m.open('main.cpp', 'w'));
+	assert.equal(m.unlink('vecchio.txt'), 0);
+	assert.equal(m.unlink('vecchio.txt'), 44);
+	const binary = m.open('dati.bin', 'w');
+	m.write(binary, '\0\u0001');
+	assert.deepEqual(m.changes(), { written: { 'main.cpp': '', 'voti/uscita.txt': 'a\nb\nc\n', 'dati.bin': null }, removed: ['vecchio.txt'] });
+
+	// a file does not grow without end
+	const big = m.open('grande.txt', 'w');
+	assert.equal(m.calls.fd_filestat_set_size(big, BigInt(MAX_FILE)), 0);
+	assert.equal(m.seek(big, 0, 2), MAX_FILE);
+	assert.equal(m.write(big, 'x'), 22);
+
+	// every disk starts from the project's files: nothing of the run before is left
+	const next = machine({ 'dati.txt': 'uno\ndue\n' });
+	assert.equal(next.open('voti/uscita.txt'), -44);
+	assert.deepEqual(next.changes(), { written: {}, removed: [] });
+});
+
 const pyodide = await loadPyodide();
 pyodide.FS.mkdirTree('/sapiens');
 for (const name of ['sapiens.py', 'turtle.py']) pyodide.FS.writeFile(`/sapiens/${name}`, readFileSync(new URL(`../../public/codice/${name}`, import.meta.url), 'utf8'));
 pyodide.runPython('import sys; sys.path.insert(0, "/sapiens")');
-const esegui = pyodide.pyimport('sapiens').esegui;
+const { esegui, colloca, raccogli } = pyodide.pyimport('sapiens');
 
 /** Runs a program as the worker does and gathers what it sends. */
 function run(source, inputs = [], batch = false) {
@@ -290,4 +507,37 @@ test('the turtle sends its drawing as operations', () => {
 	assert.equal(status, 'ok');
 	const ops = sent.filter(([kind]) => kind === 'turtle').flatMap(([, text]) => JSON.parse(text));
 	assert.deepEqual(ops, [['new', 0], ['move', 0, 100, 0, true], ['turn', 0, 90]]);
+});
+
+test('a Python program runs among the files of its project, and what it wrote is known at the end', () => {
+	const files = { 'dati.txt': '3\n4\n', 'conti.py': 'def doppio(n):\n    return n * 2\n', 'voti/': '', 'vecchio.txt': 'x' };
+	/** A run as the worker makes it: the files, the program, what it left. */
+	const among = (source, inputs = [], given = files) => {
+		colloca(JSON.stringify(given));
+		const result = run(source, inputs);
+		return { ...result, changes: result.status === 'input' ? null : JSON.parse(raccogli()) };
+	};
+
+	const read = among('import conti\nprint(sum(conti.doppio(int(riga)) for riga in open("dati.txt")))\n');
+	assert.equal(read.out, '14\n');
+	assert.deepEqual(read.changes, { written: {}, removed: [] });
+
+	const missing = among('try:\n    open("manca.txt")\nexcept FileNotFoundError:\n    print("non c\'è")\n');
+	assert.equal(missing.out, "non c'è\n");
+
+	// a file never closed, a file in a folder, a file that is not text, a file removed, a new folder
+	const wrote = among('import os\nf = open("uscita.txt", "w")\nf.write("ciao\\n")\nopen("voti/primo.csv", "w").write("a;b\\n")\nopen("dati.bin", "wb").write(bytes([255, 0]))\nos.remove("vecchio.txt")\nos.mkdir("nuova")\n');
+	assert.equal(wrote.status, 'ok');
+	assert.deepEqual(wrote.changes, { written: { 'uscita.txt': 'ciao\n', 'voti/primo.csv': 'a;b\n', 'dati.bin': null, 'nuova/': '' }, removed: ['vecchio.txt'] });
+
+	// the next run starts from the files it is given: nothing of the run before is left
+	assert.equal(among('import os\nprint(sorted(os.listdir(".")))\n').out, "['conti.py', 'dati.txt', 'vecchio.txt', 'voti']\n");
+
+	// a program that reads from the keyboard is run again from the start: it appends once
+	const source = 'nome = input()\nwith open("dati.txt", "a") as f:\n    f.write(nome + "\\n")\n';
+	assert.equal(among(source).changes, null);
+	assert.deepEqual(among(source, ['Ada']).changes.written, { 'dati.txt': '3\n4\nAda\n' });
+
+	// a module that was changed is read again
+	assert.equal(among('import conti\nprint(conti.doppio(1))\n', [], { 'conti.py': 'def doppio(n):\n    return 20\n' }).out, '20\n');
 });

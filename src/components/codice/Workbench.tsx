@@ -1,13 +1,13 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Check, Lightbulb, ListChecks, Maximize2, Minimize2, PanelBottom, Play, RotateCcw, Settings, Square, X } from 'lucide-react';
 import { frame as frameClass, useFullscreen } from './fullscreen';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils/cn';
-import { tidy, type Test } from '@/lib/codice/blocco';
-import { LANGUAGES, TIME_LIMIT, type Chunk, type Language, type Outcome } from './runtime';
+import { grade, tidy, type FileVerdict, type Test } from '@/lib/codice/blocco';
+import { LANGUAGES, TIME_LIMIT, unchanged, type Changes, type Chunk, type Language, type Outcome } from './runtime';
 import { retain, runtimeFor } from './runtimes';
 import { SettingsPanel } from './SettingsPanel';
 import { Panes, Split } from './Split';
@@ -20,10 +20,32 @@ const Editor = dynamic(() => import('./Editor'), {
 	loading: () => <p className="p-4 text-sm text-fg-subtle">Carico l&apos;editor…</p>
 });
 
-/** How a test went: `got` is what the program printed, or why it stopped. */
+/** How a test went: `got` is what the program printed, or why it stopped; `printed` says whether that was right, `files` how the files it had to write are. */
 interface Verdict {
 	passed: boolean;
 	got: string;
+	printed: boolean;
+	files: FileVerdict[];
+}
+
+/** Names in a sentence: `a.txt`, `a.txt e b.txt`, `a.txt, b.txt e c.txt`. */
+export const named = (paths: string[]) => (paths.length < 2 ? paths.join('') : `${paths.slice(0, -1).join(', ')} e ${paths[paths.length - 1]}`);
+
+/** The most of a written file that a program without a project shows in its console. */
+const SHOWN = 2000;
+
+/**
+ * What a program that is not in a project wrote, for its console: there is no list of files for it to appear in, so
+ * each file is named and shown, and is gone with the run.
+ */
+function written(changes: Changes): Chunk[] {
+	const chunks: Chunk[] = [];
+	for (const [path, text] of Object.entries(changes.written)) {
+		if (path.endsWith('/')) continue;
+		if (text === null) chunks.push({ kind: 'note', text: `Il programma ha scritto il file ${path}, che non è un file di testo.` });
+		else chunks.push({ kind: 'note', text: `Il programma ha scritto il file ${path}, che qui non resta dopo l’esecuzione. Contiene:` }, { kind: 'out', text: text.length > SHOWN ? `${text.slice(0, SHOWN)}…\n` : text.endsWith('\n') || text === '' ? text : `${text}\n` });
+	}
+	return chunks;
 }
 
 /** idle: nothing running. loading: the language is downloading. running: the program runs. waiting: it asked for a line. checking: the tests run. */
@@ -210,7 +232,7 @@ export function Workbench({
 		void runtime.load().then((ok) => {
 			if (ok && mine === turn.current) setPhase((now) => (now === 'loading' ? 'running' : now));
 		});
-		const { outcome, ms } = await runtime.run(
+		const { outcome, ms, changes } = await runtime.run(
 			{
 				...program,
 				inputs: inputs.current,
@@ -224,6 +246,8 @@ export function Workbench({
 			}
 		);
 		if (mine !== turn.current) return;
+		// the files the program wrote go among the project's, and the console says which
+		if (changes && !unchanged(changes)) pending.current.push(...(project ? project.absorb(changes).map((text): Chunk => ({ kind: 'note', text })) : written(changes)));
 		const note = closing(outcome, ms, program.language);
 		if (note) pending.current.push({ kind: 'note', text: note });
 		// the last lines and the end of the run reach the screen together
@@ -263,7 +287,7 @@ export function Workbench({
 		for (const test of tests) {
 			let printed = '';
 			let errors = '';
-			const { outcome } = await runtime.run(
+			const { outcome, changes } = await runtime.run(
 				{
 					...program,
 					inputs: test.input === '' ? [] : test.input.replace(/\n$/, '').split('\n'),
@@ -282,7 +306,8 @@ export function Workbench({
 			);
 			if (mine !== turn.current) return;
 			const failure = FAILURE[outcome] ?? (outcome === 'error' ? tidy(errors) || 'Il programma si è fermato con un errore.' : null);
-			results.push(failure ? { passed: false, got: failure } : { passed: tidy(printed) === tidy(test.output), got: tidy(printed) });
+			// every test starts from the files in the editor: what a test wrote is compared and let go
+			results.push(failure ? { passed: false, got: failure, printed: false, files: [] } : { ...grade(test, printed, program.files, changes), got: tidy(printed) });
 			setVerdicts([...results]);
 			// a program that does not compile, or never ends, fails every test the same way
 			if (outcome === 'stopped' || outcome === 'failed' || outcome === 'timeout') break;
@@ -524,10 +549,28 @@ export function Workbench({
 																<dd className="font-mono whitespace-pre-wrap text-fg">{tests[i].input.trimEnd()}</dd>
 															</>
 														)}
-														<dt className="text-fg-subtle">Atteso</dt>
-														<dd className="font-mono whitespace-pre-wrap text-fg">{tidy(tests[i].output)}</dd>
-														<dt className="text-fg-subtle">Ottenuto</dt>
-														<dd className="font-mono whitespace-pre-wrap text-fg">{verdict.got || '(niente)'}</dd>
+														{!verdict.printed && (
+															<>
+																{tests[i].output !== null && (
+																	<>
+																		<dt className="text-fg-subtle">Atteso</dt>
+																		<dd className="font-mono whitespace-pre-wrap text-fg">{tidy(tests[i].output) || '(niente)'}</dd>
+																	</>
+																)}
+																<dt className="text-fg-subtle">Ottenuto</dt>
+																<dd className="font-mono whitespace-pre-wrap text-fg">{verdict.got || '(niente)'}</dd>
+															</>
+														)}
+														{verdict.files
+															.filter((file) => !file.passed)
+															.map((file) => (
+																<Fragment key={file.path}>
+																	<dt className="text-fg-subtle">Atteso in {file.path}</dt>
+																	<dd className="font-mono whitespace-pre-wrap text-fg">{file.expected || '(un file vuoto)'}</dd>
+																	<dt className="text-fg-subtle">Ottenuto in {file.path}</dt>
+																	<dd className={cn('whitespace-pre-wrap text-fg', file.got === null ? 'italic' : 'font-mono')}>{file.got === null ? 'Il programma non ha scritto questo file.' : file.got || '(un file vuoto)'}</dd>
+																</Fragment>
+															))}
 													</dl>
 												)}
 											</div>

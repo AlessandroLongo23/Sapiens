@@ -8,15 +8,23 @@ matplotlib figure in base64, 'turtle' a JSON list of drawing operations for the 
 input() cannot wait for the keyboard in a worker. A program that asks for a line nobody has typed yet stops with
 'input'; once the line is typed it runs again from the start with every line typed so far, and the same seed for
 random makes the second run repeat the first.
+
+The program runs among the files of its project: colloca() writes them in PROGETTO before every run, in place of
+whatever the run before left there, and raccogli() says what the program wrote. A rerun for a line typed at the
+keyboard starts from the same files, so a program that reads and then appends does not append twice.
 """
 
 import base64
 import builtins
+import gc
+import importlib
 import io
 import json
 import linecache
 import os
 import random
+import re
+import shutil
 import sys
 import time
 import traceback
@@ -26,6 +34,10 @@ os.environ["MPLBACKEND"] = "module://sapiens_grafici"
 
 FILE = "programma.py"
 MAX_IMAGES = 20
+# where a run's files are, and where the program runs: open("dati.txt") and `import modulo` look here
+PROGETTO = "/progetto"
+# a file the program wrote is given back to the editor up to this many bytes
+MAX_FILE = 2_000_000
 
 # printed text waits here for at most this long, so a loop of prints does not call the page once per print
 PAUSE = 0.03
@@ -35,6 +47,9 @@ _images = 0
 _buffer = []
 _last = 0.0
 _sleep = time.sleep
+# the files of the project as colloca() wrote them, by path, and the folders there were
+_prima = {}
+_cartelle = set()
 
 
 class Attesa(BaseException):
@@ -108,6 +123,68 @@ def _disegni_in_sospeso():
     turtle = sys.modules.get("turtle")
     if turtle is not None:
         turtle._flush()
+
+
+def colloca(files):
+    """Puts the files of the program's project (a JSON object, path to text) where the program runs, in place of
+    those of the run before. The modules imported from there are forgotten, so a module that was changed is read
+    again."""
+    global _prima, _cartelle
+    os.chdir("/")
+    shutil.rmtree(PROGETTO, ignore_errors=True)
+    os.makedirs(PROGETTO)
+    _prima = {}
+    for path, text in json.loads(files).items():
+        folder = os.path.dirname(path)
+        if folder:
+            os.makedirs(f"{PROGETTO}/{folder}", exist_ok=True)
+        # a folder with nothing in it yet
+        if path.endswith("/"):
+            continue
+        # a picture is the data URL of its bytes
+        data = base64.b64decode(text.split(",", 1)[1]) if re.match(r"data:[^,]*;base64,", text) else text.encode("utf-8")
+        with open(f"{PROGETTO}/{path}", "wb") as file:
+            file.write(data)
+        _prima[path] = data
+    _cartelle = {os.path.relpath(folder, PROGETTO) for folder, _, _ in os.walk(PROGETTO)}
+    os.chdir(PROGETTO)
+    # after the runner's own modules: a file called turtle.py does not take the turtle's place
+    if PROGETTO not in sys.path:
+        sys.path.insert(1, PROGETTO)
+    for name, module in list(sys.modules.items()):
+        if (getattr(module, "__file__", None) or "").startswith(PROGETTO + "/"):
+            del sys.modules[name]
+    importlib.invalidate_caches()
+
+
+def raccogli():
+    """What the run left in the project, as JSON: `written` are the files it made or changed, with their text (null
+    for a file that is not text, or too long), and the new folders with nothing in them, whose path ends with a
+    slash; `removed` are the files it deleted."""
+    # a file the program never closed is written when the program's names are let go
+    gc.collect()
+    written, there = {}, set()
+    for folder, folders, names in os.walk(PROGETTO):
+        folders[:] = [name for name in folders if name != "__pycache__"]
+        inside = os.path.relpath(folder, PROGETTO)
+        if inside != "." and not folders and not names and inside not in _cartelle:
+            written[inside + "/"] = ""
+        for name in names:
+            path = name if inside == "." else f"{inside}/{name}"
+            there.add(path)
+            if os.path.getsize(f"{folder}/{name}") > MAX_FILE:
+                written[path] = None
+                continue
+            with open(f"{folder}/{name}", "rb") as file:
+                data = file.read()
+            if _prima.get(path) == data:
+                continue
+            try:
+                text = data.decode("utf-8")
+            except UnicodeDecodeError:
+                text = None
+            written[path] = None if text is None or "\0" in text else text
+    return json.dumps({"written": written, "removed": [path for path in _prima if path not in there]})
 
 
 def esegui(source, inputs, seed, emit, batch=False):

@@ -1,4 +1,4 @@
-import type { Chunk, Job, Listeners, Outcome, Result, Runtime } from './runtime';
+import type { Changes, Chunk, Job, Listeners, Outcome, Result, Runtime } from './runtime';
 
 /**
  * The page's side of the sandbox. A program is somebody's code, and code running on the site's origin can do on the
@@ -144,14 +144,14 @@ export class Sandboxed implements Runtime {
 		if (message.type === 'chunk') run.onChunk(message.chunk);
 		else if (message.type === 'status') run.onStatus?.(message.text);
 		else if (message.type === 'start') run.onStart?.();
-		else this.end(message.result.outcome, message.result.ms);
+		else this.end(message.result.outcome, message.result.ms, message.result.changes);
 	}
 
-	private end(outcome: Outcome, ms = 0) {
+	private end(outcome: Outcome, ms = 0, changes?: Changes) {
 		const run = this.current;
 		if (!run) return;
 		this.current = null;
-		run.finish({ outcome, ms });
+		run.finish({ outcome, ms, changes });
 	}
 }
 
