@@ -92,6 +92,123 @@ Valgono per tutti i capitoli, perché le lezioni si richiamano a vicenda.
   cancellare. Si guardano con `node scripts/figure/anteprima.mjs <cartella di uscita> <file della lezione>`.
 - Nel primo anno non c'è programmazione: niente blocchi `codice` e niente figure interattive in questo lotto.
 
+#### Figure interattive
+
+Dal terzo anno le lezioni hanno figure interattive, richiamate con un blocco ` ```interattivo ` (`% nome:` e
+`% alt:`) come in matematica e in fisica. Non sono disegni TikZ: sono fatte con i colori del sito, quindi non si
+invertono nel tema scuro e non usano `Drawing` di `kit.tsx`. Carta e inchiostro per quello che è fermo, l'arancione
+della materia per quello che l'algoritmo sta facendo, il verde per quello che è a posto; valori, indici e nomi in
+monospazio, come il codice.
+
+**Il modello.** Una figura a passi non calcola niente mentre lo studente la usa. Una funzione pura, in
+`src/lib/informatica/tracce.ts` (senza React), prende l'ingresso e restituisce la lista dei passi; la figura mostra
+un passo alla volta. Un `Passo` ha `celle` (nell'ordine in cui sono adesso: `{ id, valore, stato }`, dove `id` è il
+posto di partenza dell'elemento e lo segue quando si sposta, così lo scambio si può animare), `puntatori`
+(`{ nome, su, lato? }`), `contatori` (`{ confronti: 5, scambi: 2 }`) e `frase`, in italiano e in prima persona
+("Confronto 7 con 3: 3 è più piccolo, diventa il nuovo minimo"). Gli stati di una cella sono `normale`, `esame`
+(quella su cui si lavora, o il minimo finora), `confronto` (l'altra di un confronto), `scambio` (appena spostata),
+`ordinata`, `trovata`, `scartata` e `sollevata` (tolta dalla fila e tenuta sopra il suo posto, che resta vuoto).
+
+Tracce pronte, con i test in `tests/unit/informatica-tracce.test.mjs` (`npm run test:unit`):
+`ricercaSequenziale(valori, cercato)`, `ricercaBinaria(valori, cercato)` (su valori già ordinati),
+`ordinamentoPerSelezione(valori)`, `ordinamentoABolle(valori, { bandierina })`, `ordinamentoPerInserimento(valori)`.
+Restituiscono `{ passi, valori, confronti, scambi }`, le ricerche anche `posizione` (-1 se il valore non c'è). Si
+conta un confronto per ogni elemento guardato; la selezione conta lo scambio solo quando il minimo non è già al suo
+posto; l'inserimento conta gli spostamenti di un posto a destra (contatore `spostamenti`). Una traccia nuova va nello
+stesso file, con i suoi test su casi contati a mano.
+
+**I pezzi**, in `src/components/content/interactive/informatica.tsx`:
+
+| Pezzo | Props | Che cosa fa |
+| --- | --- | --- |
+| `Figura` | `children` | La cornice: mette l'arancione della materia. Tutto il resto va dentro. |
+| `Celle` | `celle`, `puntatori?`, `passi?`, `label?`, `max?` (52), `indici?`, `unite?`, `onCella?` | La fila di celle con l'indice sotto e i puntatori per nome sotto o sopra (`lato: 'sopra'`). Si adatta alla larghezza: 8 celle in 330 px, 12 su schermo largo. Con `passi` (tutta la traccia) tiene l'altezza del passo più alto. Lo scambio di due celle è animato. |
+| `Stringa` | `testo`, `stato?(i, carattere)`, `puntatori?`, `onCella?` | I caratteri in celle attaccate, con gli indici. |
+| `Matrice` | `valori`, `stato?(r, c)`, `riga?`, `colonna?` (`{ nome, su }`), `onCella?(r, c)` | Righe e colonne con gli indici da 0, e il nome (`i`, `j`) accanto alla riga e alla colonna in corso. |
+| `Legenda` | `stati` (`{ esame: 'minimo finora', ordinata: true }`) | Che cosa vogliono dire i colori: solo gli stati che la figura usa. |
+| `usePassi(quanti, { ritmo? })` | | Dove si è nella traccia: `passo`, `avanti`, `indietro`, `esegui`, `ricomincia`, `vai`. |
+| `ComandiPassi` | `passi` (quello di `usePassi`) | Esegui o Pausa, Indietro, Avanti, Ricomincia e "Passo 3 di 17". Con il fuoco su un bottone le frecce sinistra e destra vanno indietro e avanti, Home e Fine al primo e all'ultimo passo. |
+| `Frase` | `children`, `tutte?` | La frase del passo, letta da uno screen reader quando cambia (`aria-live`). Con `tutte` tiene l'altezza della più lunga. |
+| `Contatori` | `voci` (`{ confronti: 5, scambi: 2 }`) | I numeri in fila, con il nome sotto. |
+| `Dati` | `valori`, `onValori`, `cerca?`, `onCerca?`, `ordinati?`, `min?`, `max?` | Il campo dove lo studente scrive i valori (interi da 0 a 99, da 2 a 12), il bottone Mescola, e con `cerca` il valore da cercare. Con `ordinati` li tiene in ordine. |
+| `Scatola`, `Variabili` | `variabile` (`{ nome, valore, stato?, rif? }`), `variabili` | Una variabile: il valore in una scatola e il nome sotto. `stato` è `letta`, `scritta` o `nuova`; `rif` dice di che cosa è un altro nome ("a di main"). |
+| `Pila` | `pila` (`Chiamata[]`, `main` per prima), `passi?` | I riquadri delle chiamate impilati: `main` sotto, la funzione in esecuzione sopra, con parametri e variabili locali. Un riquadro compare alla chiamata e sparisce al ritorno. |
+
+Nella cartella `informatica/` accanto: `VettorePassi.tsx` (la figura intera di un algoritmo su un vettore: celle,
+legenda, frase, contatori, comandi e dati), `multimedia.tsx` (`GrigliaPixel`: `pixel` è una matrice di colori CSS,
+`griglia?`, `lato?`, e con `onPixel(r, c)` lo studente colora, anche da tastiera; `peso(bit)` scrive una dimensione
+in bit, B, kB) e `web.tsx` (`ScatolaCss`: `scatola` con `width`, `height`, `padding`, `border`, `margin`,
+`borderBox?`, più `scala?` e `spazio?`; `misure(scatola)` dà le dimensioni calcolate come fa il browser).
+
+**Una figura in dieci righe.** Una ricerca o un ordinamento è `VettorePassi` con la sua traccia:
+
+```tsx
+'use client';
+
+import { ordinamentoPerSelezione } from '@/lib/informatica/tracce';
+import { VettorePassi } from './VettorePassi';
+
+// defined outside the component, so the trace is computed again only when the data change
+const traccia = (valori: readonly number[]) => ordinamentoPerSelezione(valori);
+
+export default function SelectionSortPassi({ alt }: { alt?: string }) {
+	return <VettorePassi alt={alt} valori={[29, 10, 14, 37, 8, 21, 3, 17]} traccia={traccia} legenda={{ esame: 'minimo finora', confronto: 'confrontato', scambio: 'scambiato', ordinata: 'al suo posto' }} />;
+}
+```
+
+`VettorePassi` prende anche `cerca` (il valore cercato all'inizio: compare il campo), `ordinati` e `varianti` (una
+scelta tra due o tre versioni, passata alla traccia come `variante`). I valori di partenza sono quelli dell'esempio
+della lezione. Una figura che non è un vettore si compone a mano con gli stessi pezzi: vedi
+`ScambiaValoreRiferimento.tsx`, che scrive i suoi passi come lista di pile.
+
+**Figure pronte**, da usare così o da copiare e adattare:
+
+| Nome | Domanda |
+| --- | --- |
+| `inf-ricerca-sequenziale-passi` | Quanti confronti per trovare un valore, e quanti per sapere che non c'è? |
+| `inf-ricerca-binaria-passi` | Quanti elementi guarda la ricerca binaria? |
+| `inf-selection-sort-passi` | Come ordina la selezione, e con quanti confronti e scambi? |
+| `inf-bubble-sort-passi` | Che cosa cambia fermandosi al primo giro senza scambi? |
+| `inf-insertion-sort-passi` | Come trova il suo posto ogni elemento nell'inserimento? |
+| `inf-scambia-valore-riferimento` | Perché scambiare due parametri ricevuti per valore non scambia le variabili di chi chiama? Senza codice, perché valga in C++ e in Python: chi la usa controlli che le frasi vadano d'accordo con il programma della lezione. |
+| `inf-pixel-risoluzione-profondita` | Che cosa si guadagna e che cosa si paga con più pixel o più bit per pixel? |
+| `inf-css-modello-scatola` | Quanto spazio occupa un elemento con padding, bordo e margine, e che cosa cambia con `border-box`? |
+
+`inf-kit-campionario` non è per le lezioni: mostra tutti i pezzi insieme, per riguardarli dopo averne cambiato uno.
+
+**Registrare e guardare.** Il componente va in `src/components/content/interactive/informatica/<Nome>.tsx` e si
+registra in `FIGURES` di `src/lib/utils/interactive.ts`, sotto il commento `// Computer science, third year.`, con
+un nome che comincia per `inf-`. Si registra solo quando il file esiste e compila: una registrazione rotta ferma il
+sito di sviluppo a tutti. Poi si guarda, con il sito in sviluppo acceso:
+
+```sh
+node scripts/figure/anteprima-interattivo.mjs /percorso/figura.png figura=<nome> --porta 3133 [--scuro] [--telefono] [--clic "button:has-text('Avanti')" --attendi 800]
+```
+
+Va guardata in chiaro, in scuro e da telefono, al primo passo, a metà e alla fine, dopo Mescola e con i casi
+limite (il valore che non c'è, il vettore già ordinato), e provata da tastiera. Un bottone che non ha niente da
+fare (Avanti all'ultimo passo) resta raggiungibile con Tab ma non si può cliccare: per arrivare alla fine in uno
+script di Playwright si usa il tasto Fine. Lo script di anteprima aspetta un `<svg>` nella pagina: per una figura
+che non ne ha (`inf-css-modello-scatola`) aspetta un minuto e scrive "nessun <svg> nella pagina", ma lo screenshot è
+buono.
+
+**Regole.**
+
+- Una domanda precisa per figura, scritta nel commento in testa al file; il testo della lezione subito dopo dà la
+  risposta, così chi non tocca la figura non perde niente.
+- Niente librerie nuove. Niente pezzi ridisegnati a mano se il kit li ha; un pezzo che manca e serve a più figure
+  si aggiunge al kit, con una riga nella tabella qui sopra.
+- La figura sta in 330 px senza far scorrere la pagina di lato, e non cambia altezza da un passo all'altro (`passi`
+  su `Celle` e `Pila`, `tutte` su `Frase`).
+- Chiaro e scuro: solo i token del sito (`bg-surface`, `text-fg`, `border-edge`, `bg-tint-soft`, `text-ok-fg`),
+  mai un colore scritto a mano. Fa eccezione il contenuto di un'immagine (`GrigliaPixel`).
+- Tastiera e screen reader: ogni comando è un bottone o un campo con il suo nome, la frase del passo è in
+  `aria-live`, uno stato non si distingue solo dal colore (c'è la frase, e una `Legenda`).
+- Il movimento è breve (meno di mezzo secondo) e si spegne con `prefers-reduced-motion`: `Celle` lo fa da sé.
+- Le frasi seguono lo stile delle lezioni: italiano, senza trattini lunghi e senza "piuttosto che".
+- Difetti noti dei componenti comuni: `Slider` accavalla l'unità al numero se l'etichetta è lunga, `ToggleGroup`
+  non va a capo oltre quattro o cinque opzioni. Etichette corte, e niente correzioni ai componenti.
+
 ### Programmazione
 
 Scelte del 5 ottobre 2026, per le prime lezioni di programmazione (secondo anno), da confermare.
