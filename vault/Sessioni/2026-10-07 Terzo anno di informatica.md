@@ -15,7 +15,7 @@ Sessione del 7 ottobre 2026, seguito di [[2026-10-05 Secondo anno di informatica
 - I fogli di stile (4, 92-95)
 - Pagine web interattive (3, 96-98)
 
-Niente è pubblicato e niente è committato: tutto sta nel worktree `Sapiens-informatica-terzo`, sul branch `informatica-terzo-anno`. Commit, PR e pubblicazione nel database vengono dopo, e la pubblicazione aspetta il via di Alessandro. Quello che resta aperto è in [[Informatica terzo anno, da sistemare]].
+Il codice è in produzione dal 7 ottobre (PR #51, unita dopo i controlli) e i testi delle 34 lezioni, con formulari e flashcard, sono pubblicati nel database lo stesso giorno, con il via di Alessandro: 102 scritture e 10 figure TikZ compilate. Dopo la pubblicazione sono state aperte in produzione, a 390 px, sei pagine (cinque lezioni e una scheda di esercizi) e tre figure interattive sono state usate fino a metà: nessun errore. Quello che resta aperto è in [[Informatica terzo anno, da sistemare]].
 
 ## Cosa si è fatto
 - Prima dei gruppi, il brief `docs/lezioni/informatica/brief-terzo-anno.md` (gruppi, scelte del lotto, confini tra le 34 lezioni, forma del rapporto) e tre agenti che hanno preparato quello che al sito mancava:
@@ -211,7 +211,7 @@ Alla chiusura, dopo l'allineamento dei nomi, `inf-markup`, `inf-css-layout` e `i
 - Le prove e2e (`tests/e2e/esercizi-informatica.spec.ts` crea utenti), gli errori piantati dopo le correzioni, il tema scuro e la scheda da stampare degli esercizi, un telefono vero.
 
 ## Stato
-Scritto, rivisto e collegato nel worktree `Sapiens-informatica-terzo` (branch `informatica-terzo-anno`), non committato e non pubblicato nel database. I generatori sono collegati al sito solo nel worktree, e le pagine esercizi vere non esistono finché le lezioni non sono nel database. Restano il commit, la PR e la pubblicazione, che aspetta il via di Alessandro.
+Scritto, rivisto e collegato in un worktree, poi unito a master con la PR #51 e pubblicato nel database il 7 ottobre 2026. Le copie dell'ultima versione pubblicata sono in `docs/lezioni/informatica/pubblicate/`.
 
 ## Collegamenti
 - [[Informatica terzo anno, da sistemare]], [[Domande per Andrea]], [[Pipeline lezioni]], [[Pipeline esercizi]], [[Lezioni]], [[Esercizi]], [[Editor di codice]], [[Diagrammi di flusso eseguibili]]
