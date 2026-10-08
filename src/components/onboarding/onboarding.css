@@ -1,0 +1,1016 @@
+/*
+ * The onboarding (/iscriviti, /benvenuto): one question a screen, on the squared paper of the site, next to a
+ * notebook whose label fills in with the answers and which opens on the page the student will start from.
+ * Everything here hangs on a class starting with `ob-` and uses the tokens of globals.css. The objects are drawn
+ * live over the page (stage-engine.ts).
+ *
+ * Motion: a step leaves quickly and quietly, the next one arrives piece by piece (the question, the highlighter
+ * across its key word, then the answers one after the other), from the side the student is moving towards. A new
+ * account is made once, so the arrival can take its time; pressing and choosing answer at once. With reduced
+ * motion nothing moves.
+ *
+ * Colour: what is chosen takes `--ob-tone`, which is the site's red until an element (a subject's card, the
+ * screen of a subject's lesson, a notebook) carries `data-subject`. The bar on top and the button that moves on
+ * use the accent itself and stay red.
+ */
+
+/* Custom properties resolve where they are declared, so the shades are worked out again on every element that
+   changes the tone (the subjects are at the end of the file). */
+.ob-page,
+.ob-page [data-subject] {
+	--ob-tone: var(--accent);
+	--ob-tone-soft: color-mix(in oklab, var(--ob-tone) 9%, var(--surface));
+	--ob-tone-fg: color-mix(in oklab, var(--ob-tone) 84%, black);
+	--ob-tone-deep: color-mix(in oklab, var(--ob-tone) 72%, black);
+	/* On the notebook's paper, which is light in both themes. */
+	--ob-tone-ink: color-mix(in oklab, var(--ob-tone) 84%, black);
+	--ob-tone-wash: color-mix(in oklab, var(--ob-tone) 11%, #fffdf8);
+}
+.dark .ob-page,
+.dark .ob-page [data-subject] {
+	--ob-tone-soft: color-mix(in oklab, var(--ob-tone) 22%, var(--surface));
+	--ob-tone-fg: color-mix(in oklab, var(--ob-tone) 62%, white);
+}
+
+.ob-page {
+	/* The notebook's width: it has to fit, open and with a question above it, on a short screen too. */
+	--ob-w: min(22rem, calc((100dvh - 23rem) * 0.75));
+	--ob-ink: oklch(0.36 0.13 262);
+	/* The plain notebook of the first questions; each subject then has its own colour. */
+	--ob-cover: oklch(0.36 0.06 265);
+	--ob-cover-dark: oklch(0.28 0.05 265);
+	position: relative;
+	min-height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	overflow-x: clip;
+	background-color: var(--surface-2, var(--color-paper-50));
+	background-image:
+		radial-gradient(ellipse 70% 55% at 50% 0%, color-mix(in oklab, var(--surface) 85%, transparent), transparent 70%),
+		linear-gradient(var(--grid-faint) 1px, transparent 1px),
+		linear-gradient(90deg, var(--grid-faint) 1px, transparent 1px);
+	background-size: auto, 24px 24px, 24px 24px;
+}
+
+/* ---- the bar on top: back, how far along, a way out. One segment a step. ---- */
+.ob-track {
+	height: 10px;
+	flex: 1 1 0;
+	min-width: 0;
+	border-radius: 999px;
+	background: color-mix(in oklab, var(--fg) 9%, transparent);
+	box-shadow: inset 0 1px 1px color-mix(in oklab, var(--fg) 8%, transparent);
+	overflow: hidden;
+}
+.ob-fill {
+	height: 100%;
+	width: 100%;
+	border-radius: inherit;
+	background: linear-gradient(to bottom, color-mix(in oklab, var(--accent) 82%, white), var(--accent) 55%);
+	transform-origin: left center;
+	transform: scaleX(var(--ob-done, 0));
+	transition: transform 0.55s var(--ease-out-soft);
+}
+
+/* ---- a step arriving and leaving ---- */
+.ob-step {
+	--ob-dir: 1;
+}
+.ob-step[data-dir='back'] {
+	--ob-dir: -1;
+}
+@keyframes ob-segment {
+	from {
+		flex-grow: 0.001;
+		opacity: 0;
+	}
+}
+@media (prefers-reduced-motion: no-preference) {
+	/* A segment added to the bar (a subject chosen adds its step) makes room for itself. */
+	.ob-track {
+		animation: ob-segment 0.45s var(--ease-out-soft) both;
+	}
+	.ob-step[data-phase='in'] .ob-rise {
+		animation: ob-rise 0.5s var(--ease-out-soft) calc(var(--i, 0) * 55ms) both;
+	}
+	/* Its pieces, not the step itself: on the screen of the open notebook the step has no box of its own. */
+	.ob-step[data-phase='out'] > * {
+		animation: ob-leave 0.16s cubic-bezier(0.4, 0, 1, 1) both;
+	}
+	/* Answers that appear inside a step already on screen (the lessons of a chapter). */
+	.ob-list .ob-rise {
+		animation: ob-rise 0.36s var(--ease-out-soft) calc(var(--i, 0) * 30ms) both;
+	}
+	.ob-step[data-phase='in'] .ob-hl::before {
+		animation: ob-swipe 0.55s var(--ease-out-soft) 0.32s both;
+	}
+	.ob-in {
+		animation: ob-rise 0.6s var(--ease-out-soft) both;
+	}
+}
+@keyframes ob-rise {
+	from {
+		opacity: 0;
+		translate: calc(var(--ob-dir, 1) * 18px) 10px;
+		filter: blur(5px);
+	}
+}
+@keyframes ob-leave {
+	to {
+		opacity: 0;
+		translate: calc(var(--ob-dir, 1) * -10px) 0;
+		filter: blur(2px);
+	}
+}
+@keyframes ob-swipe {
+	from {
+		clip-path: inset(0 100% 0 0);
+	}
+	to {
+		clip-path: inset(0 0 0 0);
+	}
+}
+@keyframes ob-pop {
+	from {
+		opacity: 0;
+		scale: 0.9;
+	}
+}
+
+/* The key word of a question, under the site's felt-tip highlighter (`.marker-hand` in globals.css). */
+.ob-hl {
+	position: relative;
+	isolation: isolate;
+	white-space: nowrap;
+}
+.ob-hl::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	inset: 0.14em -0.16em -0.02em -0.14em;
+	background: var(--marker);
+	mask: var(--hl-a) center / 100% 100% no-repeat;
+	transform: rotate(-0.8deg);
+}
+
+/* ---- an answer: a key that goes down under the finger ---- */
+.ob-key {
+	--ob-edge: color-mix(in oklab, var(--color-ink-700) 22%, var(--surface));
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	border-radius: 1.4rem;
+	border: 1.5px solid var(--ob-edge);
+	background: var(--surface);
+	color: var(--fg-strong);
+	box-shadow: 0 5px 0 var(--ob-edge), 0 14px 22px -16px color-mix(in oklab, var(--color-ink-900) 40%, transparent);
+	text-align: center;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	transition:
+		translate 0.16s var(--ease-out-soft),
+		box-shadow 0.16s var(--ease-out-soft),
+		border-color 0.18s,
+		background-color 0.18s,
+		opacity 0.3s;
+}
+.ob-key:focus-visible {
+	outline: 3px solid color-mix(in oklab, var(--ob-tone) 50%, transparent);
+	outline-offset: 3px;
+}
+@media (hover: hover) {
+	.ob-key:hover {
+		translate: 0 -3px;
+		box-shadow: 0 8px 0 var(--ob-edge), 0 22px 28px -18px color-mix(in oklab, var(--color-ink-900) 50%, transparent);
+	}
+	/* A subject's card shows its colour already under the pointer. */
+	.ob-key[data-subject]:not([aria-checked='true']):hover {
+		--ob-edge: color-mix(in oklab, var(--ob-tone) 45%, var(--surface));
+	}
+}
+.ob-key:active {
+	translate: 0 4px;
+	box-shadow: 0 1px 0 var(--ob-edge), 0 4px 8px -6px color-mix(in oklab, var(--color-ink-900) 40%, transparent);
+	transition-duration: 0.06s;
+}
+.ob-key[aria-checked='true'],
+.ob-key[aria-selected='true'] {
+	--ob-edge: var(--ob-tone);
+	background: var(--ob-tone-soft);
+}
+.ob-key[aria-checked='true'] {
+	translate: 0 2px;
+	box-shadow: 0 3px 0 var(--ob-tone), 0 12px 20px -14px color-mix(in oklab, var(--ob-tone) 60%, transparent);
+}
+/* Once one is chosen the others step back. */
+.ob-keys[data-chosen] .ob-key:not([aria-checked='true']) {
+	opacity: 0.4;
+}
+.ob-check {
+	position: absolute;
+	top: 0.65rem;
+	right: 0.65rem;
+	display: grid;
+	place-items: center;
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: 999px;
+	background: var(--ob-tone);
+	color: white;
+	box-shadow: 0 2px 0 var(--ob-tone-deep);
+	animation: ob-pop 0.35s var(--ease-spring) both;
+}
+/* The fifth of five on a phone's two columns: one line across, the object beside its name. */
+@media (max-width: 639px) {
+	.ob-key-wide {
+		flex-direction: row;
+		gap: 1rem;
+	}
+}
+/* A key with its object beside its name (a subject). */
+.ob-key-side {
+	flex-direction: row;
+	justify-content: flex-start;
+	gap: 0.9rem;
+}
+.ob-key-side .ob-kbd {
+	left: auto;
+	right: 0.7rem;
+	top: auto;
+	bottom: 0.7rem;
+}
+/* The number that chooses it from the keyboard, on screens that have one. */
+.ob-kbd {
+	position: absolute;
+	top: 0.7rem;
+	left: 0.7rem;
+	display: none;
+	min-width: 1.4rem;
+	padding: 0.05rem 0.3rem;
+	border-radius: 0.4rem;
+	border: 1px solid var(--edge);
+	background: var(--surface-2, var(--surface));
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	line-height: 1.2rem;
+	color: var(--fg-subtle);
+}
+@media (hover: hover) and (min-width: 1024px) {
+	.ob-kbd {
+		display: block;
+	}
+}
+
+/* A key that is a line of a list (a lesson). */
+.ob-row {
+	flex-direction: row;
+	justify-content: space-between;
+	text-align: left;
+	border-radius: 1rem;
+	padding: 0.85rem 1rem;
+	font-weight: 500;
+	box-shadow: 0 3px 0 var(--ob-edge);
+}
+@media (hover: hover) {
+	.ob-row:hover {
+		translate: 0 -2px;
+		box-shadow: 0 5px 0 var(--ob-edge);
+	}
+}
+.ob-chip {
+	flex-direction: row;
+	border-radius: 999px;
+	padding: 0.42rem 0.95rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	white-space: nowrap;
+	color: var(--fg);
+	box-shadow: 0 2px 0 var(--ob-edge);
+}
+@media (hover: hover) {
+	.ob-chip:hover {
+		translate: 0 -1px;
+		box-shadow: 0 3px 0 var(--ob-edge);
+	}
+}
+.ob-chip:active {
+	translate: 0 2px;
+	box-shadow: 0 0 0 var(--ob-edge);
+}
+
+.ob-search:focus {
+	border-color: var(--ob-tone);
+	box-shadow: 0 0 0 4px color-mix(in oklab, var(--ob-tone) 15%, transparent);
+}
+
+/* The big figure on an age or a year card. */
+.ob-figure {
+	font-family: var(--font-display);
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: -0.03em;
+	color: var(--fg-strong);
+}
+
+/* ---- the fields of the account ---- */
+.ob-field {
+	position: relative;
+}
+.ob-field input {
+	width: 100%;
+	border-radius: 1rem;
+	border: 1.5px solid color-mix(in oklab, var(--color-ink-700) 22%, var(--surface));
+	background: var(--surface);
+	padding: 1.45rem 1rem 0.5rem;
+	font-size: 1rem;
+	color: var(--fg-strong);
+	outline: none;
+	box-shadow: inset 0 2px 0 color-mix(in oklab, var(--color-ink-900) 4%, transparent);
+	transition: border-color 0.18s, box-shadow 0.18s;
+}
+.ob-field input:focus {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+}
+.ob-field label {
+	position: absolute;
+	left: 1rem;
+	top: 0.95rem;
+	color: var(--fg-subtle);
+	pointer-events: none;
+	transform-origin: left top;
+	transition: transform 0.18s var(--ease-out-soft), color 0.18s;
+}
+.ob-field input:focus + label,
+.ob-field input:not(:placeholder-shown) + label {
+	transform: translateY(-0.55rem) scale(0.76);
+	color: var(--fg-muted);
+}
+.ob-field-ok {
+	position: absolute;
+	right: 0.9rem;
+	top: 50%;
+	translate: 0 -50%;
+	display: grid;
+	place-items: center;
+	width: 1.4rem;
+	height: 1.4rem;
+	border-radius: 999px;
+	background: var(--ok);
+	color: white;
+	animation: ob-pop 0.3s var(--ease-spring) both;
+}
+
+/* ---- the notebook ----
+   Its width is one number, smaller on a short screen, and everything on it is sized in `em` of that. */
+.ob-book {
+	position: relative;
+	width: var(--ob-w);
+	aspect-ratio: 3 / 4;
+	font-size: calc(var(--ob-w) / 22);
+	perspective: 2400px;
+	perspective-origin: 20% 35%;
+	rotate: 2.2deg;
+	transition: rotate 0.7s var(--ease-out-soft);
+}
+.ob-split[data-layout='spread'] .ob-book {
+	rotate: 0deg;
+}
+/* The block of pages, seen from the side under the cover, and the shadow of the whole notebook on the desk. */
+.ob-leaves {
+	position: absolute;
+	inset: 6px -7px -7px 10px;
+	border-radius: 6px 18px 18px 6px;
+	background: repeating-linear-gradient(to bottom, #f4efe2 0 2px, #d9d2c0 2px 3px);
+	box-shadow: 0 34px 44px -20px color-mix(in oklab, var(--color-ink-900) 38%, transparent);
+}
+.ob-leaf {
+	position: absolute;
+	inset: 0;
+	border-radius: 8px 18px 18px 8px;
+	overflow: hidden;
+	background-color: #fdfbf5;
+	background-image:
+		linear-gradient(to right, transparent 2.6em, color-mix(in oklab, var(--color-crimson-500) 45%, transparent) 2.6em calc(2.6em + 1.5px), transparent calc(2.6em + 1.5px)),
+		linear-gradient(oklch(0.62 0.09 245 / 0.22) 1px, transparent 1px),
+		linear-gradient(90deg, oklch(0.62 0.09 245 / 0.22) 1px, transparent 1px);
+	background-size: auto, 1.2em 1.2em, 1.2em 1.2em;
+	color: #23283b;
+}
+/* The shadow the cover throws on the page while it is over it, and the fold by the spine once it is open. */
+.ob-cast {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(to right, rgb(20 16 30 / 0.4), transparent 75%);
+	opacity: var(--ob-cast, 0);
+}
+.ob-leaf::after {
+	content: '';
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 7%;
+	pointer-events: none;
+	background: linear-gradient(to right, rgb(20 16 30 / 0.16), transparent);
+	opacity: 0;
+	transition: opacity 0.4s;
+}
+.ob-book[data-open] .ob-leaf::after {
+	opacity: 1;
+}
+
+/* The cover: strips hinged one on the other from the spine (Notebook.tsx turns them). */
+.ob-cover {
+	position: absolute;
+	inset: 0;
+	transform-style: preserve-3d;
+}
+.ob-strip {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 100%;
+	width: 100%;
+	transform-origin: left center;
+	transform-style: preserve-3d;
+}
+.ob-strip[data-first] {
+	left: 0;
+}
+/* A hair wider than its strip, so no line of the page shows between two of them lying flat. */
+.ob-face,
+.ob-shade {
+	position: absolute;
+	inset: 0 -0.6px 0 0;
+	overflow: hidden;
+}
+.ob-strip[data-first] > .ob-face,
+.ob-strip[data-first] > .ob-shade {
+	border-radius: 8px 0 0 8px;
+}
+.ob-strip[data-last] > .ob-face,
+.ob-strip[data-last] > .ob-shade {
+	border-radius: 0 18px 18px 0;
+}
+/* The inner face is seen from behind: mirrored here, it reads the right way round once the strip has turned. */
+.ob-face-inner {
+	transform: scaleX(-1);
+}
+.ob-strip[data-first] > .ob-face-inner {
+	border-radius: 0 8px 8px 0;
+}
+.ob-strip[data-last] > .ob-face-inner {
+	border-radius: 18px 0 0 18px;
+}
+.ob-shade {
+	background: #17121f;
+	opacity: 0;
+	pointer-events: none;
+}
+.ob-cover-front,
+.ob-cover-back {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+}
+.ob-cover-front {
+	background:
+		linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.1) 46%, transparent 56%),
+		linear-gradient(to right, var(--ob-cover-dark) 0 9%, color-mix(in oklab, var(--ob-cover-dark) 55%, black) 9% calc(9% + 2px), var(--ob-cover) calc(9% + 2px));
+	box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08), inset -3px -3px 6px rgb(0 0 0 / 0.14);
+}
+/* the stitching along the spine */
+.ob-cover-front::before {
+	content: '';
+	position: absolute;
+	left: 4.5%;
+	top: 5%;
+	bottom: 5%;
+	border-left: 2px dashed rgb(255 255 255 / 0.3);
+}
+/* The inside of the cover: card of the cover's own colour, darker towards the spine, which is on its right. */
+.ob-cover-back {
+	background:
+		linear-gradient(255deg, transparent 40%, rgb(255 255 255 / 0.08) 50%, transparent 62%),
+		linear-gradient(to left, var(--ob-cover-dark), var(--ob-cover) 16%);
+	box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 3px -3px 6px rgb(0 0 0 / 0.14);
+	color: #23283b;
+}
+.ob-inside {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	justify-content: center;
+	gap: 0.9em;
+	padding: 1.3em 1.9em 1.3em 1.5em;
+}
+/* A sheet glued inside the cover (and, on a phone, a card under the page): the lesson's exercise path. */
+.ob-index {
+	overflow: hidden;
+	padding: 1em 1em 0.9em;
+	border-radius: 0.9em;
+	background: #fffdf8;
+	box-shadow: 0 3px 0 rgb(0 0 0 / 0.16), 0 0 0 1.5px color-mix(in oklab, var(--ob-tone) 30%, transparent);
+	color: #23283b;
+}
+.ob-path {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15em;
+	margin-top: 0.7em;
+	font-size: 0.8em;
+	line-height: 1.25;
+}
+.ob-path li {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: center;
+	column-gap: 0.65em;
+	padding: 0.24em 0.4em;
+	border-radius: 0.8em;
+}
+.ob-path li > span:nth-child(2) {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+.ob-path[data-dense] li > span:nth-child(2) {
+	-webkit-line-clamp: 1;
+}
+.ob-path li[data-first] {
+	background: var(--ob-tone-wash);
+	font-weight: 600;
+}
+.ob-path .ob-level {
+	font-size: 0.82em;
+}
+.ob-path-here {
+	grid-column: 2;
+	font-family: var(--font-hand);
+	font-size: 1.3em;
+	font-weight: 600;
+	line-height: 0.95;
+	color: var(--ob-tone-ink);
+}
+/* What comes with the account, written on the card of the cover. */
+.ob-inside-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.6em;
+	padding: 0 0.3em;
+	font-size: 0.76em;
+	line-height: 1.35;
+	color: rgb(255 255 255 / 0.94);
+}
+.ob-wordmark {
+	position: absolute;
+	left: 16%;
+	bottom: 5.5%;
+	font-family: var(--font-display);
+	font-weight: 600;
+	font-size: 1.05em;
+	letter-spacing: 0.01em;
+	color: rgb(255 255 255 / 0.5);
+}
+
+/* The label of an Italian school notebook: a white card with a double border and dotted lines to write on. */
+.ob-label {
+	position: absolute;
+	left: 19%;
+	right: 9%;
+	top: 11%;
+	padding: 0.85em 1em 0.95em;
+	border-radius: 0.9em;
+	background: #fffdf8;
+	box-shadow: 0 0 0 2px var(--ob-ink) inset, 0 0 0 4.5px #fffdf8 inset, 0 0 0 5.5px color-mix(in oklab, var(--ob-ink) 55%, transparent) inset, 0 3px 0 rgb(0 0 0 / 0.14);
+	color: #23283b;
+}
+.ob-line {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5em;
+	min-height: 2.15em;
+	border-bottom: 1.5px dotted color-mix(in oklab, var(--ob-ink) 45%, transparent);
+}
+.ob-line + .ob-line {
+	margin-top: 0.15rem;
+}
+/* The line of the lesson is two lines tall, ruled like the others. */
+.ob-line[data-wrap] {
+	min-height: 3.7em;
+	align-items: flex-start;
+	padding-top: 0.35em;
+	border-bottom: 0;
+	background: repeating-linear-gradient(to bottom, transparent 0 calc(1.85em - 1.5px), color-mix(in oklab, var(--ob-ink) 28%, transparent) calc(1.85em - 1.5px) 1.85em);
+}
+.ob-line[data-wrap] .ob-line-name {
+	padding-top: 0.45em;
+}
+.ob-hand[data-wrap] {
+	white-space: normal;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	font-size: 1.4em;
+	line-height: 1.3214;
+	margin-top: -0.3em;
+}
+.ob-line-name {
+	flex: none;
+	font-size: max(0.62em, 9px);
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: color-mix(in oklab, var(--ob-ink) 75%, transparent);
+}
+.ob-hand {
+	min-width: 0;
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: var(--font-hand);
+	font-size: 1.55em;
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--ob-ink);
+}
+/* What the pointer is over, in pencil, before it is chosen and written in ink. */
+.ob-hand[data-pencil] {
+	color: color-mix(in oklab, var(--graphite) 55%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+	.ob-hand[data-written] {
+		animation: ob-write 0.55s cubic-bezier(0.3, 0, 0.3, 1) both;
+	}
+}
+@keyframes ob-write {
+	from {
+		clip-path: inset(-10% 100% -10% 0);
+	}
+	to {
+		clip-path: inset(-10% -2% -10% 0);
+	}
+}
+
+/* A sticker pressed on the cover. */
+.ob-sticker {
+	position: absolute;
+	rotate: var(--r, -7deg);
+	filter: drop-shadow(0 2px 1px rgb(0 0 0 / 0.25));
+}
+.ob-sticker img {
+	display: block;
+}
+.ob-sticker[data-edge] img {
+	box-sizing: content-box;
+	border: 0.25em solid #fffdf8;
+	border-radius: 0.55em;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.ob-sticker {
+		animation: ob-slap 0.5s var(--ease-spring) both;
+	}
+}
+@keyframes ob-slap {
+	from {
+		opacity: 0;
+		scale: 1.7;
+		rotate: calc(var(--r, -7deg) + 14deg);
+	}
+	30% {
+		opacity: 1;
+	}
+}
+
+/* The first page, where the student starts: the lesson, its chapter, and a drawing from the lesson. */
+.ob-start {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	padding: 1.7em 1.25em 2.3em 3.4em;
+}
+.ob-start-eyebrow {
+	font-family: var(--font-hand);
+	font-size: 1.5em;
+	font-weight: 600;
+	line-height: 1;
+	color: var(--ob-tone-ink);
+}
+/* The room left under the title: the drawing is as large as fits in it. */
+.ob-start-art {
+	display: grid;
+	flex: 1;
+	min-height: 0;
+	margin-top: 1em;
+	place-items: center;
+	container-type: size;
+}
+/* A drawing cut out of the lesson and taped to the page. */
+.ob-cutout {
+	--r: -1.6deg;
+	position: relative;
+	width: min(calc(100cqw - 1em), calc((100cqh - 1.6em) * var(--ar, 1)));
+	aspect-ratio: var(--ar, 1);
+	margin: 0;
+	border-radius: 0.25em;
+	background: white;
+	box-shadow: 0 1px 0 rgb(0 0 0 / 0.08), 0 0.6em 1em -0.6em rgb(20 16 30 / 0.5);
+	rotate: var(--r);
+}
+.ob-cutout img {
+	position: absolute;
+	inset: 0.55em;
+	width: calc(100% - 1.1em);
+	height: calc(100% - 1.1em);
+	object-fit: contain;
+}
+.ob-cutout::before {
+	content: '';
+	position: absolute;
+	z-index: 1;
+	top: -0.6em;
+	left: 50%;
+	width: 4.4em;
+	height: 1.3em;
+	translate: -50% 0;
+	rotate: -3deg;
+	background: color-mix(in oklab, var(--ob-tone) 50%, transparent);
+	box-shadow: 0 1px 1px rgb(0 0 0 / 0.1);
+}
+.ob-start-sticker {
+	--r: -6deg;
+	width: min(9em, 70cqw);
+	height: auto;
+	rotate: var(--r);
+	filter: drop-shadow(0 2px 1px rgb(0 0 0 / 0.25));
+}
+@media (prefers-reduced-motion: no-preference) {
+	.ob-book[data-open] .ob-cutout,
+	.ob-book[data-open] .ob-start-sticker,
+	.ob-sheet .ob-cutout,
+	.ob-sheet .ob-start-sticker {
+		animation: ob-slap 0.5s var(--ease-spring) 0.75s both;
+	}
+}
+
+.ob-level {
+	display: grid;
+	place-items: center;
+	width: 1.9em;
+	height: 1.9em;
+	border-radius: 999px;
+	border: 1.5px solid color-mix(in oklab, #23283b 35%, transparent);
+	background: #fffdf8;
+	font-size: 1em;
+	font-weight: 600;
+	color: #5b6076;
+}
+.ob-level[data-first] {
+	border-color: var(--ob-tone);
+	background: var(--ob-tone);
+	color: white;
+	box-shadow: 0 2px 0 var(--ob-tone-deep);
+}
+@media (prefers-reduced-motion: no-preference) {
+	.ob-book[data-open] .ob-level,
+	.ob-step > .ob-index .ob-level {
+		animation: ob-pop 0.4s var(--ease-spring) calc(0.7s + var(--i, 0) * 70ms) both;
+	}
+}
+
+/* The same page on a phone, where the notebook does not fit beside the question. */
+.ob-sheet {
+	position: relative;
+	border-radius: 1.1rem;
+	overflow: hidden;
+	box-shadow: 0 18px 36px -22px color-mix(in oklab, var(--color-ink-900) 50%, transparent), 0 0 0 1.5px var(--edge);
+}
+
+/* The notebook as a strip on top of a phone's screen: the object and the label in two lines. */
+.ob-strip-label {
+	font-size: 16px;
+	border-radius: 0.8rem;
+	background: #fffdf8;
+	box-shadow: 0 0 0 1.5px var(--ob-ink) inset, 0 0 0 3.5px #fffdf8 inset, 0 0 0 4.5px color-mix(in oklab, var(--ob-ink) 45%, transparent) inset, 0 2px 0 rgb(0 0 0 / 0.12);
+	color: #23283b;
+}
+
+/* ---- the screen of a question: the answers on the left, the notebook on the right ----
+   Everything hangs from the top, so a longer or shorter list never moves the question or the notebook, which
+   stays where it is while the list scrolls. On the screen that opens the notebook the two become one column:
+   the question, the notebook open across the middle, the button. */
+.ob-split {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+.ob-sheet {
+	font-size: 15px;
+}
+@media (min-width: 1024px) {
+	.ob-split {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) var(--ob-w);
+		column-gap: clamp(3rem, 8vw, 7.5rem);
+		align-items: start;
+		align-content: start;
+		padding-top: 7vh;
+	}
+	.ob-split[data-layout='side'] > .ob-aside {
+		order: 2;
+		position: sticky;
+		top: 7.5rem;
+		padding-top: 2.5rem;
+	}
+	.ob-split[data-layout='spread'] {
+		grid-template-columns: minmax(0, 1fr);
+		justify-items: center;
+		row-gap: 2rem;
+		padding-top: 2vh;
+	}
+	.ob-split[data-layout='spread'] > .ob-step {
+		display: contents;
+	}
+	.ob-split[data-layout='spread'] .ob-q {
+		order: 1;
+		text-align: center;
+	}
+	.ob-split[data-layout='spread'] .ob-q p {
+		margin-inline: auto;
+	}
+	/* Twice as wide as the notebook, which keeps the right half: the cover opens onto the left one. */
+	.ob-split[data-layout='spread'] > .ob-aside {
+		order: 2;
+		width: calc(var(--ob-w) * 2);
+		padding-left: var(--ob-w);
+	}
+	.ob-split[data-layout='spread'] .ob-foot {
+		order: 3;
+		margin-top: 0.5rem;
+		justify-content: center;
+	}
+	/* The lessons: the list scrolls inside the screen, with room for the keys' shadows. */
+	.ob-scroll {
+		max-height: max(13rem, calc(100dvh - 33rem));
+		overflow-y: auto;
+		margin: 0 -0.5rem;
+		padding: 0.25rem 0.5rem 1rem;
+		scrollbar-width: thin;
+		mask-image: linear-gradient(to bottom, black calc(100% - 1.5rem), transparent);
+	}
+}
+
+/* ---- a notebook for each subject, and the tone of what belongs to it ---- */
+.ob-page [data-subject='math'] {
+	--ob-cover: oklch(0.5 0.19 18);
+	--ob-cover-dark: oklch(0.4 0.16 18);
+	--ob-tone: oklch(0.57 0.21 20);
+}
+.ob-page [data-subject='physics'] {
+	--ob-cover: oklch(0.5 0.15 256);
+	--ob-cover-dark: oklch(0.4 0.13 256);
+	--ob-tone: oklch(0.54 0.16 256);
+}
+.ob-page [data-subject='chemistry'] {
+	--ob-cover: oklch(0.54 0.12 160);
+	--ob-cover-dark: oklch(0.43 0.1 160);
+	--ob-tone: oklch(0.54 0.12 160);
+}
+/* Orange is light: what is written in it on paper goes a step darker than the others. */
+.ob-page [data-subject='computer-science'] {
+	--ob-cover: oklch(0.66 0.16 55);
+	--ob-cover-dark: oklch(0.54 0.14 52);
+	--ob-tone: oklch(0.66 0.16 55);
+	--ob-tone-fg: oklch(0.5 0.13 50);
+	--ob-tone-ink: oklch(0.5 0.13 50);
+}
+.dark .ob-page [data-subject='computer-science'] {
+	--ob-tone-fg: oklch(0.78 0.13 60);
+}
+.ob-strip-label[data-subject] {
+	border-left: 6px solid var(--ob-cover);
+}
+
+/* The other notebooks of the pile, under the one in hand: only their edges show. */
+.ob-stack {
+	position: relative;
+	width: var(--ob-w);
+}
+.ob-slab {
+	position: absolute;
+	inset: 0;
+	border-radius: 8px 18px 18px 8px;
+	background: linear-gradient(to right, var(--ob-cover-dark) 0 9%, var(--ob-cover) 9%);
+	box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08), 0 10px 18px -12px rgb(20 16 30 / 0.5);
+	rotate: var(--r, 0deg);
+	translate: var(--x, 0) var(--y, 0);
+	transition: rotate 0.6s var(--ease-out-soft), translate 0.6s var(--ease-out-soft), opacity 0.3s;
+}
+.ob-split[data-layout='spread'] .ob-slab {
+	opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.ob-slab {
+		animation: ob-deal 0.55s var(--ease-out-soft) both;
+	}
+	/* The notebook that comes to the top of the pile. */
+	.ob-deal {
+		animation: ob-deal 0.6s var(--ease-out-soft) both;
+	}
+}
+@keyframes ob-deal {
+	from {
+		opacity: 0;
+		translate: 40px -30px;
+		rotate: 9deg;
+	}
+}
+
+/* A closed notebook among others, to be picked: a key in the shape of a cover. */
+.ob-cover-card {
+	position: relative;
+	display: block;
+	width: 100%;
+	aspect-ratio: 3 / 4;
+	container-type: inline-size;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	rotate: var(--r, 0deg);
+	transition: translate 0.22s var(--ease-out-soft), rotate 0.3s var(--ease-out-soft), filter 0.22s;
+	filter: drop-shadow(0 18px 18px rgb(20 16 30 / 0.25));
+}
+.ob-cover-card-in {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	border-radius: 8px 18px 18px 8px;
+	font-size: calc(100cqw / 22);
+	text-align: left;
+}
+@media (hover: hover) {
+	.ob-cover-card:hover {
+		translate: 0 -10px;
+		rotate: 0deg;
+		filter: drop-shadow(0 30px 24px rgb(20 16 30 / 0.3));
+	}
+}
+.ob-cover-card:active {
+	translate: 0 -2px;
+}
+.ob-cover-card:focus-visible {
+	outline: 3px solid color-mix(in oklab, var(--ob-tone) 50%, transparent);
+	outline-offset: 6px;
+	border-radius: 12px 22px 22px 12px;
+}
+
+/* The notebooks to pick from: two to a row on a phone; on a wider screen one row, as large as the window lets them be. */
+.ob-choose {
+	display: grid;
+	width: 100%;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 2.5rem 2rem;
+}
+@media (min-width: 640px) {
+	.ob-choose {
+		--gap: clamp(2rem, 4vw, 4.5rem);
+		--card: min(27rem, calc((100vw - 7rem - (var(--n) - 1) * var(--gap)) / var(--n)), calc((100dvh - 23rem) * 0.75));
+		width: max-content;
+		grid-template-columns: repeat(var(--n), max(9rem, var(--card)));
+		gap: var(--gap);
+	}
+}
+
+/* A badge on a subject that has no lessons yet for the student's year. */
+.ob-soon {
+	border-radius: 999px;
+	padding: 0.1rem 0.55rem;
+	background: color-mix(in oklab, var(--fg) 8%, transparent);
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: var(--fg-muted);
+}
+
+@media (min-width: 1024px) {
+	/* The screen where one notebook is picked among the compiled ones: no notebook at the side, they are the answers. */
+	.ob-split[data-layout='choose'] {
+		max-width: none;
+		grid-template-columns: minmax(0, 1fr);
+		justify-items: center;
+		padding-top: 2vh;
+	}
+	.ob-split[data-layout='choose'] > .ob-aside {
+		display: none;
+	}
+	.ob-split[data-layout='choose'] .ob-q {
+		text-align: center;
+	}
+	.ob-split[data-layout='choose'] .ob-q p {
+		margin-inline: auto;
+	}
+}

@@ -72,11 +72,15 @@ export function bonusOf(user: MaybeUser, now: Date = new Date()): BonusClaim | n
 	return bonus.until >= romeDate(now) ? (bonus as BonusClaim) : null;
 }
 
-/** When the reverse trial ends: TRIAL_DAYS after the account was created, or the longer trial an invite gave. */
+/**
+ * When the reverse trial ends: TRIAL_DAYS after the account was created, or the longer trial an invite gave. The
+ * account of a student under 14 starts counting when the parent confirms (`app_metadata.trialFrom`).
+ */
 export function trialEnd(user: MaybeUser): Date | null {
-	const created = user?.created_at ? Date.parse(user.created_at) : NaN;
+	const from = Date.parse(String(user?.app_metadata?.trialFrom ?? ''));
+	const start = Number.isFinite(from) ? from : user?.created_at ? Date.parse(user.created_at) : NaN;
 	const days = Number(user?.app_metadata?.trialDays);
-	return Number.isFinite(created) ? new Date(created + (Number.isInteger(days) && days > 0 ? days : TRIAL_DAYS) * 86_400_000) : null;
+	return Number.isFinite(start) ? new Date(start + (Number.isInteger(days) && days > 0 ? days : TRIAL_DAYS) * 86_400_000) : null;
 }
 
 /** The plan in force and what gives it. */

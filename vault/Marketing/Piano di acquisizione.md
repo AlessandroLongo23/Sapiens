@@ -1,7 +1,7 @@
 ---
 stato: bozza
 release: beta
-aggiornato: 2026-09-30
+aggiornato: 2026-10-07
 tag: [marketing, piano]
 ---
 # Piano di acquisizione
@@ -30,7 +30,7 @@ Esclusi fino alla beta: stampa, sponsorizzazioni, pubblicità come canale princi
 - Gennaio 2027, dopo le pagelle: email alla lista d'attesa, video di presentazione con il volto, uscita dei creator.
 - Febbraio: piano fino a giugno in vendita (vedi [[Piani e prezzi]]).
 - Maggio e giugno: la maturità e la seconda prova di matematica (vedi [[Stagionalità]]).
-- Misura per canale fin dal primo giorno: link con parametri UTM, un codice per ogni creator, una domanda di un clic all'iscrizione ("Come ci hai conosciuto?"). Vedi [[Metriche]].
+- Misura per canale fin dal primo giorno: link con parametri UTM, un codice per ogni creator, una domanda di un clic dopo la prima prova ("Come ci hai conosciuto?", vedi [[2026-10-07 Come ci hai conosciuto si chiede dopo la prima prova]]). Vedi [[Metriche]].
 
 ## Un piano per ogni fascia di budget
 Stime di costo di Claude, da verificare prima di spendere.

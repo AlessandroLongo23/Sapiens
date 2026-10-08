@@ -16,7 +16,7 @@ export interface CheckoutOptions {
 
 export class CheckoutError extends Error {
 	constructor(
-		public code: 'login_required' | 'failed',
+		public code: 'login_required' | 'email_unverified' | 'failed',
 		message: string
 	) {
 		super(message);
@@ -32,18 +32,28 @@ export async function startCheckout(options: CheckoutOptions): Promise<void> {
 	});
 	const body = await response.json().catch(() => ({}));
 	if (response.status === 401) throw new CheckoutError('login_required', body.error ?? 'Accedi per continuare.');
+	if (body.code === 'email_unverified') throw new CheckoutError('email_unverified', body.error);
 	if (!response.ok || !body.url) throw new CheckoutError('failed', body.error ?? 'Errore durante la creazione della sessione di pagamento.');
 	window.location.href = body.url;
 }
 
 /** Same as `startCheckout`, but opens the login modal for anonymous visitors and resumes the checkout once they are in. */
 export async function requestCheckout(options: CheckoutOptions): Promise<void> {
-	const { user, openModal } = authStore.getState();
-	if (!user) return openModal({ register: true, next: () => startCheckout(options) });
+	const { user, openModal, openVerify } = authStore.getState();
+	// A new account confirms its email before paying; the checkout goes on once the code is in.
+	const start = async (): Promise<void> => {
+		try {
+			await startCheckout(options);
+		} catch (err) {
+			if (err instanceof CheckoutError && err.code === 'email_unverified') return openVerify(start);
+			throw err;
+		}
+	};
+	if (!user) return openModal({ register: true, next: start });
 	try {
-		await startCheckout(options);
+		await start();
 	} catch (err) {
-		if (err instanceof CheckoutError && err.code === 'login_required') return openModal({ next: () => startCheckout(options) });
+		if (err instanceof CheckoutError && err.code === 'login_required') return openModal({ next: start });
 		throw err;
 	}
 }

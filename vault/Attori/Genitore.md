@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-23
+aggiornato: 2026-10-07
 tag: [attore]
 ---
 # Genitore
@@ -21,6 +21,6 @@ L'abbonamento dello studente. Con la [[Release v2 Tutor]], il piano Pro gli dà 
 Come pagatore dalla [[Release Beta]]; come utente con un'area propria dalla [[Release v2 Tutor]] (piano Pro) e con la [[Release v3 Famiglie]].
 
 ## Domande aperte
-- Nella beta il genitore ha un account suo o paga dall'account del figlio?
+- Deciso il 7 ottobre 2026: nella beta il genitore paga dall'account del figlio oppure da un link che il figlio gli manda, senza un account suo ([[2026-10-07 Chiedi a un genitore è un link per pagare senza account]]); la porta "genitore" di "Chi sei?" raccoglie l'interesse per l'[[Area genitori]] ([[Onboarding]]). Resta aperto il genitore che crea l'account per un figlio sotto i 14 anni.
 - Un genitore con più figli: un abbonamento per figlio o un piano famiglia?
 - Il dialogo con i docenti (colloqui, comunicazioni) passa da Sapiens solo con il prodotto per le scuole, o prima?

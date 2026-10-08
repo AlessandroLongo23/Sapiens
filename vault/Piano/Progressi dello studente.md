@@ -129,6 +129,6 @@ Stima: 3-4 settimane di lavoro con gli LLM, cioè entro fine ottobre 2026 se si 
 
 ## Domande aperte
 - Regole proposte e non ancora discusse: quando un errore è chiuso (due risposte giuste in prove successive, entro 30 giorni), composizione della pratica, soglia della serie (5 risposte al giorno).
-- Onboarding su classe e indirizzo, legato a "Oggi" (vedi [[Agenda]]).
+- Onboarding: deciso il 7 ottobre 2026, chiede anno e argomento in classe e porta alla prima prova (vedi [[Onboarding]]).
 - Un percorso che attraversa le lezioni di un capitolo.
 - Dopo una prova andata male, come si sceglie il prerequisito più debole da suggerire (deciso che si fa per la beta, non come).

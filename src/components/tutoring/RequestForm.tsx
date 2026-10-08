@@ -69,6 +69,10 @@ export function RequestForm({ tutor, initial = {}, compact = false }: Props) {
 		});
 		const body = await response.json().catch(() => ({}));
 		if (response.status === 401) return openModal({ next: deliver });
+		if (body.code === 'email_unverified') {
+			setState({});
+			return useAuth.getState().openVerify(deliver);
+		}
 		if (!response.ok) throw new Error(body.error ?? 'Invio non riuscito. Riprova tra qualche minuto.');
 		setState({ sent: true });
 	};

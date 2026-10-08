@@ -1,6 +1,7 @@
 import { fail, isUuid, json, readJson } from '@/lib/server/http';
 import { readMessages, sendMessage } from '@/lib/server/tutor-agenda';
 import { withTutor, withUser } from '@/lib/server/tutor-agenda-http';
+import { EMAIL_UNVERIFIED, emailVerified } from '@/lib/server/profile';
 
 type Params = { params: Promise<{ linkId: string }> };
 
@@ -17,5 +18,8 @@ export async function POST(request: Request, { params }: Params) {
 	if (!isUuid(linkId)) return fail('Conversazione non trovata.', 404);
 	const body = await readJson(request);
 	if (body.as === 'tutor') return withTutor('message send', async (tutor) => json({ message: await sendMessage({ tutorId: tutor.id }, linkId, body.body) }, 201));
-	return withUser('message send', async (user) => json({ message: await sendMessage({ userId: user.id }, linkId, body.body) }, 201));
+	return withUser('message send', async (user) => {
+		if (!(await emailVerified(user))) return json(EMAIL_UNVERIFIED, 403);
+		return json({ message: await sendMessage({ userId: user.id }, linkId, body.body) }, 201);
+	});
 }

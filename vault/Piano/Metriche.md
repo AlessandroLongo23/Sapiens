@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-28
+aggiornato: 2026-10-07
 tag: [piano]
 ---
 # Metriche
@@ -14,6 +14,7 @@ Proposta del 23 settembre 2026, ipotesi da rivedere dopo il primo mese:
 ## Da misurare fin dal primo giorno
 Senza interviste (vedi [[2026-09-23 Niente interviste, il prodotto nasce dall'esperienza diretta]]) la beta è l'unica verifica delle ipotesi: questa lista è un requisito del lancio, non un extra.
 - Iscrizioni, attivazioni (primo esercizio fatto), ritorni settimanali.
+- Dal 7 ottobre 2026, la misura dell'[[Onboarding]]: quota di iscritti che finisce una prova nella prima sessione, e risposte a "Chi sei?" per ruolo.
 - Conversione da prova gratuita a pagamento.
 - Disdette e motivo.
 - Costo dell'AI per utente pagante.

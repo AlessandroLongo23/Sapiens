@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-28
+aggiornato: 2026-10-07
 tag: [prodotto, marketing, piani]
 ---
 # Inviti e codici
@@ -26,6 +26,7 @@ Scritto il 28 settembre 2026, non committato né pubblicato. La migrazione è ap
 Deciso in [[2026-09-28 Porta un amico premia l'attivazione con 30 giorni di Studio]], [[2026-09-28 Porta un amico solo per i maggiorenni]], [[2026-09-28 Il codice di un creator dà 14 giorni di prova e al creator il 30 per cento per 3 mesi]], [[2026-09-28 I creator si pagano a contenuto, non a provvigione]], [[2026-09-28 L'invito si salva solo dopo Usa l'invito]].
 
 ## Domande aperte
+- Dal 7 ottobre 2026 l'email si conferma dopo l'ingresso ([[2026-10-07 La conferma dell'email non blocca l'ingresso]]): l'attivazione deve contare solo se l'amico ha l'email confermata, e creare un proprio codice chiede la conferma. `referral_activate` oggi non lo controlla.
 - Per un legale danese: la guida del Forbrugerombudsmanden (§3.12) vale per il marketing verso l'Italia? Basta una dichiarazione di maggiore età? L'art. 26 lett. e) del Codice del consumo tocca anche l'invito a una prova gratuita?
 - Per un commercialista italiano: come scrivere il contratto con i creator per restare fuori dall'agenzia e dall'Enasarco; da quante collaborazioni una prestazione occasionale diventa abituale.
 - Con Stripe in modalità live l'endpoint del webhook deve ricevere anche `invoice.created`.

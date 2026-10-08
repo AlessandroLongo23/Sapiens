@@ -84,6 +84,8 @@ export const PRIVATE_PATH_PREFIXES = [
 	'/messaggi',
 	'/il-mio-tutor',
 	'/invito-tutor',
+	'/benvenuto',
+	'/genitore',
 	'/pricing/success',
 	'/pricing/cancel'
 ];
@@ -100,7 +102,7 @@ export const isPrivatePath = (pathname: string): boolean => startsWithAny(pathna
  * sells it.
  */
 export const AUTH_REQUIRED_PREFIXES = PRIVATE_PATH_PREFIXES.filter(
-	(p) => p !== '/api' && p !== ZAINO_ROOT && p !== DIARIO_ROOT && p !== '/invito-tutor' && !p.startsWith('/pricing/')
+	(p) => p !== '/api' && p !== ZAINO_ROOT && p !== DIARIO_ROOT && p !== '/invito-tutor' && p !== '/genitore' && !p.startsWith('/pricing/')
 );
 
 export const requiresLogin = (pathname: string): boolean => startsWithAny(pathname, AUTH_REQUIRED_PREFIXES);
