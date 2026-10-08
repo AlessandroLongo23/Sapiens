@@ -15,7 +15,7 @@ import { atwood, cartAndWeight, incline, inclineAndWeight, lampAndWall, launch, 
 import { BodyPanel } from './panels';
 import { SceneDrawing, sceneFrame } from './SceneDrawing';
 import { LiveChart } from './TimeChart';
-import { usePreview, useSim } from './useSim';
+import { usePreview, useSim, useDuration } from './useSim';
 
 const EXAMPLES: Record<string, { name: string; build: () => Scene }> = {
 	'piano-inclinato': { name: 'Piano inclinato con attrito', build: () => incline({ angle: 30, m: 2, muS: 0.3, muK: 0.2 }) },
@@ -26,6 +26,14 @@ const EXAMPLES: Record<string, { name: string; build: () => Scene }> = {
 	lampada: { name: 'Lampada tra soffitto e parete', build: () => lampAndWall() },
 	lancio: { name: 'Lancio da un tavolo', build: () => launch() }
 };
+
+/** The speeds of the clock, in the order the button goes through them. */
+const SPEEDS = [
+	{ k: 1, label: '×1', say: 'normale' },
+	{ k: 0.5, label: '×½', say: 'metà' },
+	{ k: 0.25, label: '×¼', say: 'un quarto' },
+	{ k: 0.125, label: '×⅛', say: 'un ottavo' }
+];
 
 const PIECES: { kind: PieceKind | 'rope'; label: string }[] = [
 	{ kind: 'block', label: 'Massa' },
@@ -124,14 +132,18 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 	const [sel, setSel] = useState<Sel | null>(null);
 	/** Tying a rope: the first end chosen, the pulley it passes over, and where the pointer is. */
 	const [tying, setTying] = useState<{ from?: RopeEnd; pulley?: string; at?: Vec } | null>(null);
-	const [slow, setSlow] = useState<'1' | '0.25'>('1');
+	/** Which of SPEEDS the clock runs at. */
+	const [speed, setSpeed] = useState(0);
 	const [chart, setChart] = useState<Quantity>('v');
+	const [split, setSplit] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [examples, setExamples] = useState(false);
-	const sim = useSim(doc, Number(slow));
+	const sim = useSim(doc, SPEEDS[speed].k);
 	// The course of the scene, for the graph of the selected body; not worked out while nothing is selected.
 	const ahead = usePreview(doc, sel?.type === 'body');
 	const editing = sim.state.t === 0;
+	// The time bar is as long as the scene lasts, known before it starts; a scene that got further than expected stretches it.
+	const length = Math.max(useDuration(doc), sim.state.t, 0.1);
 
 	const svgRef = useRef<SVGSVGElement | null>(null);
 	const drag = useRef<{ move: (p: Vec) => (d: Scene) => Scene; pushed: boolean } | null>(null);
@@ -350,7 +362,7 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 				<div className={cn('flex min-w-0 flex-col lg:order-2 lg:flex-1', full && 'min-h-0 flex-1')}>
 					<p className="m-0 border-b border-edge-soft px-3 py-2 text-sm text-fg-muted" aria-live="polite">{hint}</p>
 					<div ref={stage} className={cn('flex min-w-0 flex-1 items-center justify-center', full ? 'm-2 min-h-0 overflow-hidden' : 'p-2')}>
-					<SceneDrawing svgRef={svgRef} grid={0.5} scene={doc} state={sim.state} solution={sim.solution} selected={bi} forces="all" forceScale={FORCE_SCALE} velocityScale={0.4} trail={bi >= 0 ? sim.frames.slice(0, sim.cursor + 1).map((s) => s.pos[bi]) : []} label="La scena della sandbox: i pezzi si trascinano" maxW={canvasW} maxH={canvasH}>
+					<SceneDrawing svgRef={svgRef} grid={0.5} scene={doc} state={sim.state} solution={sim.solution} selected={bi} forces="all" forceScale={FORCE_SCALE} velocityScale={0.4} components={split} trail={bi >= 0 ? sim.frames.slice(0, sim.cursor + 1).map((s) => s.pos[bi]) : []} label="La scena della sandbox: i pezzi si trascinano" maxW={canvasW} maxH={canvasH}>
 						{/* a click on the empty scene lets go of the selection */}
 						<rect x={0} y={0} width={f.W} height={f.H} fill="transparent" onPointerDown={() => setSel(null)} />
 						{doc.surfaces.map((s) => {
@@ -417,21 +429,25 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 					</div>
 					{/* the clock, under the scene */}
 					<div className="mt-auto flex flex-wrap items-center gap-2 border-t border-edge bg-surface-2 px-2 py-2">
-						<Button size="sm" onClick={sim.play} disabled={sim.done || sim.still || sim.broken || !doc.bodies.length}>
-							{sim.running ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
-							{sim.running ? 'Pausa' : sim.state.t > 0 ? 'Riprendi' : 'Avvia'}
-						</Button>
-						<IconButton label="Un passo" text="Un passo" onClick={() => sim.forward(0.05)} disabled={sim.done || sim.still || sim.broken || !doc.bodies.length}>
-							<StepForward className="size-4" aria-hidden="true" />
-						</IconButton>
-						<IconButton label="Da capo" text="Da capo" onClick={sim.restart} disabled={editing}>
+						{/* symbols only, in the order of a player: back to the start, play or pause, one step; then the speed, which a click takes to the next slower one and round again */}
+						<IconButton label="Da capo" onClick={sim.restart} disabled={editing}>
 							<RotateCcw className="size-4" aria-hidden="true" />
 						</IconButton>
-						<ToggleGroup label="Velocità del tempo" compact value={slow} onChange={setSlow} options={[{ value: '1', label: '1×' }, { value: '0.25', label: '¼×' }]} />
+						<Button size="sm" className="px-2.5" onClick={sim.play} disabled={sim.done || sim.still || sim.broken || !doc.bodies.length} aria-label={sim.running ? 'Pausa' : sim.state.t > 0 ? 'Riprendi' : 'Avvia'} title={sim.running ? 'Pausa' : sim.state.t > 0 ? 'Riprendi' : 'Avvia'}>
+							{sim.running ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4 translate-x-px" aria-hidden="true" />}
+						</Button>
+						<IconButton label="Un passo" onClick={() => sim.forward(0.05)} disabled={sim.done || sim.still || sim.broken || !doc.bodies.length}>
+							<StepForward className="size-4" aria-hidden="true" />
+						</IconButton>
+						<button type="button" onClick={() => setSpeed((x) => (x + 1) % SPEEDS.length)} aria-label={`Velocità del tempo: ${SPEEDS[speed].say}. Clicca per cambiarla`} title="Velocità del tempo" className="h-9 min-w-11 rounded-lg px-2 text-sm font-semibold tabular-nums text-fg-muted hover:bg-surface-3 hover:text-fg focus-ring">
+							{SPEEDS[speed].label}
+						</button>
 						<label className="flex min-w-40 flex-1 items-center gap-2 text-sm text-fg-muted">
 							Tempo
-							<input type="range" className="slider w-full" style={{ '--fill': `${sim.frames.length > 1 ? (sim.cursor / (sim.frames.length - 1)) * 100 : 0}%` } as CSSProperties} min={0} max={Math.max(1, sim.frames.length - 1)} value={sim.cursor} disabled={sim.frames.length === 1} onChange={(ev) => sim.seek(Number(ev.target.value))} aria-valuetext={`${num(sim.state.t, 2)} secondi`} />
-							<span className="w-14 shrink-0 text-right tabular-nums">{num(sim.state.t, 2)} s</span>
+							<input type="range" className="slider w-full" style={{ '--fill': `${(sim.state.t / length) * 100}%` } as CSSProperties} min={0} max={length} step={0.01} value={sim.state.t} disabled={(sim.still && sim.frames.length === 1) || sim.broken || !doc.bodies.length} onChange={(ev) => sim.seekTime(Number(ev.target.value))} aria-valuetext={`${num(sim.state.t, 2)} secondi su ${num(length, 2)}`} />
+							<span className="shrink-0 text-right tabular-nums">
+								{num(sim.state.t, 2)} / {num(length, 2)} s
+							</span>
 						</label>
 					</div>
 				</div>
@@ -498,7 +514,11 @@ export function Editor({ example = 'piano-inclinato' }: { example?: string }) {
 						{body && bi >= 0 && (
 							<>
 								<Card title={`Forze su ${body.name ?? 'il corpo'}`}>
-									<BodyPanel scene={doc} state={read} body={bi} />
+									<label className="flex cursor-pointer items-center gap-2 text-sm text-fg">
+										<input type="checkbox" className="size-4 accent-[var(--accent)]" checked={split} onChange={(ev) => setSplit(ev.target.checked)} />
+										Componenti lungo x e y
+									</label>
+									<BodyPanel scene={doc} state={read} body={bi} components={split} />
 								</Card>
 								<Card title="Grafico" action={<Select aria-label="Grandezza del grafico" className="!w-44 py-1 text-sm" value={chart} onChange={(ev) => setChart(ev.target.value as Quantity)}>{Object.entries(QUANTITIES).map(([id, x]) => <option key={id} value={id}>{x.name}</option>)}</Select>}>
 									<div className="flex justify-center">

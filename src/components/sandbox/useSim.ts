@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useFrameLoop, useReducedMotion } from '@/components/content/interactive/kit';
 import { advance, initial, solve, type Scene, type Solution, type State } from '@/lib/sandbox/engine';
 
-/** Seconds after which a scene stops by itself. */
-const T_MAX = 20;
+/** Seconds after which a scene stops by itself: the length of the time bar of a scene that never ends. */
+export const T_MAX = 30;
 
 /**
  * A scene in time: the states recorded so far, the one shown, and the clock. A new scene starts from its beginning.
@@ -66,7 +66,28 @@ export function useSim(scene: Scene, speed = 1) {
 			setPlaying(true);
 		},
 		restart: () => { setPlaying(false); setSim({ scene, frames: [initial(scene)], cursor: 0 }); },
-		seek: (i: number) => { setPlaying(false); setSim({ scene, frames, cursor: i }); }
+		seek: (i: number) => { setPlaying(false); setSim({ scene, frames, cursor: i }); },
+		/** Go to an instant, in seconds: a recorded one if the scene has been there, otherwise the scene is worked out up to it. */
+		seekTime: (t: number) => {
+			setPlaying(false);
+			const last = frames[frames.length - 1];
+			if (t <= last.t) {
+				const after = frames.findIndex((f) => f.t >= t);
+				const i = after <= 0 ? 0 : t - frames[after - 1].t < frames[after].t - t ? after - 1 : after;
+				return setSim({ scene, frames, cursor: i });
+			}
+			const more = [...frames];
+			let at = last;
+			try {
+				while (at.t < t - 1e-9 && !at.ended && at.t < T_MAX) {
+					at = advance(scene, at, Math.min(1 / 60, t - at.t));
+					more.push(at);
+				}
+			} catch {
+				// a scene the engine cannot settle stops where it got to
+			}
+			setSim({ scene, frames: more, cursor: more.length - 1 });
+		}
 	};
 }
 
@@ -97,4 +118,37 @@ export function usePreview(scene: Scene, on = true, horizon = 8): State[] | null
 		return () => clearTimeout(id);
 	}, [scene, on, horizon]);
 	return done?.scene === scene ? done.states : null;
+}
+
+/**
+ * How long a scene lasts, in seconds, for its time bar: the instant it ends or comes to rest, or T_MAX for one that
+ * goes on. Worked out a moment after the scene stops changing; until then, and for a scene the engine cannot
+ * settle, it is T_MAX.
+ */
+export function useDuration(scene: Scene): number {
+	const [done, setDone] = useState<{ scene: Scene; t: number } | null>(null);
+	useEffect(() => {
+		const id = setTimeout(() => {
+			let at = initial(scene);
+			let t = T_MAX;
+			try {
+				while (at.t < T_MAX) {
+					const acc = solve(scene, at).acc;
+					const rest = acc.every((a) => Math.hypot(a.x, a.y) < 1e-7) && at.vel.every((u) => Math.hypot(u.x, u.y) < 1e-7);
+					// nothing moves from the start: there is no course to measure
+					if (at.ended || (rest && at.t > 0)) {
+						t = at.t;
+						break;
+					}
+					if (rest) break;
+					at = advance(scene, at, 1 / 30);
+				}
+			} catch {
+				// no course: the bar keeps its whole length
+			}
+			setDone({ scene, t });
+		}, 200);
+		return () => clearTimeout(id);
+	}, [scene]);
+	return done?.scene === scene ? done.t : T_MAX;
 }
