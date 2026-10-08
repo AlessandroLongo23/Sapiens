@@ -64,9 +64,9 @@ export function CoverStickersButton() {
  * page comes with, which a signed-in student does not see (html.signed-in, set before the first paint in
  * the root layout): their own cover may have different stickers, and those would flash and go.
  */
-function StaticCover({ stickers, defaults = false }: { stickers: PlacedSticker[]; defaults?: boolean }) {
+function StaticCover({ stickers, defaults = false, className = '' }: { stickers: PlacedSticker[]; defaults?: boolean; className?: string }) {
 	return (
-		<div className={`absolute inset-0 [container-type:inline-size] ${defaults ? 'cover-defaults' : ''}`} aria-hidden="true">
+		<div className={`absolute inset-0 [container-type:inline-size] ${defaults ? 'cover-defaults' : ''} ${className}`} aria-hidden="true">
 			{stickers.map((s) => {
 				const d = STICKER_BY_ID.get(s.sticker);
 				if (!d) return null;
@@ -98,9 +98,11 @@ function StaticCover({ stickers, defaults = false }: { stickers: PlacedSticker[]
  * visit (table cover_stickers, route /api/adesivi). The page is cached for everybody, so the covers are
  * fetched in the browser, all of them at once (lib/state/covers), with a copy kept in the browser: a
  * page draws the student's stickers from the copy at once, and the board takes over when the server has
- * answered. Until a student changes the cover it has coverDefaults(page), which is what visitors see.
+ * answered. Until a student changes the cover it has coverDefaults(page), which is what visitors see;
+ * `defaults` puts other stickers in their place, for a page whose cover has something where they go.
  */
-export function CoverStickers({ page }: { page: string }) {
+export function CoverStickers({ page, defaults }: { page: string; defaults?: PlacedSticker[] }) {
+	const base = defaults ?? coverDefaults(page);
 	const { user, ready } = useAuth();
 	const userId = user?.id ?? null;
 	const coarse = useCoarsePointer();
@@ -127,7 +129,7 @@ export function CoverStickers({ page }: { page: string }) {
 	}, [ready, userId]);
 
 	/** The cover as saved, in saved coordinates: the student's, or what the page comes with. */
-	const own = covers && (userId ? coversUser === userId : !ready && hinted) ? (covers[page] ?? coverDefaults(page)) : null;
+	const own = covers && (userId ? coversUser === userId : !ready && hinted) ? (covers[page] ?? base) : null;
 	const active = userId !== null && fresh && coversUser === userId;
 	const set = useRef<PlacedSticker[]>([]);
 	const count = own?.length ?? 0;
@@ -192,8 +194,9 @@ export function CoverStickers({ page }: { page: string }) {
 	// Read once, when the board mounts: the cover as the server last gave it.
 	const initial = useCallback(() => {
 		const w = cover.current?.getBoundingClientRect().width ?? COVER_WIDTH;
-		set.current = coversStore.getState().covers?.[page] ?? coverDefaults(page);
+		set.current = coversStore.getState().covers?.[page] ?? base;
 		return set.current.map((s) => toBoard(s, w));
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- `base` is the same set on every render of a page
 	}, [page]);
 	// A pending save goes out when the page is left or hidden.
 	useEffect(() => {
@@ -216,7 +219,8 @@ export function CoverStickers({ page }: { page: string }) {
 			) : own ? (
 				<StaticCover stickers={own} />
 			) : (
-				<StaticCover stickers={coverDefaults(page)} defaults />
+				// Given defaults stand in the room between the title and what is beside it, which a narrow screen does not have.
+				<StaticCover stickers={base} defaults className={defaults ? 'max-xl:hidden' : ''} />
 			)}
 		</div>
 	);

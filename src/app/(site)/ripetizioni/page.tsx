@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ArrowRight, Handshake, MousePointerClick, Send, UsersRound } from 'lucide-react';
+import { ArrowRight, Handshake, MousePointerClick, Send } from 'lucide-react';
 import { SITE_NAME, TUTORING_ROOT } from '@/lib/config/site';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { getPublishedTutors } from '@/lib/server/tutoring';
@@ -33,10 +33,10 @@ export default async function TutoringPage() {
 	const cities = citiesOf(tutors).length;
 
 	return (
-		<Page>
+		<Page wash>
 			<PageHeader
 				crumbs={[HOME_CRUMB, TUTORING_CRUMB]}
-				icon={UsersRound}
+				object="section-ripetizioni"
 				eyebrow="Tutor"
 				title="Ripetizioni"
 				lead="Tutor di matematica, fisica, chimica e informatica per medie, superiori e università. Scegli il profilo, chiedi aiuto e, se il tutor accetta, organizzate le lezioni tra voi."

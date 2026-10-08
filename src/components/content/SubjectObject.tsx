@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 /** Bump when the files in public/materie are exported again: a browser holding an old still would show it under a new film. */
-const VERSION = 9;
+const VERSION = 12;
 
 /**
  * The object on a card of the library: a still, and a short film of it moving, which
@@ -12,7 +12,7 @@ const VERSION = 9;
  * runs to its end and the still comes back, so the object never jumps. Chrome and
  * Firefox get VP9 with alpha, Safari HEVC with alpha (see scripts/materie/export.py).
  */
-export function SubjectObject({ id, className }: { id: string; className?: string }) {
+export function SubjectObject({ id, className, auto = false }: { id: string; className?: string; /** Plays on its own, in a loop, with no card to hover. */ auto?: boolean }) {
 	const box = useRef<HTMLSpanElement>(null);
 	const film = useRef<HTMLVideoElement>(null);
 	const over = useRef(false);
@@ -27,13 +27,21 @@ export function SubjectObject({ id, className }: { id: string; className?: strin
 	};
 
 	useEffect(() => {
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		const source = () => `/materie/${id}.${/^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'mov' : 'webm'}?v=${VERSION}`;
+		if (auto) {
+			over.current = true;
+			// Which film a browser gets is only known in the browser, so it cannot be in the first render.
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setSrc(source());
+			return;
+		}
 		const card = box.current?.closest('.subject-card');
-		if (!card || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		if (!card) return;
 		const enter = (e: Event) => {
 			if ((e as PointerEvent).pointerType !== 'mouse') return;
 			over.current = true;
-			const safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-			setSrc(`/materie/${id}.${safari ? 'mov' : 'webm'}?v=${VERSION}`);
+			setSrc(source());
 			play();
 		};
 		const leave = () => {
@@ -46,7 +54,7 @@ export function SubjectObject({ id, className }: { id: string; className?: strin
 			card.removeEventListener('pointerenter', enter);
 			card.removeEventListener('pointerleave', leave);
 		};
-	}, [id]);
+	}, [id, auto]);
 
 	const end = () => {
 		const v = film.current;

@@ -21,6 +21,7 @@ import { ChapterYears, chaptersByYear } from '@/components/content/ChapterYears'
 import type { RowProgress } from '@/components/content/ProgressMeta';
 import { SubjectGuide } from '@/components/content/SubjectGuide';
 import { CoverStickers, CoverStickersButton } from '@/components/content/CoverStickers';
+import { objectCoverDefaults } from '@/lib/zaino/stickers';
 import { Latex } from '@/components/ui/Latex';
 import { Stat } from '@/components/ui/Badge';
 
@@ -94,9 +95,13 @@ export default async function IndexPage({ params }: Params) {
 	const subject = ancestors[1];
 	const eyebrow = node.type === 'chapter' && subject ? `${heading.eyebrow} ${String(subject.children.findIndex((c) => c.id === node.id) + 1).padStart(2, '0')}` : undefined;
 
+	// A level and a subject have the object of their card at the top of the page, and the wash of the card behind it.
+	const object = node.type === 'level' ? `level-${node.slug}` : node.type === 'subject' && level ? `${level.slug}-${node.slug}` : undefined;
+	const page = dbPath(ancestors);
+
 	return (
 		// Every index page has its own cover of stickers, keyed by its path: a level, a subject and each of its chapters.
-		<Page tone={toneFor(node, ...ancestors)} cover={<CoverStickers page={dbPath(ancestors)} />}>
+		<Page tone={toneFor(node, ...ancestors)} wash={!!object} cover={<CoverStickers page={page} defaults={object ? objectCoverDefaults(page) : undefined} />}>
 			<JsonLd data={structured} />
 			<PageHeader
 				crumbs={contentCrumbs(ancestors)}
@@ -109,6 +114,7 @@ export default async function IndexPage({ params }: Params) {
 					</Stat>
 				))}
 				aside={<CoverStickersButton />}
+				object={object}
 			/>
 			{years ? (
 				<ChapterYears id="children-heading" chapters={node.children} years={years} rows={rows} />

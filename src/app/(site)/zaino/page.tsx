@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/seo/page-metadata';
 import { ZAINO_ROOT } from '@/lib/config/site';
+import { objectCoverDefaults } from '@/lib/zaino/stickers';
 import { getSession } from '@/lib/server/auth';
 import { getQuota, listNotebooks, recentNotes, shelfStats, trashCount } from '@/lib/server/zaino';
 import { HOME_CRUMB } from '@/components/content/Breadcrumb';
@@ -26,11 +27,12 @@ export default async function ZainoPage() {
 	const fromLessons = all.reduce((n, s) => n + s.fromLessons, 0);
 
 	return (
-		<Page width="medium" cover={<CoverStickers page="zaino" />}>
+		<Page width="medium" wash cover={<CoverStickers page="zaino" defaults={objectCoverDefaults('zaino')} />}>
 			<PageHeader
 				crumbs={[HOME_CRUMB, { label: 'Zaino' }]}
 				eyebrow="Quaderni e note"
 				title="Zaino"
+				object="section-zaino"
 				lead="I tuoi quaderni e le tue note, scritti da te e visibili solo a te."
 				aside={<CoverStickersButton />}
 				stats={

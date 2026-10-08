@@ -1,13 +1,13 @@
 # Renders one object per subject for the subject cards of Sapiens: a still, and the
 # frames of a loop that starts and ends on the still.
-# Run: Blender -b --factory-startup -P icons.py -- <out dir> <still|frames|both> [id ...]
+# Run: Blender -b --factory-startup -P icons.py -- <out dir> <still|frames|both|glb> [id ...]
 # Then: python3 scripts/materie/export.py <out dir>
 import bpy, bmesh, math, sys, os, traceback
 from mathutils import Vector, Matrix
 
 ARGS = sys.argv[sys.argv.index('--') + 1:]
 OUT, MODE, ONLY = ARGS[0], ARGS[1], ARGS[2:]
-SIZE, FRAME_SIZE, FRAMES = 720, 480, 75  # the loop: 75 frames at 30 a second
+SIZE, FRAME_SIZE, FRAMES = 720, 480, 75  # the loop: 75 frames at 30 a second, unless an object sets its own length
 
 PAPER, YELLOW, INK, GREY = '#ECE4D2', '#FFCB2E', '#27304D', '#C3CAD8'
 TONES = {
@@ -308,6 +308,8 @@ def compass(t):
 		sph(0.13, (hinge[0], 0, hinge[2] + 0.62), mat(INK)),
 	]
 	turn = pivot(parts, (0, 0, top))
+	turn.name = 'part-compass'
+	circle.name = 'part-circle'
 
 	def anim(u):
 		# the circle is rubbed out, without hurry, then the compass goes once round and draws it again
@@ -333,6 +335,7 @@ def cradle(t):
 		p = (x, 0, top - L)
 		parts = [sph(0.21, p, mb)] + [rod((x, y, top), p, 0.011, ms) for y in (-0.55, 0.55)]
 		swings.append(pivot(parts, (x, 0, top)))
+		swings[-1].name = 'part-swing-%d' % i
 
 	def anim(u):
 		c = math.cos(2 * math.pi * u)
@@ -369,6 +372,8 @@ def keys(t):
 		keycap(mat(PAPER, 0.35), mat(INK), '/', (0.0, 0.78, 0), (0, 0, 0.03)),
 		keycap(mat(INK), mat(YELLOW), '>', (0.6, -0.35, 0), (0, 0, -0.06)),
 	]
+	for i, k in enumerate(ks):
+		k.name = 'part-key-%d' % i
 	group(ks, rot=(0, 0, 0.64))
 
 	def anim(u):
@@ -390,6 +395,7 @@ def benzene(t):
 		objs += [rod(C[i], C[(i + 1) % 6], 0.075, mbond), rod(C[i], H[i], 0.06, mbond), sph(0.3, C[i], mc), sph(0.19, H[i], mh)]
 	spin = group(objs)
 	tilt = group([spin], rot=(-0.5, 0.15, 0.5), loc=(0, 0, 1.5))
+	spin.name, tilt.name = 'part-ring', 'part-tilt'
 
 	def anim(u):
 		# a sixth of a turn, twice: the ring lands on itself
@@ -693,6 +699,8 @@ def level_middle(t):
 	spots = [(-0.62, 0.12, 1.25, 0.2), (0.0, -0.3, 1.7, 0.5), (0.62, 0.18, 0.95, 0.0)]
 	cols = [TONES['math'][0], TONES['cs'][0], TONES['chemistry'][0]]
 	ps = [pencil(c, x, y, h, turn) for c, (x, y, h, turn) in zip(cols, spots)]
+	for i, p in enumerate(ps):
+		p.name = 'part-pencil-%d' % i
 
 	def anim(u):
 		for i, (p, (x, y, h, turn)) in enumerate(zip(ps, spots)):
@@ -718,6 +726,8 @@ def level_high(t):
 	cols = [TONES['physics'][0], TONES['math'][0], TONES['chemistry'][0], TONES['cs'][0]]
 	turns, sizes = [0.12, -0.2, 0.26, -0.06], [(1.8, 1.3), (1.65, 1.25), (1.7, 1.2), (1.45, 1.1)]
 	books = [book(c, 0.3 * i, turns[i], *sizes[i]) for i, c in enumerate(cols)]
+	for i, b in enumerate(books):
+		b.name = 'part-book-%d' % i
 
 	def anim(u):
 		# the pile breathes open from the top and settles, each book turning a little on the way
@@ -742,6 +752,9 @@ def level_university(t):
 		tassel,
 	], (0, 0, z))
 	cap.rotation_euler.z = 0.2
+	cap.name, tassel.name = 'part-cap', 'part-tassel'
+	for i, b in enumerate(base):
+		b.name = 'part-base-%d' % i
 
 	def anim(u):
 		# the cap is tossed, and the tassel swings on after it lands
@@ -785,9 +798,18 @@ def basis(t):
 	e = group([origin] + wires + dots + [o for objs, _ in arrows for o in objs], rot=(0, 0, 1.43), loc=(0, 0, 0.2))
 
 	def anim(u):
-		# a linear map and its inverse: the cube leans into a parallelepiped and comes back
-		a = ease(seg(u, 0.05, 0.42)) - ease(seg(u, 0.56, 0.95))
-		v = [Vector((L * (1 + 0.12 * a), 0, 0)), Vector((0.5 * a * L, L, 0)), Vector((0, -0.32 * a * L, L * (1 - 0.08 * a)))]
+		# three linear maps, one after the other: each springs the cube into a parallelepiped, holds it a moment
+		# and lets it spring back, more slowly, to the cube, which rests before the next
+		k, w = divmod(u * 3, 1)
+		a = spring(seg(w, 0.1, 0.5), 6.0, 13.0) - spring(seg(w, 0.52, 0.98), 5.0, 9.0)
+		v = [
+			# the base leans: a shear along the first vector
+			[Vector((L * (1 + 0.12 * a), 0, 0)), Vector((0.5 * a * L, L, 0)), Vector((0, -0.32 * a * L, L * (1 - 0.08 * a)))],
+			# taller and narrower: a stretch along the third
+			[Vector((L * (1 - 0.1 * a), 0, 0)), Vector((0, L * (1 - 0.1 * a), 0)), Vector((0, 0, L * (1 + 0.3 * a)))],
+			# the top slides over the base, away from where the base leant: a shear of the third vector
+			[Vector((L, 0, 0)), Vector((0, L, 0)), Vector((-0.32 * a * L, 0.32 * a * L, L))],
+		][int(k) % 3]
 		at = lambda c: c[0] * v[0] + c[1] * v[1] + c[2] * v[2]
 		for (_, to), w in zip(arrows, v):
 			to(w)
@@ -795,7 +817,7 @@ def basis(t):
 			w.data.splines[0].points[0].co, w.data.splines[0].points[1].co = (*at(p), 1), (*at(q), 1)
 		for d, c in zip(dots, far):
 			d.location = at(c)
-		e.rotation_euler.z = 1.43 + 0.12 * math.sin(2 * math.pi * u)
+	anim.frames = 150
 	return anim
 
 
@@ -844,6 +866,9 @@ def flask(t):
 	body = pivot(parts, (0, 0, 0))
 	sizes = [(0.25, main), (0.17, YELLOW), (0.21, light), (0.15, main)]
 	bubbles = [sph(r, (0, 0, 0), mat(h, 0.3)) for r, h in sizes]
+	body.name = 'part-flask'
+	for i, b in enumerate(bubbles):
+		b.name = 'part-bubble-%d' % i
 
 	def anim(u):
 		body.rotation_euler.y = 0.07 * math.sin(2 * math.pi * u)
@@ -857,7 +882,278 @@ def flask(t):
 	return anim
 
 
+# ---- the onboarding: who is signing up (public/onboarding, see src/components/onboarding) ----
+
+def breathe(u, a=0.04, b=0.48, c=0.5, d=0.96):
+	"""Up on a spring and back down: 0 at both ends of the loop."""
+	return max(spring(seg(u, a, b), 5.0, 9.0) - spring(seg(u, c, d), 5.5, 11.0), -0.02)
+
+
+def backpack(t):
+	red, dark, blue = TONES['math'][0], TONES['math'][2], TONES['physics'][0]
+	body = box((1.5, 0.95, 1.85), (0, 0, 0.95), mat(red), bevel=0.32)
+	pocket = pivot([
+		box((1.1, 0.3, 0.8), (0, -0.52, 0.62), mat(dark), bevel=0.14),
+		box((0.5, 0.05, 0.07), (0, -0.69, 0.84), mat(YELLOW), bevel=0.02),
+	], (0, -0.45, 0.25))
+	pocket.name = 'part-pocket'
+	zipper = tube([(-0.55, -0.43, 1.32), (-0.3, -0.48, 1.55), (0.3, -0.48, 1.55), (0.55, -0.43, 1.32)], 0.035, mat(YELLOW))
+	handle = torus(0.26, 0.06, (0, 0.1, 1.88), mat(INK), rot=(math.pi / 2, 0, 0))
+	side = box((0.22, 0.6, 0.6), (0.78, 0, 0.5), mat(dark), bevel=0.1)
+	bottle = cyl(0.13, 0.75, (0.83, 0, 0.78), mat(blue), bevel=0.04)
+	e = pivot([group([body, zipper, handle, side, bottle, pocket], rot=(0, 0, 0.35))], (0, 0, 0))
+
+	def anim(u):
+		# picked up and put down, and the pocket settles after it
+		jump(e, (0, 0, 0), seg(u, 0.04, 0.7), 0.45)
+		s = 1 + 0.14 * pop(seg(u, 0.5, 1.0))
+		pocket.scale = (s, s, s)
+	return anim
+
+
+def house(t):
+	red = TONES['math'][0]
+	walls = box((1.7, 1.4, 1.1), (0, 0, 0.55), mat(PAPER, 0.5), bevel=0.05)
+	roof = poly([(-1.08, 0), (1.08, 0), (0, 0.85)], 1.62, mat(red), bevel=0.05)
+	roof.location = (0, 0, 1.1)
+	chimney = box((0.26, 0.26, 0.7), (0.55, 0.3, 1.6), mat(INK), bevel=0.03)
+	top = pivot([roof, chimney], (0, 0, 1.1))
+	top.name = 'part-roof'
+	door = box((0.4, 0.06, 0.66), (-0.38, -0.71, 0.33), mat(INK), bevel=0.02)
+	knob = sph(0.035, (-0.26, -0.75, 0.33), mat(YELLOW))
+	window = pivot([box((0.46, 0.06, 0.46), (0.38, -0.71, 0.62), mat(YELLOW), bevel=0.02)], (0.38, -0.71, 0.62))
+	side = pivot([box((0.06, 0.46, 0.46), (0.86, 0, 0.6), mat(YELLOW), bevel=0.02)], (0.86, 0, 0.6))
+	group([walls, top, door, knob, window, side], rot=(0, 0, 0.3))
+
+	def anim(u):
+		# the roof lifts like a lid and comes back; the lights answer
+		top.location.z = 1.1 + 0.3 * breathe(u)
+		top.rotation_euler.z = 0.12 * breathe(u)
+		for i, w in enumerate((window, side)):
+			s = 1 + 0.25 * pop(seg(u, 0.3 + 0.15 * i, 0.9 + 0.1 * i))
+			w.scale = (s, s, s)
+	return anim
+
+
+def bulb(t):
+	glass = mat(YELLOW, 0.22, coat=0.6)
+	parts = [
+		sph(0.72, (0, 0, 1.78), glass),
+		cone(0.3, 0.55, (0, 0, 1.05), glass, r2=0.52, bevel=0.02),
+		cyl(0.3, 0.42, (0, 0, 0.62), mat(GREY, 0.3, metal=0.5), bevel=0.03),
+		torus(0.3, 0.05, (0, 0, 0.52), mat(INK)),
+		torus(0.3, 0.05, (0, 0, 0.72), mat(INK)),
+		cyl(0.15, 0.16, (0, 0, 0.36), mat(INK), bevel=0.04),
+	]
+	lamp = pivot(parts, (0, 0, 0.28))
+	lamp.name = 'part-lamp'
+	rays = []
+	for i in range(7):
+		a = math.radians(-25 + 38.5 * i)
+		rays.append(group([box((0.36, 0.1, 0.1), (1.18, 0, 0), mat(TONES['cs'][0]), bevel=0.04)], rot=(0, -a, 0), loc=(0, 0, 1.78)))
+		rays[-1].name = 'part-ray-%d' % i
+	group([lamp] + rays, rot=(0, 0.16, 0.5))
+
+	def anim(u):
+		# it lights up: the rays shoot out one after the other, and the lamp swells with them
+		for i, r in enumerate(rays):
+			s = 1 + 0.2 * pop(seg(u, 0.05 + 0.05 * i, 0.6 + 0.05 * i))
+			r.scale = (s, s, s)
+		k = 1 + 0.06 * pop(seg(u, 0.02, 0.6))
+		lamp.scale = (k, k, k)
+		lamp.rotation_euler.y = 0.07 * math.sin(2 * math.pi * u)
+	return anim
+
+
+def blackboard(t):
+	wood, leg = mat(TONES['cs'][1], 0.6), mat(TONES['cs'][2], 0.5)
+	chalk = mat(PAPER, 0.8, coat=0)
+	y = -0.118
+	axes = [tube([(-0.95, y, 1.2), (0.95, y, 1.2)], 0.022, chalk), tube([(-0.6, y, 1.0), (-0.6, y, 2.12)], 0.022, chalk)]
+	curve = tube([(-0.38 + 0.06 * k, y, 1.28 + 1.9 * (0.06 * k - 0.6) ** 2) for k in range(21)], 0.03, mat(YELLOW, 0.8, coat=0))
+	objs = axes + [curve,
+		box((2.6, 0.14, 1.7), (0, 0, 1.55), wood, bevel=0.04),
+		box((2.35, 0.08, 1.45), (0, -0.06, 1.55), mat(TONES['chemistry'][2], 0.75, coat=0), bevel=0.02),
+		box((2.0, 0.24, 0.07), (0, -0.15, 0.7), wood, bevel=0.02),
+		cyl(0.045, 0.3, (0.5, -0.18, 0.78), chalk, rot=(0, math.pi / 2, 0), bevel=0.01),
+		rod((-0.95, 0, 0.75), (-1.15, -0.12, 0), 0.05, leg),
+		rod((0.95, 0, 0.75), (1.15, -0.12, 0), 0.05, leg),
+		rod((0, 0.07, 1.6), (0, 0.95, 0), 0.05, leg),
+	]
+	e = group(objs, rot=(0, 0, 0.32))
+
+	def anim(u):
+		# wiped clean, then the axes and the curve are drawn again
+		wipe = 1 - ease(seg(u, 0.03, 0.12))
+		for i, a in enumerate(axes):
+			a.data.bevel_factor_end = max(wipe, ease(seg(u, 0.16 + 0.12 * i, 0.34 + 0.12 * i)))
+		curve.data.bevel_factor_end = max(wipe, ease(seg(u, 0.42, 0.86)))
+		e.rotation_euler.z = 0.32 + 0.05 * math.sin(2 * math.pi * u)
+	return anim
+
+
+def school(t):
+	blue, red, wall = TONES['physics'][0], TONES['math'][0], mat(PAPER, 0.5)
+	roof = poly([(-0.62, 0), (0.62, 0), (0, 0.55)], 1.3, mat(red), bevel=0.04)
+	roof.location = (0, -0.02, 1.7)
+	flag = poly([(0, 0), (0.55, 0.15), (0, 0.3)], 0.03, mat(YELLOW), bevel=0.01)
+	flag.location = (0.02, -0.02, 2.62)
+	wave = pivot([flag], (0, -0.02, 2.62))
+	wave.name = 'part-flag'
+	hand = pivot([box((0.035, 0.03, 0.16), (0, -0.675, 1.37), mat(INK), bevel=0.008)], (0, -0.675, 1.3))
+	hand.name = 'part-hand'
+	objs = [
+		box((2.6, 1.1, 1.0), (0, 0, 0.5), wall, bevel=0.04),
+		box((2.72, 1.2, 0.1), (0, 0, 1.04), mat(red), bevel=0.03),
+		box((0.9, 1.2, 1.7), (0, -0.02, 0.85), wall, bevel=0.04),
+		roof,
+		box((0.36, 0.06, 0.6), (0, -0.63, 0.3), mat(INK), bevel=0.02),
+		cyl(0.2, 0.06, (0, -0.63, 1.3), mat(YELLOW), rot=(math.pi / 2, 0, 0), bevel=0.015),
+		rod((0, -0.02, 2.2), (0, -0.02, 3.0), 0.03, mat(INK)),
+		wave, hand,
+	]
+	objs += [box((0.24, 0.05, 0.34), (x, -0.56, 0.55), mat(blue), bevel=0.02) for x in (-1.02, -0.66, 0.66, 1.02)]
+	group(objs, rot=(0, 0, 0.3))
+
+	def anim(u):
+		# the hour goes round once and the flag flaps
+		hand.rotation_euler.y = 2 * math.pi * ease(seg(u, 0.05, 0.95))
+		wave.rotation_euler.z = 0.55 * math.sin(4 * math.pi * u) * math.sin(math.pi * u)
+	return anim
+
+
+def envelope(t):
+	card = pivot([box((1.6, 0.04, 1.1), (0, 0.13, 1.1), mat(TONES['math'][0]), bevel=0.04)]
+		+ [cyl(0.075, 0.03, (-0.5 + 0.2 * i, 0.1, 1.42), mat(YELLOW), rot=(math.pi / 2, 0, 0), bevel=0.01) for i in range(6)], (0, 0.13, 0.6))
+	card.name = 'part-card'
+	objs = [
+		box((2.0, 0.18, 1.3), (0, 0, 0.65), mat(PAPER, 0.5), bevel=0.05),
+		tube([(-0.93, -0.1, 1.24), (0, -0.1, 0.62), (0.93, -0.1, 1.24)], 0.025, mat(GREY, 0.4)),
+		card,
+	]
+	e = group(objs, rot=(-0.22, 0, 0.3))
+
+	def anim(u):
+		# the card slips back in and comes out again
+		card.location.z = 0.6 - 0.48 * (ease(seg(u, 0.05, 0.3)) - spring(seg(u, 0.4, 0.95), 5.0, 10.0))
+		e.rotation_euler.z = 0.3 + 0.06 * math.sin(2 * math.pi * u)
+	return anim
+
+
+# ---- the sections of the site: what stands in the header of /strumenti, /laboratorio, /zaino and /ripetizioni ----
+
+def frame(outer, inner, depth, m, bevel=0.03):
+	"""A flat shape with a hole, in the XZ plane, facing -Y: `inner` goes round the same way as `outer`, point for point."""
+	me = bpy.data.meshes.new('frame')
+	bm = bmesh.new()
+	a = [bm.verts.new((x, 0, z)) for x, z in outer]
+	b = [bm.verts.new((x, 0, z)) for x, z in inner]
+	for i in range(len(a)):
+		j = (i + 1) % len(a)
+		bm.faces.new([a[i], a[j], b[j], b[i]])
+	bm.to_mesh(me)
+	bm.free()
+	o = bpy.data.objects.new('frame', me)
+	bpy.context.collection.objects.link(o)
+	s = o.modifiers.new('solid', 'SOLIDIFY')
+	s.thickness, s.offset = depth, 0
+	return fin(o, m, bevel)
+
+
+def tools(t):
+	red, blue = TONES['math'][0], TONES['physics'][0]
+	# a calculator, leaning back: a screen and nine keys, one of them the equals
+	parts = [
+		box((1.2, 0.24, 1.8), (0, 0, 0.9), mat(INK), bevel=0.1),
+		box((0.92, 0.06, 0.4), (0, -0.12, 1.42), mat(TONES['chemistry'][1], 0.25), bevel=0.03),
+	]
+	for r in range(3):
+		for c in range(3):
+			parts.append(box((0.26, 0.12, 0.26), (-0.33 + 0.33 * c, -0.13, 0.98 - 0.33 * r), mat(YELLOW if (r, c) == (2, 2) else PAPER), bevel=0.05))
+	calc = pivot(parts, (0, 0, 0))
+	group([calc], rot=(-0.2, 0, 0.3), loc=(-0.5, -0.1, 0))
+	# a set square, standing on its short side behind it
+	square = pivot([frame([(0, 0), (1.5, 0), (0, 2.2)], [(0.27, 0.27), (0.9, 0.27), (0.27, 1.19)], 0.11, mat(YELLOW))], (0, 0, 0))
+	group([square], rot=(0, 0, 0.55), loc=(0.0, 0.45, 0))
+	# a protractor, standing on its straight side in front
+	N, R = 48, 0.82
+	arc = [math.pi * i / N for i in range(N + 1)]
+	half = pivot([frame([(R * math.cos(a), R * math.sin(a)) for a in arc], [(0.5 * math.cos(a), 0.2 + 0.43 * math.sin(a)) for a in arc], 0.11, mat(blue))], (0, 0, 0))
+	group([half], rot=(0, 0, 0.5), loc=(0.72, -0.5, 0))
+	calc.name, square.name, half.name = 'part-calculator', 'part-square', 'part-protractor'
+
+	typed = [parts[2 + 3 * r + c] for r, c in ((0, 0), (1, 1), (0, 2), (2, 2))]
+
+	def anim(u):
+		# a sum is typed, the equals last; the set square slides out along its base to measure and comes back; the protractor turns once
+		for i, k in enumerate(typed):
+			k.location.y = -0.13 + 0.07 * math.sin(math.pi * seg(u, 0.04 + 0.09 * i, 0.16 + 0.09 * i)) ** 2
+		s = 1 + 0.05 * pop(seg(u, 0.4, 0.8))
+		calc.scale = (s, s, s)
+		square.location.x = 0.4 * (spring(seg(u, 0.3, 0.62), 5.0, 9.0) - spring(seg(u, 0.62, 0.96), 5.5, 11.0))
+		half.rotation_euler.z = 2 * math.pi * ease(seg(u, 0.45, 0.95))
+		half.location.z = 0.12 * math.sin(math.pi * seg(u, 0.45, 0.95))
+	return anim
+
+
+def burner(t):
+	blue, light, metal = TONES['physics'][0], TONES['physics'][1], mat(GREY, 0.25, metal=1.0, coat=0)
+	# a gas burner under a stand
+	cyl(0.5, 0.18, (0, 0, 0.09), mat(INK), bevel=0.06)
+	cyl(0.17, 0.46, (0, 0, 0.4), metal, bevel=0.04)
+	torus(0.18, 0.06, (0, 0, 0.36), mat(INK))
+	flame = pivot([sph(0.19, (0, 0, 0.76), mat(TONES['cs'][0], 0.3)), cone(0.185, 0.36, (0, 0, 0.96), mat(TONES['cs'][0], 0.3), bevel=0)], (0, 0, 0.63))
+	top = 1.48  # where the beaker stands
+	cyl(0.58, 0.08, (0, 0, top - 0.04), metal, bevel=0.03)
+	for deg in (6.5, 126.5, 246.5):  # the gap between two legs faces the camera, so the flame shows
+		a = math.radians(deg)
+		rod((0.48 * math.cos(a), 0.48 * math.sin(a), top - 0.06), (0.86 * math.cos(a), 0.86 * math.sin(a), 0.06), 0.07, mat(INK))
+	# the beaker: the copper sulfate is its lower band, as the liquid of the flask is, with three marks on the glass
+	glass, r, surf = mat(PAPER, 0.3), 0.48, top + 1.0
+	cyl(r, 0.52, (0, 0, top + 0.26), mat(blue), bevel=0.06)
+	cyl(r, 0.5, (0, 0, top + 0.75), glass, bevel=0.02)
+	torus(r + 0.01, 0.055, (0, 0, surf), glass)
+	cyl(r - 0.07, 0.03, (0, 0, surf), mat(light, 0.3), bevel=0)
+	face = math.atan2(-1.35, 1.0) - 0.45
+	for k in range(3):
+		box((0.2 if k == 1 else 0.13, 0.03, 0.04), (r * math.cos(face), r * math.sin(face), top + 0.62 + 0.12 * k), mat(INK), rot=(0, 0, face + math.pi / 2), bevel=0.01)
+	# a thermometer leaning on the rim: a tube of clear glass with the red column inside it, which grows from its foot
+	at, lean = (0.35, 0, surf), 0.42
+	clear = mat(TONES['physics'][1], 0.12, coat=0.6)
+	next(n for n in clear.node_tree.nodes if n.type == 'BSDF_PRINCIPLED').inputs['Alpha'].default_value = 0.22
+	column = pivot([cyl(0.058, 0.75, (at[0], 0, surf - 0.025), mat(TONES['math'][0]), bevel=0.02)], (at[0], 0, surf - 0.4))
+	thermo = pivot([cyl(0.1, 1.45, (at[0], 0, surf + 0.225), clear, bevel=0.03), sph(0.1, (at[0], 0, surf + 0.95), clear), column], at)
+	spots = [(0.08, -0.2, 0.19), (-0.26, -0.1, 0.15), (-0.05, 0.24, 0.16), (-0.18, 0.12, 0.12), (-0.08, -0.3, 0.14)]
+	bubbles = [sph(size, (0, 0, 0), mat(light if i % 2 else blue, 0.3)) for i, (x, y, size) in enumerate(spots)]
+	flame.name, thermo.name, column.name = 'part-flame', 'part-thermometer', 'part-column'
+	for i, o in enumerate(bubbles):
+		o.name = 'part-bubble-%d' % i
+
+	def anim(u):
+		# the flame goes up, the column climbs, the water boils and shakes the thermometer; then the flame goes down and it all settles
+		fire = ease(seg(u, 0.04, 0.16)) * (1 - ease(seg(u, 0.6, 0.72)))
+		heat = ease(seg(u, 0.1, 0.5)) * (1 - ease(seg(u, 0.68, 0.96)))
+		boil = ease(seg(u, 0.3, 0.44)) * (1 - ease(seg(u, 0.68, 0.86)))
+		flick = math.sin(18 * math.pi * u) * (0.3 + fire) * math.sin(math.pi * u)
+		flame.scale = (1 + 0.15 * fire, 1 + 0.15 * fire, 1 + 0.38 * fire + 0.07 * flick)
+		column.scale = (1, 1, 1 + 0.6 * heat)
+		thermo.rotation_euler = (0.045 * boil * math.sin(22 * math.pi * u + 1), lean + 0.04 * boil * math.sin(28 * math.pi * u), 0)
+		thermo.location = (at[0], at[1], surf + 0.015 * boil * math.sin(14 * math.pi * u))
+		for i, (o, (x, y, size)) in enumerate(zip(bubbles, spots)):
+			# each bubble swells as it leaves the surface and is gone a little above it; they take turns
+			p = (6 * u + i / len(spots)) % 1
+			k = max(boil * math.sin(math.pi * p) ** 0.6, 0.001)
+			o.location, o.scale = (x, y, surf + 0.06 + 0.6 * p), (k, k, k)
+	anim.frames = 120
+	return anim
+
+
 ICONS = {
+	'section-strumenti': (tools, 'ink'),
+	'section-laboratori': (burner, 'ink'),
+	# the same objects as the student and the tutor of the onboarding, under the names of their pages
+	'section-zaino': (backpack, 'ink'),
+	'section-ripetizioni': (bulb, 'ink'),
 	'level-middle_school': (level_middle, 'ink'),
 	'level-high_school': (level_high, 'ink'),
 	'level-university': (level_university, 'ink'),
@@ -867,14 +1163,14 @@ ICONS = {
 	'high_school-math': (compass, 'math'),
 	'high_school-physics': (cradle, 'physics'),
 	'high_school-computer-science': (keys, 'cs'),
-	'high_school-chemistry': (benzene, 'chemistry'),
+	'high_school-chemistry': (flask, 'chemistry'),
 	'university-analisi-1': (infinity, 'math'),
 	'university-analisi-2': (saddle, 'math'),
 	'university-metodi-matematici': (epicycles, 'math'),
 	'university-geometria-algebra-lineare': (basis, 'math'),
 	'university-fisica-1': (gyro, 'physics'),
 	'university-fisica-2': (magnet, 'physics'),
-	'university-chimica': (flask, 'chemistry'),
+	'university-chimica': (benzene, 'chemistry'),
 	'university-fondamenti-informatica': (chip, 'cs'),
 	'university-ia-classica': (tree, 'ink'),
 	'university-machine-learning': (scatter, 'ink'),
@@ -882,6 +1178,12 @@ ICONS = {
 	'university-modelli-linguistici': (bubble, 'ink'),
 	'university-agenti-ia': (agents, 'ink'),
 	'university-ia-responsabile': (shield, 'ink'),
+	'onboarding-student': (backpack, 'ink'),
+	'onboarding-parent': (house, 'ink'),
+	'onboarding-tutor': (bulb, 'ink'),
+	'onboarding-teacher': (blackboard, 'ink'),
+	'onboarding-school': (school, 'ink'),
+	'onboarding-email': (envelope, 'ink'),
 }
 
 
@@ -918,11 +1220,23 @@ def render(name):
 	bpy.ops.wm.read_factory_settings(use_empty=True)
 	sc = bpy.context.scene
 	anim = build(TONES[tone])
+	if MODE == 'glb':
+		# the model alone, at rest, for the pages that draw it live (src/components/onboarding/stage-engine.ts):
+		# modifiers and curves become meshes, the empties keep their names so the page can move the parts
+		anim(0)
+		for o in bpy.data.objects:
+			if o.name.startswith('part-swing-'):
+				o.rotation_euler.y = 0
+		bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, name + '.glb'), export_format='GLB', export_apply=True, export_yup=True, export_cameras=False, export_lights=False, export_animations=False)
+		return
 	# the picture holds the whole loop, so the still and the frames share one camera
 	rest = None
 	corners = []
-	for k in range(16):
-		anim(k / 16)
+	# a loop of its own length (`anim.frames`) is sampled as finely as the usual one
+	frames = getattr(anim, 'frames', FRAMES)
+	steps = 16 * frames // FRAMES
+	for k in range(steps):
+		anim(k / steps)
 		cs = corners_now(sc)
 		rest = rest or cs
 		corners += cs
@@ -985,9 +1299,9 @@ def render(name):
 		sc.render.resolution_x = sc.render.resolution_y = FRAME_SIZE
 		# one render session for the whole loop: the handler poses the object at each frame
 		sc.render.use_persistent_data = True
-		sc.frame_start, sc.frame_end = 0, FRAMES - 1
+		sc.frame_start, sc.frame_end = 0, frames - 1
 		bpy.app.handlers.frame_change_pre.clear()
-		bpy.app.handlers.frame_change_pre.append(lambda scene, *_: anim(scene.frame_current / FRAMES))
+		bpy.app.handlers.frame_change_pre.append(lambda scene, *_: anim(scene.frame_current / frames))
 		sc.render.filepath = os.path.join(OUT, 'frames', name, '')
 		bpy.ops.render.render(animation=True)
 		bpy.app.handlers.frame_change_pre.clear()
