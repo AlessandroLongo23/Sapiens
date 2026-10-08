@@ -1,6 +1,6 @@
 ---
 stato: idea
-aggiornato: 2026-09-26
+aggiornato: 2026-10-08
 tag: [idea, mobile, ai]
 ---
 # Foto e soluzione
@@ -20,6 +20,7 @@ C'è un vantaggio tecnico (Claude, 26 settembre 2026). Per gli esercizi della sc
 - Precisione della lettura della scrittura a mano e costo per foto: da verificare.
 - Tocca il provider AI ([[Provider AI]], [[2026-09-23 OpenAI con dati nell'UE per la beta]]) e i dati dei minori ([[GDPR e minori]]): le foto del quaderno possono contenere nomi o altro.
 - Quando: proposta dopo la beta, come funzione di Studio. Non ancora deciso.
+- L'8 ottobre 2026 la versione del 26 settembre entra nelle [[Simulazioni di verifica]]: la consegna può essere una foto, e i passaggi entrano nel voto. Vedi [[2026-10-08 Una simulazione si consegna dalla pagina o da un'immagine, e i passaggi entrano nel voto]]. La correzione da foto fuori dalle simulazioni (scheda, esercizi singoli) resta un'idea.
 
 ## Collegamenti
 - [[App mobile]], [[Sapiens AI]], [[Esercizi]]

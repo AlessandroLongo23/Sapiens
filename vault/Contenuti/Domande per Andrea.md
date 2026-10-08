@@ -1,7 +1,7 @@
 ---
 stato: in uso
 release: beta
-aggiornato: 2026-10-05
+aggiornato: 2026-10-07
 tag: [contenuti, revisione]
 ---
 # Domande per Andrea
@@ -481,6 +481,18 @@ Le 49 lezioni del terzo anno (71-119): relatività galileiana, forze conservativ
 - [ ] Componenti di un vettore scritte $(4;\ 3)$ o $(4, 3)$ nella 71.
 - [ ] Negli esercizi sull'impulso i tempi d'urto sono decine di millisecondi per tenere le forze sotto i 100 N: meglio tempi realistici e forze in kilonewton?
 - [ ] Costanti, dati dei pianeti, viscosità, calori molari, date e fatti storici scritti a memoria: gli elenchi "Da verificare" delle note, soprattutto 92, 93 e 112.
+
+## Laboratorio di fisica (7 ottobre 2026)
+Piano in [[Laboratorio di fisica]]; niente è ancora costruito.
+- [ ] Quali esperienze di laboratorio si fanno davvero, anno per anno, in un liceo scientifico? L'elenco di partenza è di Claude, senza una fonte: densità, molla, pendolo, rotaia con fototraguardi, tavolo delle forze, leva, Archimede, calorimetro; urti e Boyle al terzo anno; riflessione, Snell, lenti, Young; Ohm, serie e parallelo, condensatore, induzione.
+- [ ] Per le prime quattro schede (pendolo, molla, rotaia, densità): quali strumenti e con quale sensibilità, quante misure ripetute, e come si scrive l'incertezza al biennio (semidispersione, errore assoluto e relativo).
+
+## Simulazioni di verifica (8 ottobre 2026)
+Per [[Simulazioni di verifica]], matematica al biennio.
+- [ ] Una verifica scritta vera: quanto dura (un'ora di lezione, due), quanti esercizi ha, e quanti sono esercizi brevi, espressioni o equazioni lunghe, problemi?
+- [ ] Come si distribuiscono i punti tra gli esercizi e come si passa dai punti al voto in decimi? Dove sta la sufficienza?
+- [ ] Il credito parziale: quanto vale un esercizio con il metodo giusto e un errore di calcolo? E un risultato giusto senza passaggi?
+- [ ] Quanto tempo in più ha di solito uno studente con un PDP?
 
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

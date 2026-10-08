@@ -1,9 +1,11 @@
 ---
 stato: decisa
-aggiornato: 2026-10-06
+aggiornato: 2026-10-07
 tag: [idea, laboratori, chimica, fisica, 3d]
 ---
 # Laboratori
+
+Nota del 7 ottobre 2026: i saggi alla fiamma, la titolazione e il quaderno sono committati su master (`fc612b42`), e Alessandro conferma che i tre esperimenti di chimica sono in produzione e provati. Dove i paragrafi qui sotto dicono "nel codice locale, non committato" per questi tre, descrivono com'era nel giorno in cui sono stati scritti. Il secondo laboratorio è la fisica: il piano è in [[Laboratorio di fisica]].
 
 ## L'idea
 Alessandro, 29 settembre 2026. Ambienti 3D esplorabili in prima persona, uno per area: chimica, fisica, ottica, elettronica. Si gira come in un videogioco (WASD e mouse), ma lo scopo è imparare. Per la chimica un laboratorio molto completo, a cui aggiungere esperimenti nel tempo.
@@ -258,6 +260,16 @@ Precedenti (ricerca di Claude, 29 settembre 2026):
 - ChemCollective Virtual Lab, Carnegie Mellon (David Yaron): gratuito, in HTML5 dal 2016 circa. È già l'idea modulare in 2D: centinaia di reagenti in soluzione acquosa, si mescolano liberamente e il programma calcola i prodotti per acido-base, termochimica, solubilità e redox. Serve come riferimento per il modello chimico. Fonte: chemcollective.org/vlabs.
 - Labster, azienda di Copenaghen: oltre 300 simulazioni di laboratorio vendute a scuole e università, a esperimenti scritti uno per uno. È il modello che l'idea vuole superare. Prezzi non pubblici. Fonte: labster.com/simulations.
 
+## Decisioni del 7 ottobre 2026, sul laboratorio di fisica
+Discusse in [[2026-10-07 Laboratorio di fisica, scopo e stanze]].
+- [[2026-10-07 Nel laboratorio di fisica si misura, la legge esatta resta alla sandbox]]
+- [[2026-10-07 Il laboratorio di fisica è una copertina sola con tre stanze]]
+- [[2026-10-07 Termologia e fluidi usano il guscio dell'aula di chimica]]
+- [[2026-10-07 In fisica si misura una legge, in elettronica si costruisce un circuito]]
+- [[2026-10-07 Nella stanza di meccanica gli apparati sono fissi e un esperimento è una scheda del quaderno]]
+- [[2026-10-07 Con la classe la stanza di meccanica si dispone a isole dello stesso apparato]]
+- [[2026-10-07 Il laboratorio di fisica parte dalla meccanica del biennio, per ora solo sul piano]]
+
 ## Decisioni del 30 settembre 2026
 - [[2026-09-30 I laboratori devono sembrare un videogioco, in uno stile pittorico e morbido]]
 - [[2026-09-30 Il prototipo dei laboratori usa solo asset con licenza libera]]
@@ -275,7 +287,8 @@ Discussa in [[2026-09-29 Laboratori]]. Si fa, e subito:
 - [[2026-09-29 Il prototipo del laboratorio va su master, fuori dall'indice e senza link]] (superata in parte da [[2026-10-03 Il laboratorio ha il suo link nella navbar]])
 
 ## Domande aperte
-- Il secondo laboratorio dopo la chimica: elettronica, meccanica o ottica. Si decide dopo aver visto la chimica.
+- Il secondo laboratorio dopo la chimica: risolto il 7 ottobre 2026, è la fisica, a partire dalla stanza di meccanica. Vedi [[Laboratorio di fisica]] e [[2026-10-07 Il laboratorio di fisica è una copertina sola con tre stanze]].
+- A quale materia si aggancia il laboratorio di elettronica, che oggi non ha lezioni dietro ([[2026-10-07 In fisica si misura una legge, in elettronica si costruisce un circuito]]).
 - L'elenco degli esperimenti classici del programma di chimica, da cui ricavare il catalogo.
 - Se il kit di ogni esperimento diventa un file a parte anche per il solfato di rame, con le stanze senza kit (5 ottobre 2026: per i saggi alla fiamma è già così).
 - Se e quando i laboratori entrano in un piano a pagamento o nell'offerta alle scuole.

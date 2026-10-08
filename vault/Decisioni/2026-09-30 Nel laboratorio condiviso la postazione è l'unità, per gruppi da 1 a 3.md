@@ -15,6 +15,7 @@ Alessandro, 30 settembre 2026: le classi hanno 24 studenti e a volte di più, e 
 - Il kit dell'esperimento si piazza su ogni postazione da codice (`build_aula.py`): va solo moltiplicato.
 - Gli strumenti condivisi danno ai gruppi un motivo per muoversi nella stanza.
 - Vedi anche [[2026-09-30 L'aula si sceglie all'avvio dai presenti, e si ottimizza per la classe intera]].
+- Dal 7 ottobre 2026, nella stanza di meccanica del laboratorio di fisica l'unità è l'isola con il suo apparato, non la postazione da 1,3 m: vedi [[2026-10-07 Con la classe la stanza di meccanica si dispone a isole dello stesso apparato]]. Per l'aula di chimica questa decisione resta com'è.
 
 ## Collegamenti
 - [[Laboratorio condiviso]], [[Laboratori]]
