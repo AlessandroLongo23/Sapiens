@@ -330,7 +330,7 @@ function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?
 }
 
 /** An answered attempt as read back from the database. */
-type AnsweredRow = { id: string; user_id: string; position: number; level: number; correct: boolean; answer: { choice?: number; latex?: string; message?: string; built?: BuildResponse }; exercise: Stored };
+type AnsweredRow = { id: string; user_id: string; position: number; level: number; correct: boolean; active_ms?: number | null; answer: { choice?: number; latex?: string; message?: string; built?: BuildResponse }; exercise: Stored };
 
 /** An answered attempt as the page shows it again: the exercise as it was asked, the answer, the verdict. */
 function answered(row: AnsweredRow): AnsweredView {
@@ -418,7 +418,11 @@ export interface UnfinishedRun {
 	next: number;
 	/** The questions already answered wrong, for the summary at the end. */
 	mistakes: AnsweredView[];
+	/** The time spent on the questions already answered, for the summary at the end. */
+	activeMs: number;
 }
+
+const spent = (rows: AnsweredRow[]) => rows.reduce((sum, a) => sum + (a.active_ms ?? 0), 0);
 
 /** A question already answered: what was asked, the answer picked, and the verdict with the solution. */
 export interface AnsweredView {
@@ -448,7 +452,7 @@ const RESUME_DAYS = 3;
 async function unfinishedRun(latest: RunRow | undefined): Promise<UnfinishedRun | null> {
 	if (!latest || latest.answered >= latest.plan.length) return null;
 	if (Date.now() - Date.parse(latest.started_at) > RESUME_DAYS * 86_400_000) return null;
-	const { data, error } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise').eq('session_id', latest.id).not('answered_at', 'is', null);
+	const { data, error } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise, active_ms').eq('session_id', latest.id).not('answered_at', 'is', null);
 	if (error) throw error;
 	const rows = (data ?? []) as AnsweredRow[];
 	const progress = latest.plan.map((): UnfinishedRun['progress'][number] => 'unanswered');
@@ -459,7 +463,8 @@ async function unfinishedRun(latest: RunRow | undefined): Promise<UnfinishedRun 
 		session: { id: latest.id, kind: latest.kind, level: latest.level, step: latest.step ?? null, length: latest.plan.length },
 		progress,
 		next,
-		mistakes: rows.filter((a) => !a.correct).map(answered)
+		mistakes: rows.filter((a) => !a.correct).map(answered),
+		activeMs: spent(rows)
 	};
 }
 
@@ -888,8 +893,8 @@ async function todaysPractice(userId: string): Promise<PracticeRow | null> {
 }
 
 /** A run across lessons as the page takes it up: the run, how each question went, where to go on. */
-async function resumeMixed(userId: string, kind: 'practice' | 'review', row: PracticeRow): Promise<{ session: SessionView; exercise: ExerciseView; startAt: number; progress: UnfinishedRun['progress']; mistakes: AnsweredView[] }> {
-	const { data, error } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise').eq('session_id', row.id).not('answered_at', 'is', null);
+async function resumeMixed(userId: string, kind: 'practice' | 'review', row: PracticeRow): Promise<{ session: SessionView; exercise: ExerciseView; startAt: number; progress: UnfinishedRun['progress']; mistakes: AnsweredView[]; activeMs: number }> {
+	const { data, error } = await db().from('exercise_attempts').select('id, user_id, position, level, correct, answer, exercise, active_ms').eq('session_id', row.id).not('answered_at', 'is', null);
 	if (error) throw error;
 	const rows = (data ?? []) as AnsweredRow[];
 	const progress = row.plan.map((): UnfinishedRun['progress'][number] => 'unanswered');
@@ -897,7 +902,7 @@ async function resumeMixed(userId: string, kind: 'practice' | 'review', row: Pra
 	const startAt = Math.max(0, progress.indexOf('unanswered'));
 	const items = row.plan.map((_, i) => itemAt(row, i));
 	const [exercise, views] = await Promise.all([issueAt(userId, items[startAt].lesson, items[startAt].generator, row.id, startAt, items[startAt].level), itemViews(items)]);
-	return { session: { id: row.id, kind, level: row.plan[0], length: row.plan.length, items: views }, exercise, startAt, progress, mistakes: rows.filter((a) => !a.correct).map(answered) };
+	return { session: { id: row.id, kind, level: row.plan[0], length: row.plan.length, items: views }, exercise, startAt, progress, mistakes: rows.filter((a) => !a.correct).map(answered), activeMs: spent(rows) };
 }
 
 /**
@@ -905,7 +910,7 @@ async function resumeMixed(userId: string, kind: 'practice' | 'review', row: Pra
  * from the lessons started and the mistakes still open (see practicePlan). For a Free account (`limited`) as many
  * questions as today's free session has left.
  */
-export async function startPractice(userId: string, limited = false): Promise<{ session: SessionView; exercise: ExerciseView; startAt: number; progress?: UnfinishedRun['progress']; mistakes?: AnsweredView[] }> {
+export async function startPractice(userId: string, limited = false): Promise<{ session: SessionView; exercise: ExerciseView; startAt: number; progress?: UnfinishedRun['progress']; mistakes?: AnsweredView[]; activeMs?: number }> {
 	const [existing, left, rows, recent] = await Promise.all([todaysPractice(userId), limited ? freeQuestionsLeft(userId) : Promise.resolve(PRACTICE_LENGTH), allPathRuns(userId), recentAnswers(userId)]);
 	if (existing) {
 		if (existing.finished_at) throw new ExerciseError(400, 'Hai già fatto la pratica di oggi. Domani ne trovi una nuova.');

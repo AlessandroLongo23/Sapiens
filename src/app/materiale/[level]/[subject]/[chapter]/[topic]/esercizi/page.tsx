@@ -96,7 +96,7 @@ export default async function ExercisesPage(props: LessonParams & { searchParams
 									</div>
 								)
 							) : (
-								path && <ExerciseRunner lesson={dbPath} path={path} free={!full} questionsLeft={full ? SESSION_LENGTH : left} titleHtml={title} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} finished={finished} modes={modes} />
+								path && <ExerciseRunner lesson={dbPath} path={path} free={!full} questionsLeft={full ? SESSION_LENGTH : left} titleHtml={title} lessonTitleHtml={titleHtml} theoryHref={paths.theory} nextHref={navigation?.next?.url ?? null} finished={finished} modes={modes} />
 							)}
 						</div>
 					</div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, type CSSProperties, type ReactNode } from 'react';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, Timer, XCircle } from 'lucide-react';
 import { Sheet } from '@/components/ui/Sheet';
 import { useReducedMotion } from '@/lib/hooks/use-media';
 
@@ -34,10 +34,20 @@ function Rolling({ value }: { value: number }) {
 	);
 }
 
+/** A run's time as the summary says it: "45 s", "3 min 40 s". */
+function duration(ms: number) {
+	const seconds = Math.max(1, Math.round(ms / 1000));
+	const m = Math.floor(seconds / 60);
+	const s = seconds % 60;
+	return m === 0 ? `${s} s` : s === 0 ? `${m} min` : `${m} min ${s} s`;
+}
+
 interface Props {
 	open: boolean;
 	correct: number;
 	total: number;
+	/** The time spent answering, in ms, without the time on another tab or reading a solution. */
+	activeMs?: number;
 	/** Whether the run passed its level, counted as a repetition, or opened the level it was jumping to. */
 	passed: boolean;
 	/** The word on the stamp when it passed: "Superato", or "Fatta" for a repetition that is not the last. */
@@ -54,7 +64,7 @@ interface Props {
  * End of a run: the score ring, what it means for the path, and what to do next. A sheet on phones, a centred card
  * on wider screens. The mistakes are not here: a button in `actions` opens them on the whole page (RunReview).
  */
-export function SummarySheet({ open, correct, total, passed, stamp = 'Superato', title, detail, actions, onClose }: Props) {
+export function SummarySheet({ open, correct, total, activeMs, passed, stamp = 'Superato', title, detail, actions, onClose }: Props) {
 	const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
 	const wrong = Math.max(0, total - correct);
 	const ring = passed ? 'stroke-ok' : percent >= 50 ? 'stroke-warn' : 'stroke-accent';
@@ -101,7 +111,7 @@ export function SummarySheet({ open, correct, total, passed, stamp = 'Superato',
 					</p>
 					<p className="text-balance text-fg-muted">{detail}</p>
 				</div>
-				<dl className="score-after flex items-center justify-center gap-6 pb-2 text-base font-semibold">
+				<dl className="score-after flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pb-2 text-base font-semibold">
 					<div className="flex items-center gap-2 text-ok-fg">
 						<CheckCircle2 className="size-5" aria-hidden="true" />
 						<dd>{correct}</dd>
@@ -112,6 +122,13 @@ export function SummarySheet({ open, correct, total, passed, stamp = 'Superato',
 						<dd>{wrong}</dd>
 						<dt className="font-medium">{wrong === 1 ? 'sbagliata' : 'sbagliate'}</dt>
 					</div>
+					{!!activeMs && (
+						<div className="flex items-center gap-2 text-fg-muted">
+							<Timer className="size-5" aria-hidden="true" />
+							<dt className="sr-only">Tempo</dt>
+							<dd className="tabular-nums">{duration(activeMs)}</dd>
+						</div>
+					)}
 				</dl>
 			</div>
 		</Sheet>

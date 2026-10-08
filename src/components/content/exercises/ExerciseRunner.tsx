@@ -9,6 +9,7 @@ import { JUMP_LENGTH, RAMP, REPETITION_LENGTH, canPass, passMark, runPassed, typ
 import { cn } from '@/lib/utils/cn';
 import { progressStore } from '@/lib/state/progress';
 import { Button, LinkButton } from '@/components/ui/Button';
+import { Html } from '@/components/ui/Html';
 import { ExercisePath } from './ExercisePath';
 import { ReviewRun } from './ReviewRun';
 import { RunPlayer, post, type Progress, type RunResult } from './RunPlayer';
@@ -25,6 +26,8 @@ interface Props {
 	/** Questions left today on Free; SESSION_LENGTH otherwise. */
 	questionsLeft?: number;
 	titleHtml: string;
+	/** The lesson's own title, shown in the corner of a run. */
+	lessonTitleHtml: string;
 	theoryHref: string;
 	nextHref: string | null;
 	/** A finished run whose mistakes the address asks for (`?prova=<id>`): the page opens on them. */
@@ -49,8 +52,9 @@ interface Current {
 	startAt: number;
 	initial?: Progress[];
 	earlier?: RunResult[];
+	elapsed?: number;
 	/** Set when the last question is answered: the summary opens. */
-	done?: { results: RunResult[]; progress: Progress[] };
+	done?: { results: RunResult[]; progress: Progress[]; activeMs?: number };
 }
 
 /**
@@ -58,7 +62,7 @@ interface Current {
  * levels, then a run at the level picked (see RunPlayer), then its summary. The summary says how the run went
  * and what to do next; the mistakes have a page of their own (RunReview), at `?prova=<id>`.
  */
-export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SESSION_LENGTH, titleHtml, theoryHref, nextHref, finished = null, modes }: Props) {
+export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SESSION_LENGTH, titleHtml, lessonTitleHtml, theoryHref, nextHref, finished = null, modes }: Props) {
 	const router = useRouter();
 	const [run, setRun] = useState<Current | null>(() =>
 		finished ? { session: finished.session, first: null, startAt: 0, done: { results: finished.results, progress: finished.results.map((r) => (r.verdict.correct ? 'correct' : 'incorrect')) } } : null
@@ -118,7 +122,7 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 		setError(null);
 		try {
 			const { exercise } = await post<{ exercise: ExerciseView }>(`/api/esercizi/prove/${unfinished.session.id}`, { position: unfinished.next });
-			setRun({ session: unfinished.session, first: exercise, startAt: unfinished.next, initial: unfinished.progress, earlier: unfinished.mistakes });
+			setRun({ session: unfinished.session, first: exercise, startAt: unfinished.next, initial: unfinished.progress, earlier: unfinished.mistakes, elapsed: unfinished.activeMs });
 		} catch (err) {
 			setError((err as Error).message);
 		} finally {
@@ -315,15 +319,18 @@ export function ExerciseRunner({ lesson, path, free = false, questionsLeft = SES
 				startAt={run.startAt}
 				initial={run.initial}
 				earlier={run.earlier}
+				elapsed={run.elapsed}
 				finished={!!run.done}
 				onLeave={leave}
-				onFinish={(results, progress) => setRun((r) => r && { ...r, done: { results, progress } })}
+				onFinish={(results, progress, activeMs) => setRun((r) => r && { ...r, done: { results, progress, activeMs } })}
+				title={<Html as="span" html={lessonTitleHtml} className="math-inline" />}
 				label={label}
 			/>
 			<SummarySheet
 				open={!!run.done}
 				correct={correct}
 				total={length}
+				activeMs={run.done?.activeMs}
 				passed={passed}
 				stamp={stamp}
 				title={outcome.title}
