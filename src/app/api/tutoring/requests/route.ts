@@ -3,6 +3,7 @@ import { getSession } from '@/lib/server/auth';
 import { getTutorById, userEmail, validEmail, validPhone, type RequestRow } from '@/lib/server/tutoring-admin';
 import { mailRequestReceived } from '@/lib/server/tutoring-mail';
 import { fail, guarded, json, readJson } from '@/lib/server/http';
+import { EMAIL_UNVERIFIED, emailVerified } from '@/lib/server/profile';
 
 /**
  * A signed-in student asks to be put in touch with a tutor. The row is written
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
 	if (typeof parsed === 'string') return fail(parsed, 400);
 
 	return guarded('request creation', async () => {
+		if (!(await emailVerified(user))) return json(EMAIL_UNVERIFIED, 403);
 		const tutor = await getTutorById(parsed.tutorId);
 		if (!tutor || tutor.status !== 'published') return fail('Questo tutor non è disponibile.', 404);
 		if (tutor.user_id === user.id) return fail('Non puoi inviare una richiesta a te stesso.', 400);

@@ -17,11 +17,16 @@ interface AuthState {
 	modalOpen: boolean;
 	modalRegister: boolean;
 	next: AfterLogin | null;
+	/** The dialog that confirms the email with a code, and what was waiting for it. */
+	verifyOpen: boolean;
+	afterVerify: AfterLogin | null;
 	/** Refreshes server-rendered data after a login; set by the layout. */
 	refreshServer: () => void;
 	init: () => Promise<void>;
 	openModal: (options?: { register?: boolean; next?: AfterLogin }) => void;
 	closeModal: () => void;
+	openVerify: (next?: AfterLogin) => void;
+	closeVerify: (verified?: boolean) => Promise<void>;
 	setRegister: (register: boolean) => void;
 	completeLogin: (user: User) => Promise<void>;
 	refresh: () => Promise<void>;
@@ -36,6 +41,8 @@ export const authStore = create<AuthState>((set, get) => ({
 	modalOpen: false,
 	modalRegister: false,
 	next: null,
+	verifyOpen: false,
+	afterVerify: null,
 	refreshServer: () => {},
 
 	async init() {
@@ -57,6 +64,13 @@ export const authStore = create<AuthState>((set, get) => ({
 	openModal: (options = {}) => set({ modalRegister: options.register ?? false, next: options.next ?? null, modalOpen: true }),
 	closeModal: () => set({ modalOpen: false, next: null }),
 	setRegister: (modalRegister) => set({ modalRegister }),
+	openVerify: (next) => set({ verifyOpen: true, afterVerify: next ?? null }),
+	/** Closes the dialog; once the email is confirmed, what asked for it goes on. */
+	async closeVerify(verified = false) {
+		const { afterVerify } = get();
+		set({ verifyOpen: false, afterVerify: null });
+		if (verified && afterVerify) await afterVerify();
+	},
 
 	/** Called by the login form: refresh server data, then run the pending action. */
 	async completeLogin(user) {

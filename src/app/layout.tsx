@@ -7,6 +7,7 @@ import { organizationJsonLd, webSiteJsonLd } from '@/lib/seo/jsonld';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Boot } from '@/components/shell/Boot';
 import { AuthModal } from '@/components/shell/AuthModal';
+import { VerifyEmailModal } from '@/components/onboarding/VerifyEmailModal';
 import { CookieBanner } from '@/components/shell/CookieBanner';
 import { InviteOffer } from '@/components/shell/InviteOffer';
 import { InstallPrompt } from '@/components/shell/InstallPrompt';
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 				</a>
 				<Boot />
 				<AuthModal />
+				<VerifyEmailModal />
 				<CookieBanner />
 				<InviteOffer />
 				<InstallPrompt />

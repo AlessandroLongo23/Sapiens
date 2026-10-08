@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { Children, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
 import { binderLabelClass, binderRowClass, binderTabClass } from '@/components/ui/binder-tabs';
 
 const YEARS = ['Primo', 'Secondo', 'Terzo', 'Quarto', 'Quinto'];
@@ -88,7 +88,10 @@ export function YearTabs({ id, years }: { id: string; years: YearPanel[] }) {
 					<p className="label-mono text-fg-subtle">
 						{YEARS[year - 1]} anno · <span className={ready ? 'text-tint-fg' : undefined}>{ready} di {total} pronti</span>
 					</p>
-					<ol className="mt-2 grid grid-cols-1 gap-x-12 lg:grid-cols-2">{rows}</ol>
+					{/* Down the first column, then the second: the numbers read top to bottom. */}
+					<ol className="mt-2 grid grid-cols-1 gap-x-12 lg:grid-flow-col lg:grid-cols-2 lg:grid-rows-[repeat(var(--rows),auto)]" style={{ '--rows': Math.ceil(Children.count(rows) / 2) } as CSSProperties}>
+						{rows}
+					</ol>
 				</div>
 			))}
 		</>

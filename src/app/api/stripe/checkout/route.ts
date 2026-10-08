@@ -2,6 +2,7 @@ import { createCheckoutSession, createPassCheckoutSession, getOrCreateCustomer }
 import { SUBSCRIPTION_PLANS, formatDay, getPlanById, passEnd, passOnSale } from '@/lib/stripe/config';
 import { planOf } from '@/lib/auth/entitlements';
 import { currentUser } from '@/lib/server/auth';
+import { EMAIL_UNVERIFIED, emailVerified } from '@/lib/server/profile';
 import { fail, json, readJson } from '@/lib/server/http';
 import { safePath } from '@/lib/utils/safe-path';
 
@@ -16,6 +17,8 @@ import { safePath } from '@/lib/utils/safe-path';
 export async function POST(request: Request) {
 	const user = await currentUser();
 	if (!user) return json({ error: 'Accedi per attivare un piano.', code: 'login_required' }, 401);
+	// Receipts and the subscription go to this address: it has to be theirs.
+	if (!(await emailVerified(user))) return json(EMAIL_UNVERIFIED, 403);
 
 	const body = await readJson(request);
 	const plan = getPlanById(String(body.planId ?? ''));

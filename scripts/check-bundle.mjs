@@ -46,13 +46,16 @@ const offenders = walk('src')
 // `import type` is erased by the compiler, so it may name them anywhere.
 const CRUMPLE = /^import\s+(?!type\s)[^;]*?from\s+['"](three|html-to-image|@\/lib\/zaino\/(paper-crumple|page-photo))['"]/m;
 const CRUMPLE_ALLOWED = new Set(['src/lib/zaino/paper-crumple.ts', 'src/lib/zaino/page-photo.ts']);
+// The 3D objects of the onboarding and of the Materie landing: three.js too, each loaded only with import(), by
+// Stage.tsx and ScrollStage.tsx.
+const STAGE_ALLOWED = new Set(['src/components/onboarding/stage-engine.ts', 'src/components/landing/prova/materie/turn.ts']);
 // The 3D lab's engine is three.js through and through; only the /laboratorio pages reach it, so it lands in their
 // own chunks. Nothing outside src/components/lab may import from it.
 const LAB_ENGINE = 'src/components/lab/engine/';
 offenders.push(
 	...walk('src')
 		.map((path) => ({ path: relative('.', path), source: readFileSync(path, 'utf8') }))
-		.filter(({ path, source }) => !CRUMPLE_ALLOWED.has(path) && !path.startsWith(LAB_ENGINE) && CRUMPLE.test(source))
+		.filter(({ path, source }) => !CRUMPLE_ALLOWED.has(path) && !STAGE_ALLOWED.has(path) && !path.startsWith(LAB_ENGINE) && CRUMPLE.test(source))
 		.map(({ path, source }) => `${path} → ${source.match(CRUMPLE)?.[1]}`)
 );
 // ...and the engine stays behind the lab's pages (the dev API routes run on the server)

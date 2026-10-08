@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-10-07
+aggiornato: 2026-10-08
 tag: [prodotto, studenti, contenuti]
 ---
 # Esercizi
@@ -9,6 +9,8 @@ tag: [prodotto, studenti, contenuti]
 Esercizi con correzione immediata, collegati alle lezioni, con i progressi salvati.
 
 ## Stato attuale
+- 8 ottobre 2026, nel codice e non pubblicato: il riepilogo di una prova mostra il tempo impiegato accanto a corrette e sbagliate ("3 min 40 s"). È la somma del tempo attivo delle risposte, lo stesso salvato in `exercise_attempts.active_ms`: non conta il tempo con la scheda nascosta né quello passato a leggere una soluzione. Su una prova ripresa a metà conta anche le risposte date prima (`activeMs` in `UnfinishedRun`). Durante la prova nessun timer, per scelta (vedi [[2026-10-08 Nella prova veloce non c'è un timer, il tempo sta nel riepilogo e nelle simulazioni]]). Provato nel browser a 1512 px e su un Pixel 7 con un account di prova poi cancellato.
+- 7 ottobre 2026, nel codice e non pubblicato: una prova prende tutto lo schermo (`RunPlayer.tsx`, steso sopra la pagina con `fixed inset-0`), senza l'header del sito, senza la barra della lezione con i bottoni di teoria, formulario e flashcard, e sul telefono senza la barra in basso. In alto resta una riga sola: a sinistra il titolo della lezione con sotto il livello e il suo nome, al centro la barra di avanzamento larga quanto la domanda, a destra la X per uscire. Il contatore "01 / 08" non c'è più. La X (e il tasto Esc) non esce subito: apre un modale "Vuoi uscire dalla prova?" con "Continua la prova" ed "Esci"; chiudere la scheda o il browser, o ricaricare, fa comparire l'avviso del browser (`beforeunload`), l'unico che una pagina può mostrare in quel momento. A prova finita non chiede niente. Dall'8 ottobre 2026 anche il tasto Indietro del browser apre il modale: la prova mette una voce sua nella cronologia quando parte, e la toglie quando lo studente esce o la prova finisce, così dopo Indietro torna a funzionare come prima. Sul telefono la barra di avanzamento va su una riga sua sotto il titolo. Vale anche per il ripasso degli errori e la pratica di Oggi, dove il titolo è il nome della prova e sotto ci sono livello e lezione di ogni domanda. Provato nel browser a 1512 px e su un Pixel 7 con un account di prova poi cancellato; tema scuro, ripasso e pratica non provati.
 - 7 ottobre 2026, in produzione (PR #51): i 34 generatori del terzo anno di informatica, 183 livelli, collegati in `index.ts`, `config.ts` e `level-names.ts`. Novità nel sistema:
   - il modulo `src/lib/exercises/v2/inf-codice.ts`, con il controllo `scripts/exercises/checkers/_inf_codice.py`, per gli esercizi in cui il programma è scritto a mano nei due linguaggi (il linguaggio dei diagrammi non ha funzioni né vettori): un programma sotto la domanda, programmi come opzioni, mostrati in Python o in C++ a scelta dello studente; il brief è `docs/lezioni/informatica/brief-esercizi-codice.md`;
   - i frammenti `listing` (`ChoiceOption.listing`, `Sample.listing`, `Sample.solutionListing` in `types.ts`): un testo a larghezza fissa di HTML, CSS, JavaScript, JSON o CSV sotto la domanda o come opzione;
@@ -64,7 +66,7 @@ Esercizi con correzione immediata, collegati alle lezioni, con i progressi salva
 - Un percorso che attraversa le lezioni di un capitolo, come le unità di Duolingo, oltre a quello di ogni lezione.
 - Le prove lasciate a metà non compaiono nel percorso: se mostrarle o riprenderle.
 - Svolgimento passo passo: si mostra la soluzione completa, un suggerimento alla volta, o si passa a [[Sapiens AI]]?
-- Esercizi a fine capitolo e simulazioni di verifica: nella beta o dopo?
+- Esercizi a fine capitolo: nella beta o dopo? Le simulazioni di verifica hanno la loro nota dall'8 ottobre 2026: [[Simulazioni di verifica]], prototipo subito, nei piani dopo la beta.
 - Esercizi gratuiti di assaggio nel piano Free per convertire? In parte risposta dalla scheda gratuita del 26 settembre 2026.
 - Livelli con esercizi lunghi per la scheda (espressioni, equazioni con più passaggi, problemi): quali generatori e in che ordine.
 - Alcuni livelli della scheda hanno 1 o 2 esercizi invece di 6, perché il generatore dà pochi esercizi diversi (Prime definizioni: 19 esercizi, il livello 4 ne ha uno).
@@ -74,6 +76,7 @@ Esercizi con correzione immediata, collegati alle lezioni, con i progressi salva
 
 ## Collegamenti
 - [[Pipeline esercizi]], [[Pratica quotidiana]], [[Schema dati]]
+- [[Simulazioni di verifica]], [[2026-10-08 Nella prova veloce non c'è un timer, il tempo sta nel riepilogo e nelle simulazioni]]
 - Funzioni sui progressi (errori, prova da riprendere, progressi nel materiale, "Oggi"): [[Progressi dello studente]]
 - [[2026-09-23 Esercizi da generatori scritti dall'AI]]
 - [[2026-09-26 Una scheda di esercizi gratuita e indicizzata per ogni lezione]], [[2026-09-27 La scheda degli esercizi è giornaliera]], [[SEO]]

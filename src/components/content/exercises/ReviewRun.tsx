@@ -11,20 +11,17 @@ import { RunPlayer, type Progress, type RunResult } from './RunPlayer';
 import { SummarySheet } from './SummarySheet';
 import { RunReview } from './RunReview';
 
-/** The line above a question of a run across lessons: which lesson and level it comes from. */
-export function itemLabel(session: SessionView, title: string) {
+/** The line under the title of a run across lessons: which lesson and level the question comes from. */
+export function itemLabel(session: SessionView) {
 	return function Label(index: number) {
 		const item = session.items?.[index];
 		return (
-			<>
-				<span className="label-mono shrink-0 text-fg-subtle">{title}</span>
-				{item && (
-					<>
-						<Html as="span" html={item.lessonTitleHtml} className="math-inline min-w-0 truncate text-fg-muted" />
-						<span className="shrink-0 text-fg-muted">· livello {item.level}</span>
-					</>
-				)}
-			</>
+			item && (
+				<>
+					<span className="label-mono shrink-0 text-fg-subtle">Livello {item.level}</span>
+					<Html as="span" html={item.lessonTitleHtml} className="math-inline min-w-0 truncate text-fg-muted" />
+				</>
+			)
 		);
 	};
 }
@@ -36,7 +33,9 @@ interface MixedProps {
 	startAt?: number;
 	initial?: Progress[];
 	earlier?: AnsweredView[];
-	/** What the run is, above each question: "Ripasso degli errori", "Pratica di oggi". */
+	/** The time already spent on the questions answered before, in ms. */
+	elapsed?: number;
+	/** What the run is, in the top left corner: "Ripasso degli errori", "Pratica di oggi". */
 	title: string;
 	/** The summary's heading and line once all is answered, from the number right. */
 	outcome: (correct: number, total: number) => { title: string; detail: string };
@@ -50,8 +49,8 @@ interface MixedProps {
  * A run across lessons (practice, review): the questions, then a summary. It never passes a level. The mistakes
  * have the whole page (RunReview), opened from the summary; back from there returns to it.
  */
-export function MixedRun({ session, first, startAt, initial, earlier, title, outcome, backLabel, onBack, extra }: MixedProps) {
-	const [done, setDone] = useState<{ results: RunResult[]; progress: Progress[] } | null>(null);
+export function MixedRun({ session, first, startAt, initial, earlier, elapsed, title, outcome, backLabel, onBack, extra }: MixedProps) {
+	const [done, setDone] = useState<{ results: RunResult[]; progress: Progress[]; activeMs: number } | null>(null);
 	const [showMistakes, setShowMistakes] = useState(false);
 	const correct = done ? done.progress.filter((p) => p === 'correct').length : 0;
 	const wrong = done ? done.progress.filter((p) => p === 'incorrect').length : 0;
@@ -83,11 +82,12 @@ export function MixedRun({ session, first, startAt, initial, earlier, title, out
 
 	return (
 		<>
-			<RunPlayer key={session.id} session={session} first={first} startAt={startAt} initial={initial} earlier={earlier} finished={!!done} onLeave={onBack} onFinish={(results, progress) => setDone({ results, progress })} label={itemLabel(session, title)} />
+			<RunPlayer key={session.id} session={session} first={first} startAt={startAt} initial={initial} earlier={earlier} elapsed={elapsed} finished={!!done} onLeave={onBack} onFinish={(results, progress, activeMs) => setDone({ results, progress, activeMs })} title={title} label={itemLabel(session)} />
 			<SummarySheet
 				open={!!done}
 				correct={correct}
 				total={session.length}
+				activeMs={done?.activeMs}
 				passed={done !== null && correct === session.length}
 				title={heading}
 				detail={detail}

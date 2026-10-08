@@ -166,6 +166,20 @@ export function coverDefaults(page: string): PlacedSticker[] {
 	}));
 }
 
+/**
+ * What the cover of a level or a subject comes with. The object of its card stands on the right, where the
+ * slots are, so it has two of them at most, smaller, between the title and the object.
+ */
+const OBJECT_SLOTS = [
+	{ x: 150, y: 108, r: -6 },
+	{ x: 110, y: 250, r: 7 }
+];
+export function objectCoverDefaults(page: string): PlacedSticker[] {
+	return coverDefaults(page)
+		.slice(0, OBJECT_SLOTS.length)
+		.map((sticker, i) => ({ ...sticker, ...OBJECT_SLOTS[i], s: 0.85 }));
+}
+
 /** A request body's sticker list, or the reason it was refused. */
 export function parseStickers(value: unknown, bounds: StickerBounds = SHEET_BOUNDS): PlacedSticker[] | string {
 	if (!Array.isArray(value)) return 'Adesivi non validi.';

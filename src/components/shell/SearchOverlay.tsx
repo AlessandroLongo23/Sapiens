@@ -324,11 +324,7 @@ function Hit({ row, index, active, stems, onOpen, onHover }: { row: Row; index: 
 					<span className="font-display text-xl font-semibold leading-tight tracking-tight text-fg-strong">
 						<Marked text={titleOf(node)} stems={stems} />
 					</span>
-					<span className="label-mono mt-1 flex flex-wrap gap-x-3 text-fg-subtle">
-						{counts.map((count) => (
-							<span key={count}>{count}</span>
-						))}
-					</span>
+					<span className="label-mono mt-1 text-fg-subtle">{counts.map((count) => count.replaceAll(' ', '\u00a0')).join(' · ')}</span>
 				</span>
 				<ArrowRight className="size-4 shrink-0 text-fg-faint transition-[transform,color] duration-300 ease-out-soft group-hover:translate-x-1 group-hover:text-tint-fg group-data-active:translate-x-1 group-data-active:text-tint-fg" aria-hidden="true" />
 			</Link>

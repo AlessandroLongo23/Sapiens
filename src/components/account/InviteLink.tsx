@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useSyncExternalStore } from 'react';
+import { authStore } from '@/lib/state/auth';
 import { useRouter } from 'next/navigation';
 import { Check, Copy, Share2 } from 'lucide-react';
 import { REFERRAL } from '@/lib/referrals/config';
@@ -62,6 +63,10 @@ export function AdultDeclaration() {
 		try {
 			const response = await fetch('/api/inviti', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adult }) });
 			const body = await response.json().catch(() => ({}));
+			if (body.code === 'email_unverified') {
+				setStatus({});
+				return authStore.getState().openVerify(() => router.refresh());
+			}
 			if (!response.ok) throw new Error(body.error || 'Non siamo riusciti a creare il tuo codice. Riprova.');
 			router.refresh();
 		} catch (err) {

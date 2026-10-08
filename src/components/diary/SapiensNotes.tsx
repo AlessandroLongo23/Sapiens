@@ -66,7 +66,7 @@ function TestLessons({ review }: { review: TestReview }) {
 				<Link href={next.exercisesUrl} className={INK_LINK}>
 					<Play className="size-4 fill-current" aria-hidden="true" />
 					<span className="min-w-0 truncate">
-						Allenati su <Html as="span" html={next.titleHtml} className="math-inline" />
+						Esercitati su <Html as="span" html={next.titleHtml} className="math-inline" />
 					</span>
 				</Link>
 			)}

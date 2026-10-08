@@ -1,5 +1,5 @@
 ---
-aggiornato: 2026-10-07
+aggiornato: 2026-10-08
 tag: [indice]
 ---
 # Sapiens
@@ -41,12 +41,20 @@ Il 6 ottobre è scritto il terzo anno di chimica: 33 lezioni nuove (struttura el
 
 Il 6 ottobre è scritto il terzo anno di fisica: 49 lezioni (71-119) su relatività galileiana, forze conservative, quantità di moto, corpo rigido, gravitazione, fluidi in moto, gas e i due principi della termodinamica, con 221 figure TikZ, 53 figure interattive, 926 flashcard e 49 generatori (283 livelli, 21 scene nuove). Pubblicato lo stesso giorno; quello che resta da correggere è in [[Fisica terzo anno, da sistemare]], [[Matematica terzo anno, da sistemare]]. Vedi [[2026-10-06 Terzo anno di fisica]].
 
+Il 7 ottobre si è deciso l'onboarding, che diventa una condizione della beta: il traguardo è la prima prova finita nella prima sessione; si entra subito e l'email si conferma dopo, con un codice, solo per pagare, per gli inviti e per scrivere a un tutor; si chiedono anno e argomento in classe; il primo passo è "Chi sei?", con il percorso intero per lo studente e una porta per tutor, genitore, docente e scuola; un account può avere più ruoli; c'è l'accesso con Google; lo studente può mandare a un genitore un link per pagare. Sotto i 14 anni conferma un genitore con un link, senza account. La prima fetta è nel codice lo stesso giorno, non committata: iscrizione senza attesa, "Chi sei?", età, link del genitore, anno e argomento, codice per l'email e cancello su pagamento, inviti e tutor; la migrazione è applicata. Vedi [[Onboarding]] e [[2026-10-07 Onboarding]].
+
+Sempre il 7 ottobre è deciso il piano del laboratorio di fisica, il secondo dopo la chimica, senza codice per ora: ci si misura, e la legge esatta resta alla sandbox; nel menu è una copertina sola con tre stanze (Meccanica, Camera oscura, Elettromagnetismo), ciascuna con il suo caricamento; termologia e fluidi usano l'aula di chimica; l'elettronica è un laboratorio a parte. Si parte dalla stanza di meccanica, con apparati fissi e quattro schede del quaderno (pendolo, molla, rotaia, densità). I tre esperimenti di chimica sono in produzione. Vedi [[Laboratorio di fisica]] e [[2026-10-07 Laboratorio di fisica, scopo e stanze]].
+
+Sempre il 7 ottobre la sandbox di fisica è diventata uno strumento del sito, in produzione a `/strumenti/sandbox-di-fisica` (PR #54), e la landing (versione Oggetti, ancora in locale) ha un disegno suo per il telefono e filmati nelle schede degli strumenti. Vedi [[Sandbox di fisica]] e [[2026-10-07 Tre versioni della landing]].
+
+L'8 ottobre la pagina della prova è diventata a tutto schermo, con la conferma prima di uscire e il tempo nel riepilogo (nel codice, non pubblicato), e si è deciso che durante la prova veloce non c'è un timer. Lo stesso giorno sono partite le [[Simulazioni di verifica]]: prototipo subito, su un capitolo pilota con esercizi lunghi, con lezioni scelte dallo studente, voto in decimi, consegna dalla pagina o da un'immagine con i passaggi nel voto, e un editor a penna vero per chi scrive a mano su Sapiens. Nei piani restano una funzione di Plus, dopo la beta. Vedi [[2026-10-08 Pagina della prova e simulazioni di verifica]].
+
 Il 7 ottobre è scritto il terzo anno di informatica: 34 lezioni (65-98) su funzioni, vettori, matrici e stringhe, ricerca e ordinamento, file, immagini, suoni e video digitali, HTML, fogli di stile e pagine web interattive, con 634 flashcard, 10 figure TikZ, 46 figure interattive e 34 generatori (183 livelli, 16 a risposta aperta). Per scriverle l'editor di codice ha imparato a leggere e scrivere file anche in C e C++ e a correggere il comportamento di una pagina (clic, campi, invio di un modulo), e l'informatica ha un kit suo per le figure interattive. Tutto è in produzione dal 7 ottobre (PR #51), con i testi pubblicati nel database lo stesso giorno. La revisione dei testi e l'integrazione degli esercizi sono finite il 7 ottobre, e i generatori sono collegati al sito; quello che non è stato controllato (le figure oltre il primo passo, formulari e flashcard per intero, le risposte aperte nel browser, tutto fuori da Chromium) è scritto nella nota di sessione. Quello che resta aperto è in [[Informatica terzo anno, da sistemare]]. Vedi [[2026-10-07 Terzo anno di informatica]].
 
 ## Mappa
 - **Visione:** [[Visione]], [[Problema]], [[Principi]], [[Concorrenti]]
 - **Attori:** [[Studente]], [[Genitore]], [[Tutor]], [[Docente]], [[Dirigente]], [[DSGA e personale ATA]]
-- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]], [[Grafico di funzioni]], [[Geometria analitica nel plotter]], [[Editor di codice]], [[Sandbox di fisica]]
+- **Prodotti per gli studenti:** [[Lezioni]], [[Esercizi]], [[Pratica quotidiana]], [[Zaino]], [[Diario e calendario]], [[Onboarding]], [[Account e impostazioni]], [[Inviti e codici]], [[Sapiens AI]], [[Strumenti DSA]], [[Flashcard]], [[Adesivi]], [[Ricerca]], [[Laboratori]], [[Laboratorio di fisica]], [[Calcolatori e convertitori]], [[Tavola periodica interattiva]], [[Orbitali atomici interattivi]], [[Grafico di funzioni]], [[Geometria analitica nel plotter]], [[Editor di codice]], [[Sandbox di fisica]]
 - **Prodotti per i tutor:** [[Marketplace]], [[Pay-per-lead]], [[Agenda tutor]]
 - **Prodotti per le famiglie:** [[Area genitori]]
 - **Prodotti per le scuole:** [[Registro elettronico]], [[Verifiche]], [[Orario e aule]], [[Turni ATA]]
@@ -59,10 +67,33 @@ Il 7 ottobre è scritto il terzo anno di informatica: 34 lezioni (65-98) su funz
 - **Team:** [[Persone e ruoli]]
 
 ## Da discutere
-La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, le ultime sono [[2026-10-07 Programmi dei corsi di base di ingegneria]] e [[2026-10-06 Schede di livelli e materie]]. Per ripartire: `/sparring`.
+La coda degli argomenti, in ordine di priorità, è in [[Agenda]]. Le sessioni di lavoro sono registrate in `Sessioni/`, le ultime sono [[2026-10-08 Pagina della prova e simulazioni di verifica]], [[2026-10-07 Laboratorio di fisica, scopo e stanze]], [[2026-10-07 Onboarding]], [[2026-10-07 Tre versioni della landing]], [[2026-10-07 Programmi dei corsi di base di ingegneria]] e [[2026-10-06 Schede di livelli e materie]]. Per ripartire: `/sparring`.
 
 ## Decisioni
 Una nota per decisione in `Decisioni/`, con la data nel nome. Le più recenti in cima:
+- [[2026-10-08 Le simulazioni di verifica si costruiscono subito come prototipo, su un capitolo pilota con esercizi lunghi]]
+- [[2026-10-08 Una simulazione si consegna dalla pagina o da un'immagine, e i passaggi entrano nel voto]]
+- [[2026-10-08 Chi scrive a mano su Sapiens ha un editor a penna vero]]
+- [[2026-10-08 Nella prova veloce non c'è un timer, il tempo sta nel riepilogo e nelle simulazioni]]
+- [[2026-10-07 Il laboratorio di fisica parte dalla meccanica del biennio, per ora solo sul piano]]
+- [[2026-10-07 Con la classe la stanza di meccanica si dispone a isole dello stesso apparato]]
+- [[2026-10-07 Nella stanza di meccanica gli apparati sono fissi e un esperimento è una scheda del quaderno]]
+- [[2026-10-07 In fisica si misura una legge, in elettronica si costruisce un circuito]]
+- [[2026-10-07 Termologia e fluidi usano il guscio dell'aula di chimica]]
+- [[2026-10-07 Il laboratorio di fisica è una copertina sola con tre stanze]]
+- [[2026-10-07 Nel laboratorio di fisica si misura, la legge esatta resta alla sandbox]]
+- [[2026-10-07 L'onboarding chiede le materie e un argomento per materia]]
+- [[2026-10-07 L'onboarding è un percorso a pagina intera, con l'account alla fine]]
+- [[2026-10-07 Sotto i 14 anni conferma un genitore con un link, senza account]]
+- [[2026-10-07 L'onboarding è una condizione della beta]]
+- [[2026-10-07 L'onboarding porta lo studente a finire una prova nella prima sessione]]
+- [[2026-10-07 La conferma dell'email non blocca l'ingresso]]
+- [[2026-10-07 L'onboarding chiede anno e argomento in classe]] (superata in parte)
+- [[2026-10-07 L'onboarding comincia da Chi sei, con una porta per ruolo]]
+- [[2026-10-07 Un account può avere più ruoli]]
+- [[2026-10-07 Chiedi a un genitore è un link per pagare senza account]]
+- [[2026-10-07 L'iscrizione ha anche l'accesso con Google]]
+- [[2026-10-07 Come ci hai conosciuto si chiede dopo la prima prova]]
 - [[2026-10-06 Le lezioni hanno un esercizio guidato, con fermate non fisse]]
 - [[2026-10-06 Gli esercizi mostrano grafici, dalla funzione al grafico e dal grafico alla funzione]]
 - [[2026-10-06 Il quaderno del laboratorio si apre con B ed è una pagina in cui si scrive]]

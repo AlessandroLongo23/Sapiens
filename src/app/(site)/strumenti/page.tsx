@@ -49,14 +49,14 @@ export default function ToolsIndex() {
 		}))
 	}));
 	return (
-		<Page width="wide">
+		<Page width="wide" wash>
 			<JsonLd
 				data={breadcrumbJsonLd([
 					{ name: 'Home', path: '/' },
 					{ name: 'Strumenti', path: TOOLS_ROOT }
 				])}
 			/>
-			<PageHeader crumbs={[HOME_CRUMB]} eyebrow="Gratis, senza registrazione" title="Strumenti" lead={`${TOOLS.length} calcolatori e convertitori per la scuola, con tutti i passaggi e il collegamento alla lezione dell'argomento.`} />
+			<PageHeader crumbs={[HOME_CRUMB]} eyebrow="Gratis, senza registrazione" title="Strumenti" object="section-strumenti" lead={`${TOOLS.length} calcolatori e convertitori per la scuola, con tutti i passaggi e il collegamento alla lezione dell'argomento.`} />
 			<ToolIndex groups={groups} />
 		</Page>
 	);

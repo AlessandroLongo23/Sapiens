@@ -7,6 +7,8 @@ import { ArrowRight, Check, X } from 'lucide-react';
 import type { BuildResponse, ExerciseView, QuestionBlock, SessionView, Verdict } from '@/lib/server/exercises';
 import { cn } from '@/lib/utils/cn';
 import { Html } from '@/components/ui/Html';
+import { Button } from '@/components/ui/Button';
+import { Sheet, sheetActions } from '@/components/ui/Sheet';
 import { SceneFigure } from './scenes';
 import { OpenAnswer, type OpenState } from './OpenAnswer';
 import { BuildAnswer, CodeLanguageToggle, useCodeLanguage } from './BuildAnswer';
@@ -16,21 +18,14 @@ export type Progress = 'unanswered' | 'correct' | 'incorrect';
 
 const PROGRESS_CLASS: Record<Progress, string> = { unanswered: 'bg-surface-4', correct: 'bg-ok', incorrect: 'bg-accent' };
 
-/** One segment per question, coloured as it is answered, the current one in ink, and the count beside it; the segments are one progress bar for assistive tech. */
+/** One segment per question, coloured as it is answered, the current one in ink; the segments are one progress bar for assistive tech. */
 function ProgressBar({ states, current }: { states: Progress[]; current: number }) {
 	const answered = states.filter((s) => s !== 'unanswered').length;
-	const pad = (n: number) => String(n).padStart(2, '0');
 	return (
-		<div className="flex min-w-0 flex-1 items-center gap-4">
-			<div className="flex flex-1 gap-1.5" role="progressbar" aria-label="Avanzamento degli esercizi" aria-valuemin={0} aria-valuemax={states.length} aria-valuenow={answered} aria-valuetext={`${answered} di ${states.length} domande`}>
-				{states.map((state, i) => (
-					<div key={i} className={cn('h-1.5 flex-1 rounded-full transition-colors duration-500', state === 'unanswered' && i === current ? 'bg-fg-subtle' : PROGRESS_CLASS[state])} />
-				))}
-			</div>
-			<span className="label-mono shrink-0 tabular-nums text-fg-subtle" aria-hidden="true">
-				{pad(Math.min(current + 1, states.length))}
-				<span className="text-fg-faint"> / {pad(states.length)}</span>
-			</span>
+		<div className="flex w-full gap-1.5" role="progressbar" aria-label="Avanzamento degli esercizi" aria-valuemin={0} aria-valuemax={states.length} aria-valuenow={answered} aria-valuetext={`${answered} di ${states.length} domande`}>
+			{states.map((state, i) => (
+				<div key={i} className={cn('h-1.5 flex-1 rounded-full transition-colors duration-500', state === 'unanswered' && i === current ? 'bg-fg-subtle' : PROGRESS_CLASS[state])} />
+			))}
 		</div>
 	);
 }
@@ -237,13 +232,17 @@ interface PlayerProps {
 	initial?: Progress[];
 	/** The ones among them answered wrong, so the summary lists every mistake of the run. */
 	earlier?: RunResult[];
-	/** What the run is, under the progress bar: "Livello 3" and its name; for a run across lessons, per question. */
+	/** The time already spent on the questions answered before this visit, in ms. */
+	elapsed?: number;
+	/** What the run is, in the top left corner: the lesson's title, or "Ripasso degli errori". */
+	title: ReactNode;
+	/** Under the title: "Livello 3" and its name; for a run across lessons, per question. */
 	label: ReactNode | ((index: number) => ReactNode);
 	/** The run is over and its summary is on screen: the keys stop answering. */
 	finished?: boolean;
 	onLeave: () => void;
-	/** After the last question: the answers of this visit and how every question of the run went. */
-	onFinish: (results: RunResult[], progress: Progress[]) => void;
+	/** After the last question: the answers of this visit, how every question of the run went, and the time spent answering, in ms. */
+	onFinish: (results: RunResult[], progress: Progress[], activeMs: number) => void;
 }
 
 /**
@@ -252,8 +251,11 @@ interface PlayerProps {
  * click waits only for the verdict: the answer is marked at once, the verdict colours it. A right answer moves on
  * by itself; after a mistake the solution stays on screen until "Continua". Each question takes focus as it
  * appears and the verdict is announced, so a run works by keyboard and screen reader too.
+ *
+ * A run takes the whole screen, over the site header and the page it started from: one row at the top with what
+ * the run is, the progress and the way out, then only the question.
  */
-export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], label, finished = false, onLeave, onFinish }: PlayerProps) {
+export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], elapsed = 0, title, label, finished = false, onLeave, onFinish }: PlayerProps) {
 	const [exercise, setExercise] = useState<ExerciseView>(first);
 	const [index, setIndex] = useState(startAt);
 	const [progress, setProgress] = useState<Progress[]>(() => initial ?? Array(session.length).fill('unanswered'));
@@ -261,6 +263,8 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 	const [verdict, setVerdict] = useState<Verdict | null>(null);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	// The X, or Esc, asks before leaving a run under way.
+	const [leaving, setLeaving] = useState(false);
 	// Answers wider than their cell send the set back to one column; measured after render.
 	const [narrow, setNarrow] = useState(false);
 	const grid = useRef<HTMLDivElement>(null);
@@ -268,6 +272,8 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 	const after = useRef<HTMLDivElement>(null);
 	const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const results = useRef<RunResult[]>(earlier);
+	// The time on the questions answered so far: what the server saves with each answer, summed.
+	const spent = useRef(elapsed);
 	// The run's exercises asked for ahead, by position: the requests, and the ones already here.
 	const requests = useRef(new Map<number, Promise<ExerciseView>>());
 	const arrived = useRef(new Map<number, ExerciseView>());
@@ -319,7 +325,7 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		if (advanceTimer.current) clearTimeout(advanceTimer.current);
 		advanceTimer.current = null;
 		if (last) {
-			onFinish(results.current, progress);
+			onFinish(results.current, progress, spent.current);
 			return;
 		}
 		const position = index + 1;
@@ -349,8 +355,10 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		setBusy(true);
 		setError(null);
 		try {
-			const body = built ? { key: exercise.key, built, activeMs: clock.read() } : latex !== undefined ? { key: exercise.key, latex, activeMs: clock.read() } : { key: exercise.key, choice: i, activeMs: clock.read() };
+			const activeMs = clock.read();
+			const body = built ? { key: exercise.key, built, activeMs } : latex !== undefined ? { key: exercise.key, latex, activeMs } : { key: exercise.key, choice: i, activeMs };
 			const res = await post<{ verdict: Verdict }>(`/api/esercizi/${exercise.id}`, body);
+			spent.current += activeMs;
 			results.current = [...results.current.filter((r) => r.position !== index), { position: index, exercise, choice: i, verdict: res.verdict }];
 			setVerdict(res.verdict);
 			setProgress((p) => p.map((s, k) => (k === index ? (res.verdict.correct ? 'correct' : 'incorrect') : s)));
@@ -380,6 +388,63 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [verdict]);
 
+	// Closing the tab or the browser, or reloading, asks too: there the browser shows its own dialog, the only one
+	// a page may put up. Attached only while the run is under way, so the page keeps its place in the
+	// back/forward cache afterwards.
+	useEffect(() => {
+		if (finished) return;
+		const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+		window.addEventListener('beforeunload', warn);
+		return () => window.removeEventListener('beforeunload', warn);
+	}, [finished]);
+
+	// The browser's Back asks as well. A page cannot stop it, so the run puts an entry of its own on the history
+	// when it starts: Back takes that one, the page stays, the entry goes back on and the question comes up. The
+	// entry is taken off again when the student leaves or the run ends, so Back then works as it always did.
+	const guard = useRef<'on' | 'leaving' | 'dropping' | 'off'>('off');
+	const leave = useRef(onLeave);
+	useEffect(() => {
+		leave.current = onLeave;
+	});
+	const guarding = () => guard.current === 'on' && window.history.state?.__run === session.id;
+	const pushGuard = () => window.history.pushState({ ...window.history.state, __run: session.id }, '', window.location.href);
+	useEffect(() => {
+		if (finished) return;
+		// Already there when the effect runs twice (development), or after Forward.
+		if (window.history.state?.__run !== session.id) pushGuard();
+		guard.current = 'on';
+		const onPop = () => {
+			if (guard.current === 'leaving') {
+				guard.current = 'off';
+				leave.current();
+			} else if (guard.current === 'dropping') guard.current = 'off';
+			else if (guard.current === 'on' && window.history.state?.__run !== session.id) {
+				pushGuard();
+				setLeaving(true);
+			}
+		};
+		window.addEventListener('popstate', onPop);
+		return () => window.removeEventListener('popstate', onPop);
+		// `pushGuard` only reads the run's id.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [finished, session.id]);
+	// The run is over: its entry goes, before the summary's buttons use the history themselves.
+	useEffect(() => {
+		if (!finished || !guarding()) return;
+		const onPop = () => (guard.current = 'off');
+		window.addEventListener('popstate', onPop, { once: true });
+		guard.current = 'dropping';
+		window.history.back();
+		return () => window.removeEventListener('popstate', onPop);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [finished]);
+	/** Out of the run for good: first its history entry, then the page it came from. */
+	const exit = () => {
+		if (!guarding()) return onLeave();
+		guard.current = 'leaving';
+		window.history.back();
+	};
+
 	// From the keyboard: 1-4 pick an answer (the number on its box), and a-d too, the letters of a written test;
 	// Enter goes on after a mistake. Not while typing somewhere else on the page, not with a modifier held.
 	useEffect(() => {
@@ -387,6 +452,11 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 		const onKey = (e: KeyboardEvent) => {
 			if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
 			const target = e.target as HTMLElement | null;
+			if (e.key === 'Escape' && !target?.closest('math-field, [role="dialog"]')) {
+				e.preventDefault();
+				setLeaving(true);
+				return;
+			}
 			if (target?.closest('input, textarea, select, button, math-field, [contenteditable=""], [contenteditable="true"], [role="dialog"]')) return;
 			if (verdict && !verdict.correct && e.key === 'Enter') {
 				e.preventDefault();
@@ -447,15 +517,24 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 				: `Risposta sbagliata. Quella giusta era: ${speakable(exercise.options[verdict.correctIndex]?.text ?? '')}. Sotto c'è come si risolve.`;
 
 	return (
-		<div id="esercizi" data-code-language={codeLanguage} className="flex h-full w-full flex-col items-center gap-6 px-4 pb-6 pt-3 sm:gap-10 sm:px-8 sm:pb-10 sm:pt-6 md:px-10">
-			<div className="flex w-full max-w-2xl flex-col items-center gap-3">
-				<div className="flex w-full items-center gap-3">
-					<button type="button" onClick={onLeave} aria-label="Esci dalla prova" className="-ml-2 flex size-9 shrink-0 items-center justify-center rounded-lg text-fg-subtle transition-colors hover:bg-surface-3 hover:text-fg focus-ring">
-						<X className="size-5" aria-hidden="true" />
-					</button>
-					<ProgressBar states={progress} current={index} />
+		<div id="esercizi" data-code-language={codeLanguage} className="fixed inset-0 z-50 flex flex-col items-center gap-6 overflow-y-auto overscroll-y-contain bg-surface px-4 pb-[calc(var(--safe-b)+1.5rem)] pt-3 text-fg sm:gap-10 sm:px-8 sm:pb-10 sm:pt-5 md:px-10">
+			<div className="flex w-full flex-col items-center gap-3 pt-safe-t">
+				{/* One row: what the run is on the left, the way out on the right, the progress between them, as wide as the
+				    question below. On a phone the progress takes a row of its own under the title. */}
+				<div className="flex w-full flex-wrap items-center gap-x-6 gap-y-3">
+					<div className="flex min-w-0 flex-1 basis-0 flex-col gap-0.5">
+						<p className="truncate font-display text-lg font-semibold leading-tight tracking-tight text-fg-strong">{title}</p>
+						<p className="flex min-w-0 items-baseline gap-2 truncate text-sm">{typeof label === 'function' ? label(index) : label}</p>
+					</div>
+					<div className="order-last w-full md:order-none md:w-auto md:max-w-2xl md:flex-[2_1_0]">
+						<ProgressBar states={progress} current={index} />
+					</div>
+					<div className="flex shrink-0 justify-end md:flex-1 md:basis-0">
+						<button type="button" onClick={() => (finished ? exit() : setLeaving(true))} aria-label="Esci dalla prova" aria-haspopup="dialog" className="-mr-2 flex size-9 shrink-0 items-center justify-center rounded-lg text-fg-subtle transition-colors hover:bg-surface-3 hover:text-fg focus-ring">
+							<X className="size-5" aria-hidden="true" />
+						</button>
+					</div>
 				</div>
-				<p className="flex max-w-full items-baseline gap-2 truncate text-sm">{typeof label === 'function' ? label(index) : label}</p>
 				{error && (
 					<p role="alert" className="px-4 text-center text-sm text-danger-fg">
 						{error}
@@ -531,6 +610,15 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 			<p className="sr-only" role="status" aria-live="assertive">
 				{announced}
 			</p>
+			<Sheet open={leaving && !finished} onClose={() => setLeaving(false)} title="Vuoi uscire dalla prova?" size="auto" width="sm" align="center">
+				<p className="text-sm text-fg-muted">Le risposte che hai dato restano salvate, ma la prova resta a metà.</p>
+				<div className={cn(sheetActions, 'mt-5')}>
+					<Button variant="ghost" onClick={exit}>
+						Esci
+					</Button>
+					<Button onClick={() => setLeaving(false)}>Continua la prova</Button>
+				</div>
+			</Sheet>
 		</div>
 	);
 }

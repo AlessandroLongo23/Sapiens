@@ -1,5 +1,5 @@
 ---
-stato: in sviluppo
+stato: rilasciata
 release: da decidere
 aggiornato: 2026-10-07
 tag: [prodotto, studenti, strumenti, fisica, lezioni]
@@ -11,7 +11,7 @@ Lo strumento della fisica: una scena fatta di pezzi (masse, piani inclinati, cor
 ## Stato attuale
 Dal 5 ottobre 2026 c'è la prima fetta, nel codice locale, non committata. Non è nella beta.
 
-Dal 7 ottobre 2026 la sandbox è uno strumento del sito, alla pagina `/strumenti/sandbox-di-fisica`: l'editor in alto, i link alle lezioni sul piano inclinato e sull'attrito, un articolo (`src/content/strumenti/sandbox-di-fisica.md`) e la carta nell'indice degli strumenti, tra quelli di fisica. Il nome è "Sandbox di fisica". La pagina di prova `/prova-fisica/sandbox` è stata tolta; il vecchio visore delle scene fisse (`Sandbox.tsx`, quello di `?fissa=1`) non ha più una pagina che lo usa. Una scena condivisa sta nell'indirizzo dopo `#s=`, come prima. Guardata con Playwright a 1440 e 390 px, senza scorrimento laterale.
+Dal 7 ottobre 2026 la sandbox è uno strumento del sito, in produzione (PR #54), alla pagina `/strumenti/sandbox-di-fisica`: l'editor in alto, i link alle lezioni sul piano inclinato e sull'attrito, un articolo (`src/content/strumenti/sandbox-di-fisica.md`) e la carta nell'indice degli strumenti, tra quelli di fisica. Il nome è "Sandbox di fisica". La pagina di prova `/prova-fisica/sandbox` è stata tolta; il vecchio visore delle scene fisse (`Sandbox.tsx`, quello di `?fissa=1`) non ha più una pagina che lo usa. Una scena condivisa sta nell'indirizzo dopo `#s=`, come prima. Guardata con Playwright a 1440 e 390 px, senza scorrimento laterale.
 
 - Il motore, `src/lib/sandbox/engine.ts`: punti materiali, superfici fisse dritte con attrito statico e dinamico, corde ideali, carrucole fisse ideali (una per corda), in unità SI. A ogni passo risolve un solo sistema lineare che ha per incognite le accelerazioni e le forze dei vincoli, quindi tensioni, reazioni e attrito sono risultati da leggere. Il passo è $x + vh + \frac{1}{2}ah^2$, tagliato dove l'attrito ferma un corpo, dove un corpo atterra e dove una corda si tende: un sistema con forze costanti segue la legge chiusa fino all'arrotondamento. Una scena è JSON.
 - Le scene, `src/lib/sandbox/scenes.ts`: piano inclinato, macchina di Atwood, piano inclinato con peso appeso, corpo appeso a due fili, lancio da un tavolo, e per le lezioni la lampada tra soffitto e parete e il carrello sul tavolo con il pesetto.

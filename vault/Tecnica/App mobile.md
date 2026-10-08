@@ -1,6 +1,6 @@
 ---
 stato: in sviluppo
-aggiornato: 2026-09-26
+aggiornato: 2026-10-07
 tag: [tecnica, mobile]
 ---
 # App mobile
@@ -18,7 +18,7 @@ Decisione in [[2026-09-03 Mobile-first, poi PWA, poi Capacitor]].
 - Sviluppo: con `npm run dev` avviato, `npm run cap:dev:ios` e `npm run cap:dev:android` aprono l'app nel simulatore collegata a `localhost:3000` con il live reload. Con Xcode 27 il deploy di `cap run ios` fallisce perché Simulator.app non è più dove Capacitor lo cerca: lo script `scripts/cap-dev-ios.mjs` installa e avvia l'app con `simctl`.
 
 ## Obiettivo
-1. Deciso il 25 settembre 2026: l'app si apre su "Oggi" ([[2026-09-25 Oggi è lo schermo iniziale dell'app]], piano in [[Progressi dello studente]]). Una schermata iniziale dell'app, "Oggi" (lezione da riprendere, pratica quotidiana, serie di giorni), e un onboarding che chiede classe e indirizzo una volta sola, al posto di `APP_START` fisso. Da disegnare con Dario: vedi [[Agenda]].
+1. Deciso il 25 settembre 2026: l'app si apre su "Oggi" ([[2026-09-25 Oggi è lo schermo iniziale dell'app]], piano in [[Progressi dello studente]]). Una schermata iniziale dell'app, "Oggi" (lezione da riprendere, pratica quotidiana, serie di giorni), e un onboarding che chiede anno e argomento in classe una volta sola (dal 7 ottobre 2026 l'indirizzo non si chiede, vedi [[Onboarding]]), al posto di `APP_START` fisso. Da disegnare con Dario: vedi [[Agenda]].
 2. PWA installabile: service worker che salva l'app e le ultime lezioni lette per aprirle senza rete; invito a installare dopo la seconda visita.
 3. App Android e iOS con Capacitor quando i numeri di ritorno lo giustificano, con notifiche native.
 

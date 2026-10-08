@@ -97,18 +97,17 @@ export const subjectLayout = (count: number): CardLayout => (count === 2 || coun
  */
 export function ObjectCard({ href, tone, object, eyebrow, title, text, chips, meta, layout = 'stack' }: ObjectCardProps) {
 	const stack = layout === 'stack';
+	// The arrow stays in the middle of its disc: under a mouse the disc is inked from the left, and the arrow with it.
 	const arrow = (
-		<span className="grid size-9 shrink-0 place-items-center rounded-full bg-tint-soft text-tint-fg transition-colors duration-300 ease-out-soft group-hover:bg-tint-cover group-hover:text-tint-cover-fg max-sm:hidden" aria-hidden="true">
-			<ArrowRight className="size-4 transition-transform duration-300 ease-out-soft group-hover:translate-x-0.5" />
+		<span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-tint-soft text-tint-fg max-sm:hidden" aria-hidden="true">
+			<ArrowRight className="size-4" />
+			<span className="absolute inset-0 grid place-items-center rounded-full bg-tint-cover text-tint-cover-fg transition-[clip-path] duration-500 ease-out-soft [clip-path:circle(0%_at_0%_50%)] group-hover:[clip-path:circle(115%_at_0%_50%)] motion-reduce:transition-none">
+				<ArrowRight className="size-4" />
+			</span>
 		</span>
 	);
-	const counts = (
-		<p className="label-mono flex flex-wrap gap-x-3 gap-y-1 text-fg-subtle">
-			{meta.map((m) => (
-				<span key={m}>{m}</span>
-			))}
-		</p>
-	);
+	// Each count stays on one line; a middle dot goes between them.
+	const counts = <p className="label-mono text-fg-subtle">{meta.map((m) => m.replaceAll(' ', '\u00a0')).join(' · ')}</p>;
 	const words = (
 		<>
 			{eyebrow && <span className="label-mono mb-2 text-tint-fg max-sm:hidden">{eyebrow}</span>}
@@ -165,7 +164,7 @@ export function ObjectCard({ href, tone, object, eyebrow, title, text, chips, me
 						</div>
 						<div className="flex min-w-0 flex-1 flex-col px-6 pb-5 max-sm:px-3 max-sm:py-4">
 							{words}
-							<div className="mt-auto flex items-center justify-between gap-3 pt-5 max-sm:pt-2">
+							<div className="mt-auto flex items-center justify-between gap-3 pt-8 max-sm:pt-2">
 								{counts}
 								{arrow}
 							</div>
@@ -176,7 +175,7 @@ export function ObjectCard({ href, tone, object, eyebrow, title, text, chips, me
 					<>
 						<div className="flex min-w-0 flex-1 flex-col justify-center py-6 pl-7 max-sm:order-2 max-sm:px-3 max-sm:py-4">
 							{words}
-							<div className="flex items-center gap-4 pt-5 max-sm:pt-2">
+							<div className="flex items-center gap-4 pt-8 max-sm:pt-2">
 								{arrow}
 								{counts}
 							</div>

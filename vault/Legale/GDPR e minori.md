@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-28
+aggiornato: 2026-10-07
 tag: [legale, privacy]
 ---
 # GDPR e minori
@@ -32,4 +32,9 @@ Oggi la chat usa OpenAI, con server negli Stati Uniti. Per i clienti B2C servono
 
 ## Domande aperte
 - In quale regione è il progetto Supabase?
+- Dal 7 ottobre 2026 l'[[Onboarding]] chiede anno di corso e argomento in classe, che sono più di nome ed email: si possono chiedere a chi dichiara almeno 14 anni prima del consenso forte del genitore? Da chiedere a un legale.
+- Deciso il 7 ottobre 2026: sotto i 14 anni lo studente indica l'email di un genitore, che conferma da un link senza creare un account ([[2026-10-07 Sotto i 14 anni conferma un genitore con un link, senza account]]). Nel codice, non pubblicato. Sostituisce la casella "sono il genitore". Per il legale: quale età vale per un'impresa danese con pubblico italiano, se un minorenne accetta da solo i termini del piano gratuito, se l'email al genitore basta per il Garante.
+- Con [[2026-10-07 La conferma dell'email non blocca l'ingresso]] un account può esistere 30 giorni con un indirizzo non verificato, che può essere di un'altra persona: a quell'indirizzo vanno solo il codice e un promemoria. Da scrivere nell'informativa.
+- La pagina "chiedi a un genitore" mostra a chi ha il link l'attività di un minorenne ([[2026-10-07 Chiedi a un genitore è un link per pagare senza account]]): quali dati, per quanto tempo.
+- Google come fornitore di accesso va aggiunto all'informativa ([[2026-10-07 L'iscrizione ha anche l'accesso con Google]]).
 - Uno studente tra 14 e 17 anni può chiedere un tutor dal suo account, o solo dall'account del genitore (consigliato nella ricerca del 6 settembre)?

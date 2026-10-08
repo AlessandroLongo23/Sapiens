@@ -8,8 +8,8 @@ test.describe('public pages', () => {
 	test('home shows content counters and one h1', async ({ page }) => {
 		await page.goto('/');
 		await expect(page.locator('h1')).toHaveCount(1);
-		// The counters are rendered twice, beside the title on desktop and after the sketch on phones; one is hidden.
-		await expect(page.getByText('Lezioni pubblicate').filter({ visible: true })).toBeVisible();
+		// The figures under the hero come from the content table.
+		await expect(page.getByText('lezioni online', { exact: true })).toBeVisible();
 		await expect(page.getByText('Studenti Iscritti')).toHaveCount(0);
 	});
 

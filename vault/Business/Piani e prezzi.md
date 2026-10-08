@@ -1,6 +1,6 @@
 ---
 stato: bozza
-aggiornato: 2026-09-28
+aggiornato: 2026-10-07
 tag: [business]
 ---
 # Piani e prezzi
@@ -28,6 +28,8 @@ Dal 25 settembre 2026, nel codice (non ancora pubblicato con un deploy), in `src
 - Il Pro non include più ore di ripetizione. Diventa Base più contatto con il tutor pagato da Sapiens più [[Area genitori]], ed esce con la [[Release v2 Tutor]]. Fino ad allora c'è solo una lista d'attesa. Vedi [[2026-09-23 Il piano Pro non include ore di ripetizione]].
 - L'AI è a pagamento fin dalla [[Release Beta]].
 - Studio costa €9,99 al mese, oppure €49,99 in un solo pagamento fino a giugno; nessun prezzo diverso per chi si abbona nella beta. Il piano fino a giugno è un pagamento unico con accesso fino al 30 giugno, senza rinnovo, in vendita a gennaio e febbraio. Vedi [[2026-09-25 Studio costa 9,99 euro al mese o 49,99 fino a giugno]].
+
+- Nella beta lo studente paga dal suo account oppure manda a un genitore un link che porta al pagamento di Studio per il suo account, senza che il genitore si iscriva. Vedi [[2026-10-07 Chiedi a un genitore è un link per pagare senza account]].
 
 ## Discussione del 23 settembre 2026
 Idea di Alessandro: piani da gratuito fino a un piano completo (AI e contatto con il tutor) intorno a €50-60 al mese, con piani intermedi intorno a €5-10 e €25-30. Esercizi, formulari e flashcard a pagamento; Zaino con un'anteprima gratuita e illimitato a pagamento; le funzioni AI nel piano più alto prima del Pro, perché l'inferenza costa.

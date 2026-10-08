@@ -15,6 +15,7 @@ interface Current {
 	startAt: number;
 	initial?: Progress[];
 	earlier?: AnsweredView[];
+	elapsed?: number;
 }
 
 /**
@@ -41,6 +42,7 @@ export function useRuns() {
 				startAt?: number;
 				progress?: Progress[];
 				mistakes?: AnsweredView[];
+				activeMs?: number;
 			}>('/api/esercizi', { kind });
 			setRun({
 				kind,
@@ -48,7 +50,8 @@ export function useRuns() {
 				first: res.exercise,
 				startAt: res.startAt ?? 0,
 				initial: res.progress,
-				earlier: res.mistakes
+				earlier: res.mistakes,
+				elapsed: res.activeMs
 			});
 		} catch (err) {
 			setError({ kind, message: (err as Error).message });
@@ -73,6 +76,7 @@ export function useRuns() {
 				startAt={run.startAt}
 				initial={run.initial}
 				earlier={run.earlier}
+				elapsed={run.elapsed}
 				title="Pratica di oggi"
 				outcome={(correct, total) => ({
 					title: 'Pratica fatta',

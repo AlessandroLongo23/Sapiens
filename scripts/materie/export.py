@@ -10,7 +10,8 @@ import numpy as np
 from PIL import Image
 
 SRC, ONLY = sys.argv[1], sys.argv[2:]
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'public', 'materie')
+# OUT_DIR sends the files elsewhere: the objects of the onboarding go to public/onboarding.
+OUT = os.environ.get('OUT_DIR') or os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'public', 'materie')
 os.makedirs(OUT, exist_ok=True)
 
 

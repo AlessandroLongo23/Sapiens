@@ -20,4 +20,5 @@ Fonti: wiki di fsrs4anki su GitHub ("ABC of FSRS", "The optimal retention"); FAQ
 
 ## Collegamenti
 - [[Flashcard]], [[Pratica quotidiana]], [[Esercizi]], [[Piani e prezzi]]
+- [[Simulazioni di verifica]] (8 ottobre 2026): se la simulazione è l'ultimo passo di questo ripasso è una domanda aperta lì.
 - Il 30 settembre 2026 FSRS è deciso per gli esercizi, per livello: [[2026-09-30 La memoria degli esercizi è per livello, con FSRS, e la risposta aperta pesa di più]]. Il ripasso verso la data di una verifica resta un'idea.

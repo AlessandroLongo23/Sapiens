@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-28
+aggiornato: 2026-10-07
 tag: [prodotto, studenti, privacy]
 ---
 # Account e impostazioni
@@ -24,6 +24,8 @@ Dal 28 settembre 2026, su richiesta di Alessandro. Nel codice, non ancora pubbli
 ## Obiettivo
 Da discutere. Vedi le domande aperte.
 
+Dal 7 ottobre 2026 sul profilo ci sono anche le materie scelte e un argomento per materia ([[2026-10-07 L'onboarding chiede le materie e un argomento per materia]]), da rendere modificabili da qui. Deciso il 7 ottobre 2026 con l'[[Onboarding]]: l'anno di corso si chiede all'ingresso e si potrà cambiare dal profilo ([[2026-10-07 L'onboarding chiede anno e argomento in classe]]); un account può avere più ruoli, in una tabella dei profili scritta dal server ([[2026-10-07 Un account può avere più ruoli]]); si accede anche con Google ([[2026-10-07 L'iscrizione ha anche l'accesso con Google]]); la sezione "Accesso e sicurezza" mostra se l'email è confermata e fa inserire il codice ([[2026-10-07 La conferma dell'email non blocca l'ingresso]]).
+
 ## Dettagli
 - Tema e preferenze dello Zaino restano per dispositivo, come prima: chi usa il telefono e il computer può avere scelte diverse.
 - L'export non contiene gli identificativi di pagamento: le ricevute sono di Stripe e arrivano per email.
@@ -38,4 +40,4 @@ Da discutere. Vedi le domande aperte.
 ## Collegamenti
 - Attori: [[Studente]]
 - Release: [[Release Beta]]
-- Decisioni: nessuna ancora
+- Decisioni: [[2026-10-07 Un account può avere più ruoli]], [[2026-10-07 La conferma dell'email non blocca l'ingresso]], [[2026-10-07 L'iscrizione ha anche l'accesso con Google]]
