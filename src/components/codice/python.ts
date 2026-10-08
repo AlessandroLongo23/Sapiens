@@ -1,5 +1,5 @@
 import { spawn } from './sandbox-worker';
-import { TIME_LIMIT, type FromRunner, type Job, type Listeners, type Outcome, type Result, type Runtime, type ToRunner } from './runtime';
+import { TIME_LIMIT, type Changes, type FromRunner, type Job, type Listeners, type Outcome, type Result, type Runtime, type ToRunner } from './runtime';
 
 /** The sandbox's side of the Python worker (python.worker.ts): starts it, runs a program, ends it when it takes too long. */
 
@@ -75,15 +75,15 @@ export class Python implements Runtime {
 		else if (data.type === 'started') {
 			run.timer = setTimeout(() => this.stop('timeout'), TIME_LIMIT);
 			run.onStart?.();
-		} else this.end(data.status, data.ms);
+		} else this.end(data.status, data.ms, data.changes);
 	}
 
-	private end(outcome: Outcome, ms = 0) {
+	private end(outcome: Outcome, ms = 0, changes?: Changes) {
 		const run = this.current;
 		if (!run) return;
 		this.current = null;
 		clearTimeout(run.timer);
-		run.finish({ outcome, ms });
+		run.finish({ outcome, ms, changes });
 	}
 
 	private discard() {

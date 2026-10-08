@@ -1,5 +1,5 @@
 import type { FromCompiler, ToCompiler } from './clang.worker';
-import { TIME_LIMIT, type FromRunner, type Job, type Listeners, type Outcome, type Result, type Runtime } from './runtime';
+import { TIME_LIMIT, type Changes, type FromRunner, type Job, type Listeners, type Outcome, type Result, type Runtime } from './runtime';
 import { spawn } from './sandbox-worker';
 import type { ToWasi } from './wasi.worker';
 
@@ -108,7 +108,7 @@ export class Clang implements Runtime {
 			else if (data.type === 'started') {
 				run.timer = setTimeout(() => this.stop('timeout'), TIME_LIMIT);
 				run.onStart?.();
-			} else if (data.type === 'done') this.end(data.status, data.ms);
+			} else if (data.type === 'done') this.end(data.status, data.ms, data.changes);
 		});
 		worker.addEventListener('error', () => this.current === run && this.end('failed'));
 	}
@@ -126,12 +126,12 @@ export class Clang implements Runtime {
 		this.up = false;
 	}
 
-	private end(outcome: Outcome, ms = 0) {
+	private end(outcome: Outcome, ms = 0, changes?: Changes) {
 		const run = this.current;
 		if (!run) return;
 		this.current = null;
 		clearTimeout(run.timer);
 		run.worker?.terminate();
-		run.finish({ outcome, ms });
+		run.finish({ outcome, ms, changes });
 	}
 }

@@ -133,7 +133,7 @@ interface Sealed {
 	figure?: FigureRef;
 	scene?: SceneRef;
 	/** A flowchart or a program that goes with the solution. */
-	drawn?: { chart?: string; code?: CodeText };
+	drawn?: { chart?: string; code?: CodeText; listing?: string };
 	/** An open question: what the grader needs, and the right answer to show. */
 	open?: { answer: Answer; grading: OpenGrading; prompt: string; problem: string; expected: string };
 	/** An open question answered with a flowchart or a program: its tests and a solution to show. */
@@ -205,6 +205,9 @@ export function codeHtml(code: CodeText): string {
  */
 export const listingHtml = (text: string): string | null => (text.includes('\n') ? `<pre class="code-block">${escapeHtml(text.replace(/\n+$/, ''))}</pre>` : null);
 
+/** A fragment in fixed width (`listing` of a sample or of an option): one line or many, always set as code. */
+export const fragmentHtml = (text: string): string => `<pre class="code-block" data-listing><code>${escapeHtml(text.replace(/\n+$/, ''))}</code></pre>`;
+
 /** The lessons before the programming languages: a chart built there has no program in Python and C++ beside it. */
 const BEFORE_LANGUAGES = new Set(['algoritmi', 'inf-problema-algoritmo', 'inf-pseudocodice', 'inf-bohm-jacopini', 'scratch']);
 
@@ -266,6 +269,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 					b.kind === 'text' ? { kind: isAsk(b.tex) ? 'ask' : 'text', html: renderMath(b.tex) } : b.kind === 'givens' ? { kind: 'givens', items: b.items.map((t) => renderTex(t, false)) } : { kind: 'math', html: renderTex(b.tex, true) }
 				);
 	if (s.code) blocks.push({ kind: 'code', html: codeHtml(s.code) });
+	if (s.listing) blocks.push({ kind: 'code', html: fragmentHtml(s.listing) });
 	if (s.chart) blocks.push({ kind: 'figure', html: chartHtml(s.chart) });
 	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
 	if (s.scene) blocks.push({ kind: 'scene', scene: drawnScene(s.scene) });
@@ -275,7 +279,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 	// a question stored as open on a chart or a program is graded by running it, whatever the table says today
 	const open: OpenGrading | null = s.mode === 'open' ? (made ? { grade: 'run' } : openGrading(s.generatorId, s.level)) : null;
 	const run = open?.grade === 'run' && (s.answer.kind === 'chart' || s.answer.kind === 'program') ? s.answer : null;
-	const drawn = { chart: s.solutionChart, code: s.solutionCode };
+	const drawn = { chart: s.solutionChart, code: s.solutionCode, listing: s.solutionListing };
 	return {
 		id,
 		level,
@@ -290,6 +294,8 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 				? { html: chartHtml(o.chart, o.text ?? 'Diagramma di flusso'), text: o.text ?? 'un diagramma di flusso', figure: true as const }
 				: o.code
 					? { html: codeHtml(o.code), text: o.text ?? 'un programma', figure: true as const }
+						: o.listing !== undefined
+							? { html: fragmentHtml(o.listing), text: o.text ?? o.listing, figure: true as const }
 					: o.figure
 				? { html: figureHtml(o.figure), text: o.text ?? o.figure.alt, figure: true as const }
 				: o.scene
@@ -308,7 +314,7 @@ function view(id: string, userId: string, level: number, s: Stored): ExerciseVie
 			format: s.format,
 			figure: s.solutionFigure,
 			scene: s.solutionScene,
-			...(drawn.chart !== undefined || drawn.code ? { drawn } : {}),
+			...(drawn.chart !== undefined || drawn.code || drawn.listing ? { drawn } : {}),
 			...(run ? { run } : open ? { open: { answer: s.answer, grading: open, prompt: s.prompt, problem: s.problem, expected: expectedLatex(s) } } : {})
 		})
 	};
@@ -323,9 +329,9 @@ function expectedLatex(s: Sample): string {
 }
 
 /** Solution and steps typeset, from the sample or from the sealed key. */
-function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef; scene?: SceneRef; drawn?: { chart?: string; code?: CodeText } }) {
+function worked(w: { solution: string; steps: string[]; format?: 'text'; figure?: FigureRef; scene?: SceneRef; drawn?: { chart?: string; code?: CodeText; listing?: string } }) {
 	const html = w.format === 'text' ? textHtml : (t: string) => renderMath(presentStep(t));
-	const drawing = [w.drawn?.code ? codeHtml(w.drawn.code) : '', w.drawn?.chart !== undefined ? chartHtml(w.drawn.chart) : '', w.figure ? figureHtml(w.figure) : ''].join('');
+	const drawing = [w.drawn?.code ? codeHtml(w.drawn.code) : '', w.drawn?.listing ? fragmentHtml(w.drawn.listing) : '', w.drawn?.chart !== undefined ? chartHtml(w.drawn.chart) : '', w.figure ? figureHtml(w.figure) : ''].join('');
 	return { solutionHtml: html(w.solution), stepsHtml: w.steps.map(html), ...(drawing ? { figureHtml: drawing } : {}), ...(w.scene ? { scene: drawnScene(w.scene) } : {}) };
 }
 
@@ -347,7 +353,7 @@ function answered(row: AnsweredRow): AnsweredView {
 				: s.answer.kind === 'chart' || s.answer.kind === 'program'
 					? { expectedHtml: solvedHtml(s.answer), answerHtml: row.answer.built ? builtHtml(row.answer.built) : '', built: true as const, ...(row.answer.message ? { message: row.answer.message } : {}) }
 					: { expectedHtml: renderTex(expectedLatex(s), true), answerHtml: renderTex(row.answer.latex ?? '', true), ...(row.answer.message ? { message: row.answer.message } : {}) }),
-			...worked({ ...s, figure: s.solutionFigure, scene: s.solutionScene, drawn: { chart: s.solutionChart, code: s.solutionCode } })
+			...worked({ ...s, figure: s.solutionFigure, scene: s.solutionScene, drawn: { chart: s.solutionChart, code: s.solutionCode, listing: s.solutionListing } })
 		}
 	};
 }

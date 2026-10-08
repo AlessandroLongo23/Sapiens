@@ -1,4 +1,4 @@
-import { chartHtml, codeHtml, listingHtml } from '@/lib/server/exercises';
+import { chartHtml, codeHtml, fragmentHtml, listingHtml } from '@/lib/server/exercises';
 import 'server-only';
 import { configs } from '@/lib/exercises/config';
 import { generators } from '@/lib/exercises';
@@ -99,6 +99,7 @@ function item(number: number, s: Sample): SheetItem {
 					b.kind === 'text' ? { kind: isAsk(b.tex) ? 'ask' : 'text', html: renderMath(b.tex) } : b.kind === 'givens' ? { kind: 'givens', items: b.items.map((t) => renderTex(t, false)) } : { kind: 'math', html: renderTex(`\\displaystyle ${b.tex}`, false) }
 				);
 	if (s.code) blocks.push({ kind: 'code', html: codeHtml(s.code) });
+	if (s.listing) blocks.push({ kind: 'code', html: fragmentHtml(s.listing) });
 	if (s.chart) blocks.push({ kind: 'figure', html: chartHtml(s.chart) });
 	if (s.figure) blocks.push({ kind: 'figure', html: figureHtml(s.figure) });
 	if (s.scene) blocks.push({ kind: 'scene', scene: drawnScene(s.scene) });
@@ -110,14 +111,14 @@ function item(number: number, s: Sample): SheetItem {
 	// An option in words (`\text{I numeri pari} \\ \text{compresi tra 7 e 21}`, maybe in a `gathered`) becomes one
 	// line of prose that wraps: the breaks were made for a button.
 	const option = (o: ChoiceAnswer['options'][number]) =>
-		o.chart !== undefined ? chartHtml(o.chart, o.text ?? 'Diagramma di flusso') : o.code ? codeHtml(o.code) : o.figure ? figureHtml(o.figure) : o.scene ? sceneOptionHtml(o.scene) : text ? (listingHtml(o.latex) ?? textHtml(o.latex)) : renderMath(presentStep(o.latex.replace(/\\(?:begin|end)\{gathered\}/g, '').replace(/\\\\/g, ' ')));
+		o.chart !== undefined ? chartHtml(o.chart, o.text ?? 'Diagramma di flusso') : o.code ? codeHtml(o.code) : o.listing !== undefined ? fragmentHtml(o.listing) : o.figure ? figureHtml(o.figure) : o.scene ? sceneOptionHtml(o.scene) : text ? (listingHtml(o.latex) ?? textHtml(o.latex)) : renderMath(presentStep(o.latex.replace(/\\(?:begin|end)\{gathered\}/g, '').replace(/\\\\/g, ' ')));
 	const solution = text ? textHtml(s.solution) : renderMath(presentStep(s.solution));
 	return {
 		number,
 		promptHtml: prompt ? (text ? textHtml(prompt) : renderMath(prompt)) : '',
 		blocks,
 		optionsHtml: choice ? choice.options.map(option) : null,
-		optionWidth: choice ? optionWidth(choice.options.map((o) => (o.scene ? 6 : o.figure || o.chart !== undefined || o.code ? 40 : printedLength(o.latex))), text) : 0,
+		optionWidth: choice ? optionWidth(choice.options.map((o) => (o.scene ? 6 : o.figure || o.chart !== undefined || o.code || o.listing !== undefined ? 40 : printedLength(o.latex))), text) : 0,
 		answerHtml: choice ? `<b>${LETTERS[choice.correct]})</b> ${option(choice.options[choice.correct])}` : solution
 	};
 }

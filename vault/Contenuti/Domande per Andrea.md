@@ -494,5 +494,91 @@ Per [[Simulazioni di verifica]], matematica al biennio.
 - [ ] Il credito parziale: quanto vale un esercizio con il metodo giusto e un errore di calcolo? E un risultato giusto senza passaggi?
 - [ ] Quanto tempo in più ha di solito uno studente con un PDP?
 
+## Informatica, terzo anno (7 ottobre 2026)
+Dal lotto [[2026-10-07 Terzo anno di informatica]]: 34 lezioni (65-98), scritte e non ancora pubblicate. Le scelte fissate prima di scrivere sono nella sezione "Scelte del lotto" di `docs/lezioni/informatica/brief-terzo-anno.md`; le domande minori restano nelle note `docs/lezioni/informatica/note/65-98`. Qui le più pesanti per prime, poi lezione per lezione.
+
+Scelte che cambiano più lezioni:
+- [ ] **Vettori in C++ (70 e tutto il resto fino alla 80).** Array a dimensione fissa con una costante, `const int N = 5; int v[N];`, passati a una funzione come `int v[], int n`, e `vector` solo in un riquadro della 70 con `push_back`: è quello che fai in classe? La costante `N` prima di `main`, dentro `main`, o con `#define`? Quando i dati sono "quanti ne vuole l'utente" usi un array con una capienza massima e una variabile `n` per gli elementi usati?
+- [ ] **`int v[100]` negli esercizi.** Nei generatori il vettore è dichiarato `int v[6]` senza la costante (75) o `int v[MAX]` con `const int MAX = 100` (76, 77), perché il programma stia nelle righe di un esercizio sul telefono: va bene, o serve una forma sola, uguale a quella della lezione 70?
+- [ ] **Passaggio dei parametri in Python (68).** La lezione ha due modelli, uno per linguaggio: in C++ "per valore" e "per riferimento" con `&`; in Python "un nome attaccato a un valore", senza le parole "oggetto", "mutabile" e "immutabile". Va bene, o preferisci dire "per valore" e "per riferimento" anche per Python, come fanno molti libri? Lo scambio riuscito in Python è `return y, x`: si può mostrare un `return` con due valori? Presenti anche `const int &x`?
+- [ ] **`imin != i` prima dello scambio (75, 78).** Nell'ordinamento per selezione lo scambio si fa solo quando `imin != i`, o sempre come in molti libri? Cambia il conto degli scambi (3 contro 5 sui sei tempi della lezione) e deve essere uguale nella 78.
+- [ ] **Python con o senza `def main():` (65, 67).** Le istruzioni fuori dalle funzioni sono chiamate "programma principale", e in Python le sue variabili sono globali mentre in C++ quelle di `main` sono locali. Basta dirlo in un riquadro, o dal terzo anno i programmi Python devono avere `def main():`?
+- [ ] **Che cosa si conta (71, 74, 78).** Un confronto per ogni elemento guardato, e non i due confronti (`==` e `<`) di ogni giro della ricerca binaria: va bene? Nella 78 si contano solo i confronti nel caso peggiore, e scambi e spostamenti restano nella tabella: è la scelta giusta, o vuoi anche gli assegnamenti (tre per scambio) e il caso medio degli ordinamenti?
+- [ ] **Il logaritmo prima di averlo fatto (74, 78).** È solo nominato e spiegato con i dimezzamenti, con il link a matematica: al terzo anno gli studenti lo hanno già visto? Lo lasci o togli anche il nome? "Cresce come $n^2$" e "cresce come $\log_2 n$", o "quadratico" e "logaritmico"?
+- [ ] **-1 come "non trovato" (71, 74).** Va bene nei due linguaggi, anche in Python dove qualcuno usa `None`? O una variabile `trovato` accanto alla posizione?
+- [ ] **Nomi veri di font (86).** Il generatore `inf-font` usa come valori di `font-family` nomi che sono marchi (Georgia, Calibri, Menlo e altri), perché inventarli non insegnerebbe a leggerne uno vero. Si tengono?
+- [ ] **CSS prima del CSS (86, 90).** La 86 usa un foglio di stile pronto prima della lezione 92, e la 90 un `style.css` di due regole per i bordi delle tabelle "da usare senza leggerlo": va bene come anticipo, o la 86 va spostata dopo la 92?
+- [ ] **`defer` nella `head` (96-98).** È l'unica forma usata per collegare lo script; molti libri del liceo mettono il tag in fondo al `body`. Quale delle due vuoi nelle lezioni? `const` e `let` insieme dalla prima riga, o solo `let`?
+- [ ] **Indice o elemento nei cicli di Python (70, 72, 73).** Le lezioni usano sempre `for i in range(len(voti))`, uguale al C++, e `for voto in voti` sta in un riquadro: va bene, o in Python la forma principale è l'altra?
+
+Le funzioni:
+- [ ] **65.** Il primo esempio è una funzione di una riga (`linea`): preferisci un corpo di più righe fin dall'inizio? I prototipi del C++ solo in un riquadro, o usati almeno in un esempio? Va introdotta la parola "procedura" per le funzioni che non restituiscono niente?
+- [ ] **66.** Prima una funzione che stampa (`scheda`) e poi quella con `return` (`punti`), o subito `return`? In classe dici anche "la funzione ritorna 14"? Più `return` in una funzione vanno bene da subito? Serve una convenzione per i nomi delle funzioni che rispondono vero o falso, e un esempio con una funzione `double`?
+- [ ] **67.** `global` solo in un riquadro, o con un esempio da eseguire (un contatore di chiamate)? "Visibilità" o "ambito"? Le costanti globali in maiuscolo e `const` si introducono qui?
+- [ ] **68.** Va bene che la lista e l'array compaiano qui, in un programma di sei righe, prima della lezione sui vettori?
+- [ ] **69.** La pagella con le insufficienze o un gioco a turni? "Funzione vuota" o "stub", e in Python con `pass` o con un `return` provvisorio? Presenti anche il bottom-up? L'albero della scomposizione lo disegni con i riquadri?
+
+Vettori, matrici e stringhe:
+- [ ] **70.** "Dimensione" o "lunghezza" del vettore?
+- [ ] **71.** La ricerca che si ferma la scrivi con il `while` a due condizioni, con una bandierina nella condizione, o con `break` (che nella 70 e nella 71 non compare)? "Ricerca sequenziale" o "ricerca lineare"? Il caso medio, con (n + 1) : 2, resta? In Python va detto che esistono `in` e `index`?
+- [ ] **72.** In classe la matrice si passa a una funzione, e serve un paragrafo su `int m[][C]`? In Python `R = len(voti)` e `C = len(voti[0])` in due variabili, o `len` dentro i `range`? "Diagonale secondaria" o "antidiagonale"? Trasposta e massimo di una matrice vanno aggiunti?
+- [ ] **73.** In C++ solo `string`, o fai vedere anche gli array di `char`? I codici dei caratteri (`ord`, `chr`, `toupper`) e il cifrario di Cesare meritano un paragrafo? Per la palindroma i due indici come versione principale, o "rovescia e confronta"?
+
+Ricerca e ordinamento:
+- [ ] **74.** In C++ va bene `int centro;` dichiarata prima del ciclo (dentro, la riga non sta in un esercizio sul telefono)? Serve un esempio di ricerca binaria tra nomi in ordine alfabetico?
+- [ ] **75.** Il nome `imin` va bene, e per l'ordine decrescente `imax`? La formula $\frac{n(n-1)}{2}$ sta già qui o solo nella 78? Lo scambio di Python in una riga è in un riquadro: lo accetti nelle risposte degli studenti (il correttore lo accetta)?
+- [ ] **76.** Le bolle portano il più grande in fondo, come qui, o il più piccolo in cima? La bandierina con un `while` a due condizioni va bene, e si chiama "bandierina" o "flag"? Il ciclo interno accorciato (`n - 1 - i`) va bene come versione di base?
+- [ ] **77.** Come chiami l'elemento tenuto da parte: `x`, `temp`, `chiave`? Inserimento per spostamenti, come qui, o prima la versione con gli scambi tra vicini? La regola per cui la seconda condizione di un `and` non viene controllata se la prima è falsa va detta qui o nella lezione 58, che non la dice?
+- [ ] **75, 76, 77.** La tabella di traccia va prima del programma (76) o dopo (75)? È da scegliere un ordine per le tre lezioni.
+
+I file:
+- [ ] **79.** Per il file che non c'è, in Python va bene `try` ed `except FileNotFoundError`, due anni prima delle eccezioni, o preferisci `os.path.exists`? In C++ i numeri si leggono con `getline` e `stoi`, o con `file >> voto` come forma principale? `file.close()` va scritto sempre? "Segnaposto", "cursore" o "puntatore" per il punto a cui è arrivata la lettura? Servono `read()` e `readlines()`?
+- [ ] **80.** In C++ un `getline` con il separatore per ogni campo, o la riga intera e `stringstream`? Il separatore dei file della lezione è la virgola: lo vuoi al contrario, visto che i file esportati a scuola hanno quasi sempre il punto e virgola? I campi contati da 0 anche a parole ("il campo 0")? Il modulo `csv` solo nominato?
+- [ ] **81.** Un solo programma, in Python con `json`, e il dizionario detto in una riga: basta, o in classe leggi anche XML con un programma? Gli esercizi fanno correggere un file XML e completare un file JSON con il programma già scritto: sono adatti? Per XML bastano le regole del ben formato, senza schemi? La fattura elettronica come esempio italiano?
+
+Immagini, suoni e video:
+- [ ] **82.** La firma dei file (i primi byte) è fuori dai programmi del liceo: resta? Contenitore e codec stanno qui, nella 85 o in tutte e due? DOCX va tra i formati aperti, tra i proprietari, o resta fuori? GIF come "senza perdita, ma con 256 colori" va bene?
+- [ ] **83.** I libri in uso fanno i conti della stampa in pollici o in centimetri? Serve distinguere dpi e ppi? Va bene una pagina fatta del solo `svg` prima delle lezioni di HTML? Le operazioni di base bastano in una tabella, o la voce `editing-base` dell'albero vuole una lezione sua?
+- [ ] **84.** Il rapporto di compressione è originale diviso compresso, o i libri lo definiscono al contrario? RLE si scrive `6B` o `B6`? Per dizionario e codici di lunghezza diversa basta l'idea, o vuoi Huffman per intero?
+- [ ] **85.** "Bitrate" o "flusso di bit", come in una riga della lezione 12? Serve nominare i fotogrammi I, P e B? Vuoi dell'audio vero da ascoltare a bitrate diversi (oggi non c'è)?
+- [ ] **86.** "Famiglia di caratteri" e "font", o "tipo di carattere" come nei menu dei programmi? "Con le grazie" e "senza grazie", o "graziati" e "bastoni"? Sei regole di leggibilità in elenco sono troppe?
+
+HTML:
+- [ ] **87.** "Marcatore" in generale e "tag" per l'HTML: vanno bene tutte e due? `em` e `strong` anticipati qui, prima della 89? L'albero con `body` come radice anticipa troppo la 88? Markdown come secondo esempio, o i tuoi libri usano LaTeX?
+- [ ] **88.** Va bene insegnare "un solo `h1` per pagina" come regola, anche se lo standard non la impone? `section` e `div` già qui, o solo dal CSS? "Testa" e "corpo" accanto a `head` e `body`: come dicono i libri in adozione? Serve un esempio di messaggio del validatore?
+- [ ] **89.** `width` e `height` restano attributi HTML dell'immagine (il brief vieta gli attributi di presentazione, ma riservano lo spazio), o vanno al CSS? `b` e `i` vanno almeno nominati? Serve `target="_blank"`? Il percorso che comincia con `/` resta in un riquadro?
+- [ ] **90.** `<thead>` e `<tbody>` vanno già qui? `<th>` di riga e `scope`: qui o nella 95? L'elenco di definizioni (`<dl>`) è nel programma? "Conto dei posti" va bene come nome del controllo su una riga con celle unite? Tre esercizi sono troppi?
+- [ ] **91.** `<fieldset>` e `<legend>` per i pallini: qui, nella 95, o da nessuna parte? "Pallino" e "casella", o "pulsante di opzione" e "casella di controllo"? GET e POST in poche righe, o la richiesta intera con le intestazioni? `pattern` è nel programma del terzo anno?
+
+I fogli di stile:
+- [ ] **92.** La specificità come tre conti in ordine (id, classi, nomi di elemento), o con i punteggi 100, 10, 1 dei libri? `li.prossimo` e `a:hover` vanno in questa lezione (ora non ci sono, e `a:hover` è quello che gli studenti chiedono per primo)? Serve nominare `<style>` e l'attributo `style`, almeno per riconoscerli? `class` e `id` vanno anticipati nel capitolo sull'HTML? Serve `rgb()` oltre ai nomi e all'esadecimale?
+- [ ] **93.** `box-sizing: border-box` come scelta normale ("mettilo sempre") o come alternativa? I margini che si fondono: basta il riquadro? `display: inline-block` va tenuto, visto che il menu della 94 si fa con flexbox? `span` introdotto qui, o nella 88 accanto a `div`? Servono tre e quattro valori per `padding` e `margin`?
+- [ ] **94.** `flex: 1` come una sola dichiarazione ("prende lo spazio che avanza"), senza `flex-grow`, `flex-shrink`, `flex-basis`: va bene, sapendo che il conto della lezione vale solo nei due casi mostrati? `space-evenly`, `align-content` e la griglia restano fuori? "Asse trasversale" o "asse secondario"?
+- [ ] **95.** Responsive e accessibilità in una lezione sola, con l'accessibilità ridotta al contrasto più quattro controlli: basta, o due lezioni? `em` spiegato solo per le proprietà diverse da `font-size`: si tiene così o si toglie? Si nominano le WCAG e la legge italiana sull'accessibilità, o resta "linee guida internazionali"? "Lettore di schermo" o "screen reader"?
+
+Pagine web interattive:
+- [ ] **96.** Il programma con `prompt()` va bene come ponte dai programmi alla pagina? I vettori di JavaScript in una frase sola sono troppo o troppo poco?
+- [ ] **97.** Gli ascoltatori sono sempre funzioni con un nome: vuoi anche la funzione scritta dentro `addEventListener`, che è la forma più comune nei siti veri? "Ascoltatore" o "gestore dell'evento"? Va bene lasciare fuori `innerHTML` e la propagazione degli eventi?
+- [ ] **98.** Il controllo dell'email si ferma alla chiocciola: è abbastanza? `Number.isInteger()` si tiene, o si accetta che `2.5` passi? Campi senza `required` per far lavorare lo script, o tutti e due i controlli con `novalidate`? "Validazione" compare una volta e poi si dice "controllo": va bene?
+
+Dalla revisione del lotto (7 ottobre 2026):
+- [ ] **I Fuori Tempo (86-98).** Lezioni e generatori ora hanno quattro componenti: Sara alla voce, Leo alla batteria, Marta alla chitarra, Dario al basso, come nelle lezioni 88-90. Va bene, o preferisci i cinque che c'erano nelle 92-95 (con Pietro ed Emma)?
+- [ ] **Il "prossimo concerto" (88-95).** Nelle 92-95 è venerdì 12 dicembre in palestra, nelle 88-91 è venerdì 5 giugno in aula magna. I giorni tornano tutti con l'anno scolastico 2025-26, quindi sono concerti diversi. Va bene così, o il sito deve avere un solo "prossimo concerto"? Le date con il giorno della settimana invecchiano.
+- [ ] **96, 98.** Il concerto con i biglietti a 8 euro è stato chiamato "di beneficenza", perché quello di fine anno è gratuito. Va bene, o togliamo il prezzo?
+- [ ] **90, esercizio 2.** Le celle scritte senza `<tr>` passano, e nessun controllo sull'albero le distingue dalla soluzione, perché il browser ripara la tabella da sé. Si accetta, o serve un controllo sul sorgente dello studente (che oggi non esiste)?
+- [ ] **75, 76, 77.** Ora la tabella di traccia sta dopo il programma in tutte e tre, come chiede il brief. Il gruppo 6 l'aveva messa subito dopo la figura: preferisci quell'ordine, da portare allora anche nella 75?
+- [ ] **76.** È a 408 righe: si accetta, o si toglie qualcosa (per esempio la funzione `stampa` dal primo programma)?
+- [ ] **85.** "Codifica" per MP3, AAC e H.264 e "codec" per il programma, come nella 82: va bene, o in classe si dice "codec" per tutte e due le cose?
+- [ ] **81.** "Dati strutturati" è definito come dati ad albero, ma anche una tabella è un dato strutturato. Si lascia?
+- [ ] **89.** Perché il disco si deformi come una fotografia, l'SVG ha `preserveAspectRatio='none'`: è un trucco. Va bene, o si aspetta che l'editor abbia le immagini vere?
+- [ ] **88.** La figura `inf-html-albero-documento` da telefono è alta 1160 px: si accetta, o si ridisegna con due linguette "albero" e "pagina"?
+
+Le domande dei generatori:
+- [ ] Le risposte aperte si correggono su quello che il programma scrive e sul costrutto chiesto (`funzione`, `vettore`, `ciclo`): una ricerca sequenziale dentro `cerca` o `v.sort()` dentro `ordina` passano. È accettabile, o in quei livelli va vietato qualcosa?
+- [ ] Nel livello 6 della 73 la consegna dice "Usa un ciclo" e `parola[::-1]`, `parola.count()` e `parola.replace()` vengono bocciati anche se scrivono il risultato giusto: è quello che vuoi?
+- [ ] Non c'è un livello sulla palindroma (73, risponde solo sì o no) né uno sulla scelta del formato tra CSV, XML e JSON (81, "sarebbero opinioni"): vanno aggiunti in un'altra forma?
+- [ ] Nei generatori i nomi sono accorciati perché le opzioni stiano in 34 caratteri (`conta`, `cerca`, `v`, file `num.txt`): si leggono ancora come quelli della lezione?
+- [ ] I nomi dei 183 livelli (in `src/lib/exercises/level-names.ts`) sono dei gruppi: da rileggere, come quelli degli altri lotti.
+
 ## Collegamenti
 - [[Pipeline lezioni]], [[Pipeline esercizi]], [[Standard di qualità]]

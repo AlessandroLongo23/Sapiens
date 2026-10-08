@@ -1,7 +1,7 @@
 ---
 stato: in sviluppo
 release: beta
-aggiornato: 2026-09-29
+aggiornato: 2026-10-07
 tag: [contenuti, ai]
 ---
 # Pipeline esercizi
@@ -84,6 +84,12 @@ Deciso il 29 settembre 2026: gli esercizi di fisica hanno la figura come scena d
 
 Primo lotto di fisica (29 settembre 2026): 19 generatori, 100 livelli, tutti a scelta multipla con l'unità nell'opzione, costruiti all'indietro perché gli arrotondamenti siano univoci. Undici usano le scene, dieci tipi in tutto (righello, cilindro graduato, calibro, bersaglio, grafico dei dati, vettori sul piano, dinamometro, molla con righello, forze su un punto, blocco con le forze). Verificati come quelli di matematica, con i seed 1, 50001 e 777001. Vedi [[2026-09-29 Primo lotto di fisica]].
 
+## Informatica
+Il secondo anno ha 32 generatori con diagrammi e programmi nelle domande, nelle opzioni e nelle risposte aperte: vedi [[2026-10-05 Secondo anno di informatica]].
+
+Terzo anno di informatica (7 ottobre 2026, in produzione con la PR #51): 34 generatori, 183 livelli. Nelle lezioni 65-80 i programmi sono scritti a mano nei due linguaggi con il modulo `src/lib/exercises/v2/inf-codice.ts`, perché il linguaggio dei diagrammi non ha funzioni né vettori, e ogni generatore ha un livello a risposta aperta "scrivi il programma" con il costrutto chiesto (`funzione`, `vettore`, `ciclo`); nelle lezioni 81-98 la scelta multipla mostra frammenti veri di HTML, CSS, JavaScript, CSV e JSON (`listing`), e dove la lezione ha un conto almeno un livello è su quel conto, costruito all'indietro. Verificati con i seed 1, 50001 e 777001 su 1000 esercizi per livello; il C++ è controllato con `INF_CPP=1` su un campione, da 20 a 80 esercizi per livello. I generatori di otto lezioni li hanno scritti dei sottoagenti e chi ha chiuso il gruppo non li ha riletti. Vedi [[2026-10-07 Terzo anno di informatica]] e [[Informatica terzo anno, da sistemare]].
+
 ## Domande aperte
+- Il generatore di numeri casuali `src/lib/exercises/v2/rng.ts` esce dalle quote su certe finestre di semi? Con i semi da 424243 a 424642 la prima estrazione tra cinque dà 55 volte su 400 lo stesso caso (13,75% contro il 20% atteso), uguale per tutti i generatori: quattro generatori di informatica (`inf-ricerca-sequenziale`, `inf-stringhe`, `inf-confronto-algoritmi`, `inf-html-elenchi-tabelle`) davano UNBALANCED con 400 esercizi giusti su 400, e con il seme 600001 le quote tornano. Trovato il 7 ottobre 2026 durante l'integrazione del terzo anno di informatica, non corretto, da verificare. Riguarda `rng.pick` come prima estrazione su semi consecutivi, quindi anche gli esercizi che uno studente riceve con semi vicini.
 - La pipeline diventa una skill di Claude Code nella repo?
 - Quanti tipi di esercizio servono per la matematica dei cinque anni? Stima da fare sul [[Programma ministeriale]]. Moltiplicata per il tempo di rilettura di Andrea, dice se la pipeline regge entro gennaio 2027.

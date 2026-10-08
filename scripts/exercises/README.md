@@ -59,6 +59,17 @@ che scrivono cose diverse, così l'uscita non si batte a mano: lo controllano `m
 `/prova-grafico/esercizio?g=<id>&l=<livello>&seed=<seed>` (con `&open=1` a risposta aperta); `review.mts` e
 `width.mts` valgono solo per i campioni in LaTeX.
 
+## Esercizi con programmi scritti a mano
+
+Dal 7 ottobre 2026, per le lezioni che il linguaggio dei blocchi `diagramma` non copre (funzioni, vettori, stringhe,
+file, HTML, CSS, JavaScript), un programma si scrive a mano nei due linguaggi con una funzione TypeScript che dice
+che cosa scrive: `src/lib/exercises/v2/inf-codice.ts`, con `inf-vettori` come riferimento e il brief in
+`docs/lezioni/informatica/brief-esercizi-codice.md`. Il controllo indipendente esegue il Python di ogni programma
+(`checkers/_inf_codice.py`) e, con `INF_CPP=1`, compila ed esegue anche il C++. Un frammento che non è un programma
+nei due linguaggi (HTML, CSS, JSON, CSV) va in `listing`: sotto la domanda (`Sample.listing`), con la soluzione
+(`solutionListing`) o come opzione (`ChoiceOption.listing`), a larghezza fissa e con le sue righe. Una risposta aperta
+può chiedere anche `funzione` (una funzione definita e chiamata dallo studente, non `main`) e `vettore`.
+
 ## Esercizi con i grafici
 
 Dal 6 ottobre 2026 un esercizio di matematica può mostrare il piano cartesiano con una o più curve: sotto il

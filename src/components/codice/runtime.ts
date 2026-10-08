@@ -18,9 +18,21 @@ export type RunStatus = 'ok' | 'error' | 'input' | 'overflow';
 /** Plus the ends the page decides: out of time, stopped by the student, the language not loaded. */
 export type Outcome = RunStatus | 'timeout' | 'stopped' | 'failed';
 
+/**
+ * What a run left among the files of its project. `written` are the files it made or changed, by path, with their
+ * text: null for a file that is not text, and a path that ends with a slash is a new folder with nothing in it.
+ * `removed` are the files it deleted.
+ */
+export interface Changes {
+	written: Record<string, string | null>;
+	removed: string[];
+}
+
 export interface Result {
 	outcome: Outcome;
 	ms: number;
+	/** Missing when the run did not reach an end of its own: it waits for a line, or it was stopped. */
+	changes?: Changes;
 }
 
 /**
@@ -59,6 +71,9 @@ export interface Runtime {
 	dispose(): void;
 }
 
+/** No file was written or removed. */
+export const unchanged = (changes?: Changes) => !changes || (Object.keys(changes.written).length === 0 && changes.removed.length === 0);
+
 /** A program still running after this long is taken for a loop that never ends. */
 export const TIME_LIMIT = 10_000;
 
@@ -74,7 +89,7 @@ export type FromRunner =
 	| { type: 'status'; id: number; text: string }
 	| { type: 'started'; id: number }
 	| { type: 'chunk'; id: number; kind: ChunkKind; text: string }
-	| { type: 'done'; id: number; status: RunStatus; ms: number };
+	| { type: 'done'; id: number; status: RunStatus; ms: number; changes?: Changes };
 
 /**
  * What a worker sends to the console, behind the two rules every language shares: the lines already typed were

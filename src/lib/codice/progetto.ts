@@ -26,6 +26,7 @@ const KINDS: Record<string, FileKind> = {
 	json: 'json',
 	txt: 'text',
 	csv: 'text',
+	xml: 'text',
 	png: 'image',
 	jpg: 'image',
 	jpeg: 'image',
@@ -35,7 +36,7 @@ const KINDS: Record<string, FileKind> = {
 };
 
 /** The extensions a file may have, as the student reads them. */
-export const TEXT_EXTENSIONS = ['py', 'c', 'cpp', 'h', 'js', 'html', 'css', 'md', 'json', 'txt', 'csv'];
+export const TEXT_EXTENSIONS = ['py', 'c', 'cpp', 'h', 'js', 'html', 'css', 'md', 'json', 'txt', 'csv', 'xml'];
 export const IMAGE_TYPES = 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml';
 
 export const MAX_FILES = 40;
@@ -122,6 +123,22 @@ export function resolvePath(from: string, written: string): string | null {
 		} else parts.push(part);
 	}
 	return parts.join('/');
+}
+
+/**
+ * Whether two paths written in the file `from` lead to the same place: `./scaletta.html` and `scaletta.html`,
+ * `../img/a.png` and `/img/a.png` from a page in a folder. What follows the path (`#giugno`, `?x=1`) must be the
+ * same; a web address, or a link to a point of the page alone, is the same only when written the same.
+ */
+export function samePath(from: string, a: string, b: string): boolean {
+	if (a.trim() === b.trim()) return true;
+	const parts = (written: string) => {
+		const cut = written.trim().search(/[?#]/);
+		return cut < 0 ? [written.trim(), ''] : [written.trim().slice(0, cut), written.trim().slice(cut)];
+	};
+	const [[pathA, restA], [pathB, restB]] = [parts(a), parts(b)];
+	const [toA, toB] = [resolvePath(from, pathA), resolvePath(from, pathB)];
+	return toA !== null && toA === toB && restA === restB;
 }
 
 /** What "Esegui" runs: a program in a language, or a page shown in the preview. Null for a file that is only read by others. */

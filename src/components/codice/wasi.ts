@@ -1,8 +1,10 @@
-import type { ChunkKind, Job, RunStatus } from './runtime';
+import type { Changes, ChunkKind, Job, RunStatus } from './runtime';
+import { disk } from './wasi-files';
 
 /**
  * A compiled C or C++ program (a WebAssembly module for WASI, from Clang) run to its end. WASI here is the little a
- * school program needs: the three standard streams, the clock, random numbers, exit.
+ * school program needs: the three standard streams, the files of the program's project (wasi-files.ts), the clock,
+ * random numbers, exit.
  *
  * Reading from the keyboard works as in Python (public/codice/sapiens.py): a program that asks for a line nobody has
  * typed yet stops with 'input' and is run again with every line typed so far. The time of day is the moment of the
@@ -39,7 +41,7 @@ function trap(error: unknown): string {
 }
 
 /** Runs the program to its end, or to where it stops; `emit` answers false when the console has had enough. */
-export function runWasi(module: WebAssembly.Module, job: Pick<Job, 'inputs' | 'seed' | 'clock' | 'batch'>, emit: (kind: ChunkKind, text: string) => boolean, onStart?: () => void): { status: RunStatus; ms: number } {
+export function runWasi(module: WebAssembly.Module, job: Pick<Job, 'inputs' | 'seed' | 'clock' | 'batch' | 'files'>, emit: (kind: ChunkKind, text: string) => boolean, onStart?: () => void): { status: RunStatus; ms: number; changes?: Changes } {
 	const { inputs, seed, clock, batch = false } = job;
 
 	// printed text, gathered and sent every PAUSE
@@ -79,9 +81,13 @@ export function runWasi(module: WebAssembly.Module, job: Pick<Job, 'inputs' | 's
 	const view = () => new DataView(memory.buffer);
 	const bytes = (pointer: number, length: number) => new Uint8Array(memory.buffer, pointer, length);
 	const started = performance.now();
+	// every descriptor after the three streams is a file or a folder of the project
+	const files = disk(job.files, () => memory);
 
 	const wasi: Record<string, (...args: number[]) => number> = {
+		...files.calls,
 		fd_write(fd, iovs, count, written) {
+			if (fd > 2) return files.calls.fd_write(fd, iovs, count, written);
 			if (fd !== 1 && fd !== 2) return EBADF;
 			let total = 0;
 			for (let i = 0; i < count; i++) {
@@ -95,6 +101,7 @@ export function runWasi(module: WebAssembly.Module, job: Pick<Job, 'inputs' | 's
 			return ESUCCESS;
 		},
 		fd_read(fd, iovs, count, read) {
+			if (fd > 2) return files.calls.fd_read(fd, iovs, count, read);
 			if (fd !== 0) return EBADF;
 			if (!line.length) {
 				flush();
@@ -114,18 +121,17 @@ export function runWasi(module: WebAssembly.Module, job: Pick<Job, 'inputs' | 's
 			view().setUint32(read, total, true);
 			return ESUCCESS;
 		},
-		fd_close: () => ESUCCESS,
-		fd_seek: () => ESPIPE,
+		fd_close: (fd) => (fd > 2 ? files.calls.fd_close(fd) : ESUCCESS),
+		fd_seek: (fd, ...rest) => (fd > 2 ? files.calls.fd_seek(fd, ...rest) : ESPIPE),
+		fd_tell: (fd, ...rest) => (fd > 2 ? files.calls.fd_tell(fd, ...rest) : ESPIPE),
 		fd_fdstat_get(fd, stat) {
-			if (fd > 2) return EBADF;
+			if (fd > 2) return files.calls.fd_fdstat_get(fd, stat);
 			// a character device, like a terminal
 			bytes(stat, 24).fill(0);
 			view().setUint8(stat, 2);
 			return ESUCCESS;
 		},
-		fd_fdstat_set_flags: () => ESUCCESS,
-		fd_prestat_get: () => EBADF,
-		fd_prestat_dir_name: () => EBADF,
+		fd_fdstat_set_flags: (fd, ...rest) => (fd > 2 ? files.calls.fd_fdstat_set_flags(fd, ...rest) : ESUCCESS),
 		environ_sizes_get(count, size) {
 			view().setUint32(count, 0, true);
 			view().setUint32(size, 0, true);
@@ -184,5 +190,6 @@ export function runWasi(module: WebAssembly.Module, job: Pick<Job, 'inputs' | 's
 	} catch {
 		status = 'overflow';
 	}
-	return { status, ms: performance.now() - started };
+	// a run that waits for a line starts again from the same files: what it wrote so far is not the project's yet
+	return { status, ms: performance.now() - started, changes: status === 'input' ? undefined : files.changes() };
 }

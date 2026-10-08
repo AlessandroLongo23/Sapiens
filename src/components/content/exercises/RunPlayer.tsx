@@ -505,7 +505,7 @@ export function RunPlayer({ session, first, startAt = 0, initial, earlier = [], 
 
 	const open = exercise.mode === 'open';
 	/** The question or its answers show a program: the student picks the language to read it in. */
-	const coded = exercise.blocks.some((b) => b.kind === 'code') || exercise.options.some((o) => o.html.includes('code-pair'));
+	const coded = exercise.blocks.some((b) => b.kind === 'code' && b.html.includes('code-pair')) || exercise.options.some((o) => o.html.includes('code-pair'));
 	const codeLanguage = useCodeLanguage();
 	const openState: OpenState = !verdict ? (selected !== null ? 'pending' : 'idle') : verdict.correct ? 'correct' : 'incorrect';
 	const announced = !verdict

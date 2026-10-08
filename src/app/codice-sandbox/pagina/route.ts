@@ -9,12 +9,19 @@ import { sandboxPage, siteOf } from '../origin';
  * request leaves the page (there is no `connect-src`), no form is sent, no frame is opened. What a page of a
  * beginner needs is allowed: scripts and styles written in the page, pictures from the web, the dialogs of alert()
  * and prompt().
+ *
+ * `allow-forms` is there so that a form behaves as in a real page up to the moment it would leave: the browser
+ * checks its fields and shows its messages, `submit` is fired and the student's listeners run. Without it the
+ * browser stops a form before all of that. The form still goes nowhere: `form-action 'none'` forbids every
+ * destination, pagina.ts stops the event itself once the student's listeners have run, and the site refuses any
+ * write that does not come from its own pages (src/proxy.ts). A script here could already take the frame to
+ * another address by itself, so the permission gives a page nothing it could not do.
  */
 export function GET(request: NextRequest) {
 	const origin = siteOf(request);
 	if (!origin) return new Response(null, { status: 400 });
 	return sandboxPage(`<script src="${origin}/codice/sandbox/pagina.js" crossorigin="anonymous"></script>`, [
-		'sandbox allow-scripts allow-modals',
+		'sandbox allow-scripts allow-modals allow-forms',
 		"default-src 'none'",
 		`script-src 'unsafe-inline' blob: ${origin}/codice/sandbox/`,
 		"style-src 'unsafe-inline'",

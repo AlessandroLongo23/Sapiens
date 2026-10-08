@@ -16,8 +16,8 @@ const post = (message: FromRunner) => self.postMessage(message);
 self.onmessage = ({ data }: MessageEvent<ToWasi>) => {
 	const { id, module, inputs, batch = false } = data;
 	const emit = emitter(batch ? 0 : inputs.length, (kind, text) => post({ type: 'chunk', id, kind, text }));
-	const { status, ms } = runWasi(module, data, emit, () => post({ type: 'started', id }));
-	post({ type: 'done', id, status, ms });
+	const { status, ms, changes } = runWasi(module, data, emit, () => post({ type: 'started', id }));
+	post({ type: 'done', id, status, ms, changes });
 };
 
 post({ type: 'ready' });

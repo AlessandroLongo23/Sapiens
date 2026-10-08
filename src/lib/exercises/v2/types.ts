@@ -41,6 +41,12 @@ export interface ChoiceOption {
 	 * scene's `alt`) says what the graph looks like for a screen reader.
 	 */
 	scene?: SceneRef;
+	/**
+	 * A text set in fixed width with its lines and indentation kept, for a fragment that is not a program in the two
+	 * languages: HTML, CSS, JavaScript, JSON, CSV, what a program prints line by line (v2/inf-codice.ts). `latex` is
+	 * then unused, and `text` is what a screen reader says.
+	 */
+	listing?: string;
 	/** Plain-text label of the option, when `latex` is not LaTeX (a sample with `format: 'text'`, or a drawing). */
 	text?: string;
 }
@@ -105,9 +111,10 @@ export type SetAnswer = {
 /**
  * What an answer that is a chart or a program must contain, beyond writing the right things (v2/costrutti.ts): a
  * loop of any kind, a selection, the loop of a given kind where the exercise names it, or a loop in the body of
- * another. A chart has no `for`.
+ * another. A chart has no `for`. For a program only: `funzione`, a function of its own that it defines and calls
+ * (`main` in C++ is not one), and `vettore`, a list in Python or an array or a `vector` in C++.
  */
-export type Construct = 'ciclo' | 'selezione' | 'while' | 'for' | 'annidati';
+export type Construct = 'ciclo' | 'selezione' | 'while' | 'for' | 'annidati' | 'funzione' | 'vettore';
 
 /**
  * A flowchart to build. The student's chart is run on each test's `inputs` (what its "leggi" take, in order) and
@@ -164,6 +171,9 @@ export interface Sample {
 	/** A program under the problem ("che cosa stampa?"), and one with the solution. */
 	code?: CodeText;
 	solutionCode?: CodeText;
+	/** A fragment in fixed width under the problem (a piece of HTML, a CSV file), and one with the solution: see `ChoiceOption.listing`. */
+	listing?: string;
+	solutionListing?: string;
 	/** A drawing under the problem. */
 	figure?: FigureRef;
 	/** A drawing with the solution (the main chain numbered, the group coloured). */

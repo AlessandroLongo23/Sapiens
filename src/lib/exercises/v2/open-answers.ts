@@ -160,7 +160,23 @@ export const runAnswers: Record<string, number[]> = {
 	'inf-ciclo-for': [5, 6],
 	'inf-contatori-accumulatori': [5, 6],
 	'inf-cicli-annidati': [5, 6],
-	'inf-massimo-minimo-media': [5, 6]
+	'inf-massimo-minimo-media': [5, 6],
+	'inf-definire-funzioni': [5],
+	'inf-parametri-ritorno': [6],
+	'inf-visibilita': [5],
+	'inf-passaggio-parametri': [5],
+	'inf-top-down': [6],
+	'inf-vettori': [6],
+	'inf-ricerca-sequenziale': [5],
+	'inf-matrici': [6],
+	'inf-stringhe': [6],
+	'inf-ricerca-binaria': [5],
+	'inf-selection-sort': [6],
+	'inf-bubble-sort': [5],
+	'inf-insertion-sort': [5],
+	'inf-confronto-algoritmi': [6],
+	'inf-file-testo': [5],
+	'inf-file-csv': [6]
 };
 
 /** How a level's open answer is graded, or null when the level stays multiple choice. */

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { createJiti } from 'jiti';
 
 const jiti = createJiti(import.meta.url, { alias: { '@': new URL('../../src', import.meta.url).pathname } });
-const { bare, chartConstructs, codeConstructs, missing, neededText } = await jiti.import('../../src/lib/exercises/v2/costrutti.ts');
+const { bare, chartConstructs, codeConstructs, missing, missingMessage, neededText } = await jiti.import('../../src/lib/exercises/v2/costrutti.ts');
 const { parseProgram } = await jiti.import('../../src/lib/diagramma/blocco.ts');
 const { needing, programAnswer, structure } = await jiti.import('../../src/lib/exercises/v2/inf-programmi.ts');
 
@@ -84,4 +84,68 @@ test('a program is told beforehand what it must contain', () => {
 	assert.equal(neededText(['annidati']), 'Nel programma devono esserci due cicli, uno dentro l’altro.');
 	assert.equal(neededText([]), null);
 	assert.equal(neededText(undefined), null);
+});
+
+test('a function of its own is one the program defines and calls', () => {
+	const own = (code, language) => codeConstructs(code, language).has('funzione');
+	assert.equal(own('def doppio(x):\n    return 2 * x\n\nprint(doppio(4))\n', 'python'), true);
+	// defined and never called
+	assert.equal(own('def doppio(x):\n    return 2 * x\n\nprint(8)\n', 'python'), false);
+	// a ready function is not the student's own
+	assert.equal(own('print(max(3, 4))\nprint(len("ciao"))\n', 'python'), false);
+	// the name in a comment or in a text is not a call
+	assert.equal(own('def doppio(x):\n    return 2 * x\n# doppio(4)\nprint("doppio(4)")\n', 'python'), false);
+	assert.equal(own('def saluta():\n    print("ciao")\n\nsaluta()\n', 'python'), true);
+	// a longer name that ends the same way is another function
+	assert.equal(own('def po(x):\n    return x\n\nprint(tipo(3))\n', 'python'), false);
+	const main = (body) => `#include <iostream>\nusing namespace std;\n\n${body}`;
+	// `main` alone is not a function of the student
+	assert.equal(own(main('int main() {\n    cout << 8 << endl;\n    return 0;\n}\n'), 'cpp'), false);
+	assert.equal(own(main('int main(int argc, char* argv[]) {\n    return 0;\n}\n'), 'cpp'), false);
+	assert.equal(own(main('int doppio(int x) {\n    return 2 * x;\n}\n\nint main() {\n    cout << doppio(4) << endl;\n    return 0;\n}\n'), 'cpp'), true);
+	assert.equal(own(main('int doppio(int x)\n{\n    return 2 * x;\n}\n\nint main()\n{\n    cout << doppio(4) << endl;\n}\n'), 'cpp'), true);
+	// defined and never called; the prototype is not a call
+	assert.equal(own(main('int doppio(int x);\n\nint doppio(int x) {\n    return 2 * x;\n}\n\nint main() {\n    cout << 8 << endl;\n    return 0;\n}\n'), 'cpp'), false);
+	// a prototype above and the definition below `main`
+	assert.equal(own(main('void saluta();\n\nint main() {\n    saluta();\n    return 0;\n}\n\nvoid saluta() {\n    cout << "ciao" << endl;\n}\n'), 'cpp'), true);
+	// a prototype without a body is not a definition
+	assert.equal(own(main('int doppio(int x);\n\nint main() {\n    cout << doppio(4) << endl;\n    return 0;\n}\n'), 'cpp'), false);
+	assert.equal(own(main('vector<int> pari(vector<int> v) {\n    return v;\n}\n\nint main() {\n    vector<int> w = pari({1, 2});\n    return 0;\n}\n'), 'cpp'), true);
+	// a ready function, a loop and a selection in `main` are not definitions
+	assert.equal(own(main('int main() {\n    if (max(3, 4) > 3) {\n        cout << "si" << endl;\n    }\n    while (false) {\n    }\n    return 0;\n}\n'), 'cpp'), false);
+	assert.equal(own(main('// int doppio(int x) { return 2 * x; }\nint main() {\n    cout << "doppio(4)" << endl;\n    return 0;\n}\n'), 'cpp'), false);
+});
+
+test('a list or an array is told from reading a letter of a text', () => {
+	const list = (code, language) => codeConstructs(code, language).has('vettore');
+	assert.equal(list('voti = [6, 8, 5]\nprint(voti[0])\n', 'python'), true);
+	assert.equal(list('voti = []\nvoti.append(7)\n', 'python'), true);
+	assert.equal(list('for x in [1, 2, 3]:\n    print(x)\n', 'python'), true);
+	assert.equal(list('def primi():\n    return [2, 3, 5]\n', 'python'), true);
+	assert.equal(list('v = list(range(5))\n', 'python'), true);
+	assert.equal(list('parole = input().split()\n', 'python'), true);
+	assert.equal(list('print(sum([1, 2, 3]))\n', 'python'), true);
+	// reading a letter of a text, or an element of something that is not built here
+	assert.equal(list('nome = input()\nprint(nome[0])\n', 'python'), false);
+	assert.equal(list('print("ciao"[1])\n', 'python'), false);
+	assert.equal(list('print("[1, 2, 3]")  # v = [1]\n', 'python'), false);
+	assert.equal(list('a = 1\nb = 2\nprint(a + b)\n', 'python'), false);
+	assert.equal(list('int voti[3] = {6, 8, 5};\ncout << voti[0] << endl;', 'cpp'), true);
+	assert.equal(list('int voti[] = {6, 8, 5};', 'cpp'), true);
+	assert.equal(list('vector<int> voti = {6, 8, 5};', 'cpp'), true);
+	assert.equal(list('std::vector<string> nomi;', 'cpp'), true);
+	assert.equal(list('string nomi[2] = {"Ada", "Leo"};', 'cpp'), true);
+	assert.equal(list('int somma(int v[], int n) {\n    return v[0];\n}', 'cpp'), true);
+	assert.equal(list('string nome;\ncin >> nome;\ncout << nome[0] << endl;', 'cpp'), false);
+	assert.equal(list('int a = 3;\ncout << "v[0]" << endl; // int v[3]', 'cpp'), false);
+});
+
+test('a function and a list are asked for and told as the other constructs are', () => {
+	assert.equal(neededText(['funzione']), 'Nel programma deve esserci una funzione definita e chiamata da te.');
+	assert.equal(neededText(['funzione', 'vettore']), 'Nel programma devono esserci una funzione definita e chiamata da te e un vettore (in Python, una lista).');
+	assert.equal(missingMessage('funzione', 'program'), 'Il programma scrive il risultato giusto, ma l’esercizio chiede una funzione definita e chiamata da te, e qui non c’è.');
+	assert.equal(missing(['funzione'], codeConstructs('a = int(input())\nprint(2 * a)\n', 'python')), 'funzione');
+	// the programs written before these two constructs are read as before
+	assert.deepEqual(found('i = 3\nwhile i > 0:\n    i = i - 1\n', 'python'), ['ciclo', 'while']);
+	assert.deepEqual(found('#include <iostream>\nusing namespace std;\n\nint main() {\n    int i = 3;\n    while (i > 0) {\n        i = i - 1;\n    }\n    return 0;\n}\n', 'cpp'), ['ciclo', 'while']);
 });
