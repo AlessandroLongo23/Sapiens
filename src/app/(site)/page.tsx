@@ -1,28 +1,19 @@
 import type { Metadata } from 'next';
+import 'katex/dist/katex.min.css';
+import '@/components/landing/prova/landing.css';
 import { pageMetadata } from '@/lib/seo/page-metadata';
-import { getFlatNodes } from '@/lib/server/content';
-import { HeroSection, type HeroCounts } from '@/components/landing/HeroSection';
+import { landingData } from '@/components/landing/prova/data';
+import { OggettiLanding } from '@/components/landing/prova/oggetti/OggettiLanding';
 
 // The counts are refreshed when a publish calls /api/revalidate; the daily timer only heals a render that found the database down.
 export const revalidate = 86400;
 
 export const metadata: Metadata = pageMetadata({ path: '/' });
 
-/** Counts for the hero, from the same content table the library uses. `published` is the number of lessons with theory text today. */
-async function heroCounts(): Promise<HeroCounts> {
-	const counts: HeroCounts = { subject: 0, chapter: 0, published: 0 };
-	try {
-		for (const node of await getFlatNodes()) {
-			if (node.type === 'subject') counts.subject++;
-			if (node.type === 'chapter') counts.chapter++;
-			if (node.type === 'topic' && node.has_theory) counts.published++;
-		}
-	} catch (err) {
-		console.error('landing counts unavailable:', err);
-	}
-	return counts;
-}
-
+/**
+ * The landing page: for now the "Oggetti" version of the candidates at /prova-home, where
+ * the others stay to be compared (vault/Sessioni/2026-10-07 Tre versioni della landing.md).
+ */
 export default async function HomePage() {
-	return <HeroSection counts={await heroCounts()} />;
+	return <OggettiLanding data={await landingData()} />;
 }

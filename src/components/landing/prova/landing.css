@@ -1,0 +1,473 @@
+/*
+ * The three trial landing pages (/prova-home). Kept apart from globals.css until one
+ * version is chosen: the two that lose go away with their rules. Everything here hangs
+ * on a class starting with `lp-`, and uses the tokens of globals.css.
+ */
+
+/* ---- arriving ----
+   `lp-in` comes in on load, by CSS alone; `lp-reveal` waits for `data-in`, set by Reveal
+   when the element is on screen. Without scripting, or with reduced motion, both are
+   simply there. `--lp-d` delays either. */
+@media (prefers-reduced-motion: no-preference) {
+	.lp-in {
+		animation: lp-in 0.9s var(--ease-out-soft) var(--lp-d, 0s) both;
+	}
+	.lp-pop {
+		animation: lp-pop 0.7s var(--ease-spring) var(--lp-d, 0s) both;
+	}
+}
+/* The answers of the questions (FaqRow.tsx) open on a click: without scripting they are all open. */
+@media (scripting: none) {
+	.lp-faq-answer {
+		grid-template-rows: 1fr;
+		opacity: 1;
+	}
+}
+@keyframes lp-in {
+	from { opacity: 0; translate: 0 22px; }
+}
+@keyframes lp-pop {
+	from { opacity: 0; scale: 0.6; }
+}
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+	.lp-reveal {
+		opacity: 0;
+		translate: 0 24px;
+		transition:
+			opacity 0.8s var(--ease-out-soft) var(--lp-d, 0s),
+			translate 0.8s var(--ease-out-soft) var(--lp-d, 0s);
+	}
+	.lp-reveal[data-in] {
+		opacity: 1;
+		translate: 0 0;
+	}
+	/* A stroke of pen or pencil: undrawn until the Reveal around it is on screen. The dash
+	   stays clear of both ends, or its round cap shows as a dot (see .sk-draw). */
+	.lp-draw path {
+		stroke-dasharray: 1 2;
+		stroke-dashoffset: 1.01;
+		transition: stroke-dashoffset var(--lp-t, 0.7s) var(--ease-out-soft) calc(var(--lp-d, 0s) + 0.25s);
+	}
+	[data-in] .lp-draw path,
+	.lp-draw[data-in] path {
+		stroke-dashoffset: 0;
+	}
+	/* Drawn on load instead, inside the hero. */
+	.lp-in .lp-draw path {
+		stroke-dashoffset: 0;
+		transition: none;
+		animation: lp-draw var(--lp-t, 0.7s) var(--ease-out-soft) calc(var(--lp-d, 0s) + 0.7s) backwards;
+	}
+}
+@keyframes lp-draw {
+	from { stroke-dashoffset: 1.01; }
+}
+
+/* ---- version three, "Prova" ---- */
+
+/* A flashcard that turns over its long side. */
+.lp-card {
+	perspective: 1400px;
+}
+.lp-card-inner {
+	position: relative;
+	min-height: 18rem;
+	transform-style: preserve-3d;
+	transition: transform 0.65s var(--ease-out-soft);
+}
+.lp-card[data-turned] .lp-card-inner {
+	transform: rotateX(180deg);
+}
+.lp-card-face {
+	position: absolute;
+	inset: 0;
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+}
+.lp-card-back {
+	transform: rotateX(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+	.lp-card-inner { transition: none; }
+}
+
+/* A cell of the periodic table, in the colour of its family (`--h`, `--k`). */
+.lp-element {
+	background: oklch(0.935 calc(var(--k) * 0.45) var(--h));
+	color: oklch(0.34 calc(var(--k) * 0.9) var(--h));
+	box-shadow: inset 0 0 0 1px oklch(0.85 calc(var(--k) * 0.6) var(--h));
+}
+.dark .lp-element {
+	background: oklch(0.34 calc(var(--k) * 0.55) var(--h));
+	color: oklch(0.93 calc(var(--k) * 0.4) var(--h));
+	box-shadow: inset 0 0 0 1px oklch(0.45 calc(var(--k) * 0.6) var(--h));
+}
+
+/* ---- version one, "Quaderno" ---- */
+
+/* The story: text on the left, one step a screen; on the right the sheets, each sticking
+   under the header from its own step to the end, so every new one lands on the pile.
+   On a phone it is one column, each sheet after its text. */
+.lp-story {
+	display: grid;
+	gap: 2.5rem;
+}
+.lp-story-sheet {
+	display: flex;
+	justify-content: center;
+	padding: 1.5rem 0 3rem;
+}
+@media (min-width: 64rem) {
+	.lp-story {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+		grid-template-rows: repeat(var(--steps), auto);
+		column-gap: 4.5rem;
+		row-gap: 0;
+	}
+	.lp-story-text {
+		grid-column: 1;
+		grid-row: var(--row);
+		min-height: calc(100dvh - var(--header-h, 64px));
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 4rem 0;
+	}
+	.lp-story-sheet {
+		grid-column: 2;
+		grid-row: var(--row) / -1;
+		align-self: start;
+		position: sticky;
+		top: var(--header-h, 64px);
+		height: calc(100dvh - var(--header-h, 64px));
+		align-items: center;
+		padding: 0;
+		view-timeline-name: --lp-sheet;
+		pointer-events: none;
+	}
+	.lp-story-sheet > * {
+		pointer-events: auto;
+		max-width: min(36rem, calc((100dvh - var(--header-h, 64px) - 7rem) * 10 / 9));
+	}
+}
+.lp-pile {
+	rotate: var(--tilt, 0deg);
+}
+/* A sheet comes down on the pile askew and straightens as it lands. */
+@supports (animation-timeline: view()) {
+	@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+		.lp-story-sheet > .lp-pile {
+			animation: lp-land linear both;
+			animation-timeline: --lp-sheet;
+			animation-range: entry 0% entry 100%;
+		}
+	}
+}
+@keyframes lp-land {
+	from { rotate: calc(var(--tilt, 0deg) + 9deg); translate: 5% 0; }
+}
+
+/* A sheet is sized in em from its own width. */
+.lp-sheet {
+	font-size: clamp(9px, 2.95cqw, 17.5px);
+	line-height: 1.5;
+}
+.lp-mono {
+	font-family: var(--font-mono);
+	font-size: 0.72em;
+	line-height: 1.4;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.lp-ruled {
+	background-image: repeating-linear-gradient(to bottom, transparent 0 calc(1.6em - 1px), var(--grid) calc(1.6em - 1px) 1.6em);
+	background-position: 0 0.75em;
+}
+/* What the highlighter, the pens and the pencil do. Finished by default; with scripting
+   and motion they wait for `data-in` on the Reveal around, each after its `--lp-d`. */
+.lp-mark {
+	position: relative;
+	isolation: isolate;
+}
+.lp-mark::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	inset: 0.1em -0.2em -0.02em -0.2em;
+	background: var(--marker);
+	mask: var(--hl-a) center / 100% 100% no-repeat;
+	rotate: -0.6deg;
+}
+.lp-strike {
+	position: relative;
+}
+.lp-strike::after {
+	content: '';
+	position: absolute;
+	inset: 52% -0.3em auto -0.3em;
+	height: 0.13em;
+	border-radius: 1em;
+	background: var(--accent);
+	rotate: -2deg;
+	transform-origin: left;
+}
+.lp-pick {
+	border-color: var(--ok);
+	background: var(--ok-soft);
+	color: var(--ok-fg);
+}
+.lp-pick .lp-badge {
+	border-color: var(--ok);
+	background: var(--ok);
+	color: white;
+}
+.lp-pick .lp-badge-n { opacity: 0; }
+.lp-dim { opacity: 0.5; }
+.lp-seg { background: var(--ok); }
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+	.lp-mark::before {
+		clip-path: inset(0 100% 0 0);
+		transition: clip-path 0.55s var(--ease-out-soft) var(--lp-d, 0s);
+	}
+	[data-in] .lp-mark::before { clip-path: inset(0 0 0 0); }
+	.lp-strike::after {
+		scale: 0 1;
+		transition: scale 0.35s var(--ease-out-soft) var(--lp-d, 0s);
+	}
+	[data-in] .lp-strike::after { scale: 1 1; }
+	/* Handwriting appears from left to right, at the pace of a hand. */
+	.lp-write {
+		clip-path: inset(-10% 100% -10% 0);
+		transition: clip-path var(--lp-t, 0.6s) linear var(--lp-d, 0s);
+	}
+	[data-in] .lp-write { clip-path: inset(-10% -5% -10% 0); }
+	.lp-fade {
+		opacity: 0;
+		translate: 0 0.5em;
+		transition: opacity 0.5s ease-out var(--lp-d, 0s), translate 0.5s var(--ease-out-soft) var(--lp-d, 0s);
+	}
+	[data-in] .lp-fade { opacity: 1; translate: 0 0; }
+	.lp-stamp {
+		opacity: 0;
+		scale: 1.5;
+		transition: opacity 0.2s ease-out var(--lp-d, 0s), scale 0.4s var(--ease-spring) var(--lp-d, 0s);
+	}
+	[data-in] .lp-stamp { opacity: 1; scale: 1; }
+	.lp-pick,
+	.lp-pick .lp-badge,
+	.lp-dim,
+	.lp-seg {
+		transition-property: border-color, background-color, color, opacity;
+		transition-duration: 0.3s;
+		transition-delay: var(--lp-d, 0s);
+	}
+	.lp-pick:not([data-in] *) {
+		border-color: var(--edge);
+		background: var(--surface);
+		color: var(--fg-strong);
+	}
+	.lp-pick:not([data-in] *) .lp-badge {
+		border-color: var(--edge-strong);
+		background: transparent;
+		color: var(--fg-subtle);
+	}
+	.lp-pick .lp-badge-n,
+	.lp-pick .lp-badge-tick {
+		transition: opacity 0.2s var(--lp-d, 0s), scale 0.3s var(--ease-spring) var(--lp-d, 0s);
+	}
+	.lp-pick:not([data-in] *) .lp-badge-n { opacity: 1; }
+	.lp-pick:not([data-in] *) .lp-badge-tick { opacity: 0; scale: 0.4; }
+	.lp-pick:not([data-in] *) > svg { opacity: 0; scale: 0.4; }
+	.lp-pick > svg { transition: opacity 0.2s var(--lp-d, 0s), scale 0.3s var(--ease-spring) var(--lp-d, 0s); }
+	.lp-dim:not([data-in] *) { opacity: 1; }
+	.lp-seg:not([data-in] *) { background: var(--surface-4); }
+}
+
+/* ---- version two, "Oggetti" ---- */
+
+/* The still of the hero waits a moment for the film, which begins with nothing on the
+   page; without scripting or with reduced motion it is there at once. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+	.lp-poster {
+		animation: fade-in 0.6s ease-out 2.5s backwards;
+	}
+}
+/* On a phone a sheet is the width of the screen: its type is larger, so what is written on it can be read, and it is
+   as tall as what it holds. A highlighted phrase stays on one line, or the stroke would cover the gap between two. */
+@media (max-width: 39.99rem) {
+	.lp-oggetti .lp-sheet {
+		font-size: 3.5cqw;
+		aspect-ratio: auto;
+	}
+	.lp-oggetti .lp-mark {
+		white-space: nowrap;
+	}
+	/* The flashcard runs to one more line here. */
+	.lp-oggetti .lp-deck {
+		min-height: 16em;
+	}
+	/* The chapter's object sits on the corner where the page number is. */
+	.lp-oggetti .lp-page {
+		display: none;
+	}
+}
+/* An object that drifts a little against the page as it crosses the screen. */
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.lp-drift {
+			animation: lp-drift linear both;
+			animation-timeline: view();
+			animation-range: entry 0% exit 100%;
+		}
+	}
+}
+@keyframes lp-drift {
+	from { translate: 0 calc(var(--lp-shift, 60px)); }
+	to { translate: 0 calc(var(--lp-shift, 60px) * -1); }
+}
+
+/* ---- version four, "Materie" ----
+   One stage a subject (materie/ScrollStage.tsx). By default it is in the flow: the object,
+   then the head, the lesson and the tool, one under the other. On a wide screen, with
+   motion allowed, the stage is a few screens tall and its content is pinned under the
+   header; the script places the object and the two slides with a transform at every
+   scroll, and nothing else changes while the page scrolls. */
+.lp-stage {
+	position: relative;
+}
+.lp-stage-pin {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	max-width: 42rem;
+	margin: 0 auto;
+	padding: 3.5rem 1.25rem;
+}
+.lp-stage-halo {
+	position: absolute;
+	inset: 0 -50vw;
+	z-index: -1;
+	background: radial-gradient(60% 24rem at 50% 14rem, color-mix(in oklab, var(--tint) 20%, transparent), transparent 72%);
+	mask-image: radial-gradient(70% 28rem at 50% 14rem, black 30%, transparent 75%);
+	pointer-events: none;
+}
+.lp-stage-object {
+	width: min(72vw, 21rem);
+	aspect-ratio: 1;
+	margin: 0 auto;
+	will-change: transform;
+}
+.lp-stage-object canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.lp-stage-slides {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	margin-top: 2rem;
+}
+.lp-stage-rail {
+	display: none;
+}
+
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+	.lp-stage {
+		height: 320vh;
+	}
+	.lp-stage-pin {
+		position: sticky;
+		top: var(--header-h, 64px);
+		height: calc(100dvh - var(--header-h, 64px));
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: center;
+		gap: 2rem;
+		max-width: none;
+		padding: 0 max(2.5rem, calc((100vw - 92rem) / 2));
+		/* the object leaves over the top and the slides come from under the foot: neither shows outside the stage */
+		overflow: clip;
+	}
+	.lp-stage-halo {
+		inset: 0;
+		--hx: 25%;
+		background: radial-gradient(40% 58% at var(--hx) 52%, color-mix(in oklab, var(--tint) 24%, transparent), transparent 72%);
+		mask-image: radial-gradient(46% 68% at var(--hx) 52%, black 25%, transparent 78%);
+	}
+	.lp-stage[data-side='right'] .lp-stage-halo { --hx: 75%; }
+	.lp-stage-object {
+		grid-row: 1;
+		grid-column: 1;
+		justify-self: center;
+		width: min(100%, calc(100dvh - var(--header-h, 64px) - 8rem), 36rem);
+	}
+	.lp-stage[data-side='right'] .lp-stage-object { grid-column: 2; }
+	.lp-stage-words {
+		grid-row: 1;
+		grid-column: 2;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		max-width: 40rem;
+		width: 100%;
+		justify-self: center;
+		/* clear of the bar of the versions at the foot of the screen */
+		padding: 2.5rem 0 4.5rem;
+	}
+	.lp-stage[data-side='right'] .lp-stage-words { grid-column: 1; }
+	/* The frame the two slides move in: it takes the room under the head, and has a margin all round for their shadows. */
+	.lp-stage-slides {
+		position: relative;
+		display: block;
+		flex: 1;
+		min-height: 0;
+		margin: 0.5rem -1.5rem 0;
+		overflow: clip;
+	}
+	.lp-slide {
+		position: absolute;
+		inset: 0 0 auto;
+		padding: 1rem 1.5rem 2rem;
+		will-change: transform;
+	}
+	.lp-slide[inert] { pointer-events: none; }
+	/* The TikZ figure is drawn once, when its lesson has come up: the lines first, then what is filled (TikzFigure.tsx sets `--len`). */
+	.lp-tikz [data-line] {
+		stroke-dasharray: var(--len) var(--len);
+		stroke-dashoffset: var(--len);
+	}
+	.lp-tikz [data-ink] { opacity: 0; }
+	.lp-stage[data-drawn] .lp-tikz [data-line] {
+		stroke-dashoffset: 0;
+		transition: stroke-dashoffset 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+	}
+	.lp-stage[data-drawn] .lp-tikz [data-ink] {
+		opacity: 1;
+		transition: opacity 0.25s ease-out 0.95s;
+	}
+	.lp-stage-rail {
+		display: flex;
+		gap: 1.5rem;
+		margin-top: 0.25rem;
+		color: var(--fg-faint);
+	}
+	.lp-stage-rail li {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: color 0.3s;
+	}
+	.lp-stage-rail li::before {
+		content: '';
+		width: 1.5rem;
+		height: 2px;
+		border-radius: 2px;
+		background: currentColor;
+		transition: width 0.4s var(--ease-out-soft);
+	}
+	.lp-stage-rail li.is-on { color: var(--tint-fg); }
+	.lp-stage-rail li.is-on::before { width: 3rem; }
+}
